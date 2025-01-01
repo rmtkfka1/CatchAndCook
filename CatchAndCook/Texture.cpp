@@ -27,8 +27,11 @@ void Texture::Init(const wstring& path,TextureType type)
         ::LoadFromDDSFile(finalPath.c_str(), DDS_FLAGS_NONE, nullptr, _image);
     else if (ext == L".tga" || ext == L".TGA")
         ::LoadFromTGAFile(finalPath.c_str(), nullptr, _image);
+    else if (ext == L".hdr" || ext == L".HDR")
+        ::LoadFromHDRFile(path.c_str(), nullptr, _image);
     else // png, jpg, jpeg, bmp
         ::LoadFromWICFile(finalPath.c_str(), WIC_FLAGS_NONE, nullptr, _image);
+
 
     HRESULT hr = ::CreateTexture(Core::main->GetDevice().Get(), _image.GetMetadata(), &_resource);
 
@@ -130,7 +133,7 @@ void Texture::ResourceBarrier(D3D12_RESOURCE_STATES after)
 }
  
 
-void Texture::CreateTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalState,uint32 width, uint32 height, TextureUsageFlags usageFlags ,bool jump,bool detphShared, vec4 clearValue )
+void Texture::CreateTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalState, uint32 width, uint32 height, TextureUsageFlags usageFlags ,bool jump, bool detphShared, vec4 clearValue )
 {
 
     D3D12_RESOURCE_DESC desc = CD3DX12_RESOURCE_DESC::Tex2D(format, width, height);
@@ -149,7 +152,7 @@ void Texture::CreateTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalStat
         desc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
     }
      
-	if (jump==false) 
+	if (jump == false) 
     {
         D3D12_CLEAR_VALUE cvalue = {};
 
