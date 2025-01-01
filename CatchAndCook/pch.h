@@ -61,5 +61,10 @@ using namespace Microsoft::WRL;
 #pragma comment(lib, "Assimp/assimp-vc143-mt.lib")
 #endif
 
+using namespace SimpleMath;
+
 
 #include "Global.h"
+
+#include "convert_math.h"
+#include "Input.h"

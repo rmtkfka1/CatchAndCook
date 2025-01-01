@@ -26,6 +26,12 @@
     <ClCompile Include="simple_mesh_LH.cpp">
       <Filter>pch\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>pch\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="input_module.cpp">
+      <Filter>pch\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -41,6 +47,15 @@
       <Filter>pch\Utils</Filter>
     </ClInclude>
     <ClInclude Include="d3dx12.h">
+      <Filter>pch\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>pch\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="input_module.h">
+      <Filter>pch\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="convert_math.h">
       <Filter>pch\Utils</Filter>
     </ClInclude>
   </ItemGroup>
