@@ -7,6 +7,9 @@ class RootSignature;
 class Core
 {
 public:
+
+	static unique_ptr<Core> main;
+
 	Core();
 	~Core();
 

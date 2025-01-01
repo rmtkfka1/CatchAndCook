@@ -5,6 +5,9 @@
 #include "Texture.h"
 #include "BufferPool.h"
 
+
+unique_ptr<Core> Core::main=nullptr;
+
 Core::Core()
 {
 

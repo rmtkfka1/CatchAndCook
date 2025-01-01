@@ -43,11 +43,11 @@ void RenderTarget::Resize(DWORD BackBufferWidth, DWORD BackBufferHeight, ComPtr<
 
 void RenderTarget::RenderBegin()
 {
-	ComPtr<ID3D12GraphicsCommandList> cmdList = core->GetCmdList();
+	ComPtr<ID3D12GraphicsCommandList> cmdList = Core::main->GetCmdList();
 
 	ClearDepth();
 
-	const float BackColor[] = { 1.0f, 0.0f, 0.0f, 0.0f };
+	const float BackColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	_RenderTargets[_RenderTargetIndex]->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
 
@@ -59,14 +59,14 @@ void RenderTarget::RenderBegin()
 
 void RenderTarget::RenderEnd()
 {
-	ComPtr<ID3D12GraphicsCommandList> cmdList = core->GetCmdList();
+	ComPtr<ID3D12GraphicsCommandList> cmdList = Core::main->GetCmdList();
 
 	_RenderTargets[_RenderTargetIndex]->ResourceBarrier(D3D12_RESOURCE_STATE_PRESENT);
 }
 
 void RenderTarget::ClearDepth()
 {
-	ComPtr<ID3D12GraphicsCommandList> cmdList = core->GetCmdList();
+	ComPtr<ID3D12GraphicsCommandList> cmdList = Core::main->GetCmdList();
 	cmdList->ClearDepthStencilView(_DSTexture->GetSharedDSVHandle(), D3D12_CLEAR_FLAG_DEPTH , 1.0f, 0, 0, nullptr);
 }
 

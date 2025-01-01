@@ -14,7 +14,7 @@ void TextureBufferPool::Init(int32 SrvUavCount, int32 RTVCount ,int32 DSVCount)
 {
 	{
 		_srvHeap.heapSize = SrvUavCount;
-		_srvHeap.handleIncrementSize = core->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+		_srvHeap.handleIncrementSize = Core::main->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 		_srvHeap.indexGenator.resize(_srvHeap.heapSize, -1);
 
@@ -23,12 +23,12 @@ void TextureBufferPool::Init(int32 SrvUavCount, int32 RTVCount ,int32 DSVCount)
 		srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;  // Ensure shader visibility if needed
 
-		ThrowIfFailed(core->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_srvHeap.heap)));
+		ThrowIfFailed(Core::main->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_srvHeap.heap)));
 	}
 
 	{
 		_rtvHeap.heapSize = RTVCount;
-		_rtvHeap.handleIncrementSize = core->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+		_rtvHeap.handleIncrementSize = Core::main->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 		_rtvHeap.indexGenator.resize(_rtvHeap.heapSize, -1);
 
@@ -37,12 +37,12 @@ void TextureBufferPool::Init(int32 SrvUavCount, int32 RTVCount ,int32 DSVCount)
 		RTVHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 		RTVHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;  // Ensure shader visibility if needed
 
-		ThrowIfFailed(core->GetDevice()->CreateDescriptorHeap(&RTVHeapDesc, IID_PPV_ARGS(&_rtvHeap.heap)));
+		ThrowIfFailed(Core::main->GetDevice()->CreateDescriptorHeap(&RTVHeapDesc, IID_PPV_ARGS(&_rtvHeap.heap)));
 	}
 
 	{
 		_dsvHeap.heapSize = DSVCount;
-		_dsvHeap.handleIncrementSize = core->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+		_dsvHeap.handleIncrementSize = Core::main->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
 		_dsvHeap.indexGenator.resize(_dsvHeap.heapSize, -1);
 
@@ -51,7 +51,7 @@ void TextureBufferPool::Init(int32 SrvUavCount, int32 RTVCount ,int32 DSVCount)
 		srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 		srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;  // Ensure shader visibility if needed
 
-		ThrowIfFailed(core->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_dsvHeap.heap)));
+		ThrowIfFailed(Core::main->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_dsvHeap.heap)));
 
 	}
 

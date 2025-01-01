@@ -30,14 +30,14 @@ void Texture::Init(const wstring& path,TextureType type)
     else // png, jpg, jpeg, bmp
         ::LoadFromWICFile(finalPath.c_str(), WIC_FLAGS_NONE, nullptr, _image);
 
-    HRESULT hr = ::CreateTexture(core->GetDevice().Get(), _image.GetMetadata(), &_resource);
+    HRESULT hr = ::CreateTexture(Core::main->GetDevice().Get(), _image.GetMetadata(), &_resource);
 
     if (FAILED(hr))
         assert(nullptr);
 
     vector<D3D12_SUBRESOURCE_DATA> subResources;
 
-    hr = ::PrepareUpload(core->GetDevice().Get(),
+    hr = ::PrepareUpload(Core::main->GetDevice().Get(),
         _image.GetImages(),
         _image.GetImageCount(),
         _image.GetMetadata(),
@@ -49,7 +49,7 @@ void Texture::Init(const wstring& path,TextureType type)
     const uint64 bufferSize = ::GetRequiredIntermediateSize(_resource.Get(), 0, static_cast<uint32>(subResources.size()));
 
     ComPtr<ID3D12Resource> textureUploadHeap;
-    hr = core->GetDevice()->CreateCommittedResource(
+    hr = Core::main->GetDevice()->CreateCommittedResource(
         &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
         D3D12_HEAP_FLAG_NONE,
         &CD3DX12_RESOURCE_DESC::Buffer(bufferSize),
@@ -60,7 +60,7 @@ void Texture::Init(const wstring& path,TextureType type)
     if (FAILED(hr))
         assert(nullptr);
 
-    hr = core->GetDevice()->CreateCommittedResource(
+    hr = Core::main->GetDevice()->CreateCommittedResource(
         &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
         D3D12_HEAP_FLAG_NONE,
         &CD3DX12_RESOURCE_DESC::Tex2D(
@@ -76,7 +76,7 @@ void Texture::Init(const wstring& path,TextureType type)
     if (FAILED(hr))
         assert(nullptr);
 
-    auto list = core->GetresCmdList();
+    auto list = Core::main->GetresCmdList();
   
     list->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_resource.Get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
 
@@ -89,9 +89,9 @@ void Texture::Init(const wstring& path,TextureType type)
 
     list->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_resource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE));
    
-    core->FlushResCMDQueue();
+    Core::main->FlushResCMDQueue();
 
-    core->GetTextureBufferPool()->AllocSRVDescriptorHandle(&_srvHandle);
+    Core::main->GetTextureBufferPool()->AllocSRVDescriptorHandle(&_srvHandle);
 
     D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 
@@ -113,7 +113,7 @@ void Texture::Init(const wstring& path,TextureType type)
         break;
     }
 
-    core->GetDevice()->CreateShaderResourceView(_resource.Get(), &srvDesc, _srvHandle);
+    Core::main->GetDevice()->CreateShaderResourceView(_resource.Get(), &srvDesc, _srvHandle);
 }
 
 
@@ -125,7 +125,7 @@ void Texture::ResourceBarrier(D3D12_RESOURCE_STATES after)
         return;
     }
 
-    core->GetCmdList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_resource.Get(), _state, after));
+    Core::main->GetCmdList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_resource.Get(), _state, after));
     _state = after;
 }
  
@@ -165,7 +165,7 @@ void Texture::CreateTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalStat
             desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
         }
 
-        auto hr = core->GetDevice()->CreateCommittedResource(
+        auto hr = Core::main->GetDevice()->CreateCommittedResource(
             &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
             D3D12_HEAP_FLAG_NONE,
             &desc,
@@ -181,41 +181,41 @@ void Texture::CreateTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalStat
 
     if (HasFlag(usageFlags, TextureUsageFlags::RTV))
     {
-        core->GetTextureBufferPool()->AllocRTVDescriptorHandle(&_rtvHandle);
-        core->GetDevice()->CreateRenderTargetView(_resource.Get(), nullptr, _rtvHandle);
+        Core::main->GetTextureBufferPool()->AllocRTVDescriptorHandle(&_rtvHandle);
+        Core::main->GetDevice()->CreateRenderTargetView(_resource.Get(), nullptr, _rtvHandle);
     }
 
     if (HasFlag(usageFlags, TextureUsageFlags::SRV))
     {
-        core->GetTextureBufferPool()->AllocSRVDescriptorHandle(&_srvHandle);
+        Core::main->GetTextureBufferPool()->AllocSRVDescriptorHandle(&_srvHandle);
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
         srvDesc.Format = format;
         srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
         srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
         srvDesc.Texture2D.MipLevels = 1;
-        core->GetDevice()->CreateShaderResourceView(_resource.Get(), &srvDesc, _srvHandle);
+        Core::main->GetDevice()->CreateShaderResourceView(_resource.Get(), &srvDesc, _srvHandle);
     }
 
     if (HasFlag(usageFlags, TextureUsageFlags::UAV))
     {
-        core->GetTextureBufferPool()->AllocSRVDescriptorHandle(&_uavHandle);
+        Core::main->GetTextureBufferPool()->AllocSRVDescriptorHandle(&_uavHandle);
         D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
         uavDesc.Format = format;
         uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
-        core->GetDevice()->CreateUnorderedAccessView(_resource.Get(), nullptr, &uavDesc, _uavHandle);
+        Core::main->GetDevice()->CreateUnorderedAccessView(_resource.Get(), nullptr, &uavDesc, _uavHandle);
     }
 
     if (HasFlag(usageFlags, TextureUsageFlags::DSV))
     {
         if (detphShared)
         {
-            core->GetTextureBufferPool()->AllocDSVDescriptorHandle(&_SharedDSVHandle);
-            core->GetDevice()->CreateDepthStencilView(_resource.Get(), nullptr, _SharedDSVHandle);
+            Core::main->GetTextureBufferPool()->AllocDSVDescriptorHandle(&_SharedDSVHandle);
+            Core::main->GetDevice()->CreateDepthStencilView(_resource.Get(), nullptr, _SharedDSVHandle);
         }
         else
         {
-            core->GetTextureBufferPool()->AllocDSVDescriptorHandle(&_dsvHandle);
-            core->GetDevice()->CreateDepthStencilView(_resource.Get(), nullptr, _dsvHandle);
+            Core::main->GetTextureBufferPool()->AllocDSVDescriptorHandle(&_dsvHandle);
+            Core::main->GetDevice()->CreateDepthStencilView(_resource.Get(), nullptr, _dsvHandle);
         }
     }
 
