@@ -25,7 +25,7 @@ public:
 class Input 
 {
 public:
-    static Input* main;
+    static unique_ptr<Input> main;
 
     Input();
     ~Input();

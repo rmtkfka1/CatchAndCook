@@ -1,3 +1,4 @@
+#pragma once
 #define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용을 Windows 헤더에서 제외합니다.
 #define _HAS_STD_BYTE 0
 
@@ -66,5 +67,22 @@ using namespace SimpleMath;
 
 #include "Global.h"
 
+using int8 = __int8;
+using int16 = __int16;
+using int32 = __int32;
+using int64 = __int64;
+using uint8 = unsigned __int8;
+using uint16 = unsigned __int16;
+using uint32 = unsigned __int32;
+using uint64 = unsigned __int64;
+using vec2 = DirectX::SimpleMath::Vector2;
+using vec3 = DirectX::SimpleMath::Vector3;
+using vec4 = DirectX::SimpleMath::Vector4;
+using Matrix = DirectX::SimpleMath::Matrix;
+using Ray = DirectX::SimpleMath::Ray;
+using Quaternion = DirectX::SimpleMath::Quaternion;
+
+
 #include "convert_math.h"
 #include "Input.h"
+#include "Time.h"

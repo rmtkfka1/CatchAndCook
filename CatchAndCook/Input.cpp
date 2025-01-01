@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "Input.h"
 
-Input* Input::main = nullptr;
+
+unique_ptr<Input> Input::main = nullptr;
 
 Input::Input()
 {
-    if (main == nullptr)
-        main = this;
+
 }
 
 Input::~Input()

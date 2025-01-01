@@ -5,6 +5,7 @@
 #include <crtdbg.h>
 
 
+
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 int main()
@@ -46,7 +47,8 @@ int main()
     ShowWindow(hwnd, SW_SHOWDEFAULT);
     UpdateWindow(hwnd);
 
-    Input::main = new Input();
+	Input::main = make_unique<Input>();
+	Time::main = make_unique<Time>();
 
     MSG msg = {};
 
@@ -59,8 +61,9 @@ int main()
         else
         {
   
-
+		
 			Input::main->Update();
+			Time::main->Update();
 
             if (Input::main->GetKey(KeyCode::A))
                 std::cout << "A - Down\n";
@@ -72,7 +75,7 @@ int main()
     DestroyWindow(hwnd);
     UnregisterClass(wc.lpszClassName, wc.hInstance);
 
-    delete Input::main;
+    //delete Input::main;
 
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 

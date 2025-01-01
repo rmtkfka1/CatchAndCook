@@ -11,6 +11,9 @@
     <Filter Include="pch\Utils">
       <UniqueIdentifier>{e676c44d-931e-447d-9037-d6e8e14516af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{7543e3e8-7bc4-4150-aaaf-c8ee39bc9447}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -26,11 +29,14 @@
     <ClCompile Include="simple_mesh_LH.cpp">
       <Filter>pch\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>pch\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="input_module.cpp">
-      <Filter>pch\Utils</Filter>
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -49,14 +55,17 @@
     <ClInclude Include="d3dx12.h">
       <Filter>pch\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Input.h">
+    <ClInclude Include="convert_math.h">
       <Filter>pch\Utils</Filter>
     </ClInclude>
     <ClInclude Include="input_module.h">
-      <Filter>pch\Utils</Filter>
+      <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="convert_math.h">
-      <Filter>pch\Utils</Filter>
+    <ClInclude Include="Input.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
