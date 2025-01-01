@@ -8,7 +8,6 @@ void Game::Init(HWND hwnd)
 	Input::main = make_unique<Input>();
 	Core::main = make_unique<Core>();
 	Core::main->Init(hwnd);
-
 }
 
 void Game::Run()
@@ -19,4 +18,11 @@ void Game::Run()
 	Core::main->RenderBegin();
 	Core::main->RenderEnd();
 
+}
+
+void Game::Release()
+{
+	Input::main.reset(nullptr);
+	Time::main.reset(nullptr);
+	Core::main.reset(nullptr);
 }

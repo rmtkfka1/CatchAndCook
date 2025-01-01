@@ -15,66 +15,74 @@ int main()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	{
-		WNDCLASSEX wc = { sizeof(WNDCLASSEX),
-						 CS_CLASSDC,
-						 WndProc,
-						 0L,
-						 0L,
-						 GetModuleHandle(NULL),
-						 NULL,
-						 NULL,
-						 NULL,
-						 NULL,
-						 L"Game",
-						 NULL };
 
-		RegisterClassEx(&wc);
+	WNDCLASSEX wc = { sizeof(WNDCLASSEX),
+				CS_CLASSDC,
+				WndProc,
+				0L,
+				0L,
+				GetModuleHandle(NULL),
+				NULL,
+				NULL,
+				NULL,
+				NULL,
+				L"Game", // lpszClassName, L-string
+				NULL };
 
-		RECT wr = { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT };
-
-		AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);
-
-		HWND hwnd = CreateWindow(wc.lpszClassName, L"Game",
-			WS_OVERLAPPEDWINDOW,
-			100, // 윈도우 좌측 상단의 x 좌표
-			100, // 윈도우 좌측 상단의 y 좌표
-			wr.right - wr.left, // 윈도우 가로 방향 해상도
-			wr.bottom - wr.top, // 윈도우 세로 방향 해상도
-			NULL, NULL, wc.hInstance, NULL);
-
-		ShowWindow(hwnd, SW_SHOWDEFAULT);
-		UpdateWindow(hwnd);
-
-		unique_ptr<Game> game = make_unique<Game>();
-		game->Init(hwnd);
-
-		MSG msg = {};
-
-		while (WM_QUIT != msg.message) {
-			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
-			else
-			{
-				game->Run();
-			}
-		}
-
-		DestroyWindow(hwnd);
-		UnregisterClass(wc.lpszClassName, wc.hInstance);
-
-
+	// https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-registerclassa?redirectedfrom=MSDN
+	if (!RegisterClassEx(&wc)) {
+		cout << "RegisterClassEx() failed." << endl;
 	}
+
+	RECT wr = { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT };
+
+
+	AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, false);
+
+	// 윈도우를 만들때 위에서 계산한 wr 사용
+	HWND hwnd = CreateWindow(wc.lpszClassName, L"Game",
+		WS_OVERLAPPEDWINDOW,
+		100, // 윈도우 좌측 상단의 x 좌표
+		100, // 윈도우 좌측 상단의 y 좌표
+		wr.right - wr.left, // 윈도우 가로 방향 해상도
+		wr.bottom - wr.top, // 윈도우 세로 방향 해상도
+		NULL, NULL, wc.hInstance, NULL);
+
+
+
+	ShowWindow(hwnd, SW_SHOWDEFAULT);
+	UpdateWindow(hwnd);
+
+	unique_ptr<Game> game = make_unique<Game>();
+	game->Init(hwnd);
+
+	MSG msg = {};
+
+	while (WM_QUIT != msg.message) {
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+		else
+		{
+			game->Run();
+		}
+	}
+
+
+	game->Release();
+	game.reset(nullptr);
+
+	DestroyWindow(hwnd);
+	UnregisterClass(wc.lpszClassName, wc.hInstance);
 
 #ifdef _DEBUG
 	_CrtDumpMemoryLeaks();
 #endif
 
-    return 0;
-}
+	return 0;
+};
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -200,6 +208,10 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	        Input::main->_eventQueue.push(eventDesc);
 	        break;
 	    }
+		case WM_DESTROY:
+			::PostQuitMessage(0);
+			return 0;
+
 	    case WM_SYSKEYDOWN:
 	    case WM_SYSKEYUP:
 	    {
@@ -227,5 +239,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	            break;
 	        }
 	    }
+
+
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }

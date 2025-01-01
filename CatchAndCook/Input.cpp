@@ -11,6 +11,8 @@ Input::Input()
 
 Input::~Input()
 {
+
+
 }
 
 void Input::Update()
