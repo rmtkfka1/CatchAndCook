@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="pch">
+      <UniqueIdentifier>{d6409ad0-7edf-4b0e-af95-5ceb424937b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pch\Utils">
+      <UniqueIdentifier>{e676c44d-931e-447d-9037-d6e8e14516af}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="pch.cpp">
+      <Filter>pch</Filter>
+    </ClCompile>
+    <ClCompile Include="Global.cpp">
+      <Filter>pch</Filter>
+    </ClCompile>
+    <ClCompile Include="simple_mesh_ext.cpp">
+      <Filter>pch\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="simple_mesh_LH.cpp">
+      <Filter>pch\Utils</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="Global.h">
+      <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="simple_mesh_ext.h">
+      <Filter>pch\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="simple_mesh_LH.h">
+      <Filter>pch\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dx12.h">
+      <Filter>pch\Utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SimpleMath_LH.inl">
+      <Filter>pch\Utils</Filter>
+    </None>
+  </ItemGroup>
+</Project>
