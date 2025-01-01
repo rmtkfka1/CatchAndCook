@@ -38,6 +38,7 @@
     <ClCompile Include="Time.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Game.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -67,6 +68,7 @@
     <ClInclude Include="Time.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Game.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">

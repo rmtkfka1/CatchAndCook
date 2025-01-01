@@ -33,17 +33,9 @@ public:
     void Update();
 
 
-protected:
-    static const int _maxInputKeyField = 512;
-    static const int _maxInputMouseField = 518;
-    InputKeyData _inputKeyboardField[Input::_maxInputKeyField];
-    InputMouseData _inputMouseField[Input::_maxInputMouseField];
-
-    Vector2 mousePos{0, 0};
 public:
+
     std::queue<InputEvent> _eventQueue;
-
-public:
 
     //한번만 눌렸을때 (최초)
     bool GetKeyDown(int keycode);
@@ -52,17 +44,25 @@ public:
     //키를 업했을때
     bool GetKeyUp(int keycode);
 
-
     bool GetMouseDown(int keycode);
     bool GetMouse(int keycode);
     bool GetMouseUp(int keycode);
 
-    bool DataUpdate(const InputEvent& event);
-    void DataBeginUpdate();
-
-
     Vector2 GetMousePosition();
     Vector2 GetMouseDownPosition(int keycode);
     Vector2 GetMouseUpPosition(int keycode);
+
+private:
+
+    bool DataUpdate(const InputEvent& event);
+    void DataBeginUpdate();
+
+    static const int _maxInputKeyField = 512;
+    static const int _maxInputMouseField = 518;
+    InputKeyData _inputKeyboardField[Input::_maxInputKeyField];
+    InputMouseData _inputMouseField[Input::_maxInputMouseField];
+    Vector2 mousePos{ 0, 0 };
+
+
 
 };

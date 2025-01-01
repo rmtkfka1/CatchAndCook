@@ -3,7 +3,7 @@
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
-
+#include "Game.h"
 
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -12,72 +12,66 @@ int main()
 {
 
 #ifdef _DEBUG
-#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
-#else
-#define DBG_NEW new
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-    WNDCLASSEX wc = { sizeof(WNDCLASSEX),
-                     CS_CLASSDC,
-                     WndProc,
-                     0L,
-                     0L,
-                     GetModuleHandle(NULL),
-                     NULL,
-                     NULL,
-                     NULL,
-                     NULL,
-                     L"Game",
-                     NULL };
+	{
+		WNDCLASSEX wc = { sizeof(WNDCLASSEX),
+						 CS_CLASSDC,
+						 WndProc,
+						 0L,
+						 0L,
+						 GetModuleHandle(NULL),
+						 NULL,
+						 NULL,
+						 NULL,
+						 NULL,
+						 L"Game",
+						 NULL };
 
-    RegisterClassEx(&wc);
+		RegisterClassEx(&wc);
 
-    RECT wr = { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT };
+		RECT wr = { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT };
 
-    AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);
+		AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);
 
-    HWND hwnd = CreateWindow(wc.lpszClassName, L"Game",
-        WS_OVERLAPPEDWINDOW,
-        100, // 윈도우 좌측 상단의 x 좌표
-        100, // 윈도우 좌측 상단의 y 좌표
-        wr.right - wr.left, // 윈도우 가로 방향 해상도
-        wr.bottom - wr.top, // 윈도우 세로 방향 해상도
-        NULL, NULL, wc.hInstance, NULL);
+		HWND hwnd = CreateWindow(wc.lpszClassName, L"Game",
+			WS_OVERLAPPEDWINDOW,
+			100, // 윈도우 좌측 상단의 x 좌표
+			100, // 윈도우 좌측 상단의 y 좌표
+			wr.right - wr.left, // 윈도우 가로 방향 해상도
+			wr.bottom - wr.top, // 윈도우 세로 방향 해상도
+			NULL, NULL, wc.hInstance, NULL);
 
-    ShowWindow(hwnd, SW_SHOWDEFAULT);
-    UpdateWindow(hwnd);
+		ShowWindow(hwnd, SW_SHOWDEFAULT);
+		UpdateWindow(hwnd);
 
-	Input::main = make_unique<Input>();
-	Time::main = make_unique<Time>();
+		unique_ptr<Game> game = make_unique<Game>();
+		game->Init(hwnd);
 
-    MSG msg = {};
+		MSG msg = {};
 
-    while (WM_QUIT != msg.message) {
-        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-        else
-        {
-  
-		
-			Input::main->Update();
-			Time::main->Update();
+		while (WM_QUIT != msg.message) {
+			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+			else
+			{
+				game->Run();
+			}
+		}
 
-            if (Input::main->GetKey(KeyCode::A))
-                std::cout << "A - Down\n";
-		
-   
-        }
-    }
+		DestroyWindow(hwnd);
+		UnregisterClass(wc.lpszClassName, wc.hInstance);
 
-    DestroyWindow(hwnd);
-    UnregisterClass(wc.lpszClassName, wc.hInstance);
 
-    //delete Input::main;
+	}
 
-    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#ifdef _DEBUG
+	_CrtDumpMemoryLeaks();
+#endif
 
     return 0;
 }
