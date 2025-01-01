@@ -13,6 +13,18 @@ Input::~Input()
 {
 }
 
+void Input::Update()
+{
+
+    Input::main->DataBeginUpdate();
+
+    while (!_eventQueue.empty())
+    {
+        Input::main->DataUpdate(_eventQueue.front());
+        Input::main->_eventQueue.pop();
+    }
+}
+
 bool Input::GetKeyDown(int keycode)
 {
     return _inputKeyboardField[keycode].down;
@@ -43,6 +55,7 @@ bool Input::GetMouseUp(int keycode)
     return _inputMouseField[keycode].up;
 }
 
+
 bool Input::DataUpdate(const InputEvent& e)
 {
     switch (e.type)
@@ -50,6 +63,7 @@ bool Input::DataUpdate(const InputEvent& e)
     case InputType::Keyboard:
         if ((!_inputKeyboardField[e.keyCode].stay) && e.keyboard.isDown)
             _inputKeyboardField[e.keyCode].down = e.keyboard.isDown;
+
         if ((_inputKeyboardField[e.keyCode].stay) && e.keyboard.isUp)
             _inputKeyboardField[e.keyCode].up = e.keyboard.isUp;
 
@@ -60,12 +74,15 @@ bool Input::DataUpdate(const InputEvent& e)
             _inputKeyboardField[e.keyCode].stay = true;
             _inputKeyboardField[e.keyCode]._lastDown_Time = e.time;
         }
+
         if (_inputKeyboardField[e.keyCode].up)
         {
             _inputKeyboardField[e.keyCode]._lastUp_Time = e.time;
         }
+
         return true;
         break;
+
     case InputType::Mouse:
         if ((!e.mouse.isUp) && (!e.mouse.isDown))
         {
@@ -97,6 +114,7 @@ bool Input::DataUpdate(const InputEvent& e)
     }
     return false;
 }
+
 
 void Input::DataBeginUpdate()
 {

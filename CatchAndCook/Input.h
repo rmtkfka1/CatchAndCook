@@ -22,12 +22,16 @@ public:
     Vector2 upPos{0, 0};
 };
 
-class Input
+class Input 
 {
 public:
     static Input* main;
+
     Input();
-    virtual ~Input();
+    ~Input();
+
+    void Update();
+
 
 protected:
     static const int _maxInputKeyField = 512;
@@ -40,8 +44,12 @@ public:
     std::queue<InputEvent> _eventQueue;
 
 public:
+
+    //한번만 눌렸을때 (최초)
     bool GetKeyDown(int keycode);
+    //꾹누르고있을때 
     bool GetKey(int keycode);
+    //키를 업했을때
     bool GetKeyUp(int keycode);
 
 

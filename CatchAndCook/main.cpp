@@ -58,18 +58,14 @@ int main()
         }
         else
         {
-            Input::main->DataBeginUpdate();
-            while (!Input::main->_eventQueue.empty())
-            {
-                Input::main->DataUpdate(Input::main->_eventQueue.front());
-                Input::main->_eventQueue.pop();
-            }
-            if (Input::main->GetKeyDown(KeyCode::A))
+  
+
+			Input::main->Update();
+
+            if (Input::main->GetKey(KeyCode::A))
                 std::cout << "A - Down\n";
-			//if (Input::main->GetKey(KeyCode::A))
-				//std::cout << "A - Stay\n";
-        	if (Input::main->GetKeyUp(KeyCode::A))
-				std::cout << "A - Up\n";
+		
+   
         }
     }
 
@@ -89,71 +85,10 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	    std::memset(&eventDesc, 0, sizeof(InputEvent));
 	    eventDesc.type = InputType::Event;
 		
-	    switch (msg)
-	    {
-	    case WM_NCLBUTTONUP:
-	    case WM_NCRBUTTONUP:
-	    case WM_NCMBUTTONUP:
-	    case WM_NCXBUTTONUP:
-	    {
-	        break;
-	        eventDesc.type = InputType::Mouse;
-	        eventDesc.mouse.isCtrl = wParam & MK_CONTROL;
-	        eventDesc.mouse.isShift = wParam & MK_SHIFT;
-	        eventDesc.mouse.isUp = true;
-	        eventDesc.mouse.isInClient = false;
-	        eventDesc.mouse.posX = static_cast<float>(LOWORD(lParam));
-	        eventDesc.mouse.posY = static_cast<float>(HIWORD(lParam));
-	        switch (msg)
-	        {
-	        case WM_NCLBUTTONUP: eventDesc.keyCode = KeyCode::LeftMouse;
-	            break;
-	        case WM_NCRBUTTONUP: eventDesc.keyCode = KeyCode::RightMouse;
-	            break;
-	        case WM_NCMBUTTONUP: eventDesc.keyCode = KeyCode::CenterMouse;
-	            break;
-	        }
-	        if (wParam & MK_XBUTTON1) eventDesc.keyCode = KeyCode::X1Mouse;
-	        if (wParam & MK_XBUTTON1) eventDesc.keyCode = KeyCode::X2Mouse;
-	        Input::main->_eventQueue.push(eventDesc);
-	        //ReleaseCapture();
-	        break;
-	    }
-	    case WM_NCLBUTTONDOWN: //비클라이언트 영역에서 왼쪽 마우스 버튼이 눌릴 때
-	    case WM_NCRBUTTONDOWN: //비클라이언트 영역에서 왼쪽 마우스 버튼이 눌릴 때
-	    case WM_NCMBUTTONDOWN: //비클라이언트 영역에서 가운데 마우스 버튼이 눌릴 때
-	    case WM_NCXBUTTONDOWN:
-	    {
-	        break;
-	        if (wParam == HTCAPTION)
-	        {
-	            DefWindowProc(hWnd, msg, wParam, lParam);
-	            break;
-	        }
-	        eventDesc.type = InputType::Mouse;
-	        eventDesc.mouse.isCtrl = wParam & MK_CONTROL;
-	        eventDesc.mouse.isShift = wParam & MK_SHIFT;
-	        eventDesc.mouse.isDown = true;
-	        eventDesc.mouse.isInClient = false;
-	        eventDesc.mouse.posX = static_cast<float>(LOWORD(lParam));
-	        eventDesc.mouse.posY = static_cast<float>(HIWORD(lParam));
-	        switch (msg)
-	        {
-	        case WM_NCLBUTTONDOWN: eventDesc.keyCode = KeyCode::LeftMouse;
-	            break;
-	        case WM_NCRBUTTONDOWN: eventDesc.keyCode = KeyCode::RightMouse;
-	            break;
-	        case WM_NCMBUTTONDOWN: eventDesc.keyCode = KeyCode::CenterMouse;
-	            break;
-	        default:
-	            if (wParam & MK_XBUTTON1) eventDesc.keyCode = KeyCode::X1Mouse;
-	            if (wParam & MK_XBUTTON1) eventDesc.keyCode = KeyCode::X2Mouse;
-	            break;
-	        }
-	        Input::main->_eventQueue.push(eventDesc);
-	        //SetCapture(hWnd);
-	        break;
-	    }
+		switch (msg)
+		{
+
+		
 	    case WM_LBUTTONUP:
 	    case WM_RBUTTONUP:
 	    case WM_MBUTTONUP:
@@ -243,19 +178,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	        Input::main->_eventQueue.push(eventDesc);
 	        break;
 	    }
-	    case WM_MOUSEHOVER:
-	    {
-	        eventDesc.type = InputType::Mouse;
-	        eventDesc.mouse.posX = static_cast<float>(LOWORD(lParam));
-	        eventDesc.mouse.posY = static_cast<float>(HIWORD(lParam));
-	        Input::main->_eventQueue.push(eventDesc);
-	        break;
-	    }
-	    case WM_MOUSELEAVE:
-	    {
-
-	        break;
-	    }
+	  
 	    case WM_KEYUP:
 	    case WM_KEYDOWN:
 	    {
