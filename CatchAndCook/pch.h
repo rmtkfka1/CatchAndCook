@@ -86,3 +86,13 @@ using Quaternion = DirectX::SimpleMath::Quaternion;
 #include "convert_math.h"
 #include "Input.h"
 #include "Time.h"
+
+const uint32 SWAP_CHAIN_FRAME_COUNT = 4;
+const uint32 MAX_FRAME_COUNT = SWAP_CHAIN_FRAME_COUNT - 1;
+
+
+inline void ThrowIfFailed(HRESULT hr) {
+    if (FAILED(hr)) {
+        throw std::exception();
+    }
+}

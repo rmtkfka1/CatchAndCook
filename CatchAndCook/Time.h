@@ -11,12 +11,17 @@ public:
 	void Update();
 
 	uint32 GetFps() { return _fps; }
+	auto GetTime() { return _gameStartClock; }
 	float GetDeltaTime() { return _deltaTime; }
 
 private:
 	uint64	_frequency = 0;
 	uint64	_prevCount = 0;
 	float	_deltaTime = 0.f;
+
+	std::chrono::time_point<std::chrono::steady_clock> _gameStartClock{};
+	float deltaTimeLimitValue = 0.33333;
+
 
 private:
 
@@ -25,7 +30,6 @@ private:
 	float	_frameTime = 0.f;
 	uint32	_fps = 0;
 
-public:
-	uint32 _objectCount = 0;
+
 };
 

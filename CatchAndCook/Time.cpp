@@ -9,6 +9,9 @@ void Time::Init(HWND hwnd)
 	_hwnd = hwnd;
 	::QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&_frequency));
 	::QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&_prevCount)); // CPU Å¬·°
+
+	_gameStartClock = std::chrono::steady_clock::now();
+
 }
 
 void Time::Update()
@@ -17,6 +20,9 @@ void Time::Update()
 	::QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&currentCount));
 
 	_deltaTime = (currentCount - _prevCount) / static_cast<float>(_frequency);
+
+	_deltaTime = std::min(_deltaTime, deltaTimeLimitValue);
+
 	_prevCount = currentCount;
 
 	_frameCount++;
@@ -24,10 +30,6 @@ void Time::Update()
 
 	if (_frameTime > 1.0f)
 	{
-	/*	WCHAR wchTxt[64];
-		swprintf_s(wchTxt, 64, L"FPS: %u, NonCullingObject: %d", _fps, _objectCount);
-		SetWindowText(_hwnd, wchTxt);*/
-
 		_fps = static_cast<uint32>(_frameCount / _frameTime);
 		_frameTime = 0.f;
 		_frameCount = 0;
