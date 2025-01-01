@@ -88,40 +88,9 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	    InputEvent eventDesc;
 	    std::memset(&eventDesc, 0, sizeof(InputEvent));
 	    eventDesc.type = InputType::Event;
-
+		
 	    switch (msg)
 	    {
-	    case WM_SHOWWINDOW: //이건 말그대로 보이는지 여부
-	        break;
-	    case WM_GETMINMAXINFO: //창 크기 최소/최대화 요청
-	        break;
-	    case WM_SIZE:
-	    {
-
-	        break;
-	    }
-	    case WM_DISPLAYCHANGE: // 바탕화면 해상도 변경 / 모니터 변경
-	        break;
-	    case WM_COMMAND:
-	        break;
-	    case WM_CLOSE:
-	        eventDesc.type = InputType::Event;
-	        eventDesc.event.isQuit = true;
-	        Input::main->_eventQueue.push(eventDesc);
-	        break;
-	    case WM_DESTROY:
-
-	        //this->Quit();
-	        //DeleteEngine(this->shared_from_this()); // 창 파괴시 엔진 제거
-	        break;
-	    case WM_SETFOCUS:
-	        break;
-	    case WM_KILLFOCUS:
-	        break;
-	    case WM_ACTIVATE: //이건 포커스 관련
-	        break;
-
-
 	    case WM_NCLBUTTONUP:
 	    case WM_NCRBUTTONUP:
 	    case WM_NCMBUTTONUP:
@@ -337,12 +306,6 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	            Input::main->_eventQueue.push(eventDesc);
 	            break;
 	        }
-	        case WM_CHAR: // 229 로 들어오면 (wchar_t)wParam
-	            //Debug::log << (wchar_t)wParam << "\n\n";
-	            break;
-	        default:
-				return DefWindowProc(hWnd, msg, wParam, lParam);
-	            break;
-	        }
+	    }
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }

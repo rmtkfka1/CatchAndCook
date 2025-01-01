@@ -138,11 +138,11 @@ short KeyCode::NumPad0 = 96;
 
 short KeyCode::KEYBOARD_KECODE_ENDPOINT = 256;
 
-short KeyCode::MOUSE_KECODE_OFFSET = 1000;
+short KeyCode::MOUSE_KECODE_OFFSET = 512;
 
 short KeyCode::LeftMouse = KeyCode::MOUSE_KECODE_OFFSET + 0;
 short KeyCode::RightMouse = KeyCode::MOUSE_KECODE_OFFSET + 1;
 short KeyCode::CenterMouse = KeyCode::MOUSE_KECODE_OFFSET + 2;
-short KeyCode::X1Mouse = KeyCode::MOUSE_KECODE_OFFSET + 10;
-short KeyCode::X2Mouse = KeyCode::MOUSE_KECODE_OFFSET + 11;
+short KeyCode::X1Mouse = KeyCode::MOUSE_KECODE_OFFSET + 3;
+short KeyCode::X2Mouse = KeyCode::MOUSE_KECODE_OFFSET + 4;
 

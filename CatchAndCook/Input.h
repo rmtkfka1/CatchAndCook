@@ -30,8 +30,8 @@ public:
     virtual ~Input();
 
 protected:
-    static const int _maxInputKeyField = 2048;
-    static const int _maxInputMouseField = 1100;
+    static const int _maxInputKeyField = 512;
+    static const int _maxInputMouseField = 518;
     InputKeyData _inputKeyboardField[Input::_maxInputKeyField];
     InputMouseData _inputMouseField[Input::_maxInputMouseField];
 
