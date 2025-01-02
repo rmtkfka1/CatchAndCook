@@ -68,7 +68,7 @@ CB_CONTAINER* ConstantBufferPool::Alloc(uint32 count)
 {
 	assert(_currentIndex <= _count);
 	CB_CONTAINER* data = &_container[_currentIndex];
-	_currentIndex++;
+	_currentIndex+=count;
 	return data;
 }
 
