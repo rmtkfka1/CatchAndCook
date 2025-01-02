@@ -79,7 +79,7 @@ void Texture::Init(const wstring& path,TextureType type)
     if (FAILED(hr))
         assert(nullptr);
 
-    auto list = Core::main->GetresCmdList();
+    auto list = Core::main->GetResCmdList();
   
     list->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_resource.Get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
 
