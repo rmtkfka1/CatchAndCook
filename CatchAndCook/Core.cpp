@@ -52,13 +52,17 @@ void Core::Init(HWND hwnd)
 
     _mesh->Init(data, indices);
     
-     _shader = Shader::Load(L"test.hlsl",
-       {
-          {"PS_Main", "ps"},
-          {"VS_Main", "vs"}
-       });
+    _shader = Shader::Load(L"test.hlsl",
+	{
+		{"PS_Main", "ps"},
+		{"VS_Main", "vs"}
+	});
+	ShaderInfo info;
+    info._zTest = false;
+    info._stencilTest = false;
+	_shader->SetInfo(info);
+	_shader->Init(StaticData);
 
-    _shader->Init(StaticData);
 
     _buffer = make_shared<CBufferPool>();
     _buffer->Init(sizeof(vec3), 255);

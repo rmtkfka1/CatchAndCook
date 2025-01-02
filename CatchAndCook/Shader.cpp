@@ -110,7 +110,7 @@ void Shader::Init(const std::vector<VertexProp>& prop)
 
 
     CD3DX12_DEPTH_STENCIL_DESC depthStencilDesc{ D3D12_DEFAULT };
-    depthStencilDesc.DepthEnable = /*_info._zTest ? TRUE : FALSE;*/ FALSE;
+    depthStencilDesc.DepthEnable = _info._zTest ? TRUE : FALSE;
     depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
     switch (_info._zComp)
     {
@@ -136,7 +136,7 @@ void Shader::Init(const std::vector<VertexProp>& prop)
     depthStencilDesc.DepthWriteMask = _info._zWrite ? D3D12_DEPTH_WRITE_MASK_ALL : D3D12_DEPTH_WRITE_MASK_ZERO;
 
 
-    depthStencilDesc.StencilEnable = /*_info._stencilTest ? TRUE : FALSE;*/ FALSE;
+    depthStencilDesc.StencilEnable = _info._stencilTest ? TRUE : FALSE;
     depthStencilDesc.StencilReadMask = 0xFF;
     depthStencilDesc.StencilWriteMask = 0xFF;
 
