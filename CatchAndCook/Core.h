@@ -4,6 +4,9 @@ class TextureBufferPool;
 class RenderTarget;
 class RootSignature;
 
+class Shader;
+class Mesh;
+
 class Core
 {
 public:
@@ -16,6 +19,7 @@ public:
 	void Init(HWND hwnd);
 
 	void RenderBegin();
+	void Render();
 	void RenderEnd();
 
 	void Fence();
@@ -65,5 +69,10 @@ private:
 
 	HWND _hwnd{};
 
+
+	//temp
+
+	shared_ptr<Shader> _shader;
+	shared_ptr<Mesh> _mesh;
 };
 

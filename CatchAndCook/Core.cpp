@@ -4,8 +4,8 @@
 #include "RootSignature.h"
 #include "Texture.h"
 #include "BufferPool.h"
-
-
+#include "Mesh.h"
+#include "Shader.h"
 unique_ptr<Core> Core::main=nullptr;
 
 Core::Core()
@@ -34,6 +34,31 @@ void Core::Init(HWND hwnd)
     _rootSignature = make_shared<RootSignature>();
     _rootSignature->Init();
 
+    //temp
+
+    _mesh = make_shared<Mesh>();
+
+    vector<Vertex_Static> data;
+    //  1
+    //0   2
+    data.resize(3);
+    data[0].position = vec3(-0.5, 0, 0);
+    data[1].position = vec3(0, 0.5f, 0);
+    data[2].position = vec3(0.5f, 0, 0);
+
+
+    vector<uint32> indices = { 0,1,2 };
+
+    _mesh->Init(data, indices);
+    
+     _shader = Shader::Load(L"test.hlsl",
+       {
+          {"PS_Main", "ps"},
+          {"VS_Main", "vs"}
+       });
+
+    _shader->Init(StaticData);
+
 }
 
 
@@ -46,6 +71,17 @@ void Core::RenderBegin()
     _cmdList->SetGraphicsRootSignature(_rootSignature->GetGraphicsRootSignature().Get());
 
     _renderTarget->RenderBegin();
+}
+
+void Core::Render()
+{
+    
+    Core::main->GetCmdList()->SetPipelineState(_shader->_pipelineState.Get());
+    _cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    _cmdList->IASetVertexBuffers(1, 1, &_mesh->GetVertexView());
+    _cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
+    _cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 0, 0, 0, 0);
+
 }
 
 void Core::RenderEnd()

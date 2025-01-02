@@ -35,35 +35,35 @@ SelectorInfo SelectorInfo::GetInfo(const std::vector<VertexProp>& props)
             break;
         case VertexProp::uv:
         case VertexProp::uv0:
-            byteSize = sizeof(Vector3);
+            byteSize = sizeof(Vector2);
             index = 0;
             break;
         case VertexProp::uv1:
-            byteSize = sizeof(Vector3);
+            byteSize = sizeof(Vector2);
             index = 1;
             break;
         case VertexProp::uv2:
-            byteSize = sizeof(Vector3);
+            byteSize = sizeof(Vector2);
             index = 2;
             break;
         case VertexProp::uv3:
-            byteSize = sizeof(Vector3);
+            byteSize = sizeof(Vector2);
             index = 3;
             break;
         case VertexProp::uv4:
-            byteSize = sizeof(Vector3);
+            byteSize = sizeof(Vector2);
             index = 4;
             break;
         case VertexProp::uv5:
-            byteSize = sizeof(Vector3);
+            byteSize = sizeof(Vector2);
             index = 5;
             break;
         case VertexProp::uv6:
-            byteSize = sizeof(Vector3);
+            byteSize = sizeof(Vector2);
             index = 6;
             break;
         case VertexProp::uv7:
-            byteSize = sizeof(Vector3);
+            byteSize = sizeof(Vector2);
             index = 7;
             break;
         case VertexProp::bone_id0:

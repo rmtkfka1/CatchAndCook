@@ -25,9 +25,7 @@ std::vector<VertexProp> SkinData
 std::vector<VertexProp> StaticData
 {
     VertexProp::pos,
-    VertexProp::normal,
-    VertexProp::tangent,
-    VertexProp::color,
-    VertexProp::uv0,
-    VertexProp::uv1
+    //VertexProp::normal,
+    //VertexProp::uv0,
+    //VertexProp::uv1
 };

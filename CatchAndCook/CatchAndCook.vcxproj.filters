@@ -17,6 +17,12 @@
     <Filter Include="Core">
       <UniqueIdentifier>{42c487a8-4d7a-480c-8e99-9c7242908007}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{3428d179-efa7-444e-9ff4-ebf393c1abb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL">
+      <UniqueIdentifier>{9ab5b6f0-d097-4ff4-b4ea-8dc8ebb9b531}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -57,9 +63,15 @@
     <ClCompile Include="BufferPool.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="Vertex.cpp" />
-    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Vertex.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -105,7 +117,6 @@
     <ClInclude Include="BufferPool.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h" />
     <ClInclude Include="strutil.h">
       <Filter>pch\Utils</Filter>
     </ClInclude>
@@ -115,12 +126,24 @@
     <ClInclude Include="convert_string.h">
       <Filter>pch\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Vertex.h" />
-    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Vertex.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
       <Filter>pch\Utils</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="test.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

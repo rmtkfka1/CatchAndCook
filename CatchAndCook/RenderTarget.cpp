@@ -45,7 +45,7 @@ void RenderTarget::RenderBegin()
 {
 	ComPtr<ID3D12GraphicsCommandList> cmdList = Core::main->GetCmdList();
 
-	ClearDepth();
+	//ClearDepth();
 
 	const float BackColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
@@ -54,7 +54,7 @@ void RenderTarget::RenderBegin()
 	cmdList->RSSetViewports(1, &_viewport);
 	cmdList->RSSetScissorRects(1, &_scissorRect);
 	cmdList->ClearRenderTargetView(_RenderTargets[_RenderTargetIndex]->GetRTVCpuHandle(), BackColor, 0, nullptr);
-	cmdList->OMSetRenderTargets(1, &_RenderTargets[_RenderTargetIndex]->GetRTVCpuHandle(), FALSE, &_RenderTargets[0]->GetSharedDSVHandle());
+	cmdList->OMSetRenderTargets(1, &_RenderTargets[_RenderTargetIndex]->GetRTVCpuHandle(), FALSE, nullptr);
 }
 
 void RenderTarget::RenderEnd()

@@ -15,6 +15,7 @@ void Game::Run()
 	Input::main->Update();
 	Time::main->Update();
 	Core::main->RenderBegin();
+	Core::main->Render();
 	Core::main->RenderEnd();
 
 }
