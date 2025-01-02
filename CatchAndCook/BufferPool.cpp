@@ -281,6 +281,7 @@ int32 TextureBufferPool::AllocDSV()
 void DescritporTable::Init(uint32 count)
 {
 
+
 	_count = count;
 
 	_size = Core::main->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
