@@ -25,6 +25,7 @@ VS_OUT VS_Main(VS_IN input)
 
     output.pos = float4(input.pos, 1.0f);
     output.pos.x += testing.x;
+    output.pos.y += testing.y;
     
     return output;
 }

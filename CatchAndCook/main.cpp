@@ -59,14 +59,6 @@ int main()
 
 	MSG msg = {};
 
-	//std::shared_ptr<Shader> shader = Shader::Load(L"forward.hlsl",
-	//	{
-	//		{"PS_Main", "ps"},
-	//		{"VS_Main", "vs"}
-	//	});
-	//ShaderInfo info;
-	//shader->SetInfo(info);
-	//shader->Init(SkinData);
 
 	while (WM_QUIT != msg.message) {
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))

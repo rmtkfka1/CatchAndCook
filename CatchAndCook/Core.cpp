@@ -84,19 +84,41 @@ void Core::RenderBegin()
 
 void Core::Render()
 {
-   auto container =_buffer->Alloc(1);
-   
-   vec3* pptr = (vec3*)container->ptr;
-   pptr->x = 0.7f;
-   _cmdList->SetGraphicsRootConstantBufferView(1, container->GPUAdress);
 
-    Core::main->GetCmdList()->SetPipelineState(_shader->_pipelineState.Get());
-    _cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    _cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
-    _cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
-    _cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
+    vec3 temp = vec3(-0.9f, 0.4f, 0);
 
-}
+    {
+        auto container = _buffer->Alloc(1);
+
+        temp = vec3(0.7f, 0.4f, 0);
+
+        memcpy(container->ptr, (void*)&temp, sizeof(temp));
+        _cmdList->SetGraphicsRootConstantBufferView(1, container->GPUAdress);
+
+        Core::main->GetCmdList()->SetPipelineState(_shader->_pipelineState.Get());
+        _cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        _cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
+        _cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
+        _cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
+    }
+
+    {
+        auto container = _buffer->Alloc(1);
+
+        temp = vec3(-1.0f, 0.4f, 0);
+
+        memcpy(container->ptr, (void*)&temp, sizeof(temp));
+
+        _cmdList->SetGraphicsRootConstantBufferView(1, container->GPUAdress);
+
+        Core::main->GetCmdList()->SetPipelineState(_shader->_pipelineState.Get());
+        _cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        _cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
+        _cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
+        _cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
+    }
+
+};
 
 void Core::RenderEnd()
 {
