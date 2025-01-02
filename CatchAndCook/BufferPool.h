@@ -1,13 +1,40 @@
 #pragma once
 
 
-
-
 /*************************
 *                        *
 *  ConstantBuffer Pool   *
 *                        *
 **************************/
+
+
+struct CB_CONTAINER
+{
+	D3D12_CPU_DESCRIPTOR_HANDLE	CPUHandle;
+	D3D12_GPU_VIRTUAL_ADDRESS   GPUAdress;
+	void* ptr;
+};
+
+
+class ConstantBufferPool
+{
+
+public:
+	void Init(uint32 size, uint32 count);
+	CB_CONTAINER* Alloc(uint32 count=1);
+
+private:
+
+	vector<CB_CONTAINER> _container;
+
+	ComPtr<ID3D12DescriptorHeap> _heap{};
+	ComPtr<ID3D12Resource> _resource;
+
+	uint32 _currentIndex = 0;
+	uint32 _elementSize = 0;
+	uint32 _count=0;
+
+};
 
 
 /*************************

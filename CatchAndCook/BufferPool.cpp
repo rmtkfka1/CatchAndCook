@@ -3,6 +3,80 @@
 #include "Core.h"
 
 
+
+/*************************
+*                        *
+*  ConstantBuffer Pool   *
+*                        *
+**************************/
+
+void ConstantBufferPool::Init(uint32 size, uint32 count)
+{
+
+	_elementSize = (size + 255) & ~255;
+	_count = count;
+
+	uint64 bufferSize = _elementSize * _count;
+
+	Core::main->GetDevice()->CreateCommittedResource(
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		D3D12_HEAP_FLAG_NONE,
+		&CD3DX12_RESOURCE_DESC::Buffer(bufferSize),
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&_resource));
+
+
+	D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+	heapDesc.NumDescriptors = _count;
+	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	ThrowIfFailed(Core::main->GetDevice()->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&_heap)));
+
+	
+	uint8* ptr =nullptr;
+	CD3DX12_RANGE writeRange(0, 0);
+	_resource->Map(0, &writeRange, reinterpret_cast<void**>(&ptr));
+
+	_container.resize(_count);
+
+	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
+	cbvDesc.BufferLocation = _resource->GetGPUVirtualAddress();
+	cbvDesc.SizeInBytes = _elementSize;
+
+
+	CD3DX12_CPU_DESCRIPTOR_HANDLE	heapHandle(_heap->GetCPUDescriptorHandleForHeapStart());
+	uint32	DescriptorSize = Core::main->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	for (int i = 0; i < _count; i++)
+	{
+		Core::main->GetDevice()->CreateConstantBufferView(&cbvDesc, heapHandle);
+
+		_container[i].CPUHandle = heapHandle;
+		_container[i].GPUAdress = cbvDesc.BufferLocation;
+		_container[i].ptr = ptr;
+
+		heapHandle.Offset(1, DescriptorSize);
+		cbvDesc.BufferLocation += _elementSize;
+		ptr += _elementSize;
+	}
+
+
+}
+
+CB_CONTAINER* ConstantBufferPool::Alloc(uint32 count)
+{
+	assert(_currentIndex <= _count);
+	CB_CONTAINER* data = &_container[_currentIndex];
+	_currentIndex++;
+	return data;
+}
+
+
+
+
+
+
 /*************************
 *                        *
 *  TextureBuffer Pool    *

@@ -28,8 +28,6 @@ public:
 	shared_ptr<TextureBufferPool>& GetTextureBufferPool() { return _textureBufferPool; }
 	shared_ptr<RenderTarget>& GetRenderTarget() { return _renderTarget; }
 
-protected:
-
 
 private:
 	void InitDirectX12();
@@ -40,11 +38,12 @@ private:
 	void CreateCmdQueue();
 	void SetDebugLayerInfo();
 
-protected:
+private:
 	shared_ptr<TextureBufferPool> _textureBufferPool;
 	shared_ptr<RenderTarget> _renderTarget;
 	shared_ptr<RootSignature> _rootSignature;
-protected:
+
+private:
 	ComPtr<ID3D12Device5> _device = nullptr;
 	ComPtr<IDXGIFactory4> _factory = nullptr;
 	D3D_FEATURE_LEVEL _FeatureLevel = D3D_FEATURE_LEVEL_11_0;

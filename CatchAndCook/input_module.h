@@ -204,9 +204,7 @@ class InputEvent
 public:
     InputEvent() = default;
     InputType type;
-    /// <summary>
-    /// KeyCode to Int Type
-    /// </summary>
+
     short keyCode;
 
     union

@@ -87,7 +87,7 @@ bool Input::DataUpdate(const InputEvent& e)
 
     case InputType::Mouse:
         if ((!e.mouse.isUp) && (!e.mouse.isDown))
-        {
+        {  
             mousePos = Vector2(e.mouse.posX, e.mouse.posY);
         }
         else
