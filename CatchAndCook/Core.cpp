@@ -78,9 +78,9 @@ void Core::Render()
     
     Core::main->GetCmdList()->SetPipelineState(_shader->_pipelineState.Get());
     _cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    _cmdList->IASetVertexBuffers(1, 1, &_mesh->GetVertexView());
+    _cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
     _cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
-    _cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 0, 0, 0, 0);
+    _cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
 
 }
 
