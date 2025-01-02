@@ -1,4 +1,5 @@
 #pragma once
+#include "Vertex.h"
 
 enum class CompOper
 {
@@ -130,9 +131,8 @@ struct ShaderCode
 //------------
 
 
-class ShaderInfo
+struct ShaderInfo
 {
-public:
     bool _zTest = true;
     bool _zWrite = true;
     bool _depthOnly = false;
@@ -180,23 +180,14 @@ public:
     ShaderProfileInfo _profileInfo;
 
 public:
-    ComPtr<ID3D12PipelineState> _pipelineState;
     D3D12_GRAPHICS_PIPELINE_STATE_DESC _pipelineDesc = {};
-    std::vector<D3D12_INPUT_ELEMENT_DESC> _inputElementDesc;
+    ComPtr<ID3D12PipelineState> _pipelineState;
 
-    void Init();
-    void SetShaderSetting(const ShaderInfo& info);
-    //void SetRenderTargets(std::vector<std::shared_ptr<RenderTexture> rts);
-    //void SetDepthStencil(std::shared_ptr<RenderTexture> dst);
-    void SetPipeline(ComPtr<ID3D12GraphicsCommandList4> command);
-
+    void Init(const std::vector<VertexProp>& prop);
+    void SetInfo(const ShaderInfo& info);
     void Profile();
 
-
-    static std::shared_ptr<ShaderCode> Load(std::wstring path, std::string endPointName, std::string shaderType);
-
-    static std::shared_ptr<Shader> LoadEx(
-	    const std::wstring& path, const std::vector<std::pair<std::string, std::string>>& shaderParams,
-	    const std::vector<D3D_SHADER_MACRO>& shaderDefines);
-
+    static std::shared_ptr<Shader> Load(const std::wstring& path, const std::vector<std::pair<std::string, std::string>>& shaderParams);
+protected:
+    static std::shared_ptr<ShaderCode> LoadBlob(std::wstring path, std::string endPointName, std::string shaderType);
 };

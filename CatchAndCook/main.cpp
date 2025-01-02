@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 #include "Game.h"
+#include "Shader.h"
 
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -57,6 +58,15 @@ int main()
 	game->Init(hwnd);
 
 	MSG msg = {};
+
+	//std::shared_ptr<Shader> shader = Shader::Load(L"forward.hlsl",
+	//	{
+	//		{"PS_Main", "ps"},
+	//		{"VS_Main", "vs"}
+	//	});
+	//ShaderInfo info;
+	//shader->SetInfo(info);
+	//shader->Init(SkinData);
 
 	while (WM_QUIT != msg.message) {
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))

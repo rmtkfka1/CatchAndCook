@@ -20,27 +20,13 @@ ShaderCBufferInfo ShaderProfileInfo::GetCBufferByName(const std::string& name)
     return ShaderCBufferInfo{};
 }
 
-void Shader::Init()
+void Shader::Init(const std::vector<VertexProp>& prop)
 {
     auto device = Core::main->GetDevice();
 
-    _pipelineDesc = {};
+    SelectorInfo vertexSetInfo = SelectorInfo::GetInfo(prop);
 
-    std::vector<VertexProp> props
-	{
-	    VertexProp::pos,
-	    VertexProp::normal,
-	    VertexProp::tangent,
-	    VertexProp::color,
-	    VertexProp::uv0,
-	    VertexProp::uv1,
-	    VertexProp::uv2,
-	    VertexProp::uv3,
-	    VertexProp::bone_ids,
-	    VertexProp::bone_weights,
-    };
-    SelectorInfo vertexSetInfo = SelectorInfo::GetInfo(props);
-
+    std::vector<D3D12_INPUT_ELEMENT_DESC> _inputElementDesc;
     _inputElementDesc.resize(vertexSetInfo.propCount);
 
     for (int i = 0; i < _inputElementDesc.size(); i++)
@@ -280,6 +266,11 @@ void Shader::Init()
     }
 
     ThrowIfFailed(device->CreateGraphicsPipelineState(&_pipelineDesc, IID_PPV_ARGS(&_pipelineState)));
+}
+
+void Shader::SetInfo(const ShaderInfo& info)
+{
+    this->_info = info;
 }
 
 void Shader::Profile()
@@ -523,7 +514,7 @@ void Shader::Profile()
     }
 }
 
-std::shared_ptr<ShaderCode> Shader::Load(std::wstring path, std::string endPointName, std::string shaderType)
+std::shared_ptr<ShaderCode> Shader::LoadBlob(std::wstring path, std::string endPointName, std::string shaderType)
 {
     std::wstring shaderPath = path;
 
@@ -582,15 +573,16 @@ std::shared_ptr<ShaderCode> Shader::Load(std::wstring path, std::string endPoint
     return shaderCode;
 }
 
-std::shared_ptr<Shader> Shader::LoadEx(const std::wstring& path, const std::vector<std::pair<std::string, std::string>>& shaderParams, const std::vector<D3D_SHADER_MACRO>& shaderDefines)
+std::shared_ptr<Shader> Shader::Load(const std::wstring& path, const std::vector<std::pair<std::string, std::string>>& shaderParams)
 {
     auto shader = std::make_shared<Shader>();
 
     for (auto& pair : shaderParams)
     {
-        auto shaderCodeData = Load(path, pair.first, pair.second);
+        auto shaderCodeData = LoadBlob(path, pair.first, pair.second);
         shader->_shaderCodeTable.emplace(shaderCodeData->shaderType, shaderCodeData);
     }
 
     shader->Profile();
+    return shader;
 }

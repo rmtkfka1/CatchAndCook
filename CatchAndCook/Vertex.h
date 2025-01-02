@@ -40,6 +40,10 @@ const std::array<std::string, static_cast<size_t>(VertexProp::COUNT)> PropNameSt
     "TEXCOORD",
     "TEXCOORD",
     "TEXCOORD",
+    "TEXCOORD",
+    "TEXCOORD",
+    "TEXCOORD",
+    "TEXCOORD",
     "BONEIDs",
     "BONEID",
     "BONEID",
@@ -74,3 +78,31 @@ public:
     static SelectorInfo GetInfo(const std::vector<VertexProp>& props);
 };
 
+struct Vertex_Skinned
+{
+    Vector3 position = Vector3(0, 0, 0);
+    Vector3 normal = Vector3(0, 0, 1);
+    Vector3 tangent = Vector3(0, 1, 0);
+    std::array<Vector3, 3> uvs;
+    Vector4 boneId = Vector4(-1, -1, -1, -1);
+    Vector4 boneWeight = Vector4(0, 0, 0, 0);
+};
+
+struct Vertex_Static
+{
+    Vector3 position = Vector3(0, 0, 0);
+    Vector3 normal = Vector3(0, 0, 1);
+    std::array<Vector3, 2> uvs;
+};
+
+//struct Vertex_Full
+//{
+//    Vector3 position = Vector3(0, 0, 0);
+//    Vector3 normal = Vector3(0, 0, 1);
+//    Vector3 tangent = Vector3(0, 1, 0);
+//    Vector3 bitangent = Vector3(0, 0, 0);
+//    Vector4 color = Vector4(1, 1, 0, 1);
+//    std::array<Vector3, 8> uvs;
+//    Vector4 boneId = Vector4(-1, -1, -1, -1);
+//    Vector4 boneWeight = Vector4(0, 0, 0, 0);
+//};
