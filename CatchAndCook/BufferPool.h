@@ -7,23 +7,25 @@
 *                        *
 **************************/
 
-struct CB_CONTAINER
+struct CBufferContainer
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE	CPUHandle; //Descriptor Table 에다가 핸들 복사할떄 사용
 	D3D12_GPU_VIRTUAL_ADDRESS   GPUAdress; //View 에다가 바로꼽아줄때 사용
 	void* ptr;
 };
 
-class ConstantBufferPool
+class CBufferPool
 {
 
 public:
+	CBufferPool();
+	~CBufferPool();
 	void Init(uint32 size, uint32 count);
-	CB_CONTAINER* Alloc(uint32 count=1);
+	CBufferContainer* Alloc(uint32 count=1);
 
 private:
 
-	vector<CB_CONTAINER> _container;
+	vector<CBufferContainer> _container;
 
 	ComPtr<ID3D12DescriptorHeap> _heap{};
 	ComPtr<ID3D12Resource> _resource;
@@ -41,7 +43,7 @@ private:
 *                        *
 **************************/
 
-struct heapStructure
+struct HeapStructure
 {
 	vector<uint32> indexGenator;
 	ComPtr<ID3D12DescriptorHeap> heap;
@@ -74,9 +76,9 @@ private:
 	int32 AllocDSV();
 
 private:
-	heapStructure _srvHeap;
-	heapStructure _rtvHeap;
-	heapStructure _dsvHeap;
+	HeapStructure _srvHeap;
+	HeapStructure _rtvHeap;
+	HeapStructure _dsvHeap;
 
 };
 

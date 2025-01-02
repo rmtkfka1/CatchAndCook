@@ -10,16 +10,16 @@
 *                        *
 **************************/
 
-ConstantBufferPool::ConstantBufferPool()
+CBufferPool::CBufferPool()
 {
 }
 
-ConstantBufferPool::~ConstantBufferPool()
+CBufferPool::~CBufferPool()
 {
 	_resource->Unmap(0,nullptr);
 }
 
-void ConstantBufferPool::Init(uint32 size, uint32 count)
+void CBufferPool::Init(uint32 size, uint32 count)
 {
 
 	_elementSize = (size + 255) & ~255;
@@ -73,10 +73,10 @@ void ConstantBufferPool::Init(uint32 size, uint32 count)
 
 }
 
-CB_CONTAINER* ConstantBufferPool::Alloc(uint32 count)
+CBufferContainer* CBufferPool::Alloc(uint32 count)
 {
 	assert(_currentIndex <= _count);
-	CB_CONTAINER* data = &_container[_currentIndex];
+	CBufferContainer* data = &_container[_currentIndex];
 	_currentIndex+=count;
 	return data;
 }
