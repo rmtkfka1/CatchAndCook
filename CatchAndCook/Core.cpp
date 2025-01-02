@@ -41,16 +41,25 @@ void Core::Init(HWND hwnd)
 
     vector<Vertex_Static> data;
   
-    data.resize(3);
-    data[0].position = vec3(-0.5, 0, 0);
-    data[1].position = vec3(0, 0.5f, 0);
-    data[2].position = vec3(0.5f, 0, 0);
+    data.resize(4);
+    //0  1
+    //3  2
+    data[0].position = vec3(-0.5f, 0.5f, 0.3f);
+    data[1].position = vec3(0.5f, 0.5f, 0.3f);
+    data[2].position = vec3(0.5f, -0.5f, 0.3f);
+    data[3].position = vec3(-0.5f, -0.5f, 0.3f);
 
     data[0].uvs[0] = vec2(0,0);
-    data[1].uvs[0] = vec2(0,0.5f);
+    data[1].uvs[0] = vec2(1.0f,0);
     data[2].uvs[0] = vec2(1.0f, 1.0f);
+    data[3].uvs[0] = vec2(0, 1.0f);
 
-    vector<uint32> indices = { 0,1,2 };
+    data[0].uvs[1] = vec2(0, 0);
+    data[1].uvs[1] = vec2(1.0f, 0);
+    data[2].uvs[1] = vec2(1.0f, 1.0f);
+    data[3].uvs[1] = vec2(0, 1.0f);
+
+    vector<uint32> indices = { 0,1,2 ,0,2,3};
 
     _mesh->Init(data, indices);
     
@@ -76,6 +85,8 @@ void Core::Init(HWND hwnd)
     _texture = make_shared<Texture>();
     _texture->Init(L"Start.jpg");
 
+    _texture2 = make_shared<Texture>();
+    _texture2->Init(L"sea.jpg");
 
 }
 
@@ -102,11 +113,10 @@ void Core::Render()
         D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle;
         D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle;
         _table->Alloc(8,&cpuHandle,&gpuHandle);
-        _table->CopyHandle(&cpuHandle, &_texture->GetSRVCpuHandle(), 0);
+        _table->CopyHandle(&cpuHandle, &_texture->GetSRVCpuHandle(), 1);
         _cmdList->SetGraphicsRootDescriptorTable(SRV_ROOT_INDEX, gpuHandle);
 
         temp = vec3(0.7f, 0.4f, 0);
-
         memcpy(container->ptr, (void*)&temp, sizeof(temp));
         _cmdList->SetGraphicsRootConstantBufferView(1, container->GPUAdress);
 
@@ -123,8 +133,17 @@ void Core::Render()
         temp = vec3(-1.0f, 0.4f, 0);
 
         memcpy(container->ptr, (void*)&temp, sizeof(temp));
-
         _cmdList->SetGraphicsRootConstantBufferView(1, container->GPUAdress);
+
+
+        D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle;
+        D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle;
+        _table->Alloc(8, &cpuHandle, &gpuHandle);
+
+        _table->CopyHandle(&cpuHandle, &_texture2->GetSRVCpuHandle(), 1);
+        _cmdList->SetGraphicsRootDescriptorTable(SRV_ROOT_INDEX, gpuHandle);
+
+
 
         Core::main->GetCmdList()->SetPipelineState(_shader->_pipelineState.Get());
         _cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

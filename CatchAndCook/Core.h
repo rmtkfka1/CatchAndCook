@@ -80,5 +80,6 @@ private:
 	shared_ptr<Shader> _shader;
 	shared_ptr<Mesh> _mesh;
 	shared_ptr<Texture> _texture;
+	shared_ptr<Texture> _texture2;
 };
 

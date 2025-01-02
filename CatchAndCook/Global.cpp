@@ -26,6 +26,6 @@ std::vector<VertexProp> StaticData
 {
     VertexProp::pos,
     //VertexProp::normal,
-    //VertexProp::uv0,
-    //VertexProp::uv1
+    VertexProp::uv0,
+    VertexProp::uv1
 };
