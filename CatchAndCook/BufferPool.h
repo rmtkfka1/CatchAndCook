@@ -7,14 +7,12 @@
 *                        *
 **************************/
 
-
 struct CB_CONTAINER
 {
-	D3D12_CPU_DESCRIPTOR_HANDLE	CPUHandle;
-	D3D12_GPU_VIRTUAL_ADDRESS   GPUAdress;
+	D3D12_CPU_DESCRIPTOR_HANDLE	CPUHandle; //Descriptor Table 에다가 핸들 복사할떄 사용
+	D3D12_GPU_VIRTUAL_ADDRESS   GPUAdress; //View 에다가 바로꼽아줄때 사용
 	void* ptr;
 };
-
 
 class ConstantBufferPool
 {
