@@ -303,16 +303,18 @@ void DescritporTable::Init(uint32 count)
 
 }
 
-void DescritporTable::Alloc(uint32 count, OUT D3D12_CPU_DESCRIPTOR_HANDLE* cpuHandle, OUT D3D12_GPU_DESCRIPTOR_HANDLE* gpuHandle)
+tableContainer DescritporTable::Alloc(uint32 count)
 {
 	if (count + _currentIndex >= _count) assert(false);
 
-	uint32 offset = _currentIndex ;
+	tableContainer container;
 
-	*cpuHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(_cpuHandle, offset, _size);
-	*gpuHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(_gpuHandle, offset, _size);
+	container.cpuHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(_cpuHandle, _currentIndex, _size);
+	container.gpuHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(_gpuHandle, _currentIndex, _size);
 
 	_currentIndex += count;
+
+	return container;
 
 }
 

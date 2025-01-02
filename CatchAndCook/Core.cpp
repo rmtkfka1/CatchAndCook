@@ -110,11 +110,9 @@ void Core::Render()
     {
         auto container = _buffer->Alloc(1);
 
-        D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle;
-        D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle;
-        _table->Alloc(8,&cpuHandle,&gpuHandle);
-        _table->CopyHandle(&cpuHandle, &_texture->GetSRVCpuHandle(), 1);
-        _cmdList->SetGraphicsRootDescriptorTable(SRV_ROOT_INDEX, gpuHandle);
+        auto tableContainer = _table->Alloc(8);
+        _table->CopyHandle(&tableContainer.cpuHandle, &_texture->GetSRVCpuHandle(), 1);
+        _cmdList->SetGraphicsRootDescriptorTable(SRV_ROOT_INDEX, tableContainer.gpuHandle);
 
         temp = vec3(0.7f, 0.4f, 0);
         memcpy(container->ptr, (void*)&temp, sizeof(temp));
@@ -130,19 +128,13 @@ void Core::Render()
     {
         auto container = _buffer->Alloc(1);
 
-        temp = vec3(-1.0f, 0.4f, 0);
+        auto tableContainer = _table->Alloc(8);
+        _table->CopyHandle(&tableContainer.cpuHandle, &_texture2->GetSRVCpuHandle(), 1);
+        _cmdList->SetGraphicsRootDescriptorTable(SRV_ROOT_INDEX, tableContainer.gpuHandle);
 
+        temp = vec3(-0.5f, 0.4f, 0);
         memcpy(container->ptr, (void*)&temp, sizeof(temp));
         _cmdList->SetGraphicsRootConstantBufferView(1, container->GPUAdress);
-
-
-        D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle;
-        D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle;
-        _table->Alloc(8, &cpuHandle, &gpuHandle);
-
-        _table->CopyHandle(&cpuHandle, &_texture2->GetSRVCpuHandle(), 1);
-        _cmdList->SetGraphicsRootDescriptorTable(SRV_ROOT_INDEX, gpuHandle);
-
 
 
         Core::main->GetCmdList()->SetPipelineState(_shader->_pipelineState.Get());
