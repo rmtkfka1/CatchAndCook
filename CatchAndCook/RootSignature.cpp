@@ -2,6 +2,13 @@
 #include "RootSignature.h"
 #include "BufferPool.h"
 #include "Core.h"
+
+
+std::vector<int> RootSignature::_registerToRootSignatureIndexTable
+{
+	0,1,2,3,4,5,6,7,8,9
+};
+
 void RootSignature::Init()
 {
 	// 정적 샘플러 설정
@@ -35,18 +42,24 @@ void RootSignature::Init()
 	samplerDesc[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 
-	CD3DX12_DESCRIPTOR_RANGE ranges[] =
-	{
-		CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 2, 2), //b2,b3
-		CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 4, 0), //t0,t1,t2,t3
-		CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 3, 0), // u0,u1,u2
-	};
+	
+	auto SRV_Range = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 8, 0); //t0,t1,t2,t3
+	auto UAV_Range = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 4, 0); // u0,u1,u2
 
+	CD3DX12_ROOT_PARAMETER param[12];
+	param[0].InitAsConstantBufferView(0); 
+	param[1].InitAsConstantBufferView(1); 
+	param[2].InitAsConstantBufferView(2);
+	param[3].InitAsConstantBufferView(3);
+	param[4].InitAsConstantBufferView(4);
+	param[5].InitAsConstantBufferView(5);
+	param[6].InitAsConstantBufferView(6);
+	param[7].InitAsConstantBufferView(7);
+	param[8].InitAsConstantBufferView(8);
+	param[9].InitAsConstantBufferView(9);
 
-	CD3DX12_ROOT_PARAMETER param[3];
-	param[0].InitAsConstantBufferView(0);  //라이팅 b0
-	param[1].InitAsConstantBufferView(1);  //카메라 b1
-	param[2].InitAsDescriptorTable(_countof(ranges), ranges);
+	param[10].InitAsDescriptorTable(1, &SRV_Range);
+	param[11].InitAsDescriptorTable(1, &UAV_Range);
 
 	// 루트 서명 설정
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
