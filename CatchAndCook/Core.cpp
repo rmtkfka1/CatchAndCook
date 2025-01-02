@@ -6,6 +6,7 @@
 #include "BufferPool.h"
 #include "Mesh.h"
 #include "Shader.h"
+#include "BufferPool.h"
 unique_ptr<Core> Core::main=nullptr;
 
 Core::Core()
@@ -59,6 +60,10 @@ void Core::Init(HWND hwnd)
 
     _shader->Init(StaticData);
 
+    _buffer = make_shared<CBufferPool>();
+    _buffer->Init(sizeof(vec3), 255);
+
+
 }
 
 
@@ -75,7 +80,12 @@ void Core::RenderBegin()
 
 void Core::Render()
 {
-    
+   auto container =_buffer->Alloc(1);
+   
+   vec3* pptr = (vec3*)container->ptr;
+   pptr->x = 0.7f;
+   _cmdList->SetGraphicsRootConstantBufferView(1, container->GPUAdress);
+
     Core::main->GetCmdList()->SetPipelineState(_shader->_pipelineState.Get());
     _cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     _cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
@@ -99,6 +109,7 @@ void Core::RenderEnd()
 
     _swapChain->Present(1, 0);
     _renderTarget->ChangeIndex();
+    _buffer->Reset();
 }
 
 

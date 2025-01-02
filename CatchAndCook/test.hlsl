@@ -1,4 +1,9 @@
 
+cbuffer test : register(b1)
+{
+    float3 testing;
+
+}
 
 struct VS_IN
 {
@@ -19,6 +24,7 @@ VS_OUT VS_Main(VS_IN input)
     VS_OUT output = (VS_OUT) 0;
 
     output.pos = float4(input.pos, 1.0f);
+    output.pos.x += testing.x;
     
     return output;
 }

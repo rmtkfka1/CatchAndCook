@@ -21,6 +21,7 @@ public:
 	CBufferPool();
 	~CBufferPool();
 	void Init(uint32 size, uint32 count);
+	void Reset();
 	CBufferContainer* Alloc(uint32 count=1);
 
 private:

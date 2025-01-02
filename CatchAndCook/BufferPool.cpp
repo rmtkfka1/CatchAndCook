@@ -73,6 +73,11 @@ void CBufferPool::Init(uint32 size, uint32 count)
 
 }
 
+void CBufferPool::Reset()
+{
+	_currentIndex = 0;
+}
+
 CBufferContainer* CBufferPool::Alloc(uint32 count)
 {
 	assert(_currentIndex <= _count);
@@ -80,8 +85,6 @@ CBufferContainer* CBufferPool::Alloc(uint32 count)
 	_currentIndex+=count;
 	return data;
 }
-
-
 
 
 

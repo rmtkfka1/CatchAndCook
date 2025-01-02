@@ -6,6 +6,7 @@ class RootSignature;
 
 class Shader;
 class Mesh;
+class CBufferPool;
 
 class Core
 {
@@ -72,6 +73,7 @@ private:
 
 	//temp
 
+	shared_ptr<CBufferPool> _buffer;
 	shared_ptr<Shader> _shader;
 	shared_ptr<Mesh> _mesh;
 };
