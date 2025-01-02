@@ -10,6 +10,15 @@
 *                        *
 **************************/
 
+ConstantBufferPool::ConstantBufferPool()
+{
+}
+
+ConstantBufferPool::~ConstantBufferPool()
+{
+	_resource->Unmap(0,nullptr);
+}
+
 void ConstantBufferPool::Init(uint32 size, uint32 count)
 {
 
@@ -34,7 +43,7 @@ void ConstantBufferPool::Init(uint32 size, uint32 count)
 	ThrowIfFailed(Core::main->GetDevice()->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&_heap)));
 
 	
-	uint8* ptr =nullptr;
+	BYTE* ptr =nullptr;
 	CD3DX12_RANGE writeRange(0, 0);
 	_resource->Map(0, &writeRange, reinterpret_cast<void**>(&ptr));
 
