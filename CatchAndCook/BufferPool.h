@@ -83,14 +83,31 @@ private:
 };
 
 
-
-
-
 /*********************************
 *                                *
-*    GraphicsDescriptorTable     *
+*        DescritporTable		 *
 *                                *
 **********************************/
 
+class DescritporTable
+{
+
+
+public:
+	void Init(uint32 count);
+	void Alloc(uint32 count, OUT D3D12_CPU_DESCRIPTOR_HANDLE* cpuHandle , OUT D3D12_GPU_DESCRIPTOR_HANDLE* gpuHandle);
+
+	void CopyHandle(D3D12_CPU_DESCRIPTOR_HANDLE* destHandle, D3D12_CPU_DESCRIPTOR_HANDLE* sourceHandle ,uint32 index);
+
+private:
+	ComPtr<ID3D12DescriptorHeap> _heap;
+	uint32 _currentIndex=0; //현재몇개할당됬는지
+	uint32 _count=0;  // handle 갯수
+	uint32 _size = 0; 
+
+	D3D12_CPU_DESCRIPTOR_HANDLE _cpuHandle;
+	D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle;
+
+};
 
 

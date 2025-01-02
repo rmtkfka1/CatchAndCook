@@ -57,7 +57,6 @@ void RootSignature::Init()
 	param[7].InitAsConstantBufferView(7);
 	param[8].InitAsConstantBufferView(8);
 	param[9].InitAsConstantBufferView(9);
-
 	param[10].InitAsDescriptorTable(1, &SRV_Range);
 	param[11].InitAsDescriptorTable(1, &UAV_Range);
 

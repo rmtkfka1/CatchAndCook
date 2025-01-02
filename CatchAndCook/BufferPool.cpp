@@ -278,3 +278,43 @@ int32 TextureBufferPool::AllocDSV()
 *                        *
 **************************/
 
+void DescritporTable::Init(uint32 count)
+{
+
+	_count = count;
+
+	_size = Core::main->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	D3D12_DESCRIPTOR_HEAP_DESC desc;
+	desc.NumDescriptors = _count;
+	desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+
+
+	ThrowIfFailed(Core::main->GetDevice()->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&_heap)));
+
+	_cpuHandle = _heap->GetCPUDescriptorHandleForHeapStart();
+	_gpuHandle = _heap->GetGPUDescriptorHandleForHeapStart();
+
+
+}
+
+void DescritporTable::Alloc(uint32 count, OUT D3D12_CPU_DESCRIPTOR_HANDLE* cpuHandle, OUT D3D12_GPU_DESCRIPTOR_HANDLE* gpuHandle)
+{
+	if (count + _currentIndex >= _count) assert(false);
+
+	uint32 offset = _currentIndex ;
+
+	*cpuHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(_cpuHandle, offset, _size);
+	*gpuHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(_gpuHandle, offset, _size);
+
+	_currentIndex += count;
+
+}
+
+void DescritporTable::CopyHandle(D3D12_CPU_DESCRIPTOR_HANDLE* destHandle, D3D12_CPU_DESCRIPTOR_HANDLE* sourceHandle, uint32 index)
+{
+	CD3DX12_CPU_DESCRIPTOR_HANDLE dest(*destHandle, index, _size);
+	Core::main->GetDevice()->CopyDescriptorsSimple(1, dest, *sourceHandle, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
