@@ -7,6 +7,9 @@ class RootSignature;
 class Shader;
 class Mesh;
 class CBufferPool;
+class DescritporTable;
+class Texture;
+
 
 class Core
 {
@@ -72,9 +75,10 @@ private:
 
 
 	//temp
-
+	shared_ptr<DescritporTable> _table;
 	shared_ptr<CBufferPool> _buffer;
 	shared_ptr<Shader> _shader;
 	shared_ptr<Mesh> _mesh;
+	shared_ptr<Texture> _texture;
 };
 

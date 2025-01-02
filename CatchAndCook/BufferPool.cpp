@@ -287,16 +287,16 @@ void DescritporTable::Init(uint32 count)
 
 	_count = count;
 
-	_size = Core::main->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	D3D12_DESCRIPTOR_HEAP_DESC desc;
 	desc.NumDescriptors = _count;
 	desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-
+	desc.NodeMask = 0;
 
 	ThrowIfFailed(Core::main->GetDevice()->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&_heap)));
 
+	_size = Core::main->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	_cpuHandle = _heap->GetCPUDescriptorHandleForHeapStart();
 	_gpuHandle = _heap->GetGPUDescriptorHandleForHeapStart();
 
@@ -320,5 +320,10 @@ void DescritporTable::CopyHandle(D3D12_CPU_DESCRIPTOR_HANDLE* destHandle, D3D12_
 {
 	CD3DX12_CPU_DESCRIPTOR_HANDLE dest(*destHandle, index, _size);
 	Core::main->GetDevice()->CopyDescriptorsSimple(1, dest, *sourceHandle, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
+void DescritporTable::Reset()
+{
+	_currentIndex = 0;
 }
 

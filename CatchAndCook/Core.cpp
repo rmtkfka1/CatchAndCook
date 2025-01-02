@@ -40,13 +40,15 @@ void Core::Init(HWND hwnd)
     _mesh = make_shared<Mesh>();
 
     vector<Vertex_Static> data;
-    //  1
-    //0   2
+  
     data.resize(3);
     data[0].position = vec3(-0.5, 0, 0);
     data[1].position = vec3(0, 0.5f, 0);
     data[2].position = vec3(0.5f, 0, 0);
 
+    data[0].uvs[0] = vec2(0,0);
+    data[1].uvs[0] = vec2(0,0.5f);
+    data[2].uvs[0] = vec2(1.0f, 1.0f);
 
     vector<uint32> indices = { 0,1,2 };
 
@@ -57,15 +59,22 @@ void Core::Init(HWND hwnd)
 		{"PS_Main", "ps"},
 		{"VS_Main", "vs"}
 	});
+
+
 	ShaderInfo info;
     info._zTest = false;
     info._stencilTest = false;
 	_shader->SetInfo(info);
 	_shader->Init(StaticData);
 
-
     _buffer = make_shared<CBufferPool>();
     _buffer->Init(sizeof(vec3), 255);
+
+    _table = make_shared<DescritporTable>();
+    _table->Init(255);
+
+    _texture = make_shared<Texture>();
+    _texture->Init(L"Start.jpg");
 
 
 }
@@ -78,7 +87,7 @@ void Core::RenderBegin()
     ThrowIfFailed(_cmdList->Reset(_cmdMemory.Get(), nullptr));
 
     _cmdList->SetGraphicsRootSignature(_rootSignature->GetGraphicsRootSignature().Get());
-
+    _cmdList->SetDescriptorHeaps(1, _table->GetDescriptorHeap().GetAddressOf());
     _renderTarget->RenderBegin();
 }
 
@@ -89,6 +98,12 @@ void Core::Render()
 
     {
         auto container = _buffer->Alloc(1);
+
+        D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle;
+        D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle;
+        _table->Alloc(8,&cpuHandle,&gpuHandle);
+        _table->CopyHandle(&cpuHandle, &_texture->GetSRVCpuHandle(), 0);
+        _cmdList->SetGraphicsRootDescriptorTable(SRV_ROOT_INDEX, gpuHandle);
 
         temp = vec3(0.7f, 0.4f, 0);
 
@@ -135,7 +150,10 @@ void Core::RenderEnd()
 
     _swapChain->Present(1, 0);
     _renderTarget->ChangeIndex();
+
+    //temp
     _buffer->Reset();
+    _table->Reset();
 }
 
 

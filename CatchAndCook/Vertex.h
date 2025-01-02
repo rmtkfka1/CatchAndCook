@@ -108,7 +108,7 @@ struct Vertex_Static
 {
     vec3 position = vec3(0, 0, 0);
     //vec3 normal = vec3(0, 0, 1);
-    //std::array<vec2, 2> uvs;
+    std::array<vec2, 2> uvs;
 };
 
 //struct Vertex_Full
