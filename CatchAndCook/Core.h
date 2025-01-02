@@ -27,6 +27,7 @@ public:
 	ComPtr<ID3D12GraphicsCommandList>& GetresCmdList() { return _resCmdList; }
 	shared_ptr<TextureBufferPool>& GetTextureBufferPool() { return _textureBufferPool; }
 	shared_ptr<RenderTarget>& GetRenderTarget() { return _renderTarget; }
+	shared_ptr<RootSignature>& GetRootSignature() { return _rootSignature; };
 
 
 private:

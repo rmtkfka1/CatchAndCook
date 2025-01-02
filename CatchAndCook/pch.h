@@ -22,6 +22,7 @@
 #include <stack>
 #include <queue>
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -36,6 +37,9 @@ namespace fs = std::filesystem;
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
+
+#include "strutil.h"
+#include "wstrutil.h"
 
 using namespace DirectX;
 using namespace DirectX::PackedVector;
@@ -84,6 +88,7 @@ using Quaternion = DirectX::SimpleMath::Quaternion;
 
 
 #include "convert_math.h"
+#include "convert_string.h"
 #include "Input.h"
 #include "Time.h"
 

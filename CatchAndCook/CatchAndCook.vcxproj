@@ -181,14 +181,17 @@
     </ClCompile>
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="RootSignature.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="simple_mesh_ext.cpp" />
     <ClCompile Include="simple_mesh_LH.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Time.cpp" />
+    <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BufferPool.h" />
     <ClInclude Include="convert_math.h" />
+    <ClInclude Include="convert_string.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="Game.h" />
@@ -198,10 +201,14 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="RootSignature.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="simple_mesh_ext.h" />
     <ClInclude Include="simple_mesh_LH.h" />
+    <ClInclude Include="strutil.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Time.h" />
+    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="wstrutil.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl" />

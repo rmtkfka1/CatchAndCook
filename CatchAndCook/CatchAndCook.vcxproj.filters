@@ -57,6 +57,8 @@
     <ClCompile Include="BufferPool.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -102,6 +104,17 @@
     <ClInclude Include="BufferPool.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="strutil.h">
+      <Filter>pch\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="wstrutil.h">
+      <Filter>pch\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="convert_string.h">
+      <Filter>pch\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
