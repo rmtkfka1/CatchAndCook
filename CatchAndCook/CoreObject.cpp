@@ -68,6 +68,7 @@ void EObject::SetGUID(const std::wstring& str)
         RemoveGuid(prevGuid);
         AddObject(this->shared_from_this());
     }
+
     this->guid = str;
 }
 

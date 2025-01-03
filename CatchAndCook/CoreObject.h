@@ -6,13 +6,11 @@ class EObject : public std::enable_shared_from_this<EObject>, public IType
 {
 public:
     static std::unordered_map<std::wstring, std::weak_ptr<EObject>> _EObjectTable;
-
 	static void StaticInit();
     static void StaticRelease();
 
 protected:
     std::wstring guid;
-
 
 public:
     EObject();
@@ -42,8 +40,8 @@ public:
         return std::dynamic_pointer_cast<T>(this->shared_from_this());
     }
 
+
 public:
-    //template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::shaderType>
     template <class T, class = std::enable_if_t<std::is_convertible_v<T*, EObject*>>>
     static bool AddObject(std::shared_ptr<T> object)
     {
@@ -60,7 +58,6 @@ public:
         return false;
     }
 
-    //template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::shaderType>
     template <class T, class = std::enable_if_t<std::is_convertible_v<T*, EObject*>>>
     static bool RemoveObject(std::shared_ptr<T> object)
     {
@@ -93,8 +90,10 @@ public:
                 _EObjectTable.erase(guid);
                 return false;
             }
+
             return true;
         }
+
         return false;
     }
 

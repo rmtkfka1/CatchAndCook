@@ -24,8 +24,7 @@ private:
     static std::unordered_map<std::string, std::function<void* ()>> _typeTable;
 
 protected:
-    template <class T, class = std::enable_if<std::is_base_of<IType, T>::value, T*>::type>
-    //미완성 기능
+    template <class T, class = std::enable_if_t<std::is_base_of_v<IType, T*>>>
     static T* TypeRegister(T* obj)
     {
         auto& key = obj->_className;
@@ -35,8 +34,7 @@ protected:
     }
 
 public:
-    template <class T, class = std::enable_if<std::is_base_of<IType, T>::value, T*>::type>
-    //미완성 기능
+    template <class T, class = std::enable_if_t<std::is_base_of_v<IType, T*>>>
     static T* CreateObject(const std::string& typeName)
     {
         auto it = _typeTable.find(typeName);
