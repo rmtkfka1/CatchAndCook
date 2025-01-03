@@ -156,4 +156,9 @@
       <Filter>HLSL</Filter>
     </FxCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="레지스터 규약.txt">
+      <Filter>HLSL</Filter>
+    </Text>
+  </ItemGroup>
 </Project>
