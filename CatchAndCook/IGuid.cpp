@@ -1,46 +1,46 @@
 #include "pch.h"
-#include "CoreObject.h"
+#include "IGuid.h"
 #include "guid_utility.h"
 
 
-std::unordered_map<std::wstring, std::weak_ptr<EObject>> EObject::_EObjectTable{};
+std::unordered_map<std::wstring, std::weak_ptr<IGuid>> IGuid::_GuidTable{};
 
-void EObject::StaticInit()
+void IGuid::StaticInit()
 {
-    _EObjectTable.reserve(100000);
+    _GuidTable.reserve(100000);
 }
 
-void EObject::StaticRelease()
+void IGuid::StaticRelease()
 {
-    _EObjectTable.clear();
+    _GuidTable.clear();
 }
 
-EObject::EObject()
+IGuid::IGuid()
 {
     this->SetGUID(Guid::GetNewGuid());
 }
 
-EObject::~EObject()
+IGuid::~IGuid()
 {
 	RemoveGuid(this->guid);
 }
 
-EObject::EObject(const std::wstring& guid)
+IGuid::IGuid(const std::wstring& guid)
 {
     this->SetGUID(guid);
 }
 
-EObject::EObject(const EObject& eObject)
+IGuid::IGuid(const IGuid& eObject)
 {
     this->SetGUID(eObject.guid);
 }
 
-EObject::EObject(EObject&& eObject) noexcept
+IGuid::IGuid(IGuid&& eObject) noexcept
 {
     this->SetGUID(std::move(eObject.guid));
 }
 
-EObject& EObject::operator=(const EObject& eObject)
+IGuid& IGuid::operator=(const IGuid& eObject)
 {
     if (this == &eObject)
         return *this;
@@ -49,7 +49,7 @@ EObject& EObject::operator=(const EObject& eObject)
     return *this;
 }
 
-EObject& EObject::operator=(EObject&& eObject) noexcept
+IGuid& IGuid::operator=(IGuid&& eObject) noexcept
 {
     if (this == &eObject)
         return *this;
@@ -59,7 +59,7 @@ EObject& EObject::operator=(EObject&& eObject) noexcept
 }
 
 
-void EObject::SetGUID(const std::wstring& str)
+void IGuid::SetGUID(const std::wstring& str)
 {
     auto& prevGuid = this->guid;
     bool isFindPrevGuid = this->guid.empty() ? false : ContainsByGuid(prevGuid);
@@ -72,17 +72,17 @@ void EObject::SetGUID(const std::wstring& str)
     this->guid = str;
 }
 
-std::wstring& EObject::GetGUID()
+std::wstring& IGuid::GetGUID()
 {
     return this->guid;
 }
 
-bool EObject::operator==(const EObject& other) const
+bool IGuid::operator==(const IGuid& other) const
 {
     return other.guid == this->guid;
 }
 
-bool EObject::operator<(const EObject& other) const
+bool IGuid::operator<(const IGuid& other) const
 {
     return other.guid < this->guid;
 }

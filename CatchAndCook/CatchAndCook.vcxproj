@@ -163,8 +163,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BufferPool.cpp" />
+    <ClCompile Include="Component.cpp" />
     <ClCompile Include="Core.cpp" />
-    <ClCompile Include="CoreObject.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="IDelayDestroy.cpp" />
+    <ClCompile Include="IGuid.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="guid_utility.cpp" />
@@ -190,14 +193,18 @@
     <ClCompile Include="simple_mesh_LH.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Time.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BufferPool.h" />
+    <ClInclude Include="Component.h" />
     <ClInclude Include="convert_math.h" />
     <ClInclude Include="convert_string.h" />
     <ClInclude Include="Core.h" />
-    <ClInclude Include="CoreObject.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="IDelayDestroy.h" />
+    <ClInclude Include="IGuid.h" />
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Global.h" />
@@ -215,6 +222,7 @@
     <ClInclude Include="strutil.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Time.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="wstrutil.h" />
   </ItemGroup>

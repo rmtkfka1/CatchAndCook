@@ -2,10 +2,10 @@
 #include "IType.h"
 
 
-class EObject : public std::enable_shared_from_this<EObject>, public IType
+class IGuid : public std::enable_shared_from_this<IGuid>, public IType
 {
 public:
-    static std::unordered_map<std::wstring, std::weak_ptr<EObject>> _EObjectTable;
+    static std::unordered_map<std::wstring, std::weak_ptr<IGuid>> _GuidTable;
 	static void StaticInit();
     static void StaticRelease();
 
@@ -13,20 +13,20 @@ protected:
     std::wstring guid;
 
 public:
-    EObject();
-    ~EObject() override;
-    EObject(const std::wstring& guid);
-    EObject(const EObject& eObject);
-    EObject(EObject&& eObject) noexcept;
-    EObject& operator=(const EObject& eObject);
-    EObject& operator=(EObject&& eObject) noexcept;
-    bool operator==(const EObject& other) const;
-    bool operator<(const EObject& other) const;
+    IGuid();
+    ~IGuid() override;
+    IGuid(const std::wstring& guid);
+    IGuid(const IGuid& eObject);
+    IGuid(IGuid&& eObject) noexcept;
+    IGuid& operator=(const IGuid& eObject);
+    IGuid& operator=(IGuid&& eObject) noexcept;
+    bool operator==(const IGuid& other) const;
+    bool operator<(const IGuid& other) const;
 
     void SetGUID(const std::wstring& str);
     std::wstring& GetGUID();
 
-    template <class T, class = std::enable_if_t<std::is_base_of_v<EObject, T>>>
+    template <class T, class = std::enable_if_t<std::is_base_of_v<IGuid, T>>>
     std::shared_ptr<T> CoreInit()
     {
         AddObject(this->shared_from_this());
@@ -34,7 +34,7 @@ public:
         return obj;
     }
 
-    template <class T, class = std::enable_if_t<std::is_base_of_v<EObject, T>>>
+    template <class T, class = std::enable_if_t<std::is_base_of_v<IGuid, T>>>
     std::shared_ptr<T> GetCast()
     {
         return std::dynamic_pointer_cast<T>(this->shared_from_this());
@@ -42,30 +42,30 @@ public:
 
 
 public:
-    template <class T, class = std::enable_if_t<std::is_convertible_v<T*, EObject*>>>
+    template <class T, class = std::enable_if_t<std::is_convertible_v<T*, IGuid*>>>
     static bool AddObject(std::shared_ptr<T> object)
     {
         if (object == nullptr)
             return false;
-        if (!_EObjectTable.contains(object->guid))
+        if (!_GuidTable.contains(object->guid))
         {
-            _EObjectTable.insert(std::make_pair(object->guid,
-                std::weak_ptr<EObject>{
-                    std::dynamic_pointer_cast<EObject>(object)
+            _GuidTable.insert(std::make_pair(object->guid,
+                std::weak_ptr<IGuid>{
+                    std::dynamic_pointer_cast<IGuid>(object)
                 }));
             return true;
         }
         return false;
     }
 
-    template <class T, class = std::enable_if_t<std::is_convertible_v<T*, EObject*>>>
+    template <class T, class = std::enable_if_t<std::is_convertible_v<T*, IGuid*>>>
     static bool RemoveObject(std::shared_ptr<T> object)
     {
         if (object == nullptr)
             return false;
-        if (_EObjectTable.contains(object->guid))
+        if (_GuidTable.contains(object->guid))
         {
-            _EObjectTable.erase(object->guid);
+            _GuidTable.erase(object->guid);
             return true;
         }
         return false;
@@ -73,9 +73,9 @@ public:
 
     static bool RemoveGuid(const std::wstring& guid)
     {
-        auto iter = _EObjectTable.find(guid);
-        if (iter != _EObjectTable.end()) {
-            _EObjectTable.erase(iter);
+        auto iter = _GuidTable.find(guid);
+        if (iter != _GuidTable.end()) {
+            _GuidTable.erase(iter);
             return true;
         }
         return false;
@@ -83,11 +83,11 @@ public:
 
     static bool ContainsByGuid(const std::wstring& guid)
     {
-        if (_EObjectTable.contains(guid))
+        if (_GuidTable.contains(guid))
         {
-            if (_EObjectTable[guid].expired())
+            if (_GuidTable[guid].expired())
             {
-                _EObjectTable.erase(guid);
+                _GuidTable.erase(guid);
                 return false;
             }
 
@@ -97,10 +97,10 @@ public:
         return false;
     }
 
-    template <class T, class = std::enable_if_t<std::is_convertible_v<T*, EObject*>>>
+    template <class T, class = std::enable_if_t<std::is_convertible_v<T*, IGuid*>>>
     static std::shared_ptr<T> FindObjectByType()
     {
-        for (auto it = _EObjectTable.begin(); it != _EObjectTable.end();)
+        for (auto it = _GuidTable.begin(); it != _GuidTable.end();)
         {
             auto& current = *it;
             if (!current.second.expired())
@@ -111,16 +111,16 @@ public:
                 ++it;
             }
             else
-                it = _EObjectTable.erase(it);
+                it = _GuidTable.erase(it);
         }
         return nullptr;
     }
 
-    template <class T, class = std::enable_if_t<std::is_convertible_v<T*, EObject*>>>
+    template <class T, class = std::enable_if_t<std::is_convertible_v<T*, IGuid*>>>
     static bool FindObjectsByType(std::vector<std::shared_ptr<T>>& vec)
     {
         bool tf = false;
-        for (auto it = _EObjectTable.begin(); it != _EObjectTable.end();)
+        for (auto it = _GuidTable.begin(); it != _GuidTable.end();)
         {
             auto& current = *it;
             if (!current.second.expired())
@@ -134,22 +134,22 @@ public:
                 ++it;
             }
             else
-                it = _EObjectTable.erase(it);
+                it = _GuidTable.erase(it);
         }
         return tf;
     }
 
-    template <class T, class = std::enable_if_t<std::is_convertible_v<T*, EObject*>>>
+    template <class T, class = std::enable_if_t<std::is_convertible_v<T*, IGuid*>>>
     static std::shared_ptr<T> FindObjectByGuid(const std::wstring& guid)
     {
-        if (_EObjectTable.contains(guid))
+        if (_GuidTable.contains(guid))
         {
-            auto& current = _EObjectTable[guid];
+            auto& current = _GuidTable[guid];
             if (!current.expired()) {
                 auto ptr = std::dynamic_pointer_cast<T>(current.lock());
                 return ptr;
             }
-            _EObjectTable.erase(guid);
+            _GuidTable.erase(guid);
         }
         return nullptr;
     }

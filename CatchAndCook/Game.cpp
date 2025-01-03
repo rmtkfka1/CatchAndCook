@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Game.h"
 #include "Core.h"
-#include "CoreObject.h"
+#include "IGuid.h"
 
 void Game::Init(HWND hwnd)
 {
@@ -10,7 +10,7 @@ void Game::Init(HWND hwnd)
 	Input::main = make_unique<Input>();
 	Core::main = make_unique<Core>();
 	Core::main->Init(hwnd);
-	EObject::StaticInit();
+	IGuid::StaticInit();
 	IType::StaticInit();
 }
 
@@ -28,6 +28,6 @@ void Game::Release()
 	Input::main.reset(nullptr);
 	Time::main.reset(nullptr);
 	Core::main.reset(nullptr);
-	EObject::StaticRelease();
+	IGuid::StaticRelease();
 	IType::StaticRelease();
 }
