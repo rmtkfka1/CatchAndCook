@@ -23,9 +23,7 @@ void Game::Run()
 	Core::main->Render();
 	Core::main->RenderEnd();
 
-	auto a = std::make_shared<GameObject>();
-	a->Init();
-	a->AddComponent<Transform>();
+
 }
 
 void Game::Release()

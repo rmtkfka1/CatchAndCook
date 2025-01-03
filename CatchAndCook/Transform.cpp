@@ -81,9 +81,11 @@ void Transform::DebugRendering()
 
 void Transform::PushData()
 {
-    Matrix matrix = Matrix::CreateTranslation(vec3(0.9f,0,0));
-    //GetLocalToWorldMatrix(matrix);
 
+    SetWorldRotation(GetWorldRotation() * Quaternion::CreateFromAxisAngle(Vector3::Forward, 0.03f));
+
+    Matrix matrix;
+    GetLocalToWorldMatrix(matrix);
     auto conatiner = Core::main->GetTransformBufferPool()->Alloc(1);
     memcpy(conatiner->ptr, (void*)&matrix, sizeof(Matrix));
 
@@ -161,6 +163,7 @@ vec3 Transform::GetLocalPosition()
 
 const vec3& Transform::SetLocalPosition(const vec3& worldPos)
 {
+    _needLocalUpdated = true;
     return _localPosition = worldPos;
 }
 
@@ -171,6 +174,7 @@ vec3 Transform::GetLocalScale()
 
 const vec3& Transform::SetLocalScale(const vec3& worldScale)
 {
+    _needLocalUpdated = true;
     return _localScale = worldScale;
 }
 
@@ -181,6 +185,7 @@ Quaternion Transform::GetLocalRotation()
 
 const Quaternion& Transform::SetLocalRotation(const Quaternion& quaternion)
 {
+    _needLocalUpdated = true;
     return _localRotation = quaternion;
 }
 
@@ -262,6 +267,7 @@ const Quaternion& Transform::SetWorldRotation(const Quaternion& quaternion)
     }
     else
         _localRotation = quaternion;
+    _needLocalUpdated = true;
     return quaternion;
 }
 
