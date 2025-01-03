@@ -28,11 +28,11 @@ void RenderTarget::Init(ComPtr<IDXGISwapChain3>& swapchain)
 
 	for (int32 i = 0; i < SWAP_CHAIN_FRAME_COUNT; i++)
 	{
-		_RenderTargets[i]->CreateTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::RTV, true, true);
+		_RenderTargets[i]->CreateTexture(SWAP_CHAIN_FORMAT, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::RTV, true, true);
 	}
 
 	_RenderTargetIndex = swapchain->GetCurrentBackBufferIndex();
-	_DSTexture->CreateTexture(DXGI_FORMAT_D32_FLOAT, D3D12_RESOURCE_STATE_DEPTH_WRITE, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::DSV, false, true);
+	_DSTexture->CreateTexture(DEPTH_STENCIL_FORMAT, D3D12_RESOURCE_STATE_DEPTH_WRITE, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::DSV, false, true);
 }
 
 void RenderTarget::Resize(DWORD BackBufferWidth, DWORD BackBufferHeight, ComPtr<IDXGISwapChain3> swapchain, UINT _swapChainFlags)

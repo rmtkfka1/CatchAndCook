@@ -74,7 +74,6 @@ void Shader::Init(const std::vector<VertexProp>& prop)
         else if (vertexSetInfo.propInfos[i].size == 4) elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
         _inputElementDesc[i] = elementDesc;
     }
-
     _pipelineDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
     _pipelineDesc.pRootSignature = Core::main->GetRootSignature()->GetGraphicsRootSignature().Get();
 
@@ -82,7 +81,7 @@ void Shader::Init(const std::vector<VertexProp>& prop)
 
     if (!_info._depthOnly)
     {
-        _pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+        _pipelineDesc.RTVFormats[0] = SWAP_CHAIN_FORMAT;
         _pipelineDesc.NumRenderTargets = _info.renderTargetCount;
         for (int i = 0; i < _pipelineDesc.NumRenderTargets; i++)
             _pipelineDesc.RTVFormats[i] = _info.RTVForamts[i];

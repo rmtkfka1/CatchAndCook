@@ -2,12 +2,6 @@
 #define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용을 Windows 헤더에서 제외합니다.
 #define _HAS_STD_BYTE 0
 
-#ifdef _DEBUG
-#pragma comment(lib, "DirectXTex\\DirectXTex_debug.lib")
-#else
-#pragma comment(lib, "DirectXTex\\DirectXTex.lib")
-#endif
-
 #include <windows.h>
 #include <tchar.h>
 #include <memory>
@@ -18,16 +12,17 @@
 #include <map>
 #include <unordered_set>
 #include <unordered_map>
-
 #include <stack>
 #include <queue>
 #include <iostream>
 #include <fstream>
-
-using namespace std;
-
+#include <typeinfo>
 #include <filesystem>
-namespace fs = std::filesystem;
+#include <rpc.h>
+
+#pragma comment(lib, "rpcrt4.lib")
+
+
 
 #include "d3dx12.h"
 #include <d3d12.h>
@@ -38,23 +33,27 @@ namespace fs = std::filesystem;
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
 
-#include "strutil.h"
-#include "wstrutil.h"
-
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 using namespace Microsoft::WRL;
 
 #include <DirectXTex/DirectXTex.h>
 #include <DirectXTex/DirectXTex.inl>
-#include "simple_mesh_LH.h"
-#include "SimpleMath_LH.inl"
 
 // 각종 lib
 #pragma comment(lib, "d3d12")
 #pragma comment(lib, "dxgi")
 #pragma comment(lib, "dxguid")
 #pragma comment(lib, "d3dcompiler")
+
+#ifdef _DEBUG
+#pragma comment(lib, "DirectXTex\\DirectXTex_debug.lib")
+#else
+#pragma comment(lib, "DirectXTex\\DirectXTex.lib")
+#endif
+
+
+
 
 #include <Assimp/Importer.hpp>
 #include <Assimp/scene.h>
@@ -66,10 +65,10 @@ using namespace Microsoft::WRL;
 #pragma comment(lib, "Assimp/assimp-vc143-mt.lib")
 #endif
 
-using namespace SimpleMath;
 
+#include "simple_mesh_LH.h"
+#include "SimpleMath_LH.inl"
 
-#include "Global.h"
 
 using int8 = __int8;
 using int16 = __int16;
@@ -86,14 +85,19 @@ using Matrix = DirectX::SimpleMath::Matrix;
 using Ray = DirectX::SimpleMath::Ray;
 using Quaternion = DirectX::SimpleMath::Quaternion;
 
+using namespace SimpleMath;
+using namespace std;
+namespace fs = std::filesystem;
 
+#include "Global.h"
+
+#include "strutil.h"
+#include "wstrutil.h"
+#include "guid_utility.h"
 #include "convert_math.h"
 #include "convert_string.h"
 #include "Input.h"
 #include "Time.h"
-
-const uint32 SWAP_CHAIN_FRAME_COUNT = 4;
-const uint32 MAX_FRAME_COUNT = SWAP_CHAIN_FRAME_COUNT - 1;
 
 
 inline void ThrowIfFailed(HRESULT hr) {

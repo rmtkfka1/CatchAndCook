@@ -148,8 +148,8 @@ public:
     static short NumPadDot;
     static short NumPad0;
 
-    static short MOUSE_KECODE_OFFSET;
-    static short KEYBOARD_KECODE_ENDPOINT;
+    static short MOUSE_KEYCODE_OFFSET;
+    static short KEYBOARD_KEYCODE_ENDPOINT;
     static short LeftMouse;
     static short RightMouse;
     static short CenterMouse;

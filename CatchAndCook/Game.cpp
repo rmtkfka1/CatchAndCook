@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Game.h"
 #include "Core.h"
+#include "CoreObject.h"
+
 void Game::Init(HWND hwnd)
 {
 	Time::main = make_unique<Time>();
@@ -8,6 +10,8 @@ void Game::Init(HWND hwnd)
 	Input::main = make_unique<Input>();
 	Core::main = make_unique<Core>();
 	Core::main->Init(hwnd);
+	EObject::StaticInit();
+	IType::StaticInit();
 }
 
 void Game::Run()
@@ -17,7 +21,6 @@ void Game::Run()
 	Core::main->RenderBegin();
 	Core::main->Render();
 	Core::main->RenderEnd();
-
 }
 
 void Game::Release()
@@ -25,4 +28,6 @@ void Game::Release()
 	Input::main.reset(nullptr);
 	Time::main.reset(nullptr);
 	Core::main.reset(nullptr);
+	EObject::StaticRelease();
+	IType::StaticRelease();
 }

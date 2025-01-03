@@ -46,24 +46,16 @@ void RootSignature::Init()
 	auto SRV_Range = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 8, 0); //t0,t1,t2,t3
 	auto UAV_Range = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 4, 0); // u0,u1,u2
 
-	CD3DX12_ROOT_PARAMETER param[12];
-	param[0].InitAsConstantBufferView(0); 
-	param[1].InitAsConstantBufferView(1); 
-	param[2].InitAsConstantBufferView(2);
-	param[3].InitAsConstantBufferView(3);
-	param[4].InitAsConstantBufferView(4);
-	param[5].InitAsConstantBufferView(5);
-	param[6].InitAsConstantBufferView(6);
-	param[7].InitAsConstantBufferView(7);
-	param[8].InitAsConstantBufferView(8);
-	param[9].InitAsConstantBufferView(9);
-	param[10].InitAsDescriptorTable(1, &SRV_Range);
-	param[11].InitAsDescriptorTable(1, &UAV_Range);
+	array<CD3DX12_ROOT_PARAMETER, 18> param;
+	for (int cbv_index=0; cbv_index < CBV_ROOT_INDEX_COUNT; cbv_index++)
+		param[cbv_index].InitAsConstantBufferView(cbv_index); 
+	param[SRV_TABLE_INDEX].InitAsDescriptorTable(1, &SRV_Range);
+	param[UAV_TABLE_INDEX].InitAsDescriptorTable(1, &UAV_Range);
 
 	// 루트 서명 설정
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
-	rootSignatureDesc.NumParameters = _countof(param);
-	rootSignatureDesc.pParameters = param;
+	rootSignatureDesc.NumParameters = param.size();
+	rootSignatureDesc.pParameters = param.data();
 	rootSignatureDesc.NumStaticSamplers = 2;
 	rootSignatureDesc.pStaticSamplers = samplerDesc;
 	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT

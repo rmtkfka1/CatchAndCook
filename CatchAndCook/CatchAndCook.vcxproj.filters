@@ -72,6 +72,11 @@
     <ClCompile Include="Vertex.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
+    <ClCompile Include="CoreObject.cpp" />
+    <ClCompile Include="IType.cpp" />
+    <ClCompile Include="guid_utility.cpp">
+      <Filter>pch\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -134,6 +139,11 @@
     </ClInclude>
     <ClInclude Include="Vertex.h">
       <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreObject.h" />
+    <ClInclude Include="IType.h" />
+    <ClInclude Include="guid_utility.h">
+      <Filter>pch\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
