@@ -97,7 +97,7 @@ public:
         return false;
     }
 
-    template <class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+    template <class T, class = std::enable_if_t<std::is_convertible_v<T*, EObject*>>>
     static std::shared_ptr<T> FindObjectByType()
     {
         for (auto it = _EObjectTable.begin(); it != _EObjectTable.end();)
@@ -116,7 +116,7 @@ public:
         return nullptr;
     }
 
-    template <class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+    template <class T, class = std::enable_if_t<std::is_convertible_v<T*, EObject*>>>
     static bool FindObjectsByType(std::vector<std::shared_ptr<T>>& vec)
     {
         bool tf = false;
@@ -139,7 +139,7 @@ public:
         return tf;
     }
 
-    template <class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+    template <class T, class = std::enable_if_t<std::is_convertible_v<T*, EObject*>>>
     static std::shared_ptr<T> FindObjectByGuid(const std::wstring& guid)
     {
         if (_EObjectTable.contains(guid))

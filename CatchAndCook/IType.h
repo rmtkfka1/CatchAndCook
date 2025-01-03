@@ -27,7 +27,7 @@ protected:
     template <class T, class = std::enable_if_t<std::is_base_of_v<IType, T*>>>
     static T* TypeRegister(T* obj)
     {
-        auto& key = obj->_className;
+        auto& key = obj->GetTypeName();
         if (!_typeTable.contains(key))
             _typeTable.emplace(std::make_pair(key, []() { return dynamic_cast<IType*>(new T()); }));
         return obj;
