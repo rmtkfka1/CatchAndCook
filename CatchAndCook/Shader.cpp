@@ -3,6 +3,7 @@
 
 #include "Core.h"
 #include "RootSignature.h"
+#include "Texture.h"
 #include "Vertex.h"
 
 
@@ -18,6 +19,33 @@ ShaderCBufferInfo ShaderProfileInfo::GetCBufferByName(const std::string& name)
     if (_nameToCBufferTable.contains(name))
         return _nameToCBufferTable[name];
     return ShaderCBufferInfo{};
+}
+
+ShaderInfo::ShaderInfo() = default;
+ShaderInfo::~ShaderInfo() = default;
+
+void ShaderInfo::SetRenderTargets(const std::vector<std::shared_ptr<Texture>>& renderTargets)
+{
+    renderTargetCount = std::min(static_cast<unsigned int>(renderTargets.size()), 8u);
+    if (renderTargetCount == 0)
+    {
+        renderTargetCount = 1;
+        RTVForamts[0] = DXGI_FORMAT_UNKNOWN;
+        return;
+    }
+    for (uint32 i = 0; i < renderTargetCount; i++)
+        RTVForamts[i] = renderTargets[i]->GetFormat();
+}
+
+void ShaderInfo::SetDSTexture(const std::shared_ptr<Texture>& DSTexture)
+{
+    if (DSTexture == nullptr)
+    {
+        DSVFormat = DXGI_FORMAT_UNKNOWN;
+        _zTest = false;
+        _stencilTest = false;
+    }
+    DSVFormat = DSTexture->GetFormat();
 }
 
 void Shader::Init(const std::vector<VertexProp>& prop)
@@ -46,7 +74,6 @@ void Shader::Init(const std::vector<VertexProp>& prop)
         else if (vertexSetInfo.propInfos[i].size == 4) elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
         _inputElementDesc[i] = elementDesc;
     }
-
     _pipelineDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
     _pipelineDesc.pRootSignature = Core::main->GetRootSignature()->GetGraphicsRootSignature().Get();
 
@@ -54,7 +81,7 @@ void Shader::Init(const std::vector<VertexProp>& prop)
 
     if (!_info._depthOnly)
     {
-        _pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+        _pipelineDesc.RTVFormats[0] = SWAP_CHAIN_FORMAT;
         _pipelineDesc.NumRenderTargets = _info.renderTargetCount;
         for (int i = 0; i < _pipelineDesc.NumRenderTargets; i++)
             _pipelineDesc.RTVFormats[i] = _info.RTVForamts[i];

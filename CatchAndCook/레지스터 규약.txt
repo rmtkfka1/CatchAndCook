@@ -1,0 +1,21 @@
+
+
+// 4개
+s0 = 리니어
+s1 = 포인트
+s2 = 비등방 4x
+s3 = 비등방 8x
+s4 = 비등방 16x
+s5 = 그림자 샘플링
+
+// 8개
+t0 opaque_texture
+t1 depth_texture
+t2 shadow_texture
+
+u
+
+b16개
+b0 = MainLight
+b1 = Camera
+b2 = Camera

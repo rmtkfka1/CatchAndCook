@@ -1,4 +1,5 @@
 #pragma once
+#include "RenderTarget.h"
 #include "Vertex.h"
 
 enum class CompOper
@@ -131,8 +132,11 @@ struct ShaderCode
 //------------
 
 
-struct ShaderInfo
+class ShaderInfo
 {
+public:
+    ShaderInfo();
+    ~ShaderInfo();
     bool _zTest = true;
     bool _zWrite = true;
     bool _depthOnly = false;
@@ -157,19 +161,23 @@ struct ShaderInfo
     //D3D_PRIMITIVE_TOPOLOGY_1_CONTROL_POINT_PATCHLIST
 
     BlendType _blendType[8] = {
-        BlendType::AlphaBlend,BlendType::AlphaBlend ,BlendType::AlphaBlend,BlendType::AlphaBlend ,
+        BlendType::AlphaBlend,BlendType::AlphaBlend ,BlendType::AlphaBlend,BlendType::AlphaBlend,
         BlendType::AlphaBlend,BlendType::AlphaBlend ,BlendType::AlphaBlend,BlendType::AlphaBlend
     };
 
     int renderTargetCount = 1;
     DXGI_FORMAT RTVForamts[8]{
-    	DXGI_FORMAT_R8G8B8A8_UNORM,DXGI_FORMAT_R8G8B8A8_UNORM,DXGI_FORMAT_R8G8B8A8_UNORM,DXGI_FORMAT_R8G8B8A8_UNORM,
-        DXGI_FORMAT_R8G8B8A8_UNORM,DXGI_FORMAT_R8G8B8A8_UNORM,DXGI_FORMAT_R8G8B8A8_UNORM,DXGI_FORMAT_R8G8B8A8_UNORM
+        SWAP_CHAIN_FORMAT,SWAP_CHAIN_FORMAT,SWAP_CHAIN_FORMAT,SWAP_CHAIN_FORMAT,
+        SWAP_CHAIN_FORMAT,SWAP_CHAIN_FORMAT,SWAP_CHAIN_FORMAT,SWAP_CHAIN_FORMAT
     };
-    DXGI_FORMAT DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    DXGI_FORMAT DSVFormat = DEPTH_STENCIL_FORMAT;
 
     int _renderQueue = 2000;
     RenderQueueType _renderQueueType = RenderQueueType::Opaque;
+
+public:
+    void SetRenderTargets(const std::vector<std::shared_ptr<Texture>>& renderTargets);
+    void SetDSTexture(const std::shared_ptr<Texture>& DSTexture);
 };
 
 class Shader

@@ -74,7 +74,7 @@ void Core::Init(HWND hwnd)
     info._zTest = false;
     info._stencilTest = false;
 	_shader->SetInfo(info);
-	_shader->Init(StaticData);
+	_shader->Init(StaticProp);
 
     _buffer = make_shared<CBufferPool>();
     _buffer->Init(sizeof(vec3), 255);
@@ -112,7 +112,7 @@ void Core::Render()
 
         auto tableContainer = _table->Alloc(8);
         _table->CopyHandle(&tableContainer.cpuHandle, &_texture->GetSRVCpuHandle(), 1);
-        _cmdList->SetGraphicsRootDescriptorTable(SRV_ROOT_INDEX, tableContainer.gpuHandle);
+        _cmdList->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, tableContainer.gpuHandle);
 
         temp = vec3(0.7f, 0.4f, 0);
         memcpy(container->ptr, (void*)&temp, sizeof(temp));
@@ -130,7 +130,7 @@ void Core::Render()
 
         auto tableContainer = _table->Alloc(8);
         _table->CopyHandle(&tableContainer.cpuHandle, &_texture2->GetSRVCpuHandle(), 1);
-        _cmdList->SetGraphicsRootDescriptorTable(SRV_ROOT_INDEX, tableContainer.gpuHandle);
+        _cmdList->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, tableContainer.gpuHandle);
 
         temp = vec3(-0.5f, 0.4f, 0);
         memcpy(container->ptr, (void*)&temp, sizeof(temp));
@@ -317,7 +317,7 @@ void Core::CreateSwapChain()
     DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
     swapChainDesc.Width = WINDOW_WIDTH;
     swapChainDesc.Height = WINDOW_HEIGHT;
-    swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    swapChainDesc.Format = SWAP_CHAIN_FORMAT;
     swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     swapChainDesc.BufferCount = SWAP_CHAIN_FRAME_COUNT;
     swapChainDesc.SampleDesc.Count = 1;

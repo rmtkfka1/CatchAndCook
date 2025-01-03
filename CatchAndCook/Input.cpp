@@ -120,7 +120,7 @@ bool Input::DataUpdate(const InputEvent& e)
 
 void Input::DataBeginUpdate()
 {
-    for (int i = 0; i < KeyCode::KEYBOARD_KECODE_ENDPOINT; i++)
+    for (int i = 0; i < KeyCode::KEYBOARD_KEYCODE_ENDPOINT; i++)
     {
         if (_inputKeyboardField[i].down)
             _inputKeyboardField[i].down = false;
@@ -131,7 +131,7 @@ void Input::DataBeginUpdate()
             _inputKeyboardField[i].up = false;
         }
     }
-    for (int i = KeyCode::MOUSE_KECODE_OFFSET; i < Input::_maxInputMouseField; i++)
+    for (int i = KeyCode::MOUSE_KEYCODE_OFFSET; i < Input::_maxInputMouseField; i++)
     {
         if (_inputMouseField[i].down)
             _inputMouseField[i].down = false;

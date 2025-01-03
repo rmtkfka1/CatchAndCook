@@ -63,14 +63,23 @@
     <ClCompile Include="BufferPool.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Vertex.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Vertex.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="guid_utility.cpp">
+      <Filter>pch\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="CoreObject.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="IType.cpp">
+      <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -126,14 +135,23 @@
     <ClInclude Include="convert_string.h">
       <Filter>pch\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Resource</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="guid_utility.h">
+      <Filter>pch\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreObject.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="IType.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -145,5 +163,10 @@
     <FxCompile Include="test.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="레지스터 규약.txt">
+      <Filter>HLSL</Filter>
+    </Text>
   </ItemGroup>
 </Project>

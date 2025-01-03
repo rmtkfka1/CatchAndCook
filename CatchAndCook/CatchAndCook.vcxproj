@@ -164,10 +164,13 @@
   <ItemGroup>
     <ClCompile Include="BufferPool.cpp" />
     <ClCompile Include="Core.cpp" />
+    <ClCompile Include="CoreObject.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Global.cpp" />
+    <ClCompile Include="guid_utility.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="input_module.cpp" />
+    <ClCompile Include="IType.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="pch.cpp">
@@ -194,11 +197,14 @@
     <ClInclude Include="convert_math.h" />
     <ClInclude Include="convert_string.h" />
     <ClInclude Include="Core.h" />
+    <ClInclude Include="CoreObject.h" />
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="guid_utility.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="input_module.h" />
+    <ClInclude Include="IType.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RenderTarget.h" />
@@ -222,6 +228,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="레지스터 규약.txt">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </Text>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

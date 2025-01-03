@@ -40,6 +40,9 @@ public:
 	D3D12_CPU_DESCRIPTOR_HANDLE& GetDSVCpuHandle() { return _dsvHandle; }
 
 	ComPtr<ID3D12Resource>& GetResource() { return _resource; }
+	DXGI_FORMAT& GetFormat() { return _format; };
+protected:
+	DXGI_FORMAT& SetFormat(DXGI_FORMAT format) { return _format = format; };
 public:
 	//FOR GBUFFER
 	void SetSrvHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle) { _srvHandle = handle; }
@@ -54,6 +57,7 @@ private:
 
 	static D3D12_CPU_DESCRIPTOR_HANDLE _SharedDSVHandle;
 	D3D12_CPU_DESCRIPTOR_HANDLE _dsvHandle;
+	DXGI_FORMAT _format;
 public:
 	D3D12_RESOURCE_STATES _state; // ÃßÀû¿ë
 };
