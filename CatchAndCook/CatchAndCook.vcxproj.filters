@@ -63,13 +63,13 @@
     <ClCompile Include="BufferPool.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Vertex.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Vertex.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
   </ItemGroup>
@@ -126,13 +126,13 @@
     <ClInclude Include="convert_string.h">
       <Filter>pch\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Resource</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
       <Filter>Resource</Filter>
     </ClInclude>
   </ItemGroup>
