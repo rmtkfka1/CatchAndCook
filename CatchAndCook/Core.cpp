@@ -7,6 +7,7 @@
 #include "Mesh.h"
 #include "Shader.h"
 #include "BufferPool.h"
+#include "GameObject.h"
 unique_ptr<Core> Core::main=nullptr;
 
 Core::Core()
@@ -77,7 +78,7 @@ void Core::Init(HWND hwnd)
 	_shader->Init(StaticProp);
 
     _buffer = make_shared<CBufferPool>();
-    _buffer->Init(sizeof(vec3), 255);
+    _buffer->Init(sizeof(Matrix), 255);
 
     _table = make_shared<DescritporTable>();
     _table->Init(255);
@@ -85,8 +86,8 @@ void Core::Init(HWND hwnd)
     _texture = make_shared<Texture>();
     _texture->Init(L"Start.jpg");
 
-    _texture2 = make_shared<Texture>();
-    _texture2->Init(L"sea.jpg");
+    _gameObject = make_shared<GameObject>();
+    _gameObject->Init();
 
 }
 
@@ -105,44 +106,22 @@ void Core::RenderBegin()
 void Core::Render()
 {
 
-    vec3 temp = vec3(-0.9f, 0.4f, 0);
+    _cmdList->SetPipelineState(_shader->_pipelineState.Get());
 
-    {
-        auto container = _buffer->Alloc(1);
+    _gameObject->Update();
+    _gameObject->Update2();
+    _gameObject->RenderBegin();
 
-        auto tableContainer = _table->Alloc(8);
-        _table->CopyHandle(&tableContainer.cpuHandle, &_texture->GetSRVCpuHandle(), 1);
-        _cmdList->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, tableContainer.gpuHandle);
+    auto tableContainer = _table->Alloc(8);
+    _table->CopyHandle(&tableContainer.cpuHandle, &_texture->GetSRVCpuHandle(), 1);
 
-        temp = vec3(0.7f, 0.4f, 0);
-        memcpy(container->ptr, (void*)&temp, sizeof(temp));
-        _cmdList->SetGraphicsRootConstantBufferView(1, container->GPUAdress);
+    _cmdList->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, tableContainer.gpuHandle);
+    _cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    _cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
+    _cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
+    _cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
 
-        Core::main->GetCmdList()->SetPipelineState(_shader->_pipelineState.Get());
-        _cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-        _cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
-        _cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
-        _cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
-    }
-
-    {
-        auto container = _buffer->Alloc(1);
-
-        auto tableContainer = _table->Alloc(8);
-        _table->CopyHandle(&tableContainer.cpuHandle, &_texture2->GetSRVCpuHandle(), 1);
-        _cmdList->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, tableContainer.gpuHandle);
-
-        temp = vec3(-0.5f, 0.4f, 0);
-        memcpy(container->ptr, (void*)&temp, sizeof(temp));
-        _cmdList->SetGraphicsRootConstantBufferView(1, container->GPUAdress);
-
-
-        Core::main->GetCmdList()->SetPipelineState(_shader->_pipelineState.Get());
-        _cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-        _cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
-        _cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
-        _cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
-    }
+  
 
 };
 

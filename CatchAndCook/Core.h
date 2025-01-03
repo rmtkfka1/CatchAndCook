@@ -9,7 +9,7 @@ class Mesh;
 class CBufferPool;
 class DescritporTable;
 class Texture;
-
+class GameObject;
 
 class Core
 {
@@ -36,6 +36,7 @@ public:
 	shared_ptr<TextureBufferPool>& GetTextureBufferPool() { return _textureBufferPool; }
 	shared_ptr<RenderTarget>& GetRenderTarget() { return _renderTarget; }
 	shared_ptr<RootSignature>& GetRootSignature() { return _rootSignature; };
+	shared_ptr<CBufferPool>& GetTransformBufferPool() { return _buffer; }
 
 
 private:
@@ -78,8 +79,9 @@ private:
 	shared_ptr<DescritporTable> _table;
 	shared_ptr<CBufferPool> _buffer;
 	shared_ptr<Shader> _shader;
+	shared_ptr<GameObject> _gameObject;
 	shared_ptr<Mesh> _mesh;
 	shared_ptr<Texture> _texture;
-	shared_ptr<Texture> _texture2;
+
 };
 

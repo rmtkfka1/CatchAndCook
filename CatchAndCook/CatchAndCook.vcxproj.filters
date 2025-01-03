@@ -190,13 +190,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="test.hlsl">
-      <Filter>HLSL</Filter>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="레지스터 규약.txt">
       <Filter>HLSL</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Resources\Shader\test.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

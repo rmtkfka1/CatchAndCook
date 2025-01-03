@@ -19,16 +19,13 @@ public:
 	void Rendering() override;
 	void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
 	void DebugRendering() override;
-
-
-
-    void PushData(void* addr);
+    void PushData();
 
 public:
 
-    vec3 forward(const vec3& dir = Vector3::Zero);
-    vec3 up(const vec3& dir = Vector3::Zero);
-    vec3 right(const vec3& dir = Vector3::Zero);
+    vec3 forward(const vec3& dir = vec3::Zero);
+    vec3 up(const vec3& dir = vec3::Zero);
+    vec3 right(const vec3& dir = vec3::Zero);
 
     vec3 GetLocalEuler();
     const vec3& SetLocalEuler(const vec3& euler);
@@ -47,7 +44,7 @@ public:
     Quaternion GetWorldRotation();
     const Quaternion& SetWorldRotation(const Quaternion& quaternion);
 
-    bool GetLocalToWorldMatrix(Matrix& localToWorldMatrix);
+    bool GetLocalToWorldMatrix(OUT Matrix& localToWorldMatrix);
     bool GetLocalToWorldMatrix_BottomUp(Matrix& localToWorld);
     bool GetLocalSRTMatrix(Matrix& localSRT);
     bool SetLocalSRTMatrix(Matrix& localSRT);
@@ -73,9 +70,9 @@ public:
     bool isLocalToWorldChanged = true; //부모가 local 업데이트 or 부모 world 변경시 이거 true.worldtrs변경.
 
 private:
-    vec3 _localPosition;
-    vec3 _localScale;
-    Quaternion _localRotation;
+    vec3 _localPosition{};
+    vec3 _localScale=vec3(1.0f,1.0f,1.0f);
+    Quaternion _localRotation{};
 
     vec3 _forward;
     vec3 _up;
@@ -84,7 +81,6 @@ private:
     Matrix _prevLocalSRTMatrix = Matrix::Identity;
     Matrix localSRTMatrix = Matrix::Identity; // prev랑 비교후 갱신/ 갱신시 islocal머시기 true 아니면 false
     Matrix localToWorldMatrix = Matrix::Identity;
-
 
     bool _needLocalUpdated = true; // 나 자신이 SRT 갱신 해야해.
     bool _needLocalToWorldUpdated = true; // 부모가 업데이트 됬을때 내가 변경되어야함을 표기, 위에꺼랑은 역할이 조금 다른게. 위에껀 자기 기준이라, 전 프레임이랑 같으면 바뀌는데, 이건 내가 바뀌기 전까지 안꺼짐

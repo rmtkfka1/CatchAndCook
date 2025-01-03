@@ -47,7 +47,7 @@ void RenderTarget::RenderBegin()
 
 	//ClearDepth();
 
-	const float BackColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	const float BackColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	_RenderTargets[_RenderTargetIndex]->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
 

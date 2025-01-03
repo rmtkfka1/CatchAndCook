@@ -1,9 +1,13 @@
 #include "pch.h"
 #include "Transform.h"
-
 #include "Core.h"
 #include "GameObject.h"
 #include "simple_mesh_ext.h"
+#include "BufferPool.h"
+
+// SCENE -> 트리구조 / MATERIAL CAMERA MESHRENDER SCRIPTS LIGHT  / RENDERPASS / MODEL / RESOURCEMANAGER / INSTANCING
+// 1.12 전까지 엔진구조완성.
+
 
 void Transform::SetDestroy()
 {
@@ -56,6 +60,8 @@ void Transform::Destroy()
 void Transform::RenderBegin()
 {
 	Component::RenderBegin();
+
+    PushData();
 }
 
 void Transform::Rendering()
@@ -73,17 +79,22 @@ void Transform::DebugRendering()
 	Component::DebugRendering();
 }
 
-void Transform::PushData(void* addr)
+void Transform::PushData()
 {
-    Matrix matrix;
-    GetLocalToWorldMatrix(matrix);
-    //std::memcpy(addr, matrix, sizeof(matrix));
+    Matrix matrix = Matrix::CreateTranslation(vec3(0.9f,0,0));
+    //GetLocalToWorldMatrix(matrix);
+
+    auto conatiner = Core::main->GetTransformBufferPool()->Alloc(1);
+    memcpy(conatiner->ptr, (void*)&matrix, sizeof(Matrix));
+
+    Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(0, conatiner->GPUAdress);
+
 }
 
 
-Vector3 Transform::forward(const Vector3& dir)
+vec3 Transform::forward(const vec3& dir)
 {
-    if (dir != Vector3::Zero)
+    if (dir != vec3::Zero)
     {
         _forward = dir;
         _forward.Normalize(_forward);
@@ -93,13 +104,13 @@ Vector3 Transform::forward(const Vector3& dir)
         return _forward;
     }
     Quaternion quat = GetWorldRotation();
-    _forward = Vector3::Transform(Vector3(0, 0, 1), quat);
+    _forward = vec3::Transform(vec3(0, 0, 1), quat);
     return _forward;
 }
 
-Vector3 Transform::up(const Vector3& dir)
+vec3 Transform::up(const vec3& dir)
 {
-    if (dir != Vector3::Zero)
+    if (dir != vec3::Zero)
     {
         _up = dir;
         _up.Normalize();
@@ -111,13 +122,13 @@ Vector3 Transform::up(const Vector3& dir)
     }
     //쿼터니언 기반으로 다시 원래값 받아와야함.
     Quaternion quat = GetWorldRotation();
-    _up = Vector3::Transform(Vector3(0, 1, 0), quat);
+    _up = vec3::Transform(vec3(0, 1, 0), quat);
     return _up;
 }
 
-Vector3 Transform::right(const Vector3& dir)
+vec3 Transform::right(const vec3& dir)
 {
-    if (dir != Vector3::Zero)
+    if (dir != vec3::Zero)
     {
         _right = dir;
         _right.Normalize(_right);
@@ -127,16 +138,16 @@ Vector3 Transform::right(const Vector3& dir)
         return _right;
     }
     Quaternion quat = GetWorldRotation();
-    _right = Vector3::Transform(Vector3(1, 0, 0), quat);
+    _right = vec3::Transform(vec3(1, 0, 0), quat);
     return _right;
 }
 
-Vector3 Transform::GetLocalEuler()
+vec3 Transform::GetLocalEuler()
 {
     return _localRotation.ToEuler();
 }
 
-const Vector3& Transform::SetLocalEuler(const Vector3& euler)
+const vec3& Transform::SetLocalEuler(const vec3& euler)
 {
     _localRotation = Quaternion::CreateFromYawPitchRoll(euler);
     _needLocalUpdated = true;
@@ -173,26 +184,26 @@ const Quaternion& Transform::SetLocalRotation(const Quaternion& quaternion)
     return _localRotation = quaternion;
 }
 
-Vector3 Transform::GetWorldPosition()
+vec3 Transform::GetWorldPosition()
 {
     auto parent = GetOwner()->parent.lock();
     if (parent)
     {
         Matrix mat;
         parent->transform->GetLocalToWorldMatrix_BottomUp(mat);
-        return Vector3::Transform(_localPosition, mat);
+        return vec3::Transform(_localPosition, mat);
     }
     return _localPosition;
 }
 
-const Vector3& Transform::SetWorldPosition(const Vector3& worldPos)
+const vec3& Transform::SetWorldPosition(const vec3& worldPos)
 {
     auto parent = GetOwner()->parent.lock();
     if (parent)
     {
         Matrix mat;
         parent->transform->GetLocalToWorldMatrix_BottomUp(mat);
-        _localPosition = Vector3::Transform(worldPos, mat.Invert());
+        _localPosition = vec3::Transform(worldPos, mat.Invert());
     }
     else
         _localPosition = worldPos;
@@ -200,9 +211,9 @@ const Vector3& Transform::SetWorldPosition(const Vector3& worldPos)
     return worldPos;
 }
 
-Vector3 Transform::GetWorldScale()
+vec3 Transform::GetWorldScale()
 {
-    Vector3 totalScale = _localScale;
+    vec3 totalScale = _localScale;
     auto currentObj = GetOwner()->parent.lock();
     while (currentObj != nullptr)
     {
@@ -212,12 +223,12 @@ Vector3 Transform::GetWorldScale()
     return totalScale;
 }
 
-const Vector3& Transform::SetWorldScale(const Vector3& scale)
+const vec3& Transform::SetWorldScale(const vec3& scale)
 {
     auto parent = GetOwner()->parent.lock();
     if (parent)
     {
-        Vector3 ws = parent->transform->GetWorldScale();
+        vec3 ws = parent->transform->GetWorldScale();
         _localScale = (ws / (ws * ws)) * scale;
     }
     else
@@ -254,7 +265,7 @@ const Quaternion& Transform::SetWorldRotation(const Quaternion& quaternion)
     return quaternion;
 }
 
-bool Transform::GetLocalToWorldMatrix(Matrix& localToWorldMatrix)
+bool Transform::GetLocalToWorldMatrix(OUT Matrix& localToWorldMatrix)
 {
     if (CheckLocalToWorldMatrixUpdate())
     {
@@ -296,9 +307,9 @@ bool Transform::GetLocalSRTMatrix(Matrix& localSRT)
 
 bool Transform::SetLocalSRTMatrix(Matrix& localSRT)
 {
-    Vector3 position;
+    vec3 position;
     Quaternion rotation;
-    Vector3 scale;
+    vec3 scale;
     // 행렬을 위치, 회전, 스케일로 분해
     std::memcpy(&localSRTMatrix, &localSRT, sizeof(Matrix));
     if (localSRT.Decompose(scale, rotation, position))
@@ -384,24 +395,24 @@ bool Transform::BottomUpLocalToWorldUpdate()
     return isLocalToWorldChanged = false;
 }
 
-void Transform::LookUp(const Vector3& dir, const Vector3& up)
+void Transform::LookUp(const vec3& dir, const vec3& up)
 {
     SetWorldRotation(LookToQuaternion(GetWorldPosition(), dir, up));
 }
 
-Vector3 Transform::LocalToWorld_Position(const Vector3& value)
+vec3 Transform::LocalToWorld_Position(const vec3& value)
 {
     Matrix mat;
     GetLocalToWorldMatrix_BottomUp(mat);
-    return Vector3::Transform(value, mat);
+    return vec3::Transform(value, mat);
 }
 
-Vector3 Transform::LocalToWorld_Direction(const Vector3& value)
+vec3 Transform::LocalToWorld_Direction(const vec3& value)
 {
     Matrix mat;
     GetLocalToWorldMatrix_BottomUp(mat);
 
-    return Vector3::TransformNormal(value, mat);
+    return vec3::TransformNormal(value, mat);
 }
 
 Quaternion Transform::LocalToWorld_Quaternion(const Quaternion& value)
@@ -409,20 +420,20 @@ Quaternion Transform::LocalToWorld_Quaternion(const Quaternion& value)
     return value * GetWorldRotation();
 }
 
-Vector3 Transform::WorldToLocal_Position(const Vector3& value)
+vec3 Transform::WorldToLocal_Position(const vec3& value)
 {
     Matrix mat;
     GetLocalToWorldMatrix_BottomUp(mat);
     mat.Invert(mat);
-    return Vector3::Transform(value, mat);
+    return vec3::Transform(value, mat);
 }
 
-Vector3 Transform::WorldToLocal_Direction(const Vector3& value)
+vec3 Transform::WorldToLocal_Direction(const vec3& value)
 {
     Matrix mat;
     GetLocalToWorldMatrix_BottomUp(mat);
     mat.Invert(mat);
-    Vector3 vec = Vector3::TransformNormal(value, mat);
+    vec3 vec = vec3::TransformNormal(value, mat);
     vec.Normalize(vec);
     return vec;
 }

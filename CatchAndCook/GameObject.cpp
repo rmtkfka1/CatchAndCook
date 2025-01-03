@@ -18,12 +18,13 @@ GameObject::~GameObject()
 	_components.clear();
 }
 
-
 void GameObject::Init()
 {
-	std::shared_ptr<GameObject> gameObject = GetCast<GameObject>();
+    std::shared_ptr<GameObject> gameObject = GetCast<GameObject>();
+    rootParent = gameObject;
+    gameObject->transform = gameObject->AddComponent<Transform>();
+    SetActiveSelf(true);
 
-	
 }
 
 void GameObject::Start()
@@ -53,10 +54,18 @@ void GameObject::Destroy()
 
 void GameObject::RenderBegin()
 {
+    for (auto& ele : _components)
+    {
+        ele->RenderBegin();
+    }
 }
 
 void GameObject::Rendering()
 {
+    for (auto& ele : _components)
+    {
+        ele->Rendering();
+    }
 }
 
 void GameObject::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
