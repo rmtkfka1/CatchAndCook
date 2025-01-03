@@ -80,7 +80,7 @@ void CBufferPool::Reset()
 
 CBufferContainer* CBufferPool::Alloc(uint32 count)
 {
-	assert(_currentIndex + count <= _count);
+	assert(_currentIndex <= _count);
 	CBufferContainer* data = &_container[_currentIndex];
 	_currentIndex+=count;
 	return data;

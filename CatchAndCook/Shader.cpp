@@ -543,7 +543,10 @@ void Shader::Profile()
 
 std::shared_ptr<ShaderCode> Shader::LoadBlob(std::wstring path, std::string endPointName, std::string shaderType)
 {
-    std::wstring shaderPath = path;
+
+    std::wstring originPath = L"../Resources/Shader/";
+
+    std::wstring shaderPath = originPath+ path;
 
     std::wstring ext = std::filesystem::path(shaderPath).extension();
 

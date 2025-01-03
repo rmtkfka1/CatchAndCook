@@ -15,7 +15,7 @@ t2 shadow_texture
 
 u
 
-b16°³
+b8°³
 b0 = MainLight
 b1 = Camera
 b2 = Camera

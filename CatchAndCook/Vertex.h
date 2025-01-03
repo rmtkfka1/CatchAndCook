@@ -93,7 +93,7 @@ public:
 
     static SelectorInfo GetInfo(const std::vector<VertexProp>& props);
 };
- 
+
 struct Vertex_Skinned
 {
     vec3 position = vec3(0, 0, 0);
