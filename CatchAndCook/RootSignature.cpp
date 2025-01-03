@@ -41,8 +41,6 @@ void RootSignature::Init()
 	samplerDesc[1].RegisterSpace = 0;
 	samplerDesc[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
-
-	
 	auto SRV_Range = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 8, 0); //t0,t1,t2,t3
 	auto UAV_Range = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 4, 0); // u0,u1,u2
 
@@ -66,8 +64,7 @@ void RootSignature::Init()
 	rootSignatureDesc.pParameters = param;
 	rootSignatureDesc.NumStaticSamplers = 2;
 	rootSignatureDesc.pStaticSamplers = samplerDesc;
-	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT
-		| D3D12_ROOT_SIGNATURE_FLAG_ALLOW_STREAM_OUTPUT;
+	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	ComPtr<ID3DBlob> signature;
 	ComPtr<ID3DBlob> error;

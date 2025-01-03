@@ -118,7 +118,7 @@ void Core::Render()
         memcpy(container->ptr, (void*)&temp, sizeof(temp));
         _cmdList->SetGraphicsRootConstantBufferView(1, container->GPUAdress);
 
-        Core::main->GetCmdList()->SetPipelineState(_shader->_pipelineState.Get());
+        _cmdList->SetPipelineState(_shader->_pipelineState.Get());
         _cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         _cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
         _cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
@@ -137,7 +137,7 @@ void Core::Render()
         _cmdList->SetGraphicsRootConstantBufferView(1, container->GPUAdress);
 
 
-        Core::main->GetCmdList()->SetPipelineState(_shader->_pipelineState.Get());
+        _cmdList->SetPipelineState(_shader->_pipelineState.Get());
         _cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         _cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
         _cmdList->IASetIndexBuffer(&_mesh->GetIndexView());

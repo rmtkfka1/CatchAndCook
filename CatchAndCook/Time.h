@@ -20,7 +20,7 @@ private:
 	float	_deltaTime = 0.f;
 
 	std::chrono::time_point<std::chrono::steady_clock> _gameStartClock{};
-	float deltaTimeLimitValue = 0.33333;
+	float deltaTimeLimitValue = 0.33333f;
 
 
 private:
