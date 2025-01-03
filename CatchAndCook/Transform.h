@@ -70,13 +70,13 @@ public:
     bool isLocalToWorldChanged = true; //부모가 local 업데이트 or 부모 world 변경시 이거 true.worldtrs변경.
 
 private:
-    vec3 _localPosition{};
-    vec3 _localScale=vec3(1.0f,1.0f,1.0f);
-    Quaternion _localRotation{};
+    vec3 _localPosition = vec3::Zero;
+    vec3 _localScale = vec3::One;
+    Quaternion _localRotation = Quaternion::Identity;
 
-    vec3 _forward;
-    vec3 _up;
-    vec3 _right;
+    vec3 _forward = vec3::Forward;
+    vec3 _up = vec3::Up;
+    vec3 _right = vec3::Right;
 
     Matrix _prevLocalSRTMatrix = Matrix::Identity;
     Matrix localSRTMatrix = Matrix::Identity; // prev랑 비교후 갱신/ 갱신시 islocal머시기 true 아니면 false
