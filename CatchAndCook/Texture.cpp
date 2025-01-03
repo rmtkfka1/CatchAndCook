@@ -16,7 +16,7 @@ Texture::~Texture()
 
 }
 
-void Texture::Init(const wstring& path,TextureType type)
+void Texture::Init(const wstring& path, TextureType type)
 {
  
     wstring finalPath = _path + path;
@@ -115,7 +115,7 @@ void Texture::Init(const wstring& path,TextureType type)
     default:
         break;
     }
-
+    SetFormat(_image.GetMetadata().format);
     Core::main->GetDevice()->CreateShaderResourceView(_resource.Get(), &srvDesc, _srvHandle);
 }
 
@@ -181,6 +181,7 @@ void Texture::CreateTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalStat
             throw std::runtime_error("텍스쳐 생성 실패");
         }
     }
+    SetFormat(format);
 
     if (HasFlag(usageFlags, TextureUsageFlags::RTV))
     {
@@ -223,9 +224,6 @@ void Texture::CreateTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalStat
     }
 
     _state = initalState;
-
-
-
 }
 
 

@@ -3,6 +3,7 @@
 
 #include "Core.h"
 #include "RootSignature.h"
+#include "Texture.h"
 #include "Vertex.h"
 
 
@@ -18,6 +19,33 @@ ShaderCBufferInfo ShaderProfileInfo::GetCBufferByName(const std::string& name)
     if (_nameToCBufferTable.contains(name))
         return _nameToCBufferTable[name];
     return ShaderCBufferInfo{};
+}
+
+ShaderInfo::ShaderInfo() = default;
+ShaderInfo::~ShaderInfo() = default;
+
+void ShaderInfo::SetRenderTargets(const std::vector<std::shared_ptr<Texture>>& renderTargets)
+{
+    renderTargetCount = std::min(static_cast<unsigned int>(renderTargets.size()), 8u);
+    if (renderTargetCount == 0)
+    {
+        renderTargetCount = 1;
+        RTVForamts[0] = DXGI_FORMAT_UNKNOWN;
+        return;
+    }
+    for (uint32 i = 0; i < renderTargetCount; i++)
+        RTVForamts[i] = renderTargets[i]->GetFormat();
+}
+
+void ShaderInfo::SetDSTexture(const std::shared_ptr<Texture>& DSTexture)
+{
+    if (DSTexture == nullptr)
+    {
+        DSVFormat = DXGI_FORMAT_UNKNOWN;
+        _zTest = false;
+        _stencilTest = false;
+    }
+    DSVFormat = DSTexture->GetFormat();
 }
 
 void Shader::Init(const std::vector<VertexProp>& prop)

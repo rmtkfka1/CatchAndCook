@@ -1,4 +1,5 @@
 #pragma once
+#include "RenderTarget.h"
 #include "Vertex.h"
 
 enum class CompOper
@@ -131,8 +132,11 @@ struct ShaderCode
 //------------
 
 
-struct ShaderInfo
+class ShaderInfo
 {
+public:
+    ShaderInfo();
+    ~ShaderInfo();
     bool _zTest = true;
     bool _zWrite = true;
     bool _depthOnly = false;
@@ -170,6 +174,10 @@ struct ShaderInfo
 
     int _renderQueue = 2000;
     RenderQueueType _renderQueueType = RenderQueueType::Opaque;
+
+public:
+    void SetRenderTargets(const std::vector<std::shared_ptr<Texture>>& renderTargets);
+    void SetDSTexture(const std::shared_ptr<Texture>& DSTexture);
 };
 
 class Shader
