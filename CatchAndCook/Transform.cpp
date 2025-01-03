@@ -417,9 +417,7 @@ vec3 Transform::LocalToWorld_Direction(const vec3& value)
 {
     Matrix mat;
     GetLocalToWorldMatrix_BottomUp(mat);
-    vec3 vec = vec3::TransformNormal(value, mat);
-    vec.Normalize(vec);
-    return vec;
+    return vec3::TransformNormal(value, mat);
 }
 
 Quaternion Transform::LocalToWorld_Quaternion(const Quaternion& value)
@@ -440,9 +438,7 @@ vec3 Transform::WorldToLocal_Direction(const vec3& value)
     Matrix mat;
     GetLocalToWorldMatrix_BottomUp(mat);
     mat.Invert(mat);
-    vec3 vec = vec3::TransformNormal(value, mat);
-    vec.Normalize(vec);
-    return vec;
+    return vec3::TransformNormal(value, mat);
 }
 
 Quaternion Transform::WorldToLocal_Quaternion(const Quaternion& value)
