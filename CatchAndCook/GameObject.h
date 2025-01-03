@@ -195,5 +195,7 @@ private:
 	std::weak_ptr<GameObject> parent;
 	std::weak_ptr<GameObject> rootParent;
 	std::vector<std::weak_ptr<GameObject>> _childs;
+
+	friend class Transform;
 };
 
