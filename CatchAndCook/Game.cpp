@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Game.h"
 #include "Core.h"
+#include "GameObject.h"
 #include "IGuid.h"
 
 void Game::Init(HWND hwnd)
@@ -21,6 +22,10 @@ void Game::Run()
 	Core::main->RenderBegin();
 	Core::main->Render();
 	Core::main->RenderEnd();
+
+	auto a = std::make_shared<GameObject>();
+	a->Init();
+	a->AddComponent<Transform>();
 }
 
 void Game::Release()

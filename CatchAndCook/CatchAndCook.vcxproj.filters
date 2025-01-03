@@ -23,6 +23,12 @@
     <Filter Include="HLSL">
       <UniqueIdentifier>{9ab5b6f0-d097-4ff4-b4ea-8dc8ebb9b531}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Component">
+      <UniqueIdentifier>{e08a7500-fce1-4a12-b91f-639cc78e9213}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject">
+      <UniqueIdentifier>{a2c80d97-8a82-4fb3-9fa2-9e42898321f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -75,11 +81,23 @@
     <ClCompile Include="guid_utility.cpp">
       <Filter>pch\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="CoreObject.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
     <ClCompile Include="IType.cpp">
       <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="IGuid.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="IDelayDestroy.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -147,11 +165,23 @@
     <ClInclude Include="guid_utility.h">
       <Filter>pch\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="CoreObject.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="IType.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="IGuid.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="IDelayDestroy.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -42,6 +42,10 @@ void Component::Destroy()
 {
 }
 
+void Component::RenderBegin()
+{
+}
+
 void Component::Rendering()
 {
 }
