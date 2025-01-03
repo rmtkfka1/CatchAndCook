@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "Transform.h"
+
+#include "Core.h"
 #include "GameObject.h"
 #include "simple_mesh_ext.h"
 
@@ -71,7 +73,12 @@ void Transform::DebugRendering()
 	Component::DebugRendering();
 }
 
-
+void Transform::PushData(void* addr)
+{
+    Matrix matrix;
+    GetLocalToWorldMatrix(matrix);
+    //std::memcpy(addr, matrix, sizeof(matrix));
+}
 
 
 Vector3 Transform::forward(const Vector3& dir)
@@ -82,19 +89,10 @@ Vector3 Transform::forward(const Vector3& dir)
         _forward.Normalize(_forward);
         _right = _up.Cross(_forward);
         _up = _forward.Cross(_right);
-        /*GetWorldRotation(Quaternion::CreateFromRotationMatrix(Matrix(
-            _right.x, _up.x, _forward.x, 0.0f,  // 첫 번째 열 (_right)
-            _right.y, _up.y, _forward.y, 0.0f,  // 두 번째 열 (_up)
-            _right.z, _up.z, _forward.z, 0.0f,  // 세 번째 열 (_forward)
-            0.0f, 0.0f, 0.0f, 1.0f   // 평행 이동 및 4번째 열
-        )));
-        */
         SetWorldRotation(Quaternion::CreateFromRotationMatrix(Matrix(_right, _up, _forward)));
         return _forward;
     }
     Quaternion quat = GetWorldRotation();
-    //_right = Vector3::Transform(Vector3(1, 0, 0), quat);
-    //_up = Vector3::Transform(Vector3(0, 1, 0), quat);
     _forward = Vector3::Transform(Vector3(0, 0, 1), quat);
     return _forward;
 }
@@ -113,9 +111,7 @@ Vector3 Transform::up(const Vector3& dir)
     }
     //쿼터니언 기반으로 다시 원래값 받아와야함.
     Quaternion quat = GetWorldRotation();
-    //_right = Vector3::Transform(Vector3(1, 0, 0), quat);
     _up = Vector3::Transform(Vector3(0, 1, 0), quat);
-    //_forward = Vector3::Transform(Vector3(0, 0, 1), quat);
     return _up;
 }
 
@@ -132,8 +128,6 @@ Vector3 Transform::right(const Vector3& dir)
     }
     Quaternion quat = GetWorldRotation();
     _right = Vector3::Transform(Vector3(1, 0, 0), quat);
-    //_up = Vector3::Transform(Vector3(0, 1, 0), quat);
-    //_forward = Vector3::Transform(Vector3(0, 0, 1), quat);
     return _right;
 }
 
@@ -147,6 +141,36 @@ const Vector3& Transform::SetLocalEuler(const Vector3& euler)
     _localRotation = Quaternion::CreateFromYawPitchRoll(euler);
     _needLocalUpdated = true;
     return euler;
+}
+
+vec3 Transform::GetLocalPosition()
+{
+    return _localPosition;
+}
+
+const vec3& Transform::SetLocalPosition(const vec3& worldPos)
+{
+    return _localPosition = worldPos;
+}
+
+vec3 Transform::GetLocalScale()
+{
+    return _localScale;
+}
+
+const vec3& Transform::SetLocalScale(const vec3& worldScale)
+{
+    return _localScale = worldScale;
+}
+
+Quaternion Transform::GetLocalRotation()
+{
+    return _localRotation;
+}
+
+const Quaternion& Transform::SetLocalRotation(const Quaternion& quaternion)
+{
+    return _localRotation = quaternion;
 }
 
 Vector3 Transform::GetWorldPosition()
