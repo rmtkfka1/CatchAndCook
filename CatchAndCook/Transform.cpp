@@ -375,6 +375,7 @@ void Transform::TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool
     bool isLocalUpdate = GetLocalSRTMatrix(_prevLocalSRTMatrix);
     bool isFinalUpdate = isLocalUpdate || isParentUpdate || _needLocalToWorldUpdated;
 
+    //?
     if (_isLocalToWorldChanged = isFinalUpdate)
     {
         _localToWorldMatrix = _localSRTMatrix * parentLocalToWorld;
