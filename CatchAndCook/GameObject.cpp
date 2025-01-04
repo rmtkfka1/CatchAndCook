@@ -117,8 +117,14 @@ void GameObject::Destroy()
 
 void GameObject::SetDestroy()
 {
+    if (!IsDestroy())
+    {
+        SetActiveSelf(false);
+        for (auto& child : _childs)
+            if (!child.expired())
+                child.lock()->SetDestroy();
+    }
     IDelayDestroy::SetDestroy();
-    SetActiveSelf(false);
 }
 
 void GameObject::Enable()
