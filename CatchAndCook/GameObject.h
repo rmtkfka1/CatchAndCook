@@ -41,6 +41,7 @@ public:
 		component->SetOwner(GetCast<GameObject>());
 		_components.push_back(component);
 		component->Init();
+		if (!IsFirst() && GetActive()) component->Enable();
 		return component;
 	};
 
@@ -59,6 +60,7 @@ public:
 		component->SetOwner(GetCast<GameObject>());
 		_components.push_back(parentComponent);
 		component->Init();
+		if (!IsFirst() && GetActive()) component->Enable();
 	}
 
 	template <class T, class = std::enable_if_t<std::is_base_of_v<Component, T>>>
@@ -181,7 +183,8 @@ public:
 	std::shared_ptr<Scene> GetScene() { assert(!_scene.expired()); return _scene.lock(); };
 	void SetScene(const std::shared_ptr<Scene>& scene) { _scene = scene; };
 
-	std::vector<std::shared_ptr<Component>>& GetComponentAll() { return _components; };
+	std::vector<std::shared_ptr<Component>>& GetComponentAll() { return _components; }
+	void SetDestroy() override;
 
 public:
 	ObjectTag tag = ObjectTag::defualt;

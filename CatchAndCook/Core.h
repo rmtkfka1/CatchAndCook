@@ -78,8 +78,7 @@ private:
 	shared_ptr<DescritporTable> _table;
 	shared_ptr<CBufferPool> _buffer;
 	shared_ptr<Shader> _shader;
-	shared_ptr<GameObject> _gameObject;
-	shared_ptr<GameObject> _gameObject2;
+	vector<shared_ptr<GameObject>> _gameObjects;
 	shared_ptr<Mesh> _mesh;
 	shared_ptr<Texture> _texture;
 

@@ -25,17 +25,20 @@ Transform::~Transform()
 void Transform::Init()
 {
 	Component::Init();
+    std::cout << "I\n";
 }
 
 void Transform::Start()
 {
 	Component::Start();
+    std::cout << "S\n";
 }
 
 void Transform::Update()
 {
 	Component::Update();
-    SetWorldRotation(GetWorldRotation() * Quaternion::CreateFromAxisAngle(Vector3::Forward, 0.03f));
+    SetLocalRotation(GetLocalRotation() * Quaternion::CreateFromAxisAngle(Vector3::Forward, 0.03f));
+    std::cout << "U\n";
 }
 
 void Transform::Update2()
@@ -46,16 +49,19 @@ void Transform::Update2()
 void Transform::Enable()
 {
 	Component::Enable();
+    std::cout << "E\n";
 }
 
 void Transform::Disable()
 {
 	Component::Disable();
+    std::cout << "Dis\n";
 }
 
 void Transform::Destroy()
 {
 	Component::Destroy();
+    std::cout << "D\n";
 }
 
 void Transform::RenderBegin()

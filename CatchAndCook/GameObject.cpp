@@ -29,75 +29,122 @@ void GameObject::Init()
 
 void GameObject::Start()
 {
-    for (auto& element : _components)
-    {
-        element->Start();
+    if ((!IsDestroy()) && GetActive() && IsFirst()) {
+        for (auto& component : _components) {
+            if (component->IsFirst()) {
+                component->Start();
+                component->FirstOff();
+            }
+        }
+        FirstOff();
     }
 }
 
 void GameObject::Update()
 {
-    for (auto& element : _components)
-    {
-        element->Update();
+    if ((!IsDestroy()) && GetActive() && (!IsFirst())) {
+        for (auto& component : _components) {
+            if (((!component->IsDestroy()) && (!component->IsFirst())))
+                component->Update();
+        }
     }
 }
 
 void GameObject::Update2()
 {
-    for (auto& element : _components)
-    {
-        element->Update2();
+    if ((!IsDestroy()) && GetActive() && (!IsFirst())) {
+        for (auto& component : _components) {
+            if (((!component->IsDestroy()) && (!component->IsFirst())))
+                component->Update2();
+        }
     }
 }
 
-void GameObject::Enable()
-{
-    for (auto& element : _components)
-    {
-        element->Enable();
-    }
-}
-
-void GameObject::Disable()
-{
-    for (auto& element : _components)
-    {
-        element->Disable();
-    }
-}
-
-void GameObject::Destroy()
-{
-    for (auto& element : _components)
-    {
-        element->Destroy();
-    }
-}
 
 void GameObject::RenderBegin()
 {
-    for (auto& element : _components)
-    {
-        element->RenderBegin();
+    if ((!IsDestroy()) && GetActive() && (!IsFirst())) {
+        for (auto& component : _components) {
+            if (((!component->IsDestroy()) && (!component->IsFirst())))
+                component->RenderBegin();
+        }
     }
 }
 
 void GameObject::Rendering()
 {
-    for (auto& element : _components)
-    {
-        element->Rendering();
+    if ((!IsDestroy()) && GetActive() && (!IsFirst())) {
+        for (auto& component : _components) {
+            if (((!component->IsDestroy()) && (!component->IsFirst())))
+                component->Rendering();
+        }
     }
 }
+
+void GameObject::DebugRendering()
+{
+    if ((!IsDestroy()) && GetActive() && (!IsFirst())) {
+        for (auto& component : _components) {
+            if (((!component->IsDestroy()) && (!component->IsFirst())))
+                component->DebugRendering();
+        }
+    }
+}
+
+void GameObject::Destroy()
+{
+	if (IsDestroy()) {
+        for (int i = 0; i < _components.size(); ++i) {
+            auto& component = _components[i];
+            component->Destroy();
+            DisconnectComponent(component);
+            --i;
+        }
+        if (!parent.expired()) parent.lock()->RemoveChild(GetCast<GameObject>());
+    }
+    else
+    {
+        for (int i = 0; i < _components.size(); ++i) {
+            auto& component = _components[i];
+			if (component->IsDestroy()) {
+	            component->DestroyComponentOnly();
+	            DisconnectComponent(component);
+	            --i;
+            }
+        }
+    }
+}
+
+void GameObject::SetDestroy()
+{
+    IDelayDestroy::SetDestroy();
+    SetActiveSelf(false);
+}
+
+void GameObject::Enable()
+{
+    for (auto& component : _components) {
+        component->Enable();
+    }
+
+}
+
+void GameObject::Disable()
+{
+    for (auto& component : _components) {
+        component->Disable();
+    }
+}
+
 
 void GameObject::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 }
 
-void GameObject::DebugRendering()
-{
-}
+
+
+
+
 
 
 std::shared_ptr<GameObject> GameObject::GetChild(int index)
@@ -249,7 +296,7 @@ bool GameObject::SetParent(const std::shared_ptr<GameObject>& nextParentObj)
 	if (nextParentObj != nullptr && nextParentObj->IsInParent(thisObj)) // step 1.
         return false;
 
-    if (prevParentObj != nullptr) // step 2. ºÎ¸ð¿¬°á ²÷°í ÃÖ»ó´ÜÀ¸·Î ¿Ã¸®±â
+    if (prevParentObj != nullptr) // step 2. ï¿½Î¸ð¿¬°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã¸ï¿½ï¿½ï¿½
     {
         prevParentObj->RemoveChild(thisObj);
         this->parent.reset(); // null
@@ -257,19 +304,15 @@ bool GameObject::SetParent(const std::shared_ptr<GameObject>& nextParentObj)
         this->ActiveUpdateChain(true);
     }
 
-    if (nextParentObj != nullptr) // 
+    if (nextParentObj != nullptr && !nextParentObj->IsDestroy()) // ï¿½Ä±ï¿½ï¿½ï¿½ ï¿½à¼®ï¿½ï¿½ ï¿½Î¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ò°ï¿½ï¿½ï¿½
     {
         this->parent = nextParentObj;
         this->rootParent = nextParentObj->rootParent;
-        this->ActiveUpdateChain(nextParentObj->_active_total);
-        if (nextParentObj->IsDestroy())
-            this->Destroy();
+        this->ActiveUpdateChain(nextParentObj->GetActive());
         nextParentObj->AddChild(thisObj);
     }
-    if (prevRootParent.lock() != this->rootParent.lock())
-    {
+    if (prevRootParent.lock() != this->rootParent.lock()) //root ï¿½ï¿½ï¿½ï¿½
         SetRootParent(this->rootParent.lock());
-    }
 }
 
 void GameObject::SetRootParent(const std::shared_ptr<GameObject>& rootParent)
@@ -285,7 +328,7 @@ void GameObject::SetRootParent(const std::shared_ptr<GameObject>& rootParent)
 
 bool GameObject::GetActive()
 {
-    return _active_total && _active_self; //ÀÌ¹Ì total¿¡ ¹Ý¿µµÇÀÖ±ä ÇÏÁö¸¸ È¤½Ã ¸ð¸£´Ï ÇÑ¹ø´õ
+    return _active_total = _active_total && _active_self; //ï¿½Ì¹ï¿½ totalï¿½ï¿½ ï¿½Ý¿ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¤ï¿½ï¿½ ï¿½ð¸£´ï¿½ ï¿½Ñ¹ï¿½ï¿½ï¿½
 }
 
 bool GameObject::GetActiveSelf()
@@ -296,7 +339,7 @@ bool GameObject::GetActiveSelf()
 bool GameObject::SetActiveSelf(bool _active)
 {
     _active_self = _active;
-    ActiveUpdateChain((parent.lock() ? parent.lock()->_active_total : true));
+    ActiveUpdateChain(parent.lock() ? parent.lock()->GetActive() : true);
     return _active;
 }
 
@@ -319,11 +362,17 @@ void GameObject::SyncActivePrev()
 void GameObject::ActiveUpdateChain(bool active_total)
 {
     this->_active_total = active_total && _active_self;
-
+    if (CheckActiveUpdated()) {
+        for (auto& element : _components) {
+            if (GetActive()) element->Enable();
+            else element->Disable();
+        }
+        SyncActivePrev();
+    }
     for (int i = 0; i < _childs.size(); i++)
     {
         auto current = _childs[i].lock();
-        if (current != nullptr && (!current->IsDestroy()))
+        if (current != nullptr)
             current->ActiveUpdateChain(this->_active_total);
     }
 }

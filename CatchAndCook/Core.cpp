@@ -86,15 +86,17 @@ void Core::Init(HWND hwnd)
     _texture = make_shared<Texture>();
     _texture->Init(L"Start.jpg");
 
-    _gameObject = make_shared<GameObject>();
+    auto _gameObject = make_shared<GameObject>();
     _gameObject->Init();
 
-    _gameObject2 = make_shared<GameObject>();
+    auto _gameObject2 = make_shared<GameObject>();
     _gameObject2->Init();
 
     _gameObject->SetParent(_gameObject2);
     _gameObject->transform->SetWorldPosition({ 0.5,0,0 });
     _gameObject2->transform->SetWorldScale(vec3::One*0.5f);
+
+    _gameObjects = { _gameObject, _gameObject2 };
 }
 
 
@@ -114,38 +116,51 @@ void Core::Render()
 
     _cmdList->SetPipelineState(_shader->_pipelineState.Get());
 
-    _gameObject->Update();
-    _gameObject->Update2();
-
-    _gameObject2->Update();
-    _gameObject2->Update2();
+    for (auto& gameObject : _gameObjects)
+        gameObject->Start();
+    for (auto& gameObject : _gameObjects)
+        gameObject->Update();
+    for (auto& gameObject : _gameObjects)
+        gameObject->Update2();
 
     if (Input::main->GetMouseDown(KeyCode::RightMouse))
     {
-        auto worldPos = _gameObject->transform->GetWorldPosition();
-        auto worldRotation = _gameObject->transform->GetWorldRotation();
-        auto worldS = _gameObject->transform->GetWorldScale();
-        _gameObject->SetParent(nullptr);
-
-        _gameObject->transform->SetWorldPosition(worldPos);
-        _gameObject->transform->SetWorldRotation(worldRotation);
-        _gameObject->transform->SetWorldScale(worldS);
+        auto worldPos = _gameObjects[0]->transform->GetWorldPosition();
+        auto worldRotation = _gameObjects[0]->transform->GetWorldRotation();
+        auto worldS = _gameObjects[0]->transform->GetWorldScale();
+        _gameObjects[0]->SetParent(nullptr);
+        _gameObjects[0]->transform->SetWorldPosition(worldPos);
+        _gameObjects[0]->transform->SetWorldRotation(worldRotation);
+        _gameObjects[0]->transform->SetWorldScale(worldS);
+        _gameObjects[1]->SetDestroy();
     }
 
-    //_gameObject2->RenderBegin();
+    for (auto& gameObject : _gameObjects)
+        gameObject->RenderBegin();
+    _gameObjects[0]->transform->RenderBegin();
 
-    _gameObject->RenderBegin();
+    {
+	    //renderPass
+        for (auto& gameObject : _gameObjects)
+            gameObject->Rendering();
 
-    auto tableContainer = _table->Alloc(8);
-    _table->CopyHandle(&tableContainer.cpuHandle, &_texture->GetSRVCpuHandle(), 1);
+        auto tableContainer = _table->Alloc(8);
+        _table->CopyHandle(&tableContainer.cpuHandle, &_texture->GetSRVCpuHandle(), 1);
 
-    _cmdList->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, tableContainer.gpuHandle);
-    _cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    _cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
-    _cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
-    _cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
+        _cmdList->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, tableContainer.gpuHandle);
+        _cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        _cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
+        _cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
+        _cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
+    }
+    for (auto& gameObject : _gameObjects)
+        gameObject->DebugRendering();
 
-  
+    for (auto& gameObject : _gameObjects)
+        gameObject->Destroy();
+    std::erase_if(_gameObjects, [&](const std::shared_ptr<GameObject>& gameObject) {
+        return gameObject->IsDestroy();
+    });
 
 };
 
@@ -223,13 +238,13 @@ void Core::CreateDevice(bool EnableDebugLayer, bool EnableGBV)
     ComPtr<IDXGIAdapter1> bestAdapter = nullptr;
     DXGI_ADAPTER_DESC1 bestDesc;
     ZeroMemory(&bestDesc, sizeof(bestDesc));
-    size_t bestMemory = 0; // VRAM ¿ë·®
+    size_t bestMemory = 0; // VRAM ï¿½ë·®
 
     DWORD dwCreateFlags = 0;
     DWORD dwCreateFactoryFlags = 0;
 
 
-    // µð¹ö±× ·¹ÀÌ¾î È°¼ºÈ­
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ È°ï¿½ï¿½È­
     if (EnableDebugLayer)
     {
         if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&pDebugController))))
@@ -252,10 +267,10 @@ void Core::CreateDevice(bool EnableDebugLayer, bool EnableGBV)
         }
     }
 
-    // DXGI ÆÑÅä¸® »ý¼º
+    // DXGI ï¿½ï¿½ï¿½ä¸® ï¿½ï¿½ï¿½ï¿½
     CreateDXGIFactory2(dwCreateFactoryFlags, IID_PPV_ARGS(&_factory));
 
-    // Áö¿øµÇ´Â ±â´É ·¹º§ ¼³Á¤
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     D3D_FEATURE_LEVEL featureLevels[] =
     {
         D3D_FEATURE_LEVEL_12_0,
@@ -265,23 +280,23 @@ void Core::CreateDevice(bool EnableDebugLayer, bool EnableGBV)
 
     DWORD FeatureLevelNum = _countof(featureLevels);
 
-    // ¾î´ðÅÍ ¿­°Å
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     for (UINT adapterIndex = 0; ; ++adapterIndex)
     {
         ComPtr<IDXGIAdapter1> pAdapter;
         HRESULT hr = _factory->EnumAdapters1(adapterIndex, &pAdapter);
 
-        // ¾î´ðÅÍ°¡ ¾øÀ¸¸é Á¾·á
+        // ï¿½ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (hr == DXGI_ERROR_NOT_FOUND)
             break;
 
         DXGI_ADAPTER_DESC1 AdapterDesc;
         pAdapter->GetDesc1(&AdapterDesc);
 
-        // VRAMÀ» ¸Þ°¡¹ÙÀÌÆ® ´ÜÀ§·Î º¯È¯
+        // VRAMï¿½ï¿½ ï¿½Þ°ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
         size_t memory = AdapterDesc.DedicatedVideoMemory / (1024 * 1024);
 
-        // °¡Àå ³ôÀº VRAMÀ» °¡Áø ¾î´ðÅÍ ¼±ÅÃ
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ VRAMï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (memory > bestMemory)
         {
             bestMemory = memory;
@@ -292,7 +307,7 @@ void Core::CreateDevice(bool EnableDebugLayer, bool EnableGBV)
 
 
 
-    // ¼±ÅÃµÈ ¾î´ðÅÍ·Î D3D12 ÀåÄ¡ »ý¼º
+    // ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½Í·ï¿½ D3D12 ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½
     for (DWORD featerLevelIndex = 0; featerLevelIndex < FeatureLevelNum; featerLevelIndex++)
     {
         if (bestAdapter)

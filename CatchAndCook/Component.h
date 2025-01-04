@@ -16,30 +16,29 @@ protected:
 	void SetOrder(int order) { _order = order; };
 	int GetOrder() const { return _order; };
 public:
-	bool IsFirst() const { return _first; };
-	void FirstOff() { _first = false; };
-	// ¶óÀÌÇÁ »çÀÌÅ¬¿¡¼­ µ¹¸± ÇÔ¼ö Á¾·ù
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 	void SetOwner(const std::shared_ptr<GameObject>& owner) { this->_owner = owner; };
 	std::shared_ptr<GameObject> GetOwner() { assert(!_owner.expired()); return _owner.lock(); };
 
-	virtual void Init(); // »ý¼ºµÉ ½Ã // Create ¸Þ¸ð¸® ÀâÇûÀ»¶§.
-	virtual void Start(); // Ã¹ ÇÁ·¹ÀÓ // Ã¹ ÇÁ·¹ÀÓ ½Ã.
+	virtual void Init(); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ // Create ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+	virtual void Start(); // Ã¹ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ // Ã¹ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½.
 	virtual void Update(); //
 	virtual void Update2(); // 
 	virtual void Enable(); // 
 	virtual void Disable(); //
-	virtual void Destroy(); //
+	virtual void Destroy(); 
 
 	virtual void RenderBegin();
 	virtual void Rendering(); 
 
-	// ÀÌº¥Æ® ÇÔ¼ö
+	// ï¿½Ìºï¿½Æ® ï¿½Ô¼ï¿½
 	virtual void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
-	virtual void DebugRendering(); 
+	virtual void DebugRendering(); // CBuffer <- ï¿½ï¿½ï¿½ï¿½
+	void SetDestroy() override;
+	virtual void DestroyComponentOnly();
 
 private:
-	bool _first = true;
 	int _order = 0;
 	std::weak_ptr<GameObject> _owner;
 };
