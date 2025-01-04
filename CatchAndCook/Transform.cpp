@@ -91,7 +91,6 @@ void Transform::PushData()
 
 }
 
-
 vec3 Transform::forward(const vec3& dir)
 {
     if (dir != vec3::Zero)
@@ -100,9 +99,12 @@ vec3 Transform::forward(const vec3& dir)
         _forward.Normalize(_forward);
         _right = _up.Cross(_forward);
         _up = _forward.Cross(_right);
+
         SetWorldRotation(Quaternion::CreateFromRotationMatrix(Matrix(_right, _up, _forward)));
         return _forward;
     }
+
+    //??
     Quaternion quat = GetWorldRotation();
     _forward = vec3::Transform(vec3(0, 0, 1), quat);
     return _forward;
@@ -120,6 +122,7 @@ vec3 Transform::up(const vec3& dir)
 
         return _up;
     }
+
     //쿼터니언 기반으로 다시 원래값 받아와야함.
     Quaternion quat = GetWorldRotation();
     _up = vec3::Transform(vec3(0, 1, 0), quat);
@@ -147,7 +150,7 @@ vec3 Transform::GetLocalEuler()
     return _localRotation.ToEuler();
 }
 
-const vec3& Transform::SetLocalEuler(const vec3& euler)
+const vec3& Transform::SetLocalRotation(const vec3& euler)
 {
     _localRotation = Quaternion::CreateFromYawPitchRoll(euler);
     _needLocalUpdated = true;
@@ -190,26 +193,31 @@ const Quaternion& Transform::SetLocalRotation(const Quaternion& quaternion)
 vec3 Transform::GetWorldPosition()
 {
     auto parent = GetOwner()->parent.lock();
+
     if (parent)
     {
         Matrix mat;
         parent->transform->GetLocalToWorldMatrix_BottomUp(mat);
         return vec3::Transform(_localPosition, mat);
     }
+
     return _localPosition;
 }
 
 const vec3& Transform::SetWorldPosition(const vec3& worldPos)
 {
     auto parent = GetOwner()->parent.lock();
+
     if (parent)
     {
         Matrix mat;
         parent->transform->GetLocalToWorldMatrix_BottomUp(mat);
         _localPosition = vec3::Transform(worldPos, mat.Invert());
     }
+
     else
         _localPosition = worldPos;
+
     _needLocalUpdated = true;
     return worldPos;
 }
@@ -244,11 +252,13 @@ Quaternion Transform::GetWorldRotation()
 {
     Quaternion totalQuat = Quaternion::Identity;
     auto currentObj = GetOwner();
+
     while (currentObj != nullptr)
     {
         totalQuat = totalQuat * currentObj->transform->_localRotation;
         currentObj = currentObj->parent.lock();
     }
+
     totalQuat.Normalize();
     return totalQuat;
 }
@@ -256,6 +266,7 @@ Quaternion Transform::GetWorldRotation()
 const Quaternion& Transform::SetWorldRotation(const Quaternion& quaternion)
 {
     auto parent = GetOwner()->parent.lock();
+
     if (parent)
     {
         Quaternion result;
@@ -263,9 +274,13 @@ const Quaternion& Transform::SetWorldRotation(const Quaternion& quaternion)
         _localRotation = quaternion * result;
         _localRotation.Normalize();
     }
+
     else
         _localRotation = quaternion;
+
     _needLocalUpdated = true;
+
+    //??
     return quaternion;
 }
 
@@ -275,11 +290,12 @@ bool Transform::GetLocalToWorldMatrix(OUT Matrix& localToWorldMatrix)
     {
         auto root = GetOwner()->rootParent.lock();
         root->transform->TopDownLocalToWorldUpdate(Matrix::Identity);
-        std::memcpy(&localToWorldMatrix, &this->localToWorldMatrix, sizeof(Matrix));
-        return isLocalToWorldChanged;
+        std::memcpy(&localToWorldMatrix, &this->_localToWorldMatrix, sizeof(Matrix));
+        return _isLocalToWorldChanged;
     }
-    std::memcpy(&localToWorldMatrix, &this->localToWorldMatrix, sizeof(Matrix));
-    return isLocalToWorldChanged;
+
+    std::memcpy(&localToWorldMatrix, &this->_localToWorldMatrix, sizeof(Matrix));
+    return _isLocalToWorldChanged;
 }
 
 bool Transform::GetLocalToWorldMatrix_BottomUp(Matrix& localToWorld)
@@ -287,25 +303,28 @@ bool Transform::GetLocalToWorldMatrix_BottomUp(Matrix& localToWorld)
     if (CheckLocalToWorldMatrixUpdate())
     {
         BottomUpLocalToWorldUpdate();
-        std::memcpy(&localToWorld, &this->localToWorldMatrix, sizeof(Matrix));
-        return isLocalToWorldChanged;
+        std::memcpy(&localToWorld, &_localToWorldMatrix, sizeof(Matrix));
+        return _isLocalToWorldChanged;
     }
-    std::memcpy(&localToWorld, &this->localToWorldMatrix, sizeof(Matrix));
-    return isLocalToWorldChanged;
+
+    std::memcpy(&localToWorld, &_localToWorldMatrix, sizeof(Matrix));
+    return _isLocalToWorldChanged;
 }
 
 bool Transform::GetLocalSRTMatrix(Matrix& localSRT)
 {
     isLocalSRTChanged = CheckLocalSRTUpdate();
+
     if (isLocalSRTChanged)
     {
         _needLocalUpdated = false;
-        localSRTMatrix = Matrix::CreateScale(_localScale) * Matrix::CreateFromQuaternion(_localRotation) *
+        _localSRTMatrix = Matrix::CreateScale(_localScale) * Matrix::CreateFromQuaternion(_localRotation) *
             Matrix::CreateTranslation(_localPosition);
         isLocalSRTChanged = true;
     }
-    isLocalSRTChanged |= _prevLocalSRTMatrix != localSRTMatrix;
-    std::memcpy(&localSRT, &localSRTMatrix, sizeof(Matrix));
+
+    isLocalSRTChanged |= _prevLocalSRTMatrix != _localSRTMatrix;
+    std::memcpy(&localSRT, &_localSRTMatrix, sizeof(Matrix));
     return isLocalSRTChanged;
 }
 
@@ -315,7 +334,7 @@ bool Transform::SetLocalSRTMatrix(Matrix& localSRT)
     Quaternion rotation;
     vec3 scale;
     // 행렬을 위치, 회전, 스케일로 분해
-    std::memcpy(&localSRTMatrix, &localSRT, sizeof(Matrix));
+    std::memcpy(&_localSRTMatrix, &localSRT, sizeof(Matrix));
     if (localSRT.Decompose(scale, rotation, position))
     {
         _localScale = scale;
@@ -335,7 +354,7 @@ bool Transform::CheckLocalSRTUpdate()
 
 bool Transform::CheckLocalMatrixUpdate()
 {
-    return CheckLocalSRTUpdate() || (_prevLocalSRTMatrix != localSRTMatrix);
+    return CheckLocalSRTUpdate() || (_prevLocalSRTMatrix != _localSRTMatrix);
 }
 
 bool Transform::CheckLocalToWorldMatrixUpdate()
@@ -356,16 +375,16 @@ void Transform::TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool
     bool isLocalUpdate = GetLocalSRTMatrix(_prevLocalSRTMatrix);
     bool isFinalUpdate = isLocalUpdate || isParentUpdate || _needLocalToWorldUpdated;
 
-    if (isLocalToWorldChanged = isFinalUpdate)
+    if (_isLocalToWorldChanged = isFinalUpdate)
     {
-        localToWorldMatrix = localSRTMatrix * parentLocalToWorld;
+        _localToWorldMatrix = _localSRTMatrix * parentLocalToWorld;
         _needLocalToWorldUpdated = false;
     }
 
     auto& childs = GetOwner()->_childs;
     for (int i = 0; i < childs.size(); i++)
         if (auto ptr = childs[i].lock(); ptr != nullptr)
-            ptr->transform->TopDownLocalToWorldUpdate(localToWorldMatrix, isFinalUpdate);
+            ptr->transform->TopDownLocalToWorldUpdate(_localToWorldMatrix, isFinalUpdate);
 }
 
 bool Transform::BottomUpLocalToWorldUpdate()
@@ -376,27 +395,29 @@ bool Transform::BottomUpLocalToWorldUpdate()
         bool localUpdate = GetLocalSRTMatrix(_prevLocalSRTMatrix);
         if (parentUpdate || localUpdate || _needLocalToWorldUpdated)
         {
-            this->localToWorldMatrix = this->localSRTMatrix * parent->transform->localToWorldMatrix;
+            _localToWorldMatrix = _localSRTMatrix * parent->transform->_localToWorldMatrix;
             _needLocalToWorldUpdated = false;
+
             for (auto& child : GetOwner()->_childs)
                 if (child.lock())
                     child.lock()->transform->_needLocalToWorldUpdated = true;
 
-            return isLocalToWorldChanged = true;
+            return _isLocalToWorldChanged = true;
         }
     }
+
     else if (GetLocalSRTMatrix(_prevLocalSRTMatrix) || _needLocalToWorldUpdated)
     {
-        this->localToWorldMatrix = this->localSRTMatrix;
+        _localToWorldMatrix = _localSRTMatrix;
         _needLocalToWorldUpdated = false;
         if (GetOwner())
             for (auto& child : GetOwner()->_childs)
                 if (child.lock())
                     child.lock()->transform->_needLocalToWorldUpdated = true;
 
-        return isLocalToWorldChanged = true;
+        return _isLocalToWorldChanged = true;
     }
-    return isLocalToWorldChanged = false;
+    return _isLocalToWorldChanged = false;
 }
 
 void Transform::LookUp(const vec3& dir, const vec3& up)

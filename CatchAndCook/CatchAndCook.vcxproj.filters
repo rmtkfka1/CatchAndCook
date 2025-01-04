@@ -99,6 +99,7 @@
     <ClCompile Include="Transform.cpp">
       <Filter>Component</Filter>
     </ClCompile>
+    <ClCompile Include="TestMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">

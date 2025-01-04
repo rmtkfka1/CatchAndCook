@@ -32,11 +32,11 @@ public:
 	virtual void Destroy(); //
 
 	virtual void RenderBegin();
-	virtual void Rendering(); // CBuffer <- 갱신
+	virtual void Rendering(); 
 
 	// 이벤트 함수
 	virtual void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
-	virtual void DebugRendering(); // CBuffer <- 갱신
+	virtual void DebugRendering(); 
 
 private:
 	bool _first = true;

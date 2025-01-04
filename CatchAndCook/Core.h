@@ -75,7 +75,6 @@ private:
 	HWND _hwnd{};
 
 
-	//temp
 	shared_ptr<DescritporTable> _table;
 	shared_ptr<CBufferPool> _buffer;
 	shared_ptr<Shader> _shader;

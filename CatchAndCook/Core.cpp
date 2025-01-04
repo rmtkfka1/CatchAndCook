@@ -119,16 +119,19 @@ void Core::Render()
 
     _gameObject2->Update();
     _gameObject2->Update2();
+
     if (Input::main->GetMouseDown(KeyCode::RightMouse))
     {
         auto worldPos = _gameObject->transform->GetWorldPosition();
         auto worldRotation = _gameObject->transform->GetWorldRotation();
         auto worldS = _gameObject->transform->GetWorldScale();
         _gameObject->SetParent(nullptr);
+
         _gameObject->transform->SetWorldPosition(worldPos);
         _gameObject->transform->SetWorldRotation(worldRotation);
         _gameObject->transform->SetWorldScale(worldS);
     }
+
     //_gameObject2->RenderBegin();
 
     _gameObject->RenderBegin();

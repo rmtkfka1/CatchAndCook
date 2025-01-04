@@ -29,7 +29,10 @@ void GameObject::Init()
 
 void GameObject::Start()
 {
-    
+    for (auto& element : _components)
+    {
+        element->Start();
+    }
 }
 
 void GameObject::Update()
@@ -42,18 +45,34 @@ void GameObject::Update()
 
 void GameObject::Update2()
 {
+    for (auto& element : _components)
+    {
+        element->Update2();
+    }
 }
 
 void GameObject::Enable()
 {
+    for (auto& element : _components)
+    {
+        element->Enable();
+    }
 }
 
 void GameObject::Disable()
 {
+    for (auto& element : _components)
+    {
+        element->Disable();
+    }
 }
 
 void GameObject::Destroy()
 {
+    for (auto& element : _components)
+    {
+        element->Destroy();
+    }
 }
 
 void GameObject::RenderBegin()
@@ -79,17 +98,6 @@ void GameObject::Collision(const std::shared_ptr<Collider>& collider, const std:
 void GameObject::DebugRendering()
 {
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 std::shared_ptr<GameObject> GameObject::GetChild(int index)
