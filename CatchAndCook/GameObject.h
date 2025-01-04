@@ -185,8 +185,8 @@ public:
 
 	std::vector<std::shared_ptr<Component>>& GetComponentAll() { return _components; }
 	void SetDestroy() override;
+	bool IsExecuteAble() override { return  IDelayDestroy::IsExecuteAble() && GetActive(); };
 
-public:
 	ObjectTag tag = ObjectTag::defualt;
 	std::shared_ptr<Transform> transform;
 

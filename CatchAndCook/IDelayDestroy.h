@@ -14,6 +14,7 @@ public:
     virtual ~IDelayDestroy();
     bool IsDestroy() const;
     virtual void SetDestroy();
+    virtual bool IsExecuteAble();
 
 	friend class GameObject;
     friend class Component;

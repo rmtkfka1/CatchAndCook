@@ -11,6 +11,11 @@ void IDelayDestroy::SetDestroy()
     _destroy = true;
 }
 
+bool IDelayDestroy::IsExecuteAble()
+{
+    return (!IsDestroy()) && (!IsFirst());
+}
+
 IDelayDestroy::~IDelayDestroy() = default;
 
 
