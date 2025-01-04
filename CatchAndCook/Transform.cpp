@@ -383,8 +383,11 @@ void Transform::TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool
 
     auto& childs = GetOwner()->_childs;
     for (int i = 0; i < childs.size(); i++)
-        if (auto ptr = childs[i].lock(); ptr != nullptr)
+    {
+        auto ptr = childs[i].lock();
+        if (ptr != nullptr)
             ptr->transform->TopDownLocalToWorldUpdate(_localToWorldMatrix, isFinalUpdate);
+    }
 }
 
 bool Transform::BottomUpLocalToWorldUpdate()
@@ -399,8 +402,12 @@ bool Transform::BottomUpLocalToWorldUpdate()
             _needLocalToWorldUpdated = false;
 
             for (auto& child : GetOwner()->_childs)
-                if (child.lock())
-                    child.lock()->transform->_needLocalToWorldUpdated = true;
+            {
+                auto ptr = child.lock();
+
+                if (ptr)
+                    ptr->transform->_needLocalToWorldUpdated = true;
+            }
 
             return _isLocalToWorldChanged = true;
         }
