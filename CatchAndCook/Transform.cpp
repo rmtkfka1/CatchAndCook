@@ -35,6 +35,7 @@ void Transform::Start()
 void Transform::Update()
 {
 	Component::Update();
+    SetWorldRotation(GetWorldRotation() * Quaternion::CreateFromAxisAngle(Vector3::Forward, 0.03f));
 }
 
 void Transform::Update2()
@@ -81,9 +82,6 @@ void Transform::DebugRendering()
 
 void Transform::PushData()
 {
-
-    SetWorldRotation(GetWorldRotation() * Quaternion::CreateFromAxisAngle(Vector3::Forward, 0.03f));
-
     Matrix matrix;
     GetLocalToWorldMatrix(matrix);
     auto conatiner = Core::main->GetTransformBufferPool()->Alloc(1);
@@ -422,7 +420,9 @@ vec3 Transform::LocalToWorld_Direction(const vec3& value)
 
 Quaternion Transform::LocalToWorld_Quaternion(const Quaternion& value)
 {
-    return value * GetWorldRotation();
+    Quaternion result = value * GetWorldRotation();
+    result.Normalize();
+    return result;
 }
 
 vec3 Transform::WorldToLocal_Position(const vec3& value)

@@ -21,19 +21,23 @@ GameObject::~GameObject()
 void GameObject::Init()
 {
     std::shared_ptr<GameObject> gameObject = GetCast<GameObject>();
+    parent.reset();
     rootParent = gameObject;
     gameObject->transform = gameObject->AddComponent<Transform>();
     SetActiveSelf(true);
-
 }
 
 void GameObject::Start()
 {
-
+    
 }
 
 void GameObject::Update()
 {
+    for (auto& element : _components)
+    {
+        element->Update();
+    }
 }
 
 void GameObject::Update2()
@@ -54,17 +58,17 @@ void GameObject::Destroy()
 
 void GameObject::RenderBegin()
 {
-    for (auto& ele : _components)
+    for (auto& element : _components)
     {
-        ele->RenderBegin();
+        element->RenderBegin();
     }
 }
 
 void GameObject::Rendering()
 {
-    for (auto& ele : _components)
+    for (auto& element : _components)
     {
-        ele->Rendering();
+        element->Rendering();
     }
 }
 

@@ -80,6 +80,7 @@ private:
 	shared_ptr<CBufferPool> _buffer;
 	shared_ptr<Shader> _shader;
 	shared_ptr<GameObject> _gameObject;
+	shared_ptr<GameObject> _gameObject2;
 	shared_ptr<Mesh> _mesh;
 	shared_ptr<Texture> _texture;
 

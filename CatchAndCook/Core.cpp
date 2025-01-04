@@ -89,6 +89,12 @@ void Core::Init(HWND hwnd)
     _gameObject = make_shared<GameObject>();
     _gameObject->Init();
 
+    _gameObject2 = make_shared<GameObject>();
+    _gameObject2->Init();
+
+    _gameObject->SetParent(_gameObject2);
+    _gameObject->transform->SetWorldPosition({ 0.5,0,0 });
+    _gameObject2->transform->SetWorldScale(vec3::One*0.5f);
 }
 
 
@@ -110,6 +116,21 @@ void Core::Render()
 
     _gameObject->Update();
     _gameObject->Update2();
+
+    _gameObject2->Update();
+    _gameObject2->Update2();
+    if (Input::main->GetMouseDown(KeyCode::RightMouse))
+    {
+        auto worldPos = _gameObject->transform->GetWorldPosition();
+        auto worldRotation = _gameObject->transform->GetWorldRotation();
+        auto worldS = _gameObject->transform->GetWorldScale();
+        _gameObject->SetParent(nullptr);
+        _gameObject->transform->SetWorldPosition(worldPos);
+        _gameObject->transform->SetWorldRotation(worldRotation);
+        _gameObject->transform->SetWorldScale(worldS);
+    }
+    //_gameObject2->RenderBegin();
+
     _gameObject->RenderBegin();
 
     auto tableContainer = _table->Alloc(8);
