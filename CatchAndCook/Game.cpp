@@ -12,7 +12,7 @@ void Game::Init(HWND hwnd)
 	Core::main = make_unique<Core>();
 	Core::main->Init(hwnd);
 	IGuid::StaticInit();
-	IType::StaticInit();
+
 }
 
 void Game::Run()
@@ -32,5 +32,5 @@ void Game::Release()
 	Time::main.reset(nullptr);
 	Core::main.reset(nullptr);
 	IGuid::StaticRelease();
-	IType::StaticRelease();
+
 }

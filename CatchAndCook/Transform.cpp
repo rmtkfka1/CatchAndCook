@@ -37,7 +37,6 @@ void Transform::Start()
 void Transform::Update()
 {
 	Component::Update();
-    SetLocalRotation(GetLocalRotation() * Quaternion::CreateFromAxisAngle(Vector3::Forward, 0.03f));
 }
 
 void Transform::Update2()
@@ -96,55 +95,58 @@ void Transform::PushData()
 
 }
 
-vec3 Transform::forward(const vec3& dir)
+vec3 Transform::SetForward(const vec3& dir)
 {
-    if (dir != vec3::Zero)
-    {
-        _forward = dir;
-        _forward.Normalize(_forward);
-        _right = _up.Cross(_forward);
-        _up = _forward.Cross(_right);
 
-        SetWorldRotation(Quaternion::CreateFromRotationMatrix(Matrix(_right, _up, _forward)));
-        return _forward;
-    }
+    _forward = dir;
+    _forward.Normalize(_forward);
+    _right = _up.Cross(_forward);
+    _up = _forward.Cross(_right);
 
-    //??
+    SetWorldRotation(Quaternion::CreateFromRotationMatrix(Matrix(_right, _up, _forward)));
+    return _forward;
+
+};
+
+vec3 Transform::SetUp(const vec3& dir)
+{
+
+    _up = dir;
+    _up.Normalize();
+    _right = _up.Cross(_forward);
+    _forward = _right.Cross(_up);
+    SetWorldRotation(Quaternion::CreateFromRotationMatrix(Matrix(_right, _up, _forward)));
+
+    return _up;
+
+};
+
+vec3 Transform::SetRight(const vec3& dir)
+{
+    _right = dir;
+    _right.Normalize(_right);
+    _forward = _right.Cross(_up);
+    _up = _forward.Cross(_right);
+    SetWorldRotation(Quaternion::CreateFromRotationMatrix(Matrix(_right, _up, _forward)));
+    return _right;
+};
+
+vec3 Transform::GetForward()
+{
     Quaternion quat = GetWorldRotation();
     _forward = vec3::Transform(vec3(0, 0, 1), quat);
     return _forward;
 }
 
-vec3 Transform::up(const vec3& dir)
+vec3 Transform::GetUp()
 {
-    if (dir != vec3::Zero)
-    {
-        _up = dir;
-        _up.Normalize();
-        _right = _up.Cross(_forward);
-        _forward = _right.Cross(_up);
-        SetWorldRotation(Quaternion::CreateFromRotationMatrix(Matrix(_right, _up, _forward)));
-
-        return _up;
-    }
-
-    //쿼터니언 기반으로 다시 원래값 받아와야함.
     Quaternion quat = GetWorldRotation();
     _up = vec3::Transform(vec3(0, 1, 0), quat);
     return _up;
 }
 
-vec3 Transform::right(const vec3& dir)
+vec3 Transform::GetRight()
 {
-    if (dir != vec3::Zero)
-    {
-        _right = dir;
-        _right.Normalize(_right);
-        _forward = _right.Cross(_up);
-        _up = _forward.Cross(_right);
-        SetWorldRotation(Quaternion::CreateFromRotationMatrix(Matrix(_right, _up, _forward)));
-        return _right;
-    }
     Quaternion quat = GetWorldRotation();
     _right = vec3::Transform(vec3(1, 0, 0), quat);
     return _right;
@@ -285,7 +287,6 @@ const Quaternion& Transform::SetWorldRotation(const Quaternion& quaternion)
 
     _needLocalUpdated = true;
 
-    //??
     return quaternion;
 }
 

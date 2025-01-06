@@ -2,7 +2,6 @@
 #include "IType.h"
 
 
-std::unordered_map<std::string, std::function<void* ()>> IType::_typeTable{};
 
 IType::IType()
 {
@@ -10,16 +9,6 @@ IType::IType()
 
 IType::~IType()
 {
-}
-
-void IType::StaticInit()
-{
-    _typeTable.reserve(4096);
-}
-
-void IType::StaticRelease()
-{
-    _typeTable.clear();
 }
 
 std::string& IType::GetTypeName()

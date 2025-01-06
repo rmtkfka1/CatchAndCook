@@ -1,7 +1,6 @@
 #pragma once
 #include "IType.h"
 
-
 class IGuid : public std::enable_shared_from_this<IGuid>, public IType
 {
 public:

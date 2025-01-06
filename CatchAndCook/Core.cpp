@@ -89,14 +89,12 @@ void Core::Init(HWND hwnd)
     auto _gameObject = make_shared<GameObject>();
     _gameObject->Init();
 
-    auto _gameObject2 = make_shared<GameObject>();
-    _gameObject2->Init();
+    //_gameObject2 = make_shared<GameObject>();
+    //_gameObject2->Init();
 
     _gameObject->SetParent(_gameObject2);
     _gameObject->transform->SetWorldPosition({ 0.5,0,0 });
-    _gameObject2->transform->SetWorldScale(vec3::One*0.5f);
-
-    _gameObjects = { _gameObject, _gameObject2 };
+    //_gameObject2->transform->SetWorldScale(vec3::One*0.5f);
 }
 
 
@@ -123,21 +121,21 @@ void Core::Render()
     for (auto& gameObject : _gameObjects)
         gameObject->Update2();
 
-    if (Input::main->GetMouseDown(KeyCode::RightMouse))
-    {
-        auto worldPos = _gameObjects[0]->transform->GetWorldPosition();
-        auto worldRotation = _gameObjects[0]->transform->GetWorldRotation();
-        auto worldS = _gameObjects[0]->transform->GetWorldScale();
-        _gameObjects[0]->SetParent(nullptr);
-        _gameObjects[0]->transform->SetWorldPosition(worldPos);
-        _gameObjects[0]->transform->SetWorldRotation(worldRotation);
-        _gameObjects[0]->transform->SetWorldScale(worldS);
-        _gameObjects[1]->SetDestroy();
+ 
+    //if (Input::main->GetMouseDown(KeyCode::RightMouse))
+    //{
+    //    auto worldPos = _gameObject->transform->GetWorldPosition();
+    //    auto worldRotation = _gameObject->transform->GetWorldRotation();
+    //    auto worldS = _gameObject->transform->GetWorldScale();
+    //    _gameObject->SetParent(nullptr);
+        _gameObject->transform->SetWorldRotation(worldRotation);
+    //    _gameObject->transform->SetWorldPosition(worldPos);
+    //    _gameObject->transform->SetWorldRotation(worldRotation);
+    //    _gameObject->transform->SetWorldScale(worldS);
+    //}
     }
 
-    for (auto& gameObject : _gameObjects)
-        gameObject->RenderBegin();
-    _gameObjects[0]->transform->RenderBegin();
+    //_gameObject2->RenderBegin();
 
     {
 	    //renderPass

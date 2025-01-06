@@ -23,9 +23,13 @@ public:
 
 public:
 
-    vec3 forward(const vec3& dir = vec3::Zero);
-    vec3 up(const vec3& dir = vec3::Zero);
-    vec3 right(const vec3& dir = vec3::Zero);
+    vec3 SetForward(const vec3& dir );
+    vec3 SetUp(const vec3& dir );
+    vec3 SetRight(const vec3& dir );
+
+    vec3 GetForward();
+    vec3 GetUp();
+    vec3 GetRight();
 
     vec3 GetLocalEuler();
     const vec3& SetLocalRotation(const vec3& euler);

@@ -7,7 +7,7 @@ std::unordered_map<std::wstring, std::weak_ptr<IGuid>> IGuid::_GuidTable{};
 
 void IGuid::StaticInit()
 {
-    _GuidTable.reserve(100000);
+    _GuidTable.reserve(10000);
 }
 
 void IGuid::StaticRelease()
