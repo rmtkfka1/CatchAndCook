@@ -11,6 +11,7 @@
 #include "BufferManager.h"
 #include "Material.h"
 #include "MeshRenderer.h"
+#include "SceneManager.h"
 unique_ptr<Core> Core::main=nullptr;
 
 Core::Core()
@@ -81,18 +82,7 @@ void Core::Init(HWND hwnd)
 
     _texture = make_shared<Texture>();
     _texture->Init(L"Start.jpg");
-
-    _gameObjects = make_shared<GameObject>();
-    _gameObjects->Init();
-
-    _meshRenderer = make_shared<MeshRenderer>();
-    _material = make_shared<Material>();
-
-    _material->SetShader(_shader);
-    _material->SetTexture("g_tex_0", _texture);
-    _meshRenderer->AddMaterials({ _material });
-    _meshRenderer->SetMesh(_mesh);
-    _gameObjects->AddComponent(_meshRenderer);
+    
 
 }
 
@@ -110,11 +100,7 @@ void Core::RenderBegin()
 
 void Core::Render()
 {
-    _gameObjects->Start();
-    _gameObjects->Update();
-    _gameObjects->Update2();
-    _gameObjects->RenderBegin();
-    _gameObjects->Rendering();
+
 };
 
 void Core::RenderEnd()

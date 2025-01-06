@@ -76,6 +76,7 @@ private:
 
 	HWND _hwnd{};
 
+public:
 	//temp
 	shared_ptr<Shader> _shader;
 	shared_ptr<GameObject> _gameObjects;
