@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Component.h"
 
+#include "GameObject.h"
+
 Component::Component()
 {
 }
@@ -12,6 +14,11 @@ Component::~Component()
 bool Component::operator<(const Component& other) const
 {
 	return this->_order < other._order;
+}
+
+bool Component::IsExecuteAble()
+{
+	return GetOwner()->IsExecuteAble() && IDelayDestroy::IsExecuteAble();
 }
 
 void Component::Init()

@@ -66,16 +66,13 @@ public:
 	{
 		if (component == nullptr)
 			return false;
-
 		std::shared_ptr<Component> parentComponent = std::static_pointer_cast<Component>(component);
 		auto iter = std::find(_components.begin(), _components.end(), parentComponent);
-
 		if (iter != _components.end())
 		{
 			_components.erase(iter);
 			return true;
 		}
-
 		return false;
 	};
 	bool DisconnectAtComponent(int index)
