@@ -133,7 +133,6 @@ void Core::Render()
         _cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
         _cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
     }
-
     for (auto& gameObject : _gameObjects)
         gameObject->DebugRendering();
 

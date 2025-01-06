@@ -1,6 +1,7 @@
 #pragma once
 
-
+// SCENE -> 트리구조 / MATERIAL CAMERA MESHRENDER SCRIPTS LIGHT  / RENDERPASS / MODEL / RESOURCEMANAGER / INSTANCING
+// 1.12 전까지 엔진구조완성.
 
 
 class IDelayDestroy

@@ -36,8 +36,7 @@ void GameObject::Start()
                 component->FirstOff();
             }
         }
-
-        this->FirstOff();
+        FirstOff();
     }
 }
 
@@ -72,7 +71,6 @@ void GameObject::RenderBegin()
     }
 }
 
-
 void GameObject::Rendering()
 {
     if ((!IsDestroy()) && GetActive() && (!IsFirst())) {
@@ -95,23 +93,18 @@ void GameObject::DebugRendering()
 
 void GameObject::Destroy()
 {
-	if (IsDestroy()) 
-    {
-        for (int i = 0; i < _components.size(); ++i) 
-        {
+	if (IsDestroy()) {
+        for (int i = 0; i < _components.size(); ++i) {
             auto& component = _components[i];
             component->Destroy();
-            DisconnectAtComponent(i);
-            i--;
+            DisconnectComponent(component);
+            --i;
         }
-
         if (!parent.expired()) parent.lock()->RemoveChild(GetCast<GameObject>());
     }
-
     else
     {
-        for (int i = 0; i < _components.size(); ++i) 
-        {
+        for (int i = 0; i < _components.size(); ++i) {
             auto& component = _components[i];
 			if (component->IsDestroy()) {
 	            component->DestroyComponentOnly();
@@ -152,8 +145,12 @@ void GameObject::Disable()
 
 void GameObject::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
-
 }
+
+
+
+
+
 
 
 std::shared_ptr<GameObject> GameObject::GetChild(int index)
@@ -260,12 +257,10 @@ bool GameObject::RemoveChild(const std::shared_ptr<GameObject>& obj)
     auto iter = std::find_if(_childs.begin(), _childs.end(), [&](const std::weak_ptr<GameObject>& element) {
             return element.lock() == obj;
         });
-
     if (iter != _childs.end()) {
         _childs.erase(iter);
         return true;
     }
-
     return false;
 }
 
