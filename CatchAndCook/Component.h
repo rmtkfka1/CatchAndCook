@@ -1,5 +1,4 @@
 #pragma once
-#include "GameObject.h"
 #include "IDelayDestroy.h"
 #include "IGuid.h"
 
@@ -21,8 +20,6 @@ public:
 
 	void SetOwner(const std::shared_ptr<GameObject>& owner) { this->_owner = owner; };
 	std::shared_ptr<GameObject> GetOwner() { assert(!_owner.expired()); return _owner.lock(); };
-
-	bool IsExecuteAble() override { return  GetOwner()->IsExecuteAble() && IDelayDestroy::IsExecuteAble(); }
 
 	virtual void Init(); // ������ �� // Create �޸� ��������.
 	virtual void Start(); // ù ������ // ù ������ ��.
