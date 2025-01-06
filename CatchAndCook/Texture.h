@@ -44,7 +44,7 @@ public:
 protected:
 	DXGI_FORMAT& SetFormat(DXGI_FORMAT format) { return _format = format; };
 private:
-	wstring _path = L"../Resources/Texture/";
+	wstring _path = L"../Resources/Textures/";
 	ScratchImage			 		_image;
 	ComPtr<ID3D12Resource>			_resource;
 	D3D12_CPU_DESCRIPTOR_HANDLE		_rtvHandle{};

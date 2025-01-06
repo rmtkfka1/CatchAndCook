@@ -30,7 +30,11 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
-[Rr]esources/
+[Rr]esources/Textures/
+[Rr]esources/Models/
+[Rr]esources/Sounds/
+[Rr]esources/Fonts/
+[Rr]esources/Datas/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -422,3 +426,4 @@ FodyWeavers.xsd
 
 
 *.zip
+
