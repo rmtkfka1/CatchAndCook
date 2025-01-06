@@ -100,11 +100,15 @@
       <Filter>Component</Filter>
     </ClCompile>
     <ClCompile Include="TestMain.cpp" />
-    <ClCompile Include="Material.cpp">
-      <Filter>Component</Filter>
-    </ClCompile>
     <ClCompile Include="BufferManager.cpp">
       <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshRenderer.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Material.cpp">
+      <Filter>Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -190,12 +194,17 @@
     <ClInclude Include="Transform.h">
       <Filter>Component</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Component</Filter>
-    </ClInclude>
     <ClInclude Include="BufferManager.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="MeshRenderer.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Material.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -211,5 +220,10 @@
     <FxCompile Include="..\Resources\Shader\test.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CatchAndCook.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

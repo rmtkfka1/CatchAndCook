@@ -1,6 +1,8 @@
 #pragma once
+#include "RenderTarget.h"
 
 
+class Component;
 class RenderTarget;
 class RootSignature;
 class Shader;
@@ -78,5 +80,7 @@ private:
 	shared_ptr<Mesh> _mesh;
 	shared_ptr<Texture> _texture;
 
+	//??
+	array<std::vector<std::shared_ptr<>>, RENDER_PASS::Count> passMaterials;
 };
 

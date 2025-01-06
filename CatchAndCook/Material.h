@@ -2,6 +2,7 @@
 
 #include "IGuid.h"
 #include "BufferPool.h"
+enum class PASS;
 class Shader;
 class Texture;
 
@@ -29,6 +30,8 @@ public:
 	virtual ~Material();
 
 	void SetShader(std::shared_ptr<Shader> shader) { _shader = shader; }
+
+	PASS pass;
 
 public:
 	void PushMaterialData();

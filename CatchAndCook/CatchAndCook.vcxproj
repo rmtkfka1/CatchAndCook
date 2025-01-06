@@ -183,6 +183,7 @@
     </ClCompile>
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>
@@ -193,6 +194,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="RootSignature.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -228,8 +230,11 @@
     <ClInclude Include="IType.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderTarget.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="RootSignature.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="simple_mesh_ext.h" />
@@ -256,6 +261,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CatchAndCook.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,6 +1,22 @@
 #pragma once
 class Texture;
 
+namespace RENDER_PASS
+{
+	enum PASS
+	{
+		Shadow = 1 << 0,
+		Deffered = 1 << 1,
+		Forward = 1 << 2,
+		Transparent = 1 << 3,
+		PostProcessing = 1 << 4,
+		UI = 1 << 5,
+		Debug = 1 << 6,
+	};
+
+	const int Count = 7;
+}
+
 class RenderTarget
 {
 
