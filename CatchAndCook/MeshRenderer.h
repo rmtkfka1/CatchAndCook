@@ -4,6 +4,8 @@
 class MeshRenderer : public Component
 {
 
+	int a = 5;
+
 
 };
 
