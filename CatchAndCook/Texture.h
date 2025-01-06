@@ -6,7 +6,7 @@ enum class TextureType
 	CubeMap
 };
 
-enum class TextureUsageFlags : uint32_t 
+enum class TextureUsageFlags : uint32_t
 {
 	None = 0,
 	RTV = 1 << 0,   // Render Target View
