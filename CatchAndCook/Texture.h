@@ -43,10 +43,6 @@ public:
 	DXGI_FORMAT& GetFormat() { return _format; };
 protected:
 	DXGI_FORMAT& SetFormat(DXGI_FORMAT format) { return _format = format; };
-public:
-	//FOR GBUFFER
-	void SetSrvHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle) { _srvHandle = handle; }
-
 private:
 	wstring _path = L"../Resources/Texture/";
 	ScratchImage			 		_image;

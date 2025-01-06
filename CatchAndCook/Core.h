@@ -3,7 +3,6 @@
 class TextureBufferPool;
 class RenderTarget;
 class RootSignature;
-
 class Shader;
 class Mesh;
 class CBufferPool;
