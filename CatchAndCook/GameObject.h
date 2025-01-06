@@ -1,8 +1,6 @@
 #pragma once
-#include "Component.h"
 #include "IDelayDestroy.h"
 #include "IGuid.h"
-#include "Transform.h"
 
 class Scene;
 
@@ -159,9 +157,6 @@ public:
 	int GetChildsAll(std::vector<std::shared_ptr<GameObject>>& vec);
 	int GetChildsAllByName(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec);
 
-
-
-
 private:
 	bool _active_self = true;
 	bool _active_total_prev = false;
@@ -176,10 +171,7 @@ private:
 	bool CheckActiveUpdated();
 	void ActiveUpdateChain(bool _active_total);
 
-
 public:
-
-
 	void SetName(const std::wstring name){_name = name;};
 	std::wstring& GetName() { return _name; };
 
