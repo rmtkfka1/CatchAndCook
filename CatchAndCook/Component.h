@@ -2,7 +2,6 @@
 #include "IDelayDestroy.h"
 #include "IGuid.h"
 
-class GameObject;
 class Collider;
 
 class Component : public IGuid, public IDelayDestroy
@@ -20,6 +19,8 @@ public:
 
 	void SetOwner(const std::shared_ptr<GameObject>& owner) { this->_owner = owner; };
 	std::shared_ptr<GameObject> GetOwner() { assert(!_owner.expired()); return _owner.lock(); };
+
+	bool IsExecuteAble() override;
 
 	virtual void Init(); // ������ �� // Create �޸� ��������.
 	virtual void Start(); // ù ������ // ù ������ ��.

@@ -1,8 +1,12 @@
 #pragma once
+
 #include "IDelayDestroy.h"
 #include "IGuid.h"
 
 class Scene;
+class Component;
+class Transform;
+class Collider;
 
 enum class ObjectTag
 {
@@ -154,6 +158,9 @@ public:
 	int GetChildsAll(std::vector<std::shared_ptr<GameObject>>& vec);
 	int GetChildsAllByName(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec);
 
+
+
+
 private:
 	bool _active_self = true;
 	bool _active_total_prev = false;
@@ -168,7 +175,10 @@ private:
 	bool CheckActiveUpdated();
 	void ActiveUpdateChain(bool _active_total);
 
+
 public:
+
+
 	void SetName(const std::wstring name){_name = name;};
 	std::wstring& GetName() { return _name; };
 

@@ -1,6 +1,8 @@
 #pragma once
-#include "RenderTarget.h"
-#include "Vertex.h"
+
+class Vertex;
+class RenderTarget;
+class Texture;
 
 enum class CompOper
 {

@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "Shader.h"
+#include "RenderTarget.h"
+#include "Vertex.h"
 
 #include "Core.h"
 #include "RootSignature.h"
@@ -585,7 +587,6 @@ std::shared_ptr<ShaderCode> Shader::LoadBlob(std::wstring path, std::string endP
         shaderCode->_blob = _shaderBlob;
         
     }
-
     if (ext == L".cso" || ext == L".CSO")
     {
         std::ifstream shaderFile(shaderPath, std::ios::binary | std::ios::ate);

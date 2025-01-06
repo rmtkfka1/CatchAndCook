@@ -3,7 +3,6 @@
 
 class Texture;
 
-
 class Mesh 
 {
 public:

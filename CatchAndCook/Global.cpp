@@ -17,6 +17,7 @@ size_t UAV_TABLE_INDEX = CBV_ROOT_INDEX_COUNT + 1;
 size_t SRV_TABLE_REGISTER_COUNT = 8;
 size_t UAV_TABLE_REGISTER_COUNT = 4;
 
+
 std::vector<VertexProp> SkinProp
 {
     VertexProp::pos,
