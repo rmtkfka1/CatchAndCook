@@ -52,6 +52,10 @@ void MeshRenderer::Destroy()
 void MeshRenderer::RenderBegin()
 {
 	Component::RenderBegin();
+
+	for (int i = 0; i < RENDER_PASS::Count; i++)
+		if (i & packet::material.pass != 0)
+			Core::main->passPackets[i].push(packet);
 }
 
 void MeshRenderer::Rendering()

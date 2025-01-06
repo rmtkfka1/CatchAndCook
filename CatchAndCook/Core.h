@@ -80,7 +80,8 @@ private:
 	shared_ptr<Mesh> _mesh;
 	shared_ptr<Texture> _texture;
 
-	//??
-	array<std::vector<std::shared_ptr<>>, RENDER_PASS::Count> passMaterials;
+public:
+	//temp
+	array<std::vector<std::shared_ptr<Packet>>, RENDER_PASS::Count> passPackets;
 };
 
