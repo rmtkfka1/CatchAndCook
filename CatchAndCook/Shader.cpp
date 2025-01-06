@@ -543,6 +543,15 @@ void Shader::Profile()
     }
 }
 
+int Shader::GetRegisterIndex(const std::string& name)
+{
+    auto iter = _profileInfo._nameToRegisterTable.find(name);
+    if (iter != _profileInfo._nameToRegisterTable.end())
+        return iter->second.registerIndex;
+
+    return -1;
+}
+
 std::shared_ptr<ShaderCode> Shader::LoadBlob(std::wstring path, std::string endPointName, std::string shaderType)
 {
 

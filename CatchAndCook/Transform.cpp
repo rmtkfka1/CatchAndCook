@@ -4,7 +4,7 @@
 #include "GameObject.h"
 #include "simple_mesh_ext.h"
 #include "BufferPool.h"
-
+#include "BufferManager.h"
 // SCENE -> 트리구조 / MATERIAL CAMERA MESHRENDER SCRIPTS LIGHT  / RENDERPASS / MODEL / RESOURCEMANAGER / INSTANCING
 // 1.12 전까지 엔진구조완성.
 
@@ -88,11 +88,9 @@ void Transform::PushData()
 {
     Matrix matrix;
     GetLocalToWorldMatrix(matrix);
-    auto conatiner = Core::main->GetTransformBufferPool()->Alloc(1);
+    auto conatiner = Core::main->GetBufferManager()->GetBufferPool(BufferType::TransformParam)->Alloc(1);
     memcpy(conatiner->ptr, (void*)&matrix, sizeof(Matrix));
-
     Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(0, conatiner->GPUAdress);
-
 }
 
 vec3 Transform::SetForward(const vec3& dir)

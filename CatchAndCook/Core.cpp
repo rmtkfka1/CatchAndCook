@@ -8,6 +8,7 @@
 #include "Shader.h"
 #include "BufferPool.h"
 #include "GameObject.h"
+#include "BufferManager.h"
 unique_ptr<Core> Core::main=nullptr;
 
 Core::Core()
@@ -27,16 +28,14 @@ void Core::Init(HWND hwnd)
 
     InitDirectX12();
 
-    _textureBufferPool = make_shared<TextureBufferPool>();
-    _textureBufferPool->Init(255, 5, 5);
+    _bufferManager = make_shared<BufferManager>();
+    _bufferManager->Init();
 
     _renderTarget = make_shared<RenderTarget>();
     _renderTarget->Init(_swapChain);
 
     _rootSignature = make_shared<RootSignature>();
     _rootSignature->Init();
-
-    //temp
 
     _mesh = make_shared<Mesh>();
 
@@ -77,11 +76,6 @@ void Core::Init(HWND hwnd)
 	_shader->SetInfo(info);
 	_shader->Init(StaticProp);
 
-    _buffer = make_shared<CBufferPool>();
-    _buffer->Init(sizeof(Matrix), 255);
-
-    _table = make_shared<DescritporTable>();
-    _table->Init(255);
 
     _texture = make_shared<Texture>();
     _texture->Init(L"Start.jpg");
@@ -100,7 +94,7 @@ void Core::RenderBegin()
     ThrowIfFailed(_cmdList->Reset(_cmdMemory.Get(), nullptr));
 
     _cmdList->SetGraphicsRootSignature(_rootSignature->GetGraphicsRootSignature().Get());
-    _cmdList->SetDescriptorHeaps(1, _table->GetDescriptorHeap().GetAddressOf());
+    _cmdList->SetDescriptorHeaps(1, _bufferManager->GetTable()->GetDescriptorHeap().GetAddressOf());
     _renderTarget->RenderBegin();
 }
 
@@ -124,8 +118,8 @@ void Core::Render()
         for (auto& gameObject : _gameObjects)
             gameObject->Rendering();
 
-        auto tableContainer = _table->Alloc(8);
-        _table->CopyHandle(&tableContainer.cpuHandle, &_texture->GetSRVCpuHandle(), 1);
+        auto tableContainer = _bufferManager->GetTable()->Alloc(8);
+        _bufferManager->GetTable()->CopyHandle(&tableContainer.cpuHandle, &_texture->GetSRVCpuHandle(), 1);
 
         _cmdList->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, tableContainer.gpuHandle);
         _cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -162,8 +156,7 @@ void Core::RenderEnd()
     _renderTarget->ChangeIndex();
 
     //temp
-    _buffer->Reset();
-    _table->Reset();
+    _bufferManager->Reset();
 }
 
 

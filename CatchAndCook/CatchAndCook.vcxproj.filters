@@ -100,6 +100,12 @@
       <Filter>Component</Filter>
     </ClCompile>
     <ClCompile Include="TestMain.cpp" />
+    <ClCompile Include="Material.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="BufferManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -183,6 +189,12 @@
     </ClInclude>
     <ClInclude Include="Transform.h">
       <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="BufferManager.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

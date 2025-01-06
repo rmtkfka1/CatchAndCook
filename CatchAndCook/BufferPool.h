@@ -55,7 +55,6 @@ struct HeapStructure
 
 };
 
-
 class TextureBufferPool
 {
 

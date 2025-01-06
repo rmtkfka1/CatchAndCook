@@ -3,6 +3,7 @@
 #include "Texture.h"
 #include "BufferPool.h"
 #include "Core.h"
+#include "BufferManager.h"
 D3D12_CPU_DESCRIPTOR_HANDLE Texture::_SharedDSVHandle;
 
 Texture::Texture()
@@ -94,7 +95,7 @@ void Texture::Init(const wstring& path, TextureType type)
    
     Core::main->FlushResCMDQueue();
 
-    Core::main->GetTextureBufferPool()->AllocSRVDescriptorHandle(&_srvHandle);
+    Core::main->GetBufferManager()->GetTextureBufferPool()->AllocSRVDescriptorHandle(&_srvHandle);
 
     D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 
@@ -185,13 +186,13 @@ void Texture::CreateTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalStat
 
     if (HasFlag(usageFlags, TextureUsageFlags::RTV))
     {
-        Core::main->GetTextureBufferPool()->AllocRTVDescriptorHandle(&_rtvHandle);
+        Core::main->GetBufferManager()->GetTextureBufferPool()->AllocRTVDescriptorHandle(&_rtvHandle);
         Core::main->GetDevice()->CreateRenderTargetView(_resource.Get(), nullptr, _rtvHandle);
     }
 
     if (HasFlag(usageFlags, TextureUsageFlags::SRV))
     {
-        Core::main->GetTextureBufferPool()->AllocSRVDescriptorHandle(&_srvHandle);
+        Core::main->GetBufferManager()->GetTextureBufferPool()->AllocSRVDescriptorHandle(&_srvHandle);
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
         srvDesc.Format = format;
         srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
@@ -202,7 +203,7 @@ void Texture::CreateTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalStat
 
     if (HasFlag(usageFlags, TextureUsageFlags::UAV))
     {
-        Core::main->GetTextureBufferPool()->AllocSRVDescriptorHandle(&_uavHandle);
+        Core::main->GetBufferManager()->GetTextureBufferPool()->AllocSRVDescriptorHandle(&_uavHandle);
         D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
         uavDesc.Format = format;
         uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
@@ -213,12 +214,12 @@ void Texture::CreateTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalStat
     {
         if (detphShared)
         {
-            Core::main->GetTextureBufferPool()->AllocDSVDescriptorHandle(&_SharedDSVHandle);
+            Core::main->GetBufferManager()->GetTextureBufferPool()->AllocDSVDescriptorHandle(&_SharedDSVHandle);
             Core::main->GetDevice()->CreateDepthStencilView(_resource.Get(), nullptr, _SharedDSVHandle);
         }
         else
         {
-            Core::main->GetTextureBufferPool()->AllocDSVDescriptorHandle(&_dsvHandle);
+            Core::main->GetBufferManager()->GetTextureBufferPool()->AllocDSVDescriptorHandle(&_dsvHandle);
             Core::main->GetDevice()->CreateDepthStencilView(_resource.Get(), nullptr, _dsvHandle);
         }
     }

@@ -2,8 +2,6 @@
 #include "BufferPool.h"
 #include "Core.h"
 
-
-
 /*************************
 *                        *
 *  ConstantBuffer Pool   *
@@ -69,8 +67,6 @@ void CBufferPool::Init(uint32 size, uint32 count)
 		cbvDesc.BufferLocation += _elementSize;
 		ptr += _elementSize;
 	}
-
-
 }
 
 void CBufferPool::Reset()

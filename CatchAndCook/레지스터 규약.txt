@@ -13,9 +13,18 @@ t0 opaque_texture
 t1 depth_texture
 t2 shadow_texture
 
-u
 
 b8°³
-b0 = MainLight
-b1 = Camera
+//°íÁ¤
+b0 = MainLight => renderBegin
+b1 = Transform
 b2 = Camera
+b3 = (Time , value ) 
+b4 = MatrialParam => 
+//dynamcic System
+b5 = MatrialParam3
+b6 = MatrialParam4
+b7 = MatrialParam5
+b8 = MatrialParam6
+
+

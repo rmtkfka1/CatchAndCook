@@ -1,14 +1,13 @@
 #pragma once
 
-class TextureBufferPool;
+
 class RenderTarget;
 class RootSignature;
 class Shader;
 class Mesh;
-class CBufferPool;
-class DescritporTable;
 class Texture;
 class GameObject;
+class BufferManager;
 
 class Core
 {
@@ -32,11 +31,11 @@ public:
 	ComPtr<ID3D12Device5>& GetDevice() { return _device; }
 	ComPtr<ID3D12GraphicsCommandList>& GetCmdList() { return _cmdList; }
 	ComPtr<ID3D12GraphicsCommandList>& GetResCmdList() { return _resCmdList; }
-	shared_ptr<TextureBufferPool>& GetTextureBufferPool() { return _textureBufferPool; }
 	shared_ptr<RenderTarget>& GetRenderTarget() { return _renderTarget; }
 	shared_ptr<RootSignature>& GetRootSignature() { return _rootSignature; };
-	shared_ptr<CBufferPool>& GetTransformBufferPool() { return _buffer; }
+	shared_ptr< BufferManager>& GetBufferManager() { return _bufferManager; }
 
+	
 
 private:
 	void InitDirectX12();
@@ -48,9 +47,9 @@ private:
 	void SetDebugLayerInfo();
 
 private:
-	shared_ptr<TextureBufferPool> _textureBufferPool;
 	shared_ptr<RenderTarget> _renderTarget;
 	shared_ptr<RootSignature> _rootSignature;
+	shared_ptr<BufferManager> _bufferManager;
 
 private:
 	ComPtr<ID3D12Device5> _device = nullptr;
@@ -73,9 +72,7 @@ private:
 
 	HWND _hwnd{};
 
-
-	shared_ptr<DescritporTable> _table;
-	shared_ptr<CBufferPool> _buffer;
+	//temp
 	shared_ptr<Shader> _shader;
 	vector<shared_ptr<GameObject>> _gameObjects;
 	shared_ptr<Mesh> _mesh;

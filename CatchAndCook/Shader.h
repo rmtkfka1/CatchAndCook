@@ -197,6 +197,8 @@ public:
     void SetInfo(const ShaderInfo& info);
     void Profile();
 
+    int GetRegisterIndex(const std::string& name);
+
     static std::shared_ptr<Shader> Load(const std::wstring& path, const std::vector<std::pair<std::string, std::string>>& shaderParams);
 protected:
     static std::shared_ptr<ShaderCode> LoadBlob(std::wstring path, std::string endPointName, std::string shaderType);
