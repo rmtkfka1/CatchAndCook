@@ -10,7 +10,11 @@ Material::~Material()
 {
 
 }
-
+void Material::SetTexture(std::string name, const std::shared_ptr<Texture>& field)
+{
+	if (field != nullptr)
+		_propertyTextures[name] = field;
+}
 void Material::PushMaterialData()
 {
 	if (_useMaterialParams)
@@ -20,13 +24,14 @@ void Material::PushMaterialData()
 	}
 }
 
-void Material::SetData(tableContainer& container)
+void Material::PushData(tableContainer& container)
 {
-	SetTexture(container);
+	PushTexture(container);
+
 	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(4, _cbufferContainer->GPUAdress);
 }
 
-void Material::SetTexture(tableContainer& container)
+void Material::PushTexture(tableContainer& container)
 {
 	for (auto& [name,texture] : _propertyTextures)
 	{

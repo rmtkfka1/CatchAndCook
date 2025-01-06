@@ -30,8 +30,10 @@ void GameObject::Init()
 
 void GameObject::Start()
 {
-    if ((!IsDestroy()) && GetActive() && IsFirst()) {
-        for (auto& component : _components) {
+    if ((!IsDestroy()) && GetActive() && IsFirst()) 
+    {
+        for (auto& component : _components) 
+        {
             if (component->IsFirst()) {
                 component->Start();
                 component->FirstOff();

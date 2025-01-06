@@ -14,6 +14,11 @@ t1 depth_texture
 t2 shadow_texture
 
 
+t3 diffuse_texture
+t4 normal_texture
+t5 specular_texture
+t6 emissive_texture
+
 b8°³
 //°íÁ¤
 b0 = MainLight => renderBegin

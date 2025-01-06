@@ -106,7 +106,6 @@
     <ClCompile Include="MeshRenderer.cpp">
       <Filter>Component</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Material.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
@@ -200,11 +199,12 @@
     <ClInclude Include="MeshRenderer.h">
       <Filter>Component</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer.h" />
     <ClInclude Include="Material.h">
       <Filter>Resource</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h" />
+    <ClInclude Include="resource.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -217,13 +217,13 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Resources\Shader\test.hlsl">
-      <Filter>HLSL</Filter>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="CatchAndCook.rc">
       <Filter>리소스 파일</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Resources\Shaders\test.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

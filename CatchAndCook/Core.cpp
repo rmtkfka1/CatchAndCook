@@ -9,6 +9,8 @@
 #include "BufferPool.h"
 #include "GameObject.h"
 #include "BufferManager.h"
+#include "Material.h"
+#include "MeshRenderer.h"
 unique_ptr<Core> Core::main=nullptr;
 
 Core::Core()
@@ -80,10 +82,18 @@ void Core::Init(HWND hwnd)
     _texture = make_shared<Texture>();
     _texture->Init(L"Start.jpg");
 
-    auto _gameObject = make_shared<GameObject>();
-    _gameObject->Init();
+    _gameObjects = make_shared<GameObject>();
+    _gameObjects->Init();
 
-    _gameObjects.push_back(_gameObject);
+    _meshRenderer = make_shared<MeshRenderer>();
+    _material = make_shared<Material>();
+
+    _material->SetShader(_shader);
+    _material->SetTexture("g_tex_0", _texture);
+    _meshRenderer->AddMaterials({ _material });
+    _meshRenderer->SetMesh(_mesh);
+    _gameObjects->AddComponent(_meshRenderer);
+
 }
 
 
@@ -100,43 +110,11 @@ void Core::RenderBegin()
 
 void Core::Render()
 {
-
-    _cmdList->SetPipelineState(_shader->_pipelineState.Get());
-
-    for (auto& gameObject : _gameObjects)
-        gameObject->Start();
-    for (auto& gameObject : _gameObjects)
-        gameObject->Update();
-    for (auto& gameObject : _gameObjects)
-        gameObject->Update2();
-
-    {
-	    
-        for (auto& gameObject : _gameObjects)
-            gameObject->RenderBegin();//renderPass
-
-        for (auto& gameObject : _gameObjects)
-            gameObject->Rendering();
-
-        auto tableContainer = _bufferManager->GetTable()->Alloc(8);
-        _bufferManager->GetTable()->CopyHandle(&tableContainer.cpuHandle, &_texture->GetSRVCpuHandle(), 1);
-
-        _cmdList->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, tableContainer.gpuHandle);
-        _cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-        _cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
-        _cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
-        _cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
-    }
-    for (auto& gameObject : _gameObjects)
-        gameObject->DebugRendering();
-
-    for (auto& gameObject : _gameObjects)
-        gameObject->Destroy();
-
-    std::erase_if(_gameObjects, [&](const std::shared_ptr<GameObject>& gameObject) {
-        return gameObject->IsDestroy();
-    });
-
+    _gameObjects->Start();
+    _gameObjects->Update();
+    _gameObjects->Update2();
+    _gameObjects->RenderBegin();
+    _gameObjects->Rendering();
 };
 
 void Core::RenderEnd()
@@ -267,10 +245,10 @@ void Core::CreateDevice(bool EnableDebugLayer, bool EnableGBV)
         DXGI_ADAPTER_DESC1 AdapterDesc;
         pAdapter->GetDesc1(&AdapterDesc);
 
-        // VRAM�� �ް�����Ʈ ������ ��ȯ
+
         size_t memory = AdapterDesc.DedicatedVideoMemory / (1024 * 1024);
 
-        // ���� ���� VRAM�� ���� ����� ����
+ 
         if (memory > bestMemory)
         {
             bestMemory = memory;
@@ -280,8 +258,6 @@ void Core::CreateDevice(bool EnableDebugLayer, bool EnableGBV)
     }
 
 
-
-    // ���õ� ����ͷ� D3D12 ��ġ ����
     for (DWORD featerLevelIndex = 0; featerLevelIndex < FeatureLevelNum; featerLevelIndex++)
     {
         if (bestAdapter)

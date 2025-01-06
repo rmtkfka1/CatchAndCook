@@ -10,6 +10,8 @@ class Mesh;
 class Texture;
 class GameObject;
 class BufferManager;
+class MeshRenderer;
+class Material;
 
 class Core
 {
@@ -76,12 +78,14 @@ private:
 
 	//temp
 	shared_ptr<Shader> _shader;
-	vector<shared_ptr<GameObject>> _gameObjects;
+	shared_ptr<GameObject> _gameObjects;
 	shared_ptr<Mesh> _mesh;
 	shared_ptr<Texture> _texture;
+	shared_ptr<Material> _material;
+	shared_ptr<MeshRenderer> _meshRenderer;
 
 public:
 	//temp
-	array<std::vector<std::shared_ptr<Packet>>, RENDER_PASS::Count> passPackets;
+	//array<std::vector<std::shared_ptr<Packet>>, RENDER_PASS::Count> passPackets;
 };
 

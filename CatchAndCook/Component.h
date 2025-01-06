@@ -15,25 +15,22 @@ protected:
 	void SetOrder(int order) { _order = order; };
 	int GetOrder() const { return _order; };
 public:
-	// ������ ����Ŭ���� ���� �Լ� ����
-
 	void SetOwner(const std::shared_ptr<GameObject>& owner) { this->_owner = owner; };
-	std::shared_ptr<GameObject> GetOwner() { assert(!_owner.expired()); return _owner.lock(); };
+	std::shared_ptr<GameObject> GetOwner() {return _owner.lock(); };
 
 	bool IsExecuteAble() override;
 
-	virtual void Init(); // ������ �� // Create �޸� ��������.
-	virtual void Start(); // ù ������ // ù ������ ��.
-	virtual void Update(); //
-	virtual void Update2(); // 
-	virtual void Enable(); // 
-	virtual void Disable(); //
+	virtual void Init(); 
+	virtual void Start(); 
+	virtual void Update(); 
+	virtual void Update2(); 
+	virtual void Enable(); 
+	virtual void Disable(); 
 	virtual void Destroy(); 
 
 	virtual void RenderBegin();
 	virtual void Rendering(); 
 
-	// �̺�Ʈ �Լ�
 	virtual void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
 	virtual void DebugRendering(); // CBuffer <- ����
 	virtual void SetDestroy() override;

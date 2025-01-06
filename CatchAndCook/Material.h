@@ -7,7 +7,6 @@ class Shader;
 class Texture;
 
 
-
 struct MaterialParams
 {
 	void SetInt(uint8 index, int32 value) { intParams[index] = value; }
@@ -25,18 +24,20 @@ struct MaterialParams
 class Material : public IGuid
 {
 public:
-
+	Material() {};
 	Material(bool useMaterialParams) :_useMaterialParams(useMaterialParams) {};
 	virtual ~Material();
 
 	void SetShader(std::shared_ptr<Shader> shader) { _shader = shader; }
-
 	PASS pass;
+
+	void SetTexture(std::string name, const std::shared_ptr<Texture>& field);
+	shared_ptr<Shader> GetShader() { return _shader; }
 
 public:
 	void PushMaterialData();
-	void SetData(tableContainer& container);
-	void SetTexture(tableContainer& container);
+	void PushData(tableContainer& container);
+	void PushTexture(tableContainer& container);
 
 private:
 	shared_ptr<Shader> _shader;
@@ -49,7 +50,7 @@ private:
 
 	CBufferContainer* _cbufferContainer;
 	MaterialParams _params;
-	bool _useMaterialParams;
+	bool _useMaterialParams=true;
 
 };
 
