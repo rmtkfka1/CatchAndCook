@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Scene.h"
 #include "GameObject.h"
+#include "RendererBase.h"
+#include "RenderTarget.h"
 
 void Scene::AddGameObject(const std::shared_ptr<GameObject> gameObject)
 {
@@ -24,6 +26,9 @@ void Scene::Update()
 	}
     for (auto& gameObject : _gameObjects)
         gameObject->Update2();
+
+    for (int i = 0; i < RENDER_PASS::Count; i++)
+        _passObjects[i].clear();
 }
 
 void Scene::RenderBegin()
@@ -35,8 +40,28 @@ void Scene::RenderBegin()
 
 void Scene::Rendering()
 {
-    for (auto& gameObject : _gameObjects)
-        gameObject->Rendering();
+    RendererParam param;
+
+    { // Shadow
+        auto& targets = _passObjects[RENDER_PASS::Shadow];
+
+        for (auto& target : targets)
+            target.second->Rendering(param, target.first);
+    }
+
+    { // Deffered
+        auto& targets = _passObjects[RENDER_PASS::Deffered];
+
+        for (auto& target : targets)
+            target.second->Rendering(param, target.first);
+    }
+
+	{ // forward
+        auto& targets = _passObjects[RENDER_PASS::Forward];
+
+        for (auto& target : targets)
+            target.second->Rendering(param, target.first);
+	}
 }
 
 void Scene::RenderEnd()
@@ -108,6 +133,13 @@ int Scene::Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObjec
             vec.push_back(current);
     }
     return vec.size() - startSize;
+}
+
+void Scene::AddRenderObject(std::pair<std::shared_ptr<Material>, RendererBase*> data)
+{
+    for (int i=0;i<RENDER_PASS::Count;i++)
+		if (RENDER_PASS::HasFlag(data.first->pass, RENDER_PASS::PASS(1 << i)))
+            _passObjects[i].push_back(data);
 }
 
 void Scene::Release()

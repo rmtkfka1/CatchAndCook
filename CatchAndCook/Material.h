@@ -2,7 +2,8 @@
 
 #include "IGuid.h"
 #include "BufferPool.h"
-enum class PASS;
+#include "RenderTarget.h"
+
 class Shader;
 class Texture;
 
@@ -29,16 +30,19 @@ public:
 	virtual ~Material();
 
 	void SetShader(std::shared_ptr<Shader> shader) { _shader = shader; }
-	PASS pass;
+	RENDER_PASS::PASS pass;
+
+	void SetPass(RENDER_PASS::PASS pass) {this->pass = pass;};
 
 	void SetTexture(std::string name, const std::shared_ptr<Texture>& field);
 	shared_ptr<Shader> GetShader() { return _shader; }
 
 public:
 	void PushMaterialData();
-	void PushData(tableContainer& container);
-	void PushTexture(tableContainer& container);
+	void PushGPUData();
+	void PushTexture();
 
+	tableContainer _container;
 private:
 	shared_ptr<Shader> _shader;
 

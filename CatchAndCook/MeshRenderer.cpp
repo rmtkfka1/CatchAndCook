@@ -4,8 +4,12 @@
 #include "MeshRenderer.h"
 #include "BufferManager.h"
 #include "BufferPool.h"
+#include "GameObject.h"
+#include "SceneManager.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "Transform.h"
+
 MeshRenderer::~MeshRenderer()
 {
 }
@@ -60,23 +64,30 @@ void MeshRenderer::RenderBegin()
 	{
 		cmdList->SetPipelineState(ele->GetShader()->_pipelineState.Get());
 
-		tableContainer container = Core::main->GetBufferManager()->GetTable()->Alloc(1);
+		ele->_container = Core::main->GetBufferManager()->GetTable()->Alloc(1);
 		ele->PushMaterialData();
-		ele->PushData(container);
-		cmdList->SetGraphicsRootDescriptorTable(GLOBAL_SHADOW_SRV, container.gpuHandle);
 
-		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
-		cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
-		cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
+		GetOwner()->GetScene()->AddRenderObject(std::make_pair(ele, static_cast<RendererBase*>(this)));
 	}
 }
 
 void MeshRenderer::Rendering()
 {
-	
-	
+	Component::Rendering();
 }
+
+void MeshRenderer::Rendering(RendererParam& param, const std::shared_ptr<Material>& material)
+{
+	auto& cmdList = Core::main->GetCmdList();
+	GetOwner()->transform->PushData();
+	material->PushGPUData();
+
+	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
+	cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
+	cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
+}
+
 
 
 

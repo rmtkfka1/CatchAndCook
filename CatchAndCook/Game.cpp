@@ -28,7 +28,9 @@ void Game::Init(HWND hwnd)
 
 	Core::main->_material = make_shared<Material>();
 	Core::main->_material->SetShader(Core::main->_shader);
+	Core::main->_material->SetPass(RENDER_PASS::Forward);
 	Core::main->_material->SetTexture("g_tex_0", Core::main->_texture);
+
 	Core::main->_meshRenderer->AddMaterials({ Core::main->_material });
 	Core::main->_meshRenderer->SetMesh(Core::main->_mesh);
 }

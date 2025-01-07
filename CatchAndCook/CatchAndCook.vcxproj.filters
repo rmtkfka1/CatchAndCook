@@ -109,6 +109,9 @@
     <ClCompile Include="Material.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="RendererBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -205,6 +208,9 @@
     <ClInclude Include="resource.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="RendererBase.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">

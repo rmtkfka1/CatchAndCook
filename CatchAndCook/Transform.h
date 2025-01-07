@@ -1,6 +1,8 @@
 #pragma once
 #include "Component.h"
 
+struct CBufferContainer;
+
 class Transform : public Component
 {
 public:
@@ -19,7 +21,9 @@ public:
 	void Rendering() override;
 	void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
 	void DebugRendering() override;
-    void PushData();
+
+    void SetData();
+	void PushData();
 
 public:
 
@@ -88,6 +92,8 @@ private:
     bool _needLocalUpdated = true; // 나 자신이 SRT 갱신 해야해.
     bool _needLocalToWorldUpdated = true; // 부모가 업데이트 됬을때 내가 변경되어야함을 표기, 위에꺼랑은 역할이 조금 다른게. 위에껀 자기 기준이라, 전 프레임이랑 같으면 바뀌는데, 이건 내가 바뀌기 전까지 안꺼짐
 
+
+    CBufferContainer* _container;
 };
 
 

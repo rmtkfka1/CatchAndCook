@@ -25,17 +25,16 @@ void Material::PushMaterialData()
 	}
 }
 
-void Material::PushData(tableContainer& container)
+void Material::PushGPUData()
 {
-	PushTexture(container);
-
+	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(GLOBAL_SHADOW_SRV, _container.gpuHandle);
 	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(4, _cbufferContainer->GPUAdress);
 }
 
-void Material::PushTexture(tableContainer& container)
+void Material::PushTexture()
 {
 	for (auto& [name,texture] : _propertyTextures)
 	{
-		Core::main->GetBufferManager()->GetTable()->CopyHandle(&container.cpuHandle, &texture->GetSRVCpuHandle(), _shader->GetRegisterIndex(name));
+		Core::main->GetBufferManager()->GetTable()->CopyHandle(&_container.cpuHandle, &texture->GetSRVCpuHandle(), _shader->GetRegisterIndex(name)-10);
 	}
 }

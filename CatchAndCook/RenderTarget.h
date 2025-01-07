@@ -15,6 +15,15 @@ namespace RENDER_PASS
 	};
 
 	const int Count = 7;
+
+	inline PASS operator|(PASS a, PASS b) {
+		return PASS(a | b);
+	}
+
+	inline bool HasFlag(PASS value, PASS flag) {
+		return (value & flag) != 0;
+	}
+
 }
 
 class RenderTarget

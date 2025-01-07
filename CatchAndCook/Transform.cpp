@@ -65,8 +65,7 @@ void Transform::Destroy()
 void Transform::RenderBegin()
 {
 	Component::RenderBegin();
-
-    PushData();
+    SetData();
 }
 
 void Transform::Rendering()
@@ -84,13 +83,17 @@ void Transform::DebugRendering()
 	Component::DebugRendering();
 }
 
-void Transform::PushData()
+void Transform::SetData()
 {
     Matrix matrix;
     GetLocalToWorldMatrix(matrix);
-    auto conatiner = Core::main->GetBufferManager()->GetBufferPool(BufferType::TransformParam)->Alloc(1);
-    memcpy(conatiner->ptr, (void*)&matrix, sizeof(Matrix));
-    Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(0, conatiner->GPUAdress);
+    _container = Core::main->GetBufferManager()->GetBufferPool(BufferType::TransformParam)->Alloc(1);
+    memcpy(_container->ptr, (void*)&matrix, sizeof(Matrix));
+}
+
+void Transform::PushData()
+{
+    Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(0, _container->GPUAdress);
 }
 
 vec3 Transform::SetForward(const vec3& dir)
