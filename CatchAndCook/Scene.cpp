@@ -48,6 +48,8 @@ void Scene::Rendering()
         auto& targets = _passObjects[RENDER_PASS::Shadow];
 
         //이 시점에 Set
+        //Pass => shader 
+
         for (auto& target : targets)
         {
             target.second->Rendering(nullptr);

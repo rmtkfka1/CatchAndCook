@@ -25,7 +25,6 @@ public:
 	void Init(HWND hwnd);
 
 	void RenderBegin();
-	void Render();
 	void RenderEnd();
 
 	void Fence();

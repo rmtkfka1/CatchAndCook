@@ -83,6 +83,9 @@ private:
 
 	void CreateIndexBuffer(vector<uint32>& vec);
 
+public:
+	void SetTopolgy(D3D_PRIMITIVE_TOPOLOGY topology) { _topology = topology; }
+	D3D_PRIMITIVE_TOPOLOGY&  GetTopology() { return _topology; }
 
 private:
 	D3D_PRIMITIVE_TOPOLOGY _topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;

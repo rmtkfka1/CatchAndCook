@@ -98,10 +98,7 @@ void Core::RenderBegin()
     _renderTarget->RenderBegin();
 }
 
-void Core::Render()
-{
 
-};
 
 void Core::RenderEnd()
 {

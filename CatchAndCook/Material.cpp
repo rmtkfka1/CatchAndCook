@@ -16,7 +16,7 @@ void Material::SetTexture(std::string name, const std::shared_ptr<Texture>& fiel
 		_propertyTextures[name] = field;
 
 }
-void Material::PushMaterialData()
+void Material::PushData()
 {
 	PushTexture();
 
@@ -27,9 +27,9 @@ void Material::PushMaterialData()
 	}
 }
 
-void Material::PushGPUData()
+void Material::SetData()
 {
-	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(GLOBAL_SHADOW_SRV, _container.gpuHandle);
+	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, _container.gpuHandle);
 	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(4, _cbufferContainer->GPUAdress);
 }
 
@@ -37,6 +37,6 @@ void Material::PushTexture()
 {
 	for (auto& [name,texture] : _propertyTextures)
 	{
-		Core::main->GetBufferManager()->GetTable()->CopyHandle(&_container.cpuHandle, &texture->GetSRVCpuHandle(), _shader->GetRegisterIndex(name)-10);
+		Core::main->GetBufferManager()->GetTable()->CopyHandle(&_container.cpuHandle, &texture->GetSRVCpuHandle(), _shader->GetRegisterIndex(name));
 	}
 }

@@ -38,8 +38,8 @@ public:
 	shared_ptr<Shader> GetShader() { return _shader; }
 
 public:
-	void PushMaterialData();
-	void PushGPUData();
+	void PushData();
+	void SetData();
 	void PushTexture();
 
 	tableContainer _container;

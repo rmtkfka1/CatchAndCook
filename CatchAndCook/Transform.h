@@ -22,8 +22,8 @@ public:
 	void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
 	void DebugRendering() override;
 
-    void SetData();
-	void PushData();
+    void PushData();
+	void SetData();
 
 public:
 

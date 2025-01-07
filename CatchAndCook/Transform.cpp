@@ -65,7 +65,7 @@ void Transform::Destroy()
 void Transform::RenderBegin()
 {
 	Component::RenderBegin();
-    SetData();
+    PushData();
 }
 
 void Transform::Rendering()
@@ -83,7 +83,7 @@ void Transform::DebugRendering()
 	Component::DebugRendering();
 }
 
-void Transform::SetData()
+void Transform::PushData()
 {
     Matrix matrix;
     GetLocalToWorldMatrix(matrix);
@@ -91,7 +91,7 @@ void Transform::SetData()
     memcpy(_container->ptr, (void*)&matrix, sizeof(Matrix));
 }
 
-void Transform::PushData()
+void Transform::SetData()
 {
     Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(0, _container->GPUAdress);
 }
