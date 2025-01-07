@@ -4,10 +4,11 @@
 class RendererBase;
 class Material;
 
+
 struct RenderObjectStrucutre
 {
 	std::shared_ptr<Material> material;
-	RendererBase* renderer;
+	std::shared_ptr<RendererBase> renderer;
 };
 
 class RendererBase

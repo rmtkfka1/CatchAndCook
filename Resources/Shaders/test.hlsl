@@ -2,7 +2,6 @@
 cbuffer test : register(b0)
 {
     row_major matrix M;
-
 }
 
 struct VS_IN

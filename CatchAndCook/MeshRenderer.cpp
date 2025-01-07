@@ -63,9 +63,9 @@ void MeshRenderer::RenderBegin()
 	{
 		ele->_container = Core::main->GetBufferManager()->GetTable()->Alloc(8);
 		ele->PushData();
-		SceneManager::main->GetCurrentScene()->AddRenderObject(ele, this);
-	}
-	SceneManager::main->GetCurrentScene()->AddRenderObject(this, RENDER_PASS::Shadow);
+		SceneManager::main->GetCurrentScene()->AddRenderObject(ele, static_pointer_cast<MeshRenderer>(shared_from_this()));
+	} 
+	SceneManager::main->GetCurrentScene()->AddRenderObject(static_pointer_cast<MeshRenderer>(shared_from_this()), RENDER_PASS::Shadow);
 }
 
 void MeshRenderer::Rendering()

@@ -6,6 +6,7 @@
 #include "Material.h"
 #include "MeshRenderer.h"
 #include "SceneManager.h"
+#include   "Transform.h"
 
 void Game::Init(HWND hwnd)
 {
@@ -23,7 +24,7 @@ void Game::Init(HWND hwnd)
 	SceneManager::main->ChangeScene(scene);
 
 	Core::main->_gameObjects = SceneManager::main->GetCurrentScene()->CreateGameObject(L"test gameObject");
-
+	Core::main->_gameObjects->transform->SetLocalPosition(vec3(0, 0.3f, 0));
 	Core::main->_meshRenderer = Core::main->_gameObjects->AddComponent<MeshRenderer>();
 
 	Core::main->_material = make_shared<Material>();
