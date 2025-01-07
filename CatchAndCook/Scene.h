@@ -36,6 +36,7 @@ public:
 
 
 	void AddRenderObject(std::pair<std::shared_ptr<Material>, RendererBase*> data);
+	void AddRenderObject(RendererBase* data, RENDER_PASS::PASS pass);
 
 	using RenderObjectStrucutre = std::vector<std::pair<std::shared_ptr<Material>, RendererBase*>>;
 

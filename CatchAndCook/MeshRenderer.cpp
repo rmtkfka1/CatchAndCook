@@ -58,15 +58,10 @@ void MeshRenderer::Destroy()
 void MeshRenderer::RenderBegin()
 {
 	Component::RenderBegin();
-	auto& cmdList = Core::main->GetCmdList();
-
 	for (auto& ele : _materials)  
 	{
-		cmdList->SetPipelineState(ele->GetShader()->_pipelineState.Get());
-
 		ele->_container = Core::main->GetBufferManager()->GetTable()->Alloc(1);
 		ele->PushMaterialData();
-
 		GetOwner()->GetScene()->AddRenderObject(std::make_pair(ele, static_cast<RendererBase*>(this)));
 	}
 }
@@ -76,11 +71,13 @@ void MeshRenderer::Rendering()
 	Component::Rendering();
 }
 
-void MeshRenderer::Rendering(RendererParam& param, const std::shared_ptr<Material>& material)
+void MeshRenderer::Rendering(const std::shared_ptr<Material>& material)
 {
 	auto& cmdList = Core::main->GetCmdList();
+	if (material != nullptr)
+		material->PushGPUData();
+
 	GetOwner()->transform->PushData();
-	material->PushGPUData();
 
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());

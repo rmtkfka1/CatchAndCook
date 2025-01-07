@@ -27,7 +27,7 @@ public:
 	void SetMesh(const std::shared_ptr<Mesh>& _mesh);
 	void SetMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
 	void AddMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
-	void Rendering(RendererParam& param, const std::shared_ptr<Material>& material) override;
+	void Rendering(const std::shared_ptr<Material>& material) override;
 
 private:
 	std::shared_ptr<Mesh> _mesh;

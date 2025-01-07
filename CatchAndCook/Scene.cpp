@@ -1,8 +1,11 @@
 #include "pch.h"
 #include "Scene.h"
+
+#include "Core.h"
 #include "GameObject.h"
 #include "RendererBase.h"
 #include "RenderTarget.h"
+#include "Shader.h"
 
 void Scene::AddGameObject(const std::shared_ptr<GameObject> gameObject)
 {
@@ -40,27 +43,35 @@ void Scene::RenderBegin()
 
 void Scene::Rendering()
 {
-    RendererParam param;
-
+    auto& cmdList = Core::main->GetCmdList();
     { // Shadow
         auto& targets = _passObjects[RENDER_PASS::Shadow];
 
+        //이 시점에 Set
         for (auto& target : targets)
-            target.second->Rendering(param, target.first);
+        {
+            target.second->Rendering(nullptr);
+        }
     }
 
     { // Deffered
         auto& targets = _passObjects[RENDER_PASS::Deffered];
 
         for (auto& target : targets)
-            target.second->Rendering(param, target.first);
+        {
+            cmdList->SetPipelineState(target.first->GetShader()->_pipelineState.Get());
+            target.second->Rendering(target.first);
+        }
     }
 
 	{ // forward
         auto& targets = _passObjects[RENDER_PASS::Forward];
 
         for (auto& target : targets)
-            target.second->Rendering(param, target.first);
+        {
+            cmdList->SetPipelineState(target.first->GetShader()->_pipelineState.Get());
+            target.second->Rendering(target.first);
+        }
 	}
 }
 
@@ -140,6 +151,13 @@ void Scene::AddRenderObject(std::pair<std::shared_ptr<Material>, RendererBase*> 
     for (int i=0;i<RENDER_PASS::Count;i++)
 		if (RENDER_PASS::HasFlag(data.first->pass, RENDER_PASS::PASS(1 << i)))
             _passObjects[i].push_back(data);
+}
+
+void Scene::AddRenderObject(RendererBase* data, RENDER_PASS::PASS pass)
+{
+    for (int i = 0; i < RENDER_PASS::Count; i++)
+        if (RENDER_PASS::HasFlag(pass, RENDER_PASS::PASS(1 << i)))
+            _passObjects[i].push_back(std::make_pair(nullptr, data));
 }
 
 void Scene::Release()
