@@ -37,7 +37,9 @@ public:
 
 	void AddRenderObject(std::pair<std::shared_ptr<Material>, RendererBase*> data);
 
-	std::array<std::vector<std::pair<std::shared_ptr<Material>, RendererBase*>>, RENDER_PASS::Count> _passObjects;
+	using RenderObjectStrucutre = std::vector<std::pair<std::shared_ptr<Material>, RendererBase*>>;
+
+	std::array<RenderObjectStrucutre, RENDER_PASS::Count> _passObjects;
 
 	void Release();
 	friend class SceneManager;

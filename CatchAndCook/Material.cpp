@@ -18,6 +18,8 @@ void Material::SetTexture(std::string name, const std::shared_ptr<Texture>& fiel
 }
 void Material::PushMaterialData()
 {
+	PushTexture();
+
 	if (_useMaterialParams)
 	{
 		_cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::MateriaParam)->Alloc(1);

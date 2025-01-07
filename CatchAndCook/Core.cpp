@@ -124,9 +124,6 @@ void Core::RenderEnd()
 }
 
 
-
-
-
 void Core::FlushResCMDQueue()
 {
     _resCmdList->Close();
