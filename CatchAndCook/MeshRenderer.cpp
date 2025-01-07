@@ -60,12 +60,11 @@ void MeshRenderer::RenderBegin()
 	{
 		cmdList->SetPipelineState(ele->GetShader()->_pipelineState.Get());
 
-	/*	tableContainer container = Core::main->GetBufferManager()->GetTable()->Alloc(8);
+		tableContainer container = Core::main->GetBufferManager()->GetTable()->Alloc(1);
 		ele->PushMaterialData();
-		ele->PushData(container);*/
-		//cmdList->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, container.gpuHandle);
+		ele->PushData(container);
+		cmdList->SetGraphicsRootDescriptorTable(GLOBAL_SHADOW_SRV, container.gpuHandle);
 
-		cmdList->SetGraphicsRootShaderResourceView(10, Core::main->_texture->_temp);
 		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
 		cmdList->IASetIndexBuffer(&_mesh->GetIndexView());

@@ -10,7 +10,6 @@ extern DXGI_FORMAT DEPTH_STENCIL_FORMAT;
 extern size_t CBV_ROOT_INDEX_COUNT;
 extern size_t SRV_TABLE_INDEX;
 extern size_t UAV_TABLE_INDEX;
-
 extern size_t SRV_TABLE_REGISTER_COUNT;
 extern size_t UAV_TABLE_REGISTER_COUNT;
 
@@ -19,3 +18,9 @@ extern std::vector<VertexProp> StaticProp;
 
 const uint32 SWAP_CHAIN_FRAME_COUNT = 4; // 1 Front + (N-1) Back Buffer
 const uint32 MAX_FRAME_COUNT = SWAP_CHAIN_FRAME_COUNT - 1;
+
+extern size_t GLOBAL_SHADOW_SRV;
+extern size_t GLOBAL_POSITION_SRV;
+extern size_t GLOBAL_NORAML_SRV;
+extern size_t GLOBAL_COLOR_SRV;
+extern size_t GLOBAL_DEPTH_SRV;

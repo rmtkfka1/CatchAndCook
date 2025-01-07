@@ -98,17 +98,28 @@ void RootSignature::Init()
 	samplerDesc[5].ShaderRegister = 5;
 
 
+	auto G_SHADOW_SRV   = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1,10);
+	auto G_POSITION_SRV = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 11);
+	auto G_NORAML_SRV  = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 12);
+	auto G_COLOR_SRV   = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 13);
+	auto G_DEPTH_SRV   = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 14);
+
 	auto SRV_Range = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, SRV_TABLE_REGISTER_COUNT, 0);
 	auto UAV_Range = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, UAV_TABLE_REGISTER_COUNT, 0);
 
-	array<CD3DX12_ROOT_PARAMETER, 11> param;
+	array<CD3DX12_ROOT_PARAMETER, 15> param;
 
 	for (int cbv_index=0; cbv_index < CBV_ROOT_INDEX_COUNT; cbv_index++)
 		param[cbv_index].InitAsConstantBufferView(cbv_index); 
 
 	param[SRV_TABLE_INDEX].InitAsDescriptorTable(1, &SRV_Range);
 	param[UAV_TABLE_INDEX].InitAsDescriptorTable(1, &UAV_Range);
-	param[10].InitAsShaderResourceView(9, 0);
+
+	param[GLOBAL_SHADOW_SRV].InitAsDescriptorTable(1, &G_SHADOW_SRV);
+	param[GLOBAL_POSITION_SRV].InitAsDescriptorTable(1, &G_POSITION_SRV);
+	param[GLOBAL_NORAML_SRV].InitAsDescriptorTable(1, &G_NORAML_SRV);
+	param[GLOBAL_COLOR_SRV].InitAsDescriptorTable(1, &G_COLOR_SRV);
+	param[GLOBAL_DEPTH_SRV].InitAsDescriptorTable(1, &G_DEPTH_SRV);
 	
 	// 루트 서명 설정
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};

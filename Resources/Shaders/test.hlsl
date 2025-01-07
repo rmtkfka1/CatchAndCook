@@ -20,8 +20,7 @@ struct VS_OUT
     float2 uv1 : TEXCOORD1;
 };
 
-
-Texture2D g_tex_0 : register(t1);
+Texture2D g_tex_0 : register(t10);
 SamplerState g_sam_0 : register(s0);
 
 VS_OUT VS_Main(VS_IN input)

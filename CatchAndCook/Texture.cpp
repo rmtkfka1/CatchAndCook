@@ -116,9 +116,8 @@ void Texture::Init(const wstring& path, TextureType type)
     default:
         break;
     }
-    SetFormat(_image.GetMetadata().format);
 
-    _temp= _resource->GetGPUVirtualAddress();
+    SetFormat(_image.GetMetadata().format);
 
     Core::main->GetDevice()->CreateShaderResourceView(_resource.Get(), &srvDesc, _srvHandle);
 }
