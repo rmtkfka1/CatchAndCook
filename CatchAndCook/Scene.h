@@ -2,6 +2,7 @@
 
 #include "IGuid.h"
 #include "Material.h"
+#include "RendererBase.h"
 
 
 class RendererBase;
@@ -35,12 +36,9 @@ public:
 	int Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec, bool includeDestroy = false);
 
 
-	void AddRenderObject(std::pair<std::shared_ptr<Material>, RendererBase*> data);
+	void AddRenderObject(std::shared_ptr<Material> material, RendererBase* data);
 	void AddRenderObject(RendererBase* data, RENDER_PASS::PASS pass);
-
-	using RenderObjectStrucutre = std::vector<std::pair<std::shared_ptr<Material>, RendererBase*>>;
-
-	std::array<RenderObjectStrucutre, RENDER_PASS::Count> _passObjects;
+	std::array<std::vector<RenderObjectStrucutre>, RENDER_PASS::Count> _passObjects;
 
 	void Release();
 	friend class SceneManager;
