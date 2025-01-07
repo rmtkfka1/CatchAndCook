@@ -47,32 +47,29 @@ void Scene::Rendering()
     { // Shadow
         auto& targets = _passObjects[RENDER_PASS::Shadow];
 
-        //이 시점에 Set
-        //Pass => shader 
-
-        for (auto& target : targets)
+        for (auto& [material,target] : targets)
         {
-            target.second->Rendering(nullptr);
+            target->Rendering(nullptr);
         }
     }
 
     { // Deffered
         auto& targets = _passObjects[RENDER_PASS::Deffered];
 
-        for (auto& target : targets)
+        for (auto& [material, target] : targets)
         {
-            cmdList->SetPipelineState(target.first->GetShader()->_pipelineState.Get());
-            target.second->Rendering(target.first);
+            cmdList->SetPipelineState(material->GetShader()->_pipelineState.Get());
+            target->Rendering(material);
         }
     }
 
 	{ // forward
         auto& targets = _passObjects[RENDER_PASS::Forward];
 
-        for (auto& target : targets)
+        for (auto& [material, target] : targets)
         {
-            cmdList->SetPipelineState(target.first->GetShader()->_pipelineState.Get());
-            target.second->Rendering(target.first);
+            cmdList->SetPipelineState(material->GetShader()->_pipelineState.Get());
+            target->Rendering(material);
         }
 	}
 }
