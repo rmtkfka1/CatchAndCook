@@ -5,7 +5,7 @@
 #include "BufferManager.h"
 #include "BufferPool.h"
 #include "Shader.h"
-
+#include "Texture.h"
 MeshRenderer::~MeshRenderer()
 {
 }
@@ -50,7 +50,7 @@ void MeshRenderer::Destroy()
 	Component::Destroy();
 }
 
-//[meshrnder][transform][]
+//[] [] []
 void MeshRenderer::RenderBegin()
 {
 	Component::RenderBegin();
@@ -60,17 +60,17 @@ void MeshRenderer::RenderBegin()
 	{
 		cmdList->SetPipelineState(ele->GetShader()->_pipelineState.Get());
 
-		tableContainer container = Core::main->GetBufferManager()->GetTable()->Alloc(8);
+	/*	tableContainer container = Core::main->GetBufferManager()->GetTable()->Alloc(8);
 		ele->PushMaterialData();
-		ele->PushData(container);
+		ele->PushData(container);*/
+		//cmdList->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, container.gpuHandle);
 
-		cmdList->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, container.gpuHandle);
+		cmdList->SetGraphicsRootShaderResourceView(10, Core::main->_texture->_temp);
 		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
 		cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
 		cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
 	}
-
 }
 
 void MeshRenderer::Rendering()
@@ -78,6 +78,8 @@ void MeshRenderer::Rendering()
 	
 	
 }
+
+
 
 void MeshRenderer::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {

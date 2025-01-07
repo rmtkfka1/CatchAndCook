@@ -6,7 +6,7 @@ class Derived : public IType
 public:
     Derived() { TypeRegister(this); } 
 };
-
+ 
 
 int main()
 {

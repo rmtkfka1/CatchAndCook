@@ -30,6 +30,7 @@ void SceneManager::ChangeScene(const shared_ptr<Scene>& nextScene)
 		nextScene->_dont_destroy_gameObjects.push_back(obj);
 		currentScene->RemoveGameObject(obj);
 	}
+
 	currentScene->_dont_destroy_gameObjects.clear();
 	_currentScene = nextScene;
 }

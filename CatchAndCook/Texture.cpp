@@ -117,6 +117,9 @@ void Texture::Init(const wstring& path, TextureType type)
         break;
     }
     SetFormat(_image.GetMetadata().format);
+
+    _temp= _resource->GetGPUVirtualAddress();
+
     Core::main->GetDevice()->CreateShaderResourceView(_resource.Get(), &srvDesc, _srvHandle);
 }
 
@@ -199,6 +202,7 @@ void Texture::CreateTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalStat
         srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
         srvDesc.Texture2D.MipLevels = 1;
         Core::main->GetDevice()->CreateShaderResourceView(_resource.Get(), &srvDesc, _srvHandle);
+
     }
 
     if (HasFlag(usageFlags, TextureUsageFlags::UAV))

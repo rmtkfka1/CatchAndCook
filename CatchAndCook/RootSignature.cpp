@@ -98,19 +98,18 @@ void RootSignature::Init()
 	samplerDesc[5].ShaderRegister = 5;
 
 
-	//auto SRV_Range_static = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, SRV_TABLE_REGISTER_COUNT, 0); // 세팅하고건들지않는다
-
 	auto SRV_Range = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, SRV_TABLE_REGISTER_COUNT, 0);
 	auto UAV_Range = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, UAV_TABLE_REGISTER_COUNT, 0);
 
-	array<CD3DX12_ROOT_PARAMETER, 10> param;
+	array<CD3DX12_ROOT_PARAMETER, 11> param;
 
 	for (int cbv_index=0; cbv_index < CBV_ROOT_INDEX_COUNT; cbv_index++)
 		param[cbv_index].InitAsConstantBufferView(cbv_index); 
 
 	param[SRV_TABLE_INDEX].InitAsDescriptorTable(1, &SRV_Range);
 	param[UAV_TABLE_INDEX].InitAsDescriptorTable(1, &UAV_Range);
-
+	param[10].InitAsShaderResourceView(9, 0);
+	
 	// 루트 서명 설정
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 	rootSignatureDesc.NumParameters = param.size();

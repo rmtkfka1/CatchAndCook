@@ -56,5 +56,7 @@ private:
 	DXGI_FORMAT _format;
 public:
 	D3D12_RESOURCE_STATES _state; // ÃßÀû¿ë
+
+	D3D12_GPU_VIRTUAL_ADDRESS _temp;
 };
 

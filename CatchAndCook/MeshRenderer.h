@@ -23,7 +23,6 @@ public:
 	void DebugRendering() override;
 	void SetDestroy() override;
 	void DestroyComponentOnly() override;
-
 	void SetMesh(const std::shared_ptr<Mesh>& _mesh);
 	void SetMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
 	void AddMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
@@ -32,6 +31,5 @@ private:
 	std::shared_ptr<Mesh> _mesh;
 	std::vector<std::shared_ptr<Material>> _materials;
 
-	// [mesh,mateiral] [mesh,mateiral]
 };
 
