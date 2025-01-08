@@ -145,14 +145,14 @@ int Scene::Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObjec
     return vec.size() - startSize;
 }
 
-void Scene::AddRenderObject(std::shared_ptr<Material> material, shared_ptr<RendererBase> data)
+void Scene::AddRenderer(std::shared_ptr<Material> material, shared_ptr<RendererBase> data)
 {
     for (int i=0;i<RENDER_PASS::Count;i++)
-		if (RENDER_PASS::HasFlag(material->pass, RENDER_PASS::PASS(1 << i)))
+		if (RENDER_PASS::HasFlag(material->GetPass(), RENDER_PASS::PASS(1 << i)))
             _passObjects[i].emplace_back(material, data);
 }
 
-void Scene::AddRenderObject(shared_ptr<RendererBase> data, RENDER_PASS::PASS pass)
+void Scene::AddRenderer(shared_ptr<RendererBase> data, RENDER_PASS::PASS pass)
 {
     for (int i = 0; i < RENDER_PASS::Count; i++)
         if (RENDER_PASS::HasFlag(pass, RENDER_PASS::PASS(1 << i)))

@@ -61,11 +61,11 @@ void MeshRenderer::RenderBegin()
 
 	for (auto& ele : _materials)  
 	{
-		ele->_container = Core::main->GetBufferManager()->GetTable()->Alloc(8);
+		ele->_container = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
 		ele->PushData();
-		SceneManager::main->GetCurrentScene()->AddRenderObject(ele, static_pointer_cast<MeshRenderer>(shared_from_this()));
+		SceneManager::main->GetCurrentScene()->AddRenderer(ele, static_pointer_cast<MeshRenderer>(shared_from_this()));
 	} 
-	SceneManager::main->GetCurrentScene()->AddRenderObject(static_pointer_cast<MeshRenderer>(shared_from_this()), RENDER_PASS::Shadow);
+	SceneManager::main->GetCurrentScene()->AddRenderer(static_pointer_cast<MeshRenderer>(shared_from_this()), RENDER_PASS::Shadow);
 }
 
 void MeshRenderer::Rendering()
@@ -83,9 +83,17 @@ void MeshRenderer::Rendering(const std::shared_ptr<Material>& material)
 	GetOwner()->transform->SetData();
 
 	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
-	cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
-	cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
-	cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
+	if (_mesh->GetVertexCount() != 0)
+	{
+		cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
+		if (_mesh->GetIndexCount() != 0)
+		{
+			cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
+			cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
+		}
+		else
+			cmdList->DrawInstanced(_mesh->GetVertexCount(), 1, 0, 0);
+	}
 }
 
 

@@ -115,11 +115,11 @@ void RootSignature::Init()
 	param[SRV_TABLE_INDEX].InitAsDescriptorTable(1, &SRV_Range);
 	param[UAV_TABLE_INDEX].InitAsDescriptorTable(1, &UAV_Range);
 
-	param[GLOBAL_SHADOW_SRV].InitAsDescriptorTable(1, &G_SHADOW_SRV);
-	param[GLOBAL_POSITION_SRV].InitAsDescriptorTable(1, &G_POSITION_SRV);
-	param[GLOBAL_NORAML_SRV].InitAsDescriptorTable(1, &G_NORAML_SRV);
-	param[GLOBAL_COLOR_SRV].InitAsDescriptorTable(1, &G_COLOR_SRV);
-	param[GLOBAL_DEPTH_SRV].InitAsDescriptorTable(1, &G_DEPTH_SRV);
+	param[GLOBAL_SRV_SHADOW_INDEX].InitAsDescriptorTable(1, &G_SHADOW_SRV);
+	param[GLOBAL_SRV_POSITION_INDEX].InitAsDescriptorTable(1, &G_POSITION_SRV);
+	param[GLOBAL_SRV_NORAML_INDEX].InitAsDescriptorTable(1, &G_NORAML_SRV);
+	param[GLOBAL_SRV_COLOR_INDEX].InitAsDescriptorTable(1, &G_COLOR_SRV);
+	param[GLOBAL_SRV_DEPTH_INDEX].InitAsDescriptorTable(1, &G_DEPTH_SRV);
 	
 	// 루트 서명 설정
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};

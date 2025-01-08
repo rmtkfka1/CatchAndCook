@@ -30,9 +30,9 @@ public:
 	virtual ~Material();
 
 	void SetShader(std::shared_ptr<Shader> shader) { _shader = shader; }
-	RENDER_PASS::PASS pass;
 
-	void SetPass(RENDER_PASS::PASS pass) {this->pass = pass;};
+	void SetPass(RENDER_PASS::PASS pass) {this->_pass = pass;};
+	RENDER_PASS::PASS& GetPass() { return this->_pass; };
 
 	void SetTexture(std::string name, const std::shared_ptr<Texture>& field);
 	shared_ptr<Shader> GetShader() { return _shader; }
@@ -55,6 +55,6 @@ private:
 	CBufferContainer* _cbufferContainer;
 	MaterialParams _params;
 	bool _useMaterialParams=true;
-
+	RENDER_PASS::PASS _pass = RENDER_PASS::Forward;
 };
 
