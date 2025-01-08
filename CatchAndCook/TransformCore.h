@@ -1,35 +1,13 @@
 #pragma once
-#include "Component.h"
-
-struct CBufferContainer;
-
-class Transform : public Component
+class TransformCore
 {
 public:
-	Transform();
-	virtual ~Transform() override;
+    TransformCore();
+    virtual ~TransformCore();
 
-	void SetDestroy() override;
-	void Init() override;
-	void Start() override;
-	void Update() override;
-	void Update2() override;
-	void Enable() override;
-	void Disable() override;
-	void Destroy() override;
-	void RenderBegin() override;
-	void Rendering() override;
-	void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
-	void DebugRendering() override;
-
-    void PushData();
-	void SetData();
-
-public:
-
-    vec3 SetForward(const vec3& dir );
-    vec3 SetUp(const vec3& dir );
-    vec3 SetRight(const vec3& dir );
+    vec3 SetForward(const vec3& dir);
+    vec3 SetUp(const vec3& dir);
+    vec3 SetRight(const vec3& dir);
 
     vec3 GetForward();
     vec3 GetUp();
@@ -73,7 +51,7 @@ public:
 
 
 public:
-    bool _isLocalSRTChanged = true; //이거 활성화시 시 월드매트릭스 갱신.isLocalToWorldChanged 이거 활성화
+    bool isLocalSRTChanged = true; //이거 활성화시 시 월드매트릭스 갱신.isLocalToWorldChanged 이거 활성화
     bool _isLocalToWorldChanged = true; //부모가 local 업데이트 or 부모 world 변경시 이거 true.worldtrs변경.
 
 private:
@@ -92,8 +70,6 @@ private:
     bool _needLocalUpdated = true; // 나 자신이 SRT 갱신 해야해.
     bool _needLocalToWorldUpdated = true; // 부모가 업데이트 됬을때 내가 변경되어야함을 표기, 위에꺼랑은 역할이 조금 다른게. 위에껀 자기 기준이라, 전 프레임이랑 같으면 바뀌는데, 이건 내가 바뀌기 전까지 안꺼짐
 
-
-    CBufferContainer* _container;
 };
 
 
