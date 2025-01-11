@@ -95,6 +95,20 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		switch (msg)
 		{
 
+		case WM_MOVE:
+		{
+
+			if (Initalize)
+			{
+				RECT	rect;
+				GetClientRect(hWnd, &rect);
+				WINDOW_WIDTH = rect.right - rect.left;
+				WINDOW_HEIGHT = rect.bottom - rect.top;
+				Core::main->ResizeWindowSize();
+			}
+			break;
+		}
+
 		
 	    case WM_LBUTTONUP:
 	    case WM_RBUTTONUP:
