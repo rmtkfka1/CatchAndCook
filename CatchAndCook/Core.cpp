@@ -66,18 +66,15 @@ void Core::Init(HWND hwnd)
 
     _mesh->Init(data, indices);
     
-    _shader = Shader::Load(L"test.hlsl",
-	{
-		{"PS_Main", "ps"},
-		{"VS_Main", "vs"}
-	});
-
-
-	ShaderInfo info;
+    ShaderInfo info;
     info._zTest = false;
     info._stencilTest = false;
-	_shader->SetInfo(info);
-	_shader->Init(StaticProp);
+
+    _shader = Shader::Init(L"test.hlsl", StaticProp,
+	{
+		{"PS_Main", "ps"},
+		{"VS_Main", "vs"},
+	}, info);
 
 
     _texture = make_shared<Texture>();

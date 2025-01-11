@@ -193,13 +193,13 @@ public:
     D3D12_GRAPHICS_PIPELINE_STATE_DESC _pipelineDesc = {};
     ComPtr<ID3D12PipelineState> _pipelineState;
 
-    void Init(const std::vector<VertexProp>& prop);
+    void InitPipeLine(const std::vector<VertexProp>& prop);
     void SetInfo(const ShaderInfo& info);
     void Profile();
 
     int GetRegisterIndex(const std::string& name);
 
-    static std::shared_ptr<Shader> Load(const std::wstring& path, const std::vector<std::pair<std::string, std::string>>& shaderParams);
+    static std::shared_ptr<Shader> Init(const std::wstring& path, const std::vector<VertexProp>& prop , const std::vector<std::pair<std::string, std::string>>& shaderParams , const ShaderInfo& info = ShaderInfo());
 protected:
     static std::shared_ptr<ShaderCode> LoadBlob(std::wstring path, std::string endPointName, std::string shaderType);
 };

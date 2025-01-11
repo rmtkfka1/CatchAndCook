@@ -50,7 +50,7 @@ void ShaderInfo::SetDSTexture(const std::shared_ptr<Texture>& DSTexture)
     DSVFormat = DSTexture->GetFormat();
 }
 
-void Shader::Init(const std::vector<VertexProp>& prop)
+void Shader::InitPipeLine(const std::vector<VertexProp>& prop)
 {
     auto device = Core::main->GetDevice();
 
@@ -76,6 +76,7 @@ void Shader::Init(const std::vector<VertexProp>& prop)
         else if (vertexSetInfo.propInfos[i].size == 4) elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
         _inputElementDesc[i] = elementDesc;
     }
+
     _pipelineDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
     _pipelineDesc.pRootSignature = Core::main->GetRootSignature()->GetGraphicsRootSignature().Get();
 
@@ -614,7 +615,7 @@ std::shared_ptr<ShaderCode> Shader::LoadBlob(std::wstring path, std::string endP
     return shaderCode;
 }
 
-std::shared_ptr<Shader> Shader::Load(const std::wstring& path, const std::vector<std::pair<std::string, std::string>>& shaderParams)
+std::shared_ptr<Shader> Shader::Init(const std::wstring& path, const std::vector<VertexProp>& prop, const std::vector<std::pair<std::string, std::string>>& shaderParams, const ShaderInfo& info)
 {
     auto shader = std::make_shared<Shader>();
 
@@ -625,5 +626,7 @@ std::shared_ptr<Shader> Shader::Load(const std::wstring& path, const std::vector
     }
 
     shader->Profile();
+    shader->SetInfo(info);
+    shader->InitPipeLine(prop);
     return shader;
 }

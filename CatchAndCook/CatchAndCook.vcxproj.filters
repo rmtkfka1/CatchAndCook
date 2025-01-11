@@ -130,6 +130,9 @@
     <ClCompile Include="CameraManager.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -245,6 +248,9 @@
       <Filter>Resource</Filter>
     </ClInclude>
     <ClInclude Include="CameraManager.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
       <Filter>Resource</Filter>
     </ClInclude>
   </ItemGroup>
