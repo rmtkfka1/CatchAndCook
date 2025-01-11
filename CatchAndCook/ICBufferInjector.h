@@ -14,10 +14,12 @@ class ICBufferInjector
 private:
     int _staticIndex = -1;
 public:
+
     virtual ~ICBufferInjector() = default;
     virtual void Inject(const std::any& source) = 0;
     virtual void SetData(const std::shared_ptr<Shader>& shader) = 0;
     //Shader 없이 상수 위치에 넣어주기 위한 설정
+
     void SetStaticRegisterIndex(int index) {_staticIndex = index; }
     int GetStaticRegisterIndex() { return _staticIndex; }
 };
@@ -60,7 +62,9 @@ public:
     static std::unique_ptr<InjectorManager> main;
 
     std::unordered_map<BufferType, std::shared_ptr<ICBufferInjector>> _injectTable;
+
     void Init() { _injectTable.reserve(256); }
+
     template <class T, class = std::enable_if_t<std::is_base_of_v<ICBufferInjector, T>>>
     void Register(BufferType type)
     {
@@ -68,5 +72,6 @@ public:
         if (!_injectTable.contains(type))
             _injectTable[type] = inject;
     };
+
     std::shared_ptr<ICBufferInjector> Get(BufferType type) { return _injectTable[type]; };
 };

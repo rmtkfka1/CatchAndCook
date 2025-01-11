@@ -46,7 +46,6 @@ public:
 
 	void SetInjector(const std::vector<std::shared_ptr<ICBufferInjector>>& injectors) { _injectors = injectors; }
 
-
 	int GetPropertyInt(const std::string& name) { return _propertyInts[name]; };
 	void SetPropertyInt(const std::string& name, int data) { _propertyInts[name] = data; };
 	float GetPropertyFloat(const std::string& name) { return _propertyFloats[name]; };
@@ -75,11 +74,30 @@ private:
 };
 
 
-struct TestSubMaterialParam
-{
-	vec2 uv;
-};
 
-CBUFFER_INJECTOR("TestSubMaterialParam", TestSubMaterialParam, BufferType::MateriaSubParam, std::shared_ptr<Material>,
-	param.uv = Vector2(source->GetPropertyVector("uv"));
-)
+//
+//class TestSubMaterialParamInjector : public ICBufferInjector
+//{
+//public:
+//	~TestSubMaterialParamInjector() override = default;
+//	const char* cbufferName = "TestSubMaterialParam";
+//	TestSubMaterialParam data;
+//	CBufferContainer* _cbufferContainer;
+//
+//	void Inject(const std::any& originalSource) override
+//	{
+//		TestSubMaterialParam& param = data;
+//		const std::shared_ptr<Material>& source = std::any_cast<const std::shared_ptr<Material>&>(originalSource);
+//		param.uv = Vector2(source->GetPropertyVector("uv"));
+//		_cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::MateriaSubParam)->Alloc(1);
+//		memcpy(_cbufferContainer->ptr, &param, sizeof(TestSubMaterialParam));
+//	}
+//
+//	void SetData(const std::shared_ptr<Shader>& shader) override
+//	{
+//		int index = GetStaticRegisterIndex();
+//		if (shader) index = shader->GetRegisterIndex(cbufferName);
+//		if (index != -1) Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(
+//			index, _cbufferContainer->GPUAdress);
+//	}
+//};

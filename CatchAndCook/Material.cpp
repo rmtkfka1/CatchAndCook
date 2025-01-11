@@ -34,6 +34,7 @@ void Material::SetData()
 {
 	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, _container.gpuHandle);
 	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(4, _cbufferContainer->GPUAdress);
+
 	if (_shader)
 		for (auto& injector : _injectors)
 			injector->SetData(_shader);

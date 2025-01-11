@@ -11,17 +11,18 @@
 
 void Game::Init(HWND hwnd)
 {
+	IGuid::StaticInit();
 	Time::main = make_unique<Time>();
 	Time::main->Init(hwnd);
 	Input::main = make_unique<Input>();
 	Core::main = make_unique<Core>();
 	Core::main->Init(hwnd);
+
+	SceneManager::main = make_unique<SceneManager>();
+
 	InjectorManager::main = make_unique<InjectorManager>();
 	InjectorManager::main->Init();
-	SceneManager::main = make_unique<SceneManager>();
-	IGuid::StaticInit();
 
-	Core::main->GetBufferManager()->CreateBufferPool(BufferType::MateriaSubParam, sizeof(TestSubMaterialParam), 255);
 	InjectorManager::main->Register<TestSubMaterialParamInjector>(BufferType::MateriaSubParam);
 
 	std::shared_ptr<Scene> scene = std::make_shared<Scene>();

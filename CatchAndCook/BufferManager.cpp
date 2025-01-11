@@ -10,6 +10,7 @@ void BufferManager::Init()
 
 	CreateBufferPool(BufferType::TransformParam, sizeof(Matrix), 255);
 	CreateBufferPool(BufferType::MateriaParam, sizeof(MaterialParams), 255);
+	CreateBufferPool(BufferType::MateriaSubParam, sizeof(TestSubMaterialParam), 255);
 
 	{
 		_table = make_shared<DescritporTable>();

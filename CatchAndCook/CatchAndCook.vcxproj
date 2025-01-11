@@ -164,6 +164,7 @@
   <ItemGroup>
     <ClCompile Include="BufferManager.cpp" />
     <ClCompile Include="BufferPool.cpp" />
+    <ClCompile Include="CbufferParam.cpp" />
     <ClCompile Include="ICBufferInjector.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Core.cpp" />
@@ -217,6 +218,7 @@
   <ItemGroup>
     <ClInclude Include="BufferManager.h" />
     <ClInclude Include="BufferPool.h" />
+    <ClInclude Include="CbufferParam.h" />
     <ClInclude Include="ICBufferInjector.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="convert_math.h" />

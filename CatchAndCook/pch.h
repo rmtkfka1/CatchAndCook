@@ -24,7 +24,6 @@
 #pragma comment(lib, "rpcrt4.lib")
 
 
-
 #include "d3dx12.h"
 #include <d3d12.h>
 #include <wrl.h>
@@ -99,7 +98,7 @@ namespace fs = std::filesystem;
 #include "convert_string.h"
 #include "Input.h"
 #include "Time.h"
-
+#include "CbufferParam.h"
 
 inline void ThrowIfFailed(HRESULT hr) {
     if (FAILED(hr)) {
