@@ -40,50 +40,7 @@ void Core::Init(HWND hwnd)
     _rootSignature = make_shared<RootSignature>();
     _rootSignature->Init();
 
-    _mesh = make_shared<Mesh>();
-
-    vector<Vertex_Static> data;
-  
-    data.resize(4);
-    //0  1
-    //3  2
-    data[0].position = vec3(-0.5f, 0.5f, 0.3f);
-    data[1].position = vec3(0.5f, 0.5f, 0.3f);
-    data[2].position = vec3(0.5f, -0.5f, 0.3f);
-    data[3].position = vec3(-0.5f, -0.5f, 0.3f);
-
-    data[0].uvs[0] = vec2(0,0);
-    data[1].uvs[0] = vec2(1.0f,0);
-    data[2].uvs[0] = vec2(1.0f, 1.0f);
-    data[3].uvs[0] = vec2(0, 1.0f);
-
-    data[0].uvs[1] = vec2(0, 0);
-    data[1].uvs[1] = vec2(1.0f, 0);
-    data[2].uvs[1] = vec2(1.0f, 1.0f);
-    data[3].uvs[1] = vec2(0, 1.0f);
-
-    vector<uint32> indices = { 0,1,2 ,0,2,3};
-
-    _mesh->Init(data, indices);
-    
-    ShaderInfo info;
-    info._zTest = false;
-    info._stencilTest = false;
-
- //   _shader = Shader::Init(L"test.hlsl", StaticProp,
-	//{
-	//	{"PS_Main", "ps"},
-	//	{"VS_Main", "vs"},
-	//}, info);
-
-    _shader = ResourceManager::main->Load<Shader>(L"test.hlsl",L"test.hlsl", StaticProp,
-        {
-            {"PS_Main", "ps"},
-            {"VS_Main", "vs"},
-        }, info);
-
-    _texture = make_shared<Texture>();
-    _texture->Init(L"Start.jpg");
+   
     
 
 }

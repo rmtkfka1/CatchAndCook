@@ -185,6 +185,7 @@ public:
 class Shader
 {
 public:
+
     std::unordered_map<std::string, std::shared_ptr<ShaderCode>> _shaderCodeTable;
     ShaderInfo _info;
     ShaderProfileInfo _profileInfo;
@@ -199,7 +200,7 @@ public:
 
     int GetRegisterIndex(const std::string& name);
 
-    static std::shared_ptr<Shader> Init(const std::wstring& path, const std::vector<VertexProp>& prop , const std::vector<std::pair<std::string, std::string>>& shaderParams , const ShaderInfo& info = ShaderInfo());
+    void Init(const std::wstring& path, std::vector<VertexProp>& prop , std::vector<std::pair<std::string, std::string>>& shaderParams ,ShaderInfo& info = ShaderInfo());
 protected:
-    static std::shared_ptr<ShaderCode> LoadBlob(std::wstring path, std::string endPointName, std::string shaderType);
+    std::shared_ptr<ShaderCode> LoadBlob(std::wstring path, std::string endPointName, std::string shaderType);
 };

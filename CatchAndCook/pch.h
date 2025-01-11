@@ -99,6 +99,7 @@ namespace fs = std::filesystem;
 #include "Input.h"
 #include "Time.h"
 #include "CbufferParam.h"
+#include "ResourceManager.h"
 
 inline void ThrowIfFailed(HRESULT hr) {
     if (FAILED(hr)) {

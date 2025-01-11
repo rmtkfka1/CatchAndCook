@@ -615,18 +615,16 @@ std::shared_ptr<ShaderCode> Shader::LoadBlob(std::wstring path, std::string endP
     return shaderCode;
 }
 
-std::shared_ptr<Shader> Shader::Init(const std::wstring& path, const std::vector<VertexProp>& prop, const std::vector<std::pair<std::string, std::string>>& shaderParams, const ShaderInfo& info)
+void Shader::Init(const std::wstring& path, std::vector<VertexProp>& prop, std::vector<std::pair<std::string, std::string>>& shaderParams, ShaderInfo& info)
 {
-    auto shader = std::make_shared<Shader>();
-
+  
     for (auto& pair : shaderParams)
     {
         auto shaderCodeData = LoadBlob(path, pair.first, pair.second);
-        shader->_shaderCodeTable.emplace(shaderCodeData->shaderType, shaderCodeData);
+        _shaderCodeTable.emplace(shaderCodeData->shaderType, shaderCodeData);
     }
 
-    shader->Profile();
-    shader->SetInfo(info);
-    shader->InitPipeLine(prop);
-    return shader;
+    Profile();
+    SetInfo(info);
+    InitPipeLine(prop);
 }

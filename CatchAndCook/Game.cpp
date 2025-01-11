@@ -10,18 +10,22 @@
 #include "Transform.h"
 #include "CameraManager.h"
 #include "Camera.h"
+#include "Texture.h"
+#include "Mesh.h"
 void Game::Init(HWND hwnd)
 {
 	IGuid::StaticInit();
 	Time::main = make_unique<Time>();
 	Time::main->Init(hwnd);
 	Input::main = make_unique<Input>();
+
 	Core::main = make_unique<Core>();
 	Core::main->Init(hwnd);
 
+	ResourceManager::main = make_unique<ResourceManager>();
+	ResourceManager::main->Init();
 	SceneManager::main = make_unique<SceneManager>();
 	CameraManager::main = make_unique<CameraManager>();
-
 
 	InjectorManager::main = make_unique<InjectorManager>();
 	InjectorManager::main->Init();
@@ -32,19 +36,69 @@ void Game::Init(HWND hwnd)
 	SceneManager::main->AddScene(scene);
 	SceneManager::main->ChangeScene(scene);
 
-	Core::main->_gameObjects = SceneManager::main->GetCurrentScene()->CreateGameObject(L"test gameObject");
-	Core::main->_gameObjects->transform->SetLocalPosition(vec3(0, 0.3f, 0));
-	Core::main->_meshRenderer = Core::main->_gameObjects->AddComponent<MeshRenderer>();
 
-	Core::main->_material = make_shared<Material>();
-	Core::main->_material->SetShader(Core::main->_shader);
-	Core::main->_material->SetPass(RENDER_PASS::Forward);
-	Core::main->_material->SetInjector({ InjectorManager::main->Get(BufferType::MateriaSubParam) });
-	Core::main->_material->SetTexture("g_tex_0", Core::main->_texture);
-	Core::main->_material->SetPropertyVector("uv", vec4(0.3,-0.3,0,0));
+	_mesh = make_shared<Mesh>();
 
-	Core::main->_meshRenderer->AddMaterials({ Core::main->_material });
-	Core::main->_meshRenderer->SetMesh(Core::main->_mesh);
+	vector<Vertex_Static> data;
+
+	data.resize(4);
+	//0  1
+	//3  2
+	data[0].position = vec3(-0.5f, 0.5f, 0.3f);
+	data[1].position = vec3(0.5f, 0.5f, 0.3f);
+	data[2].position = vec3(0.5f, -0.5f, 0.3f);
+	data[3].position = vec3(-0.5f, -0.5f, 0.3f);
+
+	data[0].uvs[0] = vec2(0, 0);
+	data[1].uvs[0] = vec2(1.0f, 0);
+	data[2].uvs[0] = vec2(1.0f, 1.0f);
+	data[3].uvs[0] = vec2(0, 1.0f);
+
+	data[0].uvs[1] = vec2(0, 0);
+	data[1].uvs[1] = vec2(1.0f, 0);
+	data[2].uvs[1] = vec2(1.0f, 1.0f);
+	data[3].uvs[1] = vec2(0, 1.0f);
+
+	vector<uint32> indices = { 0,1,2 ,0,2,3 };
+
+	_mesh->Init(data, indices);
+
+	ShaderInfo info;
+	info._zTest = false;
+	info._stencilTest = false;
+
+	//   _shader = Shader::Init(L"test.hlsl", StaticProp,
+	   //{
+	   //	{"PS_Main", "ps"},
+	   //	{"VS_Main", "vs"},
+	   //}, info);
+
+	std::vector<std::pair<std::string, std::string>> shaderParams = {
+			{"PS_Main", "ps"},
+			{"VS_Main", "vs"},
+	};
+
+	_shader = ResourceManager::main->Load<Shader>(L"test.hlsl", L"test.hlsl", StaticProp,
+		shaderParams, info);
+
+
+	_texture = make_shared<Texture>();
+	_texture->Init(L"Start.jpg");
+
+
+	_gameObjects = SceneManager::main->GetCurrentScene()->CreateGameObject(L"test gameObject");
+	_gameObjects->transform->SetLocalPosition(vec3(0, 0.3f, 0));
+	_meshRenderer = _gameObjects->AddComponent<MeshRenderer>();
+
+	_material = make_shared<Material>();
+	_material->SetShader(_shader);
+	_material->SetPass(RENDER_PASS::Forward);
+	_material->SetInjector({ InjectorManager::main->Get(BufferType::MateriaSubParam) });
+	_material->SetTexture("g_tex_0",_texture);
+	_material->SetPropertyVector("uv", vec4(0.3,-0.3,0,0));
+
+	_meshRenderer->AddMaterials({_material });
+	_meshRenderer->SetMesh(_mesh);
 
 	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, static_pointer_cast<Camera>(make_shared<ThirdPersonCamera>()));
 	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0.5f, 0, -20.0f));
@@ -58,7 +112,7 @@ void Game::Run()
 	std::shared_ptr<Scene> currentScene = SceneManager::main->GetCurrentScene();
 	currentScene->Update();
 	
-	Core::main->_material->SetPropertyVector("uv", Core::main->_material->GetPropertyVector("uv") + vec4(0.01,0,0,0));
+	_material->SetPropertyVector("uv",_material->GetPropertyVector("uv") + vec4(0.01,0,0,0));
 	Core::main->RenderBegin();
 	currentScene->RenderBegin();
 	currentScene->Rendering();
