@@ -23,7 +23,6 @@ struct MaterialParams
 	array<Matrix, 2>	MatrixParams { Matrix::Identity, Matrix::Identity };
 };
 
-
 class Material : public IGuid
 {
 public:

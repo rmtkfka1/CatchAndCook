@@ -80,7 +80,7 @@ void Game::Init(HWND hwnd)
 	_material->SetShader(_shader);
 	_material->SetPass(RENDER_PASS::Forward);
 	_material->SetInjector({ InjectorManager::main->Get(BufferType::MateriaSubParam) });
-	//_material->SetTexture("g_tex_0",_texture);
+	_material->SetTexture("g_tex_0",_texture);
 	_material->SetPropertyVector("uv", vec4(0.3,-0.3,0,0));
 
 	_meshRenderer->AddMaterials({_material });

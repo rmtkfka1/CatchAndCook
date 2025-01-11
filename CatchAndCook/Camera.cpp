@@ -47,20 +47,18 @@ void Camera::CalculateVPMatrix()
     _params.InvertProjectionMatrix = _params.ProjectionMatrix.Invert();
     _params.InvertVPMatrix = _params.VPMatrix.Invert();
 
-
 }
 
 void Camera::PushData()
 {
-	_data = Core::main->GetBufferManager()->GetBufferPool(BufferType::CameraParam)->Alloc(1);
-	memcpy(_data->ptr, (void*)&_params, sizeof(CameraParams));
+	_cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::CameraParam)->Alloc(1);
+	memcpy(_cbufferContainer->ptr, (void*)&_params, sizeof(CameraParams));
 }
-
 
 void Camera::SetData()
 {
 	auto& cmdList =Core::main->GetCmdList();
-	cmdList->SetGraphicsRootConstantBufferView(2, _data->GPUAdress);
+	cmdList->SetGraphicsRootConstantBufferView(2, _cbufferContainer->GPUAdress);
 }
 
 /*************************

@@ -42,7 +42,6 @@ public:
 
     virtual void Update();
     
-    void CalculateVPMatrix();
     void PushData();
     void SetData();
 
@@ -58,6 +57,8 @@ public:
 
     CameraParams& GetCameraParam() { return _params; }
     CameraType& GetCameraType() { return _type; }
+private:
+    void CalculateVPMatrix();
 
 protected:
     vec3 _cameraPos = vec3(0, 0, 0);
