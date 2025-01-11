@@ -96,7 +96,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		switch (msg)
 		{
 
-		case WM_MOVE:
+		case WM_SIZE:
 		{
 
 			if (Initalize)
