@@ -29,6 +29,8 @@ public:
 
 	void Fence();
 	void FlushResCMDQueue();
+	void ResizeWindowSize();
+	HWND GetHandle() { return _hwnd; }
 
 public:
 	ComPtr<ID3D12Device5>& GetDevice() { return _device; }
@@ -41,6 +43,7 @@ public:
 	
 
 private:
+	void AdjustWinodwSize();
 	void InitDirectX12();
 
 private:
@@ -50,6 +53,7 @@ private:
 	void SetDebugLayerInfo();
 
 private:
+	
 	shared_ptr<RenderTarget> _renderTarget;
 	shared_ptr<RootSignature> _rootSignature;
 	shared_ptr<BufferManager> _bufferManager;
@@ -65,6 +69,7 @@ private:
 	ComPtr<ID3D12CommandAllocator> _cmdMemory = {};
 	ComPtr<ID3D12GraphicsCommandList> _cmdList = {};
 	ComPtr<IDXGISwapChain3> _swapChain = nullptr;
+	uint32 _swapChainFlags;
 
 	ComPtr<ID3D12CommandAllocator> _resCmdMemory{};
 	ComPtr<ID3D12GraphicsCommandList> _resCmdList{};
@@ -73,11 +78,10 @@ private:
 	HANDLE _fenceEvent = nullptr;
 	uint64 _fenceValue = 0;
 
-	HWND _hwnd{};
+	HWND _hwnd{0};
 
 public:
-
-
+	
 public:
 	//temp
 	//array<std::vector<std::shared_ptr<Packet>>, RENDER_PASS::Count> passPackets;

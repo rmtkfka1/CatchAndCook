@@ -29,6 +29,8 @@ void Core::Init(HWND hwnd)
 
     _hwnd = hwnd;
 
+    AdjustWinodwSize();
+
     InitDirectX12();
 
     _bufferManager = make_shared<BufferManager>();
@@ -40,9 +42,16 @@ void Core::Init(HWND hwnd)
     _rootSignature = make_shared<RootSignature>();
     _rootSignature->Init();
 
-   
-    
 
+
+    Initalize = true;
+}
+
+void Core::AdjustWinodwSize()
+{
+    RECT rect = { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT };
+    ::AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
+   
 }
 
 
@@ -92,6 +101,13 @@ void Core::FlushResCMDQueue()
     _resCmdList->Reset(_resCmdMemory.Get(), nullptr);
 }
 
+void Core::ResizeWindowSize()
+{
+    Fence();
+    AdjustWinodwSize();
+    _renderTarget->ResizeWindowSize(_swapChain,_swapChainFlags);
+}
+
 
 
 
@@ -116,9 +132,6 @@ void Core::Fence()
 
 void Core::InitDirectX12()
 {
-
-
-
 
     CreateDevice(true, true);
     CreateCmdQueue();
@@ -235,6 +248,7 @@ void Core::CreateSwapChain()
     swapChainDesc.Scaling = DXGI_SCALING_NONE;
     swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
     swapChainDesc.Flags |= DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
+    _swapChainFlags = swapChainDesc.Flags;
 
     DXGI_SWAP_CHAIN_FULLSCREEN_DESC fsSwapChainDesc = {};
     fsSwapChainDesc.Windowed = TRUE;

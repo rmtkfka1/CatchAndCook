@@ -35,7 +35,7 @@ public:
 
 public:
 	void Init(ComPtr<IDXGISwapChain3>& swapchain);
-	void Resize(DWORD BackBufferWidth, DWORD BackBufferHeight, ComPtr<IDXGISwapChain3> swapchain, UINT	_swapChainFlags);
+	void ResizeWindowSize(ComPtr<IDXGISwapChain3> swapchain, uint32 swapChainFlags);
 	void ChangeIndex();
 	void RenderBegin();
 	void RenderEnd();

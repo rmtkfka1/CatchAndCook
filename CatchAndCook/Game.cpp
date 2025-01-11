@@ -20,7 +20,6 @@ void Game::Init(HWND hwnd)
 	Time::main = make_unique<Time>();
 	Time::main->Init(hwnd);
 	Input::main = make_unique<Input>();
-
 	Core::main = make_unique<Core>();
 	Core::main->Init(hwnd);
 
@@ -35,6 +34,7 @@ void Game::Init(HWND hwnd)
 
 	std::shared_ptr<Scene> scene = std::make_shared<Scene>();
 	scene->Init("test");
+
 	SceneManager::main->AddScene(scene);
 	SceneManager::main->ChangeScene(scene);
 
@@ -112,9 +112,11 @@ void Game::Release()
 {
 	SceneManager::main.reset(nullptr);
 	InjectorManager::main.reset(nullptr);
-	Core::main.reset(nullptr);
+	CameraManager::main.reset(nullptr);
+	InjectorManager::main.reset(nullptr);
+	ResourceManager::main.reset(nullptr);
 	Time::main.reset(nullptr);
 	Input::main.reset(nullptr);
 	IGuid::StaticRelease();
-
+	Core::main.reset(nullptr);
 }

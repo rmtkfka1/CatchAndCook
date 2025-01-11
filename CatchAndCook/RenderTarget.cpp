@@ -35,8 +35,34 @@ void RenderTarget::Init(ComPtr<IDXGISwapChain3>& swapchain)
 	_DSTexture->CreateTexture(DEPTH_STENCIL_FORMAT, D3D12_RESOURCE_STATE_DEPTH_WRITE, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::DSV, false, true);
 }
 
-void RenderTarget::Resize(DWORD BackBufferWidth, DWORD BackBufferHeight, ComPtr<IDXGISwapChain3> swapchain, UINT _swapChainFlags)
+void RenderTarget::ResizeWindowSize(ComPtr<IDXGISwapChain3> swapchain, uint32 swapChainFlags)
 {
+	Core::main->GetBufferManager()->GetTextureBufferPool()->FreeDSVHandle(_DSTexture->GetSharedDSVHandle());
+
+	for (uint32 i = 0; i < SWAP_CHAIN_FRAME_COUNT; i++)
+	{
+		Core::main->GetBufferManager()->GetTextureBufferPool()->FreeRTVHandle(_RenderTargets[i]->GetRTVCpuHandle());
+		_RenderTargets[i]->GetResource().Reset();
+	}
+
+	if (FAILED(swapchain->ResizeBuffers(SWAP_CHAIN_FRAME_COUNT, WINDOW_WIDTH, WINDOW_HEIGHT, DXGI_FORMAT_R8G8B8A8_UNORM, swapChainFlags)))
+	{
+		__debugbreak();
+	}
+
+	_RenderTargetIndex = swapchain->GetCurrentBackBufferIndex();
+
+	for (int32 i = 0; i < SWAP_CHAIN_FRAME_COUNT; i++)
+		swapchain->GetBuffer(i, IID_PPV_ARGS(&_RenderTargets[i]->GetResource()));
+
+	for (int32 i = 0; i < SWAP_CHAIN_FRAME_COUNT; ++i)
+	{
+		_RenderTargets[i]->CreateTexture(SWAP_CHAIN_FORMAT, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::RTV, true, true);
+	}
+
+	_viewport = D3D12_VIEWPORT{ 0.0f,0.0f,static_cast<float>(WINDOW_WIDTH),static_cast<float>(WINDOW_HEIGHT), 0,1.0f };
+	_scissorRect = D3D12_RECT{ 0,0, static_cast<LONG>(WINDOW_WIDTH),static_cast<LONG>(WINDOW_HEIGHT) };
+	_DSTexture->CreateTexture(DEPTH_STENCIL_FORMAT, D3D12_RESOURCE_STATE_DEPTH_WRITE, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::DSV, false, true);
 }
 
 

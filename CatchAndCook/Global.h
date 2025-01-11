@@ -4,6 +4,8 @@
 extern int WINDOW_WIDTH;
 extern int WINDOW_HEIGHT;
 
+extern bool Initalize;
+//
 extern DXGI_FORMAT SWAP_CHAIN_FORMAT;
 extern DXGI_FORMAT DEPTH_STENCIL_FORMAT;
 
