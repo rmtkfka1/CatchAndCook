@@ -51,7 +51,6 @@ void Core::AdjustWinodwSize()
 {
     RECT rect = { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT };
     ::AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
-   
 }
 
 

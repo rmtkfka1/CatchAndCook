@@ -6,7 +6,8 @@
 #include "Game.h"
 #include "Shader.h"
 
-
+bool FullScreen = false;
+unique_ptr<Game> game;
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 int main()
@@ -54,7 +55,7 @@ int main()
 	ShowWindow(hwnd, SW_SHOWDEFAULT);
 	UpdateWindow(hwnd);
 
-	unique_ptr<Game> game = make_unique<Game>();
+	game = make_unique<Game>();
 	game->Init(hwnd);
 
 	MSG msg = {};
@@ -201,9 +202,62 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	    }
 	  
 	    case WM_KEYUP:
+			break;
+
 	    case WM_KEYDOWN:
 	    {
-	        short repeat = lParam & 0xFFFF;
+			if (wParam == VK_ESCAPE)
+			{
+				game->Release();
+				game.reset(nullptr);
+				DestroyWindow(hWnd);
+				return 0;
+			}
+
+			if (wParam == VK_F9)
+			{
+			
+				if (!FullScreen)
+				{
+					RECT rc;
+					GetWindowRect(hWnd, &rc);
+
+					MONITORINFO mi;
+					mi.cbSize = sizeof(mi);
+					GetMonitorInfo(MonitorFromWindow(hWnd, MONITOR_DEFAULTTOPRIMARY), &mi);
+
+					SetWindowLong(hWnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+					SetWindowPos(hWnd, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top,
+						mi.rcMonitor.right - mi.rcMonitor.left,
+						mi.rcMonitor.bottom - mi.rcMonitor.top,
+						SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+
+					WINDOW_WIDTH = mi.rcMonitor.right - mi.rcMonitor.left;
+					WINDOW_HEIGHT = mi.rcMonitor.bottom - mi.rcMonitor.top;
+
+					Core::main->ResizeWindowSize();
+				
+				}
+
+				else
+				{
+					SetWindowLong(hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
+					// 원래 크기로 윈도우 설정
+					SetWindowPos(hWnd, HWND_TOP, 0, 0, 800, 600, SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+
+					WINDOW_WIDTH = 800;
+					WINDOW_HEIGHT = 600;
+
+					Core::main->ResizeWindowSize();
+				
+				}
+
+				FullScreen = !FullScreen;
+				break;
+			}
+
+		
+	      /*  short repeat = lParam & 0xFFFF;
 	        short scanCode = (lParam >> 16) & 0xFF;
 	        short extendedKey = (lParam >> 16) & 0xFF;
 	        bool isAlt = (lParam >> 29) & 0x1;
@@ -221,7 +275,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	        eventDesc.keyboard.isAlt = isAlt;
 	        eventDesc.keyboard.isDown = isDown;
 	        eventDesc.keyboard.isUp = isUp;
-	        Input::main->_eventQueue.push(eventDesc);
+	        Input::main->_eventQueue.push(eventDesc);*/
 	        break;
 	    }
 		case WM_DESTROY:
