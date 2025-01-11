@@ -36,11 +36,9 @@ void Game::Init(HWND hwnd)
 	Core::main->_material = make_shared<Material>();
 	Core::main->_material->SetShader(Core::main->_shader);
 	Core::main->_material->SetPass(RENDER_PASS::Forward);
+	Core::main->_material->SetInjector({ InjectorManager::main->Get(BufferType::MateriaSubParam) });
 	Core::main->_material->SetTexture("g_tex_0", Core::main->_texture);
 	Core::main->_material->SetPropertyVector("uv", vec4(0.3,-0.3,0,0));
-	Core::main->_material->SetInjector({
-		InjectorManager::main->Get(BufferType::MateriaSubParam)
-		});
 
 	Core::main->_meshRenderer->AddMaterials({ Core::main->_material });
 	Core::main->_meshRenderer->SetMesh(Core::main->_mesh);
@@ -67,9 +65,11 @@ void Game::Run()
 
 void Game::Release()
 {
-	Input::main.reset(nullptr);
-	Time::main.reset(nullptr);
+	SceneManager::main.reset(nullptr);
+	InjectorManager::main.reset(nullptr);
 	Core::main.reset(nullptr);
+	Time::main.reset(nullptr);
+	Input::main.reset(nullptr);
 	IGuid::StaticRelease();
 
 }

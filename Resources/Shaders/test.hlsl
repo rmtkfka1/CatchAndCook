@@ -4,7 +4,7 @@ cbuffer test : register(b0)
     row_major matrix M;
 }
 
-cbuffer TestSubMaterialParam : register(b7)
+cbuffer TestSubMaterialParam : register(b4)
 {
     float2 uv;
 }

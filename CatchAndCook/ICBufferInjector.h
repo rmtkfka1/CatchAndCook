@@ -8,15 +8,21 @@
 
 class Material;
 
+//이름을 가지고 매칭하는 Dynamic CBuffer들에 대해서 CBuffer를 주입하는 기능.
 class ICBufferInjector
 {
+private:
+    int _staticIndex = -1;
 public:
     virtual ~ICBufferInjector() = default;
     virtual void Inject(const std::any& source) = 0;
     virtual void SetData(const std::shared_ptr<Shader>& shader) = 0;
+    //Shader 없이 상수 위치에 넣어주기 위한 설정
+    void SetStaticRegisterIndex(int index) {_staticIndex = index; }
+    int GetStaticRegisterIndex() { return _staticIndex; }
 };
 
-
+//인젝터를 생성하는 헬퍼 디파인
 #define CBUFFER_INJECTOR(CBUFFER_NAME, STRUCT_TYPE, CBUFFER_TYPE, SOURCE_TYPE, CODE) \
 class STRUCT_TYPE##Injector : public ICBufferInjector { \
 public: \
@@ -24,7 +30,6 @@ public: \
 	const char* cbufferName = CBUFFER_NAME;\
     STRUCT_TYPE data;\
     CBufferContainer* _cbufferContainer; \
-    int staticIndex = -1;\
     void Inject(const std::any& originalSource) override { \
 		STRUCT_TYPE& param = data; \
         const SOURCE_TYPE& source = std::any_cast<const SOURCE_TYPE&>(originalSource); \
@@ -33,13 +38,14 @@ public: \
         memcpy(_cbufferContainer->ptr, &param, sizeof(STRUCT_TYPE));\
     } \
 	void SetData(const std::shared_ptr<Shader>& shader) override { \
-		int index = staticIndex;\
+		int index = GetStaticRegisterIndex();\
         if(shader)\
 			index = shader->GetRegisterIndex(cbufferName); \
         if (index != -1) \
 			Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(index, _cbufferContainer->GPUAdress);\
 	}\
 };\
+
 //사용 예제
 /*
 	CBUFFER_INJECTOR("UserName", TestSubMaterialParam, BufferType::TransformParam, std::shared_ptr<Material> source,
@@ -47,6 +53,7 @@ public: \
 	)
 */
 
+// 인젝터들을 모아두는 함수
 class InjectorManager
 {
 public:
