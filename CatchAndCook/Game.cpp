@@ -28,7 +28,6 @@ void Game::Init(HWND hwnd)
 	SceneManager::main = make_unique<SceneManager>();
 	CameraManager::main = make_unique<CameraManager>();
 
-
 	InjectorManager::main = make_unique<InjectorManager>();
 	InjectorManager::main->Init();
 	InjectorManager::main->Register<TestSubMaterialParamInjector>(BufferType::MateriaSubParam);
@@ -38,14 +37,12 @@ void Game::Init(HWND hwnd)
 	SceneManager::main->AddScene(scene);
 	SceneManager::main->ChangeScene(scene);
 
-
 	_mesh = make_shared<Mesh>();
 
 	vector<Vertex_Static> data;
 
 	data.resize(4);
-	//0  1
-	//3  2
+	
 	data[0].position = vec3(-0.5f, 0.5f, 0.3f);
 	data[1].position = vec3(0.5f, 0.5f, 0.3f);
 	data[2].position = vec3(0.5f, -0.5f, 0.3f);
@@ -69,19 +66,10 @@ void Game::Init(HWND hwnd)
 	info._zTest = false;
 	info._stencilTest = false;
 
-	//   _shader = Shader::Init(L"test.hlsl", StaticProp,
-	   //{
-	   //	{"PS_Main", "ps"},
-	   //	{"VS_Main", "vs"},
-	   //}, info);
-
-	
 	_shader = ResourceManager::main->Load<Shader>(L"test.hlsl", L"test.hlsl", StaticProp,
 		ShaderArg{}, info);
 
-	_texture = make_shared<Texture>();
-	_texture->Init(L"Start.jpg");
-
+	_texture = ResourceManager::main->Load<Texture>(L"start.jpg",L"start.jpg");
 
 	_gameObjects = SceneManager::main->GetCurrentScene()->CreateGameObject(L"test gameObject");
 	_gameObjects->transform->SetLocalPosition(vec3(0, 0.3f, 0));
@@ -116,7 +104,6 @@ void Game::Run()
 	currentScene->RenderEnd();
 	Core::main->RenderEnd();
 	currentScene->Finish();
-
 
 }
 

@@ -118,6 +118,7 @@ bool Scene::RemoveAtGameObject(int index)
     if (index >= 0 && index < this->_gameObjects.size()) {
         this->_gameObjects.erase(this->_gameObjects.begin() + index);
     }
+
     return false;
 }
 

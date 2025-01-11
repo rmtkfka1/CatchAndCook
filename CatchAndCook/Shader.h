@@ -24,15 +24,6 @@ enum class CullingType
     WIREFRAME
 };
 
-enum class RenderQueueType
-{
-    Sky = 1000,
-    Opaque = 2000,
-    AlphaTest = 2500,
-    Transparent = 3000,
-    Geometry = 1500,
-    UI = 4000
-};
 
 enum class FrontWise
 {
@@ -130,7 +121,6 @@ struct ShaderCode
     D3D12_SHADER_BYTECODE _shaderByteCode = {};
 };
 
-//------------
 struct ShaderArg
 {
     std::vector<std::pair<std::string, std::string>> shaderParams = 
@@ -140,27 +130,31 @@ struct ShaderArg
     };
 };
 
-
 class ShaderInfo
 {
 public:
     ShaderInfo();
     ~ShaderInfo();
+
+    int renderTargetCount = 1;
+
     bool _zTest = true;
     bool _zWrite = true;
     bool _depthOnly = false;
-    CompOper _zComp = CompOper::LEqual;
     bool _stencilTest = false;
+    bool _blendEnable = false;
     int _stencilIndex = 0;
+    int _renderOrder = 2000;
+
+    CompOper _zComp = CompOper::LEqual;
     CompOper _stencilComp = CompOper::Always;
     D3D12_STENCIL_OP _stencilFailOp = D3D12_STENCIL_OP_KEEP;
     D3D12_STENCIL_OP _stencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
     D3D12_STENCIL_OP _stencilPassOp = D3D12_STENCIL_OP_KEEP;
-
     CullingType cullingType = CullingType::BACK;
     FrontWise _wise = FrontWise::CW;
-
     D3D12_PRIMITIVE_TOPOLOGY_TYPE _primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+
     //D3D12_PRIMITIVE_TOPOLOGY _topologyType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
     //D3D_PRIMITIVE_TOPOLOGY_POINTLIST
     //D3D_PRIMITIVE_TOPOLOGY_LINELIST
@@ -174,15 +168,11 @@ public:
         BlendType::AlphaBlend,BlendType::AlphaBlend ,BlendType::AlphaBlend,BlendType::AlphaBlend
     };
 
-    int renderTargetCount = 1;
     DXGI_FORMAT RTVForamts[8]{
         SWAP_CHAIN_FORMAT,SWAP_CHAIN_FORMAT,SWAP_CHAIN_FORMAT,SWAP_CHAIN_FORMAT,
         SWAP_CHAIN_FORMAT,SWAP_CHAIN_FORMAT,SWAP_CHAIN_FORMAT,SWAP_CHAIN_FORMAT
     };
     DXGI_FORMAT DSVFormat = DEPTH_STENCIL_FORMAT;
-
-    int _renderQueue = 2000;
-    RenderQueueType _renderQueueType = RenderQueueType::Opaque;
 
 public:
     void SetRenderTargets(const std::vector<std::shared_ptr<Texture>>& renderTargets);

@@ -35,6 +35,7 @@ void ShaderInfo::SetRenderTargets(const std::vector<std::shared_ptr<Texture>>& r
         RTVForamts[0] = DXGI_FORMAT_UNKNOWN;
         return;
     }
+
     for (uint32 i = 0; i < renderTargetCount; i++)
         RTVForamts[i] = renderTargets[i]->GetFormat();
 }
@@ -207,12 +208,10 @@ void Shader::InitPipeLine(const std::vector<VertexProp>& prop)
     for (int i = 0; i < 8; i++)
     {
         D3D12_RENDER_TARGET_BLEND_DESC& blendDesc = _pipelineDesc.BlendState.RenderTarget[i];
-        blendDesc.BlendEnable = FALSE;
+        blendDesc.BlendEnable = _info._blendEnable;
         blendDesc.LogicOpEnable = FALSE;
         blendDesc.SrcBlend = D3D12_BLEND_ONE;
         blendDesc.DestBlend = D3D12_BLEND_ZERO;
-
-        blendDesc.BlendEnable = _info._renderQueueType == RenderQueueType::Transparent ? TRUE : FALSE;
         blendDesc.LogicOpEnable = FALSE;
         blendDesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
         blendDesc.SrcBlendAlpha = D3D12_BLEND_ONE;

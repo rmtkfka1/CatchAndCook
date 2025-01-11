@@ -11,7 +11,6 @@ Mesh::~Mesh()
 
 }
 
-
 void Mesh::CreateIndexBuffer(vector<uint32>& vec)
 {
 
