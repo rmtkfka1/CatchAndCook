@@ -6,6 +6,8 @@
 #include "RendererBase.h"
 #include "RenderTarget.h"
 #include "Shader.h"
+#include "Camera.h"
+#include "CameraManager.h"
 
 void Scene::AddGameObject(const std::shared_ptr<GameObject> gameObject)
 {
@@ -43,6 +45,11 @@ void Scene::RenderBegin()
 
 void Scene::Rendering()
 {
+    CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
+    CameraManager::main->GetActiveCamera()->Update();
+    CameraManager::main->GetActiveCamera()->PushData();
+    CameraManager::main->GetActiveCamera()->SetData();
+
     auto& cmdList = Core::main->GetCmdList();
     { // Shadow
         auto& targets = _passObjects[RENDER_PASS::Shadow];

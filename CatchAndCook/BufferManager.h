@@ -4,7 +4,9 @@ enum class BufferType
 {
 	TransformParam,
 	MateriaParam,
+	CameraParam,
 	MateriaSubParam,
+
 };
 
 class CBufferPool;

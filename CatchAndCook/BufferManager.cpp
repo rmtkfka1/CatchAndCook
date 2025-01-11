@@ -2,6 +2,7 @@
 #include "BufferManager.h"
 #include "BufferPool.h"
 #include "Material.h"
+#include "Camera.h"
 void BufferManager::Init()
 {
 
@@ -11,6 +12,7 @@ void BufferManager::Init()
 	CreateBufferPool(BufferType::TransformParam, sizeof(Matrix), 255);
 	CreateBufferPool(BufferType::MateriaParam, sizeof(MaterialParams), 255);
 	CreateBufferPool(BufferType::MateriaSubParam, sizeof(TestSubMaterialParam), 255);
+	CreateBufferPool(BufferType::CameraParam, sizeof(CameraParams), 10);
 
 	{
 		_table = make_shared<DescritporTable>();

@@ -12,6 +12,7 @@
 
 MeshRenderer::~MeshRenderer()
 {
+
 }
 
 bool MeshRenderer::IsExecuteAble()
@@ -54,7 +55,7 @@ void MeshRenderer::Destroy()
 	Component::Destroy();
 }
 
-//[] [] []
+
 void MeshRenderer::RenderBegin()
 {
 	Component::RenderBegin();

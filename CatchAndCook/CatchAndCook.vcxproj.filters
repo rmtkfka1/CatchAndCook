@@ -124,6 +124,12 @@
     <ClCompile Include="CbufferParam.cpp">
       <Filter>pch</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraManager.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -234,6 +240,12 @@
     </ClInclude>
     <ClInclude Include="CbufferParam.h">
       <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraManager.h">
+      <Filter>Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

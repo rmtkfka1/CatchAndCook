@@ -8,7 +8,8 @@
 #include "MeshRenderer.h"
 #include "SceneManager.h"
 #include "Transform.h"
-
+#include "CameraManager.h"
+#include "Camera.h"
 void Game::Init(HWND hwnd)
 {
 	IGuid::StaticInit();
@@ -19,10 +20,11 @@ void Game::Init(HWND hwnd)
 	Core::main->Init(hwnd);
 
 	SceneManager::main = make_unique<SceneManager>();
+	CameraManager::main = make_unique<CameraManager>();
+
 
 	InjectorManager::main = make_unique<InjectorManager>();
 	InjectorManager::main->Init();
-
 	InjectorManager::main->Register<TestSubMaterialParamInjector>(BufferType::MateriaSubParam);
 
 	std::shared_ptr<Scene> scene = std::make_shared<Scene>();
@@ -43,6 +45,9 @@ void Game::Init(HWND hwnd)
 
 	Core::main->_meshRenderer->AddMaterials({ Core::main->_material });
 	Core::main->_meshRenderer->SetMesh(Core::main->_mesh);
+
+	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, static_pointer_cast<Camera>(make_shared<ThirdPersonCamera>()));
+	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0.5f, 0, -20.0f));
 }
 
 void Game::Run()

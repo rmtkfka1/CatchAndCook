@@ -1,10 +1,27 @@
 
 cbuffer test : register(b0)
 {
-    row_major matrix M;
+    row_major matrix WorldMat;
 }
 
-cbuffer TestSubMaterialParam : register(b4)
+cbuffer cameraParams : register(b2)
+{
+    row_major Matrix ViewMatrix;
+    row_major Matrix ProjectionMatrix;
+    row_major Matrix VPMatrix;
+    row_major Matrix InvertViewMatrix;
+    row_major Matrix InvertProjectionMatrix;
+    row_major Matrix InvertVPMatrix;
+
+    float cameraPos;
+    float cameraUp;
+    float cameraFrustumData;
+    float cameraScreenData;
+};
+
+
+
+cbuffer popo : register(b7)
 {
     float2 uv;
 }
@@ -32,7 +49,9 @@ VS_OUT VS_Main(VS_IN input)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    output.pos = mul(float4(input.pos, 1.0f), M);
+    output.pos = mul(float4(input.pos, 1.0f), WorldMat);
+    output.pos = mul(output.pos, VPMatrix);
+
     
     output.uv = input.uv;
     output.uv1 = input.uv1;
