@@ -13,6 +13,7 @@
 #include "Texture.h"
 #include "Mesh.h"
 #include "Shader.h"
+
 void Game::Init(HWND hwnd)
 {
 	IGuid::StaticInit();
