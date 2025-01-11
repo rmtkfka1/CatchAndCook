@@ -70,12 +70,17 @@ void Core::Init(HWND hwnd)
     info._zTest = false;
     info._stencilTest = false;
 
-    _shader = Shader::Init(L"test.hlsl", StaticProp,
-	{
-		{"PS_Main", "ps"},
-		{"VS_Main", "vs"},
-	}, info);
+ //   _shader = Shader::Init(L"test.hlsl", StaticProp,
+	//{
+	//	{"PS_Main", "ps"},
+	//	{"VS_Main", "vs"},
+	//}, info);
 
+    _shader = ResourceManager::main->Load<Shader>(L"test.hlsl",L"test.hlsl", StaticProp,
+        {
+            {"PS_Main", "ps"},
+            {"VS_Main", "vs"},
+        }, info);
 
     _texture = make_shared<Texture>();
     _texture->Init(L"Start.jpg");
