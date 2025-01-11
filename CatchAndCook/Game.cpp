@@ -12,6 +12,7 @@
 #include "Camera.h"
 #include "Texture.h"
 #include "Mesh.h"
+#include "Shader.h"
 void Game::Init(HWND hwnd)
 {
 	IGuid::StaticInit();
@@ -26,6 +27,7 @@ void Game::Init(HWND hwnd)
 	ResourceManager::main->Init();
 	SceneManager::main = make_unique<SceneManager>();
 	CameraManager::main = make_unique<CameraManager>();
+
 
 	InjectorManager::main = make_unique<InjectorManager>();
 	InjectorManager::main->Init();
@@ -73,14 +75,9 @@ void Game::Init(HWND hwnd)
 	   //	{"VS_Main", "vs"},
 	   //}, info);
 
-	std::vector<std::pair<std::string, std::string>> shaderParams = {
-			{"PS_Main", "ps"},
-			{"VS_Main", "vs"},
-	};
-
+	
 	_shader = ResourceManager::main->Load<Shader>(L"test.hlsl", L"test.hlsl", StaticProp,
-		shaderParams, info);
-
+		ShaderArg{}, info);
 
 	_texture = make_shared<Texture>();
 	_texture->Init(L"Start.jpg");

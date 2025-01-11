@@ -555,7 +555,6 @@ int Shader::GetRegisterIndex(const std::string& name)
 
 std::shared_ptr<ShaderCode> Shader::LoadBlob(std::wstring path, std::string endPointName, std::string shaderType)
 {
-
     std::wstring originPath = L"../Resources/Shaders/";
 
     std::wstring shaderPath = originPath+ path;
@@ -615,10 +614,10 @@ std::shared_ptr<ShaderCode> Shader::LoadBlob(std::wstring path, std::string endP
     return shaderCode;
 }
 
-void Shader::Init(const std::wstring& path, std::vector<VertexProp>& prop, std::vector<std::pair<std::string, std::string>>& shaderParams, ShaderInfo& info)
+void Shader::Init(const std::wstring& path, std::vector<VertexProp>& prop, ShaderArg& shaderParams, ShaderInfo& info)
 {
-  
-    for (auto& pair : shaderParams)
+ 
+    for (auto& pair : shaderParams.shaderParams)
     {
         auto shaderCodeData = LoadBlob(path, pair.first, pair.second);
         _shaderCodeTable.emplace(shaderCodeData->shaderType, shaderCodeData);

@@ -130,8 +130,15 @@ struct ShaderCode
     D3D12_SHADER_BYTECODE _shaderByteCode = {};
 };
 
-
 //------------
+struct ShaderArg
+{
+    std::vector<std::pair<std::string, std::string>> shaderParams = 
+    {
+        {"PS_Main", "ps"},
+        {"VS_Main", "vs"},
+    };
+};
 
 
 class ShaderInfo
@@ -200,7 +207,7 @@ public:
 
     int GetRegisterIndex(const std::string& name);
 
-    void Init(const std::wstring& path, std::vector<VertexProp>& prop , std::vector<std::pair<std::string, std::string>>& shaderParams ,ShaderInfo& info = ShaderInfo());
+    void Init(const std::wstring& path, std::vector<VertexProp>& prop , ShaderArg& shaderParams ,ShaderInfo& info = ShaderInfo());
 protected:
     std::shared_ptr<ShaderCode> LoadBlob(std::wstring path, std::string endPointName, std::string shaderType);
 };
