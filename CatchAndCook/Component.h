@@ -31,7 +31,7 @@ public:
 	virtual void RenderBegin();
 
 	virtual void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
-	virtual void DebugRendering(); // CBuffer <- ����
+	virtual void DebugRendering(); 
 	virtual void SetDestroy() override;
 	virtual void DestroyComponentOnly();
 

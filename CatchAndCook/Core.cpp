@@ -58,7 +58,6 @@ void Core::RenderBegin()
 }
 
 
-
 void Core::RenderEnd()
 {
 
@@ -117,6 +116,10 @@ void Core::Fence()
 
 void Core::InitDirectX12()
 {
+
+
+
+
     CreateDevice(true, true);
     CreateCmdQueue();
     CreateSwapChain();

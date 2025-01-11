@@ -75,7 +75,7 @@ protected:
     CameraProjectionMode _projmode = CameraProjectionMode::Perspective;
     CameraParams _params;
     CameraType _type =CameraType::ThirdPersonCamera;
-    CBufferContainer* _data;
+    CBufferContainer* _cbufferContainer;
 };
 
 

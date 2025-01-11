@@ -50,6 +50,7 @@ void Component::Destroy()
 
 void Component::RenderBegin()
 {
+
 }
 
 

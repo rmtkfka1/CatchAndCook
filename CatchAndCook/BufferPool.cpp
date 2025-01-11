@@ -83,8 +83,6 @@ CBufferContainer* CBufferPool::Alloc(uint32 count)
 }
 
 
-
-
 /*************************
 *                        *
 *  TextureBuffer Pool    *
