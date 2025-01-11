@@ -107,6 +107,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				WINDOW_HEIGHT = rect.bottom - rect.top;
 				Core::main->ResizeWindowSize();
 			}
+
 			break;
 		}
 
@@ -202,8 +203,28 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	    }
 	  
 	    case WM_KEYUP:
-			break;
+		{
+			short repeat = lParam & 0xFFFF;
+			short scanCode = (lParam >> 16) & 0xFF;
+			short extendedKey = (lParam >> 16) & 0xFF;
+			bool isAlt = (lParam >> 29) & 0x1;
+			bool isFirst = !((lParam >> 30) & 0x1);
+			bool isDown = !((lParam >> 31) & 0x1);
+			bool isUp = !isDown;
 
+			std::memset(&eventDesc, 0, sizeof(InputEvent));
+			eventDesc.type = InputType::Keyboard;
+			eventDesc.keyCode = wParam;
+			eventDesc.keyboard.repeat = repeat;
+			eventDesc.keyboard.scanCode = scanCode;
+			eventDesc.keyboard.extendedKey = extendedKey;
+			eventDesc.keyboard.isFirst = isFirst;
+			eventDesc.keyboard.isAlt = isAlt;
+			eventDesc.keyboard.isDown = isDown;
+			eventDesc.keyboard.isUp = isUp;
+			Input::main->_eventQueue.push(eventDesc);
+			break;
+		}
 	    case WM_KEYDOWN:
 	    {
 			if (wParam == VK_ESCAPE)
@@ -256,8 +277,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				break;
 			}
 
-		
-	      /*  short repeat = lParam & 0xFFFF;
+	        short repeat = lParam & 0xFFFF;
 	        short scanCode = (lParam >> 16) & 0xFF;
 	        short extendedKey = (lParam >> 16) & 0xFF;
 	        bool isAlt = (lParam >> 29) & 0x1;
@@ -275,7 +295,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	        eventDesc.keyboard.isAlt = isAlt;
 	        eventDesc.keyboard.isDown = isDown;
 	        eventDesc.keyboard.isUp = isUp;
-	        Input::main->_eventQueue.push(eventDesc);*/
+	        Input::main->_eventQueue.push(eventDesc);
 	        break;
 	    }
 		case WM_DESTROY:

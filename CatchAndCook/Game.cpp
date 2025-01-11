@@ -92,6 +92,7 @@ void Game::Init(HWND hwnd)
 
 void Game::Run()
 {
+
 	Input::main->Update();
 	Time::main->Update();
 

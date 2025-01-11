@@ -10,6 +10,7 @@ class MeshRenderer : public Component, public RendererBase
 {
 public:
 	~MeshRenderer() override;
+
 	bool IsExecuteAble() override;
 	void Init() override;
 	void Start() override;
