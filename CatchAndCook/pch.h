@@ -18,6 +18,7 @@
 #include <fstream>
 #include <typeinfo>
 #include <filesystem>
+#include <any>
 #include <rpc.h>
 
 #pragma comment(lib, "rpcrt4.lib")

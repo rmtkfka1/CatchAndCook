@@ -25,12 +25,18 @@ void Material::PushData()
 		_cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::MateriaParam)->Alloc(1);
 		memcpy(_cbufferContainer->ptr, (void*)&_params, sizeof(MaterialParams));
 	}
+
+	for (auto& injector : _injectors)
+		injector->Inject(GetCast<Material>());
 }
 
 void Material::SetData()
 {
 	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, _container.gpuHandle);
 	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(4, _cbufferContainer->GPUAdress);
+	if (_shader)
+		for (auto& injector : _injectors)
+			injector->SetData(_shader);
 }
 
 void Material::PushTexture()

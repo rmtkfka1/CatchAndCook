@@ -4,6 +4,7 @@ enum class BufferType
 {
 	TransformParam,
 	MateriaParam,
+	MateriaSubParam,
 };
 
 class CBufferPool;
@@ -16,6 +17,8 @@ class BufferManager
 public:
 	void Init();
 	void Reset();
+
+	void CreateBufferPool(BufferType type, uint32 size, uint32 count);
 
 	shared_ptr<CBufferPool> GetBufferPool(BufferType type) { return _map[type]; }
 	shared_ptr<TextureBufferPool> GetTextureBufferPool() { return _textureBufferPool; }

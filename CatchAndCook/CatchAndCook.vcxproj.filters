@@ -118,6 +118,9 @@
     <ClCompile Include="RendererBase.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="ICBufferInjector.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -222,6 +225,9 @@
     </ClInclude>
     <ClInclude Include="RendererBase.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ICBufferInjector.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -164,6 +164,7 @@
   <ItemGroup>
     <ClCompile Include="BufferManager.cpp" />
     <ClCompile Include="BufferPool.cpp" />
+    <ClCompile Include="ICBufferInjector.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -216,6 +217,7 @@
   <ItemGroup>
     <ClInclude Include="BufferManager.h" />
     <ClInclude Include="BufferPool.h" />
+    <ClInclude Include="ICBufferInjector.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="convert_math.h" />
     <ClInclude Include="convert_string.h" />

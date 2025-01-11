@@ -4,6 +4,12 @@ cbuffer test : register(b0)
     row_major matrix M;
 }
 
+cbuffer TestSubMaterialParam : register(b7)
+{
+    float2 uv;
+}
+
+
 struct VS_IN
 {
     float3 pos : POSITION;
@@ -36,6 +42,6 @@ VS_OUT VS_Main(VS_IN input)
 float4 PS_Main(VS_OUT input) : SV_Target
 {
 
-    return g_tex_0.Sample(g_sam_0, input.uv1);
+    return g_tex_0.Sample(g_sam_0, input.uv1 + uv);
 
 }

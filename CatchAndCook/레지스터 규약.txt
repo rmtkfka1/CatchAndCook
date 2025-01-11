@@ -9,27 +9,26 @@ s4 = 비등방 16x
 s5 = 그림자 샘플링
 
 // 8개
-t0 opaque_texture
-t1 depth_texture
-t2 shadow_texture
+t10 shadow_texture
+t11 opaque_texture
+t12 depth_texture
 
-
-t3 diffuse_texture
-t4 normal_texture
-t5 specular_texture
-t6 emissive_texture
+// 지켜야할 이름 규칙
+diffuse_texture : _BaseMap
+normal_texture : _BumpMap
+specular_texture : _SpecGlossMap
+emissive_texture : _EmissionMap
 
 b8개
 //고정
 b0 = MainLight => renderBegin
 b1 = Transform
 b2 = Camera
-b3 = (Time , value ) 
-b4 = MatrialParam => 
+b3 = Glocal GameDatas (Time , value ) 
+b4 = MatrialParam
 //dynamcic System
-b5 = MatrialParam3
-b6 = MatrialParam4
-b7 = MatrialParam5
-b8 = MatrialParam6
+b5 = 
+b6 = 
+b7 = 
 
 

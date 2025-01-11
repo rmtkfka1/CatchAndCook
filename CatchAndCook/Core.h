@@ -36,7 +36,7 @@ public:
 	ComPtr<ID3D12GraphicsCommandList>& GetResCmdList() { return _resCmdList; }
 	shared_ptr<RenderTarget>& GetRenderTarget() { return _renderTarget; }
 	shared_ptr<RootSignature>& GetRootSignature() { return _rootSignature; };
-	shared_ptr< BufferManager>& GetBufferManager() { return _bufferManager; }
+	shared_ptr<BufferManager>& GetBufferManager() { return _bufferManager; }
 
 	
 

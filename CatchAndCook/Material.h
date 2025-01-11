@@ -1,7 +1,9 @@
 #pragma once
 
+#include "BufferManager.h"
 #include "IGuid.h"
 #include "BufferPool.h"
+#include "ICBufferInjector.h"
 #include "RenderTarget.h"
 
 class Shader;
@@ -42,6 +44,18 @@ public:
 	void SetData();
 	void PushTexture();
 
+	void SetInjector(const std::vector<std::shared_ptr<ICBufferInjector>>& injectors) { _injectors = injectors; }
+
+
+	int GetPropertyInt(const std::string& name) { return _propertyInts[name]; };
+	void SetPropertyInt(const std::string& name, int data) { _propertyInts[name] = data; };
+	float GetPropertyFloat(const std::string& name) { return _propertyFloats[name]; };
+	void SetPropertyFloat(const std::string& name, float data) { _propertyFloats[name] = data; };
+	vec4 GetPropertyVector(const std::string& name) { return _propertyVectors[name]; };
+	void SetPropertyVector(const std::string& name, const vec4& data) { _propertyVectors[name] = data; };
+	Matrix GetPropertyMatrix(const std::string& name) { return _propertyMatrixs[name]; };
+	void SetPropertyMatrix(const std::string& name, const Matrix& data) { _propertyMatrixs[name] = data; };
+
 	tableContainer _container;
 private:
 	shared_ptr<Shader> _shader;
@@ -53,8 +67,19 @@ private:
 	std::unordered_map<std::string, shared_ptr<Texture>> _propertyTextures;
 
 	CBufferContainer* _cbufferContainer;
-	MaterialParams _params;
-	bool _useMaterialParams=true;
+	MaterialParams _params; // 추가 정보함수 넘겨서 데이터 넣는 셋 작업
+	bool _useMaterialParams = true;
 	RENDER_PASS::PASS _pass = RENDER_PASS::Forward;
+
+	std::vector<std::shared_ptr<ICBufferInjector>> _injectors;
 };
 
+
+struct TestSubMaterialParam
+{
+	vec2 uv;
+};
+
+CBUFFER_INJECTOR("TestSubMaterialParam", TestSubMaterialParam, BufferType::MateriaSubParam, std::shared_ptr<Material>,
+	param.uv = Vector2(source->GetPropertyVector("uv"));
+)
