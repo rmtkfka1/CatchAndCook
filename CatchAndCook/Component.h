@@ -29,7 +29,6 @@ public:
 	virtual void Destroy(); 
 
 	virtual void RenderBegin();
-	virtual void Rendering(); 
 
 	virtual void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
 	virtual void DebugRendering(); // CBuffer <- ����

@@ -53,6 +53,11 @@ public: \
 	CBUFFER_INJECTOR("UserName", TestSubMaterialParam, BufferType::TransformParam, std::shared_ptr<Material> source,
 	    source->GetShader();
 	)
+
+
+        const SOURCE_TYPE& source;\
+        if(originalSource.a.has_value()) \
+            source = const_cast<SOURCE_TYPE&>(std::any_cast<const SOURCE_TYPE&>(originalSource)); \
 */
 
 // 인젝터들을 모아두는 함수

@@ -76,12 +76,12 @@ void GameObject::RenderBegin()
 
 void GameObject::Rendering()
 {
-    if ((!IsDestroy()) && GetActive() && (!IsFirst())) {
-        for (auto& component : _components) {
-            if (((!component->IsDestroy()) && (!component->IsFirst())))
-                component->Rendering();
-        }
-    }
+    //if ((!IsDestroy()) && GetActive() && (!IsFirst())) {
+    //    for (auto& component : _components) {
+    //        if (((!component->IsDestroy()) && (!component->IsFirst())))
+    //            component->Rendering();
+    //    }
+    //}
 }
 
 void GameObject::DebugRendering()

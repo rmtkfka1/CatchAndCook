@@ -67,11 +67,6 @@ void Transform::RenderBegin()
     PushData();
 }
 
-void Transform::Rendering()
-{
-	Component::Rendering();
-}
-
 void Transform::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 	Component::Collision(collider, other);

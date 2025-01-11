@@ -98,6 +98,7 @@ class ShaderProfileInfo
 public:
     std::vector<ShaderRegisterInfo> registers;
     std::vector<ShaderCBufferInfo> cbuffers;
+    std::vector<int> tRegisterTable;
 
     //shader shaderType names ¥‹¿ß∑Œ
     std::unordered_map<std::string, ShaderStructInfo> _typeToStructTable;
@@ -196,8 +197,10 @@ public:
     void Profile();
 
     int GetRegisterIndex(const std::string& name);
+    std::vector<int>& GetTRegisterIndexs();
 
-    void Init(const std::wstring& path, std::vector<VertexProp>& prop , ShaderArg& shaderParams ,ShaderInfo& info = ShaderInfo());
+    void Init(const std::wstring& path, std::vector<VertexProp>& prop , ShaderArg& shaderParams , const ShaderInfo& info = ShaderInfo());
 protected:
     std::shared_ptr<ShaderCode> LoadBlob(std::wstring path, std::string endPointName, std::string shaderType);
 };
+

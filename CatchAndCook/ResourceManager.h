@@ -1,4 +1,5 @@
 #pragma once
+#include "Texture.h"
 
 class Shader;
 class Mesh;
@@ -15,6 +16,7 @@ public:
     void CreateDefaultMesh();
     void CreateDefaultShader();
     void CreateDefaultMaterial();
+    void CreateDefaultTexture();
 
     template<typename T, typename... Args>
     shared_ptr<T> Load(const wstring& key ,const wstring& path, Args&&... args);
@@ -25,16 +27,18 @@ public:
     template<typename T>
     void Add(const wstring& key, shared_ptr<T> object);
 
+    std::shared_ptr<Texture> GetNoneTexture() { return _noneTexture; };
+
 private:
     template<typename T>
     unordered_map<wstring, shared_ptr<T>>& GetResourceMap();
 private:
-
     unordered_map<wstring, shared_ptr<Scene>> _sceneMap;
     unordered_map<wstring, shared_ptr<Shader>> _shaderMap;
     unordered_map<wstring, shared_ptr<Mesh>> _meshMap;
     unordered_map<wstring, shared_ptr<Texture>> _textureMap;
 
+    std::shared_ptr<Texture> _noneTexture;
 };
 
 template<typename T, typename ...Args>

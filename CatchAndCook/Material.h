@@ -17,10 +17,10 @@ struct MaterialParams
 	void SetMatrix(int index, Matrix mat) { MatrixParams[index] = mat; }
 	void SetVec4(uint8 index, vec4 vector) { vec4Params[index] = vector; }
 
-	array<int32, 4>		intParams{ 0 }; 
-	array<vec4, 4>		vec4Params{ }; 
-	array<float, 4>		floatParams{ 0 }; 
-	array<Matrix, 2>	MatrixParams{};
+	array<int32, 4>		intParams { 0 }; 
+	array<vec4, 4>		vec4Params { vec4::One, vec4::One, vec4::One, vec4::One };
+	array<float, 4>		floatParams { 0 }; 
+	array<Matrix, 2>	MatrixParams { Matrix::Identity, Matrix::Identity };
 };
 
 
@@ -28,7 +28,7 @@ class Material : public IGuid
 {
 public:
 	Material() {};
-	Material(bool useMaterialParams) :_useMaterialParams(useMaterialParams) {};
+	Material(bool useMaterialParams) : _useMaterialParams(useMaterialParams) {};
 	virtual ~Material();
 
 	void SetShader(std::shared_ptr<Shader> shader) { _shader = shader; }

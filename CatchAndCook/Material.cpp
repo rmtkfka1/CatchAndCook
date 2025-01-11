@@ -42,8 +42,21 @@ void Material::SetData()
 
 void Material::PushTexture()
 {
+	array<bool, SRV_TABLE_REGISTER_COUNT> copyCheckList;
+	copyCheckList.fill(false);
 	for (auto& [name,texture] : _propertyTextures)
 	{
-		Core::main->GetBufferManager()->GetTable()->CopyHandle(&_container.cpuHandle, &texture->GetSRVCpuHandle(), _shader->GetRegisterIndex(name));
+		int index = _shader->GetRegisterIndex(name);
+		if (index != -1)
+		{
+			copyCheckList[index] = true;
+			Core::main->GetBufferManager()->GetTable()->CopyHandle(&_container.cpuHandle, &texture->GetSRVCpuHandle(), _shader->GetRegisterIndex(name));
+		}
+
 	}
+	auto& tTable = _shader->GetTRegisterIndexs();
+	for (auto& tIndex : tTable)
+		if (!copyCheckList[tIndex])
+			Core::main->GetBufferManager()->GetTable()->CopyHandle(&_container.cpuHandle, 
+				&ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle(), tIndex);
 }

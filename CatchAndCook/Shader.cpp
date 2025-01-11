@@ -529,6 +529,8 @@ void Shader::Profile()
                     registerInfo.bufferType = "textureCubeArray";
                     break;
                 }
+                if (registerInfo.registerType)
+                    _profileInfo.tRegisterTable.push_back(registerInfo.registerIndex);
                 registerInfo.registerTypeString = registerInfo.registerType +
                     std::to_string(registerInfo.registerIndex);
                 str::trim(registerInfo.registerTypeString);
@@ -550,6 +552,10 @@ int Shader::GetRegisterIndex(const std::string& name)
         return iter->second.registerIndex;
 
     return -1;
+}
+std::vector<int>& Shader::GetTRegisterIndexs()
+{
+    return _profileInfo.tRegisterTable;
 }
 
 std::shared_ptr<ShaderCode> Shader::LoadBlob(std::wstring path, std::string endPointName, std::string shaderType)
@@ -613,7 +619,7 @@ std::shared_ptr<ShaderCode> Shader::LoadBlob(std::wstring path, std::string endP
     return shaderCode;
 }
 
-void Shader::Init(const std::wstring& path, std::vector<VertexProp>& prop, ShaderArg& shaderParams, ShaderInfo& info)
+void Shader::Init(const std::wstring& path, std::vector<VertexProp>& prop, ShaderArg& shaderParams, const ShaderInfo& info)
 {
  
     for (auto& pair : shaderParams.shaderParams)

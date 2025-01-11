@@ -69,11 +69,6 @@ void MeshRenderer::RenderBegin()
 	SceneManager::main->GetCurrentScene()->AddRenderer(static_pointer_cast<MeshRenderer>(shared_from_this()), RENDER_PASS::Shadow);
 }
 
-void MeshRenderer::Rendering()
-{
-	Component::Rendering();
-}
-
 void MeshRenderer::Rendering(const std::shared_ptr<Material>& material)
 {
 	auto& cmdList = Core::main->GetCmdList();

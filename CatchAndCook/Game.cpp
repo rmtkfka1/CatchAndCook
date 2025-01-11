@@ -69,7 +69,7 @@ void Game::Init(HWND hwnd)
 	_shader = ResourceManager::main->Load<Shader>(L"test.hlsl", L"test.hlsl", StaticProp,
 		ShaderArg{}, info);
 
-	_texture = ResourceManager::main->Load<Texture>(L"start.jpg",L"start.jpg");
+	_texture = ResourceManager::main->Load<Texture>(L"start",L"Textures/start.jpg");
 
 	_gameObjects = SceneManager::main->GetCurrentScene()->CreateGameObject(L"test gameObject");
 	_gameObjects->transform->SetLocalPosition(vec3(0, 0.3f, 0));
@@ -79,14 +79,14 @@ void Game::Init(HWND hwnd)
 	_material->SetShader(_shader);
 	_material->SetPass(RENDER_PASS::Forward);
 	_material->SetInjector({ InjectorManager::main->Get(BufferType::MateriaSubParam) });
-	_material->SetTexture("g_tex_0",_texture);
+	//_material->SetTexture("g_tex_0",_texture);
 	_material->SetPropertyVector("uv", vec4(0.3,-0.3,0,0));
 
 	_meshRenderer->AddMaterials({_material });
 	_meshRenderer->SetMesh(_mesh);
 
 	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, static_pointer_cast<Camera>(make_shared<ThirdPersonCamera>()));
-	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0.5f, 0, -20.0f));
+	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0.5f, 0, -5.0f));
 }
 
 void Game::Run()
