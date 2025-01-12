@@ -1,15 +1,19 @@
 #pragma once
+
 #include "Component.h"
 #include "RendererBase.h"
 
-class Material;
 class Mesh;
 
-class MeshRenderer : public Component, public RendererBase
+struct SpriteStruct
 {
-public:
-	~MeshRenderer() override;
 
+};
+
+class SpriteRenderer : public Component, public RendererBase
+{
+
+public:
 	bool IsExecuteAble() override;
 	void Init() override;
 	void Start() override;
@@ -26,12 +30,12 @@ public:
 
 	void Rendering(const std::shared_ptr<Material>& material) override;
 
-	void SetMesh(const std::shared_ptr<Mesh>& _mesh);
-	void SetMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
-	void AddMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
-
 private:
-	std::shared_ptr<Mesh> _mesh;
-	std::vector<std::shared_ptr<Material>> _materials;
+	shared_ptr<Mesh> _mesh;
+	shared_ptr<Material> _material;
+
+	RECT _uvMapping;
+	vec2 _size;
+	vec2 _pos;
 };
 

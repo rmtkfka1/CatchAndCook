@@ -179,8 +179,6 @@ private:
 
 
 public:
-
-
 	void SetName(const std::wstring name){_name = name;};
 	std::wstring& GetName() { return _name; };
 

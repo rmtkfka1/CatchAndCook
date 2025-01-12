@@ -41,7 +41,7 @@ public:
 public:
 	void PushData();
 	void SetData();
-	void PushTexture();
+
 
 	void SetInjector(const std::vector<std::shared_ptr<ICBufferInjector>>& injectors) { _injectors = injectors; }
 
@@ -55,6 +55,9 @@ public:
 	void SetPropertyMatrix(const std::string& name, const Matrix& data) { _propertyMatrixs[name] = data; };
 
 	tableContainer _tableContainer;
+
+private:
+	void PushTexture();
 private:
 	shared_ptr<Shader> _shader;
 

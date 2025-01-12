@@ -16,6 +16,7 @@ void Material::SetTexture(std::string name, const std::shared_ptr<Texture>& fiel
 		_propertyTextures[name] = field;
 
 }
+
 void Material::PushData()
 {
 	//temp

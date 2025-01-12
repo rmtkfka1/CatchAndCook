@@ -1,7 +1,6 @@
 #pragma once
 
 #include "IGuid.h"
-#include "Material.h"
 #include "RendererBase.h"
 
 
