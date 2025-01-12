@@ -33,7 +33,7 @@ void Material::PushData()
 void Material::SetData()
 {
 	//텍스쳐바인딩
-	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, _container.gpuHandle);
+	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, _tableContainer.gpuHandle);
 
 	if(_useMaterialParams)
 		Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(4, _cbufferContainer->GPUAdress);
@@ -47,17 +47,20 @@ void Material::PushTexture()
 {
 	array<bool, SRV_TABLE_REGISTER_COUNT> copyCheckList;
 	copyCheckList.fill(false);
+
 	for (auto& [name,texture] : _propertyTextures)
 	{
 		int index = _shader->GetRegisterIndex(name);
 		if (index != -1){
 			copyCheckList[index] = true;
-			Core::main->GetBufferManager()->GetTable()->CopyHandle(&_container.cpuHandle, &texture->GetSRVCpuHandle(), _shader->GetRegisterIndex(name));
+			Core::main->GetBufferManager()->GetTable()->CopyHandle(&_tableContainer.cpuHandle, &texture->GetSRVCpuHandle(), _shader->GetRegisterIndex(name));
 		}
 	}
+
 	auto& tTable = _shader->GetTRegisterIndexs();
 	for (auto& tIndex : tTable)
 		if (tIndex < SRV_TABLE_REGISTER_COUNT && (!copyCheckList[tIndex]))
-			Core::main->GetBufferManager()->GetTable()->CopyHandle(&_container.cpuHandle, 
+			Core::main->GetBufferManager()->GetTable()->CopyHandle(&_tableContainer.cpuHandle, 
 				&ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle(), tIndex);
+
 }

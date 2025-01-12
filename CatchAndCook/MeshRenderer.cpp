@@ -62,7 +62,7 @@ void MeshRenderer::RenderBegin()
 
 	for (auto& ele : _materials)  
 	{
-		ele->_container = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
+		ele->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
 		ele->PushData();
 		SceneManager::main->GetCurrentScene()->AddRenderer(ele, static_pointer_cast<MeshRenderer>(shared_from_this()));
 	} 

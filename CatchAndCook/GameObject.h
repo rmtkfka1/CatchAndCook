@@ -120,6 +120,7 @@ public:
 		return vec.size() - prevCount;
 	}
 
+
 	template <class T, class = std::enable_if_t<std::is_base_of_v<Component, T>>>
 	int GetComponentsWithChilds(std::vector<std::shared_ptr<T>>& vec)
 	{
@@ -153,6 +154,7 @@ public:
 
 	std::shared_ptr<GameObject> GetChild(int index);
 	std::shared_ptr<GameObject> GetChildByName(const std::wstring& name);
+
 	int GetChildAll(std::vector<std::shared_ptr<GameObject>>& vec);
 	int GetChildsByName(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec);
 	int GetChildsAll(std::vector<std::shared_ptr<GameObject>>& vec);

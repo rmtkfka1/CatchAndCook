@@ -54,7 +54,7 @@ public:
 	Matrix GetPropertyMatrix(const std::string& name) { return _propertyMatrixs[name]; };
 	void SetPropertyMatrix(const std::string& name, const Matrix& data) { _propertyMatrixs[name] = data; };
 
-	tableContainer _container;
+	tableContainer _tableContainer;
 private:
 	shared_ptr<Shader> _shader;
 
