@@ -117,7 +117,7 @@ namespace fs = std::filesystem;
 #include "Time.h"
 #include "CbufferParam.h"
 #include "ResourceManager.h"
-
+#include "GeoMetryHelper.h"
 inline void ThrowIfFailed(HRESULT hr) {
     if (FAILED(hr)) {
         throw std::exception();

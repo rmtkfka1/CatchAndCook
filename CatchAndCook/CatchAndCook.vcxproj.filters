@@ -75,9 +75,6 @@
     <ClCompile Include="Shader.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
-    <ClCompile Include="Vertex.cpp">
-      <Filter>Resource</Filter>
-    </ClCompile>
     <ClCompile Include="guid_utility.cpp">
       <Filter>pch\Utils</Filter>
     </ClCompile>
@@ -132,6 +129,12 @@
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="convert_assimp.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="GeoMetryHelper.cpp" />
+    <ClCompile Include="Vertex.cpp">
+      <Filter>pch</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -193,9 +196,6 @@
     <ClInclude Include="Shader.h">
       <Filter>Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>Resource</Filter>
-    </ClInclude>
     <ClInclude Include="guid_utility.h">
       <Filter>pch\Utils</Filter>
     </ClInclude>
@@ -252,6 +252,13 @@
     </ClInclude>
     <ClInclude Include="ResourceManager.h">
       <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="convert_assimp.h" />
+    <ClInclude Include="convert_directx.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="GeoMetryHelper.h" />
+    <ClInclude Include="Vertex.h">
+      <Filter>pch</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

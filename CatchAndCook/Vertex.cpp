@@ -7,7 +7,6 @@ SelectorInfo SelectorInfo::GetInfo(const std::vector<VertexProp>& props)
     VertexPropInfo propInfo;
     info.props = props;
 
-
     int offset = 0;
     int byteOffset = 0;
     for (int i = 0; i < props.size(); i++)
