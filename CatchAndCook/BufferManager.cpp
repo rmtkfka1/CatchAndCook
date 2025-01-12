@@ -3,16 +3,20 @@
 #include "BufferPool.h"
 #include "Material.h"
 #include "Camera.h"
+#include "SpriteRenderer.h"
+#include "Scene.h"
 void BufferManager::Init()
 {
 
 	_textureBufferPool = make_shared<TextureBufferPool>();
 	_textureBufferPool->Init(255, 5, 5);
 
+	CreateBufferPool(BufferType::GlobalParam, sizeof(GlobalParam), 1);
 	CreateBufferPool(BufferType::TransformParam, sizeof(Matrix), 255);
 	CreateBufferPool(BufferType::MateriaParam, sizeof(MaterialParams), 255);
 	CreateBufferPool(BufferType::MateriaSubParam, sizeof(TestSubMaterialParam), 255);
 	CreateBufferPool(BufferType::CameraParam, sizeof(CameraParams), 10);
+	CreateBufferPool(BufferType::SpriteParam, sizeof(SpriteParam), 255);
 
 	{
 		_table = make_shared<DescritporTable>();

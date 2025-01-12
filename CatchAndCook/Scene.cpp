@@ -44,12 +44,18 @@ void Scene::RenderBegin()
 
 void Scene::Rendering()
 {
+    auto& cmdList = Core::main->GetCmdList();
+
     CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
     CameraManager::main->GetActiveCamera()->Update();
     CameraManager::main->GetActiveCamera()->PushData();
     CameraManager::main->GetActiveCamera()->SetData();
 
-    auto& cmdList = Core::main->GetCmdList();
+    _globalParam.window_size = vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
+    auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::GlobalParam)->Alloc(1);
+    memcpy(CbufferContainer->ptr, (void*)&_globalParam, sizeof(GlobalParam));
+    cmdList->SetGraphicsRootConstantBufferView(0, CbufferContainer->GPUAdress);
+
     { // Shadow
         auto& targets = _passObjects[RENDER_PASS::Shadow];
 
@@ -78,6 +84,15 @@ void Scene::Rendering()
             target->Rendering(material);
         }
 	}
+
+    //{  //UI
+    //    auto& targets = _passObjects[RENDER_PASS::UI];
+
+    //    for (auto& [material, target] : targets)
+    //    {
+    //        target->Rendering(nullptr);
+    //    }
+    //}
 }
 
 void Scene::RenderEnd()

@@ -5,9 +5,17 @@
 
 class Mesh;
 
-struct SpriteStruct
+struct SpriteParam
 {
+	vec2 Pos = { 0.0f,0.0f };
+	vec2 Scale = { 1.0f,1.0f };
 
+	vec2 origintexSize;
+	vec2 texSamplePos;
+	vec2 texSampleSize;
+
+	float depth;
+	float alpha;
 };
 
 class SpriteRenderer : public Component, public RendererBase
@@ -30,12 +38,17 @@ public:
 
 	void Rendering(const std::shared_ptr<Material>& material) override;
 
-private:
-	shared_ptr<Mesh> _mesh;
-	shared_ptr<Material> _material;
+public:
+	void SetSize(vec2 size);
+	void SetPos(vec3 pos);
+	void SetTexture(shared_ptr<Texture> texture, RECT* rect =nullptr);
 
-	RECT _uvMapping;
-	vec2 _size;
-	vec2 _pos;
+private:
+	tableContainer _tableContainer;
+	shared_ptr<Mesh> _mesh;
+	shared_ptr<Texture> _texture;
+	shared_ptr<Shader> _shader;
+	SpriteParam _spriteParam;
+	RECT _rect{0,0,0,0}; //uvMapping ¿¡ »ç¿ëµÊ.
 };
 

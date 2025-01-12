@@ -17,6 +17,7 @@ public:
 private:
 	LARGE_INTEGER _frequency = LARGE_INTEGER();
 	LARGE_INTEGER _prevCount = LARGE_INTEGER();
+
 	double	_deltaTime = 0.33333;
 	double	_totalTime = 0.0;
 

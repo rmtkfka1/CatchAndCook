@@ -118,6 +118,7 @@ namespace fs = std::filesystem;
 #include "CbufferParam.h"
 #include "ResourceManager.h"
 #include "GeoMetryHelper.h"
+#include "SceneManager.h"
 inline void ThrowIfFailed(HRESULT hr) {
     if (FAILED(hr)) {
         throw std::exception();

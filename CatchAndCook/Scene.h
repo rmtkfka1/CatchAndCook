@@ -7,6 +7,13 @@
 class RendererBase;
 class GameObject;
 
+struct GlobalParam
+{
+	vec2 window_size;
+	float Time;
+	float padding;
+};
+
 class Scene : public IGuid
 {
 
@@ -41,6 +48,8 @@ protected:
 	std::vector<std::shared_ptr<GameObject>> _dont_destroy_gameObjects;
 	std::vector<std::shared_ptr<GameObject>> _gameObjects;
 	std::string _name;
+
+	GlobalParam _globalParam;
 };
 
 

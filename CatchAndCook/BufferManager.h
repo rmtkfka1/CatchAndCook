@@ -2,10 +2,12 @@
 
 enum class BufferType
 {
+	GlobalParam,
 	TransformParam,
 	MateriaParam,
 	CameraParam,
 	MateriaSubParam,
+	SpriteParam
 
 };
 

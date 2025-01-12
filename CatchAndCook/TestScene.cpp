@@ -36,6 +36,10 @@ void TestScene::Init()
 		meshRenderer->SetMesh(GeoMetryHelper::LoadRectangleMesh(1.0f));
 	}
 
+	{
+		
+	}
+
 }
 
 void TestScene::Update()
