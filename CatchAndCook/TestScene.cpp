@@ -44,16 +44,30 @@ void TestScene::Init()
 			shared_ptr<GameObject> gameObject = CreateGameObject(L"SpriteTest");
 			auto spriteRender = gameObject->AddComponent<SpriteRenderer>();
 
-			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
+			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"spriteTest", L"Textures/spriteTest.jpg");
 
-			RECT rect { 0,0,440*5,440 * 5 };
-			spriteRender->SetTexture(texture, &rect);
-			spriteRender->SetPos(vec3(0+ i * WINDOW_WIDTH/5, 0, 0.5f));
-			spriteRender->SetSize(vec2(WINDOW_WIDTH/5, WINDOW_HEIGHT / 3));
-			spriteRender->_temp = i;
+			//풀UV 맵핑
+			if (i == 0)
+			{
+				spriteRender->SetTexture(texture);
+				spriteRender->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.5f));
+				spriteRender->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
+				spriteRender->_temp = i;
+			}
 
-
-
+			//스프라이트 짤라서 사용.
+			else
+			{
+				RECT rect;
+				rect.left = 1024/7 * i;
+				rect.top = 0;
+				rect.right = 1024/7 * (i+1);
+				rect.bottom = 1024/4;
+				spriteRender->SetTexture(texture,&rect);
+				spriteRender->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.5f));
+				spriteRender->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
+				spriteRender->_temp = i;
+			}
 
 		}
 	}
