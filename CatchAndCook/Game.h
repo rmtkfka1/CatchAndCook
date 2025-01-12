@@ -1,10 +1,10 @@
 #pragma once
 class Game
 {
-
 public:
 
 	void Init(HWND hwnd);
+	void PrevUpdate();
 	void Run();
 	void Release();
 
@@ -19,5 +19,7 @@ private:
 	shared_ptr<Material> _material;
 	shared_ptr<MeshRenderer> _meshRenderer;
 
+	bool _fullScreen = false;
+	bool _quit = false;
 };
 

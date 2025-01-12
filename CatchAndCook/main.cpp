@@ -6,7 +6,6 @@
 #include "Game.h"
 #include "Shader.h"
 
-bool FullScreen = false;
 unique_ptr<Game> game;
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -98,7 +97,6 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 		case WM_SIZE:
 		{
-
 			if (Initalize)
 			{
 				RECT	rect;
@@ -107,10 +105,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				WINDOW_HEIGHT = rect.bottom - rect.top;
 				Core::main->ResizeWindowSize();
 			}
-
 			break;
 		}
-
 		
 	    case WM_LBUTTONUP:
 	    case WM_RBUTTONUP:
@@ -227,56 +223,6 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 	    case WM_KEYDOWN:
 	    {
-			if (wParam == VK_ESCAPE)
-			{
-				game->Release();
-				game.reset(nullptr);
-				DestroyWindow(hWnd);
-				return 0;
-			}
-
-			if (wParam == VK_F9)
-			{
-			
-				if (!FullScreen)
-				{
-					RECT rc;
-					GetWindowRect(hWnd, &rc);
-
-					MONITORINFO mi;
-					mi.cbSize = sizeof(mi);
-					GetMonitorInfo(MonitorFromWindow(hWnd, MONITOR_DEFAULTTOPRIMARY), &mi);
-
-					SetWindowLong(hWnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
-					SetWindowPos(hWnd, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top,
-						mi.rcMonitor.right - mi.rcMonitor.left,
-						mi.rcMonitor.bottom - mi.rcMonitor.top,
-						SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
-
-					WINDOW_WIDTH = mi.rcMonitor.right - mi.rcMonitor.left;
-					WINDOW_HEIGHT = mi.rcMonitor.bottom - mi.rcMonitor.top;
-
-					Core::main->ResizeWindowSize();
-				
-				}
-
-				else
-				{
-					SetWindowLong(hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
-					// 원래 크기로 윈도우 설정
-					SetWindowPos(hWnd, HWND_TOP, 0, 0, 800, 600, SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
-
-					WINDOW_WIDTH = 800;
-					WINDOW_HEIGHT = 600;
-
-					Core::main->ResizeWindowSize();
-				
-				}
-
-				FullScreen = !FullScreen;
-				break;
-			}
-
 	        short repeat = lParam & 0xFFFF;
 	        short scanCode = (lParam >> 16) & 0xFF;
 	        short extendedKey = (lParam >> 16) & 0xFF;
