@@ -23,12 +23,6 @@ public:
 		CreateVertxBuffer(vec);
 	}
 
-	D3D12_VERTEX_BUFFER_VIEW& GetVertexView() { return _vertexBufferView; }
-	D3D12_INDEX_BUFFER_VIEW& GetIndexView() { return _indexBufferView; }
-	uint32 GetVertexCount() { return _vertexCount; }
-	uint32 GetIndexCount() { return _indexCount; }
-
-
 private:
 
 	template<typename T>
@@ -91,6 +85,10 @@ private:
 	void CreateIndexBuffer(vector<uint32>& vec);
 
 public:
+	D3D12_VERTEX_BUFFER_VIEW& GetVertexView() { return _vertexBufferView; }
+	D3D12_INDEX_BUFFER_VIEW& GetIndexView() { return _indexBufferView; }
+	uint32 GetVertexCount() { return _vertexCount; }
+	uint32 GetIndexCount() { return _indexCount; }
 	void SetTopolgy(D3D_PRIMITIVE_TOPOLOGY topology) { _topology = topology; }
 	D3D_PRIMITIVE_TOPOLOGY&  GetTopology() { return _topology; }
 

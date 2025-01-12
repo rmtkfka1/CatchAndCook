@@ -66,7 +66,7 @@ private:
 
 	CBufferContainer* _cbufferContainer;
 	MaterialParams _params; // 추가 정보함수 넘겨서 데이터 넣는 셋 작업
-	bool _useMaterialParams = true;
+	bool _useMaterialParams = false;
 	RENDER_PASS::PASS _pass = RENDER_PASS::Forward;
 
 	std::vector<std::shared_ptr<ICBufferInjector>> _injectors;

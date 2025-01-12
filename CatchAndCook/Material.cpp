@@ -32,8 +32,11 @@ void Material::PushData()
 
 void Material::SetData()
 {
+	//텍스쳐바인딩
 	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, _container.gpuHandle);
-	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(4, _cbufferContainer->GPUAdress);
+
+	if(_useMaterialParams)
+		Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(4, _cbufferContainer->GPUAdress);
 
 	if (_shader)
 		for (auto& injector : _injectors)
