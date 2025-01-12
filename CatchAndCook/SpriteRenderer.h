@@ -55,6 +55,6 @@ private:
 	RECT _rect{0,0,0,0}; //uvMapping 에 사용됨.
 
 public:
-	int _temp = 0;
+	int _temp = 0; //임시적으로 윈도우사이즈 맞게 변경되야해서 사용됨.
 };
 
