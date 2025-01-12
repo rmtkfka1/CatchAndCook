@@ -74,25 +74,11 @@ void SpriteRenderer::Rendering(const std::shared_ptr<Material>& material)
 
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
 	
-	if (_rect.left == 0 && _rect.right == 0 && _rect.bottom == 0 && _rect.top == 0)
-	{
-		auto desc = _texture->GetResource()->GetDesc();
-
-		_spriteParam.texSamplePos.x = _rect.left;
-		_spriteParam.texSamplePos.y = _rect.top;
-		_spriteParam.texSampleSize.x = desc.Width;
-		_spriteParam.texSampleSize.y = desc.Height;
-	}
-
-	else
-	{
-		_spriteParam.texSamplePos.x = _rect.left;
-		_spriteParam.texSamplePos.y = _rect.top;
-		_spriteParam.texSampleSize.x = _rect.right - _rect.left;
-		_spriteParam.texSampleSize.y = _rect.bottom - _rect.top;
-	}
-
-
+	_spriteParam.texSamplePos.x = _rect.left;
+	_spriteParam.texSamplePos.y = _rect.top;
+	_spriteParam.texSampleSize.x = _rect.right - _rect.left;
+	_spriteParam.texSampleSize.y = _rect.bottom - _rect.top;
+	
 	//스프라이트 파람 바인딩.
 	auto CbufferContainer= Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteParam)->Alloc(1);
 	memcpy(CbufferContainer->ptr, (void*)&_spriteParam, sizeof(SpriteParam));
@@ -153,6 +139,13 @@ void SpriteRenderer::SetTexture(shared_ptr<Texture> texture, RECT* rect)
 	if (rect)
 	{
 		_rect = *rect;
+	}
+	else
+	{
+		_rect.left = 0;
+		_rect.top = 0;
+		_rect.right = desc.Width;
+		_rect.bottom = desc.Height;
 	}
 }
 
