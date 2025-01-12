@@ -18,7 +18,7 @@ void Game::Init(HWND hwnd)
 {
 	IGuid::StaticInit();
 	Time::main = make_unique<Time>();
-	Time::main->Init(hwnd);
+	Time::main->Init();
 	Input::main = make_unique<Input>();
 	Core::main = make_unique<Core>();
 	Core::main->Init(hwnd);

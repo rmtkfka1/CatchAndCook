@@ -47,7 +47,7 @@ using namespace Microsoft::WRL;
 #pragma comment(lib, "d3dcompiler")
 
 #ifdef _DEBUG
-#pragma comment(lib, "DirectXTex\\DirectXTex_debug.lib")
+#pragma comment(lib, "DirectXTex\\DirectXTex_Debug.lib")
 #else
 #pragma comment(lib, "DirectXTex\\DirectXTex.lib")
 #endif
@@ -61,10 +61,25 @@ using namespace Microsoft::WRL;
 
 #ifdef _DEBUG
 #pragma comment(lib, "Assimp/assimp-vc143-mtd.lib")
+#pragma comment(lib, "Zlib/zlibstaticd.lib")
 #else
 #pragma comment(lib, "Assimp/assimp-vc143-mt.lib")
+#pragma comment(lib, "Zlib/zlibstatic.lib")
 #endif
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <Assimp/postprocess.h>
+#include <assimp/cimport.h>
+
+#include <assimp/ai_assert.h>
+#include <assimp/aabb.h>
+#include <assimp/color4.h>
+#include <assimp/quaternion.h>
+#include <assimp/vector3.h>
+#include <assimp/vector2.h>
+#include <assimp/matrix4x4.h>
+#include <assimp/matrix3x3.h>
 
 #include "simple_mesh_LH.h"
 #include "SimpleMath_LH.inl"
@@ -96,6 +111,8 @@ namespace fs = std::filesystem;
 #include "guid_utility.h"
 #include "convert_math.h"
 #include "convert_string.h"
+#include "convert_assimp.h"
+#include "convert_directx.h"
 #include "Input.h"
 #include "Time.h"
 #include "CbufferParam.h"

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <string>
 #include <string_view>
@@ -13,9 +13,9 @@ namespace Convert
     template <typename T>
     concept InputIterator = requires(T it)
     {
-        { ++it } -> std::same_as<T&>; // ÀüÀ§ Áõ°¡ ¿¬»êÀÚ
-        { *it } -> std::same_as<typename std::iterator_traits<T>::reference>; // ¿ªÂüÁ¶ ¿¬»êÀÚ
-        { it == it } -> std::same_as<bool>; // µ¿µî ºñ±³ ¿¬»êÀÚ
+        { ++it } -> std::same_as<T&>; // ì „ìœ„ ì¦ê°€ ì—°ì‚°ì
+        { *it } -> std::same_as<typename std::iterator_traits<T>::reference>; // ì—­ì°¸ì¡° ì—°ì‚°ì
+        { it == it } -> std::same_as<bool>; // ë™ë“± ë¹„êµ ì—°ì‚°ì
     };
 
 
@@ -26,7 +26,7 @@ namespace Convert
     {
     };
 
-    // Æ¯¼öÈ­ ÅÛÇÃ¸´: T°¡ std::ostream¿¡ Ãâ·Â °¡´ÉÇÑ °æ¿ì
+    // íŠ¹ìˆ˜í™” í…œí”Œë¦¿: Tê°€ std::ostreamì— ì¶œë ¥ ê°€ëŠ¥í•œ ê²½ìš°
     template <typename T>
     struct is_ostreamable<
             std::ostream,
@@ -36,7 +36,7 @@ namespace Convert
     {
     };
 
-    // ÇïÆÛ º¯¼ö ÅÛÇÃ¸´
+    // í—¬í¼ ë³€ìˆ˜ í…œí”Œë¦¿
     template <typename T>
     inline constexpr bool is_ostreamable_v = is_ostreamable<std::ostream, T>::value;
 
@@ -47,7 +47,7 @@ namespace Convert
     {
     };
 
-    // Æ¯¼öÈ­ ÅÛÇÃ¸´: T°¡ std::ostream¿¡ Ãâ·Â °¡´ÉÇÑ °æ¿ì
+    // íŠ¹ìˆ˜í™” í…œí”Œë¦¿: Tê°€ std::ostreamì— ì¶œë ¥ ê°€ëŠ¥í•œ ê²½ìš°
     template <typename T>
     struct is_wstringstreamable<
             std::wstringstream,
@@ -57,7 +57,7 @@ namespace Convert
     {
     };
 
-    // ÇïÆÛ º¯¼ö ÅÛÇÃ¸´
+    // í—¬í¼ ë³€ìˆ˜ í…œí”Œë¦¿
     template <typename T>
     inline constexpr bool is_wstringstreamable_v = is_wstringstreamable<std::wstringstream, T>::value;
 
@@ -221,4 +221,24 @@ namespace std
         }
         return count;
     }
+
+    template <typename T>
+    concept InputIterator = requires(T it)
+    {
+        { ++it } -> std::same_as<T&>; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        { *it } -> std::same_as<typename std::iterator_traits<T>::reference>; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        { it == it } -> std::same_as<bool>; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    };
+
+    template <InputIterator Iter>
+    inline std::wstring to_wstring(Iter _First, Iter _End, UINT codePage = CP_THREAD_ACP)
+    {
+        wstringstream wss;
+        wss << "[";
+        for (; _First != _End; ++_First)
+            wss << std::to_wstring(*_First) << ", ";
+        wss << "]";
+        return wss.str();
+    }
+    
 }

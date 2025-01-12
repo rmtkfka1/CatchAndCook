@@ -3,33 +3,28 @@
 class Time
 {
 public:
-
 	static unique_ptr<Time> main;
 
 
-	void Init(HWND hwnd);
+	void Init();
 	void Update();
 
-	uint32 GetFps() { return _fps; }
-	auto GetTime() { return _gameStartClock; }
-	float GetDeltaTime() { return _deltaTime; }
+	uint64 GetFps() { return _fps; }
+	auto GetStartTime() { return _gameStartClock; }
+	double GetDeltaTime() { return _deltaTime; }
+	double GetTotalTime() { return _totalTime; }
 
 private:
-	uint64	_frequency = 0;
-	uint64	_prevCount = 0;
-	float	_deltaTime = 0.f;
+	LARGE_INTEGER _frequency = LARGE_INTEGER();
+	LARGE_INTEGER _prevCount = LARGE_INTEGER();
+	double	_deltaTime = 0.33333;
+	double	_totalTime = 0.0;
 
 	std::chrono::time_point<std::chrono::steady_clock> _gameStartClock{};
-	float deltaTimeLimitValue = 0.33333;
+	double deltaTimeLimitValue = 0.33333;
 
 
 private:
-
-	HWND	_hwnd;
-	uint32	_frameCount = 0;
-	float	_frameTime = 0.f;
-	uint32	_fps = 0;
-
-
+	uint64	_fps = 0;
 };
 
