@@ -7,15 +7,15 @@ class Mesh;
 
 struct SpriteParam
 {
-	vec2 Pos = { 0.0f,0.0f };
-	vec2 Scale = { 1.0f,1.0f };
+	vec3 pos = { 0.0f,0.0f,0.1f };
+	float alpha;
 
+	vec2 scale = { 1.0f,1.0f };
 	vec2 origintexSize;
+
 	vec2 texSamplePos;
 	vec2 texSampleSize;
 
-	float depth;
-	float alpha;
 
 };
 
@@ -52,6 +52,7 @@ private:
 	shared_ptr<Texture> _texture;
 	shared_ptr<Shader> _shader;
 	SpriteParam _spriteParam;
+
 	RECT _rect{0,0,0,0}; //uvMapping ¿¡ »ç¿ëµÊ.
 
 public:

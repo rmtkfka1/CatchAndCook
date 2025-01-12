@@ -116,16 +116,14 @@ void SpriteRenderer::SetSize(vec2 size)
 
 	auto desc = _texture->GetResource()->GetDesc();
 
-	_spriteParam.Scale.x = size.x / WINDOW_WIDTH;
-	_spriteParam.Scale.y = size.y / WINDOW_HEIGHT;
+	_spriteParam.scale.x = size.x / WINDOW_WIDTH;
+	_spriteParam.scale.y = size.y / WINDOW_HEIGHT;
 
 }
 
 void SpriteRenderer::SetPos(vec3 pos)
 {
-	_spriteParam.Pos.x = pos.x;
-	_spriteParam.Pos.y = pos.y;
-	_spriteParam.depth = pos.z;
+	_spriteParam.pos = pos;
 }
 
 void SpriteRenderer::SetTexture(shared_ptr<Texture> texture, RECT* rect)
