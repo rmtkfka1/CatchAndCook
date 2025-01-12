@@ -152,6 +152,9 @@
     <ClCompile Include="SpriteRenderer.cpp">
       <Filter>Component</Filter>
     </ClCompile>
+    <ClCompile Include="SpriteMaterial.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -287,6 +290,9 @@
     </ClInclude>
     <ClInclude Include="SpriteRenderer.h">
       <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteMaterial.h">
+      <Filter>Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -86,8 +86,8 @@ void SpriteRenderer::Rendering(const std::shared_ptr<Material>& material)
 
 	//텍스쳐 바인딩.
 	_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
-	Core::main->GetBufferManager()->GetTable()->CopyHandle(&_tableContainer.cpuHandle, &_texture->GetSRVCpuHandle(), 0);
-	cmdList->SetGraphicsRootDescriptorTable(SPRITE_TABLE_INDEX, _tableContainer.gpuHandle);
+	Core::main->GetBufferManager()->GetTable()->CopyHandle(&_tableContainer.CPUHandle, &_texture->GetSRVCpuHandle(), 0);
+	cmdList->SetGraphicsRootDescriptorTable(SPRITE_TABLE_INDEX, _tableContainer.GPUHandle);
 
 	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
 

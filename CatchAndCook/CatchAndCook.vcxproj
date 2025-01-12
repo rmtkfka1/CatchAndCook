@@ -210,6 +210,7 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="simple_mesh_ext.cpp" />
     <ClCompile Include="simple_mesh_LH.cpp" />
+    <ClCompile Include="SpriteMaterial.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="TestMain.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -262,6 +263,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="simple_mesh_ext.h" />
     <ClInclude Include="simple_mesh_LH.h" />
+    <ClInclude Include="SpriteMaterial.h" />
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="strutil.h" />
     <ClInclude Include="TestScene.h" />

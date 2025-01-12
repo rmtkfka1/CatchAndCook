@@ -303,8 +303,8 @@ tableContainer DescritporTable::Alloc(uint32 count)
 
 	tableContainer container;
 
-	container.cpuHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(_cpuHandle, _currentIndex, _size);
-	container.gpuHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(_gpuHandle, _currentIndex, _size);
+	container.CPUHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(_cpuHandle, _currentIndex, _size);
+	container.GPUHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(_gpuHandle, _currentIndex, _size);
 
 	_currentIndex += count;
 
