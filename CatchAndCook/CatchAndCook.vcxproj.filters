@@ -308,7 +308,7 @@
     <FxCompile Include="..\Resources\Shaders\test.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="SpriteShader.hlsl">
+    <FxCompile Include="..\Resources\Shaders\SpriteShader.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
   </ItemGroup>

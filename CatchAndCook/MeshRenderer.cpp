@@ -33,6 +33,9 @@ void MeshRenderer::Start()
 void MeshRenderer::Update()
 {
 	Component::Update();
+
+	
+
 }
 
 void MeshRenderer::Update2()

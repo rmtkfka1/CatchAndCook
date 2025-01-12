@@ -24,6 +24,18 @@ namespace RENDER_PASS
 		return (value & flag) != 0;
 	}
 
+	inline int ToIndex(PASS pass) {
+		switch (pass) {
+		case Shadow: return 0;
+		case Deffered: return 1;
+		case Forward: return 2;
+		case Transparent: return 3;
+		case PostProcessing: return 4;
+		case UI: return 5;
+		case Debug: return 6;
+		default: assert(false && "Invalid PASS value");
+		}
+	}
 }
 
 class RenderTarget

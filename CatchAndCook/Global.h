@@ -18,6 +18,7 @@ extern size_t UAV_TABLE_REGISTER_COUNT;
 
 extern std::vector<VertexProp> SkinProp;
 extern std::vector<VertexProp> StaticProp;
+extern std::vector<VertexProp> SpriteProp;
 
 const uint32 SWAP_CHAIN_FRAME_COUNT = 2; // 1 Front + (N-1) Back Buffer
 const uint32 MAX_FRAME_COUNT = SWAP_CHAIN_FRAME_COUNT - 1;

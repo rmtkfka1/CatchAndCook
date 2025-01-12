@@ -594,6 +594,7 @@ std::shared_ptr<ShaderCode> Shader::LoadBlob(std::wstring path, std::string endP
         if (resurt < 0)
             std::cout << "Shader Compile Failed\n" << std::string{
                 (char*)shaderCode->_errorBlob->GetBufferPointer(), shaderCode->_errorBlob->GetBufferSize() } << "\n";
+
     	ThrowIfFailed(resurt);
         
         shaderCode->_shaderByteCode.pShaderBytecode = _shaderBlob->GetBufferPointer();

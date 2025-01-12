@@ -45,3 +45,11 @@ std::vector<VertexProp> StaticProp
     VertexProp::uv0,
     VertexProp::uv1
 };
+
+std::vector<VertexProp> SpriteProp
+{ 
+    VertexProp::pos,
+    //VertexProp::normal,
+    VertexProp::uv0,
+    VertexProp::color
+};

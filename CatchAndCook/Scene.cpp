@@ -56,8 +56,9 @@ void Scene::Rendering()
     memcpy(CbufferContainer->ptr, (void*)&_globalParam, sizeof(GlobalParam));
     cmdList->SetGraphicsRootConstantBufferView(0, CbufferContainer->GPUAdress);
 
+
     { // Shadow
-        auto& targets = _passObjects[RENDER_PASS::Shadow];
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
 
         for (auto& [material,target] : targets)
         {
@@ -66,7 +67,7 @@ void Scene::Rendering()
     }
 
     { // Deffered
-        auto& targets = _passObjects[RENDER_PASS::Deffered];
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deffered)];
 
         for (auto& [material, target] : targets)
         {
@@ -75,8 +76,10 @@ void Scene::Rendering()
         }
     }
 
+
+
 	{ // forward
-        auto& targets = _passObjects[RENDER_PASS::Forward];
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Forward)];
 
         for (auto& [material, target] : targets)
         {
@@ -85,14 +88,16 @@ void Scene::Rendering()
         }
 	}
 
-    //{  //UI
-    //    auto& targets = _passObjects[RENDER_PASS::UI];
+    {  //UI
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::UI)];
 
-    //    for (auto& [material, target] : targets)
-    //    {
-    //        target->Rendering(nullptr);
-    //    }
-    //}
+        for (auto& [material, target] : targets)
+        {
+            target->Rendering(nullptr);
+        }
+    }
+
+  
 }
 
 void Scene::RenderEnd()
@@ -169,9 +174,13 @@ int Scene::Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObjec
 
 void Scene::AddRenderer(std::shared_ptr<Material> material, shared_ptr<RendererBase> data)
 {
-    for (int i=0;i<RENDER_PASS::Count;i++)
-		if (RENDER_PASS::HasFlag(material->GetPass(), RENDER_PASS::PASS(1 << i)))
+    for (int i = 0; i < RENDER_PASS::Count; i++)
+    {
+        if (RENDER_PASS::HasFlag(material->GetPass(), RENDER_PASS::PASS(1 << i)))
+        {
             _passObjects[i].emplace_back(material, data);
+        }
+    }
 }
 
 void Scene::AddRenderer(shared_ptr<RendererBase> data, RENDER_PASS::PASS pass)

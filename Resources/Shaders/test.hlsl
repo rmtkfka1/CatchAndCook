@@ -1,5 +1,11 @@
+cbuffer GLOBAL_DATA : register(b0)
+{
+    float2 g_window_size;
+    float g_Time;
+    float g_padding;
+};
 
-cbuffer test : register(b0)
+cbuffer test : register(b1)
 {
     row_major matrix WorldMat;
 }

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "SpriteRenderer.h"
-
+#include "Material.h"
+#include "Mesh.h"
 bool SpriteRenderer::IsExecuteAble()
 {
 	return Component::IsExecuteAble();
@@ -9,7 +10,8 @@ bool SpriteRenderer::IsExecuteAble()
 void SpriteRenderer::Init()
 {
 	_mesh = GeoMetryHelper::LoadSprtieMesh();
-	_shader = ResourceManager::main->Get<Shader>(L"SprtieShader");
+	_shader = ResourceManager::main->Get<Shader>(L"SpriteShader");
+
 }
 
 void SpriteRenderer::Start()
@@ -19,7 +21,8 @@ void SpriteRenderer::Start()
 
 void SpriteRenderer::Update()
 {
-
+	SetPos(vec3(0 + _temp * WINDOW_WIDTH / 5, 0, 0.5f));
+	SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
 
 }
 
@@ -42,7 +45,7 @@ void SpriteRenderer::Destroy()
 
 void SpriteRenderer::RenderBegin()
 {
-	SceneManager::main->GetCurrentScene()->AddRenderer(nullptr, static_pointer_cast<SpriteRenderer>(shared_from_this()));
+	SceneManager::main->GetCurrentScene()->AddRenderer(static_pointer_cast<SpriteRenderer>(shared_from_this()), RENDER_PASS::UI);
 }
 
 void SpriteRenderer::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
@@ -86,11 +89,11 @@ void SpriteRenderer::Rendering(const std::shared_ptr<Material>& material)
 		_spriteParam.texSamplePos.x = _rect.left;
 		_spriteParam.texSamplePos.y = _rect.top;
 		_spriteParam.texSampleSize.x = _rect.right - _rect.left;
-		_spriteParam.texSampleSize.y = _rect.top - _rect.bottom;
+		_spriteParam.texSampleSize.y = _rect.bottom - _rect.top;
 	}
 
-	//스프라이트 파람 바인딩.
 
+	//스프라이트 파람 바인딩.
 	auto CbufferContainer= Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteParam)->Alloc(1);
 	memcpy(CbufferContainer->ptr, (void*)&_spriteParam, sizeof(SpriteParam));
 	cmdList->SetGraphicsRootConstantBufferView(5, CbufferContainer->GPUAdress);
@@ -98,8 +101,25 @@ void SpriteRenderer::Rendering(const std::shared_ptr<Material>& material)
 	//텍스쳐 바인딩.
 	_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
 	Core::main->GetBufferManager()->GetTable()->CopyHandle(&_tableContainer.cpuHandle, &_texture->GetSRVCpuHandle(), 0);
-	cmdList->SetComputeRootDescriptorTable(SPRITE_TABLE_INDEX, _tableContainer.gpuHandle);
+	cmdList->SetGraphicsRootDescriptorTable(SPRITE_TABLE_INDEX, _tableContainer.gpuHandle);
 
+	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
+
+	if (_mesh->GetVertexCount() != 0)
+	{
+
+		if (_mesh->GetIndexCount() != 0)
+		{
+			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
+			cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
+			cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
+		}
+		else
+		{
+			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
+			cmdList->DrawInstanced(_mesh->GetVertexCount(), 1, 0, 0);
+		}
+	}
 
 }
 
@@ -110,8 +130,8 @@ void SpriteRenderer::SetSize(vec2 size)
 
 	auto desc = _texture->GetResource()->GetDesc();
 
-	_spriteParam.Scale.x = size.x /WINDOW_WIDTH;
-	_spriteParam.Scale.x = size.y / WINDOW_HEIGHT;
+	_spriteParam.Scale.x = size.x / WINDOW_WIDTH;
+	_spriteParam.Scale.y = size.y / WINDOW_HEIGHT;
 
 }
 

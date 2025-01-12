@@ -6,6 +6,7 @@
 #include "Transform.h"
 #include "GameObject.h"
 #include "MeshRenderer.h"
+#include "SpriteRenderer.h"
 void TestScene::Init()
 {
 	Scene::Init();
@@ -37,7 +38,24 @@ void TestScene::Init()
 	}
 
 	{
-		
+
+		for (int i = 0; i < 5; ++i)
+		{
+			shared_ptr<GameObject> gameObject = CreateGameObject(L"SpriteTest");
+			auto spriteRender = gameObject->AddComponent<SpriteRenderer>();
+
+			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
+
+			RECT rect { 0,0,440*5,440 * 5 };
+			spriteRender->SetTexture(texture, &rect);
+			spriteRender->SetPos(vec3(0+ i * WINDOW_WIDTH/5, 0, 0.5f));
+			spriteRender->SetSize(vec2(WINDOW_WIDTH/5, WINDOW_HEIGHT / 3));
+			spriteRender->_temp = i;
+
+
+
+
+		}
 	}
 
 }

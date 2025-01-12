@@ -87,7 +87,7 @@ void Transform::PushData()
 
 void Transform::SetData()
 {
-    Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(0, _container->GPUAdress);
+    Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(1, _container->GPUAdress);
 }
 
 vec3 Transform::SetForward(const vec3& dir)

@@ -16,6 +16,7 @@ struct SpriteParam
 
 	float depth;
 	float alpha;
+
 };
 
 class SpriteRenderer : public Component, public RendererBase
@@ -38,10 +39,12 @@ public:
 
 	void Rendering(const std::shared_ptr<Material>& material) override;
 
+	
+
 public:
+	void SetTexture(shared_ptr<Texture> texture, RECT* rect = nullptr);
 	void SetSize(vec2 size);
 	void SetPos(vec3 pos);
-	void SetTexture(shared_ptr<Texture> texture, RECT* rect =nullptr);
 
 private:
 	tableContainer _tableContainer;
@@ -50,5 +53,8 @@ private:
 	shared_ptr<Shader> _shader;
 	SpriteParam _spriteParam;
 	RECT _rect{0,0,0,0}; //uvMapping ¿¡ »ç¿ëµÊ.
+
+public:
+	int _temp = 0;
 };
 

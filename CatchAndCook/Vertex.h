@@ -116,7 +116,7 @@ struct Vertex_Sprite
 {
     vec3 position = vec3(0, 0, 0);
     vec2 uv;
-    vec4 color = vec4(0, 0, 0, 0);
+    vec4 color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 };
 
 
