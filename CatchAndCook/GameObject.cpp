@@ -55,6 +55,7 @@ void GameObject::Update()
 
 void GameObject::Update2()
 {
+ 
     if ((!IsDestroy()) && GetActive() && (!IsFirst())) {
         for (auto& component : _components) {
             if (((!component->IsDestroy()) && (!component->IsFirst())))

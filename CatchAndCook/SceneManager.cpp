@@ -1,29 +1,51 @@
 #include "pch.h"
 #include "SceneManager.h"
-
 #include "GameObject.h"
+#include "TestScene.h"
 
 std::unique_ptr<SceneManager> SceneManager::main = nullptr;
 
-void SceneManager::AddScene(shared_ptr<Scene> scene)
+shared_ptr<Scene> SceneManager::AddScene(SceneType type)
 {
-	_sceneTable.emplace(scene->_name, scene);
+	if (_sceneTable.find(type) != _sceneTable.end())
+	{
+		assert(false && "Scene name already exists!");
+	}
+
+	shared_ptr<Scene> scene;
+
+	switch (type)
+	{
+	case::SceneType::TestScene:
+		scene = make_shared<TestScene>();
+		_sceneTable[SceneType::TestScene] = scene;
+		break;
+
+	default:
+		break;
+	}
+
+	scene->Init();
 
 	if (_currentScene == nullptr)
 		_currentScene = scene;
-}
 
+	return scene;
+}
 
 void SceneManager::ChangeScene(const shared_ptr<Scene>& nextScene)
 {
 	auto currentScene = GetCurrentScene();
+
 	std::vector<std::shared_ptr<GameObject>> dontObj;
+
 	if (currentScene != nullptr)
 	{
 		for (auto& obj : _currentScene->_dont_destroy_gameObjects)
 			if (!obj->IsDestroy())
 				obj->GetChildsAll(dontObj);
 	}
+
 	for (auto& obj : dontObj)
 	{
 		nextScene->AddGameObject(obj);
@@ -35,7 +57,7 @@ void SceneManager::ChangeScene(const shared_ptr<Scene>& nextScene)
 	_currentScene = nextScene;
 }
 
-std::shared_ptr<Scene> SceneManager::FindScene(const std::string& name)
+std::shared_ptr<Scene> SceneManager::FindScene(SceneType type)
 {
-	return _sceneTable[name];
+	return _sceneTable[type];
 }

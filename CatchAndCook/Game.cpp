@@ -32,39 +32,12 @@ void Game::Init(HWND hwnd)
 	InjectorManager::main->Init();
 	InjectorManager::main->Register<TestSubMaterialParamInjector>(BufferType::MateriaSubParam);
 
-	std::shared_ptr<Scene> scene = std::make_shared<Scene>();
-	scene->Init("test");
+	auto scene = SceneManager::main->AddScene(SceneType::TestScene);
 
-	SceneManager::main->AddScene(scene);
 	SceneManager::main->ChangeScene(scene);
-
-	
-
-	ShaderInfo info;
-	info._zTest = false;
-	info._stencilTest = false;
-
-	_shader = ResourceManager::main->Load<Shader>(L"test.hlsl", L"test.hlsl", StaticProp,
-		ShaderArg{}, info);
-
-	_texture = ResourceManager::main->Load<Texture>(L"start",L"Textures/start.jpg");
-
-	_gameObjects = SceneManager::main->GetCurrentScene()->CreateGameObject(L"test gameObject");
-	_gameObjects->transform->SetLocalPosition(vec3(0, 0.3f, 0));
-	_meshRenderer = _gameObjects->AddComponent<MeshRenderer>();
-
-	_material = make_shared<Material>();
-	_material->SetShader(_shader);
-	_material->SetPass(RENDER_PASS::Forward);
-	_material->SetInjector({ InjectorManager::main->Get(BufferType::MateriaSubParam) });
-	_material->SetTexture("g_tex_0",_texture);
-	_material->SetPropertyVector("uv", vec4(0.3,-0.3,0,0));
-
-	_meshRenderer->AddMaterials({_material });
-	_meshRenderer->SetMesh(GeoMetryHelper::LoadRectangleMesh(1.0f));
-
 	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, static_pointer_cast<Camera>(make_shared<ThirdPersonCamera>()));
 	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0.5f, 0, -5.0f));
+
 }
 
 void Game::PrevUpdate()
@@ -131,7 +104,6 @@ void Game::Run()
 	std::shared_ptr<Scene> currentScene = SceneManager::main->GetCurrentScene();
 	currentScene->Update();
 	
-	_material->SetPropertyVector("uv",_material->GetPropertyVector("uv") + vec4(0.01,0,0,0));
 	Core::main->RenderBegin();
 	currentScene->RenderBegin();
 	currentScene->Rendering();

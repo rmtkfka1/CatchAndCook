@@ -15,9 +15,8 @@ void Scene::AddGameObject(const std::shared_ptr<GameObject> gameObject)
 	_gameObjects.push_back(gameObject);
 }
 
-void Scene::Init(const std::string& name)
+void Scene::Init()
 {
-	SetName(name);
 
 
 }

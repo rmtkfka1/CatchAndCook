@@ -11,13 +11,6 @@ public:
 private:
 	HWND _hwnd;
 
-	//temp
-	shared_ptr<Shader> _shader;
-	shared_ptr<GameObject> _gameObjects;
-	shared_ptr<Texture> _texture;
-	shared_ptr<Material> _material;
-	shared_ptr<MeshRenderer> _meshRenderer;
-
 	bool _fullScreen = false;
 	bool _quit = false;
 };

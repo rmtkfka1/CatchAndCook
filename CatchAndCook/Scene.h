@@ -10,10 +10,7 @@ class GameObject;
 
 class Scene : public IGuid
 {
-	std::string _name;
 
-	std::vector<std::shared_ptr<GameObject>> _dont_destroy_gameObjects;
-	std::vector<std::shared_ptr<GameObject>> _gameObjects;
 
 private:
 	void AddGameObject(const std::shared_ptr<GameObject> gameObject);
@@ -22,8 +19,8 @@ private:
 
 public:
 	void SetName(const std::string& name) { _name = name; };
-	void Init(const std::string& name);
 
+	virtual void Init();
 	virtual void Update();
 	virtual void RenderBegin();
 	virtual void Rendering();
@@ -37,10 +34,14 @@ public:
 	void AddRenderer(std::shared_ptr<Material> material, shared_ptr<RendererBase> data);
 	void AddRenderer(shared_ptr<RendererBase> data, RENDER_PASS::PASS pass);
 
-	std::array<std::vector<RenderObjectStrucutre>, RENDER_PASS::Count> _passObjects;
-
 	void Release();
 	friend class SceneManager;
+
+protected:
+	std::array<std::vector<RenderObjectStrucutre>, RENDER_PASS::Count> _passObjects;
+	std::vector<std::shared_ptr<GameObject>> _dont_destroy_gameObjects;
+	std::vector<std::shared_ptr<GameObject>> _gameObjects;
+	std::string _name;
 };
 
 

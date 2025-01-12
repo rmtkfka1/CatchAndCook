@@ -8,9 +8,6 @@
     <Filter Include="pch">
       <UniqueIdentifier>{d6409ad0-7edf-4b0e-af95-5ceb424937b4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="pch\Utils">
-      <UniqueIdentifier>{e676c44d-931e-447d-9037-d6e8e14516af}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Utils">
       <UniqueIdentifier>{7543e3e8-7bc4-4150-aaaf-c8ee39bc9447}</UniqueIdentifier>
     </Filter>
@@ -29,6 +26,15 @@
     <Filter Include="GameObject">
       <UniqueIdentifier>{a2c80d97-8a82-4fb3-9fa2-9e42898321f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="pch\extern">
+      <UniqueIdentifier>{e676c44d-931e-447d-9037-d6e8e14516af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{f699de27-d62a-4ade-a47b-5ed4687274ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{e5613d50-2ba3-40c8-b6e2-16c2a0bee462}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -39,10 +45,10 @@
       <Filter>pch</Filter>
     </ClCompile>
     <ClCompile Include="simple_mesh_ext.cpp">
-      <Filter>pch\Utils</Filter>
+      <Filter>pch\extern</Filter>
     </ClCompile>
     <ClCompile Include="simple_mesh_LH.cpp">
-      <Filter>pch\Utils</Filter>
+      <Filter>pch\extern</Filter>
     </ClCompile>
     <ClCompile Include="input_module.cpp">
       <Filter>Utils</Filter>
@@ -76,7 +82,7 @@
       <Filter>Resource</Filter>
     </ClCompile>
     <ClCompile Include="guid_utility.cpp">
-      <Filter>pch\Utils</Filter>
+      <Filter>pch\extern</Filter>
     </ClCompile>
     <ClCompile Include="IType.cpp">
       <Filter>Utils</Filter>
@@ -106,12 +112,6 @@
     <ClCompile Include="Material.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="RendererBase.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -121,20 +121,33 @@
     <ClCompile Include="CbufferParam.cpp">
       <Filter>pch</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="CameraManager.cpp">
-      <Filter>Resource</Filter>
-    </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
-    <ClCompile Include="convert_assimp.cpp" />
     <ClCompile Include="Model.cpp" />
-    <ClCompile Include="GeoMetryHelper.cpp" />
     <ClCompile Include="Vertex.cpp">
       <Filter>pch</Filter>
+    </ClCompile>
+    <ClCompile Include="convert_assimp.cpp">
+      <Filter>pch\extern</Filter>
+    </ClCompile>
+    <ClCompile Include="GeoMetryHelper.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraManager.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -145,16 +158,16 @@
       <Filter>pch</Filter>
     </ClInclude>
     <ClInclude Include="simple_mesh_ext.h">
-      <Filter>pch\Utils</Filter>
+      <Filter>pch\extern</Filter>
     </ClInclude>
     <ClInclude Include="simple_mesh_LH.h">
-      <Filter>pch\Utils</Filter>
+      <Filter>pch\extern</Filter>
     </ClInclude>
     <ClInclude Include="d3dx12.h">
-      <Filter>pch\Utils</Filter>
+      <Filter>pch\extern</Filter>
     </ClInclude>
     <ClInclude Include="convert_math.h">
-      <Filter>pch\Utils</Filter>
+      <Filter>pch\extern</Filter>
     </ClInclude>
     <ClInclude Include="input_module.h">
       <Filter>Utils</Filter>
@@ -182,13 +195,13 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="strutil.h">
-      <Filter>pch\Utils</Filter>
+      <Filter>pch\extern</Filter>
     </ClInclude>
     <ClInclude Include="wstrutil.h">
-      <Filter>pch\Utils</Filter>
+      <Filter>pch\extern</Filter>
     </ClInclude>
     <ClInclude Include="convert_string.h">
-      <Filter>pch\Utils</Filter>
+      <Filter>pch\extern</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Resource</Filter>
@@ -197,7 +210,7 @@
       <Filter>Resource</Filter>
     </ClInclude>
     <ClInclude Include="guid_utility.h">
-      <Filter>pch\Utils</Filter>
+      <Filter>pch\extern</Filter>
     </ClInclude>
     <ClInclude Include="IType.h">
       <Filter>Utils</Filter>
@@ -229,12 +242,6 @@
     <ClInclude Include="resource.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="RendererBase.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -244,26 +251,41 @@
     <ClInclude Include="CbufferParam.h">
       <Filter>pch</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="CameraManager.h">
-      <Filter>Resource</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceManager.h">
       <Filter>Resource</Filter>
     </ClInclude>
-    <ClInclude Include="convert_assimp.h" />
-    <ClInclude Include="convert_directx.h" />
     <ClInclude Include="Model.h" />
-    <ClInclude Include="GeoMetryHelper.h" />
     <ClInclude Include="Vertex.h">
       <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="convert_assimp.h">
+      <Filter>pch\extern</Filter>
+    </ClInclude>
+    <ClInclude Include="convert_directx.h">
+      <Filter>pch\extern</Filter>
+    </ClInclude>
+    <ClInclude Include="GeoMetryHelper.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraManager.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScene.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
-      <Filter>pch\Utils</Filter>
+      <Filter>pch\extern</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
