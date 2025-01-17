@@ -6,6 +6,26 @@ void Camera::Update()
     CalculateVPMatrix();
 }
 
+void Camera::SetCameraRotation(float yaw, float pitch, float roll)
+{
+    vec3 orginLook = vec3(0, 0, 1.0f);
+    vec3 orginUp = vec3(0, 1.0f, 0);
+    vec3 orginRight = vec3(1.0f, 0, 0);
+
+    float radianYaw = XMConvertToRadians(yaw);
+    float radianPitch = XMConvertToRadians(pitch);
+    float radianRoll = XMConvertToRadians(roll);
+
+    _yaw += radianYaw;
+    _pitch += radianPitch;
+    _roll+= radianRoll;
+
+    _cameraLook = vec3::TransformNormal(orginLook, Matrix::CreateFromYawPitchRoll(_yaw, _pitch, _roll));
+    _cameraRight = vec3::TransformNormal(orginRight, Matrix::CreateFromYawPitchRoll(_yaw, _pitch, _roll));
+    _cameraUp = vec3::TransformNormal(orginUp, Matrix::CreateFromYawPitchRoll(_yaw, _pitch, _roll));
+
+}
+
 void Camera::CalculateVPMatrix()
 {
     _params.cameraScreenData = vec4(

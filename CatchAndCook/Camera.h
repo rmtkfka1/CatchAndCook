@@ -55,6 +55,7 @@ public:
     vec3 GetCameraUp() { return _cameraUp; }
     vec3 GetCameraRight() { return _cameraRight; }
 
+    void SetCameraRotation(float yaw, float pitch, float roll);
     CameraParams& GetCameraParam() { return _params; }
     CameraType& GetCameraType() { return _type; }
 private:
@@ -65,6 +66,10 @@ protected:
     vec3 _cameraLook = vec3(0, 0, 1.0f);
     vec3 _cameraUp = vec3(0, 1.0f, 0);
     vec3 _cameraRight = vec3(1.0f, 0, 0);
+
+    float _yaw=0;
+    float _pitch=0;
+    float _roll=0;
 
     float _near = 1.0f;
     float _far = 10000.f;

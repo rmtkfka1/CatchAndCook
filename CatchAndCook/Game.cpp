@@ -134,29 +134,60 @@ void Game::CameraUpdate()
 {
 	shared_ptr<Camera> camera = CameraManager::main->GetActiveCamera();
 
-	if (Input::main->GetKey(KeyCode::D))
-	{
-		auto prevPos = camera->GetCameraPos();
-		camera->SetCameraPos(vec3(prevPos.x + 0.01f, prevPos.y, prevPos.z));
-	}
-
-	if (Input::main->GetKey(KeyCode::A))
-	{
-		auto prevPos = camera->GetCameraPos();
-		camera->SetCameraPos(vec3(prevPos.x - 0.01f, prevPos.y, prevPos.z));
-	}
+	const float speed = 1.5f;
+	const float dt =Time::main->GetDeltaTime() *speed;
 
 	if (Input::main->GetKey(KeyCode::W))
 	{
 		auto prevPos = camera->GetCameraPos();
-		camera->SetCameraPos(vec3(prevPos.x , prevPos.y+0.01f, prevPos.z));
+		auto direction = camera->GetCameraLook();
+		camera->SetCameraPos(direction * dt + prevPos);
 	}
 
 	if (Input::main->GetKey(KeyCode::S))
 	{
 		auto prevPos = camera->GetCameraPos();
-		camera->SetCameraPos(vec3(prevPos.x, prevPos.y - 0.01f, prevPos.z));
+		auto direction = camera->GetCameraLook();
+		camera->SetCameraPos(-direction * dt + prevPos);
+	}
+
+	if (Input::main->GetKey(KeyCode::D))
+	{
+		auto prevPos = camera->GetCameraPos();
+		auto direction = camera->GetCameraRight();
+		camera->SetCameraPos(direction * dt + prevPos);
+	}
+
+	if (Input::main->GetKey(KeyCode::A))
+	{
+		auto prevPos = camera->GetCameraPos();
+		auto direction = camera->GetCameraRight();
+		camera->SetCameraPos(-direction * dt + prevPos);
+	}
+
+
+
+	
+	if (Input::main->GetMouse(KeyCode::LeftMouse))
+	{
+		static vec2 lastMousePos;
+		vec2 currentMousePos = Input::main->GetMousePosition();
+
+		//튀는현상 방어
+		if (Input::main->GetMouseDown(KeyCode::LeftMouse))
+		{
+			lastMousePos = currentMousePos;
+		}
+
+		float speed = 0.3f;
+
+		vec2 delta = (currentMousePos - lastMousePos)*speed;
+		lastMousePos = currentMousePos;
+
+		camera->SetCameraRotation(delta.x, delta.y, 0);
 	}
 
 	
+
+
 }
