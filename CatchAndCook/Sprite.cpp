@@ -60,15 +60,15 @@ void Sprite::Render()
 
 void Sprite::SetSize(vec2 size)
 {
-	_spriteParam.scale.x = size.x / WINDOW_WIDTH;
-	_spriteParam.scale.y = size.y / WINDOW_HEIGHT;
+	_spriteParam.ndcScale.x = size.x / WINDOW_WIDTH;
+	_spriteParam.ndcScale.y = size.y / WINDOW_HEIGHT;
 }
 
 void Sprite::SetPos(vec3 pos)
 {
-	_spriteParam.pos.x = pos.x/ WINDOW_WIDTH;
-	_spriteParam.pos.y = pos.y/ WINDOW_HEIGHT;
-	_spriteParam.pos.z = pos.z;
+	_spriteParam.ndcPos.x = pos.x/ WINDOW_WIDTH;
+	_spriteParam.ndcPos.y = pos.y/ WINDOW_HEIGHT;
+	_spriteParam.ndcPos.z = pos.z;
 }
 
 void Sprite::SetTexture(shared_ptr<Texture> texture, RECT* rect)
@@ -96,7 +96,9 @@ void Sprite::SetTexture(shared_ptr<Texture> texture, RECT* rect)
 	}
 }
 
-
+/// <summary>
+/// //
+/// </summary>
 
 void Inventory::Init()
 {

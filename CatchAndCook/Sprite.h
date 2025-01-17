@@ -6,14 +6,14 @@ class Shader;
 
 struct SpriteParam
 {
-	vec3 pos = { 0.0f,0.0f,0.1f };
-	float alpha;
+	vec3 ndcPos = { 0.0f,0.0f,0.1f };
+	float alpha =1.0f;
 
-	vec2 scale = { 1.0f,1.0f };
-	vec2 origintexSize;
+	vec2 ndcScale = { 1.0f,1.0f };
+	vec2 origintexSize{};
 
-	vec2 texSamplePos;
-	vec2 texSampleSize;
+	vec2 texSamplePos{};
+	vec2 texSampleSize{};
 };
 
 class Sprite
@@ -40,7 +40,9 @@ private:
 	shared_ptr<Texture> _texture;
 	shared_ptr<Shader> _shader;
 	SpriteParam _spriteParam;
-	RECT _rect{ 0,0,0,0 }; //uvMapping ¿¡ »ç¿ëµÊ.
+
+
+
 
 };
 

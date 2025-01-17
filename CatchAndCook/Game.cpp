@@ -165,9 +165,6 @@ void Game::CameraUpdate()
 		camera->SetCameraPos(-direction * dt + prevPos);
 	}
 
-
-
-	
 	if (Input::main->GetMouse(KeyCode::LeftMouse))
 	{
 		static vec2 lastMousePos;
