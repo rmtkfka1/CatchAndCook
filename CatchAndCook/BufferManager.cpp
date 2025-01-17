@@ -3,8 +3,8 @@
 #include "BufferPool.h"
 #include "Material.h"
 #include "Camera.h"
-#include "SpriteRenderer.h"
 #include "Scene.h"
+#include "Sprite.h"
 void BufferManager::Init()
 {
 

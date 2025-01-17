@@ -7,6 +7,7 @@
 #include "GameObject.h"
 #include "MeshRenderer.h"
 #include "SpriteRenderer.h"
+#include "Sprite.h"
 void TestScene::Init()
 {
 	Scene::Init();
@@ -45,14 +46,17 @@ void TestScene::Init()
 			auto spriteRender = gameObject->AddComponent<SpriteRenderer>();
 
 			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"spriteTest", L"Textures/spriteTest.jpg");
+			shared_ptr<Sprite> sprite = make_shared<Sprite>();
 
+			spriteRender->SetSprite(sprite);
+			
 			//풀UV 맵핑
 			if (i == 0)
 			{
-				spriteRender->SetTexture(texture);
-				spriteRender->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.5f));
-				spriteRender->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
-				spriteRender->_temp = i;
+				sprite->SetTexture(texture);
+				sprite->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.5f));
+				sprite->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
+				sprite->_temp = i;
 			}
 
 			//스프라이트 짤라서 사용.
@@ -63,12 +67,13 @@ void TestScene::Init()
 				rect.top = 0;
 				rect.right = 1024/7 * (i+1);
 				rect.bottom = 1024/4;
-				spriteRender->SetTexture(texture,&rect);
-				spriteRender->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.5f));
-				spriteRender->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
-				spriteRender->_temp = i;
+				sprite->SetTexture(texture,&rect);
+				sprite->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.5f));
+				sprite->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
+				sprite->_temp = i;
 			}
 
+		
 		}
 	}
 
