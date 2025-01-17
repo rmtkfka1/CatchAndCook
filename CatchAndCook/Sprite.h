@@ -16,7 +16,16 @@ struct SpriteParam
 	vec2 texSampleSize{};
 };
 
-class Sprite
+
+struct CollisionRect
+{
+	float left;
+	float top;
+	float right;
+	float bottom;
+};
+
+class Sprite : public enable_shared_from_this<Sprite>
 {
 public:
 	Sprite();
@@ -32,6 +41,13 @@ public:
 	void SetTexture(shared_ptr<Texture> texture, RECT* rect = nullptr);
 	void SetSize(vec2 size);
 	void SetPos(vec3 pos);
+	void AddCollisonMap();
+
+	vec3 _ndcPos{};
+	vec2 _ndcSize{};
+
+protected:
+
 
 private:
 
@@ -41,7 +57,7 @@ private:
 	shared_ptr<Shader> _shader;
 	SpriteParam _spriteParam;
 
-
+	static vector<pair<CollisionRect, shared_ptr<Sprite>>> _collisionMap;
 
 
 };

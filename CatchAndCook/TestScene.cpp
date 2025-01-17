@@ -81,6 +81,7 @@ void TestScene::Init()
 				sprite->SetTexture(texture);
 				sprite->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.1f));
 				sprite->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
+				sprite->AddCollisonMap();
 			}
 
 			//스프라이트 짤라서 사용.
@@ -94,6 +95,7 @@ void TestScene::Init()
 				sprite->SetTexture(texture,&rect);
 				sprite->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.99f));
 				sprite->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
+				sprite->AddCollisonMap();
 			}
 
 		

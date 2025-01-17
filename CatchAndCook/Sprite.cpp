@@ -2,6 +2,7 @@
 #include "Sprite.h"
 #include "Mesh.h"
 
+vector<pair<CollisionRect, shared_ptr<Sprite>>> Sprite::_collisionMap;
 
 Sprite::Sprite()
 {
@@ -20,6 +21,22 @@ void Sprite::Init()
 
 void Sprite::Update()
 {
+	if (Input::main->GetMouseDown(KeyCode::LeftMouse))
+	{
+		auto pos = Input::main->GetMouseDownPosition(KeyCode::LeftMouse);
+		float normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
+		float normalizedY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
+
+		for (auto& [rect, sprite] : _collisionMap)
+		{
+			if (normalizedX >= rect.left  && normalizedX <= rect.right  &&
+				normalizedY >= rect.top  && normalizedY <= rect.bottom )
+			{
+				sprite->_spriteParam.alpha *= 0.99f;
+			}
+		}
+	}
+
 
 }
 
@@ -62,6 +79,8 @@ void Sprite::SetSize(vec2 size)
 {
 	_spriteParam.ndcScale.x = size.x / WINDOW_WIDTH;
 	_spriteParam.ndcScale.y = size.y / WINDOW_HEIGHT;
+
+	_ndcSize = _spriteParam.ndcScale;
 }
 
 void Sprite::SetPos(vec3 pos)
@@ -69,7 +88,23 @@ void Sprite::SetPos(vec3 pos)
 	_spriteParam.ndcPos.x = pos.x/ WINDOW_WIDTH;
 	_spriteParam.ndcPos.y = pos.y/ WINDOW_HEIGHT;
 	_spriteParam.ndcPos.z = pos.z;
+
+	_ndcPos = _spriteParam.ndcPos;
 }
+
+void Sprite::AddCollisonMap()
+{
+	CollisionRect rect;
+	rect.left =  (_ndcPos.x);
+	rect.top  =  (_ndcPos.y);
+	rect.right = (_ndcPos.x + _ndcSize.x);
+	rect.bottom = (_ndcPos.y + _ndcSize.y);
+
+	_collisionMap.push_back({ rect, shared_from_this() });
+}
+
+
+
 
 void Sprite::SetTexture(shared_ptr<Texture> texture, RECT* rect)
 {
