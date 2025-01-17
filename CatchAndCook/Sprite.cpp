@@ -30,11 +30,6 @@ void Sprite::Render()
 
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
 
-	_spriteParam.texSamplePos.x = _rect.left;
-	_spriteParam.texSamplePos.y = _rect.top;
-	_spriteParam.texSampleSize.x = _rect.right - _rect.left;
-	_spriteParam.texSampleSize.y = _rect.bottom - _rect.top;
-
 	//스프라이트 파람 바인딩.
 	auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteParam)->Alloc(1);
 	memcpy(CbufferContainer->ptr, (void*)&_spriteParam, sizeof(SpriteParam));
@@ -68,7 +63,6 @@ void Sprite::SetSize(vec2 size)
 {
 	_spriteParam.scale.x = size.x / WINDOW_WIDTH;
 	_spriteParam.scale.y = size.y / WINDOW_HEIGHT;
-
 }
 
 void Sprite::SetPos(vec3 pos)
@@ -88,14 +82,18 @@ void Sprite::SetTexture(shared_ptr<Texture> texture, RECT* rect)
 
 	if (rect)
 	{
-		_rect = *rect;
+		_spriteParam.texSamplePos.x = rect->left;
+		_spriteParam.texSamplePos.y = rect->top;
+		_spriteParam.texSampleSize.x = (rect->right-rect->left);
+		_spriteParam.texSampleSize.y = (rect->bottom - rect->top);
 	}
 	else
 	{
-		_rect.left = 0;
-		_rect.top = 0;
-		_rect.right = desc.Width;
-		_rect.bottom = desc.Height;
+
+		_spriteParam.texSamplePos.x = 0;
+		_spriteParam.texSamplePos.y = 0;
+		_spriteParam.texSampleSize.x = desc.Width;
+		_spriteParam.texSampleSize.y = desc.Height;
 	}
 }
 
