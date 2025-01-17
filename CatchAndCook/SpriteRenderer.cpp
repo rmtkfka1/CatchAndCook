@@ -15,13 +15,12 @@ void SpriteRenderer::Init()
 
 void SpriteRenderer::Start()
 {
-	_sprite->Update();
+	
 }
 
 void SpriteRenderer::Update()
 {
-
-
+	_sprite->Update();
 }
 
 void SpriteRenderer::Update2()
