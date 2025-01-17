@@ -24,7 +24,7 @@ void ResourceManager::CreateDefaultShader()
 	{
 
 		ShaderInfo info;
-		info._zTest = false;
+		info._zTest = true;
 		info._stencilTest = false;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();

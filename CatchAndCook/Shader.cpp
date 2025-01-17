@@ -112,6 +112,7 @@ void Shader::InitPipeLine(const std::vector<VertexProp>& prop)
 
     resterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
     resterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+
     switch (_info.cullingType)
     {
     case CullingType::BACK:
@@ -139,10 +140,10 @@ void Shader::InitPipeLine(const std::vector<VertexProp>& prop)
     _pipelineDesc.RasterizerState.SlopeScaledDepthBias = 0.0f;
     _pipelineDesc.RasterizerState.DepthBiasClamp = 0.0f;
 
-
     CD3DX12_DEPTH_STENCIL_DESC depthStencilDesc{ D3D12_DEFAULT };
     depthStencilDesc.DepthEnable = _info._zTest ? TRUE : FALSE;
     depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+
     switch (_info._zComp)
     {
     case CompOper::Always: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;

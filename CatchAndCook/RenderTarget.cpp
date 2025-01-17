@@ -73,14 +73,14 @@ void RenderTarget::RenderBegin()
 
 	//ClearDepth();
 
-	const float BackColor[] = { 0.5f, 1.0f, 1.0f, 1.0f };
+	const float BackColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	_RenderTargets[_RenderTargetIndex]->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	cmdList->RSSetViewports(1, &_viewport);
 	cmdList->RSSetScissorRects(1, &_scissorRect);
 	cmdList->ClearRenderTargetView(_RenderTargets[_RenderTargetIndex]->GetRTVCpuHandle(), BackColor, 0, nullptr);
-	cmdList->OMSetRenderTargets(1, &_RenderTargets[_RenderTargetIndex]->GetRTVCpuHandle(), FALSE, nullptr);
+	cmdList->OMSetRenderTargets(1, &_RenderTargets[_RenderTargetIndex]->GetRTVCpuHandle(), FALSE, &_DSTexture->GetSharedDSVHandle());
 }
 
 void RenderTarget::RenderEnd()

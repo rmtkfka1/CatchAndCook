@@ -62,7 +62,9 @@ void Core::RenderBegin()
 
     _cmdList->SetGraphicsRootSignature(_rootSignature->GetGraphicsRootSignature().Get());
     _cmdList->SetDescriptorHeaps(1, _bufferManager->GetTable()->GetDescriptorHeap().GetAddressOf());
-    _renderTarget->RenderBegin();
+
+    _renderTarget->RenderBegin(); //임시
+    _renderTarget->ClearDepth(); //임시 
 }
 
 
@@ -70,7 +72,6 @@ void Core::RenderEnd()
 {
 
     _renderTarget->RenderEnd();
-
 
     _cmdList->Close();
 

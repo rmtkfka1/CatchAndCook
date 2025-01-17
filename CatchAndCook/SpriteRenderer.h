@@ -35,6 +35,5 @@ public:
 
 private:
 	shared_ptr<Sprite> _sprite;
-
 };
 

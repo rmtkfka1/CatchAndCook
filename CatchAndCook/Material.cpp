@@ -19,8 +19,8 @@ void Material::SetTexture(std::string name, const std::shared_ptr<Texture>& fiel
 
 void Material::PushData()
 {
-	//temp
-	SetPropertyVector("uv", GetPropertyVector("uv") + vec4(0.01, 0, 0, 0));
+	////temp
+	//SetPropertyVector("uv", GetPropertyVector("uv") + vec4(0.01, 0, 0, 0));
 
 	PushTexture();
 

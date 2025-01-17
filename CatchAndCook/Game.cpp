@@ -33,7 +33,7 @@ void Game::Init(HWND hwnd)
 	InjectorManager::main->Register<TestSubMaterialParamInjector>(BufferType::MateriaSubParam);
 
 	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, static_pointer_cast<Camera>(make_shared<ThirdPersonCamera>()));
-	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0.5f, 0, -5.0f));
+	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0, 0, -5.0f));
 
 	auto scene = SceneManager::main->AddScene(SceneType::TestScene);
 	SceneManager::main->ChangeScene(scene);
