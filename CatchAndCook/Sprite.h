@@ -16,14 +16,13 @@ struct SpriteParam
 	vec2 texSampleSize;
 };
 
-
 class Sprite
 {
 public:
 	Sprite();
 	virtual ~Sprite();
 
-private:
+protected:
 	virtual void Init();
 public:
 	virtual void Update();
@@ -45,6 +44,16 @@ private:
 	shared_ptr<Shader> _shader;
 	SpriteParam _spriteParam;
 	RECT _rect{ 0,0,0,0 }; //uvMapping ¿¡ »ç¿ëµÊ.
+
+};
+
+class Inventory :  public Sprite
+{
+
+public:
+	virtual void Init();
+	virtual void Update();
+	virtual void Render();
 
 };
 

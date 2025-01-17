@@ -27,7 +27,11 @@ public:
 
 
 public:
-	void SetSprite(shared_ptr<Sprite> sprite) { _sprite = sprite; }
+	template <typename T, typename = std::enable_if_t<std::is_base_of_v<Sprite, T>>>
+	void SetSprite(shared_ptr<T> sprite)
+	{
+		_sprite = sprite;
+	}
 
 private:
 	shared_ptr<Sprite> _sprite;

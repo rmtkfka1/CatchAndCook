@@ -64,8 +64,6 @@ void Sprite::Render()
 	}
 }
 
-
-
 void Sprite::SetSize(vec2 size)
 {
 	if (_texture == nullptr)
@@ -102,4 +100,21 @@ void Sprite::SetTexture(shared_ptr<Texture> texture, RECT* rect)
 		_rect.right = desc.Width;
 		_rect.bottom = desc.Height;
 	}
+}
+
+//
+
+void Inventory::Init()
+{
+
+}
+
+void Inventory::Update()
+{
+	Sprite::Update();
+}
+
+void Inventory::Render()
+{
+	Sprite::Render();
 }
