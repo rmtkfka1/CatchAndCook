@@ -29,6 +29,7 @@ ShaderInfo::~ShaderInfo() = default;
 void ShaderInfo::SetRenderTargets(const std::vector<std::shared_ptr<Texture>>& renderTargets)
 {
     renderTargetCount = std::min(static_cast<unsigned int>(renderTargets.size()), 8u);
+
     if (renderTargetCount == 0)
     {
         renderTargetCount = 1;
@@ -48,6 +49,7 @@ void ShaderInfo::SetDSTexture(const std::shared_ptr<Texture>& DSTexture)
         _zTest = false;
         _stencilTest = false;
     }
+
     DSVFormat = DSTexture->GetFormat();
 }
 
@@ -90,6 +92,7 @@ void Shader::InitPipeLine(const std::vector<VertexProp>& prop)
         for (int i = 0; i < _pipelineDesc.NumRenderTargets; i++)
             _pipelineDesc.RTVFormats[i] = _info.RTVForamts[i];
     }
+
     else
     {
         _pipelineDesc.NumRenderTargets = 0;
