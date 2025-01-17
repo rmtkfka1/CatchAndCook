@@ -25,7 +25,7 @@ struct CollisionRect
 	float bottom;
 };
 
-class Sprite : public enable_shared_from_this<Sprite>
+class Sprite 
 {
 public:
 	Sprite();
@@ -36,6 +36,7 @@ protected:
 public:
 	virtual void Update();
 	virtual void Render();
+
 
 public:
 	void SetTexture(shared_ptr<Texture> texture, RECT* rect = nullptr);
@@ -57,7 +58,7 @@ private:
 	shared_ptr<Shader> _shader;
 	SpriteParam _spriteParam;
 
-	static vector<pair<CollisionRect, shared_ptr<Sprite>>> _collisionMap;
+	static vector<pair<CollisionRect, Sprite*>> _collisionMap;
 
 
 };

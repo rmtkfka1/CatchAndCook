@@ -2,7 +2,7 @@
 #include "Sprite.h"
 #include "Mesh.h"
 
-vector<pair<CollisionRect, shared_ptr<Sprite>>> Sprite::_collisionMap;
+vector<pair<CollisionRect, Sprite*>> Sprite::_collisionMap;
 
 Sprite::Sprite()
 {
@@ -11,6 +11,17 @@ Sprite::Sprite()
 
 Sprite::~Sprite()
 {
+
+	auto it = std::remove_if(_collisionMap.begin(), _collisionMap.end(),
+		[this](const auto& pair) {
+			return pair.second == this;
+		});
+
+	if (it != _collisionMap.end())
+	{
+		_collisionMap.erase(it);
+	}
+
 }
 
 void Sprite::Init()
@@ -21,6 +32,7 @@ void Sprite::Init()
 
 void Sprite::Update()
 {
+	
 	if (Input::main->GetMouseDown(KeyCode::LeftMouse))
 	{
 		auto pos = Input::main->GetMouseDownPosition(KeyCode::LeftMouse);
@@ -100,7 +112,7 @@ void Sprite::AddCollisonMap()
 	rect.right = (_ndcPos.x + _ndcSize.x);
 	rect.bottom = (_ndcPos.y + _ndcSize.y);
 
-	_collisionMap.push_back({ rect, shared_from_this() });
+	_collisionMap.push_back({ rect, this });
 }
 
 
