@@ -174,10 +174,9 @@ void Core::CreateDevice(bool EnableDebugLayer, bool EnableGBV)
         }
     }
 
-    // DXGI ���丮 ����
+
     CreateDXGIFactory2(dwCreateFactoryFlags, IID_PPV_ARGS(&_factory));
 
-    // �����Ǵ� ��� ���� ����
     D3D_FEATURE_LEVEL featureLevels[] =
     {
         D3D_FEATURE_LEVEL_12_0,

@@ -20,8 +20,8 @@ void Sprite::Init()
 
 void Sprite::Update()
 {
-	SetPos(vec3(0 + _temp * WINDOW_WIDTH / 5, 0, 0.99f));
-	SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
+	//SetPos(vec3(0 + _temp * WINDOW_WIDTH / 5, 0, 0.99f));
+	//SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
 }
 
 void Sprite::Render()

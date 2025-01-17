@@ -35,6 +35,7 @@ void Game::Init(HWND hwnd)
 	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, static_pointer_cast<Camera>(make_shared<ThirdPersonCamera>()));
 	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0, 0, -5.0f));
 
+
 	auto scene = SceneManager::main->AddScene(SceneType::TestScene);
 	SceneManager::main->ChangeScene(scene);
 
@@ -101,6 +102,9 @@ void Game::Run()
 	if (_quit)
 		return;
 
+	CameraUpdate();
+
+
 	std::shared_ptr<Scene> currentScene = SceneManager::main->GetCurrentScene();
 	currentScene->Update();
 	
@@ -124,4 +128,35 @@ void Game::Release()
 	Input::main.reset(nullptr);
 	IGuid::StaticRelease();
 	Core::main.reset(nullptr);
+}
+
+void Game::CameraUpdate()
+{
+	shared_ptr<Camera> camera = CameraManager::main->GetActiveCamera();
+
+	if (Input::main->GetKey(KeyCode::D))
+	{
+		auto prevPos = camera->GetCameraPos();
+		camera->SetCameraPos(vec3(prevPos.x + 0.01f, prevPos.y, prevPos.z));
+	}
+
+	if (Input::main->GetKey(KeyCode::A))
+	{
+		auto prevPos = camera->GetCameraPos();
+		camera->SetCameraPos(vec3(prevPos.x - 0.01f, prevPos.y, prevPos.z));
+	}
+
+	if (Input::main->GetKey(KeyCode::W))
+	{
+		auto prevPos = camera->GetCameraPos();
+		camera->SetCameraPos(vec3(prevPos.x , prevPos.y+0.01f, prevPos.z));
+	}
+
+	if (Input::main->GetKey(KeyCode::S))
+	{
+		auto prevPos = camera->GetCameraPos();
+		camera->SetCameraPos(vec3(prevPos.x, prevPos.y - 0.01f, prevPos.z));
+	}
+
+	
 }

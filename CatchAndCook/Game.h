@@ -7,7 +7,7 @@ public:
 	void PrevUpdate();
 	void Run();
 	void Release();
-
+	void CameraUpdate(); //temp
 private:
 	HWND _hwnd;
 
