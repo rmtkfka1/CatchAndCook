@@ -33,9 +33,6 @@ public:
 	void SetSize(vec2 size);
 	void SetPos(vec3 pos);
 
-public:
-	int _temp = 0; //임시적으로 윈도우사이즈 맞게 변경되야해서 사용됨.
-
 private:
 
 	tableContainer _tableContainer;

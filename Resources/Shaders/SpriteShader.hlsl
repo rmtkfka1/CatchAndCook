@@ -43,7 +43,7 @@ VS_OUT VS_Main(VS_IN input)
     VS_OUT output = (VS_OUT) 0;
     
     float2 scale = g_scale;
-    float2 offset = (g_pos.xy / g_window_size);
+    float2 offset = g_pos.xy;
     float2 pos = input.pos.xy * g_scale + offset;
     output.pos = float4(pos.xy * float2(2, -2) + float2(-1, 1), g_pos.z, 1);
  
