@@ -48,8 +48,8 @@ public:
 	vec2 _ndcSize{};
 
 protected:
-
-
+	void TestMouseLeftUpdate();
+	void TestMouseRightUpdate();
 private:
 
 	tableContainer _tableContainer;
@@ -60,6 +60,8 @@ private:
 
 	static vector<pair<CollisionRect, Sprite*>> _collisionMap;
 
+	Sprite* _dragSprtie=nullptr;
+	CollisionRect* _dragRect = nullptr;
 
 };
 

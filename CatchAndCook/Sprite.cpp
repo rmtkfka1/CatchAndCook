@@ -32,23 +32,9 @@ void Sprite::Init()
 
 void Sprite::Update()
 {
+	TestMouseLeftUpdate();
 	
-	if (Input::main->GetMouseDown(KeyCode::LeftMouse))
-	{
-		auto pos = Input::main->GetMouseDownPosition(KeyCode::LeftMouse);
-		float normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
-		float normalizedY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
-
-		for (auto& [rect, sprite] : _collisionMap)
-		{
-			if (normalizedX >= rect.left  && normalizedX <= rect.right  &&
-				normalizedY >= rect.top  && normalizedY <= rect.bottom )
-			{
-				sprite->_spriteParam.alpha *= 0.99f;
-			}
-		}
-	}
-
+	TestMouseRightUpdate();
 
 }
 
@@ -113,6 +99,74 @@ void Sprite::AddCollisonMap()
 	rect.bottom = (_ndcPos.y + _ndcSize.y);
 
 	_collisionMap.push_back({ rect, this });
+}
+
+void Sprite::TestMouseLeftUpdate()
+{
+	if (Input::main->GetMouseDown(KeyCode::LeftMouse))
+	{
+		auto pos = Input::main->GetMouseDownPosition(KeyCode::LeftMouse);
+		float normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
+		float normalizedY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
+
+		for (auto& [rect, sprite] : _collisionMap)
+		{
+			if (normalizedX >= rect.left && normalizedX <= rect.right &&
+				normalizedY >= rect.top && normalizedY <= rect.bottom)
+			{
+				sprite->_spriteParam.alpha *= 0.99f;
+			}
+		}
+	}
+}
+
+void Sprite::TestMouseRightUpdate()
+{
+	vec2 pos;
+	float normalizedX, normalizedY;
+
+	// 우클릭 시작
+	if (Input::main->GetMouseDown(KeyCode::RightMouse))
+	{
+		pos = Input::main->GetMouseDownPosition(KeyCode::RightMouse);
+		normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
+		normalizedY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
+
+		// 충돌된 스프라이트 검색
+		for (auto& [rect, sprite] : _collisionMap)
+		{
+			if (normalizedX >= rect.left && normalizedX <= rect.right &&
+				normalizedY >= rect.top && normalizedY <= rect.bottom)
+			{
+				_dragSprtie = sprite;
+				_dragRect = &rect;
+				break; // 첫 번째로 충돌된 스프라이트만 선택
+			}
+		}
+	}
+
+	// 우클릭 종료
+	if (Input::main->GetMouseUp(KeyCode::RightMouse))
+	{
+		_dragSprtie = nullptr;
+		_dragRect = nullptr;
+	}
+
+	// 드래그 중
+	if (_dragSprtie && Input::main->GetMouse(KeyCode::RightMouse))
+	{
+		pos = Input::main->GetMousePosition(); // 실시간 마우스 좌표
+		float newPosX = static_cast<float>(pos.x) / WINDOW_WIDTH;
+		float newPosY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
+
+		// 스프라이트 및 충돌 사각형 업데이트
+		_dragSprtie->SetPos(vec3(pos.x, pos.y, _dragSprtie->_spriteParam.ndcPos.z));
+
+		_dragRect->left = _dragSprtie->_spriteParam.ndcPos.x;
+		_dragRect->top = _dragSprtie->_spriteParam.ndcPos.y;
+		_dragRect->right = _dragSprtie->_spriteParam.ndcPos.x + _dragSprtie->_ndcSize.x;
+		_dragRect->bottom = _dragSprtie->_spriteParam.ndcPos.y + _dragSprtie->_ndcSize.y;
+	}
 }
 
 
