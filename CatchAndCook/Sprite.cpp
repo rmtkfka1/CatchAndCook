@@ -164,13 +164,12 @@ void Sprite::TestMouseRightUpdate()
 		_dragSprtie = nullptr;
 		_dragRect = nullptr;
 
-
 	}
 
 	// 드래그 중
 	if (_dragSprtie && Input::main->GetMouse(KeyCode::RightMouse))
 	{
-		pos = Input::main->GetMousePosition(); // 실시간 마우스 좌표
+		pos = Input::main->GetMousePosition(); 
 	
 		auto size = _dragSprtie->_screenSize;
 		_dragSprtie->SetPos(vec3(pos.x - size.x/2, pos.y-size.y/2, _dragSprtie->_spriteParam.ndcPos.z));
