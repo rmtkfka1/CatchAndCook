@@ -46,9 +46,9 @@ public:
     void SetData();
 
     void SetCameraPos(const vec3& pos) { _cameraPos = pos; }
-    void SetCameraLook(const vec3& look) { _cameraLook = look; }
-    void SetCameraUp(const vec3& up) { _cameraUp = up; }
-    void SetCameraRight(const vec3& right) { _cameraRight = right; }
+    void SetCameraLook(const vec3& look);
+    void SetCameraUp(const vec3& up);
+    void SetCameraRight(const vec3& right);
 
     vec3 GetCameraPos() { return _cameraPos; }
     vec3 GetCameraLook() { return _cameraLook; }

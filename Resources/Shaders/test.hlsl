@@ -19,10 +19,11 @@ cbuffer cameraParams : register(b2)
     row_major Matrix InvertProjectionMatrix;
     row_major Matrix InvertVPMatrix;
 
-    float cameraPos;
-    float cameraUp;
-    float cameraFrustumData;
-    float cameraScreenData;
+    float4 cameraPos;
+    float4 cameraLook;
+    float4 cameraUp;
+    float4 cameraFrustumData;
+    float4 cameraScreenData;
 };
 
 cbuffer popo : register(b7)
