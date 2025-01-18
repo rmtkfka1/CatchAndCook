@@ -41,10 +41,8 @@ public:
 public:
 	void SetTexture(shared_ptr<Texture> texture, RECT* rect = nullptr);
 	void SetSize(vec2 size);
-	void SetPos(vec3 pos);
+	void SetPos(vec3 screenPos);
 	void AddCollisonMap();
-
-
 
 protected:
 	void TestMouseLeftUpdate();
@@ -59,8 +57,12 @@ private:
 
 	static vector<pair<CollisionRect, Sprite*>> _collisionMap;
 
-	Sprite* _dragSprtie=nullptr;
-	CollisionRect* _dragRect = nullptr;
+	vec3 _screenPos;
+	vec3 _ndcPos;
+
+	vec2 _screenSize;
+	vec2 _ndcSize;
+
 
 };
 

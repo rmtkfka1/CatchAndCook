@@ -76,7 +76,7 @@ void TestScene::Init()
 			spriteRender->SetSprite(sprite);
 			
 			//Ç®UV ¸ÊÇÎ
-			if (i == 0)
+			if (i == 4)
 			{
 				sprite->SetTexture(texture);
 				sprite->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.1f));
@@ -93,12 +93,10 @@ void TestScene::Init()
 				rect.right = 1024/7 * (i+1);
 				rect.bottom = 1024/4;
 				sprite->SetTexture(texture,&rect);
-				sprite->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.99f));
+				sprite->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.99f - 0.01f*i));
 				sprite->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
 				sprite->AddCollisonMap();
 			}
-
-		
 		}
 	}
 

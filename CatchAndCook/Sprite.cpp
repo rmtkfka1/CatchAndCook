@@ -75,16 +75,22 @@ void Sprite::Render()
 
 void Sprite::SetSize(vec2 size)
 {
+
 	_spriteParam.ndcScale.x = size.x / WINDOW_WIDTH;
 	_spriteParam.ndcScale.y = size.y / WINDOW_HEIGHT;
 
+	_ndcSize = _spriteParam.ndcScale;
+	_screenSize = size;
 }
 
-void Sprite::SetPos(vec3 pos)
+void Sprite::SetPos(vec3 screenPos)
 {
-	_spriteParam.ndcPos.x = pos.x/ WINDOW_WIDTH;
-	_spriteParam.ndcPos.y = pos.y/ WINDOW_HEIGHT;
-	_spriteParam.ndcPos.z = pos.z;
+	_spriteParam.ndcPos.x = screenPos.x/ WINDOW_WIDTH;
+	_spriteParam.ndcPos.y = screenPos.y/ WINDOW_HEIGHT;
+	_spriteParam.ndcPos.z = screenPos.z;
+
+	_ndcPos = _spriteParam.ndcPos;
+	_screenPos = screenPos;
 
 }
 
@@ -97,6 +103,11 @@ void Sprite::AddCollisonMap()
 	rect.bottom = (_spriteParam.ndcPos.y + _spriteParam.ndcScale.y);
 
 	_collisionMap.push_back({ rect, this });
+
+	std::sort(_collisionMap.begin(), _collisionMap.end(), [](const auto& a, const auto& b) {
+		return a.second->_spriteParam.ndcPos.z < b.second->_spriteParam.ndcPos.z;
+		});
+
 }
 
 void Sprite::TestMouseLeftUpdate()
@@ -113,6 +124,7 @@ void Sprite::TestMouseLeftUpdate()
 				normalizedY >= rect.top && normalizedY <= rect.bottom)
 			{
 				sprite->_spriteParam.alpha *= 0.99f;
+				break;
 			}
 		}
 	}
@@ -120,6 +132,9 @@ void Sprite::TestMouseLeftUpdate()
 
 void Sprite::TestMouseRightUpdate()
 {
+	static Sprite* _dragSprtie = nullptr;
+	static CollisionRect* _dragRect = nullptr;
+
 	vec2 pos;
 	float normalizedX, normalizedY;
 
@@ -148,22 +163,23 @@ void Sprite::TestMouseRightUpdate()
 	{
 		_dragSprtie = nullptr;
 		_dragRect = nullptr;
+
+
 	}
 
 	// 드래그 중
 	if (_dragSprtie && Input::main->GetMouse(KeyCode::RightMouse))
 	{
 		pos = Input::main->GetMousePosition(); // 실시간 마우스 좌표
-		float newPosX = static_cast<float>(pos.x) / WINDOW_WIDTH;
-		float newPosY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
+	
+		auto size = _dragSprtie->_screenSize;
+		_dragSprtie->SetPos(vec3(pos.x - size.x/2, pos.y-size.y/2, _dragSprtie->_spriteParam.ndcPos.z));
 
-		// 스프라이트 및 충돌 사각형 업데이트
-		_dragSprtie->SetPos(vec3(pos.x, pos.y, _dragSprtie->_spriteParam.ndcPos.z));
+		_dragRect->left = _dragSprtie->_ndcPos.x;
+		_dragRect->top = _dragSprtie->_ndcPos.y;
+		_dragRect->right = _dragSprtie->_ndcPos.x + _dragSprtie->_ndcSize.x;
+		_dragRect->bottom = _dragSprtie->_ndcPos.y + _dragSprtie->_ndcSize.y;
 
-		_dragRect->left = _dragSprtie->_spriteParam.ndcPos.x;
-		_dragRect->top = _dragSprtie->_spriteParam.ndcPos.y;
-		_dragRect->right = _dragSprtie->_spriteParam.ndcPos.x + _dragSprtie->_spriteParam.ndcScale.x;
-		_dragRect->bottom = _dragSprtie->_spriteParam.ndcPos.y + _dragSprtie->_spriteParam.ndcScale.y;
 	}
 }
 
