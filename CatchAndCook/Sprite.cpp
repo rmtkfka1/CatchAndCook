@@ -32,8 +32,8 @@ void Sprite::Init()
 
 void Sprite::Update()
 {
+
 	TestMouseLeftUpdate();
-	
 	TestMouseRightUpdate();
 
 }
@@ -135,15 +135,13 @@ void Sprite::TestMouseRightUpdate()
 	static Sprite* _dragSprtie = nullptr;
 	static CollisionRect* _dragRect = nullptr;
 
-	vec2 pos;
-	float normalizedX, normalizedY;
-
+	
 	// 우클릭 시작
 	if (Input::main->GetMouseDown(KeyCode::RightMouse))
 	{
-		pos = Input::main->GetMouseDownPosition(KeyCode::RightMouse);
-		normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
-		normalizedY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
+		vec2 pos = Input::main->GetMouseDownPosition(KeyCode::RightMouse);
+		float normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
+		float normalizedY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
 
 		// 충돌된 스프라이트 검색
 		for (auto& [rect, sprite] : _collisionMap)
@@ -158,28 +156,26 @@ void Sprite::TestMouseRightUpdate()
 		}
 	}
 
-	// 우클릭 종료
-	if (Input::main->GetMouseUp(KeyCode::RightMouse))
-	{
-		_dragSprtie = nullptr;
-		_dragRect = nullptr;
-
-	}
-
 	// 드래그 중
 	if (_dragSprtie && Input::main->GetMouse(KeyCode::RightMouse))
 	{
-		pos = Input::main->GetMousePosition(); 
-	
+		vec2 pos = Input::main->GetMousePosition(); 
 		auto size = _dragSprtie->_screenSize;
 		_dragSprtie->SetPos(vec3(pos.x - size.x/2, pos.y-size.y/2, _dragSprtie->_spriteParam.ndcPos.z));
+	}
 
+	// 우클릭 종료
+	if (_dragSprtie && Input::main->GetMouseUp(KeyCode::RightMouse))
+	{
 		_dragRect->left = _dragSprtie->_ndcPos.x;
 		_dragRect->top = _dragSprtie->_ndcPos.y;
 		_dragRect->right = _dragSprtie->_ndcPos.x + _dragSprtie->_ndcSize.x;
 		_dragRect->bottom = _dragSprtie->_ndcPos.y + _dragSprtie->_ndcSize.y;
 
-	}
+		// 드래그 상태 종료
+		_dragSprtie = nullptr;
+		_dragRect = nullptr;
+	};
 }
 
 
@@ -202,7 +198,6 @@ void Sprite::SetTexture(shared_ptr<Texture> texture, RECT* rect)
 	}
 	else
 	{
-
 		_spriteParam.texSamplePos.x = 0;
 		_spriteParam.texSamplePos.y = 0;
 		_spriteParam.texSampleSize.x = desc.Width;

@@ -47,6 +47,7 @@ public:
 protected:
 	void TestMouseLeftUpdate();
 	void TestMouseRightUpdate();
+
 private:
 
 	tableContainer _tableContainer;
