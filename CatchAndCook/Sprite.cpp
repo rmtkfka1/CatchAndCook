@@ -135,7 +135,6 @@ void Sprite::TestMouseRightUpdate()
 	static Sprite* _dragSprtie = nullptr;
 	static CollisionRect* _dragRect = nullptr;
 
-	
 	// 우클릭 시작
 	if (Input::main->GetMouseDown(KeyCode::RightMouse))
 	{
@@ -177,8 +176,6 @@ void Sprite::TestMouseRightUpdate()
 		_dragRect = nullptr;
 	};
 }
-
-
 
 
 void Sprite::SetTexture(shared_ptr<Texture> texture, RECT* rect)
