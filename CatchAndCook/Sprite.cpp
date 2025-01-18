@@ -78,7 +78,6 @@ void Sprite::SetSize(vec2 size)
 	_spriteParam.ndcScale.x = size.x / WINDOW_WIDTH;
 	_spriteParam.ndcScale.y = size.y / WINDOW_HEIGHT;
 
-	_ndcSize = _spriteParam.ndcScale;
 }
 
 void Sprite::SetPos(vec3 pos)
@@ -87,16 +86,15 @@ void Sprite::SetPos(vec3 pos)
 	_spriteParam.ndcPos.y = pos.y/ WINDOW_HEIGHT;
 	_spriteParam.ndcPos.z = pos.z;
 
-	_ndcPos = _spriteParam.ndcPos;
 }
 
 void Sprite::AddCollisonMap()
 {
 	CollisionRect rect;
-	rect.left =  (_ndcPos.x);
-	rect.top  =  (_ndcPos.y);
-	rect.right = (_ndcPos.x + _ndcSize.x);
-	rect.bottom = (_ndcPos.y + _ndcSize.y);
+	rect.left =  (_spriteParam.ndcPos.x);
+	rect.top  =  (_spriteParam.ndcPos.y);
+	rect.right = (_spriteParam.ndcPos.x + _spriteParam.ndcScale.x);
+	rect.bottom = (_spriteParam.ndcPos.y + _spriteParam.ndcScale.y);
 
 	_collisionMap.push_back({ rect, this });
 }
@@ -164,8 +162,8 @@ void Sprite::TestMouseRightUpdate()
 
 		_dragRect->left = _dragSprtie->_spriteParam.ndcPos.x;
 		_dragRect->top = _dragSprtie->_spriteParam.ndcPos.y;
-		_dragRect->right = _dragSprtie->_spriteParam.ndcPos.x + _dragSprtie->_ndcSize.x;
-		_dragRect->bottom = _dragSprtie->_spriteParam.ndcPos.y + _dragSprtie->_ndcSize.y;
+		_dragRect->right = _dragSprtie->_spriteParam.ndcPos.x + _dragSprtie->_spriteParam.ndcScale.x;
+		_dragRect->bottom = _dragSprtie->_spriteParam.ndcPos.y + _dragSprtie->_spriteParam.ndcScale.y;
 	}
 }
 

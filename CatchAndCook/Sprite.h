@@ -44,8 +44,7 @@ public:
 	void SetPos(vec3 pos);
 	void AddCollisonMap();
 
-	vec3 _ndcPos{};
-	vec2 _ndcSize{};
+
 
 protected:
 	void TestMouseLeftUpdate();
