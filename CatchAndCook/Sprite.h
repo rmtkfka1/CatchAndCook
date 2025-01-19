@@ -31,7 +31,7 @@ public:
 	Sprite();
 	virtual ~Sprite();
 
-protected:
+private:
 	virtual void Init();
 public:
 	virtual void Update();

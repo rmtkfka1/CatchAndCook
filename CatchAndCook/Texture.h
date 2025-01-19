@@ -31,8 +31,12 @@ public:
 
 	void Init(const wstring& path,TextureType type = TextureType::Texture2D);
 	void ResourceBarrier(D3D12_RESOURCE_STATES after);
-	void CreateTexture(DXGI_FORMAT format, 
-		D3D12_RESOURCE_STATES initalState ,uint32 width, uint32 height, TextureUsageFlags usageFlags , bool Jump,bool depthShared, vec4 clearValue=vec4(0,0,0,0));
+	void CreateStaticTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalState ,uint32 width, uint32 height, 
+		TextureUsageFlags usageFlags , bool Jump,bool depthShared, vec4 clearValue=vec4(0,0,0,0));
+
+
+
+
 	D3D12_CPU_DESCRIPTOR_HANDLE& GetRTVCpuHandle() { return _rtvHandle; }
 	D3D12_CPU_DESCRIPTOR_HANDLE& GetSRVCpuHandle() { return _srvHandle; }
 	D3D12_CPU_DESCRIPTOR_HANDLE& GetUAVCpuHandle() { return _uavHandle; }
@@ -41,8 +45,8 @@ public:
 
 	ComPtr<ID3D12Resource>& GetResource() { return _resource; }
 	DXGI_FORMAT& GetFormat() { return _format; };
-protected:
 	DXGI_FORMAT& SetFormat(DXGI_FORMAT format) { return _format = format; };
+
 private:
 	wstring _path = L"../Resources/";
 	ScratchImage			 		_image;
@@ -57,6 +61,5 @@ private:
 public:
 	D3D12_RESOURCE_STATES _state; // ÃßÀû¿ë
 
-	D3D12_GPU_VIRTUAL_ADDRESS _temp;
 };
 

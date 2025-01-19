@@ -1,12 +1,39 @@
+#pragma once
 #include "pch.h"
 #include "TextManager.h"
+
+using namespace D2D1;
 
 unique_ptr<TextManager> TextManager::main=nullptr;
 
 void TextManager::Init()
 {
     InitD2D();
-    InitDWrite();
+
+}
+
+TextHandle TextManager::AllocTextStrcture(int width, int height, FontColor color, float size)
+{
+
+    TextHandle textHandle;
+
+    textHandle.width = width;
+    textHandle.height = height;
+
+
+    uint32 dpi = ::GetDpiForWindow(Core::main->GetHandle());
+
+    D2D1_BITMAP_PROPERTIES1 bitmapProperties =
+        BitmapProperties1(
+            D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+            D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
+            dpi,
+            dpi
+        );
+
+
+    return textHandle;
+
 }
 
 void TextManager::InitD2D()
@@ -59,6 +86,7 @@ void TextManager::InitD2D()
 
     // D2D1 장치로부터 D2D1 디바이스 컨텍스트 생성
     ThrowIfFailed(_device->CreateDeviceContext(deviceOptions, _context.GetAddressOf()));
+
     ThrowIfFailed(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory5), (IUnknown**)&_factory));
 
     // D3D11On12 장치 및 관련 객체들의 메모리 해제
@@ -93,8 +121,3 @@ void TextManager::InitD2D()
     }
 }
 
-void TextManager::InitDWrite()
-{
-
-
-}
