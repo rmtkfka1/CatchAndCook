@@ -5,7 +5,7 @@ class TextHandle
 {
 public:
 	TextHandle() {};
-	~TextHandle() { delete[] sysMemory; sysMemory = nullptr; }
+	~TextHandle() { cout << "¼Ò¸êÀÚ È£Ãâ" << endl; }
 	
 	BYTE* sysMemory;
 	ComPtr<ID2D1Bitmap1> bitMapGpu;
@@ -33,7 +33,7 @@ public:
 
 public:
 	void Init();
-	shared_ptr<TextHandle> AllocTextStrcture(int width ,int height , FontColor color , float size );
+	TextHandle* AllocTextStrcture(int width ,int height , FontColor color , float size );
 
 private:
 	void InitD2D();

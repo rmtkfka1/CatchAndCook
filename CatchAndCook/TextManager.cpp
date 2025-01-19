@@ -12,12 +12,13 @@ void TextManager::Init()
 
 }
 
-shared_ptr<TextHandle> TextManager::AllocTextStrcture(int width, int height, FontColor color, float size)
+TextHandle* TextManager::AllocTextStrcture(int width, int height, FontColor color, float size)
 {
-    shared_ptr<TextHandle> textHandle = make_shared<TextHandle>();
+    TextHandle* textHandle = new TextHandle();
 
     textHandle->width = width;
     textHandle->height = height;
+    textHandle->fontSize = size;
 
     uint32 dpi = ::GetDpiForWindow(Core::main->GetHandle());
 

@@ -8,6 +8,7 @@
 #include "MeshRenderer.h"
 #include "SpriteRenderer.h"
 #include "Sprite.h"
+#include "TextManager.h"
 void TestScene::Init()
 {
 	Scene::Init();
@@ -99,6 +100,10 @@ void TestScene::Init()
 			}
 		}
 	}
+
+	//auto handle = TextManager::main->AllocTextStrcture(32,50,FontColor::BLACK,20);
+	//
+	//delete handle;
 
 }
 
