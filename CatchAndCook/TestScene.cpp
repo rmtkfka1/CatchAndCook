@@ -93,17 +93,14 @@ void TestScene::Init()
 				rect.top = 0;
 				rect.right = 1024/7 * (i+1);
 				rect.bottom = 1024/4;
-				sprite->SetTexture(texture,&rect);
 				sprite->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.99f - 0.01f*i));
 				sprite->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
+				sprite->SetTexture(texture, &rect);
 				sprite->AddCollisonMap();
 			}
 		}
 	}
 
-	//auto handle = TextManager::main->AllocTextStrcture(32,50,FontColor::BLACK,20);
-	//
-	//delete handle;
 
 }
 

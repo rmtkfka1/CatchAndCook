@@ -33,7 +33,7 @@ public:
 
 public:
 	void Init();
-	TextHandle* AllocTextStrcture(int width ,int height , FontColor color , float size );
+	shared_ptr<TextHandle> AllocTextStrcture(int width ,int height , FontColor color , float size );
 
 private:
 	void InitD2D();

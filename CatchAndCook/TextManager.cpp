@@ -12,9 +12,9 @@ void TextManager::Init()
 
 }
 
-TextHandle* TextManager::AllocTextStrcture(int width, int height, FontColor color, float size)
+shared_ptr<TextHandle> TextManager::AllocTextStrcture(int width, int height, FontColor color, float size)
 {
-    TextHandle* textHandle = new TextHandle();
+    shared_ptr<TextHandle> textHandle = make_shared<TextHandle>();
 
     textHandle->width = width;
     textHandle->height = height;
