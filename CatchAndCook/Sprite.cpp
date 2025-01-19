@@ -32,23 +32,9 @@ void Sprite::Init()
 
 void Sprite::Update()
 {
-	
-	if (Input::main->GetMouseDown(KeyCode::LeftMouse))
-	{
-		auto pos = Input::main->GetMouseDownPosition(KeyCode::LeftMouse);
-		float normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
-		float normalizedY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
 
-		for (auto& [rect, sprite] : _collisionMap)
-		{
-			if (normalizedX >= rect.left  && normalizedX <= rect.right  &&
-				normalizedY >= rect.top  && normalizedY <= rect.bottom )
-			{
-				sprite->_spriteParam.alpha *= 0.99f;
-			}
-		}
-	}
-
+	TestMouseLeftUpdate();
+	TestMouseRightUpdate();
 
 }
 
@@ -89,33 +75,107 @@ void Sprite::Render()
 
 void Sprite::SetSize(vec2 size)
 {
+
 	_spriteParam.ndcScale.x = size.x / WINDOW_WIDTH;
 	_spriteParam.ndcScale.y = size.y / WINDOW_HEIGHT;
 
 	_ndcSize = _spriteParam.ndcScale;
+	_screenSize = size;
 }
 
-void Sprite::SetPos(vec3 pos)
+void Sprite::SetPos(vec3 screenPos)
 {
-	_spriteParam.ndcPos.x = pos.x/ WINDOW_WIDTH;
-	_spriteParam.ndcPos.y = pos.y/ WINDOW_HEIGHT;
-	_spriteParam.ndcPos.z = pos.z;
+	_spriteParam.ndcPos.x = screenPos.x/ WINDOW_WIDTH;
+	_spriteParam.ndcPos.y = screenPos.y/ WINDOW_HEIGHT;
+	_spriteParam.ndcPos.z = screenPos.z;
 
 	_ndcPos = _spriteParam.ndcPos;
+	_screenPos = screenPos;
+
 }
 
 void Sprite::AddCollisonMap()
 {
 	CollisionRect rect;
-	rect.left =  (_ndcPos.x);
-	rect.top  =  (_ndcPos.y);
-	rect.right = (_ndcPos.x + _ndcSize.x);
-	rect.bottom = (_ndcPos.y + _ndcSize.y);
+	rect.left =  (_spriteParam.ndcPos.x);
+	rect.top  =  (_spriteParam.ndcPos.y);
+	rect.right = (_spriteParam.ndcPos.x + _spriteParam.ndcScale.x);
+	rect.bottom = (_spriteParam.ndcPos.y + _spriteParam.ndcScale.y);
 
 	_collisionMap.push_back({ rect, this });
+
+	std::sort(_collisionMap.begin(), _collisionMap.end(), [](const auto& a, const auto& b) {
+		return a.second->_spriteParam.ndcPos.z < b.second->_spriteParam.ndcPos.z;
+		});
+
 }
 
+void Sprite::TestMouseLeftUpdate()
+{
+	if (Input::main->GetMouseDown(KeyCode::LeftMouse))
+	{
+		auto pos = Input::main->GetMouseDownPosition(KeyCode::LeftMouse);
+		float normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
+		float normalizedY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
 
+		for (auto& [rect, sprite] : _collisionMap)
+		{
+			if (normalizedX >= rect.left && normalizedX <= rect.right &&
+				normalizedY >= rect.top && normalizedY <= rect.bottom)
+			{
+				sprite->_spriteParam.alpha *= 0.99f;
+				break;
+			}
+		}
+	}
+}
+
+void Sprite::TestMouseRightUpdate()
+{
+	static Sprite* _dragSprtie = nullptr;
+	static CollisionRect* _dragRect = nullptr;
+
+	// 우클릭 시작
+	if (Input::main->GetMouseDown(KeyCode::RightMouse))
+	{
+		vec2 pos = Input::main->GetMouseDownPosition(KeyCode::RightMouse);
+		float normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
+		float normalizedY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
+
+		// 충돌된 스프라이트 검색
+		for (auto& [rect, sprite] : _collisionMap)
+		{
+			if (normalizedX >= rect.left && normalizedX <= rect.right &&
+				normalizedY >= rect.top && normalizedY <= rect.bottom)
+			{
+				_dragSprtie = sprite;
+				_dragRect = &rect;
+				break; // 첫 번째로 충돌된 스프라이트만 선택
+			}
+		}
+	}
+
+	// 드래그 중
+	if (_dragSprtie && Input::main->GetMouse(KeyCode::RightMouse))
+	{
+		vec2 pos = Input::main->GetMousePosition(); 
+		auto size = _dragSprtie->_screenSize;
+		_dragSprtie->SetPos(vec3(pos.x - size.x/2, pos.y-size.y/2, _dragSprtie->_spriteParam.ndcPos.z));
+	}
+
+	// 우클릭 종료
+	if (_dragSprtie && Input::main->GetMouseUp(KeyCode::RightMouse))
+	{
+		_dragRect->left = _dragSprtie->_ndcPos.x;
+		_dragRect->top = _dragSprtie->_ndcPos.y;
+		_dragRect->right = _dragSprtie->_ndcPos.x + _dragSprtie->_ndcSize.x;
+		_dragRect->bottom = _dragSprtie->_ndcPos.y + _dragSprtie->_ndcSize.y;
+
+		// 드래그 상태 종료
+		_dragSprtie = nullptr;
+		_dragRect = nullptr;
+	};
+}
 
 
 void Sprite::SetTexture(shared_ptr<Texture> texture, RECT* rect)
@@ -135,7 +195,6 @@ void Sprite::SetTexture(shared_ptr<Texture> texture, RECT* rect)
 	}
 	else
 	{
-
 		_spriteParam.texSamplePos.x = 0;
 		_spriteParam.texSamplePos.y = 0;
 		_spriteParam.texSampleSize.x = desc.Width;

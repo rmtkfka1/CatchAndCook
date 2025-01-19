@@ -154,6 +154,9 @@
     <ClCompile Include="Model.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
+    <ClCompile Include="TextManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -291,6 +294,9 @@
     </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="TextManager.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

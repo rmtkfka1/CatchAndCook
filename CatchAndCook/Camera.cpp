@@ -24,6 +24,9 @@ void Camera::SetCameraRotation(float yaw, float pitch, float roll)
     _cameraRight = vec3::TransformNormal(orginRight, Matrix::CreateFromYawPitchRoll(_yaw, _pitch, _roll));
     _cameraUp = vec3::TransformNormal(orginUp, Matrix::CreateFromYawPitchRoll(_yaw, _pitch, _roll));
 
+    _cameraLook.Normalize();
+    _cameraRight.Normalize();
+    _cameraUp.Normalize();
 }
 
 void Camera::CalculateVPMatrix()
@@ -79,6 +82,41 @@ void Camera::SetData()
 {
 	auto& cmdList =Core::main->GetCmdList();
 	cmdList->SetGraphicsRootConstantBufferView(2, _cbufferContainer->GPUAdress);
+}
+
+void Camera::SetCameraLook(const vec3& look)
+{
+    _cameraLook = look;
+    _cameraLook.Normalize();
+    _cameraRight = _cameraUp.Cross(_cameraLook);
+    _cameraRight.Normalize();
+
+    _cameraUp = _cameraLook.Cross(_cameraRight);
+    _cameraUp.Normalize();
+}
+
+void Camera::SetCameraUp(const vec3& up)
+{
+    _cameraUp = up;
+    _cameraUp.Normalize();
+
+    _cameraRight = _cameraUp.Cross(_cameraLook);
+    _cameraRight.Normalize();
+
+    _cameraLook = _cameraRight.Cross(_cameraUp);
+    _cameraLook.Normalize();
+}
+
+void Camera::SetCameraRight(const vec3& right)
+{
+    _cameraRight = right;
+    _cameraRight.Normalize();
+
+    _cameraLook = _cameraRight.Cross(_cameraUp);
+    _cameraLook.Normalize();
+
+    _cameraUp = _cameraLook.Cross(_cameraRight);
+    _cameraUp.Normalize();
 }
 
 /*************************

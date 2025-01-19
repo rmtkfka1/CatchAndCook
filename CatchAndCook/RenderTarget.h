@@ -53,7 +53,8 @@ public:
 	void RenderEnd();
 	void ClearDepth();
 
-	vector<shared_ptr<Texture>> GetRenderTarget() { return vector<std::shared_ptr<Texture>>{_RenderTargets.begin(), _RenderTargets.end()}; };
+	array<shared_ptr<Texture>, SWAP_CHAIN_FRAME_COUNT> GetRenderTargetAll() { return _RenderTargets; }
+	shared_ptr<Texture> GetRenderTarget() { return _RenderTargets[_RenderTargetIndex]; }
 	shared_ptr<Texture> GetDSTexture() { return _DSTexture; };
 private:
 
