@@ -5,7 +5,7 @@ class TextHandle
 {
 public:
 	TextHandle() {};
-	~TextHandle() { delete[] sysMemory; sysMemory = nullptr; }
+	~TextHandle() { cout << "¼Ò¸êÀÚ È£Ãâ" << endl; }
 	
 	BYTE* sysMemory;
 	ComPtr<ID2D1Bitmap1> bitMapGpu;

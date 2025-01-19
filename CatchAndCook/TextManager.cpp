@@ -18,6 +18,7 @@ shared_ptr<TextHandle> TextManager::AllocTextStrcture(int width, int height, Fon
 
     textHandle->width = width;
     textHandle->height = height;
+    textHandle->fontSize = size;
 
     uint32 dpi = ::GetDpiForWindow(Core::main->GetHandle());
 
