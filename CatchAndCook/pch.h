@@ -32,6 +32,9 @@
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
+#include <d3d11on12.h>
+#include <d2d1_3.h>
+#include <dwrite_3.h>
 
 using namespace DirectX;
 using namespace DirectX::PackedVector;
@@ -40,19 +43,21 @@ using namespace Microsoft::WRL;
 #include <DirectXTex/DirectXTex.h>
 #include <DirectXTex/DirectXTex.inl>
 
+
 // °¢Á¾ lib
-#pragma comment(lib, "d3d12")
-#pragma comment(lib, "dxgi")
-#pragma comment(lib, "dxguid")
-#pragma comment(lib, "d3dcompiler")
+#pragma comment(lib, "DXGI.lib")
+#pragma comment(lib, "dxguid.lib")
+#pragma comment(lib, "D3D12.lib")
+#pragma comment( lib, "d3d11.lib" )
+#pragma comment(lib, "D3DCompiler.lib")
+#pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "dwrite.lib")
 
 #ifdef _DEBUG
 #pragma comment(lib, "DirectXTex\\DirectXTex_Debug.lib")
 #else
 #pragma comment(lib, "DirectXTex\\DirectXTex.lib")
 #endif
-
-
 
 
 #include <Assimp/Importer.hpp>

@@ -155,6 +155,9 @@
     <ClCompile Include="Sprite.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
+    <ClCompile Include="TextManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -293,6 +296,9 @@
     </ClInclude>
     <ClInclude Include="Sprite.h">
       <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="TextManager.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
