@@ -4,6 +4,7 @@ class Mesh;
 class Texture;
 class Shader;
 
+
 struct SpriteParam
 {
 	vec3 ndcPos = { 0.0f,0.0f,0.1f };
@@ -36,7 +37,6 @@ private:
 public:
 	virtual void Update();
 	virtual void Render();
-
 
 public:
 	void SetTexture(shared_ptr<Texture> texture, RECT* rect = nullptr);
