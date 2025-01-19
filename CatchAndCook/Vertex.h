@@ -94,11 +94,19 @@ public:
     static SelectorInfo GetInfo(const std::vector<VertexProp>& props);
 };
 
+enum class VertexType
+{
+    Vertex_Skinned,
+    Vertex_Static,
+    Vertex_Sprite
+};
+
 struct Vertex_Skinned
 {
     vec3 position = vec3(0, 0, 0);
     vec3 normal = vec3(0, 0, 1);
     vec3 tangent = vec3(0, 1, 0);
+    vec4 color = vec4(1,1,1,1);
     std::array<vec2, 3> uvs;
     vec4 boneId = vec4(-1, -1, -1, -1);
     vec4 boneWeight = vec4(0, 0, 0, 0);

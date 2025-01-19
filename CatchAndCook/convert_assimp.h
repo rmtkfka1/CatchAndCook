@@ -24,6 +24,7 @@ public:
     static DirectX::SimpleMath::Color Format(const aiColor4D& color);
     static DirectX::SimpleMath::Ray Format(const aiRay& ray);
     static DirectX::SimpleMath::Plane Format(const aiPlane& plane);
+    static std::string Format(const aiString& string);
 
 };
 

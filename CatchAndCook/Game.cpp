@@ -109,7 +109,7 @@ void Game::Run()
 
 	CameraUpdate();
 
-
+	//ResourceManager::main->Load<Model>(L"1234", L"1234");
 	std::shared_ptr<Scene> currentScene = SceneManager::main->GetCurrentScene();
 	currentScene->Update();
 	

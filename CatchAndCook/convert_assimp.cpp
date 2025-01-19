@@ -70,7 +70,12 @@ DirectX::SimpleMath::Plane convert_assimp::Format(const aiPlane& plane)
     return DirectX::SimpleMath::Plane(plane.a, plane.b, plane.c, plane.d);
 }
 
-
+std::string convert_assimp::Format(const aiString& str1)
+{
+    auto str2 = std::string(str1.C_Str(), str1.length);
+    str::trim(str2);
+    return str2;
+}
 
 
 using namespace Assimp;

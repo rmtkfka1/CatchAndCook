@@ -1,6 +1,7 @@
 #pragma once
 #include "Texture.h"
 
+class Model;
 class Shader;
 class Mesh;
 class Texture;
@@ -13,7 +14,8 @@ public:
 
     void Init();
 
-    void CreateDefaultMesh();
+    void CreateDefaultModel();
+	void CreateDefaultMesh();
     void CreateDefaultShader();
     void CreateDefaultMaterial();
     void CreateDefaultTexture();
@@ -36,6 +38,7 @@ private:
     unordered_map<wstring, shared_ptr<Scene>> _sceneMap;
     unordered_map<wstring, shared_ptr<Shader>> _shaderMap;
     unordered_map<wstring, shared_ptr<Mesh>> _meshMap;
+    unordered_map<wstring, shared_ptr<Model>> _modelMap;
     unordered_map<wstring, shared_ptr<Texture>> _textureMap;
 
     std::shared_ptr<Texture> _noneTexture;
@@ -88,6 +91,10 @@ inline unordered_map<wstring, shared_ptr<T>>& ResourceManager::GetResourceMap()
     else if constexpr (is_same_v<T, Mesh>)
     {
         return _meshMap;
+    }
+    else if constexpr (is_same_v<T, Model>)
+    {
+        return _modelMap;
     }
     else if constexpr (is_same_v<T, Texture>)
     {

@@ -30,10 +30,12 @@ size_t UAV_TABLE_REGISTER_COUNT = 4;
 std::vector<VertexProp> SkinProp
 {
     VertexProp::pos,
-    VertexProp::normal,
+	VertexProp::normal,
     VertexProp::tangent,
+    VertexProp::color,
     VertexProp::uv0,
     VertexProp::uv1,
+    VertexProp::uv2,
     VertexProp::bone_ids,
     VertexProp::bone_weights,
 };
@@ -41,9 +43,9 @@ std::vector<VertexProp> SkinProp
 std::vector<VertexProp> StaticProp
 {
     VertexProp::pos,
-    //VertexProp::normal,
     VertexProp::uv0,
-    VertexProp::uv1
+    VertexProp::normal,
+    //VertexProp::uv1
 };
 
 std::vector<VertexProp> SpriteProp

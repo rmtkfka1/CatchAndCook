@@ -47,7 +47,7 @@ void Sprite::Render()
 	//스프라이트 파람 바인딩.
 	auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteParam)->Alloc(1);
 	memcpy(CbufferContainer->ptr, (void*)&_spriteParam, sizeof(SpriteParam));
-	cmdList->SetGraphicsRootConstantBufferView(5, CbufferContainer->GPUAdress);
+	cmdList->SetGraphicsRootConstantBufferView(_shader->GetRegisterIndex("CONSTANT_BUFFER_SPRITE"), CbufferContainer->GPUAdress);
 
 	//텍스쳐 바인딩.
 	_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);

@@ -14,6 +14,11 @@ void ResourceManager::Init()
 	CreateDefaultTexture();
 }
 
+void ResourceManager::CreateDefaultModel()
+{
+
+}
+
 void ResourceManager::CreateDefaultMesh()
 {
 

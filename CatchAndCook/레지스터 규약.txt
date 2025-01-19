@@ -26,9 +26,9 @@ b1 = Transform
 b2 = Camera
 b3 = MainLight
 b4 = MatrialParam
-b5 = SpriteData
 
 //dynamcic System
+b5 = SpriteData
 b5 = SkinnedData
 b6 = 
 b7 = 
