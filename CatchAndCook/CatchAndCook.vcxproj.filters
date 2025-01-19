@@ -124,7 +124,6 @@
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Vertex.cpp">
       <Filter>pch</Filter>
     </ClCompile>
@@ -152,7 +151,7 @@
     <ClCompile Include="SpriteRenderer.cpp">
       <Filter>Component</Filter>
     </ClCompile>
-    <ClCompile Include="Sprite.cpp">
+    <ClCompile Include="Model.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
   </ItemGroup>
@@ -260,7 +259,6 @@
     <ClInclude Include="ResourceManager.h">
       <Filter>Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h" />
     <ClInclude Include="Vertex.h">
       <Filter>pch</Filter>
     </ClInclude>
@@ -291,7 +289,7 @@
     <ClInclude Include="SpriteRenderer.h">
       <Filter>Component</Filter>
     </ClInclude>
-    <ClInclude Include="Sprite.h">
+    <ClInclude Include="Model.h">
       <Filter>Resource</Filter>
     </ClInclude>
   </ItemGroup>
