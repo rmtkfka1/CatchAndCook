@@ -11,7 +11,6 @@ cbuffer GLOBAL_DATA : register(b0)
 
 cbuffer CONSTANT_BUFFER_SPRITE : register(b5)
 {
- 
     float3 g_pos;
     float g_alpha;
     
@@ -20,8 +19,6 @@ cbuffer CONSTANT_BUFFER_SPRITE : register(b5)
     
     float2 g_texSamplePos;
     float2 g_texSampleSize;
-
-
 };
 
 struct VS_IN
