@@ -43,7 +43,6 @@ using namespace Microsoft::WRL;
 #include <DirectXTex/DirectXTex.h>
 #include <DirectXTex/DirectXTex.inl>
 
-
 // °¢Á¾ lib
 #pragma comment(lib, "DXGI.lib")
 #pragma comment(lib, "dxguid.lib")

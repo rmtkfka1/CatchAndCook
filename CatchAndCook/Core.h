@@ -35,6 +35,7 @@ public:
 public:
 	ComPtr<ID3D12Device5>& GetDevice() { return _device; }
 	ComPtr<ID3D12GraphicsCommandList>& GetCmdList() { return _cmdList; }
+	ComPtr<ID3D12CommandQueue>& GetCmdQueue() { return _cmdQueue; }
 	ComPtr<ID3D12GraphicsCommandList>& GetResCmdList() { return _resCmdList; }
 	shared_ptr<RenderTarget>& GetRenderTarget() { return _renderTarget; }
 	shared_ptr<RootSignature>& GetRootSignature() { return _rootSignature; };

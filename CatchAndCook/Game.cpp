@@ -13,6 +13,7 @@
 #include "Texture.h"
 #include "Mesh.h"
 #include "Shader.h"
+#include "TextManager.h"
 
 void Game::Init(HWND hwnd)
 {
@@ -22,6 +23,7 @@ void Game::Init(HWND hwnd)
 	Input::main = make_unique<Input>();
 	Core::main = make_unique<Core>();
 	Core::main->Init(hwnd);
+
 
 	ResourceManager::main = make_unique<ResourceManager>();
 	ResourceManager::main->Init();
@@ -35,6 +37,9 @@ void Game::Init(HWND hwnd)
 	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, static_pointer_cast<Camera>(make_shared<ThirdPersonCamera>()));
 	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0, 0, -5.0f));
 	CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
+
+	TextManager::main = make_unique<TextManager>();
+	TextManager::main->Init();
 
 	auto scene = SceneManager::main->AddScene(SceneType::TestScene);
 	SceneManager::main->ChangeScene(scene);
