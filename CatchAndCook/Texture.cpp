@@ -136,14 +136,12 @@ void Texture::ResourceBarrier(D3D12_RESOURCE_STATES after)
 }
  
 
-void Texture::CreateTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalState, uint32 width, uint32 height, TextureUsageFlags usageFlags ,bool jump, bool detphShared, vec4 clearValue )
+void Texture::CreateStaticTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalState, uint32 width, uint32 height, TextureUsageFlags usageFlags ,bool jump, bool detphShared, vec4 clearValue )
 {
-
     D3D12_RESOURCE_DESC desc = CD3DX12_RESOURCE_DESC::Tex2D(format, width, height);
     desc.MipLevels = 1;
     desc.Flags = D3D12_RESOURCE_FLAG_NONE;
     
-
     if (HasFlag(usageFlags, TextureUsageFlags::RTV)) {
         desc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
     }
@@ -184,6 +182,7 @@ void Texture::CreateTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalStat
             throw std::runtime_error("텍스쳐 생성 실패");
         }
     }
+
     SetFormat(format);
 
     if (HasFlag(usageFlags, TextureUsageFlags::RTV))
@@ -201,7 +200,6 @@ void Texture::CreateTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalStat
         srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
         srvDesc.Texture2D.MipLevels = 1;
         Core::main->GetDevice()->CreateShaderResourceView(_resource.Get(), &srvDesc, _srvHandle);
-
     }
 
     if (HasFlag(usageFlags, TextureUsageFlags::UAV))

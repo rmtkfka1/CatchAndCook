@@ -1,4 +1,31 @@
 #pragma once
+
+
+class TextHandle
+{
+public:
+	TextHandle() {};
+	~TextHandle() { delete[] sysMemory; sysMemory = nullptr; }
+	
+	BYTE* sysMemory;
+	ComPtr<ID2D1Bitmap1> bitMapGpu;
+	ComPtr<ID2D1Bitmap1> bitMapRead;
+	ComPtr<ID2D1SolidColorBrush> brush;
+	ComPtr<IDWriteTextFormat> font;
+
+	uint32 width;
+	uint32 height;
+
+	float fontSize;
+};
+
+enum class FontColor
+{
+	WHITE,
+	BLACK,
+};
+
+
 class TextManager
 {
 public:
@@ -6,11 +33,10 @@ public:
 
 public:
 	void Init();
+	shared_ptr<TextHandle> AllocTextStrcture(int width ,int height , FontColor color , float size );
 
 private:
 	void InitD2D();
-	void InitDWrite();
-
 
 
 private:
@@ -20,10 +46,13 @@ private:
 	ComPtr<ID2D1Bitmap1> _bitMapGpu = nullptr;     //렌더타겟 (GPU 메모리)
 	ComPtr<ID2D1Bitmap1> _bitMapReadBack = nullptr; //렌더타겟 (ReadBack :시스템 메모리)
 
-	//IDWriteFontCollection1* m_pFontCollection = nullptr;  //폰트관리.
-	ComPtr<ID2D1SolidColorBrush> _brush = nullptr;	  //폰트색상
-
 	ComPtr<IDWriteFactory5> _factory = nullptr;
+
+	unordered_map<FontColor, ComPtr<ID2D1SolidColorBrush>> _brushMap;
+
+	//추가적인 공부필요
+	 
+	//IDWriteFontCollection1* m_pFontCollection = nullptr;  //폰트관리.
 	//DWRITE_LINE_METRICS*	m_pLineMetrics = nullptr;
 	//DWORD					m_dwMaxLineMetricsNum = 0;
 };

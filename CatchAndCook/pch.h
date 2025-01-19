@@ -35,6 +35,8 @@
 #include <d3d11on12.h>
 #include <d2d1_3.h>
 #include <dwrite_3.h>
+#include <d2d1_1.h> 
+#include <d2d1_1helper.h>
 
 using namespace DirectX;
 using namespace DirectX::PackedVector;
