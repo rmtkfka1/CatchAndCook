@@ -14,13 +14,16 @@ AssimpPack::~AssimpPack()
 
 void AssimpPack::Init(std::wstring path, bool xFlip)
 {
+	auto p = std::filesystem::path(path);
+	assert(std::filesystem::exists(p));
+
     importer = std::make_shared<Assimp::Importer>();
 
     unsigned int flag = //aiProcess_MakeLeftHanded | // 왼손 좌표계로 변경
         //aiProcess_ConvertToLeftHanded |
         aiProcess_FlipWindingOrder | //CW, CCW 바꾸는거임.
         aiProcess_FlipUVs | // 말그대로 uv의 y축을 뒤집음. 그리고 bitangent도 뒤집음.
-        aiProcess_Triangulate | // 4각형 5각형을 3각형으로
+        //aiProcess_Triangulate | // 4각형 5각형을 3각형으로
         //aiProcess_GenSmoothNormals | // Normal이 없으면 Smmoth Normal 생성
         aiProcess_GenNormals | // Normal이 없으면 Normal 생성
         //aiProcess_ImproveCacheLocality | // 삼각형 개선. 잘 되면 켜보기 캐시히트율을 위해 삼각형 재정렬함.
@@ -55,6 +58,7 @@ void AssimpPack::Init(std::wstring path, bool xFlip)
         MakeLeftHandedProcess leftHandedProcess;
         leftHandedProcess.Execute(const_cast<aiScene*>(scene));
     }
+	assert(scene != nullptr);
 }
 
 void Model::DebugLog()

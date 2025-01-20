@@ -157,6 +157,7 @@
     <ClCompile Include="TextManager.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Sprite.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -298,6 +299,7 @@
     <ClInclude Include="TextManager.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="Sprite.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -322,6 +324,9 @@
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\cubemap.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\GLOBAL.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
   </ItemGroup>
