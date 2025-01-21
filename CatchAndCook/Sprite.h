@@ -4,6 +4,13 @@ class Mesh;
 class Texture;
 class Shader;
 
+class ActionFunc
+{
+public:
+	static void OnClickAction();
+	static void OnDragAction();
+};
+
 
 struct SpriteWorldParam
 {
@@ -45,10 +52,8 @@ public:
 public:
 	void SetSize(vec2 size);
 	void SetPos(vec3 screenPos);
+	void AddAction(std::function<void(void)> action) { _actions.push_back(action); }
 	void AddCollisonMap();
-
-public:
-	SpriteWorldParam& GetSpriteWorldParam() { return _spriteWorldParam; }
 
 protected:
 	SpriteWorldParam _spriteWorldParam;
@@ -59,9 +64,12 @@ protected:
 	vec2 _screenSize;
 	vec2 _ndcSize;
 
+	vector<std::function<void(void)>> _actions;
+public:
 	static vector<pair<CollisionRect, Sprite*>> _collisionMap;
 
 	friend class BasicSprite;
+	friend class ActionFunc;
 };
 
 class BasicSprite : public Sprite
@@ -70,6 +78,9 @@ class BasicSprite : public Sprite
 public:
 	BasicSprite();
 	virtual ~BasicSprite();
+
+	void TestMouseLeftUpdate();
+	void TestMouseRightUpdate();
 	
 public:
 	virtual void Init();
