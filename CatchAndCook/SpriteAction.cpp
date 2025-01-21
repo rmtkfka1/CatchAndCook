@@ -97,3 +97,17 @@ void ActionFunc::OnClickDisableAction(KeyCode key, Sprite* sprite)
         }
     }
 }
+
+void ActionFunc::OnKeySpriteEnableDisable(KeyCode key, Sprite* sprite)
+{
+    if (Input::main->GetKeyDown(key))
+    {
+        sprite->_enable = !sprite->_enable;
+
+        for (auto& child : sprite->_children)
+        {
+            child->_enable = !child->_enable;
+        }
+    }
+}
+

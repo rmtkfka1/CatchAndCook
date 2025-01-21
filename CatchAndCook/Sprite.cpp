@@ -67,10 +67,6 @@ void BasicSprite::Init()
 
 void BasicSprite::Update()
 {
-	if (_enable == false)
-		return;
-
-
 	for (auto& action : _actions)
 	{
 		action->Execute(this);

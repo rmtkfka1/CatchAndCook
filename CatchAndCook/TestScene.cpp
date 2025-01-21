@@ -77,6 +77,7 @@ void TestScene::Init()
 			spriteRender->SetSprite(sprite);
 			sprite->AddAction(make_shared<DragAction>(KeyCode::RightMouse));
 			sprite->AddAction(make_shared<ClickAction>(KeyCode::LeftMouse));
+			sprite->AddAction(make_shared<EnableKeyAction>(KeyCode::I));
 
 			//Ç®UV ¸ÊÇÎ
 			SpriteRect rect;
@@ -94,7 +95,7 @@ void TestScene::Init()
 				childSprite->SetPos(vec3(200, 0, 0.03f));
 				childSprite->SetSize(vec2(50, 50));
 				childSprite->SetTexture(ResourceManager::main->Load<Texture>(L"disable", L"Textures/disable.png"));
-				childSprite->AddAction(make_shared<DisableAction>(KeyCode::LeftMouse));
+				childSprite->AddAction(make_shared<DisableMouseAction>(KeyCode::LeftMouse));
 				sprite->AddChildern(childSprite);
 			}
 		
