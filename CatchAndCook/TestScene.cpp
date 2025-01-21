@@ -119,8 +119,13 @@ void TestScene::Init()
 		sprite->SetSize(vec2(500,500));
 		sprite->SetFrameRate(0.05f);
 		sprite->SetClipingColor(vec4(0, 0, 0, 1.0f));		https://imagecolorpicker.com/
-		
+		sprite->AddCollisonMap();
+
+		sprite->AddAction([=]() {SpriteAction::OnDragAction(KeyCode::RightMouse); });
+		sprite->AddAction([=]() { SpriteAction::OnClickAction(KeyCode::LeftMouse); });
+
 		const float TextureSize = 512.0f;
+
 		for (int i = 0; i < 5; ++i)
 		{
 			float add = i * TextureSize / 5;
