@@ -37,30 +37,21 @@ public:
 	Sprite();
 	virtual ~Sprite();
 
-private:
-	virtual void Init();
 public:
-	virtual void Update();
-	virtual void Render();
+	virtual void Init() =0 ;
+	virtual void Update() =0;
+	virtual void Render() =0;
 
 public:
-	void SetTexture(shared_ptr<Texture> texture);
-	void SetUVCoord(RECT* rect);
 	void SetSize(vec2 size);
 	void SetPos(vec3 screenPos);
 	void AddCollisonMap();
 
+public:
+	SpriteWorldParam& GetSpriteWorldParam() { return _spriteWorldParam; }
+
 protected:
-	void TestMouseLeftUpdate();
-	void TestMouseRightUpdate();
-
-private:
-	shared_ptr<Mesh> _mesh;
-	shared_ptr<Texture> _texture;
-	shared_ptr<Shader> _shader;
-
 	SpriteWorldParam _spriteWorldParam;
-	SprtieTextureParam _sprtieTextureParam;
 
 	vec3 _screenPos;
 	vec3 _ndcPos;
@@ -69,6 +60,30 @@ private:
 	vec2 _ndcSize;
 
 	static vector<pair<CollisionRect, Sprite*>> _collisionMap;
+
+	friend class BasicSprite;
+};
+
+class BasicSprite : public Sprite
+{
+
+public:
+	BasicSprite();
+	virtual ~BasicSprite();
+	
+public:
+	virtual void Init();
+	virtual void Update();
+	virtual void Render();
+
+	void SetUVCoord(RECT* rect);
+	void SetTexture(shared_ptr<Texture> texture);
+
+private:
+	shared_ptr<Mesh> _mesh;
+	shared_ptr<Shader> _shader;
+	shared_ptr<Texture> _texture;
+	SprtieTextureParam _sprtieTextureParam;
 };
 
 

@@ -9,6 +9,7 @@
 #include "SpriteRenderer.h"
 #include "Sprite.h"
 #include "TextManager.h"
+
 void TestScene::Init()
 {
 	Scene::Init();
@@ -72,7 +73,7 @@ void TestScene::Init()
 			auto spriteRender = gameObject->AddComponent<SpriteRenderer>();
 
 			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"spriteTest", L"Textures/spriteTest.jpg");
-			shared_ptr<Sprite> sprite = make_shared<Sprite>();
+			shared_ptr<BasicSprite> sprite = make_shared<BasicSprite>();
 
 			spriteRender->SetSprite(sprite);
 			

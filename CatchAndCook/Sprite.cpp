@@ -26,57 +26,19 @@ Sprite::~Sprite()
 
 void Sprite::Init()
 {
-	_mesh = GeoMetryHelper::LoadSprtieMesh();
-	_shader = ResourceManager::main->Get<Shader>(L"SpriteShader");
+
 }
 
 void Sprite::Update()
 {
 
-	TestMouseLeftUpdate();
-	TestMouseRightUpdate();
+
 
 }
 
 void Sprite::Render()
 {
-	auto& cmdList = Core::main->GetCmdList();
-
-	cmdList->SetPipelineState(_shader->_pipelineState.Get());
-	{
-		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteWorldParam)->Alloc(1);
-		memcpy(CbufferContainer->ptr, (void*)&_spriteWorldParam, sizeof(_spriteWorldParam));
-		cmdList->SetGraphicsRootConstantBufferView(5, CbufferContainer->GPUAdress);
-	}
-
-	{
-		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteTextureParam)->Alloc(1);
-		memcpy(CbufferContainer->ptr, (void*)&_sprtieTextureParam, sizeof(_sprtieTextureParam));
-		cmdList->SetGraphicsRootConstantBufferView(6, CbufferContainer->GPUAdress);
-	}
-
-	//텍스쳐 바인딩.
-	auto tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
-	Core::main->GetBufferManager()->GetTable()->CopyHandle(&tableContainer.CPUHandle, &_texture->GetSRVCpuHandle(), 0);
-	cmdList->SetGraphicsRootDescriptorTable(SPRITE_TABLE_INDEX, tableContainer.GPUHandle);
-
-	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
-
-	if (_mesh->GetVertexCount() != 0)
-	{
-
-		if (_mesh->GetIndexCount() != 0)
-		{
-			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
-			cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
-			cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
-		}
-		else
-		{
-			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
-			cmdList->DrawInstanced(_mesh->GetVertexCount(), 1, 0, 0);
-		}
-	}
+	
 }
 
 void Sprite::SetSize(vec2 size)
@@ -117,7 +79,21 @@ void Sprite::AddCollisonMap()
 
 }
 
-void Sprite::TestMouseLeftUpdate()
+
+
+
+BasicSprite::BasicSprite()
+{
+	_mesh = GeoMetryHelper::LoadSprtieMesh();
+	_shader = ResourceManager::main->Get<Shader>(L"SpriteShader");
+}
+
+BasicSprite::~BasicSprite()
+{
+
+}
+
+void BasicSprite::TestMouseLeftUpdate()
 {
 	if (Input::main->GetMouseDown(KeyCode::LeftMouse))
 	{
@@ -137,7 +113,7 @@ void Sprite::TestMouseLeftUpdate()
 	}
 }
 
-void Sprite::TestMouseRightUpdate()
+void BasicSprite::TestMouseRightUpdate()
 {
 	static Sprite* _dragSprtie = nullptr;
 	static CollisionRect* _dragRect = nullptr;
@@ -165,9 +141,9 @@ void Sprite::TestMouseRightUpdate()
 	// 드래그 중
 	if (_dragSprtie && Input::main->GetMouse(KeyCode::RightMouse))
 	{
-		vec2 pos = Input::main->GetMousePosition(); 
+		vec2 pos = Input::main->GetMousePosition();
 		auto size = _dragSprtie->_screenSize;
-		_dragSprtie->SetPos(vec3(pos.x - size.x/2, pos.y-size.y/2, _dragSprtie->_spriteWorldParam.ndcPos.z));
+		_dragSprtie->SetPos(vec3(pos.x - size.x / 2, pos.y - size.y / 2, _dragSprtie->_spriteWorldParam.ndcPos.z));
 	}
 
 	// 우클릭 종료
@@ -184,8 +160,66 @@ void Sprite::TestMouseRightUpdate()
 	};
 }
 
+void BasicSprite::Init()
+{
+}
 
-void Sprite::SetTexture(shared_ptr<Texture> texture)
+void BasicSprite::Update()
+{
+	TestMouseLeftUpdate();
+	TestMouseRightUpdate();
+}
+
+void BasicSprite::Render()
+{
+	auto& cmdList = Core::main->GetCmdList();
+
+	cmdList->SetPipelineState(_shader->_pipelineState.Get());
+	{
+		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteWorldParam)->Alloc(1);
+		memcpy(CbufferContainer->ptr, (void*)&_spriteWorldParam, sizeof(_spriteWorldParam));
+		cmdList->SetGraphicsRootConstantBufferView(5, CbufferContainer->GPUAdress);
+	}
+
+	{
+		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteTextureParam)->Alloc(1);
+		memcpy(CbufferContainer->ptr, (void*)&_sprtieTextureParam, sizeof(_sprtieTextureParam));
+		cmdList->SetGraphicsRootConstantBufferView(6, CbufferContainer->GPUAdress);
+	}
+
+	//텍스쳐 바인딩.
+	auto tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
+	Core::main->GetBufferManager()->GetTable()->CopyHandle(&tableContainer.CPUHandle, &_texture->GetSRVCpuHandle(), 0);
+	cmdList->SetGraphicsRootDescriptorTable(SPRITE_TABLE_INDEX, tableContainer.GPUHandle);
+
+	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
+
+	if (_mesh->GetVertexCount() != 0)
+	{
+
+		if (_mesh->GetIndexCount() != 0)
+		{
+			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
+			cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
+			cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
+		}
+		else
+		{
+			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
+			cmdList->DrawInstanced(_mesh->GetVertexCount(), 1, 0, 0);
+		}
+	}
+}
+
+void BasicSprite::SetUVCoord(RECT* rect)
+{
+	_sprtieTextureParam.texSamplePos.x = rect->left;
+	_sprtieTextureParam.texSamplePos.y = rect->top;
+	_sprtieTextureParam.texSampleSize.x = (rect->right - rect->left);
+	_sprtieTextureParam.texSampleSize.y = (rect->bottom - rect->top);
+}
+
+void BasicSprite::SetTexture(shared_ptr<Texture> texture)
 {
 	_texture = texture;
 
@@ -197,14 +231,4 @@ void Sprite::SetTexture(shared_ptr<Texture> texture)
 	_sprtieTextureParam.texSamplePos.y = 0;
 	_sprtieTextureParam.texSampleSize.x = desc.Width;
 	_sprtieTextureParam.texSampleSize.y = desc.Height;
-	
 }
-
-void Sprite::SetUVCoord(RECT* rect)
-{
-	_sprtieTextureParam.texSamplePos.x = rect->left;
-	_sprtieTextureParam.texSamplePos.y = rect->top;
-	_sprtieTextureParam.texSampleSize.x = (rect->right - rect->left);
-	_sprtieTextureParam.texSampleSize.y = (rect->bottom - rect->top);
-}
-
