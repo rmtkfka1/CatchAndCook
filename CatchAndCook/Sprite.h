@@ -5,7 +5,7 @@ class Texture;
 class Shader;
 
 
-struct SpriteParam
+struct SpriteWorldParam
 {
 	vec3 ndcPos = { 0.0f,0.0f,0.1f };
 	float alpha =1.0f;
@@ -54,7 +54,7 @@ private:
 	shared_ptr<Mesh> _mesh;
 	shared_ptr<Texture> _texture;
 	shared_ptr<Shader> _shader;
-	SpriteParam _spriteParam;
+	SpriteWorldParam _spriteParam;
 
 	static vector<pair<CollisionRect, Sprite*>> _collisionMap;
 
