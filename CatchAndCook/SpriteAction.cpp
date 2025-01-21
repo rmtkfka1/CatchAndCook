@@ -2,8 +2,15 @@
 #include "SpriteAction.h"
 #include "Sprite.h"
 
+bool ActionCommand::_UpdateEnable=true;
+
 void ActionFunc::OnClickAction(KeyCode key, Sprite* sprite)
 {
+
+    if (ActionCommand::_UpdateEnable == false)
+        return;
+
+
     if (Input::main->GetMouseDown(key))
     {
         auto pos = Input::main->GetMouseDownPosition(key);
@@ -28,12 +35,18 @@ void ActionFunc::OnClickAction(KeyCode key, Sprite* sprite)
 
 void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
 {
+    if (ActionCommand::_UpdateEnable == false)
+        return;
+
     static Sprite* _dragSprite = nullptr;
     static vec2 _lastMousePos; // 이전 마우스 위치 추적 변수
 
     // 우클릭 시작
     if (Input::main->GetMouseDown(key))
     {
+
+        cout << ActionCommand::_UpdateEnable << endl;
+
         vec2 pos = Input::main->GetMouseDownPosition(key);
 
         float normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
@@ -79,6 +92,8 @@ void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
 
 void ActionFunc::OnClickDisableAction(KeyCode key, Sprite* sprite)
 {
+    if (ActionCommand::_UpdateEnable == false)
+        return;
 
     if (Input::main->GetMouseDown(key))
     {
@@ -92,8 +107,9 @@ void ActionFunc::OnClickDisableAction(KeyCode key, Sprite* sprite)
             normalizedY >= (sprite->_ndcPos.y) &&
             normalizedY <= (sprite->_ndcPos.y + sprite->_ndcSize.y))
         {
-            sprite->_parent.lock()->_enable = false;
-            sprite->_enable = false;
+            ActionCommand::_UpdateEnable = false;
+            sprite->_parent.lock()->_renderEnable = false;
+            sprite->_renderEnable = false;
         }
     }
 }
@@ -102,11 +118,13 @@ void ActionFunc::OnKeySpriteEnableDisable(KeyCode key, Sprite* sprite)
 {
     if (Input::main->GetKeyDown(key))
     {
-        sprite->_enable = !sprite->_enable;
+        ActionCommand::_UpdateEnable = !ActionCommand::_UpdateEnable;
+
+        sprite->_renderEnable = !sprite->_renderEnable;
 
         for (auto& child : sprite->_children)
         {
-            child->_enable = !child->_enable;
+            child->_renderEnable = !child->_renderEnable;
         }
     }
 }

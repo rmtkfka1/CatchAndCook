@@ -64,7 +64,6 @@ void TestScene::Init()
 		meshRenderer->SetMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
 	}
 
-
 	{
 		for (int i = 0; i < 1; ++i)
 		{
@@ -75,8 +74,7 @@ void TestScene::Init()
 			shared_ptr<BasicSprite> sprite = make_shared<BasicSprite>();
 
 			spriteRender->SetSprite(sprite);
-			sprite->AddAction(make_shared<DragAction>(KeyCode::RightMouse));
-			sprite->AddAction(make_shared<ClickAction>(KeyCode::LeftMouse));
+			sprite->AddAction(make_shared<DragAction>(KeyCode::LeftMouse));
 			sprite->AddAction(make_shared<EnableKeyAction>(KeyCode::I));
 
 			//Ç®UV ¸ÊÇÎ

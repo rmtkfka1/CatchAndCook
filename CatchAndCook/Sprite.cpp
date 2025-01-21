@@ -67,6 +67,7 @@ void BasicSprite::Init()
 
 void BasicSprite::Update()
 {
+
 	for (auto& action : _actions)
 	{
 		action->Execute(this);
@@ -74,13 +75,16 @@ void BasicSprite::Update()
 
 	for (auto& ele : _children)
 	{
-		ele->Update();
+		for (auto& action : ele->_actions)
+		{
+			action->Execute(ele.get());
+		}
 	}
 }
 
 void BasicSprite::Render()
 {
-	if (_enable == false)
+	if (_renderEnable == false)
 		return;
 
 	auto& cmdList = Core::main->GetCmdList();
@@ -181,9 +185,6 @@ void AnimationSprite::Init()
 void AnimationSprite::Update()
 {
 
-	if (_enable == false)
-		return;
-
 	for (auto& action : _actions)
 	{
 		action->Execute(this);
@@ -191,7 +192,11 @@ void AnimationSprite::Update()
 
 	for (auto& child : _children)
 	{
-		child->Update();
+		// 자식의 액션은 부모에서만 호출하도록 처리
+		for (auto& action : child->_actions)
+		{
+			action->Execute(child.get());
+		}
 	}
 
 	AnimationUpdate();
@@ -200,7 +205,7 @@ void AnimationSprite::Update()
 
 void AnimationSprite::Render()
 {
-	if (_enable == false)
+	if (_renderEnable == false)
 		return;
 
 	auto& cmdList = Core::main->GetCmdList();

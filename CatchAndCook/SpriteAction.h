@@ -16,6 +16,9 @@ class ActionCommand
 public:
     virtual ~ActionCommand() {}
     virtual void Execute(Sprite* sprite) = 0;
+
+    static bool _UpdateEnable;
+
 };
 
 
@@ -34,7 +37,6 @@ private:
 };
 
 
-
 class DragAction : public ActionCommand 
 {
 public:
@@ -42,7 +44,7 @@ public:
 
     void Execute(Sprite* sprite) override 
     {
-        ActionFunc::OnDragAction(_key, sprite);
+         ActionFunc::OnDragAction(_key, sprite);
     }
 
 private:
@@ -56,13 +58,12 @@ public:
 
     void Execute(Sprite* sprite) override
     {
-        ActionFunc::OnClickDisableAction(_key, sprite);
+         ActionFunc::OnClickDisableAction(_key, sprite);
     }
 
 private:
     KeyCode _key;
 };
-
 
 class EnableKeyAction : public ActionCommand
 {
@@ -73,7 +74,7 @@ public:
     {
         ActionFunc::OnKeySpriteEnableDisable(_key, sprite);
     }
-
+  
 private:
     KeyCode _key;
 };

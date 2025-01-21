@@ -57,7 +57,6 @@ public:
 	void AddChildern(shared_ptr<Sprite> child);
 
 protected:
-	bool _enable = true;
 	SpriteWorldParam _spriteWorldParam;
 
 	vec3 _screenPos;
@@ -65,7 +64,6 @@ protected:
 
 	vec2 _screenSize;
 	vec2 _ndcSize;
-	vector<shared_ptr<ActionCommand>> _actions;
 
 protected:
 	vector<shared_ptr<Sprite>> _children;
@@ -73,6 +71,8 @@ protected:
 
 public:
 	friend class ActionFunc;
+	bool _renderEnable = true;
+	vector<shared_ptr<ActionCommand>> _actions;
 };
 
 /*****************************************************************
