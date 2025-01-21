@@ -11,6 +11,8 @@ public:
     static void OnKeySpriteEnableDisable(KeyCode key, Sprite* sprite);
 };
 
+//
+
 class ActionCommand 
 {
 public:
