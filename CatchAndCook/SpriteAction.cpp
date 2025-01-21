@@ -25,7 +25,7 @@ void SpriteAction::OnClickAction(KeyCode key)
 void SpriteAction::OnDragAction(KeyCode key)
 {
 	static Sprite* _dragSprtie = nullptr;
-	static CollisionRect* _dragRect = nullptr;
+	static SpriteRect* _dragRect = nullptr;
 
 	// 우클릭 시작
 	if (Input::main->GetMouseDown(key))

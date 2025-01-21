@@ -93,7 +93,7 @@ void TestScene::Init()
 			//스프라이트 짤라서 사용.
 			else
 			{
-				RECT rect;
+				SpriteRect rect;
 				rect.left = 1024/7 * i;
 				rect.top = 0;
 				rect.right = 1024/7 * (i+1);
@@ -117,8 +117,7 @@ void TestScene::Init()
 		sprite->SetTexture(texture);
 		sprite->SetPos(vec3(0, 0,0.3f));
 		sprite->SetSize(vec2(500,500));
-		sprite->SetFrameRate(20.0f);
-
+		sprite->SetFrameRate(0.05f);
 		sprite->SetClipingColor(vec4(0, 0, 0, 1.0f));		https://imagecolorpicker.com/
 		
 		const float TextureSize = 512.0f;
@@ -129,7 +128,7 @@ void TestScene::Init()
 			for (int j = 0; j < 5; ++j)
 			{
 
-				RECT rect;
+				SpriteRect rect;
 				rect.left = 0 + j* TextureSize/5;
 				rect.top = add;
 				rect.right = rect.left + TextureSize/5;

@@ -24,7 +24,7 @@ struct SprtieTextureParam
 	vec2 padding;
 };
 
-struct CollisionRect
+struct SpriteRect
 {
 	float left;
 	float top;
@@ -69,7 +69,7 @@ protected:
 	vector<std::function<void(void)>> _actions;
 
 public:
-	static vector<pair<CollisionRect, Sprite*>> _collisionMap;
+	static vector<pair<SpriteRect, Sprite*>> _collisionMap;
 	friend class SpriteAction;
 };
 
@@ -92,7 +92,7 @@ public:
 	virtual void Update();
 	virtual void Render();
 
-	void SetUVCoord(RECT* rect);
+	void SetUVCoord(SpriteRect* rect);
 	void SetTexture(shared_ptr<Texture> texture);
 
 
@@ -121,7 +121,7 @@ public:
 	virtual void Update();
 	virtual void Render();
 
-	void PushUVCoord(RECT* rect);
+	void PushUVCoord(SpriteRect* rect);
 	void SetTexture(shared_ptr<Texture> texture);
 	void SetFrameRate(float frameRate) { _frameRate = frameRate; }
 

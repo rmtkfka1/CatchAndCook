@@ -2,7 +2,7 @@
 #include "Sprite.h"
 #include "Mesh.h"
 
-vector<pair<CollisionRect, Sprite*>> Sprite::_collisionMap;
+vector<pair<SpriteRect, Sprite*>> Sprite::_collisionMap;
 
 Sprite::Sprite()
 {
@@ -52,7 +52,7 @@ void Sprite::SetClipingColor(vec4 color)
 
 void Sprite::AddCollisonMap()
 {
-	CollisionRect rect;
+	SpriteRect rect;
 
 	rect.left =  (_spriteWorldParam.ndcPos.x);
 	rect.top  =  (_spriteWorldParam.ndcPos.y);
@@ -136,7 +136,7 @@ void BasicSprite::Render()
 	}
 }
 
-void BasicSprite::SetUVCoord(RECT* rect)
+void BasicSprite::SetUVCoord(SpriteRect* rect)
 {
 	_sprtieTextureParam.texSamplePos.x = rect->left;
 	_sprtieTextureParam.texSamplePos.y = rect->top;
@@ -236,7 +236,7 @@ void AnimationSprite::Render()
 	}
 }
 
-void AnimationSprite::PushUVCoord(RECT* rect)
+void AnimationSprite::PushUVCoord(SpriteRect* rect)
 {
 	if (_texture == nullptr)
 		assert(false);
@@ -267,16 +267,16 @@ void AnimationSprite::SetTexture(shared_ptr<Texture> texture)
 void AnimationSprite::AnimationUpdate()
 {
 	float dt = Time::main->GetDeltaTime();
-	_currentTime += _frameRate * dt; 
+	_currentTime += dt;  // delta time을 누적하여 진행 시간 증가
 
-	if (_currentTime >= 1.0f) {
-		_currentTime -= 1.0f;  
+	if (_currentTime >= _frameRate) { // _frameRate에 도달하면 한 프레임을 전환
+		_currentTime -= _frameRate;  // 남은 시간 처리
 
-		_currentFrameIndex++;
+		_currentFrameIndex++;  // 다음 프레임으로 이동
 
-		if (_currentFrameIndex >= _maxFrameIndex) 
+		if (_currentFrameIndex >= _maxFrameIndex)
 		{
-			_currentFrameIndex = 0;
+			_currentFrameIndex = 0;  // 첫 번째 프레임으로 돌아가기
 		}
 	}
 }
