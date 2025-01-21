@@ -7,7 +7,8 @@ enum class BufferType
 	MateriaParam,
 	CameraParam,
 	MateriaSubParam,
-	SpriteParam
+	SpriteWorldParam,
+	SpriteTextureParam,
 
 };
 

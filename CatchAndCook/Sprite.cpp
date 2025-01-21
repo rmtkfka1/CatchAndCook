@@ -1,58 +1,93 @@
 #include "pch.h"
 #include "Sprite.h"
 #include "Mesh.h"
-
-vector<pair<CollisionRect, Sprite*>> Sprite::_collisionMap;
+#include "SpriteAction.h"
 
 Sprite::Sprite()
 {
-	Init();
+
 }
 
 Sprite::~Sprite()
 {
-
-	auto it = std::remove_if(_collisionMap.begin(), _collisionMap.end(),
-		[this](const auto& pair) {
-			return pair.second == this;
-		});
-
-	if (it != _collisionMap.end())
+	for (auto& ele : _actions)
 	{
-		_collisionMap.erase(it);
+		delete ele;
 	}
+}
+
+void Sprite::SetSize(vec2 size)
+{
+
+	_spriteWorldParam.ndcScale.x = size.x / WINDOW_WIDTH;
+	_spriteWorldParam.ndcScale.y = size.y / WINDOW_HEIGHT;
+
+	_ndcSize = _spriteWorldParam.ndcScale;
+	_screenSize = size;
+}
+
+void Sprite::SetPos(vec3 screenPos)
+{
+	_spriteWorldParam.ndcPos.x = screenPos.x/ WINDOW_WIDTH;
+	_spriteWorldParam.ndcPos.y = screenPos.y/ WINDOW_HEIGHT;
+	_spriteWorldParam.ndcPos.z = screenPos.z;
+
+	_ndcPos = _spriteWorldParam.ndcPos;
+	_screenPos = screenPos;
 
 }
 
-void Sprite::Init()
+void Sprite::SetClipingColor(vec4 color)
+{
+	_spriteWorldParam.clipingColor = color;
+}
+
+
+BasicSprite::BasicSprite()
+{
+	Init();
+}
+
+BasicSprite::~BasicSprite()
+{
+
+}
+
+void BasicSprite::Init()
 {
 	_mesh = GeoMetryHelper::LoadSprtieMesh();
 	_shader = ResourceManager::main->Get<Shader>(L"SpriteShader");
 }
 
-void Sprite::Update()
+void BasicSprite::Update()
 {
-
-	TestMouseLeftUpdate();
-	TestMouseRightUpdate();
-
+	for (auto& action : _actions)
+	{
+		action->Execute(this);
+	}
 }
 
-void Sprite::Render()
+void BasicSprite::Render()
 {
 	auto& cmdList = Core::main->GetCmdList();
 
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
+	{
+		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteWorldParam)->Alloc(1);
+		memcpy(CbufferContainer->ptr, (void*)&_spriteWorldParam, sizeof(SpriteWorldParam));
+		cmdList->SetGraphicsRootConstantBufferView(_shader->GetRegisterIndex("SPRITE_WORLD_PARAM"), CbufferContainer->GPUAdress);
+	}
 
-	//½ºÇÁ¶óÀÌÆ® ÆÄ¶÷ ¹ÙÀÎµù.
-	auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteParam)->Alloc(1);
-	memcpy(CbufferContainer->ptr, (void*)&_spriteParam, sizeof(SpriteParam));
-	cmdList->SetGraphicsRootConstantBufferView(_shader->GetRegisterIndex("CONSTANT_BUFFER_SPRITE"), CbufferContainer->GPUAdress);
+	{
+		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteTextureParam)->Alloc(1);
+		memcpy(CbufferContainer->ptr, (void*)&_sprtieTextureParam, sizeof(SprtieTextureParam));
+		cmdList->SetGraphicsRootConstantBufferView(_shader->GetRegisterIndex("SPRITE_TEXTURE_PARAM"), CbufferContainer->GPUAdress);
+	}
 
-	//ÅØ½ºÃÄ ¹ÙÀÎµù.
-	_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
-	Core::main->GetBufferManager()->GetTable()->CopyHandle(&_tableContainer.CPUHandle, &_texture->GetSRVCpuHandle(), 0);
-	cmdList->SetGraphicsRootDescriptorTable(SPRITE_TABLE_INDEX, _tableContainer.GPUHandle);
+	//ï¿½Ø½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½.
+	auto tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
+	Core::main->GetBufferManager()->GetTable()->CopyHandle(&tableContainer.CPUHandle, &_texture->GetSRVCpuHandle(), 0);
+	cmdList->SetGraphicsRootDescriptorTable(SPRITE_TABLE_INDEX, tableContainer.GPUHandle);
 
 	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
 
@@ -73,150 +108,146 @@ void Sprite::Render()
 	}
 }
 
-void Sprite::SetSize(vec2 size)
+void BasicSprite::SetUVCoord(SpriteRect& rect)
 {
-
-	_spriteParam.ndcScale.x = size.x / WINDOW_WIDTH;
-	_spriteParam.ndcScale.y = size.y / WINDOW_HEIGHT;
-
-	_ndcSize = _spriteParam.ndcScale;
-	_screenSize = size;
+	_sprtieTextureParam.texSamplePos.x = rect.left;
+	_sprtieTextureParam.texSamplePos.y = rect.top;
+	_sprtieTextureParam.texSampleSize.x = (rect.right - rect.left);
+	_sprtieTextureParam.texSampleSize.y = (rect.bottom - rect.top);
 }
 
-void Sprite::SetPos(vec3 screenPos)
-{
-	_spriteParam.ndcPos.x = screenPos.x/ WINDOW_WIDTH;
-	_spriteParam.ndcPos.y = screenPos.y/ WINDOW_HEIGHT;
-	_spriteParam.ndcPos.z = screenPos.z;
-
-	_ndcPos = _spriteParam.ndcPos;
-	_screenPos = screenPos;
-
-}
-
-void Sprite::AddCollisonMap()
-{
-	CollisionRect rect;
-	rect.left =  (_spriteParam.ndcPos.x);
-	rect.top  =  (_spriteParam.ndcPos.y);
-	rect.right = (_spriteParam.ndcPos.x + _spriteParam.ndcScale.x);
-	rect.bottom = (_spriteParam.ndcPos.y + _spriteParam.ndcScale.y);
-
-	_collisionMap.push_back({ rect, this });
-
-	std::sort(_collisionMap.begin(), _collisionMap.end(), [](const auto& a, const auto& b) {
-		return a.second->_spriteParam.ndcPos.z < b.second->_spriteParam.ndcPos.z;
-		});
-
-}
-
-void Sprite::TestMouseLeftUpdate()
-{
-	if (Input::main->GetMouseDown(KeyCode::LeftMouse))
-	{
-		auto pos = Input::main->GetMouseDownPosition(KeyCode::LeftMouse);
-		float normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
-		float normalizedY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
-
-		for (auto& [rect, sprite] : _collisionMap)
-		{
-			if (normalizedX >= rect.left && normalizedX <= rect.right &&
-				normalizedY >= rect.top && normalizedY <= rect.bottom)
-			{
-				sprite->_spriteParam.alpha *= 0.99f;
-				break;
-			}
-		}
-	}
-}
-
-void Sprite::TestMouseRightUpdate()
-{
-	static Sprite* _dragSprtie = nullptr;
-	static CollisionRect* _dragRect = nullptr;
-
-	// ¿ìÅ¬¸¯ ½ÃÀÛ
-	if (Input::main->GetMouseDown(KeyCode::RightMouse))
-	{
-		vec2 pos = Input::main->GetMouseDownPosition(KeyCode::RightMouse);
-		float normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
-		float normalizedY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
-
-		// Ãæµ¹µÈ ½ºÇÁ¶óÀÌÆ® °Ë»ö
-		for (auto& [rect, sprite] : _collisionMap)
-		{
-			if (normalizedX >= rect.left && normalizedX <= rect.right &&
-				normalizedY >= rect.top && normalizedY <= rect.bottom)
-			{
-				_dragSprtie = sprite;
-				_dragRect = &rect;
-				break; // Ã¹ ¹øÂ°·Î Ãæµ¹µÈ ½ºÇÁ¶óÀÌÆ®¸¸ ¼±ÅÃ
-			}
-		}
-	}
-
-	// µå·¡±× Áß
-	if (_dragSprtie && Input::main->GetMouse(KeyCode::RightMouse))
-	{
-		vec2 pos = Input::main->GetMousePosition(); 
-		auto size = _dragSprtie->_screenSize;
-		_dragSprtie->SetPos(vec3(pos.x - size.x/2, pos.y-size.y/2, _dragSprtie->_spriteParam.ndcPos.z));
-	}
-
-	// ¿ìÅ¬¸¯ Á¾·á
-	if (_dragSprtie && Input::main->GetMouseUp(KeyCode::RightMouse))
-	{
-		_dragRect->left = _dragSprtie->_ndcPos.x;
-		_dragRect->top = _dragSprtie->_ndcPos.y;
-		_dragRect->right = _dragSprtie->_ndcPos.x + _dragSprtie->_ndcSize.x;
-		_dragRect->bottom = _dragSprtie->_ndcPos.y + _dragSprtie->_ndcSize.y;
-
-		// µå·¡±× »óÅÂ Á¾·á
-		_dragSprtie = nullptr;
-		_dragRect = nullptr;
-	};
-}
-
-
-void Sprite::SetTexture(shared_ptr<Texture> texture, RECT* rect)
+void BasicSprite::SetTexture(shared_ptr<Texture> texture)
 {
 	_texture = texture;
 
 	auto desc = _texture->GetResource()->GetDesc();
 
-	_spriteParam.origintexSize = vec2(desc.Width, desc.Height);
+	_sprtieTextureParam.origintexSize = vec2(desc.Width, desc.Height);
 
-	if (rect)
+	_sprtieTextureParam.texSamplePos.x = 0;
+	_sprtieTextureParam.texSamplePos.y = 0;
+	_sprtieTextureParam.texSampleSize.x = desc.Width;
+	_sprtieTextureParam.texSampleSize.y = desc.Height;
+}
+
+
+
+/*****************************************************************
+*                                                                *
+*                         AnimationSprite                        *
+*                                                                *
+******************************************************************/
+
+
+AnimationSprite::AnimationSprite()
+{
+	Init();
+}
+
+AnimationSprite::~AnimationSprite()
+{
+
+}
+
+void AnimationSprite::Init()
+{
+	_mesh = GeoMetryHelper::LoadSprtieMesh();
+	_shader = ResourceManager::main->Get<Shader>(L"SpriteShader");
+}
+
+void AnimationSprite::Update()
+{
+	for (auto& action : _actions)
 	{
-		_spriteParam.texSamplePos.x = rect->left;
-		_spriteParam.texSamplePos.y = rect->top;
-		_spriteParam.texSampleSize.x = (rect->right-rect->left);
-		_spriteParam.texSampleSize.y = (rect->bottom - rect->top);
+		action->Execute(this);
 	}
-	else
+
+	AnimationUpdate();
+
+}
+
+void AnimationSprite::Render()
+{
+	auto& cmdList = Core::main->GetCmdList();
+
+	cmdList->SetPipelineState(_shader->_pipelineState.Get());
 	{
-		_spriteParam.texSamplePos.x = 0;
-		_spriteParam.texSamplePos.y = 0;
-		_spriteParam.texSampleSize.x = desc.Width;
-		_spriteParam.texSampleSize.y = desc.Height;
+		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteWorldParam)->Alloc(1);
+		memcpy(CbufferContainer->ptr, (void*)&_spriteWorldParam, sizeof(SpriteWorldParam));
+		cmdList->SetGraphicsRootConstantBufferView(_shader->GetRegisterIndex("SPRITE_WORLD_PARAM"), CbufferContainer->GPUAdress);
+	}
+
+	
+	{
+		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteTextureParam)->Alloc(1);
+		memcpy(CbufferContainer->ptr, (void*)&_sprtieTextureParam[_currentFrameIndex], sizeof(SprtieTextureParam));
+		cmdList->SetGraphicsRootConstantBufferView(_shader->GetRegisterIndex("SPRITE_TEXTURE_PARAM"), CbufferContainer->GPUAdress);
+	}
+
+	//ï¿½Ø½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½.
+	auto tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
+	Core::main->GetBufferManager()->GetTable()->CopyHandle(&tableContainer.CPUHandle, &_texture->GetSRVCpuHandle(), 0);
+	cmdList->SetGraphicsRootDescriptorTable(SPRITE_TABLE_INDEX, tableContainer.GPUHandle);
+
+	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
+
+	if (_mesh->GetVertexCount() != 0)
+	{
+
+		if (_mesh->GetIndexCount() != 0)
+		{
+			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
+			cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
+			cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
+		}
+		else
+		{
+			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
+			cmdList->DrawInstanced(_mesh->GetVertexCount(), 1, 0, 0);
+		}
 	}
 }
 
-/// <summary>
-/// //
-/// </summary>
-
-void Inventory::Init()
+void AnimationSprite::PushUVCoord(SpriteRect& rect)
 {
+	if (_texture == nullptr)
+		assert(false);
+
+	SprtieTextureParam sprtieTextureParam;
+
+	auto desc = _texture->GetResource()->GetDesc();
+
+	sprtieTextureParam.origintexSize = vec2(desc.Width, desc.Height);
+	sprtieTextureParam.texSamplePos.x = rect.left;
+	sprtieTextureParam.texSamplePos.y = rect.top;
+	sprtieTextureParam.texSampleSize.x = (rect.right - rect.left);
+	sprtieTextureParam.texSampleSize.y = (rect.bottom - rect.top);
+
+	_sprtieTextureParam.push_back(sprtieTextureParam);
+
+	_maxFrameIndex += 1;
+}
+
+void AnimationSprite::SetTexture(shared_ptr<Texture> texture)
+{
+	_texture = texture;
 
 }
 
-void Inventory::Update()
-{
-	Sprite::Update();
-}
 
-void Inventory::Render()
+void AnimationSprite::AnimationUpdate()
 {
-	Sprite::Render();
+	float dt = Time::main->GetDeltaTime();
+	_currentTime += dt;  // delta timeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½
+
+	if (_currentTime >= _frameRate) { // _frameRateï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+		_currentTime -= _frameRate;  // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ Ã³ï¿½ï¿½
+
+		_currentFrameIndex++;  // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
+
+		if (_currentFrameIndex >= _maxFrameIndex)
+		{
+			_currentFrameIndex = 0;  // Ã¹ ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Æ°ï¿½ï¿½ï¿½
+		}
+	}
 }

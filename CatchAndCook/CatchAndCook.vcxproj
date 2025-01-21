@@ -211,6 +211,7 @@
     <ClCompile Include="simple_mesh_ext.cpp" />
     <ClCompile Include="simple_mesh_LH.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="SpriteAction.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="TestMain.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -265,6 +266,7 @@
     <ClInclude Include="simple_mesh_ext.h" />
     <ClInclude Include="simple_mesh_LH.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="SpriteAction.h" />
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="strutil.h" />
     <ClInclude Include="TestScene.h" />

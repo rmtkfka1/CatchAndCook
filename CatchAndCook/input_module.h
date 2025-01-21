@@ -12,150 +12,142 @@ struct WinEvent
     std::chrono::time_point<std::chrono::steady_clock> time;
 };
 
-class KeyCode
+
+enum KeyCode : short 
 {
-public:
-    static short Q;
-    static short W;
-    static short E;
-    static short R;
-    static short T;
-    static short Y;
-    static short U;
-    static short I;
-    static short O;
-    static short P;
-    /// <summary>///[{///</summary>
-    static short LeftBracket;
-    /// <summary>///]}///</summary>
-    static short RightBracket;
+    Q = 81,
+    W = 87,
+    E = 69,
+    R = 82,
+    T = 84,
+    Y = 89,
+    U = 85,
+    I = 73,
+    O = 79,
+    P = 80,
 
-    static short A;
-    static short S;
-    static short D;
-    static short F;
-    static short G;
-    static short H;
-    static short J;
-    static short K;
-    static short L;
-    /// <summary>///;:///</summary>
-    static short SemiColon;
-    /// <summary>///'"///</summary>
-    static short Quote;
+    LeftBracket = 219,
+    RightBracket = 221,
 
-    static short Z;
-    static short X;
-    static short C;
-    static short V;
-    static short B;
-    static short N;
-    static short M;
-    /// <summary>///,<///</summary>
-    static short Comma;
-    /// <summary>///.>///</summary>
-    static short Dot;
-    /// <summary>////?///</summary>
-    static short Slash;
+    A = 65,
+    S = 83,
+    D = 68,
+    F = 70,
+    G = 71,
+    H = 72,
+    J = 74,
+    K = 75,
+    L = 76,
 
-    /// <summary>////`~///</summary>
-    static short BackQoute;
-    static short Num1;
-    static short Num2;
-    static short Num3;
-    static short Num4;
-    static short Num5;
-    static short Num6;
-    static short Num7;
-    static short Num8;
-    static short Num9;
-    static short Num0;
-    static short Minus;
-    static short Eqauls;
+    SemiColon = 186,
+    Quote = 222,
 
-    static short Tap;
-    static short Capslock;
-    static short Shift;
-    static short CtrlL;
+    Z = 90,
+    X = 88,
+    C = 67,
+    V = 86,
+    B = 66,
+    N = 78,
+    M = 77,
 
-    static short Win;
-    static short Alt;
-    static short Space;
-    /// <summary>////Alt, 한영///</summary>
-    static short AltR;
-    /// <summary>////문서 버튼///</summary>
-    static short Menu;
-    static short App;
-    //static short ;
+    Comma = 188,
+    Dot = 190,
+    Slash = 191,
 
-    static short CtrlR;
-    static short ShiftR;
-    static short Enter;
-    static short BackSlash;
-    static short Backspace;
+    BackQoute = 192,
+    Num1 = 49,
+    Num2 = 50,
+    Num3 = 51,
+    Num4 = 52,
+    Num5 = 53,
+    Num6 = 54,
+    Num7 = 55,
+    Num8 = 56,
+    Num9 = 57,
+    Num0 = 48,
 
+    Minus = 189,
+    Eqauls = 187,
 
-    static short Esc;
-    static short F1;
-    static short F2;
-    static short F3;
-    static short F4;
-    static short F5;
-    static short F6;
-    static short F7;
-    static short F8;
-    static short F9;
-    static short F10;
-    static short F11;
-    static short F12;
+    Tap = 9,
+    Capslock = 20,
+    Shift = 16,
+    CtrlL = 17,
+    Win = 91,
+    Alt = 18,
+    Space = 32,
 
+    AltR = 18,
+    Menu = 93,
+    App = 93,
 
-    static short ScreenLock;
-    static short Pause;
+    CtrlR = 25,
+    ShiftR = 16,
+    Enter = 13,
+    BackSlash = 220,
+    Backspace = 8,
 
-    static short Insert;
-    static short Home;
-    static short PageUp;
+    Esc = 27,
+    F1 = 112,
+    F2 = 113,
+    F3 = 114,
+    F4 = 115,
+    F5 = 116,
+    F6 = 117,
+    F7 = 118,
+    F8 = 119,
+    F9 = 120,
+    F10 = 121,
+    F11 = 122,
+    F12 = 123,
 
-    static short Delete;
-    static short End;
-    static short PageDown;
+    ScreenLock = 145,
+    Pause = 19,
 
-    static short UpArrow;
-    static short LeftArrow;
-    static short DownArrow;
-    static short RightArrow;
+    Insert = 45,
+    Home = 36,
+    PageUp = 33,
 
-    static short NumPad7;
-    static short NumPad8;
-    static short NumPad9;
+    Delete = 46,
+    End = 35,
+    PageDown = 34,
 
-    static short NumPad4;
-    static short NumPad5;
-    static short NumPad6;
+    UpArrow = 38,
+    LeftArrow = 37,
+    DownArrow = 40,
+    RightArrow = 39,
 
-    static short NumPad1;
-    static short NumPad2;
-    static short NumPad3;
+    NumPad7 = 103,
+    NumPad8 = 104,
+    NumPad9 = 105,
 
+    NumPad4 = 100,
+    NumPad5 = 101,
+    NumPad6 = 102,
 
-    static short NumPadNum;
-    static short NumPadSlash;
-    static short NumPadMultiple;
-    static short NumPadMinus;
-    static short NumPadPlus;
-    static short NumPadEnter;
-    static short NumPadDot;
-    static short NumPad0;
+    NumPad1 = 97,
+    NumPad2 = 98,
+    NumPad3 = 99,
 
-    static short MOUSE_KEYCODE_OFFSET;
-    static short KEYBOARD_KEYCODE_ENDPOINT;
-    static short LeftMouse;
-    static short RightMouse;
-    static short CenterMouse;
-    static short X1Mouse;
-    static short X2Mouse;
+    NumPadNum = 144,
+    NumPadSlash = 111,
+    NumPadMultiple = 106,
+    NumPadMinus = 109,
+    NumPadPlus = 107,
+    NumPadEnter = 13,
+    NumPadDot = 110,
+    NumPad0 = 96,
+
+    MOUSE_KEYCODE_OFFSET = 512,
+    LeftMouse = MOUSE_KEYCODE_OFFSET + 0,
+    RightMouse = MOUSE_KEYCODE_OFFSET + 1,
+    CenterMouse = MOUSE_KEYCODE_OFFSET + 2,
+    X1Mouse = MOUSE_KEYCODE_OFFSET + 3,
+    X2Mouse = MOUSE_KEYCODE_OFFSET + 4,
+
+    KEYBOARD_KEYCODE_ENDPOINT = 256
 };
+
 
 enum InputType
 {

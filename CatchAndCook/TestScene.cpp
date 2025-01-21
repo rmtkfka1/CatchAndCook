@@ -9,6 +9,7 @@
 #include "SpriteRenderer.h"
 #include "Sprite.h"
 #include "TextManager.h"
+#include "SpriteAction.h"
 void TestScene::Init()
 {
     Scene::Init();
@@ -71,35 +72,73 @@ void TestScene::Init()
             shared_ptr<GameObject> gameObject = CreateGameObject(L"SpriteTest");
             auto spriteRender = gameObject->AddComponent<SpriteRenderer>();
 
-            shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"spriteTest", L"Textures/spriteTest.jpg");
-            shared_ptr<Sprite> sprite = make_shared<Sprite>();
+			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"spriteTest", L"Textures/spriteTest.jpg");
+			shared_ptr<BasicSprite> sprite = make_shared<BasicSprite>();
 
-            spriteRender->SetSprite(sprite);
+			spriteRender->SetSprite(sprite);
+			sprite->AddAction(new DragAction(KeyCode::RightMouse));
+			sprite->AddAction(new ClickAction(KeyCode::LeftMouse));
 
-            //Ç®UV ¸ÊÇÎ
-            if (i == 4)
-            {
-                sprite->SetTexture(texture);
-                sprite->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.1f));
-                sprite->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
-                sprite->AddCollisonMap();
-            }
+			//Ç®UV ï¿½ï¿½ï¿½ï¿½
+			if (i == 4)
+			{
+		
+				sprite->SetTexture(texture);
+				sprite->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.1f));
+				sprite->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
+			
+			}
 
-            //½ºÇÁ¶óÀÌÆ® Â©¶ó¼­ »ç¿ë.
-            else
-            {
-                RECT rect;
-                rect.left = 1024 / 7 * i;
-                rect.top = 0;
-                rect.right = 1024 / 7 * (i + 1);
-                rect.bottom = 1024 / 4;
-                sprite->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.99f - 0.01f * i));
-                sprite->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
-                sprite->SetTexture(texture, &rect);
-                sprite->AddCollisonMap();
-            }
-        }
-    }
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® Â©ï¿½ï¿½ ï¿½ï¿½ï¿½.
+			else
+			{
+				SpriteRect rect;
+				rect.left = 1024/7 * i;
+				rect.top = 0;
+				rect.right = 1024/7 * (i+1);
+				rect.bottom = 1024/4;
+				sprite->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.99f - 0.01f*i));
+				sprite->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
+				sprite->SetTexture(texture);
+				sprite->SetUVCoord(rect);
+			}
+		}
+	}
+
+	{
+		shared_ptr<GameObject> gameObject = CreateGameObject(L"AnimationSprite");
+		auto spriteRender = gameObject->AddComponent<SpriteRenderer>();
+		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"fire", L"Textures/fire.png");
+		shared_ptr<AnimationSprite> sprite = make_shared<AnimationSprite>();
+
+		spriteRender->SetSprite(sprite);
+		sprite->SetTexture(texture);
+		sprite->SetPos(vec3(0, 0,0.3f));
+		sprite->SetSize(vec2(500,500));
+		sprite->SetFrameRate(0.1f);
+		sprite->SetClipingColor(vec4(0, 0, 0, 1.0f));		https://imagecolorpicker.com/
+
+		const float TextureSize = 512.0f;
+
+		for (int i = 0; i < 5; ++i)
+		{
+			float add = i * TextureSize / 5;
+
+			for (int j = 0; j < 5; ++j)
+			{
+
+				SpriteRect rect;
+				rect.left = 0 + j* TextureSize/5;
+				rect.top = add;
+				rect.right = rect.left + TextureSize/5;
+				rect.bottom = rect.top + TextureSize / 5;
+
+				sprite->PushUVCoord(rect);
+			}
+		}
+
+
+	}
 
 
 }

@@ -9,17 +9,27 @@ cbuffer GLOBAL_DATA : register(b0)
     float   g_padding;
 };
 
-cbuffer CONSTANT_BUFFER_SPRITE : register(b5)
+cbuffer SPRITE_WORLD_PARAM : register(b5)
 {
     float3 g_pos;
     float g_alpha;
     
     float2 g_scale;
+    float2 padding;
+    
+    float4 clipingColor;
+};
+
+cbuffer SPRITE_TEXTURE_PARAM : register(b6)
+{
     float2 g_origintexSize;
     
     float2 g_texSamplePos;
     float2 g_texSampleSize;
+    float2 padding2;
+    
 };
+
 
 struct VS_IN
 {
@@ -55,6 +65,13 @@ VS_OUT VS_Main(VS_IN input)
 
 float4 PS_Main(VS_OUT input) : SV_TARGET
 {
+  
     float4 texColor = texDiffuse.Sample(samplerDiffuse, input.uv);
+    
+    if (length(texColor.rgb - clipingColor.rgb) < 0.001)
+    {
+        discard; 
+    }
+    
     return texColor * input.color * g_alpha;
 }
