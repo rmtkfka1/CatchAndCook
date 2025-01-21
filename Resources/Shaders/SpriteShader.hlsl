@@ -9,17 +9,26 @@ cbuffer GLOBAL_DATA : register(b0)
     float   g_padding;
 };
 
-cbuffer CONSTANT_BUFFER_SPRITE : register(b5)
+cbuffer SPRTIEE_WORLD_PARAM : register(b5)
 {
     float3 g_pos;
     float g_alpha;
     
     float2 g_scale;
+    float2 padding;
+};
+
+cbuffer SPRITE_TEXTURE_PARAM : register(b6)
+{
     float2 g_origintexSize;
     
     float2 g_texSamplePos;
     float2 g_texSampleSize;
+    float2 padding2;
 };
+
+
+
 
 struct VS_IN
 {
