@@ -10,10 +10,7 @@ Sprite::Sprite()
 
 Sprite::~Sprite()
 {
-	for (auto& ele : _actions)
-	{
-		delete ele;
-	}
+
 }
 
 void Sprite::SetSize(vec2 size)
@@ -41,6 +38,11 @@ void Sprite::SetClipingColor(vec4 color)
 {
 	_spriteWorldParam.clipingColor = color;
 }
+
+void Sprite::AddAction(shared_ptr<ActionCommand> action)
+{
+	_actions.push_back(action);
+};
 
 
 BasicSprite::BasicSprite()

@@ -38,8 +38,6 @@ struct SpriteRect
 *                                                                *
 ******************************************************************/
 
-
-
 class Sprite 
 {
 public:
@@ -56,10 +54,7 @@ public:
 	void SetPos(vec3 screenPos);
 	void SetClipingColor(vec4 color);  // https://imagecolorpicker.com/
 
-	void AddAction(ActionCommand* action) 
-	{
-		_actions.push_back(action); 
-	}
+	void AddAction(shared_ptr<ActionCommand> action);
 
 protected:
 	SpriteWorldParam _spriteWorldParam;
@@ -69,7 +64,7 @@ protected:
 
 	vec2 _screenSize;
 	vec2 _ndcSize;
-	vector<ActionCommand*> _actions;
+	vector<shared_ptr<ActionCommand>> _actions;
 
 public:
 	friend class ActionFunc;
@@ -103,6 +98,7 @@ private:
 	shared_ptr<Shader> _shader;
 	shared_ptr<Texture> _texture;
 	SprtieTextureParam _sprtieTextureParam;
+
 };
 
 /*****************************************************************

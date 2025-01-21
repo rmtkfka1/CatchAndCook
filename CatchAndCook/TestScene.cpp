@@ -76,8 +76,8 @@ void TestScene::Init()
 			shared_ptr<BasicSprite> sprite = make_shared<BasicSprite>();
 
 			spriteRender->SetSprite(sprite);
-			sprite->AddAction(new DragAction(KeyCode::RightMouse));
-			sprite->AddAction(new ClickAction(KeyCode::LeftMouse));
+			sprite->AddAction(make_shared<DragAction>(KeyCode::RightMouse));
+			sprite->AddAction(make_shared<ClickAction>(KeyCode::LeftMouse));
 
 			//Ç®UV ¸ÊÇÎ
 			if (i == 4)
