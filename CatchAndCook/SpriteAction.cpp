@@ -45,8 +45,6 @@ void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
     if (Input::main->GetMouseDown(key))
     {
 
-        cout << ActionCommand::_UpdateEnable << endl;
-
         vec2 pos = Input::main->GetMouseDownPosition(key);
 
         float normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
@@ -90,7 +88,7 @@ void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
     }
 }
 
-void ActionFunc::OnClickDisableAction(KeyCode key, Sprite* sprite)
+void ActionFunc::DisableMouseAction(KeyCode key, Sprite* sprite)
 {
     if (ActionCommand::_UpdateEnable == false)
         return;
@@ -114,7 +112,7 @@ void ActionFunc::OnClickDisableAction(KeyCode key, Sprite* sprite)
     }
 }
 
-void ActionFunc::OnKeySpriteEnableDisable(KeyCode key, Sprite* sprite)
+void ActionFunc::EnableDisableKeyAction(KeyCode key, Sprite* sprite)
 {
     if (Input::main->GetKeyDown(key))
     {

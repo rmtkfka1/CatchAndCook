@@ -7,8 +7,8 @@ class ActionFunc
 public:
 	static void OnClickAction(KeyCode key , Sprite* sprite );
 	static void OnDragAction(KeyCode key, Sprite* sprite);
-    static void OnClickDisableAction(KeyCode key, Sprite* sprite);
-    static void OnKeySpriteEnableDisable(KeyCode key, Sprite* sprite);
+    static void DisableMouseAction(KeyCode key, Sprite* sprite);
+    static void EnableDisableKeyAction(KeyCode key, Sprite* sprite);
 };
 
 //
@@ -60,21 +60,21 @@ public:
 
     void Execute(Sprite* sprite) override
     {
-         ActionFunc::OnClickDisableAction(_key, sprite);
+         ActionFunc::DisableMouseAction(_key, sprite);
     }
 
 private:
     KeyCode _key;
 };
 
-class EnableKeyAction : public ActionCommand
+class EnableDisableKeyAction : public ActionCommand
 {
 public:
-    EnableKeyAction(KeyCode key) : _key(key) {}
+    EnableDisableKeyAction(KeyCode key) : _key(key) {}
 
     void Execute(Sprite* sprite) override
     {
-        ActionFunc::OnKeySpriteEnableDisable(_key, sprite);
+        ActionFunc::EnableDisableKeyAction(_key, sprite);
     }
   
 private:

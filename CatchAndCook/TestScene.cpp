@@ -75,7 +75,7 @@ void TestScene::Init()
 
 			spriteRender->SetSprite(sprite);
 			sprite->AddAction(make_shared<DragAction>(KeyCode::LeftMouse));
-			sprite->AddAction(make_shared<EnableKeyAction>(KeyCode::I));
+			sprite->AddAction(make_shared<EnableDisableKeyAction>(KeyCode::I));
 
 			//Ç®UV ¸ÊÇÎ
 			SpriteRect rect;
