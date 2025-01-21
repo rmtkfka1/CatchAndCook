@@ -131,7 +131,7 @@ void Input::DataBeginUpdate()
             _inputKeyboardField[i].up = false;
         }
     }
-    for (int i = KeyCode::MOUSE_KEYCODE_OFFSET; i < Input::_maxInputMouseField; i++)
+    for (int i = static_cast<short>(KeyCode::MOUSE_KEYCODE_OFFSET); i < Input::_maxInputMouseField; i++)
     {
         if (_inputMouseField[i].down)
             _inputMouseField[i].down = false;

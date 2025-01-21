@@ -16,7 +16,8 @@ void BufferManager::Init()
 	CreateBufferPool(BufferType::MateriaParam, sizeof(MaterialParams), 255);
 	CreateBufferPool(BufferType::MateriaSubParam, sizeof(TestSubMaterialParam), 255);
 	CreateBufferPool(BufferType::CameraParam, sizeof(CameraParams), 10);
-	CreateBufferPool(BufferType::SpriteParam, sizeof(SpriteParam), 255);
+	CreateBufferPool(BufferType::SpriteTextureParam, sizeof(SprtieTextureParam), 255);
+	CreateBufferPool(BufferType::SpriteWorldParam, sizeof(SpriteWorldParam), 255);
 
 	{
 		_table = make_shared<DescritporTable>();
