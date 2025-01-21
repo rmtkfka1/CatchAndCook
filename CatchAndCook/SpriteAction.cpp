@@ -48,13 +48,15 @@ void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
         float normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
         float normalizedY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
 
+        _lastMousePos = pos;
+
         if (normalizedX >= (sprite->_ndcPos.x) &&
             normalizedX <= (sprite->_ndcPos.x + sprite->_ndcSize.x) &&
             normalizedY >= (sprite->_ndcPos.y) &&
             normalizedY <= (sprite->_ndcPos.y + sprite->_ndcSize.y))
         {
             _dragSprite = sprite;
-            _lastMousePos = pos; 
+
         }
     }
 

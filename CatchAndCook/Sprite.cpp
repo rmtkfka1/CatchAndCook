@@ -5,7 +5,7 @@
 
 Sprite::Sprite()
 {
-
+	_firstWindowSize = vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
 }
 
 Sprite::~Sprite()
@@ -15,9 +15,8 @@ Sprite::~Sprite()
 
 void Sprite::SetSize(vec2 size)
 {
-
-	_spriteWorldParam.ndcScale.x = size.x / WINDOW_WIDTH;
-	_spriteWorldParam.ndcScale.y = size.y / WINDOW_HEIGHT;
+	_spriteWorldParam.ndcScale.x = size.x / _firstWindowSize.x;
+	_spriteWorldParam.ndcScale.y = size.y / _firstWindowSize.y;
 
 	_ndcSize = _spriteWorldParam.ndcScale;
 	_screenSize = size;
@@ -25,8 +24,8 @@ void Sprite::SetSize(vec2 size)
 
 void Sprite::SetPos(vec3 screenPos)
 {
-	_spriteWorldParam.ndcPos.x = screenPos.x/ WINDOW_WIDTH;
-	_spriteWorldParam.ndcPos.y = screenPos.y/ WINDOW_HEIGHT;
+	_spriteWorldParam.ndcPos.x = screenPos.x/ _firstWindowSize.x;
+	_spriteWorldParam.ndcPos.y = screenPos.y/ _firstWindowSize.y;
 	_spriteWorldParam.ndcPos.z = screenPos.z;
 
 	_ndcPos = _spriteWorldParam.ndcPos;

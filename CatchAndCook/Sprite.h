@@ -65,6 +65,8 @@ protected:
 	vec2 _screenSize;
 	vec2 _ndcSize;
 
+	vec2 _firstWindowSize;
+
 protected:
 	vector<shared_ptr<Sprite>> _children;
 	weak_ptr<Sprite> _parent;
