@@ -53,6 +53,7 @@ public:
 	void SetSize(vec2 size);
 	void SetPos(vec3 screenPos);
 	void SetClipingColor(vec4 color);  // https://imagecolorpicker.com/
+
 	void AddAction(shared_ptr<ActionCommand> action);
 	void AddChildern(shared_ptr<Sprite> child);
 

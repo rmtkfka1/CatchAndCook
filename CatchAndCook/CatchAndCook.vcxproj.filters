@@ -158,6 +158,7 @@
     <ClCompile Include="TextManager.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="SpriteAction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -300,6 +301,7 @@
     <ClInclude Include="TextManager.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="SpriteAction.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
