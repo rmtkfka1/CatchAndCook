@@ -2,7 +2,7 @@
 class SpriteAction
 {
 public:
-	static void OnClickAction();
-	static void OnDragAction();
+	static void OnClickAction(KeyCode key);
+	static void OnDragAction(KeyCode key);
 };
 

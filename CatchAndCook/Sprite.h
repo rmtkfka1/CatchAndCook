@@ -45,7 +45,12 @@ public:
 public:
 	void SetSize(vec2 size);
 	void SetPos(vec3 screenPos);
-	void AddAction(std::function<void(void)> action) { _actions.push_back(action); }
+	void AddAction(std::function<void(void)> action) 
+	{
+		_actions.push_back(action); 
+	}
+
+
 	void AddCollisonMap();
 
 protected:

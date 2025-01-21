@@ -2,11 +2,11 @@
 #include "SpriteAction.h"
 #include "Sprite.h"
 
-void SpriteAction::OnClickAction()
+void SpriteAction::OnClickAction(KeyCode key)
 {
-	if (Input::main->GetMouseDown(KeyCode::LeftMouse))
+	if (Input::main->GetMouseDown(key))
 	{
-		auto pos = Input::main->GetMouseDownPosition(KeyCode::LeftMouse);
+		auto pos = Input::main->GetMouseDownPosition(key);
 			float normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
 			float normalizedY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
 
@@ -22,15 +22,15 @@ void SpriteAction::OnClickAction()
 	}
 }
 
-void SpriteAction::OnDragAction()
+void SpriteAction::OnDragAction(KeyCode key)
 {
 	static Sprite* _dragSprtie = nullptr;
 	static CollisionRect* _dragRect = nullptr;
 
 	// 우클릭 시작
-	if (Input::main->GetMouseDown(KeyCode::RightMouse))
+	if (Input::main->GetMouseDown(key))
 	{
-		vec2 pos = Input::main->GetMouseDownPosition(KeyCode::RightMouse);
+		vec2 pos = Input::main->GetMouseDownPosition(key);
 		float normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
 		float normalizedY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
 
@@ -48,7 +48,7 @@ void SpriteAction::OnDragAction()
 	}
 
 	// 드래그 중
-	if (_dragSprtie && Input::main->GetMouse(KeyCode::RightMouse))
+	if (_dragSprtie && Input::main->GetMouse(key))
 	{
 		vec2 pos = Input::main->GetMousePosition();
 		auto size = _dragSprtie->_screenSize;
@@ -56,7 +56,7 @@ void SpriteAction::OnDragAction()
 	}
 
 	// 우클릭 종료
-	if (_dragSprtie && Input::main->GetMouseUp(KeyCode::RightMouse))
+	if (_dragSprtie && Input::main->GetMouseUp(key))
 	{
 		_dragRect->left = _dragSprtie->_ndcPos.x;
 		_dragRect->top = _dragSprtie->_ndcPos.y;

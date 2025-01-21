@@ -75,8 +75,8 @@ void TestScene::Init()
 			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"spriteTest", L"Textures/spriteTest.jpg");
 			shared_ptr<BasicSprite> sprite = make_shared<BasicSprite>();
 
-			sprite->AddAction(SpriteAction::OnDragAction);
-			sprite->AddAction(SpriteAction::OnClickAction);
+			sprite->AddAction([=]() {SpriteAction::OnDragAction(KeyCode::RightMouse); });
+			sprite->AddAction([=]() { SpriteAction::OnClickAction(KeyCode::LeftMouse); });
 
 			spriteRender->SetSprite(sprite);
 	
