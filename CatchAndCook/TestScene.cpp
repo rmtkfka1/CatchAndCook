@@ -95,7 +95,8 @@ void TestScene::Init()
 				rect.bottom = 1024/4;
 				sprite->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.99f - 0.01f*i));
 				sprite->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
-				sprite->SetTexture(texture, &rect);
+				sprite->SetTexture(texture);
+				sprite->SetUVCoord(&rect);
 				sprite->AddCollisonMap();
 			}
 		}

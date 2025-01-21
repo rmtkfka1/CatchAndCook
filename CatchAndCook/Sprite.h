@@ -44,7 +44,8 @@ public:
 	virtual void Render();
 
 public:
-	void SetTexture(shared_ptr<Texture> texture, RECT* rect = nullptr);
+	void SetTexture(shared_ptr<Texture> texture);
+	void SetUVCoord(RECT* rect);
 	void SetSize(vec2 size);
 	void SetPos(vec3 screenPos);
 	void AddCollisonMap();
@@ -61,13 +62,13 @@ private:
 	SpriteWorldParam _spriteWorldParam;
 	SprtieTextureParam _sprtieTextureParam;
 
-	static vector<pair<CollisionRect, Sprite*>> _collisionMap;
-
 	vec3 _screenPos;
 	vec3 _ndcPos;
 
 	vec2 _screenSize;
 	vec2 _ndcSize;
+
+	static vector<pair<CollisionRect, Sprite*>> _collisionMap;
 };
 
 

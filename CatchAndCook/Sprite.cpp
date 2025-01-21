@@ -185,7 +185,7 @@ void Sprite::TestMouseRightUpdate()
 }
 
 
-void Sprite::SetTexture(shared_ptr<Texture> texture, RECT* rect)
+void Sprite::SetTexture(shared_ptr<Texture> texture)
 {
 	_texture = texture;
 
@@ -193,19 +193,18 @@ void Sprite::SetTexture(shared_ptr<Texture> texture, RECT* rect)
 
 	_sprtieTextureParam.origintexSize = vec2(desc.Width, desc.Height);
 
-	if (rect)
-	{
-		_sprtieTextureParam.texSamplePos.x = rect->left;
-		_sprtieTextureParam.texSamplePos.y = rect->top;
-		_sprtieTextureParam.texSampleSize.x = (rect->right-rect->left);
-		_sprtieTextureParam.texSampleSize.y = (rect->bottom - rect->top);
-	}
-	else
-	{
-		_sprtieTextureParam.texSamplePos.x = 0;
-		_sprtieTextureParam.texSamplePos.y = 0;
-		_sprtieTextureParam.texSampleSize.x = desc.Width;
-		_sprtieTextureParam.texSampleSize.y = desc.Height;
-	}
+	_sprtieTextureParam.texSamplePos.x = 0;
+	_sprtieTextureParam.texSamplePos.y = 0;
+	_sprtieTextureParam.texSampleSize.x = desc.Width;
+	_sprtieTextureParam.texSampleSize.y = desc.Height;
+	
+}
+
+void Sprite::SetUVCoord(RECT* rect)
+{
+	_sprtieTextureParam.texSamplePos.x = rect->left;
+	_sprtieTextureParam.texSamplePos.y = rect->top;
+	_sprtieTextureParam.texSampleSize.x = (rect->right - rect->left);
+	_sprtieTextureParam.texSampleSize.y = (rect->bottom - rect->top);
 }
 
