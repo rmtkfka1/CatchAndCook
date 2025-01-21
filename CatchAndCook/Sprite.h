@@ -127,7 +127,6 @@ public:
 	void SetTexture(shared_ptr<Texture> texture);
 	void SetFrameRate(float frameRate) { _frameRate = frameRate; }
 
-
 private:
 	void AnimationUpdate();
 

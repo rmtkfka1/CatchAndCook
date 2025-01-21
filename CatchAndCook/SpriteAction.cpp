@@ -7,13 +7,14 @@ void ActionFunc::OnClickAction(KeyCode key, Sprite* sprite)
 	if (Input::main->GetMouseDown(key))
 	{
 		auto pos = Input::main->GetMouseDownPosition(key);
+
 		float normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
 		float normalizedY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
 
-		if (pos.x >= (sprite->_screenPos.x) &&
-			pos.x <= (sprite->_screenPos.x + sprite->_screenSize.x) &&
-			pos.y >= (sprite->_screenPos.y) &&
-			pos.y <= (sprite->_screenPos.y + sprite->_screenSize.y))
+		if (normalizedX >= (sprite->_ndcPos.x) &&
+			normalizedX <= (sprite->_ndcPos.x + sprite->_ndcSize.x) &&
+			normalizedY >= (sprite->_ndcPos.y) &&
+			normalizedY <= (sprite->_ndcPos.y + sprite->_ndcSize.y))
 		{
 			sprite->_spriteWorldParam.alpha -= 0.1f;
 		}
@@ -29,10 +30,13 @@ void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
 	{
 		vec2 pos = Input::main->GetMouseDownPosition(key);
 
-		if (pos.x >= (sprite->_screenPos.x) &&
-			pos.x <= (sprite->_screenPos.x + sprite->_screenSize.x) &&
-			pos.y >= (sprite->_screenPos.y) &&
-			pos.y <= (sprite->_screenPos.y + sprite->_screenSize.y))
+		float normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
+		float normalizedY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
+
+		if (normalizedX >= (sprite->_ndcPos.x) &&
+			normalizedX <= (sprite->_ndcPos.x + sprite->_ndcSize.x) &&
+			normalizedY >= (sprite->_ndcPos.y) &&
+			normalizedY <= (sprite->_ndcPos.y + sprite->_ndcSize.y))
 		{
 			_dragSprtie = sprite;
 		}

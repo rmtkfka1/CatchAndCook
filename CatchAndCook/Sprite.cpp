@@ -153,7 +153,7 @@ void AnimationSprite::Init()
 {
 	_mesh = GeoMetryHelper::LoadSprtieMesh();
 	_shader = ResourceManager::main->Get<Shader>(L"SpriteShader");
-}
+} 
 
 void AnimationSprite::Update()
 {
