@@ -12,6 +12,8 @@ struct SpriteWorldParam
 
 	vec2 ndcScale = { 1.0f,1.0f };
 	vec2 padding = {};
+
+	vec4 clipingColor;
 };
 
 struct SprtieTextureParam
@@ -20,7 +22,6 @@ struct SprtieTextureParam
 	vec2 texSamplePos{};
 	vec2 texSampleSize{};
 	vec2 padding;
-
 };
 
 struct CollisionRect
@@ -30,6 +31,12 @@ struct CollisionRect
 	float right;
 	float bottom;
 };
+
+/*****************************************************************
+*                                                                *
+*                         Sprite                                 *
+*                                                                *
+******************************************************************/
 
 class Sprite 
 {
@@ -43,15 +50,12 @@ public:
 	virtual void Render() =0;
 
 public:
+
 	void SetSize(vec2 size);
 	void SetPos(vec3 screenPos);
-	void AddAction(std::function<void(void)> action) 
-	{
-		_actions.push_back(action); 
-	}
-
-
+	void SetClipingColor(vec4 color);
 	void AddCollisonMap();
+	void AddAction(std::function<void(void)> action) { _actions.push_back(action); }
 
 protected:
 	SpriteWorldParam _spriteWorldParam;
@@ -63,12 +67,17 @@ protected:
 	vec2 _ndcSize;
 
 	vector<std::function<void(void)>> _actions;
+
 public:
 	static vector<pair<CollisionRect, Sprite*>> _collisionMap;
-
-	friend class BasicSprite;
 	friend class SpriteAction;
 };
+
+/*****************************************************************
+*                                                                *
+*                         BasicSprite                            *
+*                                                                *
+******************************************************************/
 
 class BasicSprite : public Sprite
 {
@@ -86,6 +95,7 @@ public:
 	void SetUVCoord(RECT* rect);
 	void SetTexture(shared_ptr<Texture> texture);
 
+
 private:
 	shared_ptr<Mesh> _mesh;
 	shared_ptr<Shader> _shader;
@@ -93,4 +103,42 @@ private:
 	SprtieTextureParam _sprtieTextureParam;
 };
 
+/*****************************************************************
+*                                                                *
+*                         AnimationSprite                        *
+*                                                                *
+******************************************************************/
+
+class AnimationSprite : public Sprite
+{
+public:
+
+	AnimationSprite();
+	virtual ~AnimationSprite();
+
+public:
+	virtual void Init();
+	virtual void Update();
+	virtual void Render();
+
+	void PushUVCoord(RECT* rect);
+	void SetTexture(shared_ptr<Texture> texture);
+	void SetFrameRate(float frameRate) { _frameRate = frameRate; }
+
+
+private:
+	void AnimationUpdate();
+
+private:
+	shared_ptr<Mesh> _mesh;
+	shared_ptr<Shader> _shader;
+	shared_ptr<Texture> _texture;
+	vector<SprtieTextureParam> _sprtieTextureParam;
+
+private:
+	float _frameRate{1.0f}; //  애니메이션 진행 속도
+	float _currentTime{}; //현재 애니메이션 진행 시간
+	int32 _currentFrameIndex{}; // 현재 애니메이션 인덱스
+	int32 _maxFrameIndex =0 ; // 최대 애니메이션 프레임
+};
 
