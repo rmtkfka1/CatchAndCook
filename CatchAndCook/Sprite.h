@@ -3,7 +3,7 @@
 class Mesh;
 class Texture;
 class Shader;
-
+class ActionCommand;
 
 struct SpriteWorldParam
 {
@@ -38,6 +38,8 @@ struct SpriteRect
 *                                                                *
 ******************************************************************/
 
+
+
 class Sprite 
 {
 public:
@@ -50,12 +52,14 @@ public:
 	virtual void Render() =0;
 
 public:
-
 	void SetSize(vec2 size);
 	void SetPos(vec3 screenPos);
 	void SetClipingColor(vec4 color);  // https://imagecolorpicker.com/
-	void AddCollisonMap();
-	void AddAction(std::function<void(void)> action) { _actions.push_back(action); }
+
+	void AddAction(ActionCommand* action) 
+	{
+		_actions.push_back(action); 
+	}
 
 protected:
 	SpriteWorldParam _spriteWorldParam;
@@ -65,12 +69,10 @@ protected:
 
 	vec2 _screenSize;
 	vec2 _ndcSize;
-
-	vector<std::function<void(void)>> _actions;
+	vector<ActionCommand*> _actions;
 
 public:
-	static vector<pair<SpriteRect, Sprite*>> _collisionMap;
-	friend class SpriteAction;
+	friend class ActionFunc;
 };
 
 /*****************************************************************

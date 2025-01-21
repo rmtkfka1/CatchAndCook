@@ -1,8 +1,7 @@
 #include "pch.h"
 #include "Sprite.h"
 #include "Mesh.h"
-
-vector<pair<SpriteRect, Sprite*>> Sprite::_collisionMap;
+#include "SpriteAction.h"
 
 Sprite::Sprite()
 {
@@ -11,17 +10,10 @@ Sprite::Sprite()
 
 Sprite::~Sprite()
 {
-
-	auto it = std::remove_if(_collisionMap.begin(), _collisionMap.end(),
-		[this](const auto& pair) {
-			return pair.second == this;
-		});
-
-	if (it != _collisionMap.end())
+	for (auto& ele : _actions)
 	{
-		_collisionMap.erase(it);
+		delete ele;
 	}
-
 }
 
 void Sprite::SetSize(vec2 size)
@@ -50,24 +42,6 @@ void Sprite::SetClipingColor(vec4 color)
 	_spriteWorldParam.clipingColor = color;
 }
 
-void Sprite::AddCollisonMap()
-{
-	SpriteRect rect;
-
-	rect.left =  (_spriteWorldParam.ndcPos.x);
-	rect.top  =  (_spriteWorldParam.ndcPos.y);
-	rect.right = (_spriteWorldParam.ndcPos.x + _spriteWorldParam.ndcScale.x);
-	rect.bottom = (_spriteWorldParam.ndcPos.y + _spriteWorldParam.ndcScale.y);
-
-	_collisionMap.push_back({ rect, this });
-
-	std::sort(_collisionMap.begin(), _collisionMap.end(), [](const auto& a, const auto& b) {
-		return a.second->_spriteWorldParam.ndcPos.z < b.second->_spriteWorldParam.ndcPos.z;
-		});
-
-}
-
-
 
 
 BasicSprite::BasicSprite()
@@ -91,7 +65,7 @@ void BasicSprite::Update()
 {
 	for (auto& action : _actions)
 	{
-		action();
+		action->Execute(this);
 	}
 }
 
@@ -187,7 +161,7 @@ void AnimationSprite::Update()
 {
 	for (auto& action : _actions)
 	{
-		action();
+		action->Execute(this);
 	}
 
 	AnimationUpdate();

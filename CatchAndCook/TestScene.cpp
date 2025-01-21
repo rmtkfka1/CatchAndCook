@@ -75,19 +75,18 @@ void TestScene::Init()
 			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"spriteTest", L"Textures/spriteTest.jpg");
 			shared_ptr<BasicSprite> sprite = make_shared<BasicSprite>();
 
-			sprite->AddAction([=]() {SpriteAction::OnDragAction(KeyCode::RightMouse); });
-			sprite->AddAction([=]() { SpriteAction::OnClickAction(KeyCode::LeftMouse); });
-
 			spriteRender->SetSprite(sprite);
-	
-		
+			sprite->AddAction(new DragAction(KeyCode::RightMouse));
+			sprite->AddAction(new ClickAction(KeyCode::LeftMouse));
+
 			//풀UV 맵핑
 			if (i == 4)
 			{
+		
 				sprite->SetTexture(texture);
 				sprite->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.1f));
 				sprite->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
-				sprite->AddCollisonMap();
+			
 			}
 
 			//스프라이트 짤라서 사용.
@@ -102,7 +101,6 @@ void TestScene::Init()
 				sprite->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
 				sprite->SetTexture(texture);
 				sprite->SetUVCoord(&rect);
-				sprite->AddCollisonMap();
 			}
 		}
 	}
@@ -119,10 +117,6 @@ void TestScene::Init()
 		sprite->SetSize(vec2(500,500));
 		sprite->SetFrameRate(0.05f);
 		sprite->SetClipingColor(vec4(0, 0, 0, 1.0f));		https://imagecolorpicker.com/
-		sprite->AddCollisonMap();
-
-		sprite->AddAction([=]() {SpriteAction::OnDragAction(KeyCode::RightMouse); });
-		sprite->AddAction([=]() { SpriteAction::OnClickAction(KeyCode::LeftMouse); });
 
 		const float TextureSize = 512.0f;
 
