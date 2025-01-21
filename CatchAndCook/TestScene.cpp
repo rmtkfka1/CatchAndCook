@@ -100,7 +100,7 @@ void TestScene::Init()
 				sprite->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.99f - 0.01f*i));
 				sprite->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
 				sprite->SetTexture(texture);
-				sprite->SetUVCoord(&rect);
+				sprite->SetUVCoord(rect);
 			}
 		}
 	}
@@ -115,7 +115,7 @@ void TestScene::Init()
 		sprite->SetTexture(texture);
 		sprite->SetPos(vec3(0, 0,0.3f));
 		sprite->SetSize(vec2(500,500));
-		sprite->SetFrameRate(0.05f);
+		sprite->SetFrameRate(0.1f);
 		sprite->SetClipingColor(vec4(0, 0, 0, 1.0f));		https://imagecolorpicker.com/
 
 		const float TextureSize = 512.0f;
@@ -133,7 +133,7 @@ void TestScene::Init()
 				rect.right = rect.left + TextureSize/5;
 				rect.bottom = rect.top + TextureSize / 5;
 
-				sprite->PushUVCoord(&rect);
+				sprite->PushUVCoord(rect);
 			}
 		}
 

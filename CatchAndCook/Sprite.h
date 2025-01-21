@@ -94,7 +94,7 @@ public:
 	virtual void Update();
 	virtual void Render();
 
-	void SetUVCoord(SpriteRect* rect);
+	void SetUVCoord(SpriteRect& rect);
 	void SetTexture(shared_ptr<Texture> texture);
 
 
@@ -123,7 +123,7 @@ public:
 	virtual void Update();
 	virtual void Render();
 
-	void PushUVCoord(SpriteRect* rect);
+	void PushUVCoord(SpriteRect& rect);
 	void SetTexture(shared_ptr<Texture> texture);
 	void SetFrameRate(float frameRate) { _frameRate = frameRate; }
 

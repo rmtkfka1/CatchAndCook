@@ -43,7 +43,6 @@ void Sprite::SetClipingColor(vec4 color)
 }
 
 
-
 BasicSprite::BasicSprite()
 {
 	Init();
@@ -53,7 +52,6 @@ BasicSprite::~BasicSprite()
 {
 
 }
-
 
 void BasicSprite::Init()
 {
@@ -110,12 +108,12 @@ void BasicSprite::Render()
 	}
 }
 
-void BasicSprite::SetUVCoord(SpriteRect* rect)
+void BasicSprite::SetUVCoord(SpriteRect& rect)
 {
-	_sprtieTextureParam.texSamplePos.x = rect->left;
-	_sprtieTextureParam.texSamplePos.y = rect->top;
-	_sprtieTextureParam.texSampleSize.x = (rect->right - rect->left);
-	_sprtieTextureParam.texSampleSize.y = (rect->bottom - rect->top);
+	_sprtieTextureParam.texSamplePos.x = rect.left;
+	_sprtieTextureParam.texSamplePos.y = rect.top;
+	_sprtieTextureParam.texSampleSize.x = (rect.right - rect.left);
+	_sprtieTextureParam.texSampleSize.y = (rect.bottom - rect.top);
 }
 
 void BasicSprite::SetTexture(shared_ptr<Texture> texture)
@@ -210,7 +208,7 @@ void AnimationSprite::Render()
 	}
 }
 
-void AnimationSprite::PushUVCoord(SpriteRect* rect)
+void AnimationSprite::PushUVCoord(SpriteRect& rect)
 {
 	if (_texture == nullptr)
 		assert(false);
@@ -220,10 +218,10 @@ void AnimationSprite::PushUVCoord(SpriteRect* rect)
 	auto desc = _texture->GetResource()->GetDesc();
 
 	sprtieTextureParam.origintexSize = vec2(desc.Width, desc.Height);
-	sprtieTextureParam.texSamplePos.x = rect->left;
-	sprtieTextureParam.texSamplePos.y = rect->top;
-	sprtieTextureParam.texSampleSize.x = (rect->right - rect->left);
-	sprtieTextureParam.texSampleSize.y = (rect->bottom - rect->top);
+	sprtieTextureParam.texSamplePos.x = rect.left;
+	sprtieTextureParam.texSamplePos.y = rect.top;
+	sprtieTextureParam.texSampleSize.x = (rect.right - rect.left);
+	sprtieTextureParam.texSampleSize.y = (rect.bottom - rect.top);
 
 	_sprtieTextureParam.push_back(sprtieTextureParam);
 
@@ -235,7 +233,6 @@ void AnimationSprite::SetTexture(shared_ptr<Texture> texture)
 	_texture = texture;
 
 }
-
 
 
 void AnimationSprite::AnimationUpdate()
