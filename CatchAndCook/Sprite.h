@@ -4,13 +4,6 @@ class Mesh;
 class Texture;
 class Shader;
 
-class ActionFunc
-{
-public:
-	static void OnClickAction();
-	static void OnDragAction();
-};
-
 
 struct SpriteWorldParam
 {
@@ -69,7 +62,7 @@ public:
 	static vector<pair<CollisionRect, Sprite*>> _collisionMap;
 
 	friend class BasicSprite;
-	friend class ActionFunc;
+	friend class SpriteAction;
 };
 
 class BasicSprite : public Sprite
@@ -79,8 +72,6 @@ public:
 	BasicSprite();
 	virtual ~BasicSprite();
 
-	void TestMouseLeftUpdate();
-	void TestMouseRightUpdate();
 	
 public:
 	virtual void Init();

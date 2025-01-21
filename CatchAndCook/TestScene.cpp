@@ -9,7 +9,7 @@
 #include "SpriteRenderer.h"
 #include "Sprite.h"
 #include "TextManager.h"
-
+#include "SpriteAction.h"
 void TestScene::Init()
 {
 	Scene::Init();
@@ -75,8 +75,9 @@ void TestScene::Init()
 			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"spriteTest", L"Textures/spriteTest.jpg");
 			shared_ptr<BasicSprite> sprite = make_shared<BasicSprite>();
 
-			sprite->AddAction(ActionFunc::OnDragAction);
-			sprite->AddAction(ActionFunc::OnClickAction);
+			sprite->AddAction(SpriteAction::OnDragAction);
+			sprite->AddAction(SpriteAction::OnClickAction);
+
 			spriteRender->SetSprite(sprite);
 	
 		
