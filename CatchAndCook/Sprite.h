@@ -149,23 +149,3 @@ private:
 *                                                                *
 ******************************************************************/
 
-class Invetory : public Sprite
-{
-
-public:
-	Invetory();
-	virtual ~Invetory();
-
-public:
-	virtual void Init();
-	virtual void Update();
-	virtual void Render();
-
-private:
-	shared_ptr<Mesh> _mesh;
-	shared_ptr<Shader> _shader;
-	shared_ptr<Texture> _texture;
-	SprtieTextureParam _sprtieTextureParam;
-
-
-};

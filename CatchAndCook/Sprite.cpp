@@ -73,6 +73,7 @@ void BasicSprite::Update()
 		action->Execute(this);
 	}
 
+
 	for (auto& ele : _children)
 	{
 		for (auto& action : ele->_actions)
@@ -297,22 +298,3 @@ void AnimationSprite::AnimationUpdate()
 	}
 }
 
-Invetory::Invetory()
-{
-}
-
-Invetory::~Invetory()
-{
-}
-
-void Invetory::Init()
-{
-}
-
-void Invetory::Update()
-{
-}
-
-void Invetory::Render()
-{
-}
