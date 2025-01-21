@@ -10,7 +10,6 @@ void ActionFunc::OnClickAction(KeyCode key, Sprite* sprite)
     if (ActionCommand::_UpdateEnable == false)
         return;
 
-
     if (Input::main->GetMouseDown(key))
     {
         auto pos = Input::main->GetMouseDownPosition(key);
@@ -44,7 +43,6 @@ void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
     // 우클릭 시작
     if (Input::main->GetMouseDown(key))
     {
-
         vec2 pos = Input::main->GetMouseDownPosition(key);
 
         float normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
@@ -66,7 +64,6 @@ void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
         vec2 pos = Input::main->GetMousePosition();
         vec2 delta = pos - _lastMousePos; 
 
-        auto size = _dragSprite->_screenSize;
         _dragSprite->SetPos(vec3(_dragSprite->_screenPos.x + delta.x,
             _dragSprite->_screenPos.y + delta.y,
             _dragSprite->_spriteWorldParam.ndcPos.z));
