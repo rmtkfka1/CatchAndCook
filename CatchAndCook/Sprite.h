@@ -5,7 +5,7 @@ class Texture;
 class Shader;
 
 
-struct SpriteWorldParam
+struct SpriteParam
 {
 	vec3 ndcPos = { 0.0f,0.0f,0.1f };
 	float alpha =1.0f;
@@ -16,7 +16,6 @@ struct SpriteWorldParam
 	vec2 texSamplePos{};
 	vec2 texSampleSize{};
 };
-
 
 struct CollisionRect
 {
@@ -49,12 +48,12 @@ protected:
 	void TestMouseRightUpdate();
 
 private:
-
-	tableContainer _tableContainer;
 	shared_ptr<Mesh> _mesh;
 	shared_ptr<Texture> _texture;
 	shared_ptr<Shader> _shader;
-	SpriteWorldParam _spriteParam;
+
+	SpriteParam _spriteParam;
+
 
 	static vector<pair<CollisionRect, Sprite*>> _collisionMap;
 

@@ -50,9 +50,9 @@ void Sprite::Render()
 	cmdList->SetGraphicsRootConstantBufferView(5, CbufferContainer->GPUAdress);
 
 	//텍스쳐 바인딩.
-	_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
-	Core::main->GetBufferManager()->GetTable()->CopyHandle(&_tableContainer.CPUHandle, &_texture->GetSRVCpuHandle(), 0);
-	cmdList->SetGraphicsRootDescriptorTable(SPRITE_TABLE_INDEX, _tableContainer.GPUHandle);
+	auto tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
+	Core::main->GetBufferManager()->GetTable()->CopyHandle(&tableContainer.CPUHandle, &_texture->GetSRVCpuHandle(), 0);
+	cmdList->SetGraphicsRootDescriptorTable(SPRITE_TABLE_INDEX, tableContainer.GPUHandle);
 
 	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
 
