@@ -66,8 +66,7 @@ void TestScene::Init()
 
 
 	{
-
-		for (int i = 0; i < 5; ++i)
+		for (int i = 0; i < 1; ++i)
 		{
 			shared_ptr<GameObject> gameObject = CreateGameObject(L"SpriteTest");
 			auto spriteRender = gameObject->AddComponent<SpriteRenderer>();
@@ -80,29 +79,26 @@ void TestScene::Init()
 			sprite->AddAction(make_shared<ClickAction>(KeyCode::LeftMouse));
 
 			//풀UV 맵핑
-			if (i == 4)
-			{
-		
-				sprite->SetTexture(texture);
-				sprite->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.1f));
-				sprite->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
-			
-			}
+			SpriteRect rect;
+			rect.left = 1024 / 7 * i;
+			rect.top = 0;
+			rect.right = 1024 / 7 * (i + 1);
+			rect.bottom = 1024 / 4;
+			sprite->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.05f));
+			sprite->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
+			sprite->SetTexture(texture);
+			sprite->SetUVCoord(rect);
 
-			//스프라이트 짤라서 사용.
-			else
 			{
-				SpriteRect rect;
-				rect.left = 1024/7 * i;
-				rect.top = 0;
-				rect.right = 1024/7 * (i+1);
-				rect.bottom = 1024/4;
-				sprite->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.99f - 0.01f*i));
-				sprite->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
-				sprite->SetTexture(texture);
-				sprite->SetUVCoord(rect);
+				shared_ptr<BasicSprite> childSprite = make_shared<BasicSprite>();
+				childSprite->SetPos(vec3(200, 0, 0.03f));
+				childSprite->SetSize(vec2(50, 50));
+				childSprite->SetTexture(ResourceManager::main->Load<Texture>(L"disable", L"Textures/disable.png"));
+				childSprite->AddAction(make_shared<DisableAction>(KeyCode::LeftMouse));
+				sprite->AddChildern(childSprite);
 			}
-		}
+		
+		};
 	}
 
 	{

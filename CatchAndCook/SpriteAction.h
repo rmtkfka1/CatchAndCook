@@ -7,8 +7,8 @@ class ActionFunc
 public:
 	static void OnClickAction(KeyCode key , Sprite* sprite );
 	static void OnDragAction(KeyCode key, Sprite* sprite);
+    static void OnClickDisableAction(KeyCode key, Sprite* sprite);
 };
-
 
 class ActionCommand 
 {
@@ -31,6 +31,22 @@ public:
 private:
     KeyCode _key;
 };
+
+
+class DisableAction : public ActionCommand
+{
+public:
+    DisableAction(KeyCode key) : _key(key) {}
+
+    void Execute(Sprite* sprite) override
+    {
+        ActionFunc::OnClickDisableAction(_key, sprite);
+    }
+
+private:
+    KeyCode _key;
+};
+
 
 
 class DragAction : public ActionCommand 

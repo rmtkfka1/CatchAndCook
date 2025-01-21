@@ -42,8 +42,12 @@ void Sprite::SetClipingColor(vec4 color)
 void Sprite::AddAction(shared_ptr<ActionCommand> action)
 {
 	_actions.push_back(action);
-};
-
+}
+void Sprite::AddChildern(shared_ptr<Sprite> child)
+{
+	_children.push_back(child);
+	child->_parent = shared_from_this();
+}
 
 BasicSprite::BasicSprite()
 {
@@ -63,39 +67,55 @@ void BasicSprite::Init()
 
 void BasicSprite::Update()
 {
+	if (_enable == false)
+		return;
+
+
 	for (auto& action : _actions)
 	{
 		action->Execute(this);
+	}
+
+	for (auto& ele : _children)
+	{
+		ele->Update();
 	}
 }
 
 void BasicSprite::Render()
 {
+	if (_enable == false)
+		return;
+
 	auto& cmdList = Core::main->GetCmdList();
 
+	// 파이프라인 상태 설정
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
+
+	// SpriteWorldParam 버퍼 설정
 	{
 		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteWorldParam)->Alloc(1);
 		memcpy(CbufferContainer->ptr, (void*)&_spriteWorldParam, sizeof(SpriteWorldParam));
 		cmdList->SetGraphicsRootConstantBufferView(_shader->GetRegisterIndex("SPRITE_WORLD_PARAM"), CbufferContainer->GPUAdress);
 	}
 
+	// SpriteTextureParam 버퍼 설정
 	{
 		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteTextureParam)->Alloc(1);
 		memcpy(CbufferContainer->ptr, (void*)&_sprtieTextureParam, sizeof(SprtieTextureParam));
 		cmdList->SetGraphicsRootConstantBufferView(_shader->GetRegisterIndex("SPRITE_TEXTURE_PARAM"), CbufferContainer->GPUAdress);
 	}
 
-	//텍스쳐 바인딩.
+	// 텍스쳐 바인딩
 	auto tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
 	Core::main->GetBufferManager()->GetTable()->CopyHandle(&tableContainer.CPUHandle, &_texture->GetSRVCpuHandle(), 0);
 	cmdList->SetGraphicsRootDescriptorTable(SPRITE_TABLE_INDEX, tableContainer.GPUHandle);
 
+	// 메시 설정
 	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
 
 	if (_mesh->GetVertexCount() != 0)
 	{
-
 		if (_mesh->GetIndexCount() != 0)
 		{
 			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
@@ -107,6 +127,11 @@ void BasicSprite::Render()
 			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
 			cmdList->DrawInstanced(_mesh->GetVertexCount(), 1, 0, 0);
 		}
+	}
+
+	for (auto& child : _children)
+	{
+		child->Render();
 	}
 }
 
@@ -159,9 +184,18 @@ void AnimationSprite::Init()
 
 void AnimationSprite::Update()
 {
+
+	if (_enable == false)
+		return;
+
 	for (auto& action : _actions)
 	{
 		action->Execute(this);
+	}
+
+	for (auto& child : _children)
+	{
+		child->Update();
 	}
 
 	AnimationUpdate();
@@ -170,6 +204,9 @@ void AnimationSprite::Update()
 
 void AnimationSprite::Render()
 {
+	if (_enable == false)
+		return;
+
 	auto& cmdList = Core::main->GetCmdList();
 
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
@@ -207,6 +244,11 @@ void AnimationSprite::Render()
 			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
 			cmdList->DrawInstanced(_mesh->GetVertexCount(), 1, 0, 0);
 		}
+	}
+
+	for (auto& child : _children)
+	{
+		child->Render();
 	}
 }
 
@@ -252,4 +294,24 @@ void AnimationSprite::AnimationUpdate()
 			_currentFrameIndex = 0;  // 첫 번째 프레임으로 돌아가기
 		}
 	}
+}
+
+Invetory::Invetory()
+{
+}
+
+Invetory::~Invetory()
+{
+}
+
+void Invetory::Init()
+{
+}
+
+void Invetory::Update()
+{
+}
+
+void Invetory::Render()
+{
 }
