@@ -107,7 +107,7 @@ void BasicSprite::Render()
 
 	// 텍스쳐 바인딩
 	auto tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
-	Core::main->GetBufferManager()->GetTable()->CopyHandle(&tableContainer.CPUHandle, &_texture->GetSRVCpuHandle(), 0);
+	Core::main->GetBufferManager()->GetTable()->CopyHandle(tableContainer.CPUHandle, _texture->GetSRVCpuHandle(), 0);
 	cmdList->SetGraphicsRootDescriptorTable(SPRITE_TABLE_INDEX, tableContainer.GPUHandle);
 
 	// 메시 설정
@@ -225,7 +225,7 @@ void AnimationSprite::Render()
 
 	//텍스쳐 바인딩.
 	auto tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
-	Core::main->GetBufferManager()->GetTable()->CopyHandle(&tableContainer.CPUHandle, &_texture->GetSRVCpuHandle(), 0);
+	Core::main->GetBufferManager()->GetTable()->CopyHandle(tableContainer.CPUHandle, _texture->GetSRVCpuHandle(), 0);
 	cmdList->SetGraphicsRootDescriptorTable(SPRITE_TABLE_INDEX, tableContainer.GPUHandle);
 
 	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());

@@ -312,10 +312,10 @@ tableContainer DescritporTable::Alloc(uint32 count)
 
 }
 
-void DescritporTable::CopyHandle(D3D12_CPU_DESCRIPTOR_HANDLE* destHandle, D3D12_CPU_DESCRIPTOR_HANDLE* sourceHandle, uint32 index)
+void DescritporTable::CopyHandle(D3D12_CPU_DESCRIPTOR_HANDLE& destHandle, D3D12_CPU_DESCRIPTOR_HANDLE& sourceHandle, uint32 index)
 {
-	CD3DX12_CPU_DESCRIPTOR_HANDLE dest(*destHandle, index, _size);
-	Core::main->GetDevice()->CopyDescriptorsSimple(1, dest, *sourceHandle, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	CD3DX12_CPU_DESCRIPTOR_HANDLE dest(destHandle, index, _size);
+	Core::main->GetDevice()->CopyDescriptorsSimple(1, dest, sourceHandle, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
 void DescritporTable::Reset()

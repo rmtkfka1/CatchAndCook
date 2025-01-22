@@ -103,7 +103,7 @@ class DescritporTable
 public:
 	void Init(uint32 count);
 	tableContainer Alloc(uint32 count);
-	void CopyHandle(D3D12_CPU_DESCRIPTOR_HANDLE* destHandle, D3D12_CPU_DESCRIPTOR_HANDLE* sourceHandle ,uint32 index);
+	void CopyHandle(D3D12_CPU_DESCRIPTOR_HANDLE& destHandle, D3D12_CPU_DESCRIPTOR_HANDLE& sourceHandle ,uint32 index);
 	void Reset();
 
 	ComPtr<ID3D12DescriptorHeap>& GetDescriptorHeap() { return _heap; }
