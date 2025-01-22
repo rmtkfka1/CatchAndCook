@@ -19,6 +19,8 @@ void BufferManager::Init()
 	CreateBufferPool(BufferType::SpriteTextureParam, sizeof(SprtieTextureParam), 255);
 	CreateBufferPool(BufferType::SpriteWorldParam, sizeof(SpriteWorldParam), 255);
 
+	CreateBufferPool_Static(BufferType::BoneParam, sizeof(SpriteWorldParam), 255);
+
 	{
 		_table = make_shared<DescritporTable>();
 		_table->Init(255);
@@ -43,4 +45,11 @@ void BufferManager::CreateBufferPool(BufferType type, uint32 size, uint32 count)
 	shared_ptr<CBufferPool> transformBuffer = make_shared<CBufferPool>();
 	transformBuffer->Init(size, count);
 	_map[type] = transformBuffer;
+}
+
+void BufferManager::CreateBufferPool_Static(BufferType type, uint32 size, uint32 count)
+{
+	shared_ptr<CBufferPool> transformBuffer = make_shared<CBufferPool>();
+	transformBuffer->Init(size, count);
+	_map_notReset[type] = transformBuffer;
 }

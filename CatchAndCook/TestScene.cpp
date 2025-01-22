@@ -64,6 +64,7 @@ void TestScene::Init()
         meshRenderer->SetMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
     }
 
+	if (false)
 	{
 		for (int i = 0; i < 1; ++i)
 		{

@@ -162,6 +162,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bone.cpp" />
     <ClCompile Include="BufferManager.cpp" />
     <ClCompile Include="BufferPool.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -191,6 +192,8 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ModelMesh.cpp" />
+    <ClCompile Include="ModelNode.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>
@@ -227,6 +230,7 @@
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bone.h" />
     <ClInclude Include="BufferManager.h" />
     <ClInclude Include="BufferPool.h" />
     <ClInclude Include="Camera.h" />
@@ -254,6 +258,8 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="ModelMesh.h" />
+    <ClInclude Include="ModelNode.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RendererBase.h" />
     <ClInclude Include="RenderTarget.h" />

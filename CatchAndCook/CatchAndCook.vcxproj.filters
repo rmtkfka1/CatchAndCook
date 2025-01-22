@@ -38,6 +38,9 @@
     <Filter Include="Resource\Sprite">
       <UniqueIdentifier>{09e30710-c997-4d95-8bd1-3ad5f33dbf42}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource\Model">
+      <UniqueIdentifier>{f287f787-2094-4609-af84-dbd7d3471a5f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -77,9 +80,6 @@
     </ClCompile>
     <ClCompile Include="BufferPool.cpp">
       <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Resource</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>Resource</Filter>
@@ -127,9 +127,6 @@
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
-    <ClCompile Include="Vertex.cpp">
-      <Filter>pch</Filter>
-    </ClCompile>
     <ClCompile Include="convert_assimp.cpp">
       <Filter>pch\extern</Filter>
     </ClCompile>
@@ -154,9 +151,6 @@
     <ClCompile Include="SpriteRenderer.cpp">
       <Filter>Component</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Resource</Filter>
-    </ClCompile>
     <ClCompile Include="TextManager.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -166,6 +160,18 @@
     <ClCompile Include="SpriteAction.cpp">
       <Filter>Resource\Sprite</Filter>
     </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Resource\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Vertex.cpp">
+      <Filter>Resource\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Resource\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelNode.cpp" />
+    <ClCompile Include="ModelMesh.cpp" />
+    <ClCompile Include="Bone.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -220,9 +226,6 @@
     <ClInclude Include="convert_string.h">
       <Filter>pch\extern</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Resource</Filter>
-    </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Resource</Filter>
     </ClInclude>
@@ -271,9 +274,6 @@
     <ClInclude Include="ResourceManager.h">
       <Filter>Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>pch</Filter>
-    </ClInclude>
     <ClInclude Include="convert_assimp.h">
       <Filter>pch\extern</Filter>
     </ClInclude>
@@ -311,8 +311,17 @@
       <Filter>Resource\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
-      <Filter>Resource</Filter>
+      <Filter>Resource\Model</Filter>
     </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Resource\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Resource\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelNode.h" />
+    <ClInclude Include="ModelMesh.h" />
+    <ClInclude Include="Bone.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
