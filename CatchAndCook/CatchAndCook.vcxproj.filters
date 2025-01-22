@@ -310,6 +310,9 @@
     <ClInclude Include="SpriteAction.h">
       <Filter>Resource\Sprite</Filter>
     </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -337,6 +340,9 @@
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\GLOBAL.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\TestForward.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
   </ItemGroup>
