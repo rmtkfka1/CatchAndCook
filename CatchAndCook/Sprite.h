@@ -38,9 +38,7 @@ struct SpriteRect
 *                                                                *
 ******************************************************************/
 
-
-
-class Sprite 
+class Sprite  : public enable_shared_from_this<Sprite>
 {
 public:
 	Sprite();
@@ -56,10 +54,8 @@ public:
 	void SetPos(vec3 screenPos);
 	void SetClipingColor(vec4 color);  // https://imagecolorpicker.com/
 
-	void AddAction(ActionCommand* action) 
-	{
-		_actions.push_back(action); 
-	}
+	void AddAction(shared_ptr<ActionCommand> action);
+	void AddChildern(shared_ptr<Sprite> child);
 
 protected:
 	SpriteWorldParam _spriteWorldParam;
@@ -69,10 +65,17 @@ protected:
 
 	vec2 _screenSize;
 	vec2 _ndcSize;
-	vector<ActionCommand*> _actions;
+
+	vec2 _firstWindowSize;
+
+protected:
+	vector<shared_ptr<Sprite>> _children;
+	weak_ptr<Sprite> _parent;
 
 public:
 	friend class ActionFunc;
+	bool _renderEnable = true;
+	vector<shared_ptr<ActionCommand>> _actions;
 };
 
 /*****************************************************************
@@ -96,7 +99,6 @@ public:
 
 	void SetUVCoord(SpriteRect& rect);
 	void SetTexture(shared_ptr<Texture> texture);
-
 
 private:
 	shared_ptr<Mesh> _mesh;
@@ -127,7 +129,6 @@ public:
 	void SetTexture(shared_ptr<Texture> texture);
 	void SetFrameRate(float frameRate) { _frameRate = frameRate; }
 
-
 private:
 	void AnimationUpdate();
 
@@ -143,4 +144,11 @@ private:
 	int32 _currentFrameIndex{}; // 현재 애니메이션 인덱스
 	int32 _maxFrameIndex =0 ; // 최대 애니메이션 프레임
 };
+
+
+/*****************************************************************
+*                                                                *
+*                         Invetory                               *
+*                                                                *
+******************************************************************/
 

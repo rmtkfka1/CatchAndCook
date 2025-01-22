@@ -17,11 +17,12 @@ namespace RENDER_PASS
 	const int Count = 7;
 
 	inline PASS operator|(PASS a, PASS b) {
-		return PASS(a | b);
+		return static_cast<PASS>(static_cast<int>(a) | static_cast<int>(b));
 	}
 
+
 	inline bool HasFlag(PASS value, PASS flag) {
-		return (value & flag) != 0;
+		return (static_cast<int>(value) & static_cast<int>(flag)) != 0;
 	}
 
 	inline int ToIndex(PASS pass) {

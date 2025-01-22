@@ -57,14 +57,14 @@ void Material::PushTexture()
 		int index = _shader->GetRegisterIndex(name);
 		if (index != -1){
 			copyCheckList[index] = true;
-			Core::main->GetBufferManager()->GetTable()->CopyHandle(&_tableContainer.CPUHandle, &texture->GetSRVCpuHandle(), _shader->GetRegisterIndex(name));
+			Core::main->GetBufferManager()->GetTable()->CopyHandle(_tableContainer.CPUHandle, texture->GetSRVCpuHandle(), _shader->GetRegisterIndex(name));
 		}
 	}
 
 	auto& tTable = _shader->GetTRegisterIndexs();
 	for (auto& tIndex : tTable)
 		if (tIndex < SRV_TABLE_REGISTER_COUNT && (!copyCheckList[tIndex]))
-			Core::main->GetBufferManager()->GetTable()->CopyHandle(&_tableContainer.CPUHandle, 
-				&ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle(), tIndex);
+			Core::main->GetBufferManager()->GetTable()->CopyHandle(_tableContainer.CPUHandle, 
+				ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle(), tIndex);
 
 }

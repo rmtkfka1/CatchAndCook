@@ -5,22 +5,18 @@
 
 Sprite::Sprite()
 {
-
+	_firstWindowSize = vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
 }
 
 Sprite::~Sprite()
 {
-	for (auto& ele : _actions)
-	{
-		delete ele;
-	}
+
 }
 
 void Sprite::SetSize(vec2 size)
 {
-
-	_spriteWorldParam.ndcScale.x = size.x / WINDOW_WIDTH;
-	_spriteWorldParam.ndcScale.y = size.y / WINDOW_HEIGHT;
+	_spriteWorldParam.ndcScale.x = size.x / _firstWindowSize.x;
+	_spriteWorldParam.ndcScale.y = size.y / _firstWindowSize.y;
 
 	_ndcSize = _spriteWorldParam.ndcScale;
 	_screenSize = size;
@@ -28,8 +24,8 @@ void Sprite::SetSize(vec2 size)
 
 void Sprite::SetPos(vec3 screenPos)
 {
-	_spriteWorldParam.ndcPos.x = screenPos.x/ WINDOW_WIDTH;
-	_spriteWorldParam.ndcPos.y = screenPos.y/ WINDOW_HEIGHT;
+	_spriteWorldParam.ndcPos.x = screenPos.x/ _firstWindowSize.x;
+	_spriteWorldParam.ndcPos.y = screenPos.y/ _firstWindowSize.y;
 	_spriteWorldParam.ndcPos.z = screenPos.z;
 
 	_ndcPos = _spriteWorldParam.ndcPos;
@@ -42,6 +38,15 @@ void Sprite::SetClipingColor(vec4 color)
 	_spriteWorldParam.clipingColor = color;
 }
 
+void Sprite::AddAction(shared_ptr<ActionCommand> action)
+{
+	_actions.push_back(action);
+}
+void Sprite::AddChildern(shared_ptr<Sprite> child)
+{
+	_children.push_back(child);
+	child->_parent = shared_from_this();
+}
 
 BasicSprite::BasicSprite()
 {
@@ -61,39 +66,55 @@ void BasicSprite::Init()
 
 void BasicSprite::Update()
 {
+
 	for (auto& action : _actions)
 	{
 		action->Execute(this);
+	}
+
+	for (auto& ele : _children)
+	{
+		for (auto& action : ele->_actions)
+		{
+			action->Execute(ele.get());
+		}
 	}
 }
 
 void BasicSprite::Render()
 {
+	if (_renderEnable == false)
+		return;
+
 	auto& cmdList = Core::main->GetCmdList();
 
+	// ���������� ���� ����
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
+
+	// SpriteWorldParam ���� ����
 	{
 		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteWorldParam)->Alloc(1);
 		memcpy(CbufferContainer->ptr, (void*)&_spriteWorldParam, sizeof(SpriteWorldParam));
 		cmdList->SetGraphicsRootConstantBufferView(_shader->GetRegisterIndex("SPRITE_WORLD_PARAM"), CbufferContainer->GPUAdress);
 	}
 
+	// SpriteTextureParam ���� ����
 	{
 		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteTextureParam)->Alloc(1);
 		memcpy(CbufferContainer->ptr, (void*)&_sprtieTextureParam, sizeof(SprtieTextureParam));
 		cmdList->SetGraphicsRootConstantBufferView(_shader->GetRegisterIndex("SPRITE_TEXTURE_PARAM"), CbufferContainer->GPUAdress);
 	}
 
-	//�ؽ��� ���ε�.
+	// �ؽ��� ���ε�
 	auto tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
-	Core::main->GetBufferManager()->GetTable()->CopyHandle(&tableContainer.CPUHandle, &_texture->GetSRVCpuHandle(), 0);
+	Core::main->GetBufferManager()->GetTable()->CopyHandle(tableContainer.CPUHandle, _texture->GetSRVCpuHandle(), 0);
 	cmdList->SetGraphicsRootDescriptorTable(SPRITE_TABLE_INDEX, tableContainer.GPUHandle);
 
+	// �޽� ����
 	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
 
 	if (_mesh->GetVertexCount() != 0)
 	{
-
 		if (_mesh->GetIndexCount() != 0)
 		{
 			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
@@ -105,6 +126,11 @@ void BasicSprite::Render()
 			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
 			cmdList->DrawInstanced(_mesh->GetVertexCount(), 1, 0, 0);
 		}
+	}
+
+	for (auto& child : _children)
+	{
+		child->Render();
 	}
 }
 
@@ -153,13 +179,22 @@ void AnimationSprite::Init()
 {
 	_mesh = GeoMetryHelper::LoadSprtieMesh();
 	_shader = ResourceManager::main->Get<Shader>(L"SpriteShader");
-}
+} 
 
 void AnimationSprite::Update()
 {
+
 	for (auto& action : _actions)
 	{
 		action->Execute(this);
+	}
+
+	for (auto& child : _children)
+	{
+		for (auto& action : child->_actions)
+		{
+			action->Execute(child.get());
+		}
 	}
 
 	AnimationUpdate();
@@ -168,6 +203,10 @@ void AnimationSprite::Update()
 
 void AnimationSprite::Render()
 {
+	if (_renderEnable == false)
+		return;
+
+
 	auto& cmdList = Core::main->GetCmdList();
 
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
@@ -186,7 +225,7 @@ void AnimationSprite::Render()
 
 	//�ؽ��� ���ε�.
 	auto tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
-	Core::main->GetBufferManager()->GetTable()->CopyHandle(&tableContainer.CPUHandle, &_texture->GetSRVCpuHandle(), 0);
+	Core::main->GetBufferManager()->GetTable()->CopyHandle(tableContainer.CPUHandle, _texture->GetSRVCpuHandle(), 0);
 	cmdList->SetGraphicsRootDescriptorTable(SPRITE_TABLE_INDEX, tableContainer.GPUHandle);
 
 	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
@@ -206,6 +245,13 @@ void AnimationSprite::Render()
 			cmdList->DrawInstanced(_mesh->GetVertexCount(), 1, 0, 0);
 		}
 	}
+
+	for (auto& child : _children)
+	{
+		child->Render();
+	}
+
+
 }
 
 void AnimationSprite::PushUVCoord(SpriteRect& rect)
@@ -238,16 +284,18 @@ void AnimationSprite::SetTexture(shared_ptr<Texture> texture)
 void AnimationSprite::AnimationUpdate()
 {
 	float dt = Time::main->GetDeltaTime();
-	_currentTime += dt;  // delta time�� �����Ͽ� ���� �ð� ����
+	_currentTime += dt; 
 
-	if (_currentTime >= _frameRate) { // _frameRate�� �����ϸ� �� �������� ��ȯ
-		_currentTime -= _frameRate;  // ���� �ð� ó��
+	if (_currentTime >= _frameRate) 
+	{ 
+		_currentTime -= _frameRate; 
 
-		_currentFrameIndex++;  // ���� ���������� �̵�
+		_currentFrameIndex++; 
 
 		if (_currentFrameIndex >= _maxFrameIndex)
 		{
-			_currentFrameIndex = 0;  // ù ��° ���������� ���ư���
+			_currentFrameIndex = 0; 
 		}
 	}
 }
+

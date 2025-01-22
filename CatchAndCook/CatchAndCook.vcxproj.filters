@@ -35,6 +35,9 @@
     <Filter Include="Camera">
       <UniqueIdentifier>{e5613d50-2ba3-40c8-b6e2-16c2a0bee462}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource\Sprite">
+      <UniqueIdentifier>{09e30710-c997-4d95-8bd1-3ad5f33dbf42}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -156,6 +159,12 @@
     </ClCompile>
     <ClCompile Include="TextManager.cpp">
       <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>Resource\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteAction.cpp">
+      <Filter>Resource\Sprite</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -292,11 +301,14 @@
     <ClInclude Include="SpriteRenderer.h">
       <Filter>Component</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Resource</Filter>
-    </ClInclude>
     <ClInclude Include="TextManager.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>Resource\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteAction.h">
+      <Filter>Resource\Sprite</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
