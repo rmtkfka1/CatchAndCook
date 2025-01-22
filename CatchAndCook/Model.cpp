@@ -1,7 +1,11 @@
 #include "pch.h"
 #include "Model.h"
 
+#include "GameObject.h"
+#include "Component.h"
+#include "MeshRenderer.h"
 #include "Mesh.h"
+#include "Transform.h"
 
 
 AssimpPack::AssimpPack()
@@ -14,6 +18,9 @@ AssimpPack::~AssimpPack()
 
 void AssimpPack::Init(std::wstring path, bool xFlip)
 {
+	auto p = std::filesystem::path(path);
+	assert(std::filesystem::exists(p));
+
     importer = std::make_shared<Assimp::Importer>();
 
     unsigned int flag = //aiProcess_MakeLeftHanded | // 왼손 좌표계로 변경
@@ -55,6 +62,57 @@ void AssimpPack::Init(std::wstring path, bool xFlip)
         MakeLeftHandedProcess leftHandedProcess;
         leftHandedProcess.Execute(const_cast<aiScene*>(scene));
     }
+	assert(scene != nullptr);
+}
+
+std::shared_ptr<GameObject> Model::CreateGameObject(const std::shared_ptr<Scene>& scene)
+{
+	return _rootNode->CreateGameObject(scene, nullptr);
+}
+
+void Model::Init(const wstring& path, VertexType vertexType)
+{
+	std::shared_ptr<AssimpPack> pack = std::make_shared<AssimpPack>();
+	pack->Init(path);
+	const aiScene* scene = pack->GetScene();
+
+	// 임시
+	auto model = GetCast<Model>();
+	// -------- 매쉬 생성 --------
+	_modelMeshList.reserve(scene->mNumMeshes);
+	for (int i = 0; i < scene->mNumMeshes; i++)
+	{
+		aiMesh* currentAIMesh = scene->mMeshes[i];
+		std::shared_ptr<ModelMesh> currentModelMesh = std::make_shared<ModelMesh>();
+		std::shared_ptr<Mesh> currentMesh = std::make_shared<Mesh>();
+
+		std::vector<uint32_t> indexList;
+		LoadIndex(currentAIMesh, indexList);
+
+		switch (vertexType)
+		{
+			case VertexType::Vertex_Skinned:
+			{
+				LoadVertex(currentAIMesh, currentModelMesh->skinnedMeshList);
+				LoadBone(currentAIMesh, currentModelMesh);
+				currentMesh->Init(currentModelMesh->skinnedMeshList, indexList);
+				break;
+			}
+			case VertexType::Vertex_Static:
+			{
+				LoadVertex(currentAIMesh, currentModelMesh->staticMeshList);
+				currentMesh->Init(currentModelMesh->staticMeshList, indexList);
+				break;
+			}
+		}
+		currentModelMesh->SetType(vertexType);
+		currentModelMesh->SetMesh(currentMesh);
+		currentModelMesh->SetIndex(i);
+		_modelMeshList.push_back(currentModelMesh);
+	}
+	_rootNode = AddNode(scene->mRootNode);
+
+
 }
 
 void Model::DebugLog()
@@ -123,6 +181,96 @@ void Model::LoadIndex(aiMesh* assimp_mesh, std::vector<uint32_t>& indexs)
 	}
 }
 
+void Model::LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& currentModelMesh)
+{
+	std::vector<Vertex_Skinned>& vertexs = currentModelMesh->skinnedMeshList;
+
+	for (int boneIndex = 0; boneIndex < currentAIMesh->mNumBones; boneIndex++)
+	{
+		aiBone* currentAIBone = currentAIMesh->mBones[boneIndex];
+		std::string boneName = convert_assimp::Format(currentAIBone->mName);
+		std::string nodeName = boneName;
+		aiNode* boneNode = currentAIBone->mNode;
+		if (boneNode != nullptr)
+			nodeName = convert_assimp::Format(currentAIBone->mNode->mName);
+
+
+		auto bone = FindBoneByName(boneName);
+		if (bone == nullptr)
+		{
+			bone = std::make_shared<Bone>();
+			bone->SetName(boneName);
+			bone->SetNodeName(nodeName);
+			bone->SetTransformMatrix(convert_assimp::Format(currentAIBone->mOffsetMatrix));
+			AddBone(bone);
+		}
+
+		for (int boneVertexIndex = 0; boneVertexIndex < currentAIBone->mNumWeights; boneVertexIndex++)
+		{
+			auto& currentVertex = vertexs[currentAIBone->mWeights[boneVertexIndex].mVertexId];
+			int findIndex = -1;
+			float* idArray = &currentVertex.boneId.x;
+			float* weightArray = &currentVertex.boneWeight.x;
+
+			const int MAX_BONE_COUNT = 4;
+
+			// 먼저 안쓰는 ID가 있는지 수색
+			for (int l = MAX_BONE_COUNT - 1; l >= 0; --l)
+				if (idArray[l] == -1)
+					findIndex = l;
+			// 가장 작은거 수색
+			if (findIndex == -1)
+			{
+				float minW = currentAIBone->mWeights[boneVertexIndex].mWeight;
+				for (int l = 0; l < MAX_BONE_COUNT; l++)
+				{
+					if (weightArray[l] < minW)
+					{
+						minW = weightArray[l];
+						findIndex = l;
+					}
+				}
+			}
+			// 수색 성공시 갱신.
+			if (findIndex != -1)
+			{
+				(&currentVertex.boneId.x)[findIndex] = static_cast<float>(bone->GetIndex());
+				(&currentVertex.boneWeight.x)[findIndex] = currentAIBone->mWeights[boneVertexIndex].mWeight;
+			}
+		}
+	}
+	for (int vertexIndex = 0; vertexIndex < vertexs.size(); vertexIndex++)
+	{
+		auto& currentVertex = vertexs[vertexIndex];
+		if (currentVertex.boneWeight.LengthSquared() > 1)
+			currentVertex.boneWeight.Normalize();
+	}
+	
+}
+
+void Model::AddBone(const std::shared_ptr<Bone>& bone)
+{
+	int boneId = AllocBoneID();
+	if (_modelBoneList.size() <= boneId)
+		_modelBoneList.resize(boneId+1);
+	_modelBoneList[boneId] = bone;
+	_nameToBoneTable[bone->GetName()] = bone;
+	bone->SetIndex(boneId);
+}
+
+std::shared_ptr<ModelNode> Model::AddNode(aiNode* rootNode)
+{
+	auto currentNode = std::make_shared<ModelNode>();
+	currentNode->Init(GetCast<Model>(), rootNode);
+	_modelNodeList.push_back(currentNode);
+	
+	for (int i = 0; i < rootNode->mNumChildren; i++) {
+		AddNode(rootNode->mChildren[i])->SetParent(currentNode);
+	}
+
+	return currentNode;
+}
+
 
 void ModelNode::Init(shared_ptr<Model> model, aiNode* node)
 {
@@ -134,11 +282,11 @@ void ModelNode::Init(shared_ptr<Model> model, aiNode* node)
 	_meshIndexList.reserve(node->mNumMeshes);
 	for (int i = 0; i < node->mNumMeshes; i++)
 		_meshIndexList.push_back(node->mMeshes[i]);
-	std::vector<std::shared_ptr<Mesh>> meshList;
+	std::vector<std::shared_ptr<ModelMesh>> meshList;
 	for (auto& meshIndex : _meshIndexList)
-		meshList.push_back(model->_meshes[meshIndex]);
+		meshList.push_back(model->_modelMeshList[meshIndex]);
 
-	model->_nameToObjectTable[name] = GetCast<ModelNode>();
+	model->_nameToNodeTable[name] = shared_from_this();
 	model->_nameToMeshsTable[name] = meshList;
 
 }
@@ -148,11 +296,35 @@ void ModelNode::SetParent(const std::shared_ptr<ModelNode>& object)
 	if (object != nullptr)
 	{
 		_parent = object;
-		object->AddChild(GetCast<ModelNode>());
+		object->AddChild(shared_from_this());
 	}
 }
 
 void ModelNode::AddChild(const std::shared_ptr<ModelNode>& object)
 {
 	_childs.push_back(object);
+}
+
+std::shared_ptr<GameObject> ModelNode::CreateGameObject(const std::shared_ptr<Scene>& scene,
+                                                        const std::shared_ptr<GameObject>& parent)
+{
+	auto currentGameObject = scene->CreateGameObject(std::to_wstring(GetName()));
+	currentGameObject->transform->SetLocalSRTMatrix(_localTransform);
+	currentGameObject->SetParent(parent);
+
+	for (auto& meshIndex : _meshIndexList)
+	{
+		auto meshRenderer = currentGameObject->AddComponent<MeshRenderer>();
+		meshRenderer->SetMesh(_model.lock()->FindMeshByIndex(meshIndex)->GetMesh());
+		std::shared_ptr<Material> material = std::make_shared<Material>();
+		material->SetShader(ResourceManager::main->Get<Shader>(L"DefaultForward"));
+		material->SetPass(RENDER_PASS::Forward);
+		material->SetTexture("g_tex_0", ResourceManager::main->Get<Texture>(L"None_Debug"));
+		meshRenderer->AddMaterials({ material });
+	}
+
+	for (auto& child : _childs)
+		child.lock()->CreateGameObject(scene, currentGameObject);
+
+	return currentGameObject;
 }

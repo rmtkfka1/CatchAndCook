@@ -97,8 +97,7 @@ public:
 enum class VertexType
 {
     Vertex_Skinned,
-    Vertex_Static,
-    Vertex_Sprite
+    Vertex_Static
 };
 
 struct Vertex_Skinned

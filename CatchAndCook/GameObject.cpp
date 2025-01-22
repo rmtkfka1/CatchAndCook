@@ -131,6 +131,11 @@ void GameObject::SetDestroy()
     IDelayDestroy::SetDestroy();
 }
 
+void GameObject::Debug()
+{
+    std::cout << "GameObject\n";
+}
+
 void GameObject::Enable()
 {
     for (auto& component : _components) {

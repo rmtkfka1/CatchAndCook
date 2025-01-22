@@ -189,6 +189,8 @@ public:
 	void SetDestroy() override;
 	bool IsExecuteAble() override { return  IDelayDestroy::IsExecuteAble() && GetActive(); };
 
+	void Debug();
+
 	ObjectTag tag = ObjectTag::defualt;
 	std::shared_ptr<Transform> transform;
 

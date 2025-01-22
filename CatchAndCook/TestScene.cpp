@@ -100,6 +100,7 @@ void TestScene::Init()
 		};
 	}
 
+	if (false)
 	{
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"AnimationSprite");
 		auto spriteRender = gameObject->AddComponent<SpriteRenderer>();

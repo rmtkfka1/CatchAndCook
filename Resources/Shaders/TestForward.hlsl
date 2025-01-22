@@ -1,10 +1,5 @@
 #include "GLOBAL.hlsl"
 
-cbuffer test : register(b1)
-{
-    row_major matrix WorldMat;
-}
-
 cbuffer cameraParams : register(b2)
 {
     row_major Matrix ViewMatrix;
@@ -21,27 +16,28 @@ cbuffer cameraParams : register(b2)
     float4 cameraScreenData;
 };
 
-cbuffer popo : register(b7)
+cbuffer TestTransform : register(b1)
 {
-    float2 uv;
+    row_major matrix WorldMat;
 }
-
 
 struct VS_IN
 {
     float3 pos : POSITION;
+    float3 normal : NORMAL;
     float2 uv : TEXCOORD0;
-    //float3 normal : NORMAL;
 };
 
 struct VS_OUT
 {
     float4 pos : SV_Position;
     float2 uv : TEXCOORD0;
+    float3 normal : NORMAL;
 };
 
 Texture2D g_tex_0 : register(t0);
 SamplerState g_sam_0 : register(s0);
+SamplerState g_sam_1 : register(s1);
 
 VS_OUT VS_Main(VS_IN input)
 {
@@ -58,5 +54,5 @@ VS_OUT VS_Main(VS_IN input)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-   return g_tex_0.Sample(g_sam_0, input.uv+uv);
+   return  g_tex_0 .Sample(g_sam_0, input.uv*5.0f);
 }

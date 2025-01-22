@@ -44,6 +44,9 @@ void Game::Init(HWND hwnd)
 	auto scene = SceneManager::main->AddScene(SceneType::TestScene);
 	SceneManager::main->ChangeScene(scene);
 
+	ResourceManager::main->Load<Model>(L"testModel", L"../Resources/Models/Kindred/kindred_unity.fbx", VertexType::Vertex_Skinned);
+	auto obj = ResourceManager::main->Get<Model>(L"testModel")->CreateGameObject(scene);
+	obj->transform->SetWorldPosition(vec3(0, 0, -1));
 }
 
 void Game::PrevUpdate()
@@ -109,7 +112,6 @@ void Game::Run()
 
 	CameraUpdate();
 
-	//ResourceManager::main->Load<Model>(L"1234", L"1234");
 	std::shared_ptr<Scene> currentScene = SceneManager::main->GetCurrentScene();
 	currentScene->Update();
 	

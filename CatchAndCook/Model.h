@@ -2,6 +2,9 @@
 #include "Mesh.h"
 #include "Vertex.h"
 
+class Scene;
+class Bone;
+class ModelMesh;
 class ModelNode;
 
 class AssimpPack : public std::enable_shared_from_this<AssimpPack>
@@ -21,45 +24,25 @@ public:
 class Model : public IGuid
 {
 public:
-	std::vector<std::shared_ptr<Mesh>> _meshes;
-	std::vector<std::shared_ptr<ModelNode>> _objects;
+	std::vector<std::shared_ptr<ModelMesh>> _modelMeshList;
+	std::vector<std::shared_ptr<ModelNode>> _modelNodeList;
+	std::vector<std::shared_ptr<Bone>> _modelBoneList;
 
-	std::unordered_map<std::string, std::vector<std::shared_ptr<Mesh>>> _nameToMeshsTable;
-	std::unordered_map<std::string, std::shared_ptr<ModelNode>> _nameToObjectTable;
-	std::shared_ptr<ModelNode> FindObjectByName(const string& name) { return _nameToObjectTable[name]; };
-	std::vector<std::shared_ptr<Mesh>> FindMeshsByName(const string& name) { return _nameToMeshsTable[name]; };
+	std::unordered_map<std::string, std::vector<std::shared_ptr<ModelMesh>>> _nameToMeshsTable;
+	std::unordered_map<std::string, std::shared_ptr<ModelNode>> _nameToNodeTable;
+	std::unordered_map<std::string, std::shared_ptr<Bone>> _nameToBoneTable;
 
-	template<class VertexType>
-	void Init(const wstring& path)
-	{
-		std::shared_ptr<AssimpPack> pack = std::make_shared<AssimpPack>();
-		pack->Init(path);
-		const aiScene* scene = pack->GetScene();
+	std::shared_ptr<ModelNode> FindNodeByName(const string& name) { return _nameToNodeTable[name]; };
+	std::vector<std::shared_ptr<ModelMesh>> FindMeshsByName(const string& name) { return _nameToMeshsTable[name]; };
+	std::shared_ptr<ModelMesh> FindMeshByIndex(const int& index) { return _modelMeshList[index]; };
+	std::shared_ptr<Bone> FindBoneByName(const string& name) { return _nameToBoneTable[name]; };
 
-		_meshes.reserve(scene->mNumMeshes);
-		for (int i = 0; i < scene->mNumMeshes; i++)
-		{
-			std::shared_ptr<Mesh> currentMesh = std::make_shared<Mesh>();
-			auto& currentAIMesh = scene->mMeshes[i];
-			std::vector<VertexType> vertexs;
-			std::vector<uint32_t> indexs;
-			LoadVertex(currentAIMesh, vertexs);
-			LoadIndex(currentAIMesh, indexs);
-			currentMesh->Init(vertexs, indexs);
-		}
-
-		auto parentModel = std::make_shared<ModelNode>();
-		auto rootNode = scene->mRootNode;
-		auto rootModel = std::make_shared<ModelNode>();
-		rootModel->Init(GetCast<Model>(), rootNode);
-		rootModel->SetParent(parentModel);
-	}
-
+	std::shared_ptr<GameObject> CreateGameObject(const std::shared_ptr<Scene>& scene);
+	
+	void Init(const wstring& path, VertexType vertexType);
 	void DebugLog();
 
 public:
-	static const aiScene* scene;
-
 	template<class T>
 	static void LoadVertex(aiMesh* assimp_mesh, std::vector<T>& vertexs);
 	template<>
@@ -69,9 +52,40 @@ public:
 
 	static void LoadIndex(aiMesh* assimp_mesh, std::vector<uint32_t>& indexs);
 
+	void LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& currentModelMesh);
+
+private:
+	int AllocBoneID() { return _boneAllocator++; };
+	void AddBone(const std::shared_ptr<Bone>& bone);
+	std::shared_ptr<ModelNode> AddNode(aiNode* rootNode);
+
+private:
+	int _boneAllocator = 0;
+	std::shared_ptr<ModelNode> _rootNode;
 };
 
-class ModelNode : public IGuid
+class ModelMesh
+{
+	std::shared_ptr<Mesh> _mesh;
+	VertexType _type = VertexType::Vertex_Static;
+	std::string _name;
+	int _index = -1;
+
+public:
+	std::shared_ptr<Mesh> GetMesh() { return _mesh; };
+	void SetMesh(const std::shared_ptr<Mesh>& mesh) { _mesh = mesh; };
+	VertexType GetType() { return _type; };
+	void SetType(const VertexType& type) { _type = type; };
+	void SetIndex(int index) { _index = index; };
+	int GetIndex() { return _index; };
+	void SetName(const std::string& name) { _name = name; };
+	std::string& GetName() { return  _name; };
+
+	std::vector<Vertex_Skinned> skinnedMeshList;
+	std::vector<Vertex_Static> staticMeshList;
+};
+
+class ModelNode : public std::enable_shared_from_this<ModelNode>
 {
 private:
 	std::vector<int> _meshIndexList;
@@ -94,12 +108,29 @@ public:
 
 	void SetParent(const std::shared_ptr<ModelNode>& object);
 	void AddChild(const std::shared_ptr<ModelNode>& object);
+
+	std::shared_ptr<GameObject> CreateGameObject(const std::shared_ptr<Scene>& scene,
+	                                             const std::shared_ptr<GameObject>& parent);
 };
+
 
 class Bone
 {
-	std::string _targetObjectName;
+	std::string _targetNodeName;
+	std::string _boneName;
+	Matrix _boneTransformMatrix = Matrix::Identity;
+	int _index = -1;
+
 public:
-	void SetName(const std::string& name) { _targetObjectName = name; };
-	std::string& GetName() { return  _targetObjectName; };
+	void SetNodeName(const std::string& name) { _targetNodeName = name; };
+	std::string& GetNodeName() { return  _targetNodeName; };
+
+	void SetName(const std::string& name) { _boneName = name; };
+	std::string& GetName() { return  _boneName; };
+
+	void SetIndex(int index) { _index = index; };
+	int GetIndex() { return _index; };
+
+	void SetTransformMatrix(const Matrix& matrix) { _boneTransformMatrix = matrix; };
+	Matrix& GetTransformMatrix() { return _boneTransformMatrix; };
 };

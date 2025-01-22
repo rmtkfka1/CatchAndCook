@@ -336,5 +336,8 @@
     <FxCompile Include="..\Resources\Shaders\cubemap.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\GLOBAL.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
