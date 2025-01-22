@@ -2,6 +2,8 @@
 #include "Model.h"
 
 #include "GameObject.h"
+#include "Component.h"
+#include "MeshRenderer.h"
 #include "Mesh.h"
 #include "Transform.h"
 
@@ -25,7 +27,7 @@ void AssimpPack::Init(std::wstring path, bool xFlip)
         //aiProcess_ConvertToLeftHanded |
         aiProcess_FlipWindingOrder | //CW, CCW 바꾸는거임.
         aiProcess_FlipUVs | // 말그대로 uv의 y축을 뒤집음. 그리고 bitangent도 뒤집음.
-        //aiProcess_Triangulate | // 4각형 5각형을 3각형으로
+        aiProcess_Triangulate | // 4각형 5각형을 3각형으로
         //aiProcess_GenSmoothNormals | // Normal이 없으면 Smmoth Normal 생성
         aiProcess_GenNormals | // Normal이 없으면 Normal 생성
         //aiProcess_ImproveCacheLocality | // 삼각형 개선. 잘 되면 켜보기 캐시히트율을 위해 삼각형 재정렬함.
@@ -63,9 +65,9 @@ void AssimpPack::Init(std::wstring path, bool xFlip)
 	assert(scene != nullptr);
 }
 
-void Model::CreateGameObject(const std::shared_ptr<Scene>& scene)
+std::shared_ptr<GameObject> Model::CreateGameObject(const std::shared_ptr<Scene>& scene)
 {
-	
+	return _rootNode->CreateGameObject(scene, nullptr);
 }
 
 void Model::Init(const wstring& path, VertexType vertexType)
@@ -309,6 +311,17 @@ std::shared_ptr<GameObject> ModelNode::CreateGameObject(const std::shared_ptr<Sc
 	auto currentGameObject = scene->CreateGameObject(std::to_wstring(GetName()));
 	currentGameObject->transform->SetLocalSRTMatrix(_localTransform);
 	currentGameObject->SetParent(parent);
+
+	for (auto& meshIndex : _meshIndexList)
+	{
+		auto meshRenderer = currentGameObject->AddComponent<MeshRenderer>();
+		meshRenderer->SetMesh(_model.lock()->FindMeshByIndex(meshIndex)->GetMesh());
+		std::shared_ptr<Material> material = std::make_shared<Material>();
+		material->SetShader(ResourceManager::main->Get<Shader>(L"DefaultForward"));
+		material->SetPass(RENDER_PASS::Forward);
+		material->SetTexture("g_tex_0", ResourceManager::main->Get<Texture>(L"None_Debug"));
+		meshRenderer->AddMaterials({ material });
+	}
 
 	for (auto& child : _childs)
 		child.lock()->CreateGameObject(scene, currentGameObject);

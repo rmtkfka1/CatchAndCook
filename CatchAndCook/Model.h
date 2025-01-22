@@ -34,9 +34,10 @@ public:
 
 	std::shared_ptr<ModelNode> FindNodeByName(const string& name) { return _nameToNodeTable[name]; };
 	std::vector<std::shared_ptr<ModelMesh>> FindMeshsByName(const string& name) { return _nameToMeshsTable[name]; };
+	std::shared_ptr<ModelMesh> FindMeshByIndex(const int& index) { return _modelMeshList[index]; };
 	std::shared_ptr<Bone> FindBoneByName(const string& name) { return _nameToBoneTable[name]; };
 
-	void CreateGameObject(const std::shared_ptr<Scene>& scene);
+	std::shared_ptr<GameObject> CreateGameObject(const std::shared_ptr<Scene>& scene);
 	
 	void Init(const wstring& path, VertexType vertexType);
 	void DebugLog();

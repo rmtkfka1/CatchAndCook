@@ -37,6 +37,17 @@ void ResourceManager::CreateDefaultShader()
 		Add<Shader>(L"SpriteShader", shader);
 	}
 
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->Init(L"TestForward.hlsl", SkinProp, ShaderArg{}, info);
+		Add<Shader>(L"DefaultForward", shader);
+	}
+
 }
 
 void ResourceManager::CreateDefaultMaterial()
@@ -46,4 +57,5 @@ void ResourceManager::CreateDefaultMaterial()
 void ResourceManager::CreateDefaultTexture()
 {
 	_noneTexture = Load<Texture>(L"None", L"Textures/Config/noneTexture.png");
+	_noneTexture = Load<Texture>(L"None_Debug", L"Textures/Config/noneTexture_debug.png");
 }
