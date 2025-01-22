@@ -283,16 +283,16 @@ void AnimationSprite::SetTexture(shared_ptr<Texture> texture)
 void AnimationSprite::AnimationUpdate()
 {
 	float dt = Time::main->GetDeltaTime();
-	_currentTime += dt;  // delta time을 누적하여 진행 시간 증가
+	_currentTime += dt; 
 
-	if (_currentTime >= _frameRate) { // _frameRate에 도달하면 한 프레임을 전환
-		_currentTime -= _frameRate;  // 남은 시간 처리
+	if (_currentTime >= _frameRate) { 
+		_currentTime -= _frameRate; 
 
-		_currentFrameIndex++;  // 다음 프레임으로 이동
+		_currentFrameIndex++; 
 
 		if (_currentFrameIndex >= _maxFrameIndex)
 		{
-			_currentFrameIndex = 0;  // 첫 번째 프레임으로 돌아가기
+			_currentFrameIndex = 0; 
 		}
 	}
 }

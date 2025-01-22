@@ -110,7 +110,7 @@ void TestScene::Init()
 		sprite->SetTexture(texture);
 		sprite->SetPos(vec3(0, 0,0.3f));
 		sprite->SetSize(vec2(500,500));
-		sprite->SetFrameRate(0.1f);
+		sprite->SetFrameRate(0.05f);
 		sprite->SetClipingColor(vec4(0, 0, 0, 1.0f));		https://imagecolorpicker.com/
 
 		const float TextureSize = 512.0f;
