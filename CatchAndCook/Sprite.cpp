@@ -72,7 +72,6 @@ void BasicSprite::Update()
 		action->Execute(this);
 	}
 
-
 	for (auto& ele : _children)
 	{
 		for (auto& action : ele->_actions)
@@ -192,7 +191,6 @@ void AnimationSprite::Update()
 
 	for (auto& child : _children)
 	{
-		// 자식의 액션은 부모에서만 호출하도록 처리
 		for (auto& action : child->_actions)
 		{
 			action->Execute(child.get());
@@ -207,6 +205,7 @@ void AnimationSprite::Render()
 {
 	if (_renderEnable == false)
 		return;
+
 
 	auto& cmdList = Core::main->GetCmdList();
 
@@ -251,6 +250,8 @@ void AnimationSprite::Render()
 	{
 		child->Render();
 	}
+
+
 }
 
 void AnimationSprite::PushUVCoord(SpriteRect& rect)
@@ -285,7 +286,8 @@ void AnimationSprite::AnimationUpdate()
 	float dt = Time::main->GetDeltaTime();
 	_currentTime += dt; 
 
-	if (_currentTime >= _frameRate) { 
+	if (_currentTime >= _frameRate) 
+	{ 
 		_currentTime -= _frameRate; 
 
 		_currentFrameIndex++; 
