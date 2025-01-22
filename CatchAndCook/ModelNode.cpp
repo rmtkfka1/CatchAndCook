@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "ModelNode.h"
 
+#include "GameObject.h"
+#include "ModelMesh.h"
+#include "Transform.h"
+#include "Component.h"
+#include "MeshRenderer.h"
+
 
 void ModelNode::Init(shared_ptr<Model> model, aiNode* node)
 {

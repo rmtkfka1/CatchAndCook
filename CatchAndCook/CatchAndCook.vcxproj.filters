@@ -169,9 +169,15 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>Resource\Model</Filter>
     </ClCompile>
-    <ClCompile Include="ModelNode.cpp" />
-    <ClCompile Include="ModelMesh.cpp" />
-    <ClCompile Include="Bone.cpp" />
+    <ClCompile Include="ModelNode.cpp">
+      <Filter>Resource\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelMesh.cpp">
+      <Filter>Resource\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Bone.cpp">
+      <Filter>Resource\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -319,9 +325,15 @@
     <ClInclude Include="Mesh.h">
       <Filter>Resource\Model</Filter>
     </ClInclude>
-    <ClInclude Include="ModelNode.h" />
-    <ClInclude Include="ModelMesh.h" />
-    <ClInclude Include="Bone.h" />
+    <ClInclude Include="ModelNode.h">
+      <Filter>Resource\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelMesh.h">
+      <Filter>Resource\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Bone.h">
+      <Filter>Resource\Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
