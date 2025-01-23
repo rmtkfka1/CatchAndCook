@@ -141,7 +141,7 @@ void TestScene::Init()
 		shared_ptr<TextSprite> sprite = make_shared<TextSprite>();
 
 		spriteRender->SetSprite(sprite);
-		sprite->SetPos(vec3(300.0f, 0.0f, 0.3f));
+		sprite->SetPos(vec3(300.0f, 0.0f, 0.000001));
 		sprite->SetSize(vec2(300, 300));
 		sprite->SetText(L"Ä³Ä¡¾ØÄî");
 		sprite->AddAction(make_shared<DragAction>(KeyCode::LeftMouse));

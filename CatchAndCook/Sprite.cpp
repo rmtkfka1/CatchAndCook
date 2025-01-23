@@ -325,7 +325,7 @@ void TextSprite::Init()
 
 void TextSprite::Update()
 {
-	if (_changed)
+	if (_textChanged)
 	{
 		TextManager::main->UpdateToSysMemory(_text, _textHandle, _sysMemory);
 	}
@@ -351,11 +351,11 @@ void TextSprite::Render()
 
 	auto& cmdList = Core::main->GetCmdList();
 
-	if (_changed)
+	if (_textChanged)
 	{
 		_texture->UpdateDynamicTexture(_sysMemory);
 		_texture->CopyCpuToGpu();
-		_changed = false;
+		_textChanged = false;
 	}
 
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
