@@ -127,19 +127,19 @@ public:
 	virtual void Update();
 	virtual void Render();
 
-	void SetText(const wstring& text) { _text = text; }
+	void SetText(const wstring& text) { _text = text; _changed = true; }
 	void CreateObject(int width, int height, const WCHAR* font, FontColor color, float fontsize);
 
 	
 private:
+	bool _changed = true;
 	wstring _text =L"NULL";
 	shared_ptr<TextHandle> _textHandle;
 	shared_ptr<Mesh> _mesh;
 	shared_ptr<Shader> _shader;
 	shared_ptr<Texture> _texture;
 	SprtieTextureParam _sprtieTextureParam;
-	BYTE* testptr;
-	ULONGLONG g_PrvUpdateTick=0;
+	BYTE* _sysMemory;
 };
 
 /*****************************************************************

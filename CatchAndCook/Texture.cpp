@@ -274,10 +274,9 @@ void Texture::CreateDynamicTexture(DXGI_FORMAT format, uint32 width, uint32 heig
 
 void Texture::UpdateDynamicTexture(const BYTE* sysMemory)
 {
-    ID3D12Resource* pDestTexResource = _resource.Get();
-    ID3D12Resource* pUploadBuffer = _uploadResource.Get();
 
-    D3D12_RESOURCE_DESC Desc = pDestTexResource->GetDesc();
+
+    D3D12_RESOURCE_DESC Desc = _resource->GetDesc();
    
     D3D12_PLACED_SUBRESOURCE_FOOTPRINT Footprint;
     UINT	Rows = 0;
@@ -289,61 +288,65 @@ void Texture::UpdateDynamicTexture(const BYTE* sysMemory)
     BYTE* pMappedPtr = nullptr;
     CD3DX12_RANGE writeRange(0, 0);
 
-    HRESULT hr = pUploadBuffer->Map(0, &writeRange, reinterpret_cast<void**>(&pMappedPtr));
+    HRESULT hr = _uploadResource->Map(0, &writeRange, reinterpret_cast<void**>(&pMappedPtr));
     if (FAILED(hr))
         __debugbreak();
 
     const BYTE* pSrc = sysMemory;
     BYTE* pDest = pMappedPtr;
 
-    for (UINT y = 0; y < 256; y++)
+    int width = Desc.Width;
+    int height =Desc.Height;
+
+    for (UINT y = 0; y < height; y++)
     {
-        memcpy(pDest, pSrc, 512 * 4);
-        pSrc += (512 * 4);
+        memcpy(pDest, pSrc, width * 4);
+        pSrc += (width * 4);
         pDest += Footprint.Footprint.RowPitch;
     }
     // Unmap
-    pUploadBuffer->Unmap(0, nullptr);
+    _uploadResource->Unmap(0, nullptr);
 
 }
 
 void Texture::CopyCpuToGpu()
 {
-    ID3D12Resource* pDestTexResource = _resource.Get();
-    ID3D12Resource* pSrcTexResource = _uploadResource.Get();
+    
+    D3D12_PLACED_SUBRESOURCE_FOOTPRINT Footprint = {};
+    UINT Rows = 0;
+    UINT64 RowSize = 0;
+    UINT64 TotalBytes = 0;
 
-    const DWORD MAX_SUB_RESOURCE_NUM = 32;
-    D3D12_PLACED_SUBRESOURCE_FOOTPRINT Footprint[MAX_SUB_RESOURCE_NUM] = {};
-    UINT	Rows[MAX_SUB_RESOURCE_NUM] = {};
-    UINT64	RowSize[MAX_SUB_RESOURCE_NUM] = {};
-    UINT64	TotalBytes = 0;
-
-    D3D12_RESOURCE_DESC Desc = pDestTexResource->GetDesc();
-    if (Desc.MipLevels > (UINT)_countof(Footprint))
+    D3D12_RESOURCE_DESC Desc = _resource->GetDesc();
+    if (Desc.MipLevels != 1) // 밉맵 레벨은 1이어야 함
         __debugbreak();
 
-    Core::main->GetDevice()->GetCopyableFootprints(&Desc, 0, Desc.MipLevels, 0, Footprint, Rows, RowSize, &TotalBytes);
+    auto& device = Core::main->GetDevice();
+    auto& cmdList = Core::main->GetCmdList();
 
-    Core::main->GetCmdList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(pDestTexResource, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_DEST));
-    for (DWORD i = 0; i < Desc.MipLevels; i++)
-    {
+    // 서브리소스 발자국 정보 가져오기
+    device->GetCopyableFootprints(&Desc, 0, 1, 0, &Footprint, &Rows, &RowSize, &TotalBytes);
 
-        D3D12_TEXTURE_COPY_LOCATION	destLocation = {};
-        destLocation.PlacedFootprint = Footprint[i];
-        destLocation.pResource = pDestTexResource;
-        destLocation.SubresourceIndex = i;
-        destLocation.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
+    // 리소스 상태를 복사 대상으로 전환
+    cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
+        _resource.Get(), D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_DEST));
 
-        D3D12_TEXTURE_COPY_LOCATION	srcLocation = {};
-        srcLocation.PlacedFootprint = Footprint[i];
-        srcLocation.pResource = pSrcTexResource;
-        srcLocation.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
+    // 텍스처 복사 위치 설정
+    D3D12_TEXTURE_COPY_LOCATION destLocation = {};
+    destLocation.PlacedFootprint = Footprint;
+    destLocation.pResource = _resource.Get();
+    destLocation.SubresourceIndex = 0;
+    destLocation.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
 
-        Core::main->GetCmdList()->CopyTextureRegion(&destLocation, 0, 0, 0, &srcLocation, nullptr);
-    }
-    Core::main->GetCmdList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(pDestTexResource, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE));
-  
+    D3D12_TEXTURE_COPY_LOCATION srcLocation = {};
+    srcLocation.PlacedFootprint = Footprint;
+    srcLocation.pResource = _uploadResource.Get();
+    srcLocation.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
+
+    // 텍스처 복사 수행
+    cmdList->CopyTextureRegion(&destLocation, 0, 0, 0, &srcLocation, nullptr);
+
+    // 리소스 상태를 원래 상태로 전환
+    cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
+        _resource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE));
 }
-
-
-

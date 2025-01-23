@@ -13,12 +13,12 @@ void TextManager::Init()
 
 }
 
-void TextManager::UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>& handle , BYTE* memory)
+void TextManager::UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>& handle , BYTE* memory )
 {
     IDWriteTextLayout* textLayout = nullptr;
 
     //텍스트레이아웃 생성
-    ThrowIfFailed(_factory->CreateTextLayout(L"helloworld", 10, handle->font.Get(), 1024, handle->height, &textLayout));
+    ThrowIfFailed(_factory->CreateTextLayout(text.c_str(), text.length(), handle->font.Get(), 1024, handle->height, &textLayout));
 
     DWRITE_TEXT_METRICS metrics = {};
 
@@ -36,7 +36,16 @@ void TextManager::UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>&
         // 텍스트 렌더링
         _context->BeginDraw();
 
-        _context->Clear(D2D1::ColorF(D2D1::ColorF::YellowGreen));
+        if (handle->fontcolor == FontColor::WHITE)
+        {
+            _context->Clear(D2D1::ColorF(D2D1::ColorF::Black));
+        }
+
+        else if (handle->fontcolor == FontColor::BLACK)
+        {
+            _context->Clear(D2D1::ColorF(D2D1::ColorF::White));
+        }
+
         _context->SetTransform(D2D1::Matrix3x2F::Identity());
 
         _context->DrawTextLayout(D2D1::Point2F(0.0f, 0.0f), textLayout, handle->brush.Get());
@@ -118,6 +127,7 @@ shared_ptr<TextHandle> TextManager::AllocTextStrcture(int width, int height, con
     textHandle->height = height;
     textHandle->fontSize = fontsize;
     textHandle->brush = _brushMap[color];
+    textHandle->fontcolor = color;
    
     uint32 dpi = ::GetDpiForWindow(Core::main->GetHandle());
 
@@ -132,8 +142,8 @@ shared_ptr<TextHandle> TextManager::AllocTextStrcture(int width, int height, con
             );
 
         D2D1_SIZE_U	size_u;
-        size_u.width = 1024;
-        size_u.height = 256;
+        size_u.width = width;
+        size_u.height = height;
 
         ThrowIfFailed(_context->CreateBitmap(size_u, nullptr, 0, &bitmapProperties, textHandle->bitMapGpu.GetAddressOf()));
 

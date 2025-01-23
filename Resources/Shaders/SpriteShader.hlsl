@@ -68,10 +68,11 @@ float4 PS_Main(VS_OUT input) : SV_TARGET
   
     float4 texColor = texDiffuse.Sample(samplerDiffuse, input.uv);
     
-    if (length(texColor.rgb - clipingColor.rgb) < 0.001)
+    if (texColor.r == clipingColor.r && texColor.g == clipingColor.g && texColor.b == clipingColor.b)
     {
-        discard; 
+        discard;
     }
+    
     
     return texColor ;
 }

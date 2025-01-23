@@ -1,5 +1,11 @@
 #pragma once
 
+enum class FontColor
+{
+	WHITE,
+	BLACK,
+};
+
 
 class TextHandle
 {
@@ -11,19 +17,12 @@ public:
 	ComPtr<ID2D1Bitmap1> bitMapRead{};
 	ComPtr<ID2D1SolidColorBrush> brush{};
 	ComPtr<IDWriteTextFormat> font{};
+	FontColor fontcolor;
 	uint32 width{};
 	uint32 height{};
-	
-
-
 	float fontSize{};
 };
 
-enum class FontColor
-{
-	WHITE,
-	BLACK,
-};
 
 class TextManager
 {
@@ -32,7 +31,7 @@ public:
 
 public:
 	void Init();
-	void UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>& handle , BYTE* memory);
+	void UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>& handle , BYTE* memory );
 	void PrintFontAll(); //사용할수있는 모든 폰트 콘솔로 출력.
 
 	shared_ptr<TextHandle> AllocTextStrcture(int width ,int height , const WCHAR* font, FontColor color , float fontsize );

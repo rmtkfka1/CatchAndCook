@@ -300,6 +300,12 @@ void AnimationSprite::AnimationUpdate()
 	}
 }
 
+/*****************************************************************
+*                                                                *
+*                         TextSprite                             *
+*                                                                *
+******************************************************************/
+
 TextSprite::TextSprite()
 {
 	Init();
@@ -307,97 +313,37 @@ TextSprite::TextSprite()
 
 TextSprite::~TextSprite()
 {
+	delete[] _sysMemory;
+
 }
 
 void TextSprite::Init()
 {
 	_mesh = GeoMetryHelper::LoadSprtieMesh();
 	_shader = ResourceManager::main->Get<Shader>(L"SpriteShader");
-
-	int g_ImageWidth = 512;
-	int g_ImageHeight = 256;
-
-	testptr = new BYTE[(g_ImageWidth * g_ImageHeight * 4)];
-
-	DWORD* pDest = (DWORD*)testptr;
-	for (DWORD y = 0; y < g_ImageHeight; y++)
-	{
-		for (DWORD x = 0; x < g_ImageWidth; x++)
-		{
-			pDest[x + g_ImageWidth * y] = 0xff0000ff;
-		}
-	}
-
-
-
 }
 
 void TextSprite::Update()
 {
-	//int g_ImageWidth = 512;
-	//int g_ImageHeight = 256;
+	if (_changed)
+	{
+		TextManager::main->UpdateToSysMemory(_text, _textHandle, _sysMemory);
+	}
 
-	//// Update Texture
-	//static DWORD g_dwCount = 0;
-	//static DWORD g_dwTileColorR = 0;
-	//static DWORD g_dwTileColorG = 0;
-	//static DWORD g_dwTileColorB = 0;
+	for (auto& action : _actions)
+	{
+		action->Execute(this);
+	}
 
-	//const DWORD TILE_WIDTH = 16;
-	//const DWORD TILE_HEIGHT = 16;
-
-	//DWORD TILE_WIDTH_COUNT = g_ImageWidth / TILE_WIDTH;
-	//DWORD TILE_HEIGHT_COUNT = g_ImageHeight / TILE_HEIGHT;
-
-	//if (g_dwCount >= TILE_WIDTH_COUNT * TILE_HEIGHT_COUNT)
-	//{
-	//	g_dwCount = 0;
-	//}
-	//DWORD TileY = g_dwCount / TILE_WIDTH_COUNT;
-	//DWORD TileX = g_dwCount % TILE_WIDTH_COUNT;
-
-	//DWORD StartX = TileX * TILE_WIDTH;
-	//DWORD StartY = TileY * TILE_HEIGHT;
+	for (auto& child : _children)
+	{
+		for (auto& action : child->_actions)
+		{
+			action->Execute(child.get());
+		}
+	}
 
 
-	//DWORD r = g_dwTileColorR;
-	//DWORD g = g_dwTileColorG;
-	//DWORD b = g_dwTileColorB;
-
-
-	//DWORD* pDest = (DWORD*)testptr;
-	//for (DWORD y = 0; y < TILE_HEIGHT; y++)
-	//{
-	//	for (DWORD x = 0; x < TILE_WIDTH; x++)
-	//	{
-	//		if (StartX + x >= g_ImageWidth)
-	//			__debugbreak();
-
-	//		if (StartY + y >= g_ImageHeight)
-	//			__debugbreak();
-
-	//		pDest[(StartX + x) + (StartY + y) * g_ImageWidth] = 0xff000000 | (b << 16) | (g << 8) | r;
-	//	}
-	//}
-
-	//g_dwCount++;
-	//g_dwTileColorR += 8;
-	//if (g_dwTileColorR > 255)
-	//{
-	//	g_dwTileColorR = 0;
-	//	g_dwTileColorG += 8;
-	//}
-	//if (g_dwTileColorG > 255)
-	//{
-	//	g_dwTileColorG = 0;
-	//	g_dwTileColorB += 8;
-	//}
-	//if (g_dwTileColorB > 255)
-	//{
-	//	g_dwTileColorB = 0;
-	//}
-
-	_texture->UpdateDynamicTexture(testptr);
 };
 
 void TextSprite::Render()
@@ -405,9 +351,12 @@ void TextSprite::Render()
 
 	auto& cmdList = Core::main->GetCmdList();
 
-	TextManager::main->UpdateToSysMemory(L"helloworld", _textHandle, testptr);
-
-	_texture->CopyCpuToGpu();
+	if (_changed)
+	{
+		_texture->UpdateDynamicTexture(_sysMemory);
+		_texture->CopyCpuToGpu();
+		_changed = false;
+	}
 
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
 
@@ -445,22 +394,54 @@ void TextSprite::Render()
 		}
 	}
 
+	for (auto& child : _children)
+	{
+		child->Render();
+	}
 }
 
 void TextSprite::CreateObject(int width, int height, const WCHAR* font, FontColor color, float fontsize)
 {
 	_textHandle =  TextManager::main->AllocTextStrcture(width, height, font, color, fontsize);
+	_sysMemory = new BYTE[(width * height * 4)];
 	_texture = make_shared<Texture>();
 	_texture->CreateDynamicTexture(DXGI_FORMAT_R8G8B8A8_UNORM, width, height);
+	_sprtieTextureParam.origintexSize = vec2(width,height);
 
-	auto desc = _texture->GetResource()->GetDesc();
+	if (color == FontColor::BLACK)
+	{
+		SetClipingColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
-	_sprtieTextureParam.origintexSize = vec2(desc.Width, desc.Height);
+		DWORD* pDest = (DWORD*)_sysMemory;
 
+		for (DWORD y = 0; y < height; y++)
+		{
+			for (DWORD x = 0; x < width; x++)
+			{
+				pDest[x + width * y] = 0xff'ff'ff'ff;
+			}
+		}
+	}
+	
+	else if (color == FontColor::WHITE)
+	{
+		SetClipingColor(vec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		DWORD* pDest = (DWORD*)_sysMemory;
+
+		for (DWORD y = 0; y < height; y++)
+		{
+			for (DWORD x = 0; x < width; x++)
+			{
+				pDest[x + width * y] = 0x00000000;
+			}
+		}
+	}
+	
 	_sprtieTextureParam.texSamplePos.x = 0;
 	_sprtieTextureParam.texSamplePos.y = 0;
-	_sprtieTextureParam.texSampleSize.x = desc.Width;
-	_sprtieTextureParam.texSampleSize.y = desc.Height;
+	_sprtieTextureParam.texSampleSize.x = width;
+	_sprtieTextureParam.texSampleSize.y = height;
 
 	
 }
