@@ -4,9 +4,9 @@ SamplerState samplerDiffuse : register(s0);
 
 cbuffer GLOBAL_DATA : register(b0)
 {
-    float2  g_window_size;
-    float   g_Time;
-    float   g_padding;
+    float2 g_window_size;
+    float g_Time;
+    float g_padding;
 };
 
 cbuffer SPRITE_WORLD_PARAM : register(b5)
@@ -52,7 +52,7 @@ VS_OUT VS_Main(VS_IN input)
     float2 pos = input.pos.xy * g_scale + g_pos.xy;
     output.pos = float4(pos.xy * float2(2, -2) + float2(-1, 1), g_pos.z, 1);
  
-    float2 tex_scale = (g_texSampleSize/ g_origintexSize);
+    float2 tex_scale = (g_texSampleSize / g_origintexSize);
     float2 tex_offset = (g_texSamplePos / g_origintexSize);
     
     output.uv = input.uv * tex_scale + tex_offset;
@@ -68,11 +68,10 @@ float4 PS_Main(VS_OUT input) : SV_TARGET
   
     float4 texColor = texDiffuse.Sample(samplerDiffuse, input.uv);
     
-    if (texColor.r == clipingColor.r && texColor.g == clipingColor.g && texColor.b == clipingColor.b)
+    if (length(texColor.rgb - clipingColor.rgb) < 0.001)
     {
         discard;
     }
     
-    
-    return texColor ;
+    return texColor * input.color * g_alpha;
 }

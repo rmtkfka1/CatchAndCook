@@ -433,7 +433,7 @@ void TextSprite::CreateObject(int width, int height, const WCHAR* font, FontColo
 		{
 			for (DWORD x = 0; x < width; x++)
 			{
-				pDest[x + width * y] = 0x00000000;
+				pDest[x + width * y] = 0x00'00'00'00;
 			}
 		}
 	}
