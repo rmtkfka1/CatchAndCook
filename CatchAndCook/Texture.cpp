@@ -274,8 +274,6 @@ void Texture::CreateDynamicTexture(DXGI_FORMAT format, uint32 width, uint32 heig
 
 void Texture::UpdateDynamicTexture(const BYTE* sysMemory)
 {
-
-
     D3D12_RESOURCE_DESC Desc = _resource->GetDesc();
    
     D3D12_PLACED_SUBRESOURCE_FOOTPRINT Footprint;
@@ -288,9 +286,7 @@ void Texture::UpdateDynamicTexture(const BYTE* sysMemory)
     BYTE* pMappedPtr = nullptr;
     CD3DX12_RANGE writeRange(0, 0);
 
-    HRESULT hr = _uploadResource->Map(0, &writeRange, reinterpret_cast<void**>(&pMappedPtr));
-    if (FAILED(hr))
-        __debugbreak();
+    _uploadResource->Map(0, &writeRange, reinterpret_cast<void**>(&pMappedPtr));
 
     const BYTE* pSrc = sysMemory;
     BYTE* pDest = pMappedPtr;

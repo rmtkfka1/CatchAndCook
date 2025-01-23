@@ -119,7 +119,6 @@ void TestScene::Init()
 		for (int i = 0; i < 5; ++i)
 		{
 			float add = i * TextureSize / 5;
-
 			for (int j = 0; j < 5; ++j)
 			{
 
@@ -132,7 +131,7 @@ void TestScene::Init()
 				sprite->PushUVCoord(rect);
 			}
 		}
-	}
+	};
 
 	{
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"TextTest");
@@ -142,7 +141,7 @@ void TestScene::Init()
 		spriteRender->SetSprite(sprite);
 		sprite->SetPos(vec3(300.0f, 0.0f, 0.000001));
 		sprite->SetSize(vec2(300, 300));
-		sprite->SetText(L"Ä³Ä¡¾ØÄî");
+		//sprite->SetText(L"Ä³Ä¡¾ØÄî");
 		sprite->AddAction(make_shared<DragAction>(KeyCode::LeftMouse));
 		sprite->CreateObject(512, 256, L"Arial", FontColor::WHITE, 123);
 	}
