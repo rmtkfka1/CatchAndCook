@@ -13,12 +13,12 @@ void TextManager::Init()
 
 }
 
-void TextManager::UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>& handle)
+void TextManager::UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>& handle , BYTE* memory)
 {
     IDWriteTextLayout* textLayout = nullptr;
 
     //텍스트레이아웃 생성
-    ThrowIfFailed(_factory->CreateTextLayout(text.c_str(), text.length(), handle->font.Get(), handle->width, handle->height, &textLayout));
+    ThrowIfFailed(_factory->CreateTextLayout(L"helloworld", 10, handle->font.Get(), 1024, handle->height, &textLayout));
 
     DWRITE_TEXT_METRICS metrics = {};
 
@@ -36,7 +36,7 @@ void TextManager::UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>&
         // 텍스트 렌더링
         _context->BeginDraw();
 
-        _context->Clear(D2D1::ColorF(D2D1::ColorF::Black));
+        _context->Clear(D2D1::ColorF(D2D1::ColorF::YellowGreen));
         _context->SetTransform(D2D1::Matrix3x2F::Identity());
 
         _context->DrawTextLayout(D2D1::Point2F(0.0f, 0.0f), textLayout, handle->brush.Get());
@@ -67,7 +67,7 @@ void TextManager::UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>&
     if (FAILED(handle->bitMapRead.Get()->Map(D2D1_MAP_OPTIONS_READ, &mappedRect)))
         __debugbreak();
 
-    BYTE* pDest = handle->sysMemory;
+    BYTE* pDest = memory;
     char* pSrc = (char*)mappedRect.bits;
 
     for (DWORD y = 0; y < (DWORD)height; y++)
@@ -117,10 +117,6 @@ shared_ptr<TextHandle> TextManager::AllocTextStrcture(int width, int height, con
     textHandle->width = width;
     textHandle->height = height;
     textHandle->fontSize = fontsize;
-    textHandle->sysMemory = new BYTE[width * height * 4];
-
-    memset(textHandle->sysMemory, 0, sizeof(width * height * 4));
-
     textHandle->brush = _brushMap[color];
    
     uint32 dpi = ::GetDpiForWindow(Core::main->GetHandle());

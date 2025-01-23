@@ -294,13 +294,14 @@ void Texture::UpdateDynamicTexture(const BYTE* sysMemory)
 
     const BYTE* pSrc = sysMemory;
     BYTE* pDest = mapped;
+
     for (UINT y = 0; y < height; y++)
     {
         memcpy(pDest, pSrc, width * 4);
         pSrc += (width * 4);
         pDest += footprint.Footprint.RowPitch;
     }
-   
+
     _uploadResource->Unmap(0, nullptr);
 
 }

@@ -5,9 +5,8 @@ class TextHandle
 {
 public:
 	TextHandle() {};
-	~TextHandle() { delete[] sysMemory; }
+	~TextHandle() { }
 	
-	BYTE* sysMemory{};
 	ComPtr<ID2D1Bitmap1> bitMapGpu{};
 	ComPtr<ID2D1Bitmap1> bitMapRead{};
 	ComPtr<ID2D1SolidColorBrush> brush{};
@@ -33,7 +32,7 @@ public:
 
 public:
 	void Init();
-	void UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>& handle);
+	void UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>& handle , BYTE* memory);
 	void PrintFontAll(); //사용할수있는 모든 폰트 콘솔로 출력.
 
 	shared_ptr<TextHandle> AllocTextStrcture(int width ,int height , const WCHAR* font, FontColor color , float fontsize );
