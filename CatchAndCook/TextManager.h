@@ -14,6 +14,9 @@ public:
 	ComPtr<IDWriteTextFormat> font{};
 	uint32 width{};
 	uint32 height{};
+	
+
+
 	float fontSize{};
 };
 
@@ -30,14 +33,15 @@ public:
 
 public:
 	void Init();
+	void UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>& handle);
 	void PrintFontAll(); //사용할수있는 모든 폰트 콘솔로 출력.
 
-	shared_ptr<TextHandle> AllocTextStrcture(int width ,int height ,wstring font , FontColor color , float fontsize );
+	shared_ptr<TextHandle> AllocTextStrcture(int width ,int height , const WCHAR* font, FontColor color , float fontsize );
 
 private:
 	void InitD2D();
 	void CreateSolidBrush();
-	void CreateFont();
+
 
 
 private:

@@ -2,6 +2,7 @@
 #include "Sprite.h"
 #include "Mesh.h"
 #include "SpriteAction.h"
+#include "TextManager.h"
 
 Sprite::Sprite()
 {
@@ -299,3 +300,83 @@ void AnimationSprite::AnimationUpdate()
 	}
 }
 
+TextSprite::TextSprite()
+{
+	Init();
+}
+
+TextSprite::~TextSprite()
+{
+}
+
+void TextSprite::Init()
+{
+	_mesh = GeoMetryHelper::LoadSprtieMesh();
+	_shader = ResourceManager::main->Get<Shader>(L"SpriteShader");
+}
+
+void TextSprite::Update()
+{
+
+}
+
+void TextSprite::Render()
+{
+	if (_renderEnable == false)
+		return;
+
+	auto& cmdList = Core::main->GetCmdList();
+	TextManager::main->UpdateToSysMemory(_text, _textHandle);
+	_texture->UpdateDynamicTexture(_textHandle->sysMemory);
+	_texture->CopyCpuToGpu();
+
+	cmdList->SetPipelineState(_shader->_pipelineState.Get());
+
+	{
+		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteWorldParam)->Alloc(1);
+		memcpy(CbufferContainer->ptr, (void*)&_spriteWorldParam, sizeof(SpriteWorldParam));
+		cmdList->SetGraphicsRootConstantBufferView(_shader->GetRegisterIndex("SPRITE_WORLD_PARAM"), CbufferContainer->GPUAdress);
+	}
+
+	{
+		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteTextureParam)->Alloc(1);
+		memcpy(CbufferContainer->ptr, (void*)&_sprtieTextureParam, sizeof(SprtieTextureParam));
+		cmdList->SetGraphicsRootConstantBufferView(_shader->GetRegisterIndex("SPRITE_TEXTURE_PARAM"), CbufferContainer->GPUAdress);
+	}
+
+	auto tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
+	Core::main->GetBufferManager()->GetTable()->CopyHandle(tableContainer.CPUHandle, _texture->GetSRVCpuHandle(), 0);
+	cmdList->SetGraphicsRootDescriptorTable(SPRITE_TABLE_INDEX, tableContainer.GPUHandle);
+
+
+	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
+
+	if (_mesh->GetVertexCount() != 0)
+	{
+		if (_mesh->GetIndexCount() != 0)
+		{
+			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
+			cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
+			cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
+		}
+		else
+		{
+			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
+			cmdList->DrawInstanced(_mesh->GetVertexCount(), 1, 0, 0);
+		}
+	}
+
+	for (auto& child : _children)
+	{
+		child->Render();
+	}
+
+}
+
+void TextSprite::CreateObject(int width, int height, const WCHAR* font, FontColor color, float fontsize)
+{
+	_textHandle =  TextManager::main->AllocTextStrcture(width, height, font, color, fontsize);
+	_texture = make_shared<Texture>();
+	_texture->CreateDynamicTexture(DXGI_FORMAT_R8G8B8A8_UNORM, width, height);
+	
+}

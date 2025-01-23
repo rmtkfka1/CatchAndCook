@@ -11,10 +11,76 @@ void TextManager::Init()
     InitD2D();
     CreateSolidBrush();
 
-    
 }
 
-void TextManager::PrintFont()
+void TextManager::UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>& handle)
+{
+    IDWriteTextLayout* textLayout = nullptr;
+
+    //텍스트레이아웃 생성
+    ThrowIfFailed(_factory->CreateTextLayout(text.c_str(), text.length(), handle->font.Get(), handle->width, handle->height, &textLayout));
+
+    DWRITE_TEXT_METRICS metrics = {};
+
+    //Rendering To 비트맵
+    if (textLayout)
+    {
+        textLayout->GetMetrics(&metrics);
+
+        // 타겟설정
+        _context->SetTarget(handle->bitMapGpu.Get());
+
+        // 안티앨리어싱모드 설정
+        _context->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE);
+
+        // 텍스트 렌더링
+        _context->BeginDraw();
+
+        _context->Clear(D2D1::ColorF(D2D1::ColorF::White));
+        _context->SetTransform(D2D1::Matrix3x2F::Identity());
+
+        _context->DrawTextLayout(D2D1::Point2F(0.0f, 0.0f), textLayout, handle->brush.Get());
+
+        // We ignore D2DERR_RECREATE_TARGET here. This error indicates that the device
+        // is lost. It will be handled during the next call to Present.
+        _context->EndDraw();
+
+        // 안티앨리어싱 모드 복구    
+        _context->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_DEFAULT);
+        _context->SetTarget(nullptr);
+
+        textLayout->Release();
+        textLayout = nullptr;
+    }
+
+    int width = (int)ceil(metrics.width);
+    int height = (int)ceil(metrics.height);
+
+    D2D1_POINT_2U	destPos = {};
+    D2D1_RECT_U		srcRect = { 0, 0, width, height };
+
+    ThrowIfFailed(handle->bitMapRead->CopyFromBitmap(&destPos, handle->bitMapGpu.Get(), &srcRect));
+
+    ////////////////////////////////////////////////
+     
+    D2D1_MAPPED_RECT	mappedRect;
+    ThrowIfFailed(handle->bitMapRead->Map(D2D1_MAP_OPTIONS_READ, &mappedRect));
+
+    BYTE* Dest = handle->sysMemory;
+    char* Src = (char*)mappedRect.bits;
+
+    for (DWORD y = 0; y < (DWORD)height; y++)
+    {
+        memcpy(Dest, Src, width * 4);
+        Dest += handle->width*4;
+        Src += mappedRect.pitch;
+    }
+
+    handle->bitMapRead->Unmap();
+}
+
+
+void TextManager::PrintFontAll()
 {
 
     Microsoft::WRL::ComPtr<IDWriteFontCollection> fontCollection;
@@ -43,7 +109,7 @@ void TextManager::PrintFont()
 
 }
 
-shared_ptr<TextHandle> TextManager::AllocTextStrcture(int width, int height, wstring font , FontColor color, float fontsize)
+shared_ptr<TextHandle> TextManager::AllocTextStrcture(int width, int height, const WCHAR* font, FontColor color, float fontsize)
 {
     shared_ptr<TextHandle> textHandle = make_shared<TextHandle>();
 
@@ -51,8 +117,12 @@ shared_ptr<TextHandle> TextManager::AllocTextStrcture(int width, int height, wst
     textHandle->height = height;
     textHandle->fontSize = fontsize;
     textHandle->sysMemory = new BYTE[width * height * 4];
-    textHandle->brush = _brushMap[color];
-   
+
+    ComPtr<ID2D1SolidColorBrush> brush;
+    ThrowIfFailed(_context->CreateSolidColorBrush(ColorF(ColorF::Black), &brush));
+
+    textHandle->brush = brush;
+    
     uint32 dpi = ::GetDpiForWindow(Core::main->GetHandle());
 
     //비트맵 생성
@@ -76,9 +146,24 @@ shared_ptr<TextHandle> TextManager::AllocTextStrcture(int width, int height, wst
         ThrowIfFailed(_context->CreateBitmap(size_u, nullptr, 0, &bitmapProperties, textHandle->bitMapRead.GetAddressOf()));
     }
 
- 
-    return textHandle;
+    //폰트생성
+    {
+        ThrowIfFailed(_factory->CreateTextFormat(
+            font,
+            nullptr,
+            DWRITE_FONT_WEIGHT_REGULAR,
+            DWRITE_FONT_STYLE_NORMAL,
+            DWRITE_FONT_STRETCH_NORMAL,
+            fontsize,
+            L"ko-kr",
+            &textHandle->font
+        ));
 
+        ThrowIfFailed(textHandle->font.Get()->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+        ThrowIfFailed(textHandle->font.Get()->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
+    };
+
+    return textHandle;
 }
 
 void TextManager::InitD2D()
@@ -179,11 +264,5 @@ void TextManager::CreateSolidBrush()
         ThrowIfFailed(_context->CreateSolidColorBrush(ColorF(ColorF::Black), &brush));
         _brushMap[FontColor::BLACK] = brush;
     }
-}
-
-void TextManager::CreateFont()
-{
-
-
 }
 

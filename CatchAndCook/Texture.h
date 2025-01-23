@@ -35,7 +35,11 @@ public:
 		TextureUsageFlags usageFlags , bool Jump,bool depthShared, vec4 clearValue=vec4(0,0,0,0));
 
 
-
+	//DynamicTexture ¿ë
+	void CreateDynamicTexture(DXGI_FORMAT format ,uint32 width , uint32 height ); //only for srv
+	void UpdateDynamicTexture(const BYTE* sysMemory);
+	void CopyCpuToGpu();
+	//////////
 
 	D3D12_CPU_DESCRIPTOR_HANDLE& GetRTVCpuHandle() { return _rtvHandle; }
 	D3D12_CPU_DESCRIPTOR_HANDLE& GetSRVCpuHandle() { return _srvHandle; }
@@ -44,13 +48,17 @@ public:
 	D3D12_CPU_DESCRIPTOR_HANDLE& GetDSVCpuHandle() { return _dsvHandle; }
 
 	ComPtr<ID3D12Resource>& GetResource() { return _resource; }
+	ComPtr<ID3D12Resource>& GetUploadResource() { return _uploadResource; }
 	DXGI_FORMAT& GetFormat() { return _format; };
 	DXGI_FORMAT& SetFormat(DXGI_FORMAT format) { return _format = format; };
 
 private:
 	wstring _path = L"../Resources/";
 	ScratchImage			 		_image;
+
 	ComPtr<ID3D12Resource>			_resource;
+	ComPtr<ID3D12Resource>			_uploadResource;
+
 	D3D12_CPU_DESCRIPTOR_HANDLE		_rtvHandle{};
 	D3D12_CPU_DESCRIPTOR_HANDLE		_srvHandle{};
 	D3D12_CPU_DESCRIPTOR_HANDLE		_uavHandle{};
