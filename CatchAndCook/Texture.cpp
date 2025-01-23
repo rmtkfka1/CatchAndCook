@@ -274,42 +274,43 @@ void Texture::CreateDynamicTexture(DXGI_FORMAT format, uint32 width, uint32 heig
 
 void Texture::UpdateDynamicTexture(const BYTE* sysMemory)
 {
-    auto& device = Core::main->GetDevice();
-    D3D12_RESOURCE_DESC desc =_resource->GetDesc();
+    ID3D12Resource* pDestTexResource = _resource.Get();
+    ID3D12Resource* pUploadBuffer = _uploadResource.Get();
 
-    D3D12_PLACED_SUBRESOURCE_FOOTPRINT footprint;
-    uint32	rows = 0;
-    uint64	rowSize = 0;
-    uint64	totalBytes = 0;
+    D3D12_RESOURCE_DESC Desc = pDestTexResource->GetDesc();
+   
+    D3D12_PLACED_SUBRESOURCE_FOOTPRINT Footprint;
+    UINT	Rows = 0;
+    UINT64	RowSize = 0;
+    UINT64	TotalBytes = 0;
 
-    device->GetCopyableFootprints(&desc, 0, 1, 0, &footprint, &rows, &rowSize, &totalBytes);
+    Core::main->GetDevice()->GetCopyableFootprints(&Desc, 0, 1, 0, &Footprint, &Rows, &RowSize, &TotalBytes);
 
-    BYTE* mapped = nullptr;
+    BYTE* pMappedPtr = nullptr;
     CD3DX12_RANGE writeRange(0, 0);
 
-    ThrowIfFailed(_uploadResource->Map(0, &writeRange, reinterpret_cast<void**>(&mapped)));
-   
-    int32 width = desc.Width;
-    int32 height = desc.Height;
+    HRESULT hr = pUploadBuffer->Map(0, &writeRange, reinterpret_cast<void**>(&pMappedPtr));
+    if (FAILED(hr))
+        __debugbreak();
 
     const BYTE* pSrc = sysMemory;
-    BYTE* pDest = mapped;
+    BYTE* pDest = pMappedPtr;
 
-    for (UINT y = 0; y < height; y++)
+    for (UINT y = 0; y < 256; y++)
     {
-        memcpy(pDest, pSrc, width * 4);
-        pSrc += (width * 4);
-        pDest += footprint.Footprint.RowPitch;
+        memcpy(pDest, pSrc, 512 * 4);
+        pSrc += (512 * 4);
+        pDest += Footprint.Footprint.RowPitch;
     }
-
-    _uploadResource->Unmap(0, nullptr);
+    // Unmap
+    pUploadBuffer->Unmap(0, nullptr);
 
 }
 
 void Texture::CopyCpuToGpu()
 {
-    auto& device = Core::main->GetDevice();
-    auto& cmdlist = Core::main->GetCmdList();
+    ID3D12Resource* pDestTexResource = _resource.Get();
+    ID3D12Resource* pSrcTexResource = _uploadResource.Get();
 
     const DWORD MAX_SUB_RESOURCE_NUM = 32;
     D3D12_PLACED_SUBRESOURCE_FOOTPRINT Footprint[MAX_SUB_RESOURCE_NUM] = {};
@@ -317,33 +318,31 @@ void Texture::CopyCpuToGpu()
     UINT64	RowSize[MAX_SUB_RESOURCE_NUM] = {};
     UINT64	TotalBytes = 0;
 
-    D3D12_RESOURCE_DESC Desc = _resource->GetDesc();
-
+    D3D12_RESOURCE_DESC Desc = pDestTexResource->GetDesc();
     if (Desc.MipLevels > (UINT)_countof(Footprint))
         __debugbreak();
 
-    device->GetCopyableFootprints(&Desc, 0, Desc.MipLevels, 0, Footprint, Rows, RowSize, &TotalBytes);
+    Core::main->GetDevice()->GetCopyableFootprints(&Desc, 0, Desc.MipLevels, 0, Footprint, Rows, RowSize, &TotalBytes);
 
-    cmdlist->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_resource.Get(), D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_DEST));
-
+    Core::main->GetCmdList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(pDestTexResource, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_DEST));
     for (DWORD i = 0; i < Desc.MipLevels; i++)
     {
+
         D3D12_TEXTURE_COPY_LOCATION	destLocation = {};
         destLocation.PlacedFootprint = Footprint[i];
-        destLocation.pResource = _resource.Get();
+        destLocation.pResource = pDestTexResource;
         destLocation.SubresourceIndex = i;
         destLocation.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
 
         D3D12_TEXTURE_COPY_LOCATION	srcLocation = {};
         srcLocation.PlacedFootprint = Footprint[i];
-        srcLocation.pResource = _uploadResource.Get();
+        srcLocation.pResource = pSrcTexResource;
         srcLocation.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
 
-        cmdlist->CopyTextureRegion(&destLocation, 0, 0, 0, &srcLocation, nullptr);
+        Core::main->GetCmdList()->CopyTextureRegion(&destLocation, 0, 0, 0, &srcLocation, nullptr);
     }
-
-    cmdlist->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_resource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE));
-    Core::main->Fence();
+    Core::main->GetCmdList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(pDestTexResource, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE));
+  
 }
 
 

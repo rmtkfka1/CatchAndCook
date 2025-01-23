@@ -328,21 +328,85 @@ void TextSprite::Init()
 		}
 	}
 
+
+
 }
 
 void TextSprite::Update()
 {
+	//int g_ImageWidth = 512;
+	//int g_ImageHeight = 256;
 
-}
+	//// Update Texture
+	//static DWORD g_dwCount = 0;
+	//static DWORD g_dwTileColorR = 0;
+	//static DWORD g_dwTileColorG = 0;
+	//static DWORD g_dwTileColorB = 0;
+
+	//const DWORD TILE_WIDTH = 16;
+	//const DWORD TILE_HEIGHT = 16;
+
+	//DWORD TILE_WIDTH_COUNT = g_ImageWidth / TILE_WIDTH;
+	//DWORD TILE_HEIGHT_COUNT = g_ImageHeight / TILE_HEIGHT;
+
+	//if (g_dwCount >= TILE_WIDTH_COUNT * TILE_HEIGHT_COUNT)
+	//{
+	//	g_dwCount = 0;
+	//}
+	//DWORD TileY = g_dwCount / TILE_WIDTH_COUNT;
+	//DWORD TileX = g_dwCount % TILE_WIDTH_COUNT;
+
+	//DWORD StartX = TileX * TILE_WIDTH;
+	//DWORD StartY = TileY * TILE_HEIGHT;
+
+
+	//DWORD r = g_dwTileColorR;
+	//DWORD g = g_dwTileColorG;
+	//DWORD b = g_dwTileColorB;
+
+
+	//DWORD* pDest = (DWORD*)testptr;
+	//for (DWORD y = 0; y < TILE_HEIGHT; y++)
+	//{
+	//	for (DWORD x = 0; x < TILE_WIDTH; x++)
+	//	{
+	//		if (StartX + x >= g_ImageWidth)
+	//			__debugbreak();
+
+	//		if (StartY + y >= g_ImageHeight)
+	//			__debugbreak();
+
+	//		pDest[(StartX + x) + (StartY + y) * g_ImageWidth] = 0xff000000 | (b << 16) | (g << 8) | r;
+	//	}
+	//}
+
+	//g_dwCount++;
+	//g_dwTileColorR += 8;
+	//if (g_dwTileColorR > 255)
+	//{
+	//	g_dwTileColorR = 0;
+	//	g_dwTileColorG += 8;
+	//}
+	//if (g_dwTileColorG > 255)
+	//{
+	//	g_dwTileColorG = 0;
+	//	g_dwTileColorB += 8;
+	//}
+	//if (g_dwTileColorB > 255)
+	//{
+	//	g_dwTileColorB = 0;
+	//}
+
+	_texture->UpdateDynamicTexture(testptr);
+};
 
 void TextSprite::Render()
 {
-	if (_renderEnable == false)
-		return;
 
 	auto& cmdList = Core::main->GetCmdList();
-	TextManager::main->UpdateToSysMemory(_text, _textHandle,testptr);
-	_texture->UpdateDynamicTexture(testptr);
+
+	TextManager::main->UpdateToSysMemory(L"helloworld", _textHandle, testptr);
+
 	_texture->CopyCpuToGpu();
 
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
@@ -381,11 +445,6 @@ void TextSprite::Render()
 		}
 	}
 
-	for (auto& child : _children)
-	{
-		child->Render();
-	}
-
 }
 
 void TextSprite::CreateObject(int width, int height, const WCHAR* font, FontColor color, float fontsize)
@@ -394,7 +453,14 @@ void TextSprite::CreateObject(int width, int height, const WCHAR* font, FontColo
 	_texture = make_shared<Texture>();
 	_texture->CreateDynamicTexture(DXGI_FORMAT_R8G8B8A8_UNORM, width, height);
 
+	auto desc = _texture->GetResource()->GetDesc();
 
+	_sprtieTextureParam.origintexSize = vec2(desc.Width, desc.Height);
+
+	_sprtieTextureParam.texSamplePos.x = 0;
+	_sprtieTextureParam.texSamplePos.y = 0;
+	_sprtieTextureParam.texSampleSize.x = desc.Width;
+	_sprtieTextureParam.texSampleSize.y = desc.Height;
 
 	
 }

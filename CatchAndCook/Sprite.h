@@ -139,6 +139,7 @@ private:
 	shared_ptr<Texture> _texture;
 	SprtieTextureParam _sprtieTextureParam;
 	BYTE* testptr;
+	ULONGLONG g_PrvUpdateTick=0;
 };
 
 /*****************************************************************
