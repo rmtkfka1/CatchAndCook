@@ -127,12 +127,12 @@ public:
 	virtual void Update();
 	virtual void Render();
 
-	void SetText(const wstring& text) { _text = text; _changed = true; }
+	void SetText(const wstring& text) { _text = text; _textChanged = true; }
 	void CreateObject(int width, int height, const WCHAR* font, FontColor color, float fontsize);
 
 	
 private:
-	bool _changed = true;
+	bool _textChanged = true;
 	wstring _text =L"NULL";
 	shared_ptr<TextHandle> _textHandle;
 	shared_ptr<Mesh> _mesh;

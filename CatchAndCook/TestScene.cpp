@@ -135,7 +135,6 @@ void TestScene::Init()
 	}
 
 	{
-
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"TextTest");
 		auto spriteRender = gameObject->AddComponent<SpriteRenderer>();
 		shared_ptr<TextSprite> sprite = make_shared<TextSprite>();
