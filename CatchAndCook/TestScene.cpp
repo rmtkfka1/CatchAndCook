@@ -14,6 +14,9 @@ void TestScene::Init()
 {
     Scene::Init();
 
+
+
+
     {
         ShaderInfo info;
         info._zTest = true;

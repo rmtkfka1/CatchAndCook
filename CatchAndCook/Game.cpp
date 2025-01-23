@@ -90,9 +90,15 @@ void Game::PrevUpdate()
 			// 원래 크기로 윈도우 설정
 			SetWindowPos(hWnd, HWND_TOP, 0, 0, 800, 600, SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
 
-			WINDOW_WIDTH = 800;
-			WINDOW_HEIGHT = 600;
-
+			RECT rect;
+			if (GetClientRect(hWnd, &rect))
+			{
+				int width = rect.right - rect.left;
+				int height = rect.bottom - rect.top;
+				WINDOW_WIDTH = width;
+				WINDOW_HEIGHT = height;
+			}
+	
 			Core::main->ResizeWindowSize();
 
 		}
