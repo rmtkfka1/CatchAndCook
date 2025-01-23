@@ -313,6 +313,17 @@ void TextSprite::Init()
 {
 	_mesh = GeoMetryHelper::LoadSprtieMesh();
 	_shader = ResourceManager::main->Get<Shader>(L"SpriteShader");
+	testptr = new BYTE[512 * 256 * 4];
+
+	DWORD* pDest = (DWORD*)testptr;
+	for (DWORD y = 0; y < 256; y++)
+	{
+		for (DWORD x = 0; x < 512; x++)
+		{
+			pDest[x + 512 * y] = 0x00'00'00'ff; // 빨간색 (ABGR)
+		}
+	}
+	
 }
 
 void TextSprite::Update()
@@ -326,8 +337,8 @@ void TextSprite::Render()
 		return;
 
 	auto& cmdList = Core::main->GetCmdList();
-	TextManager::main->UpdateToSysMemory(_text, _textHandle);
-	_texture->UpdateDynamicTexture(_textHandle->sysMemory);
+	//TextManager::main->UpdateToSysMemory(_text, _textHandle);
+	_texture->UpdateDynamicTexture(testptr);
 	_texture->CopyCpuToGpu();
 
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
@@ -375,7 +386,7 @@ void TextSprite::Render()
 
 void TextSprite::CreateObject(int width, int height, const WCHAR* font, FontColor color, float fontsize)
 {
-	_textHandle =  TextManager::main->AllocTextStrcture(width, height, font, color, fontsize);
+	//_textHandle =  TextManager::main->AllocTextStrcture(width, height, font, color, fontsize);
 	_texture = make_shared<Texture>();
 	_texture->CreateDynamicTexture(DXGI_FORMAT_R8G8B8A8_UNORM, width, height);
 	

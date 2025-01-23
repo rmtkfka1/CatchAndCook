@@ -293,7 +293,6 @@ void Texture::UpdateDynamicTexture(const BYTE* sysMemory)
     int32 height = desc.Height;
 
     const BYTE* pSrc = sysMemory;
-
     BYTE* pDest = mapped;
     for (UINT y = 0; y < height; y++)
     {
@@ -343,7 +342,7 @@ void Texture::CopyCpuToGpu()
     }
 
     cmdlist->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_resource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE));
-
+    Core::main->Fence();
 }
 
 

@@ -139,12 +139,11 @@ void TestScene::Init()
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"TextTest");
 		auto spriteRender = gameObject->AddComponent<SpriteRenderer>();
 		shared_ptr<TextSprite> sprite = make_shared<TextSprite>();
-
 		spriteRender->SetSprite(sprite);
 		sprite->SetPos(vec3(300.0f, 0.0f, 0.3f));
-		sprite->SetSize(vec2(200, 200));
-		//sprite->SetText(L"½Ã¹ß");
-		sprite->CreateObject(500, 500, L"Arial", FontColor::BLACK, 32);
+		sprite->SetSize(vec2(512, 256));
+		//sprite->SetText(L"hello world");
+		sprite->CreateObject(512, 256, L"Tahoma", FontColor::BLACK, 32);
 	}
 
 

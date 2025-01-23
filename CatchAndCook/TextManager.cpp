@@ -36,7 +36,7 @@ void TextManager::UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>&
         // 텍스트 렌더링
         _context->BeginDraw();
 
-        _context->Clear(D2D1::ColorF(D2D1::ColorF::White));
+        _context->Clear(D2D1::ColorF(D2D1::ColorF::Black));
         _context->SetTransform(D2D1::Matrix3x2F::Identity());
 
         _context->DrawTextLayout(D2D1::Point2F(0.0f, 0.0f), textLayout, handle->brush.Get());
@@ -55,28 +55,29 @@ void TextManager::UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>&
 
     int width = (int)ceil(metrics.width);
     int height = (int)ceil(metrics.height);
-
+ 
     D2D1_POINT_2U	destPos = {};
     D2D1_RECT_U		srcRect = { 0, 0, width, height };
 
-    ThrowIfFailed(handle->bitMapRead->CopyFromBitmap(&destPos, handle->bitMapGpu.Get(), &srcRect));
+    ThrowIfFailed(handle->bitMapRead.Get()->CopyFromBitmap(&destPos, handle->bitMapGpu.Get(), &srcRect));
 
-    ////////////////////////////////////////////////
-     
+    //////////////////////////////////////////////// 
+
     D2D1_MAPPED_RECT	mappedRect;
-    ThrowIfFailed(handle->bitMapRead->Map(D2D1_MAP_OPTIONS_READ, &mappedRect));
+    if (FAILED(handle->bitMapRead.Get()->Map(D2D1_MAP_OPTIONS_READ, &mappedRect)))
+        __debugbreak();
 
-    BYTE* Dest = handle->sysMemory;
-    char* Src = (char*)mappedRect.bits;
+    BYTE* pDest = handle->sysMemory;
+    char* pSrc = (char*)mappedRect.bits;
 
     for (DWORD y = 0; y < (DWORD)height; y++)
     {
-        memcpy(Dest, Src, width * 4);
-        Dest += handle->width*4;
-        Src += mappedRect.pitch;
+        memcpy(pDest, pSrc, width * 4);
+        pDest += handle->width*4;
+        pSrc += mappedRect.pitch;
     }
 
-    handle->bitMapRead->Unmap();
+    handle->bitMapRead.Get()->Unmap();
 }
 
 
@@ -118,11 +119,10 @@ shared_ptr<TextHandle> TextManager::AllocTextStrcture(int width, int height, con
     textHandle->fontSize = fontsize;
     textHandle->sysMemory = new BYTE[width * height * 4];
 
-    ComPtr<ID2D1SolidColorBrush> brush;
-    ThrowIfFailed(_context->CreateSolidColorBrush(ColorF(ColorF::Black), &brush));
+    memset(textHandle->sysMemory, 0, sizeof(width * height * 4));
 
-    textHandle->brush = brush;
-    
+    textHandle->brush = _brushMap[color];
+   
     uint32 dpi = ::GetDpiForWindow(Core::main->GetHandle());
 
     //비트맵 생성
@@ -136,8 +136,8 @@ shared_ptr<TextHandle> TextManager::AllocTextStrcture(int width, int height, con
             );
 
         D2D1_SIZE_U	size_u;
-        size_u.width = width;
-        size_u.height = height;
+        size_u.width = 1024;
+        size_u.height = 256;
 
         ThrowIfFailed(_context->CreateBitmap(size_u, nullptr, 0, &bitmapProperties, textHandle->bitMapGpu.GetAddressOf()));
 
@@ -182,6 +182,7 @@ void TextManager::InitD2D()
     ID3D11On12Device* d3d11On12Device = nullptr;
 
     // D2D1 팩토리에서 디버그 레벨을 설정합니다.
+    d3d11DeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
     d2dFactoryOptions.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
 
     // D3D11On12 장치를 생성합니다. D3D12 장치를 사용하여 D3D11 장치를 만든 후, D3D11On12Device를 얻습니다.

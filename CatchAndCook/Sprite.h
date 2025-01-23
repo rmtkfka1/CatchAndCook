@@ -13,7 +13,7 @@ struct SpriteWorldParam
 	vec2 ndcScale = { 1.0f,1.0f };
 	vec2 padding = {};
 
-	vec4 clipingColor;
+	vec4 clipingColor = { 5.0f,5.0f,5.0f,5.0f };
 };
 
 struct SprtieTextureParam
@@ -138,6 +138,7 @@ private:
 	shared_ptr<Shader> _shader;
 	shared_ptr<Texture> _texture;
 	SprtieTextureParam _sprtieTextureParam;
+	BYTE* testptr;
 };
 
 /*****************************************************************
