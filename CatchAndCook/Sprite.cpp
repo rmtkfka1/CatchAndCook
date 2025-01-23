@@ -335,15 +335,6 @@ void TextSprite::Update()
 		action->Execute(this);
 	}
 
-	for (auto& child : _children)
-	{
-		for (auto& action : child->_actions)
-		{
-			action->Execute(child.get());
-		}
-	}
-
-
 };
 
 void TextSprite::Render()
@@ -394,10 +385,7 @@ void TextSprite::Render()
 		}
 	}
 
-	for (auto& child : _children)
-	{
-		child->Render();
-	}
+
 }
 
 void TextSprite::CreateObject(int width, int height, const WCHAR* font, FontColor color, float fontsize)
