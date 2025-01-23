@@ -64,8 +64,7 @@ void TestScene::Init()
         meshRenderer->SetMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
     }
 
-	if (false)
-	{
+
 		for (int i = 0; i < 1; ++i)
 		{
 			shared_ptr<GameObject> gameObject = CreateGameObject(L"SpriteTest");
@@ -78,7 +77,6 @@ void TestScene::Init()
 			sprite->AddAction(make_shared<DragAction>(KeyCode::LeftMouse));
 			sprite->AddAction(make_shared<EnableDisableKeyAction>(KeyCode::I));
 
-			//ǮUV ����
 			SpriteRect rect;
 			rect.left = 1024 / 7 * i;
 			rect.top = 0;
@@ -99,10 +97,9 @@ void TestScene::Init()
 			}
 		
 		};
-	}
+	
 
-	if (false)
-	{
+
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"AnimationSprite");
 		auto spriteRender = gameObject->AddComponent<SpriteRenderer>();
 		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"fire", L"Textures/fire.png");
@@ -134,11 +131,8 @@ void TestScene::Init()
 			}
 		}
 
-
-	}
-
-
-}
+	
+};
 
 void TestScene::Update()
 {

@@ -73,5 +73,5 @@ float4 PS_Main(VS_OUT input) : SV_TARGET
         discard; 
     }
     
-    return texColor * input.color * g_alpha;
+    return texColor * input.color * g_alpha * length(texColor.rgb - clipingColor.rgb);
 }
