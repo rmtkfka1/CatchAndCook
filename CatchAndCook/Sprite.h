@@ -91,7 +91,6 @@ public:
 	BasicSprite();
 	virtual ~BasicSprite();
 
-	
 public:
 	virtual void Init();
 	virtual void Update();

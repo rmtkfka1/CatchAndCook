@@ -82,7 +82,6 @@ void Game::PrevUpdate()
 			WINDOW_HEIGHT = mi.rcMonitor.bottom - mi.rcMonitor.top;
 
 			Core::main->ResizeWindowSize();
-
 		}
 		else
 		{

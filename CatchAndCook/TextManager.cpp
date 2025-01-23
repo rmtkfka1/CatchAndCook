@@ -9,28 +9,74 @@ unique_ptr<TextManager> TextManager::main=nullptr;
 void TextManager::Init()
 {
     InitD2D();
+    CreateSolidBrush();
+
+    
+}
+
+void TextManager::PrintFont()
+{
+
+    Microsoft::WRL::ComPtr<IDWriteFontCollection> fontCollection;
+    _factory->GetSystemFontCollection(&fontCollection);
+
+    UINT32 fontCount = fontCollection->GetFontFamilyCount();
+    for (UINT32 i = 0; i < fontCount; i++) {
+        Microsoft::WRL::ComPtr<IDWriteFontFamily> fontFamily;
+        fontCollection->GetFontFamily(i, &fontFamily);
+
+        Microsoft::WRL::ComPtr<IDWriteLocalizedStrings> familyNames;
+        fontFamily->GetFamilyNames(&familyNames);
+
+        UINT32 index = 0;
+        BOOL exists = false;
+        familyNames->FindLocaleName(L"en-us", &index, &exists);
+        if (exists) {
+            UINT32 length = 0;
+            familyNames->GetStringLength(index, &length);
+
+            std::wstring fontName(length + 1, L'\0');
+            familyNames->GetString(index, &fontName[0], length + 1);
+            wprintf(L"Font Family: %s\n", fontName.c_str());
+        }
+    }
 
 }
 
-shared_ptr<TextHandle> TextManager::AllocTextStrcture(int width, int height, FontColor color, float size)
+shared_ptr<TextHandle> TextManager::AllocTextStrcture(int width, int height, wstring font , FontColor color, float fontsize)
 {
     shared_ptr<TextHandle> textHandle = make_shared<TextHandle>();
 
     textHandle->width = width;
     textHandle->height = height;
-    textHandle->fontSize = size;
-
+    textHandle->fontSize = fontsize;
+    textHandle->sysMemory = new BYTE[width * height * 4];
+    textHandle->brush = _brushMap[color];
+   
     uint32 dpi = ::GetDpiForWindow(Core::main->GetHandle());
 
-    D2D1_BITMAP_PROPERTIES1 bitmapProperties =
-        BitmapProperties1(
-            D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
-            D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
-            dpi,
-            dpi
-        );
+    //ºñÆ®¸Ê »ý¼º
+    {
+        D2D1_BITMAP_PROPERTIES1 bitmapProperties =
+            BitmapProperties1(
+                D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+                D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
+                dpi,
+                dpi
+            );
 
+        D2D1_SIZE_U	size_u;
+        size_u.width = width;
+        size_u.height = height;
 
+        ThrowIfFailed(_context->CreateBitmap(size_u, nullptr, 0, &bitmapProperties, textHandle->bitMapGpu.GetAddressOf()));
+
+        bitmapProperties.bitmapOptions = D2D1_BITMAP_OPTIONS_CANNOT_DRAW | D2D1_BITMAP_OPTIONS_CPU_READ;
+
+        ThrowIfFailed(_context->CreateBitmap(size_u, nullptr, 0, &bitmapProperties, textHandle->bitMapRead.GetAddressOf()));
+    }
+
+ 
     return textHandle;
 
 }
@@ -118,5 +164,26 @@ void TextManager::InitD2D()
         d3d11Context->Release();
         d3d11Context = nullptr;
     }
+}
+
+void TextManager::CreateSolidBrush()
+{
+    {
+        ComPtr<ID2D1SolidColorBrush> brush;
+        ThrowIfFailed(_context->CreateSolidColorBrush(ColorF(ColorF::White), &brush));
+        _brushMap[FontColor::WHITE] = brush;
+    }
+
+    {
+        ComPtr<ID2D1SolidColorBrush> brush;
+        ThrowIfFailed(_context->CreateSolidColorBrush(ColorF(ColorF::Black), &brush));
+        _brushMap[FontColor::BLACK] = brush;
+    }
+}
+
+void TextManager::CreateFont()
+{
+
+
 }
 

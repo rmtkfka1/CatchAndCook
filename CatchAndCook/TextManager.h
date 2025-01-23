@@ -5,18 +5,16 @@ class TextHandle
 {
 public:
 	TextHandle() {};
-	~TextHandle() { cout << "소멸자 호출" << endl; }
+	~TextHandle() { delete[] sysMemory; }
 	
-	BYTE* sysMemory;
-	ComPtr<ID2D1Bitmap1> bitMapGpu;
-	ComPtr<ID2D1Bitmap1> bitMapRead;
-	ComPtr<ID2D1SolidColorBrush> brush;
-	ComPtr<IDWriteTextFormat> font;
-
-	uint32 width;
-	uint32 height;
-
-	float fontSize;
+	BYTE* sysMemory{};
+	ComPtr<ID2D1Bitmap1> bitMapGpu{};
+	ComPtr<ID2D1Bitmap1> bitMapRead{};
+	ComPtr<ID2D1SolidColorBrush> brush{};
+	ComPtr<IDWriteTextFormat> font{};
+	uint32 width{};
+	uint32 height{};
+	float fontSize{};
 };
 
 enum class FontColor
@@ -25,7 +23,6 @@ enum class FontColor
 	BLACK,
 };
 
-
 class TextManager
 {
 public:
@@ -33,13 +30,18 @@ public:
 
 public:
 	void Init();
-	shared_ptr<TextHandle> AllocTextStrcture(int width ,int height , FontColor color , float size );
+	void PrintFontAll(); //사용할수있는 모든 폰트 콘솔로 출력.
+
+	shared_ptr<TextHandle> AllocTextStrcture(int width ,int height ,wstring font , FontColor color , float fontsize );
 
 private:
 	void InitD2D();
+	void CreateSolidBrush();
+	void CreateFont();
 
 
 private:
+
 	ComPtr<ID2D1Device2> _device = nullptr;
 	ComPtr<ID2D1DeviceContext2> _context = nullptr;
 
