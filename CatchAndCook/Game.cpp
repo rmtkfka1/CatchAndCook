@@ -46,7 +46,7 @@ void Game::Init(HWND hwnd)
 
 	ResourceManager::main->Load<Model>(L"testModel", L"../Resources/Models/Kindred/kindred_unity.fbx", VertexType::Vertex_Skinned);
 	auto obj = ResourceManager::main->Get<Model>(L"testModel")->CreateGameObject(scene);
-	obj->transform->SetWorldPosition(vec3(0, 0, -1));
+	obj->_transform->SetWorldPosition(vec3(0, 0, -1));
 }
 
 void Game::PrevUpdate()

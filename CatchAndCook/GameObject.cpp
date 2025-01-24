@@ -24,7 +24,7 @@ void GameObject::Init()
     std::shared_ptr<GameObject> gameObject = GetCast<GameObject>();
     parent.reset();
     rootParent = gameObject;
-    gameObject->transform = gameObject->AddComponent<Transform>();
+    gameObject->_transform = gameObject->AddComponent<Transform>();
     SetActiveSelf(true);
 }
 

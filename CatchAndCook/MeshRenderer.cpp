@@ -79,7 +79,7 @@ void MeshRenderer::Rendering(const std::shared_ptr<Material>& material)
 	if (material != nullptr)
 		material->SetData();
 
-	GetOwner()->transform->SetData();
+	GetOwner()->_transform->SetData();
 
 	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
 

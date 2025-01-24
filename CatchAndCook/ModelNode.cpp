@@ -45,7 +45,7 @@ std::shared_ptr<GameObject> ModelNode::CreateGameObject(const std::shared_ptr<Sc
 	const std::shared_ptr<GameObject>& parent)
 {
 	auto currentGameObject = scene->CreateGameObject(std::to_wstring(GetName()));
-	currentGameObject->transform->SetLocalSRTMatrix(_localTransform);
+	currentGameObject->_transform->SetLocalSRTMatrix(_localTransform);
 	currentGameObject->SetParent(parent);
 
 	for (auto& meshIndex : _meshIndexList)

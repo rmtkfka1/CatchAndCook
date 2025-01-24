@@ -57,5 +57,5 @@ void ResourceManager::CreateDefaultMaterial()
 void ResourceManager::CreateDefaultTexture()
 {
 	_noneTexture = Load<Texture>(L"None", L"Textures/Config/noneTexture.png");
-	_noneTexture = Load<Texture>(L"None_Debug", L"Textures/Config/noneTexture_debug.png");
+	//_noneTexture = Load<Texture>(L"None_Debug", L"Textures/Config/noneTexture_debug.png");
 }
