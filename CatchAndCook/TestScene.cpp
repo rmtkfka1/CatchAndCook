@@ -54,7 +54,9 @@ void TestScene::Init()
 		shared_ptr<Material> material = make_shared<Material>();
 
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"cubeMap");
+
 		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+		meshRenderer->SetDrawNormal(false);
 
 		material = make_shared<Material>();
 		material->SetShader(shader);
@@ -80,7 +82,6 @@ void TestScene::Init()
 		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
 
 		gameObject->_transform->SetLocalPosition(vec3(0, 10.0f, 0));
-
 
 		material = make_shared<Material>();
 		material->SetShader(shader);
@@ -173,7 +174,6 @@ void TestScene::Init()
 	}
 
 
-
 };
 
 void TestScene::Update()
@@ -194,6 +194,8 @@ void TestScene::Rendering()
 void TestScene::RenderEnd()
 {
     Scene::RenderEnd();
+
+
 }
 
 void TestScene::Finish()

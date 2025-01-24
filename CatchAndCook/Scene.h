@@ -30,6 +30,7 @@ public:
 	virtual void Update();
 	virtual void RenderBegin();
 	virtual void Rendering();
+	virtual void DebugRendering();
 	virtual void RenderEnd();
 	virtual void Finish();
 

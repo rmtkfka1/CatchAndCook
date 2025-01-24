@@ -98,6 +98,38 @@ void Scene::Rendering()
   
 }
 
+void Scene::DebugRendering()
+{
+    { // Shadow
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
+
+        for (auto& [material, target] : targets)
+        {
+            target->DebugRendering();
+        }
+    }
+
+    { // Deffered
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deffered)];
+
+        for (auto& [material, target] : targets)
+        {
+            target->DebugRendering();
+        }
+    }
+
+    { // forward
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Forward)];
+
+        for (auto& [material, target] : targets)
+        {
+            target->DebugRendering();
+        }
+    }
+
+  
+}
+
 void Scene::RenderEnd()
 {
 

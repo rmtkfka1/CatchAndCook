@@ -75,25 +75,11 @@ void GameObject::RenderBegin()
     }
 }
 
-void GameObject::Rendering()
-{
-    //if ((!IsDestroy()) && GetActive() && (!IsFirst())) {
-    //    for (auto& component : _components) {
-    //        if (((!component->IsDestroy()) && (!component->IsFirst())))
-    //            component->Rendering();
-    //    }
-    //}
-}
+//void GameObject::Rendering()
+//{
+//  
+//}
 
-void GameObject::DebugRendering()
-{
-    if ((!IsDestroy()) && GetActive() && (!IsFirst())) {
-        for (auto& component : _components) {
-            if (((!component->IsDestroy()) && (!component->IsFirst())))
-                component->DebugRendering();
-        }
-    }
-}
 
 void GameObject::Destroy()
 {

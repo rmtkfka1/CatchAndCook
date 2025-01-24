@@ -58,9 +58,6 @@ void Component::Collision(const std::shared_ptr<Collider>& collider, const std::
 {
 }
 
-void Component::DebugRendering()
-{
-}
 
 void Component::SetDestroy()
 {

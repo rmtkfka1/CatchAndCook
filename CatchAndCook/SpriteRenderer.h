@@ -19,11 +19,11 @@ public:
 	void Destroy() override;
 	void RenderBegin() override;
 	void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
-	void DebugRendering() override;
 	void SetDestroy() override;
 	void DestroyComponentOnly() override;
-	void Rendering(const std::shared_ptr<Material>& material) override;
 
+	void DebugRendering() override;
+	void Rendering(const std::shared_ptr<Material>& material) override;
 
 public:
 	template <typename T, typename = std::enable_if_t<std::is_base_of_v<Sprite, T>>>
@@ -34,5 +34,6 @@ public:
 
 private:
 	shared_ptr<Sprite> _sprite;
+
 };
 
