@@ -46,7 +46,15 @@ void Game::Init(HWND hwnd)
 
 	ResourceManager::main->Load<Model>(L"testModel", L"../Resources/Models/Kindred/kindred_unity.fbx", VertexType::Vertex_Skinned);
 	auto obj = ResourceManager::main->Get<Model>(L"testModel")->CreateGameObject(scene);
-	obj->GetComponentsWithChilds()
+
+	vector<shared_ptr<MeshRenderer>> v;
+	obj->GetComponentsWithChilds(v);
+
+	for (auto& ele : v)
+	{
+		ele->SetDrawNormal(false);
+	}
+
 	obj->_transform->SetWorldPosition(vec3(0, 5.0f, -1));
 }
 
@@ -87,7 +95,7 @@ void Game::PrevUpdate()
 		else
 		{
 			SetWindowLong(hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
-			// ¿ø·¡ Å©±â·Î À©µµ¿ì ¼³Á¤
+			// ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			SetWindowPos(hWnd, HWND_TOP, 0, 0, 800, 600, SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
 
 			RECT rect;
@@ -184,7 +192,7 @@ void Game::CameraUpdate()
 		static vec2 lastMousePos;
 		vec2 currentMousePos = Input::main->GetMousePosition();
 
-		//Æ¢´ÂÇö»ó ¹æ¾î
+		//Æ¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 		if (Input::main->GetMouseDown(KeyCode::LeftMouse))
 		{
 			lastMousePos = currentMousePos;

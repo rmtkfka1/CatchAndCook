@@ -130,6 +130,7 @@ public:
 			if (downCast != nullptr)
 				vec.push_back(downCast);
 		}
+
 		count = vec.size() - count;
 		for (auto& child : _childs)
 			if (!child.expired())
