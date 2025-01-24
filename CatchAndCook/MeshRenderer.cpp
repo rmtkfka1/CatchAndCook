@@ -84,7 +84,7 @@ void MeshRenderer::Rendering(const std::shared_ptr<Material>& material)
 	if (material != nullptr)
 		material->SetData();
 
-	GetOwner()->_transform->SetData();
+	GetOwner()->transform->SetData();
 
 	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
 
@@ -123,7 +123,7 @@ void MeshRenderer::DebugRendering()
 	{
 		cmdList->SetPipelineState(_normalDebugShader->_pipelineState.Get());
 
-		GetOwner()->_transform->SetData();
+		GetOwner()->transform->SetData();
 
 		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 

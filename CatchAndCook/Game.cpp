@@ -55,7 +55,7 @@ void Game::Init(HWND hwnd)
 		ele->SetDrawNormal(false);
 	}
 
-	obj->_transform->SetWorldPosition(vec3(0, 5.0f, -1));
+	obj->transform->SetWorldPosition(vec3(0, 5.0f, -1));
 }
 
 void Game::PrevUpdate()

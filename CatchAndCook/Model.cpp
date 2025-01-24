@@ -26,33 +26,33 @@ void AssimpPack::Init(std::wstring path, bool xFlip)
 
     importer = std::make_shared<Assimp::Importer>();
 
-    unsigned int flag = //aiProcess_MakeLeftHanded | // ¿Þ¼Õ ÁÂÇ¥°è·Î º¯°æ
+    unsigned int flag = //aiProcess_MakeLeftHanded | // ï¿½Þ¼ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         //aiProcess_ConvertToLeftHanded |
-        aiProcess_FlipWindingOrder | //CW, CCW ¹Ù²Ù´Â°ÅÀÓ.
-        aiProcess_FlipUVs | // ¸»±×´ë·Î uvÀÇ yÃàÀ» µÚÁýÀ½. ±×¸®°í bitangentµµ µÚÁýÀ½.
-        aiProcess_Triangulate | // 4°¢Çü 5°¢ÇüÀ» 3°¢ÇüÀ¸·Î
-        //aiProcess_GenSmoothNormals | // NormalÀÌ ¾øÀ¸¸é Smmoth Normal »ý¼º
-        aiProcess_GenNormals | // NormalÀÌ ¾øÀ¸¸é Normal »ý¼º
-        //aiProcess_ImproveCacheLocality | // »ï°¢Çü °³¼±. Àß µÇ¸é ÄÑº¸±â Ä³½ÃÈ÷Æ®À²À» À§ÇØ »ï°¢Çü ÀçÁ¤·ÄÇÔ.
-        //aiProcess_GenUVCoords | // UV¾øÀ¸¸é UV °è»êÇÏ°Ô[ ½ÃÅ°±â
-        aiProcess_CalcTangentSpace | // ÅºÁ¨Æ® °è»ê
-        //aiProcess_SplitLargeMeshes |// ¸Å½¬°¡ ³Ê¹« Å¬¶§ ÂÉ°³´Â°Å ¸Å½¬ Å¬¶§ ·»´õ¸µ À¯¸®.
-        //aiProcess_Debone | ¼Õ½Ç¾øÀÌ »À Á¦°Å. °Á ¾²Áö¸»ÀÚ.
-        //aiProcess_RemoveComponent | // (animations, materials, light sources, cameras, textures, vertex components Á¦°Å
-        //aiProcess_PreTransformVertices | // root Node¸¦ Á¦¿ÜÇÑ ¸ðµç ÇÏÀ§ ³ëµåµé ÀüºÎ ÆòÅºÈ­. °èÃþ Á¦°Å.
-        //aiProcess_ValidateDataStructure | // ¿¬°á À¯È¿¼º °Ë»ç
-        //aiProcess_RemoveRedundantMaterials | // Áßº¹ÀÌ³ª ¾È¾²´Â°Å Á¦°Å
-        //aiProcess_FixInfacingNormals | //Àß¸ø ¿¬°áµÇ¼­ °íÀå³­ ³ë¸Ö Àç´ë·Î ¼öÁ¤
-        //aiProcess_FindDegenerates | //»ï°¢Çü¿¡¼­ Á¡ÀÌ °ãÃÄ¹ö¸®¸é ¶óÀÎÀÌ³ª Á¡ÀÌ µÇ¹ö¸®´Âµ¥, ÀÌ°É LineÀÌ³ª Point·Î º¯È¯ÇÏ´Â°ÅÀÓ. ¾È¾²´Â°Ô ³ªÀ½.
-        //aiProcess_FindInvalidData | //À¯È¿ÇÏÁö ¾Ê´Â µ¥ÀÌÅÍ °¨ÁöÈÄ ¼öÁ¤, ¹ý¼± UV¸¦ Á¦°ÅÇÔ. ÀÌ·¸°Ô Á¦°ÅÇÏ°í ³ª¸é aiProcess_GenNormals°°Àº°Ô »õ·Ó°Ô »ý¼ºÇØÁÙ°ÅÀÓ. ¾Ö´Ï¸ÞÀÌ¼Ç¿¡¼­µµ ÀÌÁ¡ÀÌ ÀÖ´Ù°íÇÔ.
-        //aiProcess_GenUVCoords  | //UV¸¦ ÀÚÃ¼ÀûÀ¸·Î °è»êÇÔ. ¸ðµ¨¸µÅø¿¡¼­ »ý¼ºÇÏ´Â°É ÃßÃµÇÏ°í, UV°¡ ¾øÀ¸¸é »õ·Ó°Ô »ý¼ºÇÏ´Â°ÅÀÓ.
-        //aiProcess_FindInstances | //³Ê¹« ¸Å½¬°¡ ¸¹À»¶§ Å°³ªº½. ´À¸®´Ù´Â°Å°°À½. °°Àº ÀçÁúÀÎ ¸Å½¬µéÀ» ÇÏ³ª·Î ÇÕÃÄ¹ö¸®´Â ±â´ÉÀÎµí.
-        //aiProcess_OptimizeMeshes |// ¸Å½¬ ¸¦ ÁÙ¿©ÁÖ´Â ÃÖÀûÈ­ ¿É¼ÇÀÎµí. aiProcess_OptimizeGraph¶û °°ÀÌ ¾²´Â°Ô ÁÁ°í, #aiProcess_SplitLargeMeshes and #aiProcess_SortByPType.¶û È£È¯µÊ.
-        //°Á ¾ÈÅ°´Â°Ô ³ªÀ»µí. ¹º°¡ ¹Ø¿¡ ¿É¼ÇÀÌ¶û È£È¯µÇ´Â ¸ð¾çÀÎµ¥, ¹Ø¿¡ ¿É¼ÇÀ» ¸ø¾¸.
-        //aiProcess_OptimizeGraph |//ÇÊ¿ä¾ø´Â ³ëµå¸¦ »èÁ¦ÇÔ. ³ëµå°¡ ÅÂ±×·Î ¾²ÀÏ¶§ ´©¶ôµÇ´Â ¹®Á¦°¡ ÀÕ³ªº½, ¾ÈÅ°´Â°Ô ³ªÀ»µí. °èÃþ±¸Á¶°¡ ¼Õ½ÇµÈ´Ù°í ÇÔ.
-        aiProcess_TransformUVCoords | //UV¿¡ ´ëÇØ¼­ º¯È¯Ã³¸® ÇÑ´Ù°í ÇÏ´Â°Å°°À½. ÅØ½ºÃÄ ÀÌ»óÇØÁö¸é ²¨¹ö¸®µµ·Ï
-        aiProcess_JoinIdenticalVertices// Áßº¹Á¦°Å ÈÄ ÀÎµ¦½º ¹öÆÛ ±â¹ÝÀ¸·Î º¯È¯
-        //aiProcess_SortByPType // Æú¸®°ïÀ» Å¸ÀÔº°·Î ÀçÁ¤·ÄÇÔ. aiProcess_Triangulate ¾²¸é ¾îÂ÷ÇÇ »ï°¢Çü¸¸ ³²¾Æ¼­ ÇÊ¿ä ¾øÀ½. ÀÏ´Ü ³Ö¾î~ 
+        aiProcess_FlipWindingOrder | //CW, CCW ï¿½Ù²Ù´Â°ï¿½ï¿½ï¿½.
+        aiProcess_FlipUVs | // ï¿½ï¿½ï¿½×´ï¿½ï¿½ uvï¿½ï¿½ yï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. ï¿½×¸ï¿½ï¿½ï¿½ bitangentï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+        aiProcess_Triangulate | // 4ï¿½ï¿½ï¿½ï¿½ 5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        //aiProcess_GenSmoothNormals | // Normalï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Smmoth Normal ï¿½ï¿½ï¿½ï¿½
+        aiProcess_GenNormals | // Normalï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Normal ï¿½ï¿½ï¿½ï¿½
+        //aiProcess_ImproveCacheLocality | // ï¿½ï°¢ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ ï¿½Ç¸ï¿½ ï¿½Ñºï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï°¢ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+        //aiProcess_GenUVCoords | // UVï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ UV ï¿½ï¿½ï¿½ï¿½Ï°ï¿½[ ï¿½ï¿½Å°ï¿½ï¿½
+        aiProcess_CalcTangentSpace | // Åºï¿½ï¿½Æ® ï¿½ï¿½ï¿½
+        //aiProcess_SplitLargeMeshes |// ï¿½Å½ï¿½ï¿½ï¿½ ï¿½Ê¹ï¿½ Å¬ï¿½ï¿½ ï¿½É°ï¿½ï¿½Â°ï¿½ ï¿½Å½ï¿½ Å¬ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+        //aiProcess_Debone | ï¿½Õ½Ç¾ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+        //aiProcess_RemoveComponent | // (animations, materials, light sources, cameras, textures, vertex components ï¿½ï¿½ï¿½ï¿½
+        //aiProcess_PreTransformVertices | // root Nodeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ÅºÈ­. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+        //aiProcess_ValidateDataStructure | // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¿ï¿½ï¿½ ï¿½Ë»ï¿½
+        //aiProcess_RemoveRedundantMaterials | // ï¿½ßºï¿½ï¿½Ì³ï¿½ ï¿½È¾ï¿½ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½
+        //aiProcess_FixInfacingNormals | //ï¿½ß¸ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¼ï¿½ ï¿½ï¿½ï¿½å³­ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        //aiProcess_FindDegenerates | //ï¿½ï°¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ç¹ï¿½ï¿½ï¿½ï¿½Âµï¿½, ï¿½Ì°ï¿½ Lineï¿½Ì³ï¿½ Pointï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ï´Â°ï¿½ï¿½ï¿½. ï¿½È¾ï¿½ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½.
+        //aiProcess_FindInvalidData | //ï¿½ï¿½È¿ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ UVï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. ï¿½Ì·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ aiProcess_GenNormalsï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ó°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù°ï¿½ï¿½ï¿½. ï¿½Ö´Ï¸ï¿½ï¿½Ì¼Ç¿ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ù°ï¿½ï¿½ï¿½.
+        //aiProcess_GenUVCoords  | //UVï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½. ï¿½ðµ¨¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´Â°ï¿½ ï¿½ï¿½Ãµï¿½Ï°ï¿½, UVï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ó°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´Â°ï¿½ï¿½ï¿½.
+        //aiProcess_FindInstances | //ï¿½Ê¹ï¿½ ï¿½Å½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å°ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½Ù´Â°Å°ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Îµï¿½.
+        //aiProcess_OptimizeMeshes |// ï¿½Å½ï¿½ ï¿½ï¿½ ï¿½Ù¿ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½È­ ï¿½É¼ï¿½ï¿½Îµï¿½. aiProcess_OptimizeGraphï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½, #aiProcess_SplitLargeMeshes and #aiProcess_SortByPType.ï¿½ï¿½ È£È¯ï¿½ï¿½.
+        //ï¿½ï¿½ ï¿½ï¿½Å°ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½Ø¿ï¿½ ï¿½É¼ï¿½ï¿½Ì¶ï¿½ È£È¯ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½Îµï¿½, ï¿½Ø¿ï¿½ ï¿½É¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+        //aiProcess_OptimizeGraph |//ï¿½Ê¿ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½å°¡ ï¿½Â±×·ï¿½ ï¿½ï¿½ï¿½Ï¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Õ³ï¿½ï¿½ï¿½, ï¿½ï¿½Å°ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Õ½ÇµÈ´Ù°ï¿½ ï¿½ï¿½.
+        aiProcess_TransformUVCoords | //UVï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½È¯Ã³ï¿½ï¿½ ï¿½Ñ´Ù°ï¿½ ï¿½Ï´Â°Å°ï¿½ï¿½ï¿½. ï¿½Ø½ï¿½ï¿½ï¿½ ï¿½Ì»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        aiProcess_JoinIdenticalVertices// ï¿½ßºï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+        //aiProcess_SortByPType // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ôºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. aiProcess_Triangulate ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï°¢ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Æ¼ï¿½ ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½Ï´ï¿½ ï¿½Ö¾ï¿½~ 
         | aiProcess_GlobalScale;
     if (!xFlip)
     {
@@ -79,9 +79,9 @@ void Model::Init(const wstring& path, VertexType vertexType)
 	pack->Init(path);
 	const aiScene* scene = pack->GetScene();
 
-	// ÀÓ½Ã
+	// ï¿½Ó½ï¿½
 	auto model = GetCast<Model>();
-	// -------- ¸Å½¬ »ý¼º --------
+	// -------- ï¿½Å½ï¿½ ï¿½ï¿½ï¿½ï¿½ --------
 	_modelMeshList.reserve(scene->mNumMeshes);
 	for (int i = 0; i < scene->mNumMeshes; i++)
 	{
@@ -217,11 +217,11 @@ void Model::LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& cu
 
 			const int MAX_BONE_COUNT = 4;
 
-			// ¸ÕÀú ¾È¾²´Â ID°¡ ÀÖ´ÂÁö ¼ö»ö
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½È¾ï¿½ï¿½ï¿½ IDï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			for (int l = MAX_BONE_COUNT - 1; l >= 0; --l)
 				if (idArray[l] == -1)
 					findIndex = l;
-			// °¡Àå ÀÛÀº°Å ¼ö»ö
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			if (findIndex == -1)
 			{
 				float minW = currentAIBone->mWeights[boneVertexIndex].mWeight;
@@ -234,7 +234,7 @@ void Model::LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& cu
 					}
 				}
 			}
-			// ¼ö»ö ¼º°ø½Ã °»½Å.
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 			if (findIndex != -1)
 			{
 				(&currentVertex.boneId.x)[findIndex] = static_cast<float>(bone->GetIndex());

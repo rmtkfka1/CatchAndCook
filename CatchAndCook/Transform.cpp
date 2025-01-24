@@ -196,7 +196,7 @@ vec3 Transform::GetWorldPosition()
     if (parent)
     {
         Matrix mat;
-        parent->_transform->GetLocalToWorldMatrix_BottomUp(mat);
+        parent->transform->GetLocalToWorldMatrix_BottomUp(mat);
         return vec3::Transform(_localPosition, mat);
     }
 
@@ -210,7 +210,7 @@ const vec3& Transform::SetWorldPosition(const vec3& worldPos)
     if (parent)
     {
         Matrix mat;
-        parent->_transform->GetLocalToWorldMatrix_BottomUp(mat);
+        parent->transform->GetLocalToWorldMatrix_BottomUp(mat);
         _localPosition = vec3::Transform(worldPos, mat.Invert());
     }
     else
@@ -227,7 +227,7 @@ vec3 Transform::GetWorldScale()
     if (currentObj) currentObj = currentObj->parent.lock();
     while (currentObj)
     {
-        totalScale = totalScale * currentObj->_transform->_localScale;
+        totalScale = totalScale * currentObj->transform->_localScale;
         currentObj = currentObj->parent.lock();
     }
     return totalScale;
@@ -239,7 +239,7 @@ const vec3& Transform::SetWorldScale(const vec3& scale)
     if (parent) parent = parent->parent.lock();
     if (parent)
     {
-        vec3 ws = parent->_transform->GetWorldScale();
+        vec3 ws = parent->transform->GetWorldScale();
         _localScale = (ws / (ws * ws)) * scale;
     }
     else
@@ -255,7 +255,7 @@ Quaternion Transform::GetWorldRotation()
     if (currentObj) currentObj = currentObj->parent.lock();
     while (currentObj)
     {
-        totalQuat = totalQuat * currentObj->_transform->_localRotation;
+        totalQuat = totalQuat * currentObj->transform->_localRotation;
         currentObj = currentObj->parent.lock();
     }
 
@@ -270,7 +270,7 @@ const Quaternion& Transform::SetWorldRotation(const Quaternion& quaternion)
     if (parent)
     {
         Quaternion result;
-        parent->_transform->GetWorldRotation().Inverse(result);
+        parent->transform->GetWorldRotation().Inverse(result);
         _localRotation = quaternion * result;
         _localRotation.Normalize();
     }
@@ -289,7 +289,7 @@ bool Transform::GetLocalToWorldMatrix(OUT Matrix& localToWorldMatrix)
         if (CheckLocalToWorldMatrixUpdate())
         {
             auto root = owner->rootParent.lock();
-            root->_transform->TopDownLocalToWorldUpdate(Matrix::Identity);
+            root->transform->TopDownLocalToWorldUpdate(Matrix::Identity);
             std::memcpy(&localToWorldMatrix, &this->_localToWorldMatrix, sizeof(Matrix));
             return _isLocalToWorldChanged;
         }
@@ -368,7 +368,7 @@ bool Transform::CheckLocalToWorldMatrixUpdate()
     auto currentObj = GetOwner();
     while (currentObj != nullptr && (!needUpdate))
     {
-        needUpdate |= currentObj->_transform->CheckLocalMatrixUpdate() || _needLocalToWorldUpdated;
+        needUpdate |= currentObj->transform->CheckLocalMatrixUpdate() || _needLocalToWorldUpdated;
         currentObj = currentObj->parent.lock();
     }
     return needUpdate;
@@ -393,7 +393,7 @@ void Transform::TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool
         {
             auto ptr = childs[i].lock();
             if (ptr != nullptr)
-                ptr->_transform->TopDownLocalToWorldUpdate(_localToWorldMatrix, isFinalUpdate);
+                ptr->transform->TopDownLocalToWorldUpdate(_localToWorldMatrix, isFinalUpdate);
         }
     }
 }
@@ -404,11 +404,11 @@ bool Transform::BottomUpLocalToWorldUpdate()
     if (parent) parent = parent->parent.lock();
     if (parent)
     {
-        bool parentUpdate = parent->_transform->BottomUpLocalToWorldUpdate();
+        bool parentUpdate = parent->transform->BottomUpLocalToWorldUpdate();
         bool localUpdate = GetLocalSRTMatrix(_prevLocalSRTMatrix);
         if (parentUpdate || localUpdate || _needLocalToWorldUpdated)
         {
-            _localToWorldMatrix = _localSRTMatrix * parent->_transform->_localToWorldMatrix;
+            _localToWorldMatrix = _localSRTMatrix * parent->transform->_localToWorldMatrix;
             _needLocalToWorldUpdated = false;
 
             for (auto& child : GetOwner()->_childs)
@@ -416,7 +416,7 @@ bool Transform::BottomUpLocalToWorldUpdate()
                 auto ptr = child.lock();
 
                 if (ptr)
-                    ptr->_transform->_needLocalToWorldUpdated = true;
+                    ptr->transform->_needLocalToWorldUpdated = true;
             }
 
             return _isLocalToWorldChanged = true;
@@ -429,7 +429,7 @@ bool Transform::BottomUpLocalToWorldUpdate()
         if (auto owner = GetOwner(); owner)
             for (auto& child : owner->_childs)
                 if (child.lock())
-                    child.lock()->_transform->_needLocalToWorldUpdated = true;
+                    child.lock()->transform->_needLocalToWorldUpdated = true;
 
         return _isLocalToWorldChanged = true;
     }

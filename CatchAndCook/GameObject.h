@@ -192,7 +192,7 @@ public:
 	void Debug();
 
 	ObjectTag tag = ObjectTag::defualt;
-	std::shared_ptr<Transform> _transform;
+	std::shared_ptr<Transform> transform;
 
 private:
 	std::wstring _name = L"none";

@@ -61,7 +61,7 @@ void SkinnedMeshRenderer::Rendering(const std::shared_ptr<Material>& material)
 	if (material != nullptr)
 		material->SetData();
 
-	GetOwner()->_transform->SetData();
+	GetOwner()->transform->SetData();
 
 	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
 
