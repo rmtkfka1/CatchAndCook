@@ -114,7 +114,7 @@ public:
 		{
 			std::shared_ptr<T> downCast = std::dynamic_pointer_cast<T>(component);
 			if (downCast != nullptr)
-				vec.push_back(vec);
+				vec.push_back(downCast);
 		}
 		return vec.size() - prevCount;
 	}
@@ -128,7 +128,7 @@ public:
 		{
 			std::shared_ptr<T> downCast = std::dynamic_pointer_cast<T>(component);
 			if (downCast != nullptr)
-				vec.push_back(vec);
+				vec.push_back(downCast);
 		}
 		count = vec.size() - count;
 		for (auto& child : _childs)

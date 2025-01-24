@@ -61,7 +61,7 @@ void SkinnedMeshRenderer::Rendering(const std::shared_ptr<Material>& material)
 	if (material != nullptr)
 		material->SetData();
 
-	GetOwner()->transform->SetData();
+	GetOwner()->_transform->SetData();
 
 	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
 
@@ -87,10 +87,6 @@ void SkinnedMeshRenderer::Collision(const std::shared_ptr<Collider>& collider, c
 	Component::Collision(collider, other);
 }
 
-void SkinnedMeshRenderer::DebugRendering()
-{
-	Component::DebugRendering();
-}
 
 void SkinnedMeshRenderer::SetDestroy()
 {

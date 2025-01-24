@@ -16,7 +16,6 @@ public:
 	void Destroy() override;
 	void RenderBegin() override;
 	void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
-	void DebugRendering() override;
 	void SetDestroy() override;
 	void DestroyComponentOnly() override;
 
