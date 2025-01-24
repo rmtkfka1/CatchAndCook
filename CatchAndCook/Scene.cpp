@@ -76,8 +76,6 @@ void Scene::Rendering()
         }
     }
 
-
-
 	{ // forward
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Forward)];
 

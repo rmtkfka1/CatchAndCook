@@ -207,10 +207,10 @@ void AnimationSprite::Render()
 	if (_renderEnable == false)
 		return;
 
-
 	auto& cmdList = Core::main->GetCmdList();
 
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
+
 	{
 		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteWorldParam)->Alloc(1);
 		memcpy(CbufferContainer->ptr, (void*)&_spriteWorldParam, sizeof(SpriteWorldParam));
@@ -240,6 +240,7 @@ void AnimationSprite::Render()
 			cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
 			cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
 		}
+
 		else
 		{
 			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());

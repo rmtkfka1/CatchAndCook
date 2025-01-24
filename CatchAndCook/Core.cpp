@@ -70,7 +70,6 @@ void Core::RenderBegin()
 
 void Core::RenderEnd()
 {
-
     _renderTarget->RenderEnd();
 
     _cmdList->Close();
@@ -82,8 +81,6 @@ void Core::RenderEnd()
 
     _swapChain->Present(1, 0);
     _renderTarget->ChangeIndex();
-
-    //temp
     _bufferManager->Reset();
 }
 

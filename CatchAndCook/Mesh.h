@@ -32,28 +32,25 @@ private:
 		uint32 bufferSize = _vertexCount * sizeof(T);
 
 		//DEFAULT 버퍼 생성
-		auto hr = Core::main->GetDevice()->CreateCommittedResource(
+		ThrowIfFailed( Core::main->GetDevice()->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
 			D3D12_HEAP_FLAG_NONE,
 			&CD3DX12_RESOURCE_DESC::Buffer(bufferSize),
 			D3D12_RESOURCE_STATE_COMMON,
 			nullptr,
-			IID_PPV_ARGS(&_vertexBuffer));
+			IID_PPV_ARGS(&_vertexBuffer)));
 
-		ThrowIfFailed(hr);
 
-	
 		ID3D12Resource* uploadBuffer = nullptr;
 
-		auto hr2 = Core::main->GetDevice()->CreateCommittedResource(
+		ThrowIfFailed(Core::main->GetDevice()->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
 			D3D12_HEAP_FLAG_NONE,
 			&CD3DX12_RESOURCE_DESC::Buffer(bufferSize),
 			D3D12_RESOURCE_STATE_GENERIC_READ,
 			nullptr,
-			IID_PPV_ARGS(&uploadBuffer));
+			IID_PPV_ARGS(&uploadBuffer)));
 
-		ThrowIfFailed(hr2);
 
 		void* data = nullptr;
 		CD3DX12_RANGE readRange(0, 0);
@@ -66,7 +63,6 @@ private:
 		list->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_vertexBuffer.Get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
 		list->CopyBufferRegion(_vertexBuffer.Get(), 0, uploadBuffer, 0, bufferSize);
 		list->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_vertexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER));
-
 
 		Core::main->FlushResCMDQueue();
 

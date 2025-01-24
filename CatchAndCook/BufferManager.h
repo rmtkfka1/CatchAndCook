@@ -27,10 +27,10 @@ public:
 	void CreateBufferPool(BufferType type, uint32 size, uint32 count);
 	void CreateBufferPool_Static(BufferType type, uint32 size, uint32 count);
 
-	shared_ptr<CBufferPool> GetBufferPool(BufferType type) { return _map[type]; }
-	shared_ptr<CBufferPool> GetBufferPool_Static(BufferType type) { return _map_notReset[type]; }
-	shared_ptr<TextureBufferPool> GetTextureBufferPool() { return _textureBufferPool; }
-	shared_ptr<DescritporTable> GetTable() { return _table; }
+	shared_ptr<CBufferPool>& GetBufferPool(BufferType type) { return _map[type]; }
+	shared_ptr<CBufferPool>& GetBufferPool_Static(BufferType type) { return _map_notReset[type]; }
+	shared_ptr<TextureBufferPool>& GetTextureBufferPool() { return _textureBufferPool; }
+	shared_ptr<DescritporTable>& GetTable() { return _table; }
 
 private:
 	unordered_map<BufferType, shared_ptr<CBufferPool>> _map;

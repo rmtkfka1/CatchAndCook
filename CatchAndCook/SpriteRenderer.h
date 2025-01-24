@@ -22,7 +22,6 @@ public:
 	void DebugRendering() override;
 	void SetDestroy() override;
 	void DestroyComponentOnly() override;
-
 	void Rendering(const std::shared_ptr<Material>& material) override;
 
 
