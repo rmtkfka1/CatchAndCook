@@ -89,7 +89,7 @@ void TestScene::Init()
 		material->SetTexture("g_tex_0", ResourceManager::main->GetNoneTexture());
 
 		meshRenderer->AddMaterials({ material });
-		meshRenderer->SetMesh(GeoMetryHelper::LoadGripMesh(30,30,30.0f,30.0f));
+		meshRenderer->SetMesh(GeoMetryHelper::LoadGripMesh(30.0f,30.0f,30.0f,30.0f));
 	}
 
 
