@@ -24,7 +24,6 @@ void Game::Init(HWND hwnd)
 	Core::main = make_unique<Core>();
 	Core::main->Init(hwnd);
 
-
 	ResourceManager::main = make_unique<ResourceManager>();
 	ResourceManager::main->Init();
 	SceneManager::main = make_unique<SceneManager>();

@@ -52,6 +52,7 @@ void Scene::Rendering()
     CameraManager::main->GetActiveCamera()->SetData();
 
     _globalParam.window_size = vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
+    _globalParam.Time = Time::main->GetTime();
     auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::GlobalParam)->Alloc(1);
     memcpy(CbufferContainer->ptr, (void*)&_globalParam, sizeof(GlobalParam));
     cmdList->SetGraphicsRootConstantBufferView(0, CbufferContainer->GPUAdress);

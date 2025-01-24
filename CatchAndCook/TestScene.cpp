@@ -73,13 +73,15 @@ void TestScene::Init()
 		info._stencilTest = false;
 		info.cullingType = CullingType::WIREFRAME;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"testgrid", L"test.hlsl", StaticProp,
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"testgrid", L"sea.hlsl", StaticProp,
 			ShaderArg{}, info);
 
 		shared_ptr<Material> material = make_shared<Material>();
 
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"grid");
 		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+
+		meshRenderer->SetDrawNormal(false);
 
 		gameObject->_transform->SetLocalPosition(vec3(0, 10.0f, 0));
 
@@ -89,7 +91,7 @@ void TestScene::Init()
 		material->SetTexture("g_tex_0", ResourceManager::main->GetNoneTexture());
 
 		meshRenderer->AddMaterials({ material });
-		meshRenderer->SetMesh(GeoMetryHelper::LoadGripMesh(30.0f,30.0f,30.0f,30.0f));
+		meshRenderer->SetMesh(GeoMetryHelper::LoadGripMesh(300.0f, 300.0f, 100, 100));
 	}
 
 
