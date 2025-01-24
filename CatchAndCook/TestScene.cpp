@@ -141,8 +141,7 @@ void TestScene::Init()
 		spriteRender->SetSprite(sprite);
 		sprite->SetPos(vec3(300.0f, 0.0f, 0.000001));
 		sprite->SetSize(vec2(300, 300));
-		//sprite->SetText(L"Ä³Ä¡¾ØÄî");
-		sprite->AddAction(make_shared<DragAction>(KeyCode::LeftMouse));
+		sprite->SetText(L"Ä³Ä¡¾ØÄî");
 		sprite->CreateObject(512, 256, L"Arial", FontColor::WHITE, 123);
 	}
 
