@@ -45,10 +45,7 @@ void RenderTarget::ResizeWindowSize(ComPtr<IDXGISwapChain3> swapchain, uint32 sw
 		_RenderTargets[i]->GetResource().Reset();
 	}
 
-	if (FAILED(swapchain->ResizeBuffers(SWAP_CHAIN_FRAME_COUNT, WINDOW_WIDTH, WINDOW_HEIGHT, DXGI_FORMAT_R8G8B8A8_UNORM, swapChainFlags)))
-	{
-		__debugbreak();
-	}
+	ThrowIfFailed(swapchain->ResizeBuffers(SWAP_CHAIN_FRAME_COUNT, WINDOW_WIDTH, WINDOW_HEIGHT, DXGI_FORMAT_R8G8B8A8_UNORM, swapChainFlags));
 
 	_RenderTargetIndex = swapchain->GetCurrentBackBufferIndex();
 
@@ -73,7 +70,7 @@ void RenderTarget::RenderBegin()
 
 	//ClearDepth();
 
-	const float BackColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	const float BackColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	_RenderTargets[_RenderTargetIndex]->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
 

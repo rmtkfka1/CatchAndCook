@@ -3,6 +3,7 @@
 
 class TextHandle;
 
+
 class TestScene : public Scene
 {
 public:
@@ -13,6 +14,7 @@ public:
 	virtual void Rendering();
 	virtual void RenderEnd();
 	virtual void Finish();
+
 
 };
 

@@ -10,6 +10,8 @@
 #include "Texture.h"
 #include "Transform.h"
 
+shared_ptr<Shader> MeshRenderer::_normalDebugShader;
+
 MeshRenderer::~MeshRenderer()
 {
 
@@ -23,6 +25,9 @@ bool MeshRenderer::IsExecuteAble()
 void MeshRenderer::Init()
 {
 	Component::Init();
+
+	if(_normalDebugShader==nullptr)
+		_normalDebugShader = ResourceManager::main->Get<Shader>(L"normalDraw");
 }
 
 void MeshRenderer::Start()
@@ -79,7 +84,7 @@ void MeshRenderer::Rendering(const std::shared_ptr<Material>& material)
 	if (material != nullptr)
 		material->SetData();
 
-	GetOwner()->transform->SetData();
+	GetOwner()->_transform->SetData();
 
 	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
 
@@ -112,7 +117,34 @@ void MeshRenderer::Collision(const std::shared_ptr<Collider>& collider, const st
 
 void MeshRenderer::DebugRendering()
 {
-	Component::DebugRendering();
+	auto& cmdList = Core::main->GetCmdList();
+
+	if (_drawNormal)
+	{
+		cmdList->SetPipelineState(_normalDebugShader->_pipelineState.Get());
+
+		GetOwner()->_transform->SetData();
+
+		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+		if (_mesh->GetVertexCount() != 0)
+		{
+			if (_mesh->GetIndexCount() != 0)
+			{
+				cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
+				cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
+				cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
+			}
+
+			else
+			{
+				cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
+				cmdList->DrawInstanced(_mesh->GetVertexCount(), 1, 0, 0);
+			}
+		}
+
+	}
+
 }
 
 void MeshRenderer::SetDestroy()

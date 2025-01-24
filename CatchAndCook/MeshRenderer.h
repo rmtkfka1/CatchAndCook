@@ -4,6 +4,7 @@
 
 class Material;
 class Mesh;
+class Shader;
 
 class MeshRenderer : public Component, public RendererBase
 {
@@ -30,8 +31,15 @@ public:
 	void SetMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
 	void AddMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
 
+	void SetDrawNormal(bool draw) { _drawNormal = draw; }
+
 private:
 	std::shared_ptr<Mesh> _mesh;
 	std::vector<std::shared_ptr<Material>> _materials;
+
+	bool _drawNormal = true;
+	static shared_ptr<Shader> _normalDebugShader;
+
+
 };
 

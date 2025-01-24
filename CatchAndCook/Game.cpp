@@ -46,7 +46,7 @@ void Game::Init(HWND hwnd)
 
 	ResourceManager::main->Load<Model>(L"testModel", L"../Resources/Models/Kindred/kindred_unity.fbx", VertexType::Vertex_Skinned);
 	auto obj = ResourceManager::main->Get<Model>(L"testModel")->CreateGameObject(scene);
-	obj->transform->SetWorldPosition(vec3(0, 0, -1));
+	obj->_transform->SetWorldPosition(vec3(0, 5.0f, -1));
 }
 
 void Game::PrevUpdate()
@@ -82,7 +82,6 @@ void Game::PrevUpdate()
 			WINDOW_HEIGHT = mi.rcMonitor.bottom - mi.rcMonitor.top;
 
 			Core::main->ResizeWindowSize();
-
 		}
 		else
 		{
@@ -90,9 +89,15 @@ void Game::PrevUpdate()
 			// 원래 크기로 윈도우 설정
 			SetWindowPos(hWnd, HWND_TOP, 0, 0, 800, 600, SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
 
-			WINDOW_WIDTH = 800;
-			WINDOW_HEIGHT = 600;
-
+			RECT rect;
+			if (GetClientRect(hWnd, &rect))
+			{
+				int width = rect.right - rect.left;
+				int height = rect.bottom - rect.top;
+				WINDOW_WIDTH = width;
+				WINDOW_HEIGHT = height;
+			}
+	
 			Core::main->ResizeWindowSize();
 
 		}
@@ -118,6 +123,7 @@ void Game::Run()
 	Core::main->RenderBegin();
 	currentScene->RenderBegin();
 	currentScene->Rendering();
+	currentScene->DebugRendering();
 	currentScene->RenderEnd();
 	Core::main->RenderEnd();
 	currentScene->Finish();

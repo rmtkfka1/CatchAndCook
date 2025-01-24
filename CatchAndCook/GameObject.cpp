@@ -24,7 +24,7 @@ void GameObject::Init()
     std::shared_ptr<GameObject> gameObject = GetCast<GameObject>();
     parent.reset();
     rootParent = gameObject;
-    gameObject->transform = gameObject->AddComponent<Transform>();
+    gameObject->_transform = gameObject->AddComponent<Transform>();
     SetActiveSelf(true);
 }
 
@@ -75,25 +75,11 @@ void GameObject::RenderBegin()
     }
 }
 
-void GameObject::Rendering()
-{
-    //if ((!IsDestroy()) && GetActive() && (!IsFirst())) {
-    //    for (auto& component : _components) {
-    //        if (((!component->IsDestroy()) && (!component->IsFirst())))
-    //            component->Rendering();
-    //    }
-    //}
-}
+//void GameObject::Rendering()
+//{
+//  
+//}
 
-void GameObject::DebugRendering()
-{
-    if ((!IsDestroy()) && GetActive() && (!IsFirst())) {
-        for (auto& component : _components) {
-            if (((!component->IsDestroy()) && (!component->IsFirst())))
-                component->DebugRendering();
-        }
-    }
-}
 
 void GameObject::Destroy()
 {

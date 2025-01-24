@@ -66,6 +66,9 @@ void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
         vec2 pos = Input::main->GetMousePosition();
         vec2 delta = pos - _lastMousePos; 
 
+        delta.x = delta.x * (_dragSprite->_firstWindowSize.x / WINDOW_WIDTH);
+        delta.y = delta.y * (_dragSprite->_firstWindowSize.y / WINDOW_HEIGHT);
+
         _dragSprite->SetPos(vec3(_dragSprite->_screenPos.x + delta.x,
             _dragSprite->_screenPos.y + delta.y,
             _dragSprite->_spriteWorldParam.ndcPos.z));

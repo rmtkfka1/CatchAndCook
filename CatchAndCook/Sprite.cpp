@@ -2,6 +2,7 @@
 #include "Sprite.h"
 #include "Mesh.h"
 #include "SpriteAction.h"
+#include "TextManager.h"
 
 Sprite::Sprite()
 {
@@ -206,10 +207,10 @@ void AnimationSprite::Render()
 	if (_renderEnable == false)
 		return;
 
-
 	auto& cmdList = Core::main->GetCmdList();
 
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
+
 	{
 		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteWorldParam)->Alloc(1);
 		memcpy(CbufferContainer->ptr, (void*)&_spriteWorldParam, sizeof(SpriteWorldParam));
@@ -239,6 +240,7 @@ void AnimationSprite::Render()
 			cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
 			cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
 		}
+
 		else
 		{
 			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
@@ -299,3 +301,136 @@ void AnimationSprite::AnimationUpdate()
 	}
 }
 
+/*****************************************************************
+*                                                                *
+*                         TextSprite                             *
+*                                                                *
+******************************************************************/
+
+TextSprite::TextSprite()
+{
+	Init();
+}
+
+TextSprite::~TextSprite()
+{
+	delete[] _sysMemory;
+
+}
+
+void TextSprite::Init()
+{
+	_mesh = GeoMetryHelper::LoadSprtieMesh();
+	_shader = ResourceManager::main->Get<Shader>(L"SpriteShader");
+}
+
+void TextSprite::Update()
+{
+	if (_textChanged)
+	{
+		TextManager::main->UpdateToSysMemory(_text, _textHandle, _sysMemory);
+	}
+
+	for (auto& action : _actions)
+	{
+		action->Execute(this);
+	}
+
+};
+
+void TextSprite::Render()
+{
+
+	auto& cmdList = Core::main->GetCmdList();
+
+	if (_textChanged)
+	{
+		_texture->UpdateDynamicTexture(_sysMemory);
+		_texture->CopyCpuToGpu();
+		_textChanged = false;
+	}
+
+	cmdList->SetPipelineState(_shader->_pipelineState.Get());
+
+	{
+		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteWorldParam)->Alloc(1);
+		memcpy(CbufferContainer->ptr, (void*)&_spriteWorldParam, sizeof(SpriteWorldParam));
+		cmdList->SetGraphicsRootConstantBufferView(_shader->GetRegisterIndex("SPRITE_WORLD_PARAM"), CbufferContainer->GPUAdress);
+	}
+
+	{
+		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteTextureParam)->Alloc(1);
+		memcpy(CbufferContainer->ptr, (void*)&_sprtieTextureParam, sizeof(SprtieTextureParam));
+		cmdList->SetGraphicsRootConstantBufferView(_shader->GetRegisterIndex("SPRITE_TEXTURE_PARAM"), CbufferContainer->GPUAdress);
+	}
+
+	auto tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
+	Core::main->GetBufferManager()->GetTable()->CopyHandle(tableContainer.CPUHandle, _texture->GetSRVCpuHandle(), 0);
+	cmdList->SetGraphicsRootDescriptorTable(SPRITE_TABLE_INDEX, tableContainer.GPUHandle);
+
+
+	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
+
+	if (_mesh->GetVertexCount() != 0)
+	{
+		if (_mesh->GetIndexCount() != 0)
+		{
+			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
+			cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
+			cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
+		}
+		else
+		{
+			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
+			cmdList->DrawInstanced(_mesh->GetVertexCount(), 1, 0, 0);
+		}
+	}
+
+
+}
+
+void TextSprite::CreateObject(int width, int height, const WCHAR* font, FontColor color, float fontsize)
+{
+	_textHandle =  TextManager::main->AllocTextStrcture(width, height, font, color, fontsize);
+	_sysMemory = new BYTE[(width * height * 4)];
+	_texture = make_shared<Texture>();
+	_texture->CreateDynamicTexture(DXGI_FORMAT_R8G8B8A8_UNORM, width, height);
+	_sprtieTextureParam.origintexSize = vec2(width,height);
+
+	if (color == FontColor::BLACK)
+	{
+		SetClipingColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+		DWORD* pDest = (DWORD*)_sysMemory;
+
+		for (DWORD y = 0; y < height; y++)
+		{
+			for (DWORD x = 0; x < width; x++)
+			{
+				pDest[x + width * y] = 0xff'ff'ff'ff;
+			}
+		}
+	}
+	
+	else if (color == FontColor::WHITE)
+	{
+		SetClipingColor(vec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		DWORD* pDest = (DWORD*)_sysMemory;
+
+		for (DWORD y = 0; y < height; y++)
+		{
+			for (DWORD x = 0; x < width; x++)
+			{
+				pDest[x + width * y] = 0x00'00'00'00;
+			}
+		}
+	}
+	
+	_sprtieTextureParam.texSamplePos.x = 0;
+	_sprtieTextureParam.texSamplePos.y = 0;
+	_sprtieTextureParam.texSampleSize.x = width;
+	_sprtieTextureParam.texSampleSize.y = height;
+
+	
+}

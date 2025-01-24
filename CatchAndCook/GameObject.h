@@ -27,13 +27,12 @@ public:
 	void Enable(); // 
 	void Disable(); //
 	void Destroy(); //
-
 	void RenderBegin(); // CBuffer <- 갱신
-	void Rendering(); // CBuffer <- 갱신
+	//void Rendering(); // CBuffer <- 갱신
 
 	// 이벤트 함수
 	void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
-	void DebugRendering(); // CBuffer <- 갱신
+	
 
 public:
 	template <class T, class = std::enable_if_t<std::is_base_of_v<Component, T>>>
@@ -192,7 +191,7 @@ public:
 	void Debug();
 
 	ObjectTag tag = ObjectTag::defualt;
-	std::shared_ptr<Transform> transform;
+	std::shared_ptr<Transform> _transform;
 
 private:
 	std::wstring _name = L"none";

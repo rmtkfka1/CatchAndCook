@@ -1,28 +1,26 @@
 #pragma once
 
+enum class FontColor
+{
+	WHITE,
+	BLACK,
+};
+
 
 class TextHandle
 {
 public:
 	TextHandle() {};
-	~TextHandle() { cout << "소멸자 호출" << endl; }
+	~TextHandle() { }
 	
-	BYTE* sysMemory;
-	ComPtr<ID2D1Bitmap1> bitMapGpu;
-	ComPtr<ID2D1Bitmap1> bitMapRead;
-	ComPtr<ID2D1SolidColorBrush> brush;
-	ComPtr<IDWriteTextFormat> font;
-
-	uint32 width;
-	uint32 height;
-
-	float fontSize;
-};
-
-enum class FontColor
-{
-	WHITE,
-	BLACK,
+	ComPtr<ID2D1Bitmap1> bitMapGpu{};
+	ComPtr<ID2D1Bitmap1> bitMapRead{};
+	ComPtr<ID2D1SolidColorBrush> brush{};
+	ComPtr<IDWriteTextFormat> font{};
+	FontColor fontcolor;
+	uint32 width{};
+	uint32 height{};
+	float fontSize{};
 };
 
 
@@ -33,13 +31,19 @@ public:
 
 public:
 	void Init();
-	shared_ptr<TextHandle> AllocTextStrcture(int width ,int height , FontColor color , float size );
+	void UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>& handle , BYTE* memory );
+	void PrintFontAll(); //사용할수있는 모든 폰트 콘솔로 출력.
+
+	shared_ptr<TextHandle> AllocTextStrcture(int width ,int height , const WCHAR* font, FontColor color , float fontsize );
 
 private:
 	void InitD2D();
+	void CreateSolidBrush();
+
 
 
 private:
+
 	ComPtr<ID2D1Device2> _device = nullptr;
 	ComPtr<ID2D1DeviceContext2> _context = nullptr;
 

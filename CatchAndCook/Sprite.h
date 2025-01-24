@@ -91,7 +91,6 @@ public:
 	BasicSprite();
 	virtual ~BasicSprite();
 
-	
 public:
 	virtual void Init();
 	virtual void Update();
@@ -105,6 +104,42 @@ private:
 	shared_ptr<Shader> _shader;
 	shared_ptr<Texture> _texture;
 	SprtieTextureParam _sprtieTextureParam;
+};
+
+
+/*****************************************************************
+*                                                                *
+*                         TextSprite                             *
+*                                                                *
+******************************************************************/
+enum class FontColor;
+class TextHandle;
+
+class TextSprite : public Sprite
+{
+
+public:
+	TextSprite();
+	virtual ~TextSprite();
+
+public:
+	virtual void Init();
+	virtual void Update();
+	virtual void Render();
+
+	void SetText(const wstring& text) { _text = text; _textChanged = true; }
+	void CreateObject(int width, int height, const WCHAR* font, FontColor color, float fontsize);
+
+	
+private:
+	bool _textChanged = true;
+	wstring _text =L"NULL";
+	shared_ptr<TextHandle> _textHandle;
+	shared_ptr<Mesh> _mesh;
+	shared_ptr<Shader> _shader;
+	shared_ptr<Texture> _texture;
+	SprtieTextureParam _sprtieTextureParam;
+	BYTE* _sysMemory;
 };
 
 /*****************************************************************
