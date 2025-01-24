@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "BufferManager.h"
+
+#include "Bone.h"
 #include "BufferPool.h"
 #include "Material.h"
 #include "Camera.h"
@@ -19,7 +21,7 @@ void BufferManager::Init()
 	CreateBufferPool(BufferType::SpriteTextureParam, sizeof(SprtieTextureParam), 255);
 	CreateBufferPool(BufferType::SpriteWorldParam, sizeof(SpriteWorldParam), 255);
 
-	CreateBufferPool_Static(BufferType::BoneParam, sizeof(SpriteWorldParam), 255);
+	CreateBufferPool_Static(BufferType::BoneParam, sizeof(BoneParam), 128);
 
 	{
 		_table = make_shared<DescritporTable>();

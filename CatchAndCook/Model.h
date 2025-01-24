@@ -54,6 +54,8 @@ public:
 
 	void LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& currentModelMesh);
 
+	void SetDataBone();
+
 private:
 	int AllocBoneID() { return _boneAllocator++; };
 	void AddBone(const std::shared_ptr<Bone>& bone);
@@ -62,4 +64,5 @@ private:
 private:
 	int _boneAllocator = 0;
 	std::shared_ptr<ModelNode> _rootNode;
+	CBufferContainer* boneCBuffer;
 };

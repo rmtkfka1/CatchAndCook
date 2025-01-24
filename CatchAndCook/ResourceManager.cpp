@@ -29,8 +29,9 @@ void ResourceManager::CreateDefaultShader()
 	{
 
 		ShaderInfo info;
-		info._zTest = true;
+		info._zTest = false;
 		info._stencilTest = false;
+		info._blendEnable = true;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->Init(L"SpriteShader.hlsl", SpriteProp, ShaderArg{}, info);

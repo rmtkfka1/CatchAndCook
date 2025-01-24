@@ -1,5 +1,11 @@
 #pragma once
 
+
+struct BoneParam
+{
+	Matrix boneMatrixs[256];
+};
+
 class Bone
 {
 	std::string _targetNodeName;
