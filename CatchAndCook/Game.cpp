@@ -44,21 +44,17 @@ void Game::Init(HWND hwnd)
 	SceneManager::main->ChangeScene(scene);
 
 	ResourceManager::main->Load<Model>(L"testModel", L"../Resources/Models/Kindred/kindred_unity.fbx", VertexType::Vertex_Skinned);
+	auto obj = ResourceManager::main->Get<Model>(L"testModel")->CreateGameObject(scene);
 
-	for (int i = 0; i < 300; ++i)
+	vector<shared_ptr<MeshRenderer>> v;
+	obj->GetComponentsWithChilds(v);
+
+	for (auto& ele : v)
 	{
-		auto obj = ResourceManager::main->Get<Model>(L"testModel")->CreateGameObject(scene);
-
-	/*	vector<shared_ptr<MeshRenderer>> v;
-		obj->GetComponentsWithChilds(v);
-
-		for (auto& ele : v)
-		{
-			ele->SetDrawNormal(false);
-		}*/
-
-		obj->_transform->SetWorldPosition(vec3(0, 5.0f * i, -1));
+		ele->SetDrawNormal(false);
 	}
+
+	obj->_transform->SetWorldPosition(vec3(0, 5.0f, -1));
 }
 
 void Game::PrevUpdate()
@@ -98,7 +94,7 @@ void Game::PrevUpdate()
 		else
 		{
 			SetWindowLong(hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
-			// ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+			// ¿ø·¡ Å©±â·Î À©µµ¿ì ¼³Á¤
 			SetWindowPos(hWnd, HWND_TOP, 0, 0, 800, 600, SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
 
 			RECT rect;
@@ -195,7 +191,7 @@ void Game::CameraUpdate()
 		static vec2 lastMousePos;
 		vec2 currentMousePos = Input::main->GetMousePosition();
 
-		//Æ¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+		//Æ¢´ÂÇö»ó ¹æ¾î
 		if (Input::main->GetMouseDown(KeyCode::LeftMouse))
 		{
 			lastMousePos = currentMousePos;

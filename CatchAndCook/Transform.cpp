@@ -6,8 +6,8 @@
 #include "BufferPool.h"
 #include "BufferManager.h"
 #include "RendererBase.h"
-// SCENE -> Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ / MATERIAL CAMERA MESHRENDER SCRIPTS LIGHT  / RENDERPASS / MODEL / RESOURCEMANAGER / INSTANCING
-// 1.12 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¼ï¿½.
+// SCENE -> Æ®¸®±¸Á¶ / MATERIAL CAMERA MESHRENDER SCRIPTS LIGHT  / RENDERPASS / MODEL / RESOURCEMANAGER / INSTANCING
+// 1.12 Àü±îÁö ¿£Áø±¸Á¶¿Ï¼º.
 
 void Transform::SetDestroy()
 {
@@ -25,13 +25,13 @@ Transform::~Transform()
 void Transform::Init()
 {
 	Component::Init();
-    //std::cout << "Init\n";
+    std::cout << "Init\n";
 }
 
 void Transform::Start()
 {
 	Component::Start();
-    //std::cout << "Start\n";
+    std::cout << "Start\n";
 }
 
 void Transform::Update()
@@ -47,19 +47,19 @@ void Transform::Update2()
 void Transform::Enable()
 {
 	Component::Enable();
-    //std::cout << "Enable\n";
+    std::cout << "Enable\n";
 }
 
 void Transform::Disable()
 {
 	Component::Disable();
-    //std::cout << "Disable\n";
+    std::cout << "Disable\n";
 }
 
 void Transform::Destroy()
 {
 	Component::Destroy();
-    //std::cout << "Destroy\n";
+    std::cout << "Destroy\n";
 }
 
 void Transform::RenderBegin()
@@ -339,7 +339,7 @@ bool Transform::SetLocalSRTMatrix(Matrix& localSRT)
     vec3 position;
     Quaternion rotation;
     vec3 scale;
-    // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡, È¸ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ ï¿½ï¿½ï¿½ï¿½
+    // Çà·ÄÀ» À§Ä¡, È¸Àü, ½ºÄÉÀÏ·Î ºÐÇØ
     std::memcpy(&_localSRTMatrix, &localSRT, sizeof(Matrix));
     if (localSRT.Decompose(scale, rotation, position))
     {
@@ -349,7 +349,7 @@ bool Transform::SetLocalSRTMatrix(Matrix& localSRT)
         _needLocalUpdated = false;
         return true;
     }
-    std::cout << "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½\n";
+    std::cout << "ºÐÇØ ½ÇÆÐ\n";
     return false;
 }
 
@@ -365,7 +365,7 @@ bool Transform::CheckLocalMatrixUpdate()
 
 bool Transform::CheckLocalToWorldMatrixUpdate()
 {
-    //bottom-up check ï¿½ï¿½ï¿½
+    //bottom-up check ¹æ½Ä
     bool needUpdate = false;
     auto currentObj = GetOwner();
     while (currentObj != nullptr && (!needUpdate))
