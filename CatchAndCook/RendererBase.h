@@ -27,7 +27,8 @@ public:
 	void AddSetter(std::shared_ptr<RenderObjectSetter> setter)
 	{
 		setters.push_back(setter);
-	};
+	}
+
 	void ClearSetter() { setters.clear(); };
 	std::vector<std::shared_ptr<RenderObjectSetter>> setters;
 };

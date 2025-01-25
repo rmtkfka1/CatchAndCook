@@ -132,36 +132,36 @@ void MeshRenderer::Collision(const std::shared_ptr<Collider>& collider, const st
 
 void MeshRenderer::DebugRendering()
 {
-	auto& cmdList = Core::main->GetCmdList();
+	//auto& cmdList = Core::main->GetCmdList();
 
-	for (auto& mesh : _mesh)
-	{
-		if (_drawNormal)
-		{
-			cmdList->SetPipelineState(_normalDebugShader->_pipelineState.Get());
+	//for (auto& mesh : _mesh)
+	//{
+	//	if (_drawNormal)
+	//	{
+	//		cmdList->SetPipelineState(_normalDebugShader->_pipelineState.Get());
 
-			GetOwner()->_transform->SetData();
+	//		GetOwner()->_transform->SetData();
 
-			cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+	//		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-			if (mesh->GetVertexCount() != 0)
-			{
-				if (mesh->GetIndexCount() != 0)
-				{
-					cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());
-					cmdList->IASetIndexBuffer(&mesh->GetIndexView());
-					cmdList->DrawIndexedInstanced(mesh->GetIndexCount(), 1, 0, 0, 0);
-				}
+	//		if (mesh->GetVertexCount() != 0)
+	//		{
+	//			if (mesh->GetIndexCount() != 0)
+	//			{
+	//				cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());
+	//				cmdList->IASetIndexBuffer(&mesh->GetIndexView());
+	//				cmdList->DrawIndexedInstanced(mesh->GetIndexCount(), 1, 0, 0, 0);
+	//			}
 
-				else
-				{
-					cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());
-					cmdList->DrawInstanced(mesh->GetVertexCount(), 1, 0, 0);
-				}
-			}
+	//			else
+	//			{
+	//				cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());
+	//				cmdList->DrawInstanced(mesh->GetVertexCount(), 1, 0, 0);
+	//			}
+	//		}
 
-		}
-	}
+	//	}
+	//}
 
 }
 
