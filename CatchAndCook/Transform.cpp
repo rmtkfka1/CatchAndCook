@@ -6,8 +6,8 @@
 #include "BufferPool.h"
 #include "BufferManager.h"
 #include "RendererBase.h"
-// SCENE -> Æ®¸®±¸Á¶ / MATERIAL CAMERA MESHRENDER SCRIPTS LIGHT  / RENDERPASS / MODEL / RESOURCEMANAGER / INSTANCING
-// 1.12 Àü±îÁö ¿£Áø±¸Á¶¿Ï¼º.
+// SCENE -> Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ / MATERIAL CAMERA MESHRENDER SCRIPTS LIGHT  / RENDERPASS / MODEL / RESOURCEMANAGER / INSTANCING
+// 1.12 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¼ï¿½.
 
 void Transform::SetDestroy()
 {
@@ -59,7 +59,7 @@ void Transform::Disable()
 void Transform::Destroy()
 {
 	Component::Destroy();
-
+    //std::cout << "Destroy\n";
 }
 
 void Transform::RenderBegin()
@@ -339,7 +339,7 @@ bool Transform::SetLocalSRTMatrix(Matrix& localSRT)
     vec3 position;
     Quaternion rotation;
     vec3 scale;
-    // Çà·ÄÀ» À§Ä¡, È¸Àü, ½ºÄÉÀÏ·Î ºÐÇØ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡, È¸ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ ï¿½ï¿½ï¿½ï¿½
     std::memcpy(&_localSRTMatrix, &localSRT, sizeof(Matrix));
     if (localSRT.Decompose(scale, rotation, position))
     {
@@ -349,7 +349,7 @@ bool Transform::SetLocalSRTMatrix(Matrix& localSRT)
         _needLocalUpdated = false;
         return true;
     }
-    std::cout << "ºÐÇØ ½ÇÆÐ\n";
+    std::cout << "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½\n";
     return false;
 }
 
@@ -365,7 +365,7 @@ bool Transform::CheckLocalMatrixUpdate()
 
 bool Transform::CheckLocalToWorldMatrixUpdate()
 {
-    //bottom-up check ¹æ½Ä
+    //bottom-up check ï¿½ï¿½ï¿½
     bool needUpdate = false;
     auto currentObj = GetOwner();
     while (currentObj != nullptr && (!needUpdate))
