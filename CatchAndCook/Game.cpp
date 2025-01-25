@@ -49,14 +49,6 @@ void Game::Init(HWND hwnd)
 	{
 		auto obj = ResourceManager::main->Get<Model>(L"testModel")->CreateGameObject(scene);
 
-	/*	vector<shared_ptr<MeshRenderer>> v;
-		obj->GetComponentsWithChilds(v);
-
-		for (auto& ele : v)
-		{
-			ele->SetDrawNormal(false);
-		}*/
-
 		obj->_transform->SetWorldPosition(vec3(0, 5.0f * i, -1));
 	}
 }

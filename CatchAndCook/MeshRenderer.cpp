@@ -35,6 +35,8 @@ void MeshRenderer::Init()
 void MeshRenderer::Start()
 {
 	Component::Start();
+
+
 }
 
 void MeshRenderer::Update()
@@ -69,7 +71,7 @@ void MeshRenderer::RenderBegin()
 {
 	Component::RenderBegin();
 
-	for (int i = 0; i<_mesh.size();i++) 
+	for (int i = 0; i < _mesh.size(); i++)
 	{
 		auto currentMesh = _mesh[i];
 		auto currentMaterial = _uniqueMaterials[i];
@@ -101,23 +103,23 @@ void MeshRenderer::Rendering(const std::shared_ptr<Material>& material, const st
 	for (auto& data : setters)
 		data->SetData();
 
-	cmdList->IASetPrimitiveTopology(mesh->GetTopology());
+	//cmdList->IASetPrimitiveTopology(mesh->GetTopology());
 
-	if (mesh->GetVertexCount() != 0)
-	{
-		
-		if (mesh->GetIndexCount() != 0)
-		{
-			cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());
-			cmdList->IASetIndexBuffer(&mesh->GetIndexView());
-			cmdList->DrawIndexedInstanced(mesh->GetIndexCount(), 1, 0, 0, 0);
-		}
-		else
-		{
-			cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());
-			cmdList->DrawInstanced(mesh->GetVertexCount(), 1, 0, 0);
-		}
-	}
+	//if (mesh->GetVertexCount() != 0)
+	//{
+	//	
+	//	if (mesh->GetIndexCount() != 0)
+	//	{
+	//		/*cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());*/
+	//		//cmdList->IASetIndexBuffer(&mesh->GetIndexView());
+	//		cmdList->DrawIndexedInstanced(0, 1, 0, 0, 0);
+	//	}
+	//	else
+	//	{
+	//		cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());
+	//		cmdList->DrawInstanced(mesh->GetVertexCount(), 1, 0, 0);
+	//	}
+	//}
 
 	setters.clear();
 }

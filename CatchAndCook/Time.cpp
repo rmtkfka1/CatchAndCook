@@ -23,6 +23,11 @@ void Time::Update()
 
 	if (_frameTime > 1.0f)
 	{
+			WCHAR wchTxt[64];
+		swprintf_s(wchTxt, 64, L"FPS: %u", _fps);
+		SetWindowText(Core::main->GetHandle(), wchTxt);
+
+
 		_fps = static_cast<uint32>(_frameCount / _frameTime);
 		_frameTime = 0.f;
 		_frameCount = 0;
