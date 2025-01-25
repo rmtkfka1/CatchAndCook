@@ -59,7 +59,7 @@ void Transform::Disable()
 void Transform::Destroy()
 {
 	Component::Destroy();
-    //std::cout << "Destroy\n";
+
 }
 
 void Transform::RenderBegin()
