@@ -53,8 +53,6 @@ void Core::AdjustWinodwSize()
     ::AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
 }
 
-
-
 void Core::RenderBegin()
 {
     ThrowIfFailed(_cmdMemory->Reset());
@@ -164,7 +162,7 @@ void Core::CreateDevice(bool EnableDebugLayer, bool EnableGBV)
             ID3D12Debug5* pDebugController5 = nullptr;
             if (S_OK == pDebugController->QueryInterface(IID_PPV_ARGS(&pDebugController5)))
             {
-                pDebugController5->SetEnableGPUBasedValidation(TRUE);
+                pDebugController5->SetEnableGPUBasedValidation(FALSE);
                 pDebugController5->SetEnableAutoName(TRUE);
                 pDebugController5->Release();
             }

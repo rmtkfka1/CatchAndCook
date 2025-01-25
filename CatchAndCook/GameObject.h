@@ -161,8 +161,6 @@ public:
 	int GetChildsAllByName(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec);
 
 
-
-
 private:
 	bool _active_self = true;
 	bool _active_total_prev = false;
@@ -191,9 +189,12 @@ public:
 
 	void Debug();
 
+	std::shared_ptr<RendererBase> GetRenderer() { return _renderer; }
+
 	ObjectTag tag = ObjectTag::defualt;
 	std::shared_ptr<Transform> transform;
 
+	std::shared_ptr<RendererBase> _renderer;
 private:
 	std::wstring _name = L"none";
 	std::weak_ptr<Scene> _scene;

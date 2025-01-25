@@ -5,6 +5,7 @@
 #include "simple_mesh_ext.h"
 #include "BufferPool.h"
 #include "BufferManager.h"
+#include "RendererBase.h"
 // SCENE -> 트리구조 / MATERIAL CAMERA MESHRENDER SCRIPTS LIGHT  / RENDERPASS / MODEL / RESOURCEMANAGER / INSTANCING
 // 1.12 전까지 엔진구조완성.
 
@@ -65,6 +66,11 @@ void Transform::RenderBegin()
 {
 	Component::RenderBegin();
     PushData();
+
+    if (GetOwner()->GetRenderer())
+    {
+        GetOwner()->GetRenderer()->AddSetter(GetCast<Transform>());
+    }
 }
 
 void Transform::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)

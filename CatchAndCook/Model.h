@@ -1,6 +1,5 @@
 #pragma once
-#include "Mesh.h"
-#include "Vertex.h"
+
 
 class Scene;
 class Bone;

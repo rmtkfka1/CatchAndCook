@@ -1,4 +1,8 @@
 #include "GLOBAL.hlsl"
+cbuffer TestTransform : register(b1)
+{
+    row_major matrix WorldMat;
+}
 
 cbuffer cameraParams : register(b2)
 {
@@ -15,11 +19,6 @@ cbuffer cameraParams : register(b2)
     float4 cameraFrustumData;
     float4 cameraScreenData;
 };
-
-cbuffer TestTransform : register(b1)
-{
-    row_major matrix WorldMat;
-}
 
 struct VS_IN
 {

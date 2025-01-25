@@ -278,9 +278,7 @@ int32 TextureBufferPool::AllocDSV()
 void DescritporTable::Init(uint32 count)
 {
 
-
 	_count = count;
-
 
 	D3D12_DESCRIPTOR_HEAP_DESC desc;
 	desc.NumDescriptors = _count;
@@ -294,7 +292,6 @@ void DescritporTable::Init(uint32 count)
 	_cpuHandle = _heap->GetCPUDescriptorHandleForHeapStart();
 	_gpuHandle = _heap->GetGPUDescriptorHandleForHeapStart();
 
-
 }
 
 tableContainer DescritporTable::Alloc(uint32 count)
@@ -307,7 +304,6 @@ tableContainer DescritporTable::Alloc(uint32 count)
 	container.GPUHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(_gpuHandle, _currentIndex, _size);
 
 	_currentIndex += count;
-
 	return container;
 
 }

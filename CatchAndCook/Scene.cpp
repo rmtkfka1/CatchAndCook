@@ -52,6 +52,7 @@ void Scene::Rendering()
     CameraManager::main->GetActiveCamera()->SetData();
 
     _globalParam.window_size = vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
+    _globalParam.Time = Time::main->GetTime();
     auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::GlobalParam)->Alloc(1);
     memcpy(CbufferContainer->ptr, (void*)&_globalParam, sizeof(GlobalParam));
     cmdList->SetGraphicsRootConstantBufferView(0, CbufferContainer->GPUAdress);
@@ -60,38 +61,38 @@ void Scene::Rendering()
     { // Shadow
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
 
-        for (auto& [material,target] : targets)
+        for (auto& [material, mesh,target] : targets)
         {
-            target->Rendering(nullptr);
+            target->Rendering(nullptr, mesh);
         }
     }
 
     { // Deffered
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deffered)];
 
-        for (auto& [material, target] : targets)
+        for (auto& [material, mesh, target] : targets)
         {
             cmdList->SetPipelineState(material->GetShader()->_pipelineState.Get());
-            target->Rendering(material);
+            target->Rendering(material, mesh);
         }
     }
 
 	{ // forward
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Forward)];
 
-        for (auto& [material, target] : targets)
+        for (auto& [material, mesh, target] : targets)
         {
             cmdList->SetPipelineState(material->GetShader()->_pipelineState.Get());
-            target->Rendering(material);
+            target->Rendering(material, mesh);
         }
 	}
 
     {  //UI
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::UI)];
 
-        for (auto& [material, target] : targets)
+        for (auto& [material, mesh, target] : targets)
         {
-            target->Rendering(nullptr);
+            target->Rendering(nullptr, mesh);
         }
     }
 
@@ -103,7 +104,7 @@ void Scene::DebugRendering()
     { // Shadow
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
 
-        for (auto& [material, target] : targets)
+        for (auto& [material, mesh, target] : targets)
         {
             target->DebugRendering();
         }
@@ -112,7 +113,7 @@ void Scene::DebugRendering()
     { // Deffered
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deffered)];
 
-        for (auto& [material, target] : targets)
+        for (auto& [material, mesh, target] : targets)
         {
             target->DebugRendering();
         }
@@ -121,13 +122,11 @@ void Scene::DebugRendering()
     { // forward
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Forward)];
 
-        for (auto& [material, target] : targets)
+        for (auto& [material, mesh, target] : targets)
         {
             target->DebugRendering();
         }
     }
-
-  
 }
 
 void Scene::RenderEnd()
@@ -202,24 +201,24 @@ int Scene::Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObjec
     return vec.size() - startSize;
 }
 
-void Scene::AddRenderer(std::shared_ptr<Material> material, shared_ptr<RendererBase> data)
+void Scene::AddRenderer(std::shared_ptr<Material> material, std::shared_ptr<Mesh> mesh, shared_ptr<RendererBase> data)
 {
     for (int i = 0; i < RENDER_PASS::Count; i++)
     {
         if (RENDER_PASS::HasFlag(material->GetPass(), RENDER_PASS::PASS(1 << i)))
         {
-            _passObjects[i].emplace_back(material, data);
+            _passObjects[i].emplace_back(material, mesh, data);
 
         }
     }
 }
 
-void Scene::AddRenderer(shared_ptr<RendererBase> data, RENDER_PASS::PASS pass)
+void Scene::AddRenderer(std::shared_ptr<Mesh> mesh, shared_ptr<RendererBase> data, RENDER_PASS::PASS pass)
 {
     for (int i = 0; i < RENDER_PASS::Count; i++)
         if (RENDER_PASS::HasFlag(pass, RENDER_PASS::PASS(1 << i)))
         {
-            _passObjects[i].emplace_back(nullptr, data);
+            _passObjects[i].emplace_back(nullptr, mesh, data);
         }
 }
 

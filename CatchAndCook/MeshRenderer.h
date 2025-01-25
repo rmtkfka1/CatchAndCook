@@ -25,17 +25,20 @@ public:
 	void SetDestroy() override;
 	void DestroyComponentOnly() override;
 
-	void Rendering(const std::shared_ptr<Material>& material) override;
+	void Rendering(const std::shared_ptr<Material>& material, const std::shared_ptr<Mesh>& mesh) override;
 
-	void SetMesh(const std::shared_ptr<Mesh>& _mesh);
+	void AddMesh(const std::shared_ptr<Mesh>& _mesh);
 	void SetMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
 	void AddMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
+	void SetSharedMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
+	void AddSharedMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
 
 	void SetDrawNormal(bool draw) { _drawNormal = draw; }
 
 private:
-	std::shared_ptr<Mesh> _mesh;
-	std::vector<std::shared_ptr<Material>> _materials;
+	std::vector<std::shared_ptr<Mesh>> _mesh;
+	std::vector<std::shared_ptr<Material>> _uniqueMaterials;
+	std::vector<std::shared_ptr<Material>> _sharedMaterials;
 
 	bool _drawNormal = true;
 	static shared_ptr<Shader> _normalDebugShader;

@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Model.h"
-
 #include "Bone.h"
 #include "GameObject.h"
 #include "Component.h"
@@ -9,7 +8,8 @@
 #include "ModelMesh.h"
 #include "ModelNode.h"
 #include "Transform.h"
-
+#include "Mesh.h"
+#include "Vertex.h"
 
 AssimpPack::AssimpPack()
 {
