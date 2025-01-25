@@ -53,8 +53,6 @@ void Core::AdjustWinodwSize()
     ::AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
 }
 
-
-
 void Core::RenderBegin()
 {
     ThrowIfFailed(_cmdMemory->Reset());
