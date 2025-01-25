@@ -66,7 +66,11 @@ void Transform::RenderBegin()
 {
 	Component::RenderBegin();
     PushData();
-    GetOwner()->GetRenderer()->AddSetter(GetCast<Transform>());
+
+    if (GetOwner()->GetRenderer())
+    {
+        GetOwner()->GetRenderer()->AddSetter(GetCast<Transform>());
+    }
 }
 
 void Transform::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
