@@ -26,8 +26,10 @@ void MeshRenderer::Init()
 {
 	Component::Init();
 
-	if(_normalDebugShader==nullptr)
+	if(_normalDebugShader == nullptr)
 		_normalDebugShader = ResourceManager::main->Get<Shader>(L"normalDraw");
+
+	GetOwner()->_renderer = GetCast<MeshRenderer>();
 }
 
 void MeshRenderer::Start()
@@ -67,44 +69,57 @@ void MeshRenderer::RenderBegin()
 {
 	Component::RenderBegin();
 
-	for (auto& ele : _materials)  
+	for (int i = 0; i<_mesh.size();i++) 
 	{
-		ele->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
-		ele->PushData();
-		SceneManager::main->GetCurrentScene()->AddRenderer(ele, static_pointer_cast<MeshRenderer>(shared_from_this()));
-	} 
+		auto currentMesh = _mesh[i];
+		auto currentMaterial = _uniqueMaterials[i];
+		currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
+		currentMaterial->PushData();
+		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial, currentMesh, static_pointer_cast<MeshRenderer>(shared_from_this()));
+	}
 
-	//SceneManager::main->GetCurrentScene()->AddRenderer(static_pointer_cast<MeshRenderer>(shared_from_this()), RENDER_PASS::Shadow);
+	for (int j = 0; j < _sharedMaterials.size(); j++)
+	{
+		auto currentMaterial = _sharedMaterials[j];
+		for (int i = 0; i < _mesh.size(); i++)
+		{
+			auto currentMesh = _mesh[i];
+			currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
+			currentMaterial->PushData();
+			SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial, currentMesh, static_pointer_cast<MeshRenderer>(shared_from_this()));
+		}
+	}
 }
 
-void MeshRenderer::Rendering(const std::shared_ptr<Material>& material)
+void MeshRenderer::Rendering(const std::shared_ptr<Material>& material, const std::shared_ptr<Mesh>& mesh)
 {
 	auto& cmdList = Core::main->GetCmdList();
 
 	if (material != nullptr)
 		material->SetData();
 
-	GetOwner()->_transform->SetData();
+	for (auto& data : setters)
+		data->SetData();
 
-	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
+	cmdList->IASetPrimitiveTopology(mesh->GetTopology());
 
-	if (_mesh->GetVertexCount() != 0)
+	if (mesh->GetVertexCount() != 0)
 	{
 		
-		if (_mesh->GetIndexCount() != 0)
+		if (mesh->GetIndexCount() != 0)
 		{
-			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
-			cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
-			cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
+			cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());
+			cmdList->IASetIndexBuffer(&mesh->GetIndexView());
+			cmdList->DrawIndexedInstanced(mesh->GetIndexCount(), 1, 0, 0, 0);
 		}
 		else
 		{
-			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
-			cmdList->DrawInstanced(_mesh->GetVertexCount(), 1, 0, 0);
+			cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());
+			cmdList->DrawInstanced(mesh->GetVertexCount(), 1, 0, 0);
 		}
 	}
 
-	
+	setters.clear();
 }
 
 
@@ -119,30 +134,33 @@ void MeshRenderer::DebugRendering()
 {
 	auto& cmdList = Core::main->GetCmdList();
 
-	if (_drawNormal)
+	for (auto& mesh : _mesh)
 	{
-		cmdList->SetPipelineState(_normalDebugShader->_pipelineState.Get());
-
-		GetOwner()->_transform->SetData();
-
-		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
-
-		if (_mesh->GetVertexCount() != 0)
+		if (_drawNormal)
 		{
-			if (_mesh->GetIndexCount() != 0)
+			cmdList->SetPipelineState(_normalDebugShader->_pipelineState.Get());
+
+			GetOwner()->_transform->SetData();
+
+			cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+			if (mesh->GetVertexCount() != 0)
 			{
-				cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
-				cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
-				cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
+				if (mesh->GetIndexCount() != 0)
+				{
+					cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());
+					cmdList->IASetIndexBuffer(&mesh->GetIndexView());
+					cmdList->DrawIndexedInstanced(mesh->GetIndexCount(), 1, 0, 0, 0);
+				}
+
+				else
+				{
+					cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());
+					cmdList->DrawInstanced(mesh->GetVertexCount(), 1, 0, 0);
+				}
 			}
 
-			else
-			{
-				cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
-				cmdList->DrawInstanced(_mesh->GetVertexCount(), 1, 0, 0);
-			}
 		}
-
 	}
 
 }
@@ -157,18 +175,30 @@ void MeshRenderer::DestroyComponentOnly()
 	Component::DestroyComponentOnly();
 }
 
-void MeshRenderer::SetMesh(const std::shared_ptr<Mesh>& _mesh)
+void MeshRenderer::AddMesh(const std::shared_ptr<Mesh>& _mesh)
 {
-	this->_mesh = _mesh;
+	this->_mesh.push_back(_mesh);
 }
 
 void MeshRenderer::SetMaterials(const std::vector<std::shared_ptr<Material>>& _materials)
 {
-	this->_materials = _materials;
+	this->_uniqueMaterials = _materials;
 }
 
 void MeshRenderer::AddMaterials(const std::vector<std::shared_ptr<Material>>& _materials)
 {
 	for (auto& ele : _materials)
-		this->_materials.push_back(ele);
+		this->_uniqueMaterials.push_back(ele);
 }
+
+void MeshRenderer::SetSharedMaterials(const std::vector<std::shared_ptr<Material>>& _materials)
+{
+	this->_sharedMaterials = _materials;
+}
+
+void MeshRenderer::AddSharedMaterials(const std::vector<std::shared_ptr<Material>>& _materials)
+{
+	for (auto& ele : _materials)
+		this->_sharedMaterials.push_back(ele);
+}
+

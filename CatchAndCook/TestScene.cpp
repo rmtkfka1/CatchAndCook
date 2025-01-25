@@ -37,7 +37,7 @@ void TestScene::Init()
 		material->SetTexture("g_tex_0", texture);
 
 		meshRenderer->AddMaterials({ material });
-		meshRenderer->SetMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
+		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
 	}
 
 
@@ -64,7 +64,7 @@ void TestScene::Init()
 		material->SetTexture("g_tex_0", texture);
 
 		meshRenderer->AddMaterials({ material });
-		meshRenderer->SetMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
+		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
 	}
 
 	{
@@ -91,7 +91,7 @@ void TestScene::Init()
 		material->SetTexture("g_tex_0", ResourceManager::main->GetNoneTexture());
 
 		meshRenderer->AddMaterials({ material });
-		meshRenderer->SetMesh(GeoMetryHelper::LoadGripMesh(300.0f, 300.0f, 100, 100));
+		meshRenderer->AddMesh(GeoMetryHelper::LoadGripMesh(300.0f, 300.0f, 100, 100));
 	}
 
 

@@ -51,7 +51,7 @@ std::shared_ptr<GameObject> ModelNode::CreateGameObject(const std::shared_ptr<Sc
 	for (auto& meshIndex : _meshIndexList)
 	{
 		auto meshRenderer = currentGameObject->AddComponent<MeshRenderer>();
-		meshRenderer->SetMesh(_model.lock()->FindMeshByIndex(meshIndex)->GetMesh());
+		meshRenderer->AddMesh(_model.lock()->FindMeshByIndex(meshIndex)->GetMesh());
 		std::shared_ptr<Material> material = std::make_shared<Material>();
 		material->SetShader(ResourceManager::main->Get<Shader>(L"DefaultForward"));
 		material->SetPass(RENDER_PASS::Forward);

@@ -23,7 +23,7 @@ public:
 	void DestroyComponentOnly() override;
 
 	void DebugRendering() override;
-	void Rendering(const std::shared_ptr<Material>& material) override;
+	void Rendering(const std::shared_ptr<Material>& material, const std::shared_ptr<Mesh>& mesh) override;
 
 public:
 	template <typename T, typename = std::enable_if_t<std::is_base_of_v<Sprite, T>>>
