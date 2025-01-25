@@ -9,21 +9,21 @@ void BufferManager::Init()
 {
 
 	_textureBufferPool = make_shared<TextureBufferPool>();
-	_textureBufferPool->Init(255, 5, 5);
+	_textureBufferPool->Init(3000, 5, 5);
 
 	CreateBufferPool(BufferType::GlobalParam, sizeof(GlobalParam), 1);
-	CreateBufferPool(BufferType::TransformParam, sizeof(Matrix), 255);
-	CreateBufferPool(BufferType::MateriaParam, sizeof(MaterialParams), 255);
-	CreateBufferPool(BufferType::MateriaSubParam, sizeof(TestSubMaterialParam), 255);
+	CreateBufferPool(BufferType::TransformParam, sizeof(Matrix), 50000);
+	CreateBufferPool(BufferType::MateriaParam, sizeof(MaterialParams), 3000);
+	CreateBufferPool(BufferType::MateriaSubParam, sizeof(TestSubMaterialParam), 3000);
 	CreateBufferPool(BufferType::CameraParam, sizeof(CameraParams), 10);
-	CreateBufferPool(BufferType::SpriteTextureParam, sizeof(SprtieTextureParam), 255);
-	CreateBufferPool(BufferType::SpriteWorldParam, sizeof(SpriteWorldParam), 255);
+	CreateBufferPool(BufferType::SpriteTextureParam, sizeof(SprtieTextureParam), 3000);
+	CreateBufferPool(BufferType::SpriteWorldParam, sizeof(SpriteWorldParam), 3000);
 
-	CreateBufferPool_Static(BufferType::BoneParam, sizeof(SpriteWorldParam), 255);
+	CreateBufferPool_Static(BufferType::BoneParam, sizeof(SpriteWorldParam), 3000);
 
 	{
 		_table = make_shared<DescritporTable>();
-		_table->Init(255);
+		_table->Init(20000);
 	}
 
 

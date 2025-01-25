@@ -25,13 +25,13 @@ Transform::~Transform()
 void Transform::Init()
 {
 	Component::Init();
-    std::cout << "Init\n";
+    //std::cout << "Init\n";
 }
 
 void Transform::Start()
 {
 	Component::Start();
-    std::cout << "Start\n";
+    //std::cout << "Start\n";
 }
 
 void Transform::Update()
@@ -47,19 +47,19 @@ void Transform::Update2()
 void Transform::Enable()
 {
 	Component::Enable();
-    std::cout << "Enable\n";
+    //std::cout << "Enable\n";
 }
 
 void Transform::Disable()
 {
 	Component::Disable();
-    std::cout << "Disable\n";
+    //std::cout << "Disable\n";
 }
 
 void Transform::Destroy()
 {
 	Component::Destroy();
-    std::cout << "Destroy\n";
+    //std::cout << "Destroy\n";
 }
 
 void Transform::RenderBegin()
