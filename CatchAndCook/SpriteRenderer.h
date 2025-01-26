@@ -20,7 +20,7 @@ public:
 	void RenderBegin() override;
 	void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
 	void SetDestroy() override;
-	void DestroyComponentOnly() override;
+
 
 	void DebugRendering() override;
 	void Rendering(Material* material, Mesh* mesh) override;

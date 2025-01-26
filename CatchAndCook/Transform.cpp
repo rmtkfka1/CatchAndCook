@@ -33,7 +33,6 @@ void Transform::Start()
 {
 	Component::Start();
 
-    cout << "È£ÃâµÊ" << endl;
 
     if (GetOwner()->GetRenderer())
     {
@@ -56,17 +55,21 @@ void Transform::Enable()
 {
 	Component::Enable();
 
+  
 }
 
 void Transform::Disable()
 {
 	Component::Disable();
 
+
 }
 
 void Transform::Destroy()
 {
 	Component::Destroy();
+
+
 
 }
 

@@ -62,10 +62,6 @@ void SpriteRenderer::SetDestroy()
 
 }
 
-void SpriteRenderer::DestroyComponentOnly()
-{
-
-}
 
 void SpriteRenderer::Rendering(Material* material, Mesh* mesh)
 {

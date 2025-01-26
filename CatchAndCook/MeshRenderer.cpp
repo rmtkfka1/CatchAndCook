@@ -36,7 +36,6 @@ void MeshRenderer::Start()
 {
 	Component::Start();
 
-	cout << "메시 렌더러 스타트" << endl;
 
 }
 
@@ -53,16 +52,23 @@ void MeshRenderer::Update2()
 void MeshRenderer::Enable()
 {
 	Component::Enable();
+
+	cout << "호출되엇다 인에이블" << endl;
+
 }
 
 void MeshRenderer::Disable()
 {
 	Component::Disable();
+
+	cout << "호출되엇다 디스에이블" << endl;
 }
 
 void MeshRenderer::Destroy()
 {
 	Component::Destroy();
+
+	cout << "호출되엇다 파괴" << endl;
 }
 
 
@@ -152,10 +158,6 @@ void MeshRenderer::SetDestroy()
 	Component::SetDestroy();
 }
 
-void MeshRenderer::DestroyComponentOnly()
-{
-	Component::DestroyComponentOnly();
-}
 
 void MeshRenderer::AddMesh(const std::shared_ptr<Mesh>& _mesh)
 {

@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Component.h"
-
 #include "Game.h"
 #include "GameObject.h"
 
@@ -70,7 +69,4 @@ void Component::SetDestroy()
 	GameObject::AddDestroyComponent(GetCast<Component>());
 }
 
-void Component::DestroyComponentOnly()
-{
 
-}

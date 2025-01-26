@@ -61,21 +61,4 @@ public:
 	GlobalParam _globalParam;
 };
 
-void Scene::ExecuteDestroyGameObjects()
-{
-	while (_destroyQueue.empty() == false)
-	{
-		auto& gameObject = _destroyQueue.front();
-		_destroyQueue.pop();
-
-		auto it = std::find(_gameObjects.begin(), _gameObjects.end(), gameObject);
-
-		if (it != _gameObjects.end())
-		{
-			gameObject->Destroy();
-			_gameObjects.erase(it);
-		}
-	}
-}
-
 

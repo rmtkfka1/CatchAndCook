@@ -31,6 +31,7 @@ void TestScene::Init()
 	
 		root->_transform->SetLocalPosition(vec3(0, 0.3f, 0.8f));
 		auto meshRenderer = root->AddComponent<MeshRenderer>();
+		root->AddComponent<testComponent>();
 
 		material = make_shared<Material>();
 		material->SetShader(shader);

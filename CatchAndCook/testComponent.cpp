@@ -5,6 +5,11 @@
 
 
 
+testComponent::~testComponent()
+{
+
+}
+
 void testComponent::Init()
 {
 	_test.testcolor = vec4(0.4f, 0.3f, 0, 0);
@@ -40,7 +45,10 @@ void testComponent::Disable()
 
 void testComponent::Destroy()
 {
-
+	if (GetOwner()->GetRenderer())
+	{
+		GetOwner()->GetRenderer()->RemoveSetters(static_pointer_cast<testComponent>(shared_from_this()));
+	}
 }
 
 void testComponent::RenderBegin()

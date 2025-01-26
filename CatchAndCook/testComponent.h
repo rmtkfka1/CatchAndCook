@@ -12,6 +12,8 @@ class testComponent : public Component, public RenderObjectSetter
 {
 
 public:
+	virtual ~testComponent();
+
 	virtual void Init();
 	virtual void Start();
 	virtual void Update();

@@ -5,6 +5,9 @@
 #include "Game.h"
 #include "testComponent.h"
 #include "MeshRenderer.h"
+#include "Scene.h"
+
+std::queue<std::shared_ptr<Component>> GameObject::_componentDestroyQueue;
 GameObject::GameObject()
 {
 	_components.reserve(4);
@@ -53,6 +56,13 @@ void GameObject::Update()
                 component->Update();
         }
     }
+
+
+    if (Input::main->GetKeyDown(KeyCode::M))
+    {
+        SetDestroy();
+    }
+
 }
 
 void GameObject::Update2()
@@ -125,11 +135,12 @@ void GameObject::ExecuteDestroyComponents()
         auto& component = _componentDestroyQueue.front();
         auto gameObject = component->GetOwner();
 
-		if (gameObject != nullptr && component->IsDestroy())
+		if (gameObject != nullptr)
 		{
-			component->DestroyComponentOnly();
+			component->Destroy();
             gameObject->DisconnectComponent(component);
 		}
+
         _componentDestroyQueue.pop();
 	}
 }

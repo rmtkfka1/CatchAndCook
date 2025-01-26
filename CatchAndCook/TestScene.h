@@ -14,7 +14,5 @@ public:
 	virtual void Rendering();
 	virtual void RenderEnd();
 	virtual void Finish();
-
-
 };
 

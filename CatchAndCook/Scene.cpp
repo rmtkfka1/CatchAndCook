@@ -146,8 +146,9 @@ void Scene::RenderEnd()
 
 void Scene::Finish()
 {
-    GameObject::ExecuteDestroyComponents();
     Scene::ExecuteDestroyGameObjects();
+    GameObject::ExecuteDestroyComponents();
+
 }
 
 void Scene::ExecuteDestroyGameObjects()
