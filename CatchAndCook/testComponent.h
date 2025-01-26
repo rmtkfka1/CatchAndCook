@@ -12,6 +12,8 @@ class testComponent : public Component, public RenderObjectSetter
 {
 
 public:
+	virtual ~testComponent();
+
 	virtual void Init();
 	virtual void Start();
 	virtual void Update();
@@ -28,7 +30,6 @@ public:
 	virtual void SetData(shared_ptr<Shader> shader=nullptr) override;
 
 private:
-	CBufferContainer* _container;
 	test _test ;
 
 };

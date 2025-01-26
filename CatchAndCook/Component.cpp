@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Component.h"
+#include "Game.h"
 #include "GameObject.h"
 
 Component::Component()
@@ -8,6 +9,7 @@ Component::Component()
 
 Component::~Component()
 {
+	
 }
 
 bool Component::operator<(const Component& other) const
@@ -47,6 +49,7 @@ void Component::Disable()
 
 void Component::Destroy()
 {
+
 }
 
 void Component::RenderBegin()
@@ -63,9 +66,7 @@ void Component::Collision(const std::shared_ptr<Collider>& collider, const std::
 void Component::SetDestroy()
 {
 	IDelayDestroy::SetDestroy();
+	GameObject::AddDestroyComponent(GetCast<Component>());
 }
 
-void Component::DestroyComponentOnly()
-{
 
-}

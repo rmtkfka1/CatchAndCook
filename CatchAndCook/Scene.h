@@ -23,6 +23,8 @@ private:
 	bool RemoveGameObject(const std::shared_ptr<GameObject>& gameObject);
 	bool RemoveAtGameObject(int index);
 
+	void ExecuteDestroyGameObjects();
+
 public:
 	void SetName(const std::string& name) { _name = name; };
 
@@ -36,11 +38,11 @@ public:
 
 	std::shared_ptr<GameObject> CreateGameObject(const std::wstring& name);
 	std::shared_ptr<GameObject> Find(const std::wstring& name, bool includeDestroy = false);
-
 	int Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec, bool includeDestroy = false);
+	void AddDestroyQueue(const std::shared_ptr<GameObject>& gameObject);
 
-	void AddRenderer(std::shared_ptr<Material> material, std::shared_ptr<Mesh> mesh, shared_ptr<RendererBase> data);
-	void AddRenderer(std::shared_ptr<Mesh> mesh, shared_ptr<RendererBase> data, RENDER_PASS::PASS pass);
+	void AddRenderer(Material* material, Mesh* mesh, RendererBase* renderBase);
+	void AddRenderer(Mesh* mesh, RendererBase* renderBase, RENDER_PASS::PASS pass);
 
 	void Release();
 	friend class SceneManager;
@@ -48,7 +50,12 @@ public:
 protected:
 	std::array<std::vector<RenderObjectStrucutre>, RENDER_PASS::Count> _passObjects;
 	std::vector<std::shared_ptr<GameObject>> _dont_destroy_gameObjects;
+
+public:
 	std::vector<std::shared_ptr<GameObject>> _gameObjects;
+	std::queue<std::shared_ptr<GameObject>> _destroyQueue;
+	std::queue<std::shared_ptr<Component>> _destroyComponentQueue;
+
 	std::string _name;
 
 	GlobalParam _globalParam;

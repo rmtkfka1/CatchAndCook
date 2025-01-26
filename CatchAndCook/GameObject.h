@@ -21,16 +21,13 @@ public:
 	virtual ~GameObject() override;
 
 	void Init();
-	void Start(); // ù ������ // ù ������ ��.
-	void Update(); //
-	void Update2(); // 
-	void Enable(); // 
-	void Disable(); //
-	void Destroy(); //
-	void RenderBegin(); // CBuffer <- ����
-	//void Rendering(); // CBuffer <- ����
-
-	// �̺�Ʈ �Լ�
+	void Start(); 
+	void Update(); 
+	void Update2(); 
+	void Enable(); 
+	void Disable(); 
+	void Destroy(); 
+	void RenderBegin(); 
 	void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
 	
 
@@ -42,7 +39,7 @@ public:
 		component->SetOwner(GetCast<GameObject>());
 		_components.push_back(component);
 		component->Init();
-		if (!IsFirst() && GetActive()) component->Enable();
+		if (GetActive()) component->Enable();
 		return component;
 	};
 
@@ -162,19 +159,20 @@ public:
 
 
 private:
-	bool _active_self = true;
+	bool _active_self = true; // 
 	bool _active_total_prev = false;
 	bool _active_total = true;
+
 public:
 	bool GetActive(); //_active_total
 	bool GetActiveSelf(); // _active_self
 	bool SetActiveSelf(bool _active); //_active_self
+
 private:
 	void SyncActivePrev();
 	void SetActivePrev(bool activeTotalPrev);
 	bool CheckActiveUpdated();
 	void ActiveUpdateChain(bool _active_total);
-
 
 public:
 	void SetName(const std::wstring name){_name = name;};
@@ -187,7 +185,11 @@ public:
 	void SetDestroy() override;
 	bool IsExecuteAble() override { return  IDelayDestroy::IsExecuteAble() && GetActive(); };
 
+
 	void Debug();
+
+	static void AddDestroyComponent(const std::shared_ptr<Component>& component);
+	static void ExecuteDestroyComponents();
 
 	std::shared_ptr<RendererBase> GetRenderer() { return _renderer; }
 
@@ -203,6 +205,9 @@ private:
 	std::weak_ptr<GameObject> parent;
 	std::weak_ptr<GameObject> rootParent;
 	std::vector<std::weak_ptr<GameObject>> _childs;
+
+
+	static std::queue<std::shared_ptr<Component>> _componentDestroyQueue;
 
 	friend class Transform;
 };

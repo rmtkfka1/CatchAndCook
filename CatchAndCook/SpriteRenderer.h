@@ -20,10 +20,10 @@ public:
 	void RenderBegin() override;
 	void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
 	void SetDestroy() override;
-	void DestroyComponentOnly() override;
+
 
 	void DebugRendering() override;
-	void Rendering(const std::shared_ptr<Material>& material, const std::shared_ptr<Mesh>& mesh) override;
+	void Rendering(Material* material, Mesh* mesh) override;
 
 public:
 	template <typename T, typename = std::enable_if_t<std::is_base_of_v<Sprite, T>>>

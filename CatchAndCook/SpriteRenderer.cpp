@@ -15,7 +15,7 @@ void SpriteRenderer::Init()
 
 void SpriteRenderer::Start()
 {
-	SceneManager::main->GetCurrentScene()->AddRenderer(nullptr, static_pointer_cast<SpriteRenderer>(shared_from_this()), RENDER_PASS::UI);
+	SceneManager::main->GetCurrentScene()->AddRenderer(nullptr, this, RENDER_PASS::UI);
 }
 
 void SpriteRenderer::Update()
@@ -62,12 +62,8 @@ void SpriteRenderer::SetDestroy()
 
 }
 
-void SpriteRenderer::DestroyComponentOnly()
-{
 
-}
-
-void SpriteRenderer::Rendering(const std::shared_ptr<Material>& material, const std::shared_ptr<Mesh>& mesh)
+void SpriteRenderer::Rendering(Material* material, Mesh* mesh)
 {
 	_sprite->Render();
 }

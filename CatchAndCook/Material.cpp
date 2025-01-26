@@ -61,10 +61,10 @@ void Material::PushTexture()
 		}
 	}
 
-	//auto& tTable = _shader->GetTRegisterIndexs();
-	//for (auto& tIndex : tTable)
-	//	if (tIndex < SRV_TABLE_REGISTER_COUNT && (!copyCheckList[tIndex]))
-	//		Core::main->GetBufferManager()->GetTable()->CopyHandle(_tableContainer.CPUHandle, 
-	//			ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle(), tIndex);
+	auto& tTable = _shader->GetTRegisterIndexs();
+	for (auto& tIndex : tTable)
+		if (tIndex < SRV_TABLE_REGISTER_COUNT && (!copyCheckList[tIndex]))
+			Core::main->GetBufferManager()->GetTable()->CopyHandle(_tableContainer.CPUHandle, 
+				ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle(), tIndex);
 
 }

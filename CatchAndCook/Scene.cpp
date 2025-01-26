@@ -18,7 +18,6 @@ void Scene::AddGameObject(const std::shared_ptr<GameObject> gameObject)
 void Scene::Init()
 {
 
-
 }
 
 void Scene::Update()
@@ -31,6 +30,11 @@ void Scene::Update()
     for (auto& gameObject : _gameObjects)
         gameObject->Update2();
 
+
+    for (auto& ele : _passObjects)
+    {
+        ele.clear();
+    }
 
 }
 
@@ -130,14 +134,38 @@ void Scene::DebugRendering()
 
 void Scene::RenderEnd()
 {
+    if (Input::main->GetKeyDown(KeyCode::P))
+    {
+        auto ptr = Find(L"root_test");
+
+        ptr->SetDestroy();
+    }
+    
 
 }
 
 void Scene::Finish()
 {
-    for (auto& gameObject : _gameObjects)
-        gameObject->Destroy();
-    std::erase_if(_gameObjects, [](const std::shared_ptr<GameObject>& gameObject) {return gameObject->IsDestroy(); });
+    Scene::ExecuteDestroyGameObjects();
+    GameObject::ExecuteDestroyComponents();
+
+}
+
+void Scene::ExecuteDestroyGameObjects()
+{
+    while (_destroyQueue.empty() == false)
+    {
+        auto& gameObject = _destroyQueue.front();
+        _destroyQueue.pop();
+
+        auto it = std::find(_gameObjects.begin(), _gameObjects.end(), gameObject);
+
+        if (it != _gameObjects.end())
+        {
+            gameObject->Destroy();
+            _gameObjects.erase(it);
+        }
+    }
 }
 
 
@@ -167,6 +195,11 @@ bool Scene::RemoveAtGameObject(int index)
     }
 
     return false;
+}
+
+void Scene::AddDestroyQueue(const std::shared_ptr<GameObject>& gameObject)
+{
+	_destroyQueue.push(gameObject);
 }
 
 
@@ -200,24 +233,24 @@ int Scene::Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObjec
     return vec.size() - startSize;
 }
 
-void Scene::AddRenderer(std::shared_ptr<Material> material, std::shared_ptr<Mesh> mesh, shared_ptr<RendererBase> data)
+void Scene::AddRenderer(Material* material, Mesh* mesh, RendererBase* renderBase)
 {
     for (int i = 0; i < RENDER_PASS::Count; i++)
     {
         if (RENDER_PASS::HasFlag(material->GetPass(), RENDER_PASS::PASS(1 << i)))
         {
-            _passObjects[i].emplace_back(material, mesh, data);
+            _passObjects[i].emplace_back(material, mesh, renderBase);
 
         }
     }
 }
 
-void Scene::AddRenderer(std::shared_ptr<Mesh> mesh, shared_ptr<RendererBase> data, RENDER_PASS::PASS pass)
+void Scene::AddRenderer(Mesh* mesh, RendererBase* renderBase, RENDER_PASS::PASS pass)
 {
     for (int i = 0; i < RENDER_PASS::Count; i++)
         if (RENDER_PASS::HasFlag(pass, RENDER_PASS::PASS(1 << i)))
         {
-            _passObjects[i].emplace_back(nullptr, mesh, data);
+            _passObjects[i].emplace_back(nullptr, mesh, renderBase);
         }
 }
 

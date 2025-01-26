@@ -3,7 +3,11 @@
 #include "Component.h"
 #include "Transform.h"
 #include "Game.h"
+#include "testComponent.h"
+#include "MeshRenderer.h"
+#include "Scene.h"
 
+std::queue<std::shared_ptr<Component>> GameObject::_componentDestroyQueue;
 GameObject::GameObject()
 {
 	_components.reserve(4);
@@ -16,94 +20,88 @@ GameObject::GameObject(std::wstring name)
 
 GameObject::~GameObject()
 {
-	_components.clear();
+
 }
 
 void GameObject::Init()
 {
     std::shared_ptr<GameObject> gameObject = GetCast<GameObject>();
-    parent.reset();
     rootParent = gameObject;
-    gameObject->transform = gameObject->AddComponent<Transform>();
-    SetActiveSelf(true);
+    SyncActivePrev();
+    gameObject->_transform = gameObject->AddComponent<Transform>();
 }
 
 void GameObject::Start()
 {
-    if ((!IsDestroy()) && GetActive() && IsFirst()) 
+    if (_active_total)
     {
-        for (auto& component : _components) 
+        for (auto& component : _components)
         {
-            if (component->IsFirst()) {
+            if (component->_first)
+            {
                 component->Start();
-                component->FirstOff();
+                component->_first = false;
             }
         }
-        FirstOff();
     }
 }
 
 void GameObject::Update()
 {
-    if ((!IsDestroy()) && GetActive() && (!IsFirst())) {
-        for (auto& component : _components) {
-            if (((!component->IsDestroy()) && (!component->IsFirst())))
+    if (_active_total) 
+    {
+        for (auto& component : _components) 
+        {
+            if (!component->_first)
                 component->Update();
         }
     }
+
+
+    if (Input::main->GetKeyDown(KeyCode::M))
+    {
+        SetDestroy();
+    }
+
 }
 
 void GameObject::Update2()
 {
- 
-    if ((!IsDestroy()) && GetActive() && (!IsFirst())) {
-        for (auto& component : _components) {
-            if (((!component->IsDestroy()) && (!component->IsFirst())))
+    if (_active_total) 
+    {
+        for (auto& component : _components) 
+        {
+            if (!component->_first)
                 component->Update2();
         }
     }
+
+
 }
 
 
 void GameObject::RenderBegin()
 {
-    if ((!IsDestroy()) && GetActive() && (!IsFirst())) {
+    if (_active_total) {
         for (auto& component : _components) {
-            if (((!component->IsDestroy()) && (!component->IsFirst())))
+            if (!component->_first)
                 component->RenderBegin();
         }
     }
+
 }
-
-//void GameObject::Rendering()
-//{
-//  
-//}
-
 
 void GameObject::Destroy()
 {
-	if (IsDestroy()) {
-        for (int i = 0; i < _components.size(); ++i) {
-            auto& component = _components[i];
-            component->Destroy();
-            DisconnectComponent(component);
-            --i;
-        }
-        if (!parent.expired()) parent.lock()->RemoveChild(GetCast<GameObject>());
-    }
-    else
+    for (int i = 0; i < _components.size(); ++i) 
     {
-        for (int i = 0; i < _components.size(); ++i) {
-            auto& component = _components[i];
-			if (component->IsDestroy()) {
-	            component->DestroyComponentOnly();
-	            DisconnectComponent(component);
-	            --i;
-            }
-        }
+        auto& component = _components[i];
+        component->Destroy();
     }
-}
+
+    if (!parent.expired()) parent.lock()->RemoveChild(GetCast<GameObject>());
+
+};
 
 void GameObject::SetDestroy()
 {
@@ -114,12 +112,37 @@ void GameObject::SetDestroy()
             if (!child.expired())
                 child.lock()->SetDestroy();
     }
+
     IDelayDestroy::SetDestroy();
+    GetScene()->AddDestroyQueue(GetCast<GameObject>());
 }
 
 void GameObject::Debug()
 {
     std::cout << "GameObject\n";
+}
+
+
+void GameObject::AddDestroyComponent(const std::shared_ptr<Component>& component)
+{
+    _componentDestroyQueue.push(component);
+}
+
+void GameObject::ExecuteDestroyComponents()
+{
+	while (_componentDestroyQueue.empty() == false)
+	{
+        auto& component = _componentDestroyQueue.front();
+        auto gameObject = component->GetOwner();
+
+		if (gameObject != nullptr)
+		{
+			component->Destroy();
+            gameObject->DisconnectComponent(component);
+		}
+
+        _componentDestroyQueue.pop();
+	}
 }
 
 void GameObject::Enable()
@@ -226,9 +249,6 @@ int GameObject::GetChildsAllByName(const std::wstring& name, std::vector<std::sh
 }
 
 
-
-
-
 bool GameObject::AddChild(const std::shared_ptr<GameObject>& obj)
 {
     if (obj == nullptr)
@@ -329,7 +349,8 @@ void GameObject::SetRootParent(const std::shared_ptr<GameObject>& rootParent)
 
 bool GameObject::GetActive()
 {
-    return _active_total = _active_total && _active_self; //�̹� total�� �ݿ����ֱ� ������ Ȥ�� �𸣴� �ѹ���
+    _active_total = _active_total && _active_self;
+    return _active_total; 
 }
 
 bool GameObject::GetActiveSelf()
@@ -352,7 +373,7 @@ void GameObject::SetActivePrev(bool activeTotalPrev)
 
 bool GameObject::CheckActiveUpdated()
 {
-    return _active_total_prev != _active_total;
+    return !(_active_total_prev == _active_total);
 }
 
 void GameObject::SyncActivePrev()
@@ -363,13 +384,19 @@ void GameObject::SyncActivePrev()
 void GameObject::ActiveUpdateChain(bool active_total)
 {
     this->_active_total = active_total && _active_self;
-    if (CheckActiveUpdated()) {
-        for (auto& element : _components) {
+
+    if (CheckActiveUpdated()) 
+    {
+        for (auto& element : _components) 
+        {
             if (GetActive()) element->Enable();
             else element->Disable();
         }
+
         SyncActivePrev();
     }
+
+
     for (int i = 0; i < _childs.size(); i++)
     {
         auto current = _childs[i].lock();

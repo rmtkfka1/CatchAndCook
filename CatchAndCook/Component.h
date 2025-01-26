@@ -26,12 +26,10 @@ public:
 	virtual void Update2(); 
 	virtual void Enable(); 
 	virtual void Disable(); 
-	virtual void Destroy(); 
 	virtual void RenderBegin();
 	virtual void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
 	virtual void SetDestroy() override;
-	virtual void DestroyComponentOnly();
-
+	virtual void Destroy();
 private:
 	int _order = 0;
 	std::weak_ptr<GameObject> _owner;
