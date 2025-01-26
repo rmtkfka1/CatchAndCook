@@ -21,7 +21,7 @@ public:
 	void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
 	void SetDestroy() override;
 
-
+	//RendererBase
 	void DebugRendering() override;
 	void Rendering(Material* material, Mesh* mesh) override;
 

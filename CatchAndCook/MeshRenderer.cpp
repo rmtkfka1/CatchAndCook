@@ -48,7 +48,6 @@ void MeshRenderer::Enable()
 {
 	Component::Enable();
 
-	cout << "호출되엇다 인에이블" << endl;
 
 }
 
@@ -56,14 +55,13 @@ void MeshRenderer::Disable()
 {
 	Component::Disable();
 
-	cout << "호출되엇다 디스에이블" << endl;
 }
 
 void MeshRenderer::Destroy()
 {
 	Component::Destroy();
 
-	cout << "호출되엇다 파괴" << endl;
+
 }
 
 
@@ -145,7 +143,6 @@ void MeshRenderer::DebugRendering()
 
 		}
 	}
-
 }
 
 void MeshRenderer::SetDestroy()

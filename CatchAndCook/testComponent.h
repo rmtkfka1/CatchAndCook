@@ -31,6 +31,6 @@ public:
 
 private:
 	test _test ;
-
+	CBufferContainer* _cbufferContainer;
 };
 

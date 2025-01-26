@@ -17,7 +17,7 @@ class RenderObjectSetter
 public:
 	virtual void PushData() =0;
 	virtual void SetData(shared_ptr<Shader> shader =nullptr) = 0;
-	CBufferContainer* _cbufferContainer;
+
 };
 
 class RendererBase
