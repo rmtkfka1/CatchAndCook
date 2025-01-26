@@ -23,6 +23,7 @@ private:
 	bool RemoveGameObject(const std::shared_ptr<GameObject>& gameObject);
 	bool RemoveAtGameObject(int index);
 
+
 public:
 	void SetName(const std::string& name) { _name = name; };
 
@@ -36,7 +37,6 @@ public:
 
 	std::shared_ptr<GameObject> CreateGameObject(const std::wstring& name);
 	std::shared_ptr<GameObject> Find(const std::wstring& name, bool includeDestroy = false);
-
 	int Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec, bool includeDestroy = false);
 	void AddRenderer(Material* material, Mesh* mesh, RendererBase* renderBase);
 	void AddRenderer(Mesh* mesh, RendererBase* renderBase, RENDER_PASS::PASS pass);
@@ -48,6 +48,7 @@ protected:
 	std::array<std::vector<RenderObjectStrucutre>, RENDER_PASS::Count> _passObjects;
 	std::vector<std::shared_ptr<GameObject>> _dont_destroy_gameObjects;
 	std::vector<std::shared_ptr<GameObject>> _gameObjects;
+	std::vector<std::shared_ptr<GameObject>> _destroy_gameObjects;
 	std::string _name;
 
 	GlobalParam _globalParam;

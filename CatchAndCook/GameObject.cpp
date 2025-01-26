@@ -111,6 +111,7 @@ void GameObject::SetDestroy()
                 child.lock()->SetDestroy();
     }
     IDelayDestroy::SetDestroy();
+    GetScene()->AddDestroyQueue(GetCast<GameObject>());
 }
 
 void GameObject::Debug()
