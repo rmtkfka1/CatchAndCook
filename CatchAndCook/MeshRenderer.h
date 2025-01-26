@@ -11,6 +11,7 @@ class MeshRenderer : public Component, public RendererBase
 public:
 	~MeshRenderer() override;
 
+	//Component
 	bool IsExecuteAble() override;
 	void Init() override;
 	void Start() override;
@@ -21,26 +22,27 @@ public:
 	void Destroy() override;
 	void RenderBegin() override;
 	void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
-	void DebugRendering() override;
 	void SetDestroy() override;
 
+	//RendererBase
 	void Rendering(Material* material, Mesh* mesh) override;
+	void DebugRendering() override;
 
+	//MeshRenderer
 	void AddMesh(const std::shared_ptr<Mesh>& _mesh);
 	void SetMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
 	void AddMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
 	void SetSharedMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
 	void AddSharedMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
-
-	void SetDrawNormal(bool draw) { _drawNormal = draw; }
+	void SetDebugShader(shared_ptr<Shader>& shader) { _normalDebugShader = shader; }
 
 private:
 	std::vector<std::shared_ptr<Mesh>> _mesh;
 	std::vector<std::shared_ptr<Material>> _uniqueMaterials;
 	std::vector<std::shared_ptr<Material>> _sharedMaterials;
 
-	bool _drawNormal = true;
-	static shared_ptr<Shader> _normalDebugShader;
+
+	shared_ptr<Shader> _normalDebugShader;
 
 
 };

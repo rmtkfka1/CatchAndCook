@@ -58,7 +58,7 @@ void ResourceManager::CreateDefaultShader()
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->Init(L"normalDraw.hlsl", StaticProp, ShaderArg{ {{"PS_Main", "ps"},{"VS_Main", "vs"},
 			{"GS_Main", "gs"}}}, info);
-		Add<Shader>(L"normalDraw", shader);
+		Add<Shader>(L"DebugNormal", shader);
 	}
 
 

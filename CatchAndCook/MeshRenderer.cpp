@@ -10,8 +10,6 @@
 #include "Texture.h"
 #include "Transform.h"
 
-shared_ptr<Shader> MeshRenderer::_normalDebugShader;
-
 MeshRenderer::~MeshRenderer()
 {
 
@@ -25,9 +23,6 @@ bool MeshRenderer::IsExecuteAble()
 void MeshRenderer::Init()
 {
 	Component::Init();
-
-	if(_normalDebugShader == nullptr)
-		_normalDebugShader = ResourceManager::main->Get<Shader>(L"normalDraw");
 
 	GetOwner()->_renderer = GetCast<MeshRenderer>();
 }
@@ -124,7 +119,7 @@ void MeshRenderer::DebugRendering()
 
 	for (auto& mesh : _mesh)
 	{
-		if (_drawNormal)
+		if (_normalDebugShader)
 		{
 			cmdList->SetPipelineState(_normalDebugShader->_pipelineState.Get());
 
