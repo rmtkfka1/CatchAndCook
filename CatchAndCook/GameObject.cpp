@@ -29,25 +29,25 @@ void GameObject::Init()
 
 void GameObject::Start()
 {
-    if ((!IsDestroy()) && GetActive() && IsFirst()) 
+    if (_active_total)
     {
-        for (auto& component : _components) 
-        {
-            if (component->IsFirst()) {
+        auto objectFirst = _first;
+        for (auto& component : _components) {
+            if (objectFirst || component->_first) {
                 component->Start();
-                component->FirstOff();
+                component->_first = false;
             }
         }
-
-        FirstOff();
+        if (objectFirst)
+            _first = false;
     }
 }
 
 void GameObject::Update()
 {
-    if ((!IsDestroy()) && GetActive() && (!IsFirst())) {
+    if (_active_total && (!_first)) {
         for (auto& component : _components) {
-            if (((!component->IsDestroy()) && (!component->IsFirst())))
+            if (!component->_first)
                 component->Update();
         }
     }
@@ -55,10 +55,9 @@ void GameObject::Update()
 
 void GameObject::Update2()
 {
-    if ((!IsDestroy()) && GetActive() && (!IsFirst())) 
-    {
+    if (_active_total && (!_first)) {
         for (auto& component : _components) {
-            if (((!component->IsDestroy()) && (!component->IsFirst())))
+            if (!component->_first)
                 component->Update2();
         }
     }
@@ -67,9 +66,9 @@ void GameObject::Update2()
 
 void GameObject::RenderBegin()
 {
-    if ((!IsDestroy()) && GetActive() && (!IsFirst())) {
+    if (_active_total && (!_first)) {
         for (auto& component : _components) {
-            if (((!component->IsDestroy()) && (!component->IsFirst())))
+            if (!component->_first)
                 component->RenderBegin();
         }
     }
