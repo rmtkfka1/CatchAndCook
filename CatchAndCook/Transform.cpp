@@ -25,13 +25,18 @@ Transform::~Transform()
 void Transform::Init()
 {
 	Component::Init();
-    std::cout << "Init\n";
+
 }
 
 void Transform::Start()
 {
 	Component::Start();
-    std::cout << "Start\n";
+
+    if (GetOwner()->GetRenderer())
+    {
+        GetOwner()->GetRenderer()->AddSetter(static_pointer_cast<Transform>(shared_from_this()));
+    }
+ 
 }
 
 void Transform::Update()
@@ -47,30 +52,25 @@ void Transform::Update2()
 void Transform::Enable()
 {
 	Component::Enable();
-    std::cout << "Enable\n";
+
 }
 
 void Transform::Disable()
 {
 	Component::Disable();
-    std::cout << "Disable\n";
+
 }
 
 void Transform::Destroy()
 {
 	Component::Destroy();
-    std::cout << "Destroy\n";
+
 }
 
 void Transform::RenderBegin()
 {
 	Component::RenderBegin();
     PushData();
-
-    if (GetOwner()->GetRenderer())
-    {
-        GetOwner()->GetRenderer()->AddSetter(GetCast<Transform>());
-    }
 }
 
 void Transform::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
@@ -88,7 +88,7 @@ void Transform::PushData()
     memcpy(_container->ptr, (void*)&matrix, sizeof(Matrix));
 }
 
-void Transform::SetData()
+void Transform::SetData(shared_ptr<Shader> shader)
 {
     Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(1, _container->GPUAdress);
 }

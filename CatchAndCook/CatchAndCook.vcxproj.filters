@@ -115,9 +115,6 @@
     <ClCompile Include="Material.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
-    <ClCompile Include="RendererBase.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="ICBufferInjector.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
@@ -177,6 +174,12 @@
     </ClCompile>
     <ClCompile Include="Bone.cpp">
       <Filter>Resource\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererBase.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="testComponent.cpp">
+      <Filter>Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -268,9 +271,6 @@
     <ClInclude Include="resource.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="RendererBase.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="ICBufferInjector.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -333,6 +333,12 @@
     </ClInclude>
     <ClInclude Include="Bone.h">
       <Filter>Resource\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererBase.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="testComponent.h">
+      <Filter>Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

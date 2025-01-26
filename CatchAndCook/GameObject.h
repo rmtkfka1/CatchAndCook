@@ -21,16 +21,16 @@ public:
 	virtual ~GameObject() override;
 
 	void Init();
-	void Start(); // Ã¹ ÇÁ·¹ÀÓ // Ã¹ ÇÁ·¹ÀÓ ½Ã.
+	void Start(); // Ã¹ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ // Ã¹ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½.
 	void Update(); //
 	void Update2(); // 
 	void Enable(); // 
 	void Disable(); //
 	void Destroy(); //
-	void RenderBegin(); // CBuffer <- °»½Å
-	//void Rendering(); // CBuffer <- °»½Å
+	void RenderBegin(); // CBuffer <- ï¿½ï¿½ï¿½ï¿½
+	//void Rendering(); // CBuffer <- ï¿½ï¿½ï¿½ï¿½
 
-	// ÀÌº¥Æ® ÇÔ¼ö
+	// ï¿½Ìºï¿½Æ® ï¿½Ô¼ï¿½
 	void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
 	
 
@@ -192,9 +192,9 @@ public:
 	std::shared_ptr<RendererBase> GetRenderer() { return _renderer; }
 
 	ObjectTag tag = ObjectTag::defualt;
-	std::shared_ptr<Transform> transform;
-
+	std::shared_ptr<Transform> _transform;
 	std::shared_ptr<RendererBase> _renderer;
+
 private:
 	std::wstring _name = L"none";
 	std::weak_ptr<Scene> _scene;

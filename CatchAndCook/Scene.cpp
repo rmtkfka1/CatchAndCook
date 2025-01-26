@@ -31,8 +31,7 @@ void Scene::Update()
     for (auto& gameObject : _gameObjects)
         gameObject->Update2();
 
-    for (int i = 0; i < RENDER_PASS::Count; i++)
-        _passObjects[i].clear();
+
 }
 
 void Scene::RenderBegin()
