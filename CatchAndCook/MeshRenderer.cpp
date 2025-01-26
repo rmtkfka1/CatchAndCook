@@ -115,7 +115,7 @@ void MeshRenderer::Rendering(const std::shared_ptr<Material>& material, const st
 		material->SetData();
 
 	for (auto& data : setters) //transform , etc 
-		data->SetData();
+		data->SetData(material->GetShader());
 
 	mesh->Redner();
 }

@@ -21,6 +21,11 @@ cbuffer cameraParams : register(b2)
     float4 cameraScreenData;
 };
 
+cbuffer test : register(b3)
+{
+    float4 test;
+}
+
 cbuffer popo : register(b7)
 {
     float2 uv;
@@ -58,5 +63,7 @@ VS_OUT VS_Main(VS_IN input)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-   return g_tex_0.Sample(g_sam_0, input.uv+uv);
+    float4 color = g_tex_0.Sample(g_sam_0, input.uv);
+    color += test;
+    return color;
 }

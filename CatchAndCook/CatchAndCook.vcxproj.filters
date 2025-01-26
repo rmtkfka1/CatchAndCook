@@ -178,6 +178,9 @@
     <ClCompile Include="RendererBase.cpp">
       <Filter>Component</Filter>
     </ClCompile>
+    <ClCompile Include="testComponent.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -332,6 +335,9 @@
       <Filter>Resource\Model</Filter>
     </ClInclude>
     <ClInclude Include="RendererBase.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="testComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
   </ItemGroup>

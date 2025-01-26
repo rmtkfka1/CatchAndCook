@@ -10,6 +10,7 @@
 #include "Sprite.h"
 #include "TextManager.h"
 #include "SpriteAction.h"
+#include "testComponent.h"
 
 void TestScene::Init()
 {
@@ -27,6 +28,8 @@ void TestScene::Init()
 		shared_ptr<Material> material = make_shared<Material>();
 
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"test gameObject");
+		gameObject->AddComponent<testComponent>();
+
 		gameObject->_transform->SetLocalPosition(vec3(0, 0.3f, 0.8f));
 		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
 

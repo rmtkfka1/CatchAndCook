@@ -88,7 +88,7 @@ void Transform::PushData()
     memcpy(_container->ptr, (void*)&matrix, sizeof(Matrix));
 }
 
-void Transform::SetData()
+void Transform::SetData(shared_ptr<Shader> shader)
 {
     Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(1, _container->GPUAdress);
 }

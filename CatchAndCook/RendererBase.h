@@ -15,7 +15,8 @@ struct RenderObjectStrucutre
 class RenderObjectSetter
 {
 public:
-	virtual void SetData() = 0;
+	virtual void PushData() =0;
+	virtual void SetData(shared_ptr<Shader> shader =nullptr) = 0;
 };
 
 class RendererBase
