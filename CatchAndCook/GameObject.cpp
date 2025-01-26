@@ -16,7 +16,7 @@ GameObject::GameObject(std::wstring name)
 
 GameObject::~GameObject()
 {
-	_components.clear();
+
 }
 
 void GameObject::Init()
@@ -87,6 +87,7 @@ void GameObject::Destroy()
 
         if (!parent.expired()) parent.lock()->RemoveChild(GetCast<GameObject>());
     }
+
     else
     {
         for (int i = 0; i < _components.size(); ++i) 
@@ -110,6 +111,7 @@ void GameObject::SetDestroy()
             if (!child.expired())
                 child.lock()->SetDestroy();
     }
+
     IDelayDestroy::SetDestroy();
     GetScene()->AddDestroyQueue(GetCast<GameObject>());
 }

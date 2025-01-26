@@ -20,6 +20,7 @@ Transform::Transform()
 
 Transform::~Transform()
 {
+
 }
 
 void Transform::Init()

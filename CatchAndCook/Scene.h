@@ -49,8 +49,11 @@ public:
 protected:
 	std::array<std::vector<RenderObjectStrucutre>, RENDER_PASS::Count> _passObjects;
 	std::vector<std::shared_ptr<GameObject>> _dont_destroy_gameObjects;
+
 	std::vector<std::shared_ptr<GameObject>> _gameObjects;
-	std::vector<std::shared_ptr<GameObject>> _destroy_gameObjects;
+	std::queue<std::shared_ptr<GameObject>> _destroyQueue;
+
+
 	std::string _name;
 
 	GlobalParam _globalParam;

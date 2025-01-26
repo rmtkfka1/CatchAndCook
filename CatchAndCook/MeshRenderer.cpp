@@ -15,7 +15,7 @@ shared_ptr<Shader> MeshRenderer::_normalDebugShader;
 MeshRenderer::~MeshRenderer()
 {
 
-}
+} 
 
 bool MeshRenderer::IsExecuteAble()
 {

@@ -28,7 +28,7 @@ void TestScene::Init()
 		shared_ptr<Material> material = make_shared<Material>();
 
 		shared_ptr<GameObject> root = CreateGameObject(L"root_test");
-		root->AddComponent<testComponent>();
+	
 
 		root->_transform->SetLocalPosition(vec3(0, 0.3f, 0.8f));
 		auto meshRenderer = root->AddComponent<MeshRenderer>();
@@ -54,7 +54,7 @@ void TestScene::Init()
 			shared_ptr<Material> material = make_shared<Material>();
 
 			shared_ptr<GameObject> child1 = CreateGameObject(L"child1");
-			child1->AddComponent<testComponent>();
+	
 
 			child1->_transform->SetLocalPosition(vec3(0, 3.0f, 0));
 			auto meshRenderer = child1->AddComponent<MeshRenderer>();
@@ -83,7 +83,7 @@ void TestScene::Init()
 					shared_ptr<Material> material = make_shared<Material>();
 
 					shared_ptr<GameObject> child2 = CreateGameObject(L"child2");
-					child2->AddComponent<testComponent>();
+		
 
 					child2->_transform->SetLocalPosition(vec3(0, 3.0f, 0));
 					auto meshRenderer = child2->AddComponent<MeshRenderer>();
@@ -247,19 +247,7 @@ void TestScene::Update()
 {
     Scene::Update();
 
-	if (Input::main->GetKeyDown(KeyCode::I))
-	{
-		auto ptr = Find(L"child2");
 
-		ptr->SetActiveSelf(!ptr->GetActiveSelf());
-	}
-
-	if (Input::main->GetKeyDown(KeyCode::K))
-	{
-		auto ptr = Find(L"root_test");
-
-		ptr->SetActiveSelf(!ptr->GetActiveSelf());
-	}
 
 }
 
