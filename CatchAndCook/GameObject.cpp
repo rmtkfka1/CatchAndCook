@@ -3,7 +3,8 @@
 #include "Component.h"
 #include "Transform.h"
 #include "Game.h"
-
+#include "testComponent.h"
+#include "MeshRenderer.h"
 GameObject::GameObject()
 {
 	_components.reserve(4);
@@ -38,6 +39,7 @@ void GameObject::Start()
                 component->_first = false;
             }
         }
+
         if (objectFirst)
             _first = false;
     }
@@ -50,6 +52,40 @@ void GameObject::Update()
             if (!component->_first)
                 component->Update();
         }
+    }
+
+    if (Input::main->GetKeyDown(KeyCode::Z))
+    {
+        ShaderInfo info;
+        info._zTest = true;
+        info._stencilTest = false;
+
+        shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"test", L"test.hlsl", StaticProp,
+            ShaderArg{}, info);
+
+        shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
+        shared_ptr<Material> material = make_shared<Material>();
+
+        shared_ptr<GameObject> root = make_shared<GameObject>();
+
+        root->SyncActivePrev();
+        root->rootParent = root;
+        root->_transform = root->AddComponent<Transform>();
+        root->_transform->SetLocalPosition(vec3(0, 4.0f, 0.8f));
+
+        auto meshRenderer = root->AddComponent<MeshRenderer>();
+
+        material = make_shared<Material>();
+        material->SetShader(shader);
+        material->SetPass(RENDER_PASS::Forward);
+        material->SetInjector({ InjectorManager::main->Get(BufferType::MateriaSubParam) });
+        material->SetTexture("g_tex_0", texture);
+
+        meshRenderer->AddMaterials({ material });
+        meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
+
+   
+        SceneManager::main->GetCurrentScene()->_addQueue.push(root);
     }
 }
 

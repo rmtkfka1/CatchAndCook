@@ -50,9 +50,10 @@ protected:
 	std::array<std::vector<RenderObjectStrucutre>, RENDER_PASS::Count> _passObjects;
 	std::vector<std::shared_ptr<GameObject>> _dont_destroy_gameObjects;
 
+public:
 	std::vector<std::shared_ptr<GameObject>> _gameObjects;
 	std::queue<std::shared_ptr<GameObject>> _destroyQueue;
-
+	std::queue<std::shared_ptr<GameObject>> _addQueue;
 
 	std::string _name;
 

@@ -33,6 +33,8 @@ void Transform::Start()
 {
 	Component::Start();
 
+    cout << "È£ÃâµÊ" << endl;
+
     if (GetOwner()->GetRenderer())
     {
         GetOwner()->GetRenderer()->AddSetter(static_pointer_cast<Transform>(shared_from_this()));

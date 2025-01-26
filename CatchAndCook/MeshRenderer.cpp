@@ -36,23 +36,8 @@ void MeshRenderer::Start()
 {
 	Component::Start();
 
-	//for (int i = 0; i < _mesh.size(); i++)
-	//{
-	//	auto currentMesh = _mesh[i];
-	//	auto currentMaterial = _uniqueMaterials[i];
-	//	SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial, currentMesh, static_pointer_cast<MeshRenderer>(shared_from_this()));
-	//}
+	cout << "메시 렌더러 스타트" << endl;
 
-	//for (int j = 0; j < _sharedMaterials.size(); j++)
-	//{
-	//	auto currentMaterial = _sharedMaterials[j];
-	//	for (int i = 0; i < _mesh.size(); i++)
-	//	{
-	//		auto currentMesh = _mesh[i];
-	//		currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
-	//		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial, currentMesh, static_pointer_cast<MeshRenderer>(shared_from_this()));
-	//	}
-	//}
 }
 
 void MeshRenderer::Update()
