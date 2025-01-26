@@ -23,6 +23,7 @@ private:
 	bool RemoveGameObject(const std::shared_ptr<GameObject>& gameObject);
 	bool RemoveAtGameObject(int index);
 
+	void ExecuteDestroyGameObjects();
 
 public:
 	void SetName(const std::string& name) { _name = name; };
@@ -53,11 +54,28 @@ protected:
 public:
 	std::vector<std::shared_ptr<GameObject>> _gameObjects;
 	std::queue<std::shared_ptr<GameObject>> _destroyQueue;
-	std::queue<std::shared_ptr<GameObject>> _addQueue;
+	std::queue<std::shared_ptr<Component>> _destroyComponentQueue;
 
 	std::string _name;
 
 	GlobalParam _globalParam;
 };
+
+void Scene::ExecuteDestroyGameObjects()
+{
+	while (_destroyQueue.empty() == false)
+	{
+		auto& gameObject = _destroyQueue.front();
+		_destroyQueue.pop();
+
+		auto it = std::find(_gameObjects.begin(), _gameObjects.end(), gameObject);
+
+		if (it != _gameObjects.end())
+		{
+			gameObject->Destroy();
+			_gameObjects.erase(it);
+		}
+	}
+}
 
 

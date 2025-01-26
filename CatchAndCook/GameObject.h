@@ -185,7 +185,11 @@ public:
 	void SetDestroy() override;
 	bool IsExecuteAble() override { return  IDelayDestroy::IsExecuteAble() && GetActive(); };
 
+
 	void Debug();
+
+	static void AddDestroyComponent(const std::shared_ptr<Component>& component);
+	static void ExecuteDestroyComponents();
 
 	std::shared_ptr<RendererBase> GetRenderer() { return _renderer; }
 
@@ -201,6 +205,9 @@ private:
 	std::weak_ptr<GameObject> parent;
 	std::weak_ptr<GameObject> rootParent;
 	std::vector<std::weak_ptr<GameObject>> _childs;
+
+
+	static std::queue<std::shared_ptr<Component>> _componentDestroyQueue;
 
 	friend class Transform;
 };

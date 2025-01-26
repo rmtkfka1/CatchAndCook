@@ -146,32 +146,25 @@ void Scene::RenderEnd()
 
 void Scene::Finish()
 {
+    GameObject::ExecuteDestroyComponents();
+    Scene::ExecuteDestroyGameObjects();
+}
 
+void Scene::ExecuteDestroyGameObjects()
+{
     while (_destroyQueue.empty() == false)
     {
-         auto& gameObject =_destroyQueue.front();
+        auto& gameObject = _destroyQueue.front();
         _destroyQueue.pop();
 
-        auto it =std::find(_gameObjects.begin(), _gameObjects.end(), gameObject);
+        auto it = std::find(_gameObjects.begin(), _gameObjects.end(), gameObject);
 
         if (it != _gameObjects.end())
         {
             gameObject->Destroy();
             _gameObjects.erase(it);
-        } 
+        }
     }
-
-
-    while (_addQueue.empty() == false)
-    {
-        auto gameObject = _addQueue.front();
-        _addQueue.pop();
-        _gameObjects.push_back(gameObject);
-    }
-
-   
-
-  
 }
 
 

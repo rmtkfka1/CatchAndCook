@@ -91,20 +91,6 @@ void GameObject::Destroy()
 
     if (!parent.expired()) parent.lock()->RemoveChild(GetCast<GameObject>());
 
-
-    /*   else
-       {
-           for (int i = 0; i < _components.size(); ++i)
-           {
-               auto& component = _components[i];
-               if (component->IsDestroy())
-               {
-                   component->DestroyComponentOnly();
-                   DisconnectComponent(component);
-                   --i;
-               }
-           }
-       }*/
 };
 
 void GameObject::SetDestroy()
@@ -124,6 +110,28 @@ void GameObject::SetDestroy()
 void GameObject::Debug()
 {
     std::cout << "GameObject\n";
+}
+
+
+void GameObject::AddDestroyComponent(const std::shared_ptr<Component>& component)
+{
+    _componentDestroyQueue.push(component);
+}
+
+void GameObject::ExecuteDestroyComponents()
+{
+	while (_componentDestroyQueue.empty() == false)
+	{
+        auto& component = _componentDestroyQueue.front();
+        auto gameObject = component->GetOwner();
+
+		if (gameObject != nullptr && component->IsDestroy())
+		{
+			component->DestroyComponentOnly();
+            gameObject->DisconnectComponent(component);
+		}
+        _componentDestroyQueue.pop();
+	}
 }
 
 void GameObject::Enable()

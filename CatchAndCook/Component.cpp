@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "Component.h"
+
+#include "Game.h"
 #include "GameObject.h"
 
 Component::Component()
@@ -65,6 +67,7 @@ void Component::Collision(const std::shared_ptr<Collider>& collider, const std::
 void Component::SetDestroy()
 {
 	IDelayDestroy::SetDestroy();
+	GameObject::AddDestroyComponent(GetCast<Component>());
 }
 
 void Component::DestroyComponentOnly()
