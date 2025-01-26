@@ -35,13 +35,30 @@ void MeshRenderer::Init()
 void MeshRenderer::Start()
 {
 	Component::Start();
+
+	for (int i = 0; i < _mesh.size(); i++)
+	{
+		auto currentMesh = _mesh[i];
+		auto currentMaterial = _uniqueMaterials[i];
+		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial, currentMesh, static_pointer_cast<MeshRenderer>(shared_from_this()));
+	}
+
+	for (int j = 0; j < _sharedMaterials.size(); j++)
+	{
+		auto currentMaterial = _sharedMaterials[j];
+		for (int i = 0; i < _mesh.size(); i++)
+		{
+			auto currentMesh = _mesh[i];
+			currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
+			currentMaterial->PushData();
+			SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial, currentMesh, static_pointer_cast<MeshRenderer>(shared_from_this()));
+		}
+	}
 }
 
 void MeshRenderer::Update()
 {
 	Component::Update();
-
-
 }
 
 void MeshRenderer::Update2()
@@ -69,13 +86,12 @@ void MeshRenderer::RenderBegin()
 {
 	Component::RenderBegin();
 
-	for (int i = 0; i<_mesh.size();i++) 
+	for (int i = 0; i < _mesh.size(); i++)
 	{
 		auto currentMesh = _mesh[i];
 		auto currentMaterial = _uniqueMaterials[i];
 		currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
 		currentMaterial->PushData();
-		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial, currentMesh, static_pointer_cast<MeshRenderer>(shared_from_this()));
 	}
 
 	for (int j = 0; j < _sharedMaterials.size(); j++)
@@ -86,9 +102,9 @@ void MeshRenderer::RenderBegin()
 			auto currentMesh = _mesh[i];
 			currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
 			currentMaterial->PushData();
-			SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial, currentMesh, static_pointer_cast<MeshRenderer>(shared_from_this()));
 		}
 	}
+	
 }
 
 void MeshRenderer::Rendering(const std::shared_ptr<Material>& material, const std::shared_ptr<Mesh>& mesh)
@@ -98,28 +114,10 @@ void MeshRenderer::Rendering(const std::shared_ptr<Material>& material, const st
 	if (material != nullptr)
 		material->SetData();
 
-	for (auto& data : setters)
+	for (auto& data : setters) //transform , etc 
 		data->SetData();
 
-	cmdList->IASetPrimitiveTopology(mesh->GetTopology());
-
-	if (mesh->GetVertexCount() != 0)
-	{
-		
-		if (mesh->GetIndexCount() != 0)
-		{
-			cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());
-			cmdList->IASetIndexBuffer(&mesh->GetIndexView());
-			cmdList->DrawIndexedInstanced(mesh->GetIndexCount(), 1, 0, 0, 0);
-		}
-		else
-		{
-			cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());
-			cmdList->DrawInstanced(mesh->GetVertexCount(), 1, 0, 0);
-		}
-	}
-
-	setters.clear();
+	mesh->Redner();
 }
 
 

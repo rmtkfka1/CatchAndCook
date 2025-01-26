@@ -193,8 +193,8 @@ public:
 
 	ObjectTag tag = ObjectTag::defualt;
 	std::shared_ptr<Transform> _transform;
-
 	std::shared_ptr<RendererBase> _renderer;
+
 private:
 	std::wstring _name = L"none";
 	std::weak_ptr<Scene> _scene;

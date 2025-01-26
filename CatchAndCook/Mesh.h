@@ -22,6 +22,8 @@ public:
 		CreateVertxBuffer(vec);
 	}
 
+	void Redner();
+
 private:
 
 	template<typename T>

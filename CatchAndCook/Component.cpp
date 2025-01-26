@@ -38,6 +38,7 @@ void Component::Update2()
 
 void Component::Enable()
 {
+
 }
 
 void Component::Disable()
