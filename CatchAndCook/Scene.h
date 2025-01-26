@@ -38,6 +38,8 @@ public:
 	std::shared_ptr<GameObject> CreateGameObject(const std::wstring& name);
 	std::shared_ptr<GameObject> Find(const std::wstring& name, bool includeDestroy = false);
 	int Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec, bool includeDestroy = false);
+	void AddDestroyQueue(const std::shared_ptr<GameObject>& gameObject);
+
 	void AddRenderer(Material* material, Mesh* mesh, RendererBase* renderBase);
 	void AddRenderer(Mesh* mesh, RendererBase* renderBase, RENDER_PASS::PASS pass);
 
