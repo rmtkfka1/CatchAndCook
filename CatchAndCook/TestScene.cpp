@@ -247,8 +247,6 @@ void TestScene::Update()
 {
     Scene::Update();
 
-
-
 }
 
 void TestScene::RenderBegin()

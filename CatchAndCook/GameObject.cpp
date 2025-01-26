@@ -38,6 +38,7 @@ void GameObject::Start()
                 component->FirstOff();
             }
         }
+
         FirstOff();
     }
 }
@@ -76,31 +77,29 @@ void GameObject::RenderBegin()
 
 void GameObject::Destroy()
 {
-	if (IsDestroy()) 
+    for (int i = 0; i < _components.size(); ++i) 
     {
-        for (int i = 0; i < _components.size(); ++i) {
-            auto& component = _components[i];
-            component->Destroy();
-            DisconnectComponent(component);
-            --i;
-        }
-
-        if (!parent.expired()) parent.lock()->RemoveChild(GetCast<GameObject>());
+        auto& component = _components[i];
+        component->Destroy();
     }
 
-    else
-    {
-        for (int i = 0; i < _components.size(); ++i) 
-        {
-            auto& component = _components[i];
-			if (component->IsDestroy()) {
-	            component->DestroyComponentOnly();
-	            DisconnectComponent(component);
-	            --i;
-            }
-        }
-    }
-}
+    if (!parent.expired()) parent.lock()->RemoveChild(GetCast<GameObject>());
+
+
+    /*   else
+       {
+           for (int i = 0; i < _components.size(); ++i)
+           {
+               auto& component = _components[i];
+               if (component->IsDestroy())
+               {
+                   component->DestroyComponentOnly();
+                   DisconnectComponent(component);
+                   --i;
+               }
+           }
+       }*/
+};
 
 void GameObject::SetDestroy()
 {

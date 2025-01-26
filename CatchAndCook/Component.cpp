@@ -48,6 +48,7 @@ void Component::Disable()
 
 void Component::Destroy()
 {
+
 }
 
 void Component::RenderBegin()

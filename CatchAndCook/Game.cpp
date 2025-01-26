@@ -43,18 +43,18 @@ void Game::Init(HWND hwnd)
 	auto scene = SceneManager::main->AddScene(SceneType::TestScene);
 	SceneManager::main->ChangeScene(scene);
 
-	ResourceManager::main->Load<Model>(L"testModel", L"../Resources/Models/Kindred/kindred_unity.fbx", VertexType::Vertex_Skinned);
-	auto obj = ResourceManager::main->Get<Model>(L"testModel")->CreateGameObject(scene);
+	//ResourceManager::main->Load<Model>(L"testModel", L"../Resources/Models/Kindred/kindred_unity.fbx", VertexType::Vertex_Skinned);
+	//auto obj = ResourceManager::main->Get<Model>(L"testModel")->CreateGameObject(scene);
 
-	vector<shared_ptr<MeshRenderer>> v;
-	obj->GetComponentsWithChilds(v);
+	//vector<shared_ptr<MeshRenderer>> v;
+	//obj->GetComponentsWithChilds(v);
 
-	for (auto& ele : v)
-	{
-		ele->SetDrawNormal(false);
-	}
+	//for (auto& ele : v)
+	//{
+	//	ele->SetDrawNormal(false);
+	//}
 
-	obj->_transform->SetWorldPosition(vec3(0, 5.0f, -1));
+	//obj->_transform->SetWorldPosition(vec3(0, 5.0f, -1));
 }
 
 void Game::PrevUpdate()

@@ -134,6 +134,12 @@ void Scene::DebugRendering()
 
 void Scene::RenderEnd()
 {
+    if (Input::main->GetKeyDown(KeyCode::P))
+    {
+        auto ptr = Find(L"root_test");
+
+        ptr->SetDestroy();
+    }
     
 
 }
@@ -152,7 +158,9 @@ void Scene::Finish()
         {
             gameObject->Destroy();
             _gameObjects.erase(it);
-        }       
+        } 
+
+
     }
 
    
