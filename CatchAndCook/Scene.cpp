@@ -164,7 +164,7 @@ void Scene::Finish()
 
     while (_addQueue.empty() == false)
     {
-        auto& gameObject = _addQueue.front();
+        auto gameObject = _addQueue.front();
         _addQueue.pop();
         _gameObjects.push_back(gameObject);
     }

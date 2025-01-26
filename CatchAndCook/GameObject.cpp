@@ -32,82 +32,53 @@ void GameObject::Start()
 {
     if (_active_total)
     {
-        auto objectFirst = _first;
-        for (auto& component : _components) {
-            if (objectFirst || component->_first) {
+        for (auto& component : _components)
+        {
+            if (component->_first)
+            {
                 component->Start();
                 component->_first = false;
             }
         }
-
-        if (objectFirst)
-            _first = false;
     }
 }
 
 void GameObject::Update()
 {
-    if (_active_total && (!_first)) {
-        for (auto& component : _components) {
+    if (_active_total) 
+    {
+        for (auto& component : _components) 
+        {
             if (!component->_first)
                 component->Update();
         }
-    }
-
-    if (Input::main->GetKeyDown(KeyCode::Z))
-    {
-        ShaderInfo info;
-        info._zTest = true;
-        info._stencilTest = false;
-
-        shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"test", L"test.hlsl", StaticProp,
-            ShaderArg{}, info);
-
-        shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
-        shared_ptr<Material> material = make_shared<Material>();
-
-        shared_ptr<GameObject> root = make_shared<GameObject>();
-
-        root->SyncActivePrev();
-        root->rootParent = root;
-        root->_transform = root->AddComponent<Transform>();
-        root->_transform->SetLocalPosition(vec3(0, 4.0f, 0.8f));
-
-        auto meshRenderer = root->AddComponent<MeshRenderer>();
-
-        material = make_shared<Material>();
-        material->SetShader(shader);
-        material->SetPass(RENDER_PASS::Forward);
-        material->SetInjector({ InjectorManager::main->Get(BufferType::MateriaSubParam) });
-        material->SetTexture("g_tex_0", texture);
-
-        meshRenderer->AddMaterials({ material });
-        meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
-
-   
-        SceneManager::main->GetCurrentScene()->_addQueue.push(root);
     }
 }
 
 void GameObject::Update2()
 {
-    if (_active_total && (!_first)) {
-        for (auto& component : _components) {
+    if (_active_total) 
+    {
+        for (auto& component : _components) 
+        {
             if (!component->_first)
                 component->Update2();
         }
     }
+
+
 }
 
 
 void GameObject::RenderBegin()
 {
-    if (_active_total && (!_first)) {
+    if (_active_total) {
         for (auto& component : _components) {
             if (!component->_first)
                 component->RenderBegin();
         }
     }
+
 }
 
 void GameObject::Destroy()
