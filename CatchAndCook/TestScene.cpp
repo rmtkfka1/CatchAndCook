@@ -82,11 +82,13 @@ void TestScene::Init()
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"testgrid", L"sea.hlsl", StaticProp,
 			ShaderArg{}, info);
 
+
 		shared_ptr<Material> material = make_shared<Material>();
 
 		shared_ptr<GameObject> gameObject =  CreateGameObject(L"grid");
 		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
 
+		meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal_Sea"));
 		gameObject->_transform->SetLocalPosition(vec3(0, 10.0f, 0));
 
 		material = make_shared<Material>();
