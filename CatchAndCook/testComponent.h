@@ -28,7 +28,6 @@ public:
 	virtual void SetData(shared_ptr<Shader> shader=nullptr) override;
 
 private:
-	CBufferContainer* _container;
 	test _test ;
 
 };

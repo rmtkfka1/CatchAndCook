@@ -27,11 +27,11 @@ void TestScene::Init()
 		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
 		shared_ptr<Material> material = make_shared<Material>();
 
-		shared_ptr<GameObject> gameObject = CreateGameObject(L"test gameObject");
-		gameObject->AddComponent<testComponent>();
+		shared_ptr<GameObject> root = CreateGameObject(L"root_test");
+		root->AddComponent<testComponent>();
 
-		gameObject->_transform->SetLocalPosition(vec3(0, 0.3f, 0.8f));
-		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+		root->_transform->SetLocalPosition(vec3(0, 0.3f, 0.8f));
+		auto meshRenderer = root->AddComponent<MeshRenderer>();
 
 		material = make_shared<Material>();
 		material->SetShader(shader);
@@ -41,6 +41,70 @@ void TestScene::Init()
 
 		meshRenderer->AddMaterials({ material });
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
+	
+		{
+			ShaderInfo info;
+			info._zTest = true;
+			info._stencilTest = false;
+
+			shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"test", L"test.hlsl", StaticProp,
+				ShaderArg{}, info);
+
+			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
+			shared_ptr<Material> material = make_shared<Material>();
+
+			shared_ptr<GameObject> child1 = CreateGameObject(L"child1");
+			child1->AddComponent<testComponent>();
+
+			child1->_transform->SetLocalPosition(vec3(0, 3.0f, 0));
+			auto meshRenderer = child1->AddComponent<MeshRenderer>();
+
+			material = make_shared<Material>();
+			material->SetShader(shader);
+			material->SetPass(RENDER_PASS::Forward);
+			material->SetInjector({ InjectorManager::main->Get(BufferType::MateriaSubParam) });
+			material->SetTexture("g_tex_0", texture);
+
+			meshRenderer->AddMaterials({ material });
+			meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
+
+			child1->SetParent(root);
+
+			{
+				{
+					ShaderInfo info;
+					info._zTest = true;
+					info._stencilTest = false;
+
+					shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"test", L"test.hlsl", StaticProp,
+						ShaderArg{}, info);
+
+					shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
+					shared_ptr<Material> material = make_shared<Material>();
+
+					shared_ptr<GameObject> child2 = CreateGameObject(L"child2");
+					child2->AddComponent<testComponent>();
+
+					child2->_transform->SetLocalPosition(vec3(0, 3.0f, 0));
+					auto meshRenderer = child2->AddComponent<MeshRenderer>();
+
+					material = make_shared<Material>();
+					material->SetShader(shader);
+					material->SetPass(RENDER_PASS::Forward);
+					material->SetInjector({ InjectorManager::main->Get(BufferType::MateriaSubParam) });
+					material->SetTexture("g_tex_0", texture);
+
+					meshRenderer->AddMaterials({ material });
+					meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
+
+					child2->SetParent(child1);
+				}
+			}
+
+
+		}
+
+
 	}
 
 
@@ -182,6 +246,21 @@ void TestScene::Init()
 void TestScene::Update()
 {
     Scene::Update();
+
+	if (Input::main->GetKeyDown(KeyCode::I))
+	{
+		auto ptr = Find(L"child2");
+
+		ptr->SetActiveSelf(!ptr->GetActiveSelf());
+	}
+
+	if (Input::main->GetKeyDown(KeyCode::K))
+	{
+		auto ptr = Find(L"root_test");
+
+		ptr->SetActiveSelf(!ptr->GetActiveSelf());
+	}
+
 }
 
 void TestScene::RenderBegin()

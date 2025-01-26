@@ -32,6 +32,11 @@ void Scene::Update()
         gameObject->Update2();
 
 
+    for (auto& ele : _passObjects)
+    {
+        ele.clear();
+    }
+
 }
 
 void Scene::RenderBegin()
@@ -200,24 +205,24 @@ int Scene::Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObjec
     return vec.size() - startSize;
 }
 
-void Scene::AddRenderer(std::shared_ptr<Material> material, std::shared_ptr<Mesh> mesh, shared_ptr<RendererBase> data)
+void Scene::AddRenderer(Material* material, Mesh* mesh, RendererBase* renderBase)
 {
     for (int i = 0; i < RENDER_PASS::Count; i++)
     {
         if (RENDER_PASS::HasFlag(material->GetPass(), RENDER_PASS::PASS(1 << i)))
         {
-            _passObjects[i].emplace_back(material, mesh, data);
+            _passObjects[i].emplace_back(material, mesh, renderBase);
 
         }
     }
 }
 
-void Scene::AddRenderer(std::shared_ptr<Mesh> mesh, shared_ptr<RendererBase> data, RENDER_PASS::PASS pass)
+void Scene::AddRenderer(Mesh* mesh, RendererBase* renderBase, RENDER_PASS::PASS pass)
 {
     for (int i = 0; i < RENDER_PASS::Count; i++)
         if (RENDER_PASS::HasFlag(pass, RENDER_PASS::PASS(1 << i)))
         {
-            _passObjects[i].emplace_back(nullptr, mesh, data);
+            _passObjects[i].emplace_back(nullptr, mesh, renderBase);
         }
 }
 

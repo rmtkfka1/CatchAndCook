@@ -84,13 +84,13 @@ void Transform::PushData()
 {
     Matrix matrix;
     GetLocalToWorldMatrix(matrix);
-    _container = Core::main->GetBufferManager()->GetBufferPool(BufferType::TransformParam)->Alloc(1);
-    memcpy(_container->ptr, (void*)&matrix, sizeof(Matrix));
+    _cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::TransformParam)->Alloc(1);
+    memcpy(_cbufferContainer->ptr, (void*)&matrix, sizeof(Matrix));
 }
 
 void Transform::SetData(shared_ptr<Shader> shader)
 {
-    Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(1, _container->GPUAdress);
+    Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(1, _cbufferContainer->GPUAdress);
 }
 
 vec3 Transform::SetForward(const vec3& dir)

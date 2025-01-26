@@ -9,6 +9,7 @@ class IDelayDestroy
 private:
     bool _destroy = false;
 
+public:
     bool IsFirst() const { return _first; };
     void FirstOff() { _first = false; };
     void SetFirst(bool first) { _first = first; };

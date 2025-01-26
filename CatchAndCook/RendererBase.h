@@ -7,9 +7,9 @@ class Material;
 
 struct RenderObjectStrucutre
 {
-	std::shared_ptr<Material> material;
-	std::shared_ptr<Mesh> mesh;
-	std::shared_ptr<RendererBase> renderer;
+	Material* material;
+	Mesh* mesh;
+	RendererBase* renderer;
 };
 
 class RenderObjectSetter
@@ -17,12 +17,13 @@ class RenderObjectSetter
 public:
 	virtual void PushData() =0;
 	virtual void SetData(shared_ptr<Shader> shader =nullptr) = 0;
+	CBufferContainer* _cbufferContainer;
 };
 
 class RendererBase
 {
 public:
-	virtual void Rendering(const std::shared_ptr<Material>& material, const std::shared_ptr<Mesh>& mesh) = 0;
+	virtual void Rendering(Material* material, Mesh* mesh) = 0;
 	virtual void DebugRendering()=0;
 
 	void AddSetter(std::shared_ptr<RenderObjectSetter> setter) { setters.push_back(setter); };

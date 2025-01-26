@@ -7,7 +7,7 @@
 
 void testComponent::Init()
 {
-	_test.testcolor = vec4(1, 0, 0, 0);
+	_test.testcolor = vec4(0.4f, 0.3f, 0, 0);
 }
 
 void testComponent::Start()
@@ -51,8 +51,8 @@ void testComponent::RenderBegin()
 
 void testComponent::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
-}
 
+}
 
 void testComponent::SetDestroy()
 {
@@ -64,14 +64,13 @@ void testComponent::DestroyComponentOnly()
 
 }
 
-
 void testComponent::PushData()
 {
-	_container = Core::main->GetBufferManager()->GetBufferPool(BufferType::TestParam)->Alloc(1);
-	memcpy(_container->ptr, (void*)&_test, sizeof(test));
+	_cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::TestParam)->Alloc(1);
+	memcpy(_cbufferContainer->ptr, (void*)&_test, sizeof(test));
 }
 
 void testComponent::SetData(shared_ptr<Shader> shader)
 {
-	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(shader->GetRegisterIndex("test"), _container->GPUAdress);
+	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(shader->GetRegisterIndex("test"), _cbufferContainer->GPUAdress);
 }

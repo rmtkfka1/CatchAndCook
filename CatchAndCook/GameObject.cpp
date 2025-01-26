@@ -22,10 +22,9 @@ GameObject::~GameObject()
 void GameObject::Init()
 {
     std::shared_ptr<GameObject> gameObject = GetCast<GameObject>();
-    parent.reset();
     rootParent = gameObject;
+    SyncActivePrev();
     gameObject->_transform = gameObject->AddComponent<Transform>();
-    SetActiveSelf(true);
 }
 
 void GameObject::Start()
@@ -55,8 +54,8 @@ void GameObject::Update()
 
 void GameObject::Update2()
 {
- 
-    if ((!IsDestroy()) && GetActive() && (!IsFirst())) {
+    if ((!IsDestroy()) && GetActive() && (!IsFirst())) 
+    {
         for (auto& component : _components) {
             if (((!component->IsDestroy()) && (!component->IsFirst())))
                 component->Update2();
@@ -75,26 +74,23 @@ void GameObject::RenderBegin()
     }
 }
 
-//void GameObject::Rendering()
-//{
-//  
-//}
-
-
 void GameObject::Destroy()
 {
-	if (IsDestroy()) {
+	if (IsDestroy()) 
+    {
         for (int i = 0; i < _components.size(); ++i) {
             auto& component = _components[i];
             component->Destroy();
             DisconnectComponent(component);
             --i;
         }
+
         if (!parent.expired()) parent.lock()->RemoveChild(GetCast<GameObject>());
     }
     else
     {
-        for (int i = 0; i < _components.size(); ++i) {
+        for (int i = 0; i < _components.size(); ++i) 
+        {
             auto& component = _components[i];
 			if (component->IsDestroy()) {
 	            component->DestroyComponentOnly();
@@ -226,9 +222,6 @@ int GameObject::GetChildsAllByName(const std::wstring& name, std::vector<std::sh
 }
 
 
-
-
-
 bool GameObject::AddChild(const std::shared_ptr<GameObject>& obj)
 {
     if (obj == nullptr)
@@ -329,7 +322,8 @@ void GameObject::SetRootParent(const std::shared_ptr<GameObject>& rootParent)
 
 bool GameObject::GetActive()
 {
-    return _active_total = _active_total && _active_self; //�̹� total�� �ݿ����ֱ� ������ Ȥ�� �𸣴� �ѹ���
+    _active_total = _active_total && _active_self;
+    return _active_total; 
 }
 
 bool GameObject::GetActiveSelf()
@@ -352,7 +346,7 @@ void GameObject::SetActivePrev(bool activeTotalPrev)
 
 bool GameObject::CheckActiveUpdated()
 {
-    return _active_total_prev != _active_total;
+    return !(_active_total_prev == _active_total);
 }
 
 void GameObject::SyncActivePrev()
@@ -363,13 +357,19 @@ void GameObject::SyncActivePrev()
 void GameObject::ActiveUpdateChain(bool active_total)
 {
     this->_active_total = active_total && _active_self;
-    if (CheckActiveUpdated()) {
-        for (auto& element : _components) {
+
+    if (CheckActiveUpdated()) 
+    {
+        for (auto& element : _components) 
+        {
             if (GetActive()) element->Enable();
             else element->Disable();
         }
+
         SyncActivePrev();
     }
+
+
     for (int i = 0; i < _childs.size(); i++)
     {
         auto current = _childs[i].lock();

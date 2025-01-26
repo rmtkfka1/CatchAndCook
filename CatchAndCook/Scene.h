@@ -38,9 +38,8 @@ public:
 	std::shared_ptr<GameObject> Find(const std::wstring& name, bool includeDestroy = false);
 
 	int Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec, bool includeDestroy = false);
-
-	void AddRenderer(std::shared_ptr<Material> material, std::shared_ptr<Mesh> mesh, shared_ptr<RendererBase> data);
-	void AddRenderer(std::shared_ptr<Mesh> mesh, shared_ptr<RendererBase> data, RENDER_PASS::PASS pass);
+	void AddRenderer(Material* material, Mesh* mesh, RendererBase* renderBase);
+	void AddRenderer(Mesh* mesh, RendererBase* renderBase, RENDER_PASS::PASS pass);
 
 	void Release();
 	friend class SceneManager;

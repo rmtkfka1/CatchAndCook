@@ -21,16 +21,13 @@ public:
 	virtual ~GameObject() override;
 
 	void Init();
-	void Start(); // 첫 프레임 // 첫 프레임 시.
-	void Update(); //
-	void Update2(); // 
-	void Enable(); // 
-	void Disable(); //
-	void Destroy(); //
-	void RenderBegin(); // CBuffer <- 갱신
-	//void Rendering(); // CBuffer <- 갱신
-
-	// 이벤트 함수
+	void Start(); 
+	void Update(); 
+	void Update2(); 
+	void Enable(); 
+	void Disable(); 
+	void Destroy(); 
+	void RenderBegin(); 
 	void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
 	
 
@@ -42,7 +39,7 @@ public:
 		component->SetOwner(GetCast<GameObject>());
 		_components.push_back(component);
 		component->Init();
-		if (!IsFirst() && GetActive()) component->Enable();
+		if (GetActive()) component->Enable();
 		return component;
 	};
 
@@ -162,19 +159,20 @@ public:
 
 
 private:
-	bool _active_self = true;
+	bool _active_self = true; // 
 	bool _active_total_prev = false;
 	bool _active_total = true;
+
 public:
 	bool GetActive(); //_active_total
 	bool GetActiveSelf(); // _active_self
 	bool SetActiveSelf(bool _active); //_active_self
+
 private:
 	void SyncActivePrev();
 	void SetActivePrev(bool activeTotalPrev);
 	bool CheckActiveUpdated();
 	void ActiveUpdateChain(bool _active_total);
-
 
 public:
 	void SetName(const std::wstring name){_name = name;};

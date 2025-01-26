@@ -36,24 +36,23 @@ void MeshRenderer::Start()
 {
 	Component::Start();
 
-	for (int i = 0; i < _mesh.size(); i++)
-	{
-		auto currentMesh = _mesh[i];
-		auto currentMaterial = _uniqueMaterials[i];
-		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial, currentMesh, static_pointer_cast<MeshRenderer>(shared_from_this()));
-	}
+	//for (int i = 0; i < _mesh.size(); i++)
+	//{
+	//	auto currentMesh = _mesh[i];
+	//	auto currentMaterial = _uniqueMaterials[i];
+	//	SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial, currentMesh, static_pointer_cast<MeshRenderer>(shared_from_this()));
+	//}
 
-	for (int j = 0; j < _sharedMaterials.size(); j++)
-	{
-		auto currentMaterial = _sharedMaterials[j];
-		for (int i = 0; i < _mesh.size(); i++)
-		{
-			auto currentMesh = _mesh[i];
-			currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
-			currentMaterial->PushData();
-			SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial, currentMesh, static_pointer_cast<MeshRenderer>(shared_from_this()));
-		}
-	}
+	//for (int j = 0; j < _sharedMaterials.size(); j++)
+	//{
+	//	auto currentMaterial = _sharedMaterials[j];
+	//	for (int i = 0; i < _mesh.size(); i++)
+	//	{
+	//		auto currentMesh = _mesh[i];
+	//		currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
+	//		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial, currentMesh, static_pointer_cast<MeshRenderer>(shared_from_this()));
+	//	}
+	//}
 }
 
 void MeshRenderer::Update()
@@ -92,22 +91,24 @@ void MeshRenderer::RenderBegin()
 		auto currentMaterial = _uniqueMaterials[i];
 		currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
 		currentMaterial->PushData();
+		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(), currentMesh.get(), this);
 	}
 
 	for (int j = 0; j < _sharedMaterials.size(); j++)
 	{
 		auto currentMaterial = _sharedMaterials[j];
+
 		for (int i = 0; i < _mesh.size(); i++)
 		{
-			auto currentMesh = _mesh[i];
+			auto &currentMesh = _mesh[i];
 			currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
 			currentMaterial->PushData();
+			SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(), currentMesh.get(), this);
 		}
 	}
-	
 }
 
-void MeshRenderer::Rendering(const std::shared_ptr<Material>& material, const std::shared_ptr<Mesh>& mesh)
+void MeshRenderer::Rendering(Material* material, Mesh* mesh)
 {
 	auto& cmdList = Core::main->GetCmdList();
 
@@ -118,10 +119,8 @@ void MeshRenderer::Rendering(const std::shared_ptr<Material>& material, const st
 		data->SetData(material->GetShader());
 
 	mesh->Redner();
-}
 
-
-
+};
 
 void MeshRenderer::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
