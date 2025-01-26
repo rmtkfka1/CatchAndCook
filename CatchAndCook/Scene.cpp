@@ -179,7 +179,7 @@ bool Scene::RemoveAtGameObject(int index)
 
 void Scene::AddDestroyQueue(const std::shared_ptr<GameObject>& gameObject)
 {
-    auto it = std::find(_destroy_gameObjects.begin(), _destroy_gameObjects.end(), _destroy_gameObjects);
+    auto it = std::find(_destroy_gameObjects.begin(), _destroy_gameObjects.end(), gameObject);
     if (it != _destroy_gameObjects.end())
 		_destroy_gameObjects.push_back(gameObject);
 }
