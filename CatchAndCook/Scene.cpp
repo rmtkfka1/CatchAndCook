@@ -17,8 +17,7 @@ void Scene::AddGameObject(const std::shared_ptr<GameObject> gameObject)
 
 void Scene::Init()
 {
-
-
+    _destroy_gameObjects.reserve(256);
 }
 
 void Scene::Update()
@@ -135,9 +134,13 @@ void Scene::RenderEnd()
 
 void Scene::Finish()
 {
-    for (auto& gameObject : _gameObjects)
+    for (int i = 0; i < _destroy_gameObjects.size(); i++)
+    {
+        auto& gameObject = _destroy_gameObjects[i];
         gameObject->Destroy();
-    std::erase_if(_gameObjects, [](const std::shared_ptr<GameObject>& gameObject) {return gameObject->IsDestroy(); });
+        _gameObjects.erase(ranges::find(_gameObjects, gameObject));
+    }
+    _destroy_gameObjects.clear();
 }
 
 
@@ -169,7 +172,12 @@ bool Scene::RemoveAtGameObject(int index)
     return false;
 }
 
-
+void Scene::AddDestroyQueue(const std::shared_ptr<GameObject>& gameObject)
+{
+    auto it = std::find(_destroy_gameObjects.begin(), _destroy_gameObjects.end(), _destroy_gameObjects);
+    if (it != _destroy_gameObjects.end())
+		_destroy_gameObjects.push_back(gameObject);
+}
 
 
 std::shared_ptr<GameObject> Scene::Find(const std::wstring& name, bool includeDestroy)
