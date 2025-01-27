@@ -10,8 +10,6 @@
 #include "Texture.h"
 #include "Transform.h"
 
-shared_ptr<Shader> MeshRenderer::_normalDebugShader;
-
 MeshRenderer::~MeshRenderer()
 {
 
@@ -25,9 +23,6 @@ bool MeshRenderer::IsExecuteAble()
 void MeshRenderer::Init()
 {
 	Component::Init();
-
-	if(_normalDebugShader == nullptr)
-		_normalDebugShader = ResourceManager::main->Get<Shader>(L"normalDraw");
 
 	GetOwner()->_renderer = GetCast<MeshRenderer>();
 }
@@ -53,7 +48,6 @@ void MeshRenderer::Enable()
 {
 	Component::Enable();
 
-	cout << "호출되엇다 인에이블" << endl;
 
 }
 
@@ -61,14 +55,13 @@ void MeshRenderer::Disable()
 {
 	Component::Disable();
 
-	cout << "호출되엇다 디스에이블" << endl;
 }
 
 void MeshRenderer::Destroy()
 {
 	Component::Destroy();
 
-	cout << "호출되엇다 파괴" << endl;
+
 }
 
 
@@ -103,11 +96,11 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh)
 {
 	auto& cmdList = Core::main->GetCmdList();
 
+	for (auto& data : setters) //transform , etc 
+		data->SetData(material);
+
 	if (material != nullptr)
 		material->SetData();
-
-	for (auto& data : setters) //transform , etc 
-		data->SetData(material->GetShader());
 
 	mesh->Redner();
 
@@ -124,7 +117,7 @@ void MeshRenderer::DebugRendering()
 
 	for (auto& mesh : _mesh)
 	{
-		if (_drawNormal)
+		if (_normalDebugShader)
 		{
 			cmdList->SetPipelineState(_normalDebugShader->_pipelineState.Get());
 
@@ -150,7 +143,6 @@ void MeshRenderer::DebugRendering()
 
 		}
 	}
-
 }
 
 void MeshRenderer::SetDestroy()

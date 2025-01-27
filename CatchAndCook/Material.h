@@ -35,13 +35,12 @@ public:
 	void SetPass(RENDER_PASS::PASS pass) {_pass = pass;};
 	RENDER_PASS::PASS& GetPass() { return _pass; };
 
-	void SetTexture(std::string name, const std::shared_ptr<Texture>& field);
+	void SetHandle(std::string name, D3D12_CPU_DESCRIPTOR_HANDLE& handle);
 	shared_ptr<Shader> GetShader() { return _shader; }
 
 public:
 	void PushData();
 	void SetData();
-
 
 	void SetInjector(const std::vector<std::shared_ptr<ICBufferInjector>>& injectors) { _injectors = injectors; }
 
@@ -57,7 +56,7 @@ public:
 	tableContainer _tableContainer;
 
 private:
-	void PushTexture();
+	void PushHandle();
 private:
 	shared_ptr<Shader> _shader;
 
@@ -65,7 +64,7 @@ private:
 	std::unordered_map<std::string, float> _propertyFloats; // 0~1 스,무스니스 정보
 	std::unordered_map<std::string, vec4> _propertyVectors; // Color 
 	std::unordered_map<std::string, Matrix> _propertyMatrixs; // 
-	std::unordered_map<std::string, shared_ptr<Texture>> _propertyTextures;
+	std::unordered_map<std::string, D3D12_CPU_DESCRIPTOR_HANDLE> _propertyHandle;
 
 	CBufferContainer* _cbufferContainer;
 	MaterialParams _params; // 추가 정보함수 넘겨서 데이터 넣는 셋 작업

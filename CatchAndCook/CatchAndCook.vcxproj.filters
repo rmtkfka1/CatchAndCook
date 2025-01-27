@@ -181,6 +181,9 @@
     <ClCompile Include="testComponent.cpp">
       <Filter>Component</Filter>
     </ClCompile>
+    <ClCompile Include="StructuredBuffer.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -340,6 +343,9 @@
     <ClInclude Include="testComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
+    <ClInclude Include="StructuredBuffer.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -376,6 +382,9 @@
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\sea.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\normalDraw_sea.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
   </ItemGroup>

@@ -10,11 +10,9 @@ Material::~Material()
 {
 
 }
-void Material::SetTexture(std::string name, const std::shared_ptr<Texture>& field)
+void Material::SetHandle(std::string name, D3D12_CPU_DESCRIPTOR_HANDLE& field)
 {
-	if (field != nullptr)
-		_propertyTextures[name] = field;
-
+	_propertyHandle[name] = field;
 }
 
 void Material::PushData()
@@ -22,7 +20,7 @@ void Material::PushData()
 	////temp
 	//SetPropertyVector("uv", GetPropertyVector("uv") + vec4(0.01, 0, 0, 0));
 
-	PushTexture();
+	PushHandle();
 
 	if (_useMaterialParams)
 	{
@@ -30,8 +28,8 @@ void Material::PushData()
 		memcpy(_cbufferContainer->ptr, (void*)&_params, sizeof(MaterialParams));
 	}
 
-	for (auto& injector : _injectors)
-		injector->Inject(GetCast<Material>());
+	//for (auto& injector : _injectors)
+	//	injector->Inject(GetCast<Material>());
 }
 
 void Material::SetData()
@@ -47,17 +45,19 @@ void Material::SetData()
 			injector->SetData(_shader);
 }
 
-void Material::PushTexture()
+void Material::PushHandle()
 {
 	array<bool, SRV_TABLE_REGISTER_COUNT> copyCheckList;
 	copyCheckList.fill(false);
 
-	for (auto& [name,texture] : _propertyTextures)
+	for (auto& [name,handle] : _propertyHandle)
 	{
 		int index = _shader->GetRegisterIndex(name);
-		if (index != -1){
+
+		if (index != -1)
+		{
 			copyCheckList[index] = true;
-			Core::main->GetBufferManager()->GetTable()->CopyHandle(_tableContainer.CPUHandle, texture->GetSRVCpuHandle(), _shader->GetRegisterIndex(name));
+			Core::main->GetBufferManager()->GetTable()->CopyHandle(_tableContainer.CPUHandle, handle, index);
 		}
 	}
 
