@@ -45,7 +45,7 @@ void TestScene::Init()
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
 		material->SetInjector({ InjectorManager::main->Get(BufferType::MateriaSubParam) });
-		material->SetTexture("g_tex_0", texture);
+		material->SetHandle("g_tex_0", texture->GetSRVCpuHandle());
 
 		meshRenderer->AddMaterials({ material });
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
@@ -73,7 +73,7 @@ void TestScene::Init()
 		material = make_shared<Material>();
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
-		material->SetTexture("g_tex_0", texture);
+		material->SetHandle("g_tex_0", texture->GetSRVCpuHandle());
 
 		meshRenderer->AddMaterials({ material });
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
@@ -99,7 +99,7 @@ void TestScene::Init()
 		material = make_shared<Material>();
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
-		material->SetTexture("g_tex_0", ResourceManager::main->GetNoneTexture());
+		material->SetHandle("g_tex_0", ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle());
 
 		meshRenderer->AddMaterials({ material });
 		meshRenderer->AddMesh(GeoMetryHelper::LoadGripMesh(300.0f, 300.0f, 100, 100));
