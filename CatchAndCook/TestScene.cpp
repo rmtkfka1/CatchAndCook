@@ -79,7 +79,7 @@ void TestScene::Init()
 
 		auto& mesh = GeoMetryHelper::LoadRectangleBox(10.0f);
 		mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
-		mesh->SetVertexCount(2024);
+		mesh->SetVertexCount(2048);
 		meshRenderer->AddMesh(mesh);
 	};
 
