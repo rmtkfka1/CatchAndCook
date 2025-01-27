@@ -38,6 +38,8 @@ void testComponent::Init()
 
 	_structuredBuffer.Init(v);
 
+
+
 }
 
 void testComponent::Start()
@@ -104,5 +106,5 @@ void testComponent::PushData()
  
 void testComponent::SetData(Material* material)
 {
-	material->SetHandle("Structured", _structuredBuffer._srvHandle);
+	material->SetHandle("Structured", _structuredBuffer.GetSRVHandle());
 }

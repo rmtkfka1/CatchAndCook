@@ -74,8 +74,10 @@ public:
 
 	}
 
-
 public:
+	D3D12_CPU_DESCRIPTOR_HANDLE& GetSRVHandle() { return _srvHandle; }
+	D3D12_CPU_DESCRIPTOR_HANDLE& GetUAVHandle() { return _uavHandle; }
+private:
 	ComPtr<ID3D12Resource> _structuredBuffer;
 	uint32 _count;
 	D3D12_CPU_DESCRIPTOR_HANDLE  _srvHandle;
