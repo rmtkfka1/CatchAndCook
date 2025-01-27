@@ -16,7 +16,7 @@ class RenderObjectSetter
 {
 public:
 	virtual void PushData() =0;
-	virtual void SetData(shared_ptr<Shader> shader =nullptr) = 0;
+	virtual void SetData(Material* material =nullptr) = 0;
 
 };
 

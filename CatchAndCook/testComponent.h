@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "RendererBase.h"
-
+#include "StructuredBuffer.h"
 
 struct test
 {
@@ -27,10 +27,10 @@ public:
 	virtual void DestroyComponentOnly();
 
 	virtual void PushData() override;
-	virtual void SetData(shared_ptr<Shader> shader=nullptr) override;
+	virtual void SetData(Material* material = nullptr) override;
 
 private:
-	test _test ;
-	CBufferContainer* _cbufferContainer;
+	StructuredBuffer<test> _structuredBuffer;
+	vector<test> v;
 };
 

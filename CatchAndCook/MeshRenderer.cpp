@@ -96,11 +96,11 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh)
 {
 	auto& cmdList = Core::main->GetCmdList();
 
+	for (auto& data : setters) //transform , etc 
+		data->SetData(material);
+
 	if (material != nullptr)
 		material->SetData();
-
-	for (auto& data : setters) //transform , etc 
-		data->SetData(material->GetShader());
 
 	mesh->Redner();
 

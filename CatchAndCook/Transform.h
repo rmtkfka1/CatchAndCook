@@ -21,7 +21,7 @@ public:
 	void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
 
     void PushData() override;
-	virtual void SetData(shared_ptr<Shader> shader=nullptr) override;
+	virtual void SetData(Material* material = nullptr) override;
 
 public:
 

@@ -11,10 +11,16 @@
 #include "TextManager.h"
 #include "SpriteAction.h"
 #include "testComponent.h"
+#include "StructuredBuffer.h"
 
+struct ee
+{
+	int a;
+};
 void TestScene::Init()
 {
 	Scene::Init();
+
 
 	{
 		ShaderInfo info;

@@ -216,6 +216,7 @@
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteAction.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
+    <ClCompile Include="StructuredBuffer.cpp" />
     <ClCompile Include="testComponent.cpp" />
     <ClCompile Include="TestMain.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -275,6 +276,7 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteAction.h" />
     <ClInclude Include="SpriteRenderer.h" />
+    <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="strutil.h" />
     <ClInclude Include="testComponent.h" />
     <ClInclude Include="TestScene.h" />

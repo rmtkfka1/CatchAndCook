@@ -42,7 +42,6 @@ public:
 	void PushData();
 	void SetData();
 
-
 	void SetInjector(const std::vector<std::shared_ptr<ICBufferInjector>>& injectors) { _injectors = injectors; }
 
 	int GetPropertyInt(const std::string& name) { return _propertyInts[name]; };

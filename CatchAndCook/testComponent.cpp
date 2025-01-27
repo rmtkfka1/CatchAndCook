@@ -12,7 +12,15 @@ testComponent::~testComponent()
 
 void testComponent::Init()
 {
-	_test.testcolor = vec4(0.4f, 0.3f, 0, 0);
+	v.resize(255);
+
+	for (int i = 0; i < v.size(); ++i)
+	{
+		v[i].testcolor = vec4(1.0f, 0, 0, 0);
+	}
+
+	_structuredBuffer.Init(v);
+
 }
 
 void testComponent::Start()
@@ -53,7 +61,7 @@ void testComponent::Destroy()
 
 void testComponent::RenderBegin()
 {
-	PushData();
+	
 }
 
 
@@ -74,11 +82,11 @@ void testComponent::DestroyComponentOnly()
 
 void testComponent::PushData()
 {
-	_cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::TestParam)->Alloc(1);
-	memcpy(_cbufferContainer->ptr, (void*)&_test, sizeof(test));
+
 }
 
-void testComponent::SetData(shared_ptr<Shader> shader)
+void testComponent::SetData(Material* material)
 {
-	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(shader->GetRegisterIndex("test"), _cbufferContainer->GPUAdress);
+	
+
 }

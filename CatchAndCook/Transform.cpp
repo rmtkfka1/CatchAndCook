@@ -94,7 +94,7 @@ void Transform::PushData()
     memcpy(_cbufferContainer->ptr, (void*)&matrix, sizeof(Matrix));
 }
 
-void Transform::SetData(shared_ptr<Shader> shader)
+void Transform::SetData(Material* material)
 {
     Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(1, _cbufferContainer->GPUAdress);
 }
