@@ -41,6 +41,9 @@
     <Filter Include="Resource\Model">
       <UniqueIdentifier>{f287f787-2094-4609-af84-dbd7d3471a5f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Component\Renderer">
+      <UniqueIdentifier>{c056486c-5d1d-4e81-9b49-16a63723f10b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -109,9 +112,6 @@
     <ClCompile Include="BufferManager.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="MeshRenderer.cpp">
-      <Filter>Component</Filter>
-    </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
@@ -145,9 +145,6 @@
     <ClCompile Include="TestScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="SpriteRenderer.cpp">
-      <Filter>Component</Filter>
-    </ClCompile>
     <ClCompile Include="TextManager.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -175,9 +172,6 @@
     <ClCompile Include="Bone.cpp">
       <Filter>Resource\Model</Filter>
     </ClCompile>
-    <ClCompile Include="RendererBase.cpp">
-      <Filter>Component</Filter>
-    </ClCompile>
     <ClCompile Include="testComponent.cpp">
       <Filter>Component</Filter>
     </ClCompile>
@@ -186,6 +180,15 @@
     </ClCompile>
     <ClCompile Include="ScreenParticle.cpp">
       <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshRenderer.cpp">
+      <Filter>Component\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererBase.cpp">
+      <Filter>Component\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteRenderer.cpp">
+      <Filter>Component\Renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -268,9 +271,6 @@
     <ClInclude Include="BufferManager.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="MeshRenderer.h">
-      <Filter>Component</Filter>
-    </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>Resource</Filter>
     </ClInclude>
@@ -310,9 +310,6 @@
     <ClInclude Include="TestScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteRenderer.h">
-      <Filter>Component</Filter>
-    </ClInclude>
     <ClInclude Include="TextManager.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -340,9 +337,6 @@
     <ClInclude Include="Bone.h">
       <Filter>Resource\Model</Filter>
     </ClInclude>
-    <ClInclude Include="RendererBase.h">
-      <Filter>Component</Filter>
-    </ClInclude>
     <ClInclude Include="testComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
@@ -351,6 +345,15 @@
     </ClInclude>
     <ClInclude Include="ScreenParticle.h">
       <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRenderer.h">
+      <Filter>Component\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererBase.h">
+      <Filter>Component\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteRenderer.h">
+      <Filter>Component\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -391,6 +394,9 @@
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\normalDraw_sea.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\screenParticle.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
   </ItemGroup>

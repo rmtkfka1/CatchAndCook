@@ -18,20 +18,29 @@ void Mesh::Redner()
 	auto& cmdList = Core::main->GetCmdList();
 	cmdList->IASetPrimitiveTopology(_topology);
 
-	if (_vertexCount != 0)
+	if (_noUseVertex == false)
 	{
 
-		if (_indexCount != 0)
+		if (_vertexCount != 0)
 		{
-			cmdList->IASetVertexBuffers(0, 1, &_vertexBufferView);
-			cmdList->IASetIndexBuffer(&_indexBufferView);
-			cmdList->DrawIndexedInstanced(_indexCount, 1, 0, 0, 0);
+
+			if (_indexCount != 0)
+			{
+				cmdList->IASetVertexBuffers(0, 1, &_vertexBufferView);
+				cmdList->IASetIndexBuffer(&_indexBufferView);
+				cmdList->DrawIndexedInstanced(_indexCount, 1, 0, 0, 0);
+			}
+			else
+			{
+				cmdList->IASetVertexBuffers(0, 1, &_vertexBufferView);
+				cmdList->DrawInstanced(_vertexCount, 1, 0, 0);
+			}
 		}
-		else
-		{
-			cmdList->IASetVertexBuffers(0, 1, &_vertexBufferView);
-			cmdList->DrawInstanced(_vertexCount, 1, 0, 0);
-		}
+	}
+
+	else
+	{
+		cmdList->DrawInstanced(_vertexCount, 1, 0, 0);
 	}
 }
 

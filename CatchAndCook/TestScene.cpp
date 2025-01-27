@@ -12,11 +12,9 @@
 #include "SpriteAction.h"
 #include "testComponent.h"
 #include "StructuredBuffer.h"
+#include "Mesh.h"
+#include "ScreenParticle.h"
 
-struct ee
-{
-	int a;
-};
 void TestScene::Init()
 {
 	Scene::Init();
@@ -51,6 +49,42 @@ void TestScene::Init()
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
 	
 	}
+
+
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->Init(L"screenParticle.hlsl", StaticProp, ShaderArg{ {{"PS_Main", "ps"},{"VS_Main", "vs"},
+			{"GS_Main", "gs"}} }, info);
+
+		shared_ptr<Material> material = make_shared<Material>();
+
+		shared_ptr<GameObject> object = CreateGameObject(L"testing_fire");
+
+		object->_transform->SetLocalPosition(vec3(0, 0.0f, 50.0f));
+		auto meshRenderer = object->AddComponent<MeshRenderer>();
+
+		object->AddComponent<ScreenParticle>();
+	
+		material = make_shared<Material>();
+		material->SetShader(shader);
+		material->SetPass(RENDER_PASS::Forward);
+		meshRenderer->AddMaterials({ material });
+
+		auto& mesh = GeoMetryHelper::LoadRectangleBox(10.0f);
+		mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+		mesh->SetVertexCount(2024);
+		meshRenderer->AddMesh(mesh);
+	};
+
+
+
 
 
 	{

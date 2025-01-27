@@ -89,7 +89,13 @@ public:
 	void SetTopolgy(D3D_PRIMITIVE_TOPOLOGY topology) { _topology = topology; }
 	D3D_PRIMITIVE_TOPOLOGY&  GetTopology() { return _topology; }
 
+	//struturedBuffer 이용할때 사용
+	void SetVertexCount(uint32 count) { _vertexCount = count; _noUseVertex = true; }
+
+
 private:
+	bool _noUseVertex=false;
+
 	D3D_PRIMITIVE_TOPOLOGY _topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	ComPtr<ID3D12Resource>		_vertexBuffer;

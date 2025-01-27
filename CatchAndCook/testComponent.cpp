@@ -2,13 +2,11 @@
 #include "testComponent.h"
 #include "GameObject.h"
 #include <random>
-#include <chrono>
 
 
-
-std::random_device rd;
-std::mt19937 gen(rd());
-std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+std::random_device dre;
+std::mt19937 gen(dre());
+std::uniform_real_distribution<float> uid(0.0f, 1.0f);
 
 
 testComponent::~testComponent()
@@ -21,7 +19,6 @@ void testComponent::Init()
 	v.resize(24);
 
 	_structuredBuffer.Init(v);
-
 
 }
 
@@ -44,13 +41,13 @@ void testComponent::Update()
 	{
 		for (int i = 0; i < v.size(); ++i)
 		{
-			float r = dist(gen);
-			float g = dist(gen);
-			float b = dist(gen);
+			float r = uid(gen);
+			float g = uid(gen);
+			float b = uid(gen);
 			v[i].testcolor = vec4(r, g, b, 0); 
 		}
-		_structuredBuffer.Upload(v);
 
+		_structuredBuffer.Upload(v);
 		time = 0;
 	}
 
