@@ -126,9 +126,8 @@ void Game::Run()
 	CameraUpdate();
 
 	std::shared_ptr<Scene> currentScene = SceneManager::main->GetCurrentScene();
-	currentScene->Update();
-	
 	Core::main->RenderBegin();
+	currentScene->Update();
 	currentScene->RenderBegin();
 	currentScene->Rendering();
 	currentScene->DebugRendering();

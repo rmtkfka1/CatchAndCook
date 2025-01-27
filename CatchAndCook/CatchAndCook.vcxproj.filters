@@ -184,6 +184,9 @@
     <ClCompile Include="StructuredBuffer.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
+    <ClCompile Include="ScreenParticle.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -345,6 +348,9 @@
     </ClInclude>
     <ClInclude Include="StructuredBuffer.h">
       <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenParticle.h">
+      <Filter>Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

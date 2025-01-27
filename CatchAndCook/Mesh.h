@@ -100,5 +100,7 @@ private:
 	D3D12_INDEX_BUFFER_VIEW		_indexBufferView = {};
 	uint32 _indexCount = 0;
 
+
+
 };
 
