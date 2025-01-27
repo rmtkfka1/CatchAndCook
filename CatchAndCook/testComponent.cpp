@@ -12,11 +12,28 @@ testComponent::~testComponent()
 
 void testComponent::Init()
 {
-	v.resize(255);
+	v.resize(24);
 
 	for (int i = 0; i < v.size(); ++i)
 	{
-		v[i].testcolor = vec4(1.0f, 0, 0, 0);
+		float r=0;
+		float g=0;
+		float b=0;
+
+		if (i % 3 == 0) // 3의 배수
+		{
+			r = 1;
+		}
+		else if (i % 3 == 1) // 3으로 나눈 나머지가 1
+		{
+			g = 1;
+		}
+		else if (i % 3 == 2) // 3으로 나눈 나머지가 2
+		{
+			b = 1;
+		}
+
+		v[i].testcolor = vec4(r, g, b, 0);
 	}
 
 	_structuredBuffer.Init(v);
@@ -84,9 +101,8 @@ void testComponent::PushData()
 {
 
 }
-
+ 
 void testComponent::SetData(Material* material)
 {
-	
-
+	material->SetHandle("Structured", _structuredBuffer._srvHandle);
 }

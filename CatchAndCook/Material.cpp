@@ -28,8 +28,8 @@ void Material::PushData()
 		memcpy(_cbufferContainer->ptr, (void*)&_params, sizeof(MaterialParams));
 	}
 
-	for (auto& injector : _injectors)
-		injector->Inject(GetCast<Material>());
+	//for (auto& injector : _injectors)
+	//	injector->Inject(GetCast<Material>());
 }
 
 void Material::SetData()

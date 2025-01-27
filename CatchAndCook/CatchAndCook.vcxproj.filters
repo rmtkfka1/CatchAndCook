@@ -384,6 +384,8 @@
     <FxCompile Include="..\Resources\Shaders\sea.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\normalDraw_sea.hlsl" />
+    <FxCompile Include="..\Resources\Shaders\normalDraw_sea.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
