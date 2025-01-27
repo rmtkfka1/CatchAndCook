@@ -53,9 +53,11 @@ void Material::PushHandle()
 	for (auto& [name,handle] : _propertyHandle)
 	{
 		int index = _shader->GetRegisterIndex(name);
-		if (index != -1){
+
+		if (index != -1)
+		{
 			copyCheckList[index] = true;
-			Core::main->GetBufferManager()->GetTable()->CopyHandle(_tableContainer.CPUHandle, handle, _shader->GetRegisterIndex(name));
+			Core::main->GetBufferManager()->GetTable()->CopyHandle(_tableContainer.CPUHandle, handle, index);
 		}
 	}
 

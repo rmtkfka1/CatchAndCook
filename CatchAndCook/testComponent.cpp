@@ -20,15 +20,15 @@ void testComponent::Init()
 		float g=0;
 		float b=0;
 
-		if (i % 3 == 0) // 3의 배수
+		if (i % 3 == 0) 
 		{
 			r = 1;
 		}
-		else if (i % 3 == 1) // 3으로 나눈 나머지가 1
+		else if (i % 3 == 1) 
 		{
 			g = 1;
 		}
-		else if (i % 3 == 2) // 3으로 나눈 나머지가 2
+		else if (i % 3 == 2) 
 		{
 			b = 1;
 		}
