@@ -192,6 +192,7 @@ void TestScene::Init()
 	}
 
 	{
+		//18프레임 => LOD 기능 들어가면 더개선가능
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
@@ -216,35 +217,37 @@ void TestScene::Init()
 
 		meshRenderer->AddMaterials({ material });
 
-		auto& mesh = GeoMetryHelper::LoadGripMeshControlPoints(100.0f, 100.0f, 10, 10);
+		auto& mesh = GeoMetryHelper::LoadGripMeshControlPoints(2000.0f, 2000.0f, 50, 50);
 		mesh->SetTopolgy((D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST));
 		meshRenderer->AddMesh(mesh);
 	}
 
-	{
-		ShaderInfo info;
-		info._zTest = true;
-		info._stencilTest = false;
-		info.cullingType = CullingType::WIREFRAME;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"testgrid", L"sea.hlsl", StaticProp,
-			ShaderArg{}, info);
+	//{
+	//	/*meshRenderer->AddMesh(GeoMetryHelper::LoadGripMesh(2000.0f, 2000.0f, 4000, 4000));*/ 	//11프레임
+	//	ShaderInfo info;
+	//	info._zTest = true;
+	//	info._stencilTest = false;
+	//	info.cullingType = CullingType::WIREFRAME;
 
-		shared_ptr<Material> material = make_shared<Material>();
+	//	shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"testgrid", L"sea.hlsl", StaticProp,
+	//		ShaderArg{}, info);
 
-		shared_ptr<GameObject> gameObject = CreateGameObject(L"grid");
-		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+	//	shared_ptr<Material> material = make_shared<Material>();
 
-		gameObject->_transform->SetLocalPosition(vec3(100.0f, 0, 0));
+	//	shared_ptr<GameObject> gameObject = CreateGameObject(L"grid");
+	//	auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
 
-		material = make_shared<Material>();
-		material->SetShader(shader);
-		material->SetPass(RENDER_PASS::Forward);
-		material->SetHandle("g_tex_0", ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle());
+	//	gameObject->_transform->SetLocalPosition(vec3(100.0f, 0, 0));
 
-		meshRenderer->AddMaterials({ material });
-		meshRenderer->AddMesh(GeoMetryHelper::LoadGripMesh(100.0f, 100.0f, 80, 80));
-	}
+	//	material = make_shared<Material>();
+	//	material->SetShader(shader);
+	//	material->SetPass(RENDER_PASS::Forward);
+	//	material->SetHandle("g_tex_0", ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle());
+
+	//	meshRenderer->AddMaterials({ material });
+	//	meshRenderer->AddMesh(GeoMetryHelper::LoadGripMesh(2000.0f, 2000.0f, 4000, 4000));
+	//}
 
 #pragma region sprite
 	//for (int i = 0; i < 1; ++i)
