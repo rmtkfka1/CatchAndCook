@@ -194,6 +194,7 @@ public:
 	std::shared_ptr<RendererBase> GetRenderer() { return _renderer; }
 
 	ObjectTag tag = ObjectTag::defualt;
+
 	std::shared_ptr<Transform> _transform;
 	std::shared_ptr<RendererBase> _renderer;
 
