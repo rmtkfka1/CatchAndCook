@@ -2,6 +2,7 @@
 Texture2D g_tex_0 : register(t0);
 SamplerState g_sam_0 : register(s0);
 
+#define TessFactor 8
 #define PI 3.14159f
 
 cbuffer test : register(b1)
@@ -106,17 +107,16 @@ struct HS_OUT
 };
 
 
-PatchConstOutput MyPatchConstantFunc(InputPatch<VS_OUT, 4> patch,
-                                     uint patchID : SV_PrimitiveID)
+PatchConstOutput MyPatchConstantFunc(InputPatch<VS_OUT, 4> patch, uint patchID : SV_PrimitiveID)
 {
     PatchConstOutput pt;
     
-    pt.edges[0] =8;
-    pt.edges[1] = 8;
-    pt.edges[2] = 8;
-    pt.edges[3] =8;
-    pt.inside[0] = 8;
-    pt.inside[1] =8;
+    pt.edges[0] = TessFactor;
+    pt.edges[1] = TessFactor;
+    pt.edges[2] = TessFactor;
+    pt.edges[3] = TessFactor;
+    pt.inside[0] = TessFactor;
+    pt.inside[1] = TessFactor;
 	
     return pt;
 }
@@ -126,10 +126,8 @@ PatchConstOutput MyPatchConstantFunc(InputPatch<VS_OUT, 4> patch,
 [outputtopology("triangle_cw")]
 [outputcontrolpoints(4)]
 [patchconstantfunc("MyPatchConstantFunc")]
-[maxtessfactor(64.0f)]
-HS_OUT HS_Main(InputPatch<VS_OUT, 4> p,
-           uint i : SV_OutputControlPointID,
-           uint patchId : SV_PrimitiveID)
+[maxtessfactor(TessFactor)]
+HS_OUT HS_Main(InputPatch<VS_OUT, 4> p, uint i : SV_OutputControlPointID, uint patchId : SV_PrimitiveID)
 {
     HS_OUT hout;
 	
@@ -144,9 +142,7 @@ struct DS_OUT
 };
 
 [domain("quad")]
-DS_OUT DS_Main(PatchConstOutput patchConst,
-             float2 uv : SV_DomainLocation,
-             const OutputPatch<HS_OUT, 4> quad)
+DS_OUT DS_Main(PatchConstOutput patchConst,float2 uv : SV_DomainLocation, const OutputPatch<HS_OUT, 4> quad)
 {
     DS_OUT dout;
 

@@ -212,7 +212,7 @@ shared_ptr<Mesh> GeoMetryHelper::LoadRectangleMesh(const float scale)
     return mesh;
 }
 
-shared_ptr<Mesh> GeoMetryHelper::LoadGripMesh(float width, float height, int division_x, int division_z)
+shared_ptr<Mesh> GeoMetryHelper::LoadGripMeshControlPoints(float width, float height, int division_x, int division_z)
 {
 
     shared_ptr<Mesh> mesh = make_shared<Mesh>();
@@ -254,6 +254,7 @@ shared_ptr<Mesh> GeoMetryHelper::LoadGripMesh(float width, float height, int div
 
         for (int i = 0; i < division_x; ++i)
         {
+            // 4개의 정점으로 이루어진 패치를 구성
             indices.push_back(offset + i);
             indices.push_back(offset + i + 1);
             indices.push_back(offset + i + division_x + 1);
@@ -266,6 +267,65 @@ shared_ptr<Mesh> GeoMetryHelper::LoadGripMesh(float width, float height, int div
 
     return mesh;
 
+}
+
+shared_ptr<Mesh> GeoMetryHelper::LoadGripMesh(float width, float height, int division_x, int division_z)
+{
+    shared_ptr<Mesh> mesh = make_shared<Mesh>();
+
+    const float dx = width / division_x;
+    const float dz = height / division_z;
+
+    vector<Vertex_Static> vertices;
+
+    vertices.reserve((division_x + 1) * (division_z + 1));
+
+
+    //leftBottom
+    vec3 leftBottom = vec3(-0.5f * width, 0, -0.5f * height);
+
+    for (int j = 0; j <= division_z; ++j)
+    {
+        vec3 startPoint = leftBottom + vec3(0, 0, dz * j);
+
+        //아랫줄
+        for (int i = 0; i <= division_x; ++i)
+        {
+            Vertex_Static v;
+            //xz 평면에서 x 방향으로이동.
+            v.position = startPoint;
+            v.position.x += dx * i;
+            v.normal = vec3(0, 1, 0);
+            v.uv = vec2(float(i) / division_x, 1.0f - float(j) / division_z);
+            vertices.push_back(v);
+        }
+    }
+
+
+    vector<uint32> indices;
+
+    for (int j = 0; j < division_z; ++j)
+    {
+        const int offset = (division_x + 1) * j;
+
+        for (int i = 0; i < division_x; ++i)
+        {
+            //윗쪽
+            indices.push_back(offset + i);
+            indices.push_back(offset + i + division_x + 1);
+            indices.push_back(offset + (i + 1) + division_x + 1);
+
+            //아랫쪽
+            indices.push_back(offset + i);
+            indices.push_back(offset + i + 1 + division_x + 1);
+            indices.push_back(offset + i + 1);
+        }
+    }
+
+
+    mesh->Init(vertices, indices);
+
+    return mesh;
 }
 
 shared_ptr<Mesh> GeoMetryHelper::LoadSprtieMesh()
