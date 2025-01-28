@@ -4,11 +4,11 @@
 #include "RendererBase.h"
 struct Particle
 {
-	vec3 position;
-	vec3 velocity;
-	vec3 color;
-	float life = 0.0f;
-	float radius = 1.0f;
+	vec3 position;  //12
+	vec3 velocity; //12
+	vec3 color; //12
+	float life = 0.0f; //4 
+	float radius = 1.0f; //4
 };
 
 class ScreenParticle :public Component , public RenderObjectSetter

@@ -85,8 +85,6 @@ void TestScene::Init()
 
 
 
-
-
 	{
 		ShaderInfo info;
 		info._zTest = true;
