@@ -216,7 +216,7 @@ void TestScene::Init()
 
 		meshRenderer->AddMaterials({ material });
 
-		auto& mesh = GeoMetryHelper::LoadGripMesh(30.0f, 30.0f, 4, 4);
+		auto& mesh = GeoMetryHelper::LoadGripMesh(300.0f, 300.0f, 12, 12);
 		mesh->SetTopolgy((D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST));
 		meshRenderer->AddMesh(mesh);
 	}
