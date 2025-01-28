@@ -118,8 +118,7 @@ struct Vertex_Static
     vec3 normal = vec3(0, 0, 1);
 };
 
-
-struct Vertex_Sprite
+struct Vertex_Color
 {
     vec3 position = vec3(0, 0, 0);
     vec2 uv;

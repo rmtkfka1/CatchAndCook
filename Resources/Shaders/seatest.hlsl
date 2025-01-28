@@ -25,12 +25,6 @@ cbuffer cameraParams : register(b2)
     float4 cameraScreenData;
 };
 
-cbuffer popo : register(b7)
-{
-    float2 uv;
-}
-
-
 struct VS_IN
 {
     float3 pos : POSITION;
@@ -106,12 +100,14 @@ VS_OUT VS_Main(VS_IN input)
     
     output.worldPos = worldPos.xyz;
 
-    
     output.pos = mul(worldPos, VPMatrix);
     output.uv = input.uv;
     output.worldNormal = normalize(mul(float4(input.normal, 0.0f), WorldMat).xyz);
     return output;
 }
+
+
+
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {

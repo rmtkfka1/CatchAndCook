@@ -33,7 +33,7 @@ void ResourceManager::CreateDefaultShader()
 		info._stencilTest = false;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"SpriteShader.hlsl", SpriteProp, ShaderArg{}, info);
+		shader->Init(L"SpriteShader.hlsl", ColorProp, ShaderArg{}, info);
 		Add<Shader>(L"SpriteShader", shader);
 	}
 	

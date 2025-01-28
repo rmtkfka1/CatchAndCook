@@ -90,6 +90,92 @@ shared_ptr<Mesh> GeoMetryHelper::LoadRectangleBox(const float scale)
     return mesh;
 }
 
+shared_ptr<Mesh> GeoMetryHelper::LoadRectangleBoxWithColor(const float scale, vec4 color)
+{
+    // 리소스 키 생성
+    //std::wstring key = L"boxColor" + std::to_wstring(scale);
+
+    //// 이미 로드된 Mesh가 있다면 반환
+    shared_ptr<Mesh> mesh;
+    //if (mesh)
+    //{
+    //    return mesh;
+    //}
+
+    // Vertex 및 Index 데이터 생성
+    vector<Vertex_Color> vertices;
+    vertices.reserve(24); // 6면 x 4개 정점
+
+    vector<uint32> indices;
+    indices.reserve(36); // 6면 x 2개의 삼각형 x 3개의 인덱스
+
+
+    float w2 = scale;
+    float h2 = scale;
+    float d2 = scale;
+
+    vector<Vertex_Color> vec(24);
+
+    // 앞면
+    vec[0] = Vertex_Color(vec3(-w2, -h2, -d2), vec2(0.0f, 1.0f), color);
+    vec[1] = Vertex_Color(vec3(-w2, +h2, -d2), vec2(0.0f, 0.0f), color);
+    vec[2] = Vertex_Color(vec3(+w2, +h2, -d2), vec2(1.0f, 0.0f), color);
+    vec[3] = Vertex_Color(vec3(+w2, -h2, -d2), vec2(1.0f, 1.0f), color);
+    // 뒷면
+    vec[4] = Vertex_Color(vec3(-w2, -h2, +d2), vec2(1.0f, 1.0f), color);
+    vec[5] = Vertex_Color(vec3(+w2, -h2, +d2), vec2(0.0f, 1.0f), color);
+    vec[6] = Vertex_Color(vec3(+w2, +h2, +d2), vec2(0.0f, 0.0f), color);
+    vec[7] = Vertex_Color(vec3(-w2, +h2, +d2), vec2(1.0f, 0.0f), color);
+    // 윗면
+    vec[8] = Vertex_Color(vec3(-w2, +h2, -d2), vec2(0.0f, 1.0f), color);
+    vec[9] = Vertex_Color(vec3(-w2, +h2, +d2), vec2(0.0f, 0.0f), color);
+    vec[10] = Vertex_Color(vec3(+w2, +h2, +d2), vec2(1.0f, 0.0f),color);
+    vec[11] = Vertex_Color(vec3(+w2, +h2, -d2), vec2(1.0f, 1.0f),color);
+    // 아랫면
+    vec[12] = Vertex_Color(vec3(-w2, -h2, -d2), vec2(1.0f, 1.0f),color);
+    vec[13] = Vertex_Color(vec3(+w2, -h2, -d2), vec2(0.0f, 1.0f),color);
+    vec[14] = Vertex_Color(vec3(+w2, -h2, +d2), vec2(0.0f, 0.0f),color);
+    vec[15] = Vertex_Color(vec3(-w2, -h2, +d2), vec2(1.0f, 0.0f),color);
+    // 왼쪽면
+    vec[16] = Vertex_Color(vec3(-w2, -h2, +d2), vec2(0.0f, 1.0f), color);
+    vec[17] = Vertex_Color(vec3(-w2, +h2, +d2), vec2(0.0f, 0.0f), color);
+    vec[18] = Vertex_Color(vec3(-w2, +h2, -d2), vec2(1.0f, 0.0f), color);
+    vec[19] = Vertex_Color(vec3(-w2, -h2, -d2), vec2(1.0f, 1.0f), color);
+    // 오른쪽면
+    vec[20] = Vertex_Color(vec3(+w2, -h2, -d2), vec2(0.0f, 1.0f),color);
+    vec[21] = Vertex_Color(vec3(+w2, +h2, -d2), vec2(0.0f, 0.0f),color);
+    vec[22] = Vertex_Color(vec3(+w2, +h2, +d2), vec2(1.0f, 0.0f),color);
+    vec[23] = Vertex_Color(vec3(+w2, -h2, +d2), vec2(1.0f, 1.0f),color);
+
+    vector<uint32> idx(36);
+
+    // 앞면
+    idx[0] = 0; idx[1] = 1; idx[2] = 2;
+    idx[3] = 0; idx[4] = 2; idx[5] = 3;
+    // 뒷면
+    idx[6] = 4; idx[7] = 5; idx[8] = 6;
+    idx[9] = 4; idx[10] = 6; idx[11] = 7;
+    // 윗면
+    idx[12] = 8; idx[13] = 9; idx[14] = 10;
+    idx[15] = 8; idx[16] = 10; idx[17] = 11;
+    // 아랫면
+    idx[18] = 12; idx[19] = 13; idx[20] = 14;
+    idx[21] = 12; idx[22] = 14; idx[23] = 15;
+    // 왼쪽면
+    idx[24] = 16; idx[25] = 17; idx[26] = 18;
+    idx[27] = 16; idx[28] = 18; idx[29] = 19;
+    // 오른쪽면
+    idx[30] = 20; idx[31] = 21; idx[32] = 22;
+    idx[33] = 20; idx[34] = 22; idx[35] = 23;
+
+
+    // Mesh 초기화 및 리소스 등록
+    mesh = make_shared<Mesh>();
+    mesh->Init(vec, idx);
+
+    return mesh;
+}
+
 shared_ptr<Mesh> GeoMetryHelper::LoadRectangleMesh(const float scale)
 {
 
@@ -196,13 +282,13 @@ shared_ptr<Mesh> GeoMetryHelper::LoadSprtieMesh()
         return mesh;
     }
 
-    vector<Vertex_Sprite> vec(4);
+    vector<Vertex_Color> vec(4);
 
     // 앞면
-    vec[0] = Vertex_Sprite(vec3(0.0f, 1.0f, 0), vec2(0.0f, 1.0f));
-    vec[1] = Vertex_Sprite(vec3(0.0f, 0.0f, 0), vec2(0.0f, 0.0f));
-    vec[2] = Vertex_Sprite(vec3(1.0f, 0.0f, 0), vec2(1.0f, 0.0f));
-    vec[3] = Vertex_Sprite(vec3(1.0f, 1.0f, 0), vec2(1.0f, 1.0f));
+    vec[0] = Vertex_Color(vec3(0.0f, 1.0f, 0), vec2(0.0f, 1.0f));
+    vec[1] = Vertex_Color(vec3(0.0f, 0.0f, 0), vec2(0.0f, 0.0f));
+    vec[2] = Vertex_Color(vec3(1.0f, 0.0f, 0), vec2(1.0f, 0.0f));
+    vec[3] = Vertex_Color(vec3(1.0f, 1.0f, 0), vec2(1.0f, 1.0f));
 
     vector<uint32> idx = { 0,1,2,0,2,3 };
 
