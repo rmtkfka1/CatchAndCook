@@ -192,7 +192,7 @@ void TestScene::Init()
 	}
 
 	{
-		//18프레임 => LOD 기능 들어가면 더개선가능
+		//18프레임 => LOD 기능 240 방어 가능할듯.
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
@@ -217,7 +217,7 @@ void TestScene::Init()
 
 		meshRenderer->AddMaterials({ material });
 
-		auto& mesh = GeoMetryHelper::LoadGripMeshControlPoints(2000.0f, 2000.0f, 50, 50);
+		auto& mesh = GeoMetryHelper::LoadGripMeshControlPoints(2000.0f, 2000.0f, 30, 30);
 		mesh->SetTopolgy((D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST));
 		meshRenderer->AddMesh(mesh);
 	}
