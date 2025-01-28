@@ -99,7 +99,7 @@ void TestScene::Init()
 		material->SetPass(RENDER_PASS::Forward);
 
 		meshRenderer->AddMaterials({ material });
-		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(0, 0, 1, 0)));
+		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(0, 1, 0, 0)));
 	}
 
 	{
@@ -125,7 +125,7 @@ void TestScene::Init()
 		material->SetPass(RENDER_PASS::Forward);
 
 		meshRenderer->AddMaterials({ material });
-		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(0, 1, 0, 0)));
+		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(0, 0, 1, 0)));
 	}
 #pragma endregion
 
