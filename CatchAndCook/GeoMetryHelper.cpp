@@ -254,15 +254,10 @@ shared_ptr<Mesh> GeoMetryHelper::LoadGripMesh(float width, float height, int div
 
         for (int i = 0; i < division_x; ++i)
         {
-            //À­ÂÊ
             indices.push_back(offset + i);
-            indices.push_back(offset + i + division_x + 1);
-            indices.push_back(offset + (i + 1) + division_x + 1);
-
-            //¾Æ·§ÂÊ
-            indices.push_back(offset + i);
-            indices.push_back(offset + i + 1 + division_x + 1);
             indices.push_back(offset + i + 1);
+            indices.push_back(offset + i + division_x + 1);
+            indices.push_back(offset + i + 1 + division_x + 1);
         }
     }
 

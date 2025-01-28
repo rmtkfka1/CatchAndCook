@@ -19,36 +19,6 @@ void TestScene::Init()
 {
 	Scene::Init();
 
-
-	{
-		ShaderInfo info;
-		info._zTest = true;
-		info._stencilTest = false;
-
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"test", L"test.hlsl", StaticProp,
-			ShaderArg{}, info);
-
-		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
-		shared_ptr<Material> material = make_shared<Material>();
-
-		shared_ptr<GameObject> root = CreateGameObject(L"root_test");
-	
-		auto meshRenderer = root->AddComponent<MeshRenderer>();
-		meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal"));
-
-		root->AddComponent<testComponent>();
-
-		material = make_shared<Material>();
-		material->SetShader(shader);
-		material->SetPass(RENDER_PASS::Forward);
-		material->SetInjector({ InjectorManager::main->Get(BufferType::MateriaSubParam) });
-		material->SetHandle("g_tex_0", texture->GetSRVCpuHandle());
-
-		meshRenderer->AddMaterials({ material });
-		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
-	
-	}
-
 #pragma region DebugXYZ
 	{
 
@@ -64,7 +34,7 @@ void TestScene::Init()
 
 		shared_ptr<GameObject> root = CreateGameObject(L"X");
 
-		root->_transform->SetLocalPosition(vec3(3000.0f,0, 0.0f));
+		root->_transform->SetLocalPosition(vec3(3000.0f, 0, 0.0f));
 		root->_transform->SetLocalScale(vec3(3000.0f, 0.1f, 0.1f));
 		auto meshRenderer = root->AddComponent<MeshRenderer>();
 
@@ -73,7 +43,7 @@ void TestScene::Init()
 		material->SetPass(RENDER_PASS::Forward);
 
 		meshRenderer->AddMaterials({ material });
-		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f,vec4(1,0,0,0)));
+		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(1, 0, 0, 0)));
 	}
 
 	{
@@ -129,6 +99,37 @@ void TestScene::Init()
 	}
 #pragma endregion
 
+	{
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"test", L"test.hlsl", StaticProp,
+			ShaderArg{}, info);
+
+		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
+		shared_ptr<Material> material = make_shared<Material>();
+
+		shared_ptr<GameObject> root = CreateGameObject(L"root_test");
+	
+		auto meshRenderer = root->AddComponent<MeshRenderer>();
+		meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal"));
+
+		root->AddComponent<testComponent>();
+
+		material = make_shared<Material>();
+		material->SetShader(shader);
+		material->SetPass(RENDER_PASS::Forward);
+		material->SetInjector({ InjectorManager::main->Get(BufferType::MateriaSubParam) });
+		material->SetHandle("g_tex_0", texture->GetSRVCpuHandle());
+
+		meshRenderer->AddMaterials({ material });
+		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
+	
+	}
+
+
+
 
 	//{
 
@@ -161,11 +162,7 @@ void TestScene::Init()
 	//	meshRenderer->AddMesh(mesh);
 	//};
 
-	{
 
-
-
-	}
 
 
 	{
@@ -199,9 +196,10 @@ void TestScene::Init()
 		info._zTest = true;
 		info._stencilTest = false;
 		info.cullingType = CullingType::WIREFRAME;
+		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest", L"seatest.hlsl", StaticProp,
-			ShaderArg{{{"VS_Main", "vs"}, {"PS_Main", "ps"}}}, info);
+			ShaderArg{ {{"VS_Main", "vs"}, {"PS_Main", "ps"}, {"HS_Main", "hs"},{"DS_Main", "ds"}  }}, info);
 	
 		shared_ptr<Material> material = make_shared<Material>();
 
@@ -217,10 +215,13 @@ void TestScene::Init()
 		material->SetHandle("g_tex_0", ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle());
 
 		meshRenderer->AddMaterials({ material });
-		meshRenderer->AddMesh(GeoMetryHelper::LoadGripMesh(300.0f, 300.0f, 10, 10));
+
+		auto& mesh = GeoMetryHelper::LoadGripMesh(30.0f, 30.0f, 4, 4);
+		mesh->SetTopolgy((D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST));
+		meshRenderer->AddMesh(mesh);
 	}
 
-
+#pragma region sprite
 	//for (int i = 0; i < 1; ++i)
 	//{
 	//	shared_ptr<GameObject> gameObject = CreateGameObject(L"SpriteTest");
@@ -298,7 +299,7 @@ void TestScene::Init()
 	//	sprite->SetText(L"Ä³Ä¡¾ØÄî");
 	//	sprite->CreateObject(512, 256, L"Arial", FontColor::WHITE, 123);
 	//}
-
+#pragma endregion
 
 };
 
