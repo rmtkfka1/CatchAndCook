@@ -14,7 +14,7 @@ void ModelNode::Init(shared_ptr<Model> model, aiNode* node)
 	std::string name = convert_assimp::Format(node->mName);
 	SetName(name);
 	SetLocalSRT(convert_assimp::Format(node->mTransformation));
-	std::cout << name << "\n";
+
 	_meshIndexList.reserve(node->mNumMeshes);
 	for (int i = 0; i < node->mNumMeshes; i++)
 		_meshIndexList.push_back(node->mMeshes[i]);

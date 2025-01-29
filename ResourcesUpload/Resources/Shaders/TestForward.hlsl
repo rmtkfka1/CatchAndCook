@@ -34,7 +34,7 @@ struct VS_OUT
     float3 normal : NORMAL;
 };
 
-Texture2D g_tex_0 : register(t0);
+Texture2D _BaseMap : register(t0);
 SamplerState g_sam_0 : register(s0);
 SamplerState g_sam_1 : register(s1);
 
@@ -53,5 +53,5 @@ VS_OUT VS_Main(VS_IN input)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-   return  g_tex_0 .Sample(g_sam_0, input.uv*5.0f);
+   return  _BaseMap.Sample(g_sam_0, input.uv);
 }

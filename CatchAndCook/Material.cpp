@@ -28,13 +28,13 @@ void Material::PushData()
 		memcpy(_cbufferContainer->ptr, (void*)&_params, sizeof(MaterialParams));
 	}
 
-	//for (auto& injector : _injectors)
-	//	injector->Inject(GetCast<Material>());
+	for (auto& injector : _injectors)
+		injector->Inject(GetCast<Material>());
 }
 
 void Material::SetData()
 {
-	//ÅØ½ºÃÄ¹ÙÀÎµù
+	//í…ìŠ¤ì³ë°”ì¸ë”©
 	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, _tableContainer.GPUHandle);
 
 	if(_useMaterialParams)

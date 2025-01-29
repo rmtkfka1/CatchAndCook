@@ -18,6 +18,7 @@ bool SkinnedMeshRenderer::IsExecuteAble()
 void SkinnedMeshRenderer::Init()
 {
 	Component::Init();
+	GetOwner()->_renderer = GetCast<SkinnedMeshRenderer>();
 }
 
 void SkinnedMeshRenderer::Start()
@@ -53,6 +54,28 @@ void SkinnedMeshRenderer::Destroy()
 void SkinnedMeshRenderer::RenderBegin()
 {
 	Component::RenderBegin();
+
+	for(int i = 0; i < _mesh.size(); i++)
+	{
+		auto currentMesh = _mesh[i];
+		auto currentMaterial = _uniqueMaterials[i % _mesh.size()];
+		currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
+		currentMaterial->PushData();
+		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(),currentMesh.get(),this);
+	}
+
+	for(int j = 0; j < _sharedMaterials.size(); j++)
+	{
+		auto currentMaterial = _sharedMaterials[j];
+
+		for(int i = 0; i < _mesh.size(); i++)
+		{
+			auto &currentMesh = _mesh[i];
+			currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
+			currentMaterial->PushData();
+			SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(),currentMesh.get(),this);
+		}
+	}
 }
 
 
@@ -67,57 +90,54 @@ void SkinnedMeshRenderer::SetDestroy()
 	Component::SetDestroy();
 }
 
+void SkinnedMeshRenderer::Rendering(Material* material, Mesh* mesh)
+{
+	auto& cmdList = Core::main->GetCmdList();
+
+	for(auto& data : setters) //transform , etc 
+		data->SetData(material);
+
+	if(material != nullptr)
+		material->SetData();
+
+	mesh->Redner();
+}
+
+void SkinnedMeshRenderer::DebugRendering()
+{
+
+}
+
 
 void SkinnedMeshRenderer::SetModel(const std::shared_ptr<Model>& model)
 {
 	_model = model;
 }
 
-void SkinnedMeshRenderer::SetMesh(const std::shared_ptr<Mesh>& _mesh)
+void SkinnedMeshRenderer::AddMesh(const std::shared_ptr<Mesh>& _mesh)
 {
-	this->_mesh = _mesh;
+	this->_mesh.push_back(_mesh);
 }
 
 void SkinnedMeshRenderer::SetMaterials(const std::vector<std::shared_ptr<Material>>& _materials)
 {
-	this->_materials = _materials;
+	_uniqueMaterials = _materials;
 }
 
 void SkinnedMeshRenderer::AddMaterials(const std::vector<std::shared_ptr<Material>>& _materials)
 {
-	for (auto& ele : _materials)
-		this->_materials.push_back(ele);
+	for(auto& ele : _materials)
+		this->_uniqueMaterials.push_back(ele);
 }
 
-void SkinnedMeshRenderer::Rendering(Material* material, Mesh* mesh)
+
+void SkinnedMeshRenderer::SetSharedMaterials(const std::vector<std::shared_ptr<Material>>& _materials)
 {
-	auto& cmdList = Core::main->GetCmdList();
-
-	if (material != nullptr)
-		material->SetData();
-
-	GetOwner()->_transform->SetData();
-
-	cmdList->IASetPrimitiveTopology(mesh->GetTopology());
-
-	if (mesh->GetVertexCount() != 0)
-	{
-
-		if (mesh->GetIndexCount() != 0)
-		{
-			cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());
-			cmdList->IASetIndexBuffer(&mesh->GetIndexView());
-			cmdList->DrawIndexedInstanced(mesh->GetIndexCount(), 1, 0, 0, 0);
-		}
-		else
-		{
-			cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());
-			cmdList->DrawInstanced(mesh->GetVertexCount(), 1, 0, 0);
-		}
-	}
+	this->_sharedMaterials = _materials;
 }
 
-void SkinnedMeshRenderer::DebugRendering()
+void SkinnedMeshRenderer::AddSharedMaterials(const std::vector<std::shared_ptr<Material>>& _materials)
 {
-
+	for(auto& ele : _materials)
+		this->_sharedMaterials.push_back(ele);
 }

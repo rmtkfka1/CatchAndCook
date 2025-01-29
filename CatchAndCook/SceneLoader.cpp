@@ -159,13 +159,14 @@ void SceneLoader::LinkGameObject(json jsonData)
 
     if (gameObject != nullptr)
     {
+        auto isStatic = jsonData["static"].get<bool>();
         gameObject->SetName(std::to_wstring(jsonData["name"].get<std::string>()));
 
-        _scene->AddGameObject(gameObject);
         for (auto& componentGuid : jsonData["components"])
             gameObject->AddComponent(
 	            IGuid::FindObjectByGuid<Component>(std::to_wstring(componentGuid.get<std::string>())));
-        gameObject->SetType(GameObjectType::Static); // ¼öÁ¤ÀÌ ÇÊ¿äÇÔ. Unity ÂÊÀÇ static ¿É¼Ç ¹Þ¾Æ¿À°Ô ÇØ¾ßÇÔ.
+        gameObject->SetType(isStatic ? GameObjectType::Deactivate : GameObjectType::Dynamic); // ìˆ˜ì •ì´ í•„ìš”í•¨. Unity ìª½ì˜ static ì˜µì…˜ ë°›ì•„ì˜¤ê²Œ í•´ì•¼í•¨.
+        _scene->AddGameObject(gameObject);
         gameObject->Init();
         gameObject->SetParent(parentObject);
     }
@@ -230,6 +231,38 @@ void SceneLoader::LinkComponent(json jsonData)
             std::cout << "Json Load - Not Found Model : " << std::to_string(modelName) << "\n";
         }
     }
+    if(type == L"SkinnedMeshRenderer")
+    {
+        auto skinnedmeshRenderer = IGuid::FindObjectByGuid<SkinnedMeshRenderer>(guid);
+        auto meshInfo = jsonData["mesh"];
+        auto modelName = std::to_wstring(meshInfo["modelName"].get<std::string>());
+
+        auto model = ResourceManager::main->Get<Model>(modelName);
+        if(model != nullptr)
+        {
+            std::vector<std::shared_ptr<ModelMesh>> meshes = model->FindMeshsByName(meshInfo["meshName"].get<std::string>());
+            std::vector<std::shared_ptr<Material>> materials;
+            for(auto& materialGuid : jsonData["materials"])
+            {
+                auto guid = std::to_wstring(materialGuid.get<std::string>());
+                auto material = IGuid::FindObjectByGuid<Material>(guid);
+                auto shaderName = std::to_wstring(refJson_MaterialTable[guid]["shaderName"].get<std::string>());
+                auto shader = ResourceManager::main->Get<Shader>(shaderName);
+                if(shader == nullptr)
+                    shader = ResourceManager::main->Get<Shader>(L"DefaultForward");
+                material->SetShader(shader);
+                materials.push_back(material);
+            }
+
+            skinnedmeshRenderer->AddMaterials(materials);
+            for(auto& mesh : meshes)
+                skinnedmeshRenderer->AddMesh(mesh->GetMesh());
+            skinnedmeshRenderer->SetModel(model);
+        } else
+        {
+            std::cout << "Json Load - Not Found Model : " << std::to_string(modelName) << "\n";
+        }
+    }
     //if (type == L"BoxCollider")
     //{
     //    auto collider = IGuid::FindObjectByGuid<Collider>(guid);
@@ -269,11 +302,14 @@ void SceneLoader::LinkMaterial(json jsonData)
     auto floats = datas["floats"];
     auto ints = datas["ints"];
     auto vectors = datas["vectors"];
-
-    for (auto& texture : textures)
+    
+    for(auto& texture : textures)
+    {
+        auto a = std::to_wstring(texture["originalName"].get<std::string>());
         material->SetHandle(
             texture["name"].get<std::string>(),
             ResourceManager::main->Get<Texture>(std::to_wstring(texture["originalName"].get<std::string>()))->GetSRVCpuHandle());
+    }
     for (auto& data : floats)
         material->SetPropertyFloat(data["name"].get<std::string>(), data["data"].get<float>());
     for (auto& data : ints)
