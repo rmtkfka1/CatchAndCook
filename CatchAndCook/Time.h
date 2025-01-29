@@ -11,18 +11,18 @@ public:
 
 	uint32 GetFps() { return _fps; }
 	double GetTime() { return _time; }
-	float GetDeltaTime() { return _deltaTime; }
+	double GetDeltaTime() { return _deltaTime; }
 
 private:
 	uint64	_frequency = 0;
 	uint64	_prevCount = 0;
-	float	_deltaTime = 0.f;
+	double	_deltaTime = 0.f;
 
 private:
 
 	HWND	_hwnd;
-	uint32	_frameCount = 0;
-	float	_frameTime = 0.f;
+	std::array<double, 15> _frameCount;
+	std::array<double, 15> _frameTime;
 	uint32	_fps = 0;
 
 	double _time = 0;
