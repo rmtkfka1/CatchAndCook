@@ -12,6 +12,7 @@ private:
 	std::string _name;
 
 	Matrix _localTransform = Matrix::Identity;
+	bool _isDynamic = false;
 
 public:
 	void SetName(const std::string& name) { _name = name; };
@@ -22,6 +23,9 @@ public:
 
 	void AddBoneIndex(int index) { _boneIndexList.push_back(index); };
 	bool IsBone() const { return _boneIndexList.size() != 0; };
+
+	void SetDynamic(bool isDynamic) { _isDynamic = isDynamic; };
+	bool IsDynamic() const { return _isDynamic; };
 
 	void Init(shared_ptr<Model> model, aiNode* node);
 

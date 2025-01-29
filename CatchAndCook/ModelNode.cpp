@@ -45,7 +45,7 @@ std::shared_ptr<GameObject> ModelNode::CreateGameObject(const std::shared_ptr<Sc
 	const std::shared_ptr<GameObject>& parent)
 {
 	auto currentGameObject = scene->CreateGameObject(std::to_wstring(GetName()),
-		IsBone() ? GameObjectType::Deactivate : GameObjectType::Dynamic);
+		IsDynamic() ? GameObjectType::Deactivate : GameObjectType::Dynamic);
 	currentGameObject->_transform->SetLocalSRTMatrix(_localTransform);
 	currentGameObject->SetParent(parent);
 

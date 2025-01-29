@@ -54,7 +54,8 @@ public:
 
 	void LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& currentModelMesh);
 
-	void SetDataBone();
+	void SetNodeData();
+	void SetBoneData();
 
 private:
 	int AllocBoneID() { return _boneAllocator++; };

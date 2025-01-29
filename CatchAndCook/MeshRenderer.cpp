@@ -101,7 +101,6 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh)
 		material->SetData();
 
 	mesh->Redner();
-
 };
 
 void MeshRenderer::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)

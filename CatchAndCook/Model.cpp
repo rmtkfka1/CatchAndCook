@@ -116,10 +116,8 @@ void Model::Init(const wstring& path, VertexType vertexType)
 
 	_rootNode = AddNode(scene->mRootNode);
 
-	for (auto& bone : _modelBoneList)
-		FindNodeByName(bone->GetNodeName())->AddBoneIndex(bone->GetIndex());
-
-	SetDataBone();
+	SetNodeData();
+	SetBoneData();
 }
 
 void Model::DebugLog()
@@ -255,7 +253,17 @@ void Model::LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& cu
 	
 }
 
-void Model::SetDataBone()
+void Model::SetNodeData()
+{
+	for (auto& bone : _modelBoneList)
+	{
+		auto currentNode = FindNodeByName(bone->GetNodeName());
+		currentNode->AddBoneIndex(bone->GetIndex());
+		currentNode->SetDynamic(false);
+	}
+}
+
+void Model::SetBoneData()
 {
 	boneCBuffer = Core::main->GetBufferManager()->GetBufferPool_Static(BufferType::BoneParam)->Alloc(1);
 	int offset = 0;
