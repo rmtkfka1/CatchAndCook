@@ -311,6 +311,26 @@ void Core::SetDebugLayerInfo()
 }
 
 
+void Core::SetPipelineState(Shader* shader)
+{
+    if (currentShader != shader)
+    {
+        currentShader = shader;
+        currentStencil = -1;
+    }
+    if (currentShader != nullptr)
+    {
+        GetCmdList()->SetPipelineState(currentShader->_pipelineState.Get());
+    }
+}
 
+void Core::SetPipelineSetting(Material* material)
+{
+    if (currentStencil != material->GetStencilIndex())
+    {
+        currentStencil = material->GetStencilIndex();
+        GetCmdList()->OMSetStencilRef(static_cast<UINT>(currentStencil));
+    }
+}
 
 

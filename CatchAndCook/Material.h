@@ -35,6 +35,9 @@ public:
 	void SetPass(RENDER_PASS::PASS pass) {_pass = pass;};
 	RENDER_PASS::PASS& GetPass() { return _pass; };
 
+	void SetStencilIndex(int index) { _stencilIndex = index; };
+	int GetStencilIndex() const { return _stencilIndex; };
+
 	void SetHandle(std::string name, D3D12_CPU_DESCRIPTOR_HANDLE& handle);
 	shared_ptr<Shader> GetShader() { return _shader; }
 
@@ -70,6 +73,7 @@ private:
 	MaterialParams _params; // 추가 정보함수 넘겨서 데이터 넣는 셋 작업
 	bool _useMaterialParams = false;
 	RENDER_PASS::PASS _pass = RENDER_PASS::Forward;
+	int _stencilIndex = 0;
 
 	std::vector<std::shared_ptr<ICBufferInjector>> _injectors;
 };
