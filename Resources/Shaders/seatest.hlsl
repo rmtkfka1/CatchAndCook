@@ -2,7 +2,7 @@
 Texture2D g_tex_0 : register(t0);
 SamplerState g_sam_0 : register(s0);
 
-#define TessFactor 8
+#define TessFactor 4
 #define PI 3.14159f
 
 cbuffer test : register(b1)
