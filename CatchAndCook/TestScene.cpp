@@ -185,16 +185,12 @@ void TestScene::Init()
 
 	ResourceManager::main->Load<Model>(L"kind", L"../Resources/Models/Kindred/kindred_unity.fbx", VertexType::Vertex_Skinned);
 	auto model = ResourceManager::main->Get<Model>(L"kind");
-	model->CreateGameObject(GetCast<Scene>());
-
-
-	std::cout << _gameObjects.size()<<"\n";
+	auto obj = model->CreateGameObject(GetCast<Scene>());
 };
 
 void TestScene::Update()
 {
     Scene::Update();
-
 }
 
 void TestScene::RenderBegin()
