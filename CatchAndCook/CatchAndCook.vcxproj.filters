@@ -190,6 +190,21 @@
     <ClCompile Include="SpriteRenderer.cpp">
       <Filter>Component\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="SkinnedMeshRenderer.cpp">
+      <Filter>Component\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinnedHierarchy.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneLoader.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene_jin.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Resource\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -355,6 +370,21 @@
     <ClInclude Include="SpriteRenderer.h">
       <Filter>Component\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="SkinnedMeshRenderer.h">
+      <Filter>Component\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinnedHierarchy.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneLoader.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScene_jin.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Resource\Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -397,6 +427,12 @@
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\screenParticle.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\seatest.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\color.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
   </ItemGroup>
