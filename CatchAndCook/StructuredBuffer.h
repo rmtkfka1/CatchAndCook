@@ -3,13 +3,13 @@
 template <typename T>
 class StructuredBuffer
 {
-
 public:
 	void Init(vector<T>& cpuData)
 	{
-		uint32 elementSize = (sizeof(T) + 255) & ~255;
+		uint32 elementSize = (sizeof(T));
 		uint32 elementCount = static_cast<uint32>(cpuData.size());
-		uint64 bufferSize = elementSize * elementCount;
+
+		_bufferSize = sizeof(T) * elementCount;
 
 		_count = static_cast<uint32>(cpuData.size());
 
@@ -18,35 +18,33 @@ public:
 		ThrowIfFailed(device->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
 			D3D12_HEAP_FLAG_NONE,
-			&CD3DX12_RESOURCE_DESC::Buffer(bufferSize, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS),
+			&CD3DX12_RESOURCE_DESC::Buffer(_bufferSize, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS),
 			D3D12_RESOURCE_STATE_COPY_DEST,
 			nullptr,
 			IID_PPV_ARGS(&_structuredBuffer)));
 
-		ComPtr<ID3D12Resource> uploadBuffer;
 		ThrowIfFailed(device->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
 			D3D12_HEAP_FLAG_NONE,
-			&CD3DX12_RESOURCE_DESC::Buffer(bufferSize),
+			&CD3DX12_RESOURCE_DESC::Buffer(_bufferSize),
 			D3D12_RESOURCE_STATE_GENERIC_READ,
 			nullptr,
-			IID_PPV_ARGS(&uploadBuffer)));
+			IID_PPV_ARGS(&_uploadBuffer)));
+		 
+		auto cmdList = Core::main->GetResCmdList();
 
-		void* mappedData = nullptr;
 		CD3DX12_RANGE readRange(0, 0);
 
-		ThrowIfFailed(uploadBuffer->Map(0, &readRange, &mappedData));
-		memcpy(mappedData, cpuData.data(), bufferSize);
-		uploadBuffer->Unmap(0, nullptr);
+		ThrowIfFailed(_uploadBuffer->Map(0, &readRange, &_mappedData));
 
-		auto commandList = Core::main->GetResCmdList();
+		memcpy(_mappedData, cpuData.data(), _bufferSize);
 
-		commandList->CopyResource(_structuredBuffer.Get(), uploadBuffer.Get());
+		cmdList->CopyResource(_structuredBuffer.Get(), _uploadBuffer.Get());
 
-		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
+		cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
 			_structuredBuffer.Get(),
 			D3D12_RESOURCE_STATE_COPY_DEST,
-			D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
+			D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE));
 
 		Core::main->FlushResCMDQueue();
 
@@ -71,17 +69,39 @@ public:
 		Core::main->GetBufferManager()->GetTextureBufferPool()->AllocSRVDescriptorHandle(&_uavHandle);
 
 		device->CreateUnorderedAccessView(_structuredBuffer.Get(), nullptr, &uavDesc, _uavHandle);
+	}
 
+	void Upload(vector<T>& cpuData)
+	{
+		auto& cmdList = Core::main->GetCmdList();
+
+		memcpy(_mappedData, cpuData.data(), _bufferSize);
+
+		cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
+			_structuredBuffer.Get(),
+			D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE,
+			D3D12_RESOURCE_STATE_COPY_DEST));
+
+		cmdList->CopyResource(_structuredBuffer.Get(), _uploadBuffer.Get());
+
+		cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
+			_structuredBuffer.Get(),
+			D3D12_RESOURCE_STATE_COPY_DEST,
+			D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE));
 	}
 
 public:
 	D3D12_CPU_DESCRIPTOR_HANDLE& GetSRVHandle() { return _srvHandle; }
 	D3D12_CPU_DESCRIPTOR_HANDLE& GetUAVHandle() { return _uavHandle; }
+
 private:
 	ComPtr<ID3D12Resource> _structuredBuffer;
+	ComPtr<ID3D12Resource> _uploadBuffer;
 	uint32 _count;
+	uint64 _bufferSize;
 	D3D12_CPU_DESCRIPTOR_HANDLE  _srvHandle;
 	D3D12_CPU_DESCRIPTOR_HANDLE  _uavHandle;
 
+	void* _mappedData;
 };
 

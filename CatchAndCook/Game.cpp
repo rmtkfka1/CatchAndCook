@@ -45,15 +45,6 @@ void Game::Init(HWND hwnd)
 
 	//ResourceManager::main->Load<Model>(L"testModel", L"../Resources/Models/Kindred/kindred_unity.fbx", VertexType::Vertex_Skinned);
 	//auto obj = ResourceManager::main->Get<Model>(L"testModel")->CreateGameObject(scene);
-
-	//vector<shared_ptr<MeshRenderer>> v;
-	//obj->GetComponentsWithChilds(v);
-
-	//for (auto& ele : v)
-	//{
-	//	ele->SetDrawNormal(false);
-	//}
-
 	//obj->_transform->SetWorldPosition(vec3(0, 5.0f, -1));
 }
 
@@ -126,9 +117,8 @@ void Game::Run()
 	CameraUpdate();
 
 	std::shared_ptr<Scene> currentScene = SceneManager::main->GetCurrentScene();
-	currentScene->Update();
-	
 	Core::main->RenderBegin();
+	currentScene->Update();
 	currentScene->RenderBegin();
 	currentScene->Rendering();
 	currentScene->DebugRendering();
@@ -155,7 +145,7 @@ void Game::CameraUpdate()
 {
 	shared_ptr<Camera> camera = CameraManager::main->GetActiveCamera();
 
-	const float speed = 1.5f;
+	const float speed = 200.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;
 
 	if (Input::main->GetKey(KeyCode::W))

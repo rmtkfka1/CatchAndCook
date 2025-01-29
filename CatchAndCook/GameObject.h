@@ -16,9 +16,9 @@ enum class GameObjectTag
 
 enum class GameObjectType
 {
-	Dynamic = 0, // µ¿Àû(¸ÅÇÁ·¹ÀÓ µ¿ÀÛ)
-	Static, // Á¤Àû(Ã¹ÇÁ·¹ÀÓµ¿ÀÛ, ÀÌÈÄ ·»´õ¸µ¸¸)
-	Deactivate //ºñÈ°¼ºÈ­(µ¿ÀÛ, ·»´õ¸µ µÑ´Ù X)
+	Dynamic = 0, // ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+	Static, // ï¿½ï¿½ï¿½ï¿½(Ã¹ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
+	Deactivate //ï¿½ï¿½È°ï¿½ï¿½È­(ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½ X)
 };
 
 class GameObject : public IGuid, public IDelayDestroy

@@ -1,8 +1,12 @@
 #include "pch.h"
 #include "testComponent.h"
 #include "GameObject.h"
+#include <random>
 
 
+std::random_device dre;
+std::mt19937 gen(dre());
+std::uniform_real_distribution<float> uid(0.0f, 1.0f);
 
 
 testComponent::~testComponent()
@@ -14,31 +18,7 @@ void testComponent::Init()
 {
 	v.resize(24);
 
-	for (int i = 0; i < v.size(); ++i)
-	{
-		float r=0;
-		float g=0;
-		float b=0;
-
-		if (i % 3 == 0) 
-		{
-			r = 1;
-		}
-		else if (i % 3 == 1) 
-		{
-			g = 1;
-		}
-		else if (i % 3 == 2) 
-		{
-			b = 1;
-		}
-
-		v[i].testcolor = vec4(r, g, b, 0);
-	}
-
 	_structuredBuffer.Init(v);
-
-
 
 }
 
@@ -52,6 +32,24 @@ void testComponent::Start()
 
 void testComponent::Update()
 {
+
+	static float time = 0;
+	
+	time += Time::main->GetDeltaTime();
+
+	if (time > 1.0f)
+	{
+		for (int i = 0; i < v.size(); ++i)
+		{
+			float r = uid(gen);
+			float g = uid(gen);
+			float b = uid(gen);
+			v[i].testcolor = vec4(r, g, b, 0); 
+		}
+
+		_structuredBuffer.Upload(v);
+		time = 0;
+	}
 
 }
 
@@ -80,9 +78,8 @@ void testComponent::Destroy()
 
 void testComponent::RenderBegin()
 {
-	
-}
 
+}
 
 void testComponent::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
@@ -104,6 +101,7 @@ void testComponent::PushData()
 
 }
  
+
 void testComponent::SetData(Material* material)
 {
 	material->SetHandle("Structured", _structuredBuffer.GetSRVHandle());

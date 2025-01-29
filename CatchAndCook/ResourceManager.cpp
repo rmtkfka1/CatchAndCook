@@ -43,7 +43,7 @@ void ResourceManager::CreateDefaultShader()
 		info._blendEnable = true;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"SpriteShader.hlsl", SpriteProp, ShaderArg{}, info);
+		shader->Init(L"SpriteShader.hlsl", ColorProp, ShaderArg{}, info);
 		Add<Shader>(L"SpriteShader", shader);
 	}
 	

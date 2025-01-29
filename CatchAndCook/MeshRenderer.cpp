@@ -47,8 +47,6 @@ void MeshRenderer::Update2()
 void MeshRenderer::Enable()
 {
 	Component::Enable();
-
-
 }
 
 void MeshRenderer::Disable()
@@ -63,7 +61,6 @@ void MeshRenderer::Destroy()
 
 
 }
-
 
 void MeshRenderer::RenderBegin()
 {
@@ -90,6 +87,7 @@ void MeshRenderer::RenderBegin()
 			SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(), currentMesh.get(), this);
 		}
 	}
+
 }
 
 void MeshRenderer::Rendering(Material* material, Mesh* mesh)

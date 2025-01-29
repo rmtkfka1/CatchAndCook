@@ -44,8 +44,9 @@ void Scene::Update()
 void Scene::RenderBegin()
 {
     for (auto& gameObject : _gameObjects)
-		gameObject->RenderBegin();
-    
+    {
+        gameObject->RenderBegin();
+    }
 }
 
 void Scene::Rendering()
@@ -62,7 +63,6 @@ void Scene::Rendering()
     auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::GlobalParam)->Alloc(1);
     memcpy(CbufferContainer->ptr, (void*)&_globalParam, sizeof(GlobalParam));
     cmdList->SetGraphicsRootConstantBufferView(0, CbufferContainer->GPUAdress);
-
 
     { // Shadow
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
@@ -101,8 +101,6 @@ void Scene::Rendering()
             target->Rendering(nullptr, mesh);
         }
     }
-
-  
 }
 
 void Scene::DebugRendering()

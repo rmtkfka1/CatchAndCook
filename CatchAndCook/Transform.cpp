@@ -33,7 +33,6 @@ void Transform::Start()
 {
 	Component::Start();
 
-
     if (GetOwner()->GetRenderer())
     {
         GetOwner()->GetRenderer()->AddSetter(static_pointer_cast<Transform>(shared_from_this()));
@@ -67,10 +66,7 @@ void Transform::Disable()
 
 void Transform::Destroy()
 {
-	Component::Destroy();
-
-
-
+    Component::Destroy();
 }
 
 void Transform::RenderBegin()
@@ -83,7 +79,6 @@ void Transform::Collision(const std::shared_ptr<Collider>& collider, const std::
 {
 	Component::Collision(collider, other);
 }
-
 
 
 void Transform::PushData()
