@@ -1,5 +1,10 @@
 #include "GLOBAL.hlsl"
 
+struct struturedParam
+{
+    float4 color;
+};
+
 cbuffer test : register(b1)
 {
     row_major matrix WorldMat;
@@ -21,26 +26,24 @@ cbuffer cameraParams : register(b2)
     float4 cameraScreenData;
 };
 
-cbuffer popo : register(b7)
-{
-    float2 uv;
-}
-
 
 struct VS_IN
 {
     float3 pos : POSITION;
     float2 uv : TEXCOORD0;
     //float3 normal : NORMAL;
+    uint vertexID : SV_VertexID;
 };
 
 struct VS_OUT
 {
     float4 pos : SV_Position;
     float2 uv : TEXCOORD0;
+    float4 paramColor : COLOR;
 };
 
 Texture2D g_tex_0 : register(t0);
+StructuredBuffer<struturedParam> Structured : register(t1);
 SamplerState g_sam_0 : register(s0);
 
 VS_OUT VS_Main(VS_IN input)
@@ -49,7 +52,7 @@ VS_OUT VS_Main(VS_IN input)
 
     output.pos = mul(float4(input.pos, 1.0f), WorldMat);
     output.pos = mul(output.pos, VPMatrix);
-
+    output.paramColor = Structured[input.vertexID].color;
     
     output.uv = input.uv;
 
@@ -58,5 +61,12 @@ VS_OUT VS_Main(VS_IN input)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-   return g_tex_0.Sample(g_sam_0, input.uv+uv);
+    float4 color = g_tex_0.Sample(g_sam_0, input.uv);
+
+    // 버텍스 셰이더에서 전달된 색상 더하기
+    color += input.paramColor;
+
+    return color;
+    
+
 }
