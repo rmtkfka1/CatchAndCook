@@ -3,11 +3,9 @@
 
 class TextHandle;
 
-
 class TestScene : public Scene
 {
 public:
-
 	virtual void Init();
 	virtual void Update();
 	virtual void RenderBegin();

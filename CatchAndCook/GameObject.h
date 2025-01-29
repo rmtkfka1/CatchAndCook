@@ -44,6 +44,7 @@ public:
 	std::shared_ptr<T> AddComponent()
 	{
 		std::shared_ptr<T> component = std::make_shared<T>();
+		component->InitGuid();
 		component->SetOwner(GetCast<GameObject>());
 		_components.push_back(component);
 		component->Init();
@@ -52,7 +53,7 @@ public:
 	};
 
 	template <class T, class = std::enable_if_t<std::is_base_of_v<Component, T>>>
-	void AddComponent(const std::shared_ptr<T>& component)
+	void AddComponent(shared_ptr<T> component)
 	{
 		if (component == nullptr)
 			return;

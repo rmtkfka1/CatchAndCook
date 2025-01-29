@@ -32,17 +32,13 @@ void Scene::Update()
 	}
     for (auto& gameObject : _gameObjects)
         gameObject->Update2();
-
-
-    for (auto& ele : _passObjects)
-    {
-        ele.clear();
-    }
-
 }
 
 void Scene::RenderBegin()
 {
+    for (auto& ele : _passObjects)
+        ele.clear();
+
     for (auto& gameObject : _gameObjects)
     {
         gameObject->RenderBegin();
@@ -218,6 +214,7 @@ void Scene::ExecuteDestroyGameObjects()
 std::shared_ptr<GameObject> Scene::CreateGameObject(const std::wstring& name, GameObjectType type)
 {
 	auto gameObject = std::make_shared<GameObject>(name);
+    gameObject->InitGuid();
     gameObject->SetType(type);
 	AddGameObject(gameObject);
 	gameObject->Init();

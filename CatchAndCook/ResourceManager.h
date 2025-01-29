@@ -1,6 +1,7 @@
 #pragma once
 #include "Texture.h"
 #include "Model.h"
+#include "SceneLoader.h"
 
 class Shader;
 class Mesh;
@@ -21,8 +22,11 @@ public:
     void CreateDefaultMaterial();
     void CreateDefaultTexture();
 
+    template<typename T>
+    shared_ptr<T> Load(const wstring& key ,const wstring& path);
+
     template<typename T, typename... Args>
-    shared_ptr<T> Load(const wstring& key ,const wstring& path, Args&&... args);
+    shared_ptr<T> Load(const wstring& key, const wstring& path, Args&&... args);
 
     template<typename T>
     shared_ptr<T> Get(const wstring& key);
@@ -36,7 +40,7 @@ private:
     template<typename T>
     unordered_map<wstring, shared_ptr<T>>& GetResourceMap();
 private:
-    unordered_map<wstring, shared_ptr<Scene>> _sceneMap;
+    unordered_map<wstring, shared_ptr<SceneLoader>> _loaderMap;
     unordered_map<wstring, shared_ptr<Shader>> _shaderMap;
     unordered_map<wstring, shared_ptr<Mesh>> _meshMap;
     unordered_map<wstring, shared_ptr<Model>> _modelMap;
@@ -45,8 +49,8 @@ private:
     std::shared_ptr<Texture> _noneTexture;
 };
 
-template<typename T, typename ...Args>
-inline shared_ptr<T> ResourceManager::Load(const wstring& key, const wstring& path, Args && ...args)
+template<typename T>
+inline shared_ptr<T> ResourceManager::Load(const wstring& key, const wstring& path)
 {
     auto& Map = GetResourceMap<T>();
 
@@ -55,7 +59,22 @@ inline shared_ptr<T> ResourceManager::Load(const wstring& key, const wstring& pa
         return it->second;
 
     shared_ptr<T> object = make_shared<T>();
-    object->Init(path, forward<Args>(args)...);
+    object->Init(path);
+    Map[key] = object;
+    return object;
+}
+
+template<typename T, typename ...Args>
+inline shared_ptr<T> ResourceManager::Load(const wstring& key, const wstring& path, Args&& ...args)
+{
+    auto& Map = GetResourceMap<T>();
+
+    auto it = Map.find(key);
+    if (it != Map.end())
+        return it->second;
+
+    shared_ptr<T> object = make_shared<T>();
+    object->Init(path, std::forward<Args>(args)...);
     Map[key] = object;
     return object;
 }
@@ -80,9 +99,9 @@ template<typename T>
 inline unordered_map<wstring, shared_ptr<T>>& ResourceManager::GetResourceMap()
 {
 
-    if constexpr (is_same_v<T, Scene>)
+    if constexpr (is_same_v<T, SceneLoader>)
     {
-        return _sceneMap;
+        return _loaderMap;
     }
     else if constexpr (is_same_v<T, Shader>)
     {

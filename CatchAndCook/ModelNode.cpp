@@ -14,7 +14,7 @@ void ModelNode::Init(shared_ptr<Model> model, aiNode* node)
 	std::string name = convert_assimp::Format(node->mName);
 	SetName(name);
 	SetLocalSRT(convert_assimp::Format(node->mTransformation));
-
+	std::cout << name << "\n";
 	_meshIndexList.reserve(node->mNumMeshes);
 	for (int i = 0; i < node->mNumMeshes; i++)
 		_meshIndexList.push_back(node->mMeshes[i]);
@@ -44,8 +44,11 @@ void ModelNode::AddChild(const std::shared_ptr<ModelNode>& object)
 std::shared_ptr<GameObject> ModelNode::CreateGameObject(const std::shared_ptr<Scene>& scene,
 	const std::shared_ptr<GameObject>& parent)
 {
+	if (GetName().find("$AssimpFbx$") != std::string::npos)
+		return nullptr;
+
 	auto currentGameObject = scene->CreateGameObject(std::to_wstring(GetName()),
-		IsDynamic() ? GameObjectType::Deactivate : GameObjectType::Dynamic);
+		IsDynamic() ? GameObjectType::Dynamic : GameObjectType::Deactivate);
 	currentGameObject->_transform->SetLocalSRTMatrix(_localTransform);
 	currentGameObject->SetParent(parent);
 
@@ -59,7 +62,6 @@ std::shared_ptr<GameObject> ModelNode::CreateGameObject(const std::shared_ptr<Sc
 		material->SetHandle("g_tex_0", ResourceManager::main->Get<Texture>(L"None_Debug")->GetSRVCpuHandle());
 		meshRenderer->AddMaterials({ material });
 	}
-
 	for (auto& child : _childs)
 		child.lock()->CreateGameObject(scene, currentGameObject);
 

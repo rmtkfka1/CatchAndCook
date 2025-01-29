@@ -28,7 +28,10 @@ void GameObject::Init()
     std::shared_ptr<GameObject> gameObject = GetCast<GameObject>();
     rootParent = gameObject;
     SyncActivePrev();
-    gameObject->_transform = gameObject->AddComponent<Transform>();
+
+    gameObject->_transform = gameObject->GetComponent<Transform>();
+    if(gameObject->_transform == nullptr)
+		gameObject->_transform = gameObject->AddComponent<Transform>();
 }
 
 void GameObject::Start()
@@ -320,10 +323,10 @@ bool GameObject::SetParent(const std::shared_ptr<GameObject>& nextParentObj)
     if (prevParentObj != nullptr) // step 2. �θ𿬰� ���� �ֻ������ �ø���
     {
         prevParentObj->RemoveChild(thisObj);
-        this->parent.reset(); // null
-        this->rootParent = thisObj;
         this->ActiveUpdateChain(true);
     }
+    this->parent.reset(); // null
+    this->rootParent = thisObj;
 
     if (nextParentObj != nullptr && !nextParentObj->IsDestroy()) // �ı��� �༮�� �θ�� ���� �Ұ���
     {

@@ -90,6 +90,8 @@ using namespace Microsoft::WRL;
 #include "simple_mesh_LH.h"
 #include "SimpleMath_LH.inl"
 
+#include "nlohmann/json.hpp"
+
 
 using int8 = __int8;
 using int16 = __int16;

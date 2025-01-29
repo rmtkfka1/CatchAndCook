@@ -65,7 +65,12 @@ void AssimpPack::Init(std::wstring path, bool xFlip)
         MakeLeftHandedProcess leftHandedProcess;
         leftHandedProcess.Execute(const_cast<aiScene*>(scene));
     }
-	assert(scene != nullptr);
+	if (scene == nullptr)
+	{
+		std::cout << "assimp load failed : path not found (" << std::to_string(path) << "\n";
+		assert(scene != nullptr);
+	}
+	
 }
 
 std::shared_ptr<GameObject> Model::CreateGameObject(const std::shared_ptr<Scene>& scene)
@@ -75,6 +80,7 @@ std::shared_ptr<GameObject> Model::CreateGameObject(const std::shared_ptr<Scene>
 
 void Model::Init(const wstring& path, VertexType vertexType)
 {
+	InitGuid();
 	std::shared_ptr<AssimpPack> pack = std::make_shared<AssimpPack>();
 	pack->Init(path);
 	const aiScene* scene = pack->GetScene();
@@ -288,7 +294,7 @@ std::shared_ptr<ModelNode> Model::AddNode(aiNode* rootNode)
 	auto currentNode = std::make_shared<ModelNode>();
 	currentNode->Init(GetCast<Model>(), rootNode);
 	_modelNodeList.push_back(currentNode);
-	
+
 	for (int i = 0; i < rootNode->mNumChildren; i++) {
 		AddNode(rootNode->mChildren[i])->SetParent(currentNode);
 	}

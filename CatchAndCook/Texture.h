@@ -29,7 +29,7 @@ public:
 	Texture();
 	virtual ~Texture();
 
-	void Init(const wstring& path,TextureType type = TextureType::Texture2D);
+	void Init(const wstring& path, TextureType type = TextureType::Texture2D, bool relativePath = true);
 	void ResourceBarrier(D3D12_RESOURCE_STATES after);
 	void CreateStaticTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalState ,uint32 width, uint32 height, 
 		TextureUsageFlags usageFlags , bool Jump,bool depthShared, vec4 clearValue=vec4(0,0,0,0));

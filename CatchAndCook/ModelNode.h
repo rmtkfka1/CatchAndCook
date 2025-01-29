@@ -12,7 +12,7 @@ private:
 	std::string _name;
 
 	Matrix _localTransform = Matrix::Identity;
-	bool _isDynamic = false;
+	bool _isDynamic = true;
 
 public:
 	void SetName(const std::string& name) { _name = name; };

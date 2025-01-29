@@ -46,6 +46,7 @@ public:
 
 	void Release();
 	friend class SceneManager;
+	friend class SceneLoader;
 
 protected:
 	std::array<std::vector<RenderObjectStrucutre>, RENDER_PASS::Count> _passObjects;

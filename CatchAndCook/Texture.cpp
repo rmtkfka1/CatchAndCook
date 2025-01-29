@@ -17,10 +17,12 @@ Texture::~Texture()
 
 }
 
-void Texture::Init(const wstring& path, TextureType type)
+void Texture::Init(const wstring& path, TextureType type, bool relativePath)
 {
- 
-    wstring finalPath = _path + path;
+
+    wstring finalPath = path;
+    if (relativePath)
+        finalPath = _path + finalPath;
 
     wstring ext = fs::path(finalPath).extension();
 

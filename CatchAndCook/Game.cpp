@@ -39,13 +39,9 @@ void Game::Init(HWND hwnd)
 
 	TextManager::main = make_unique<TextManager>();
 	TextManager::main->Init();
-
-	auto scene = SceneManager::main->AddScene(SceneType::TestScene);
+		
+	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
 	SceneManager::main->ChangeScene(scene);
-
-	//ResourceManager::main->Load<Model>(L"testModel", L"../Resources/Models/Kindred/kindred_unity.fbx", VertexType::Vertex_Skinned);
-	//auto obj = ResourceManager::main->Get<Model>(L"testModel")->CreateGameObject(scene);
-	//obj->_transform->SetWorldPosition(vec3(0, 5.0f, -1));
 }
 
 void Game::PrevUpdate()

@@ -25,12 +25,12 @@ public:
     void SetGUID(const std::wstring& str);
     std::wstring& GetGUID();
 
-    template <class T, class = std::enable_if_t<std::is_base_of_v<IGuid, T>>>
-    std::shared_ptr<T> CoreInit()
+    //template <class T, class = std::enable_if_t<std::is_base_of_v<IGuid, T>>>
+    void InitGuid()
     {
         AddObject(this->shared_from_this());
-        auto& obj = GetCast<T>();
-        return obj;
+        //auto& obj = GetCast<T>();
+        //return obj;
     }
 
     template <class T, class = std::enable_if_t<std::is_base_of_v<IGuid, T>>>

@@ -2,6 +2,7 @@
 #include "SceneManager.h"
 #include "GameObject.h"
 #include "TestScene.h"
+#include "TestScene_jin.h"
 
 std::unique_ptr<SceneManager> SceneManager::main = nullptr;
 
@@ -18,7 +19,13 @@ shared_ptr<Scene> SceneManager::AddScene(SceneType type)
 	{
 	case::SceneType::TestScene:
 		scene = make_shared<TestScene>();
+		scene->InitGuid();
 		_sceneTable[SceneType::TestScene] = scene;
+		break;
+	case::SceneType::TestScene2:
+		scene = make_shared<TestScene_jin>();
+		scene->InitGuid();
+		_sceneTable[SceneType::TestScene2] = scene;
 		break;
 
 	default:

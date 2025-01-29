@@ -11,6 +11,7 @@ enum class BufferType
 	SpriteWorldParam,
 	SpriteTextureParam,
 	TestParam,
+	DefaultMaterialParam
 
 };
 

@@ -210,6 +210,7 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="RootSignature.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneLoader.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="ScreenParticle.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -229,6 +230,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="TestScene.cpp" />
+    <ClCompile Include="TestScene_jin.cpp" />
     <ClCompile Include="TextManager.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Time.cpp" />
@@ -274,6 +276,7 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="RootSignature.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneLoader.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="ScreenParticle.h" />
     <ClInclude Include="Shader.h" />
@@ -288,6 +291,7 @@
     <ClInclude Include="strutil.h" />
     <ClInclude Include="testComponent.h" />
     <ClInclude Include="TestScene.h" />
+    <ClInclude Include="TestScene_jin.h" />
     <ClInclude Include="TextManager.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Time.h" />

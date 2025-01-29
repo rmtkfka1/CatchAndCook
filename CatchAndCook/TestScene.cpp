@@ -14,6 +14,7 @@
 #include "StructuredBuffer.h"
 #include "Mesh.h"
 #include "ScreenParticle.h"
+#include "ResourceManager.h"
 
 void TestScene::Init()
 {

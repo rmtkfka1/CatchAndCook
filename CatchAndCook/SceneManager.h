@@ -3,7 +3,8 @@
 
 enum class SceneType
 {
-	TestScene
+	TestScene,
+	TestScene2
 };
 
 
