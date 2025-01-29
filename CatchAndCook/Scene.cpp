@@ -78,20 +78,58 @@ void Scene::Rendering()
 
         for (auto& [material, mesh, target] : targets)
         {
-            cmdList->SetPipelineState(material->GetShader()->_pipelineState.Get());
+            Core::main->SetPipelineState(material->GetShader().get());
+            Core::main->SetPipelineSetting(material);
             target->Rendering(material, mesh);
         }
     }
 
-	{ // forward
+	{ // Forward
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Forward)];
+        // 이걸 추가한 이유는, Sorting을 한번 돌리는게
+        // 쉐이더가 Set되면서 PipelineState의 설정이 리셋되는게 오히려 오버헤드가 더 크기 때문에.
+        // 여기서 Sorting을 해서 바인딩이 갱신되는 횟수를 줄이는게 렌더링 부하가 더 적음.
+        ranges::sort(targets, [&](const RenderObjectStrucutre& s1, const RenderObjectStrucutre& s2) {
+            if (s1.material->GetShader()->_info._renderOrder != s2.material->GetShader()->_info._renderOrder)
+                return (s1.material->GetShader()->_info._renderOrder < s2.material->GetShader()->_info._renderOrder);
+            if (s1.material->GetShader().get() != s2.material->GetShader().get())
+                return s1.material->GetShader().get() < s2.material->GetShader().get();
+            if (s1.mesh != s2.mesh)
+                return s1.mesh < s2.mesh;
+			return true;
+            });
 
         for (auto& [material, mesh, target] : targets)
         {
-            cmdList->SetPipelineState(material->GetShader()->_pipelineState.Get());
+            Core::main->SetPipelineState(material->GetShader().get());
+            Core::main->SetPipelineSetting(material);
             target->Rendering(material, mesh);
         }
 	}
+
+    { // CopyTexture
+        auto& cmd = Core::main->GetCmdList();
+        //cmd->CopyResource()
+    }
+
+    { // Transparent
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Transparent)];
+        //여기선 Mesh말고 Camera Z기반 Sorting이 필요함.
+        ranges::sort(targets, [&](const RenderObjectStrucutre& s1, const RenderObjectStrucutre& s2) {
+            if (s1.material->GetShader()->_info._renderOrder != s2.material->GetShader()->_info._renderOrder)
+                return (s1.material->GetShader()->_info._renderOrder < s2.material->GetShader()->_info._renderOrder);
+            if (s1.material->GetShader().get() != s2.material->GetShader().get())
+                return s1.material->GetShader().get() < s2.material->GetShader().get();
+            return true;
+            });
+
+        for (auto& [material, mesh, target] : targets)
+        {
+            Core::main->SetPipelineState(material->GetShader().get());
+            Core::main->SetPipelineSetting(material);
+            target->Rendering(material, mesh);
+        }
+    }
 
     {  //UI
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::UI)];
