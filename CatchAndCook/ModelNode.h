@@ -4,6 +4,7 @@ class ModelNode : public std::enable_shared_from_this<ModelNode>
 {
 private:
 	std::vector<int> _meshIndexList;
+	std::vector<int> _boneIndexList;
 
 	std::weak_ptr<Model> _model;
 	std::weak_ptr<ModelNode> _parent;
@@ -18,6 +19,9 @@ public:
 
 	void SetLocalSRT(const Matrix& matrix) { _localTransform = matrix; };
 	Matrix& GetLocalSRT() { return _localTransform; };
+
+	void AddBoneIndex(int index) { _boneIndexList.push_back(index); };
+	bool IsBone() const { return _boneIndexList.size() != 0; };
 
 	void Init(shared_ptr<Model> model, aiNode* node);
 

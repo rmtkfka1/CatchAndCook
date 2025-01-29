@@ -156,7 +156,7 @@ vec3 Transform::GetRight()
     return _right;
 }
 
-vec3 Transform::GetLocalEuler()
+vec3 Transform::GetLocalEuler() const
 {
     return _localRotation.ToEuler();
 }
@@ -168,7 +168,7 @@ const vec3& Transform::SetLocalRotation(const vec3& euler)
     return euler;
 }
 
-vec3 Transform::GetLocalPosition()
+vec3 Transform::GetLocalPosition() const
 {
     return _localPosition;
 }
@@ -179,7 +179,7 @@ const vec3& Transform::SetLocalPosition(const vec3& worldPos)
     return _localPosition = worldPos;
 }
 
-vec3 Transform::GetLocalScale()
+vec3 Transform::GetLocalScale() const
 {
     return _localScale;
 }
@@ -190,7 +190,7 @@ const vec3& Transform::SetLocalScale(const vec3& worldScale)
     return _localScale = worldScale;
 }
 
-Quaternion Transform::GetLocalRotation()
+Quaternion Transform::GetLocalRotation() const
 {
     return _localRotation;
 }
@@ -208,7 +208,7 @@ vec3 Transform::GetWorldPosition()
     if (parent)
     {
         Matrix mat;
-        parent->transform->GetLocalToWorldMatrix_BottomUp(mat);
+        parent->_transform->GetLocalToWorldMatrix_BottomUp(mat);
         return vec3::Transform(_localPosition, mat);
     }
 
@@ -222,7 +222,7 @@ const vec3& Transform::SetWorldPosition(const vec3& worldPos)
     if (parent)
     {
         Matrix mat;
-        parent->transform->GetLocalToWorldMatrix_BottomUp(mat);
+        parent->_transform->GetLocalToWorldMatrix_BottomUp(mat);
         _localPosition = vec3::Transform(worldPos, mat.Invert());
     }
     else
@@ -239,7 +239,7 @@ vec3 Transform::GetWorldScale()
     if (currentObj) currentObj = currentObj->parent.lock();
     while (currentObj)
     {
-        totalScale = totalScale * currentObj->transform->_localScale;
+        totalScale = totalScale * currentObj->_transform->_localScale;
         currentObj = currentObj->parent.lock();
     }
     return totalScale;
@@ -251,7 +251,7 @@ const vec3& Transform::SetWorldScale(const vec3& scale)
     if (parent) parent = parent->parent.lock();
     if (parent)
     {
-        vec3 ws = parent->transform->GetWorldScale();
+        vec3 ws = parent->_transform->GetWorldScale();
         _localScale = (ws / (ws * ws)) * scale;
     }
     else
@@ -267,7 +267,7 @@ Quaternion Transform::GetWorldRotation()
     if (currentObj) currentObj = currentObj->parent.lock();
     while (currentObj)
     {
-        totalQuat = totalQuat * currentObj->transform->_localRotation;
+        totalQuat = totalQuat * currentObj->_transform->_localRotation;
         currentObj = currentObj->parent.lock();
     }
 
@@ -282,7 +282,7 @@ const Quaternion& Transform::SetWorldRotation(const Quaternion& quaternion)
     if (parent)
     {
         Quaternion result;
-        parent->transform->GetWorldRotation().Inverse(result);
+        parent->_transform->GetWorldRotation().Inverse(result);
         _localRotation = quaternion * result;
         _localRotation.Normalize();
     }
@@ -301,7 +301,7 @@ bool Transform::GetLocalToWorldMatrix(OUT Matrix& localToWorldMatrix)
         if (CheckLocalToWorldMatrixUpdate())
         {
             auto root = owner->rootParent.lock();
-            root->transform->TopDownLocalToWorldUpdate(Matrix::Identity);
+            root->_transform->TopDownLocalToWorldUpdate(Matrix::Identity);
             std::memcpy(&localToWorldMatrix, &this->_localToWorldMatrix, sizeof(Matrix));
             return _isLocalToWorldChanged;
         }
@@ -363,12 +363,12 @@ bool Transform::SetLocalSRTMatrix(Matrix& localSRT)
     return false;
 }
 
-bool Transform::CheckLocalSRTUpdate()
+bool Transform::CheckLocalSRTUpdate() const
 {
     return _needLocalUpdated;
 }
 
-bool Transform::CheckLocalMatrixUpdate()
+bool Transform::CheckLocalMatrixUpdate() const
 {
     return CheckLocalSRTUpdate() || (_prevLocalSRTMatrix != _localSRTMatrix);
 }
@@ -380,7 +380,7 @@ bool Transform::CheckLocalToWorldMatrixUpdate()
     auto currentObj = GetOwner();
     while (currentObj != nullptr && (!needUpdate))
     {
-        needUpdate |= currentObj->transform->CheckLocalMatrixUpdate() || _needLocalToWorldUpdated;
+        needUpdate |= currentObj->_transform->CheckLocalMatrixUpdate() || _needLocalToWorldUpdated;
         currentObj = currentObj->parent.lock();
     }
     return needUpdate;
@@ -405,7 +405,7 @@ void Transform::TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool
         {
             auto ptr = childs[i].lock();
             if (ptr != nullptr)
-                ptr->transform->TopDownLocalToWorldUpdate(_localToWorldMatrix, isFinalUpdate);
+                ptr->_transform->TopDownLocalToWorldUpdate(_localToWorldMatrix, isFinalUpdate);
         }
     }
 }
@@ -416,11 +416,11 @@ bool Transform::BottomUpLocalToWorldUpdate()
     if (parent) parent = parent->parent.lock();
     if (parent)
     {
-        bool parentUpdate = parent->transform->BottomUpLocalToWorldUpdate();
+        bool parentUpdate = parent->_transform->BottomUpLocalToWorldUpdate();
         bool localUpdate = GetLocalSRTMatrix(_prevLocalSRTMatrix);
         if (parentUpdate || localUpdate || _needLocalToWorldUpdated)
         {
-            _localToWorldMatrix = _localSRTMatrix * parent->transform->_localToWorldMatrix;
+            _localToWorldMatrix = _localSRTMatrix * parent->_transform->_localToWorldMatrix;
             _needLocalToWorldUpdated = false;
 
             for (auto& child : GetOwner()->_childs)
@@ -428,7 +428,7 @@ bool Transform::BottomUpLocalToWorldUpdate()
                 auto ptr = child.lock();
 
                 if (ptr)
-                    ptr->transform->_needLocalToWorldUpdated = true;
+                    ptr->_transform->_needLocalToWorldUpdated = true;
             }
 
             return _isLocalToWorldChanged = true;
@@ -441,7 +441,7 @@ bool Transform::BottomUpLocalToWorldUpdate()
         if (auto owner = GetOwner(); owner)
             for (auto& child : owner->_childs)
                 if (child.lock())
-                    child.lock()->transform->_needLocalToWorldUpdated = true;
+                    child.lock()->_transform->_needLocalToWorldUpdated = true;
 
         return _isLocalToWorldChanged = true;
     }

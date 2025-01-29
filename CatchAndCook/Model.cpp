@@ -115,6 +115,10 @@ void Model::Init(const wstring& path, VertexType vertexType)
 	}
 
 	_rootNode = AddNode(scene->mRootNode);
+
+	for (auto& bone : _modelBoneList)
+		FindNodeByName(bone->GetNodeName())->AddBoneIndex(bone->GetIndex());
+
 	SetDataBone();
 }
 

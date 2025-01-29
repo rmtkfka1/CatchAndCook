@@ -11,6 +11,7 @@ class ResourceManager
 {
 public:
     static unique_ptr<ResourceManager> main;
+    static std::wstring path_model;
 
     void Init();
 

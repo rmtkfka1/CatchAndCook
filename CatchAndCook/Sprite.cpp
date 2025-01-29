@@ -314,7 +314,8 @@ TextSprite::TextSprite()
 
 TextSprite::~TextSprite()
 {
-	delete[] _sysMemory;
+	if (_sysMemory != nullptr)
+		delete[] _sysMemory;
 
 }
 

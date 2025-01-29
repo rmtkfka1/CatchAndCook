@@ -139,7 +139,7 @@ private:
 	shared_ptr<Shader> _shader;
 	shared_ptr<Texture> _texture;
 	SprtieTextureParam _sprtieTextureParam;
-	BYTE* _sysMemory;
+	BYTE* _sysMemory = nullptr;
 };
 
 /*****************************************************************

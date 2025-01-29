@@ -21,8 +21,8 @@ private:
 private:
 
 	HWND	_hwnd;
-	std::array<double, 15> _frameCount;
-	std::array<double, 15> _frameTime;
+	std::array<double, 10> _frameCount;
+	std::array<double, 10> _frameTime;
 	uint32	_fps = 0;
 
 	double _time = 0;

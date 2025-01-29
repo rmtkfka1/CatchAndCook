@@ -19,7 +19,7 @@ class Scene : public IGuid
 
 
 private:
-	void AddGameObject(const std::shared_ptr<GameObject> gameObject);
+	void AddGameObject(const std::shared_ptr<GameObject>& gameObject);
 	bool RemoveGameObject(const std::shared_ptr<GameObject>& gameObject);
 	bool RemoveAtGameObject(int index);
 
@@ -36,7 +36,7 @@ public:
 	virtual void RenderEnd();
 	virtual void Finish();
 
-	std::shared_ptr<GameObject> CreateGameObject(const std::wstring& name);
+	std::shared_ptr<GameObject> CreateGameObject(const std::wstring& name, GameObjectType type = GameObjectType::Dynamic);
 	std::shared_ptr<GameObject> Find(const std::wstring& name, bool includeDestroy = false);
 	int Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec, bool includeDestroy = false);
 	void AddDestroyQueue(const std::shared_ptr<GameObject>& gameObject);
@@ -53,6 +53,7 @@ protected:
 
 public:
 	std::vector<std::shared_ptr<GameObject>> _gameObjects;
+	std::vector<std::shared_ptr<GameObject>> _gameObjects_deactivate;
 	std::queue<std::shared_ptr<GameObject>> _destroyQueue;
 	std::queue<std::shared_ptr<Component>> _destroyComponentQueue;
 

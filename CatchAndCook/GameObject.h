@@ -7,10 +7,18 @@ class Scene;
 class Component;
 class Transform;
 class Collider;
+class RendererBase;
 
-enum class ObjectTag
+enum class GameObjectTag
 {
-	defualt = 1 << 0,
+	Defualt = 1 << 0,
+};
+
+enum class GameObjectType
+{
+	Dynamic = 0, // 동적(매프레임 동작)
+	Static, // 정적(첫프레임동작, 이후 렌더링만)
+	Deactivate //비활성화(동작, 렌더링 둘다 X)
 };
 
 class GameObject : public IGuid, public IDelayDestroy
@@ -192,8 +200,19 @@ public:
 	static void ExecuteDestroyComponents();
 
 	std::shared_ptr<RendererBase> GetRenderer() { return _renderer; }
+	std::shared_ptr<GameObject> GetParent() const {return parent.lock();};
+	std::shared_ptr<GameObject> GetRoot() const { return rootParent.lock(); };
+	bool IsRoot() const { return rootParent.lock().get() == this; };
 
-	ObjectTag tag = ObjectTag::defualt;
+	void SetTag(const GameObjectTag& tag) { _tag = tag; };
+	GameObjectTag GetTag() const { return  _tag; };
+
+	void SetType(const GameObjectType& type) { _type = type; };
+	GameObjectType GetType() const { return  _type; };
+
+	GameObjectTag _tag = GameObjectTag::Defualt;
+	GameObjectType _type = GameObjectType::Dynamic;
+
 	std::shared_ptr<Transform> _transform;
 	std::shared_ptr<RendererBase> _renderer;
 

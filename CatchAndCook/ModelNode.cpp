@@ -44,8 +44,9 @@ void ModelNode::AddChild(const std::shared_ptr<ModelNode>& object)
 std::shared_ptr<GameObject> ModelNode::CreateGameObject(const std::shared_ptr<Scene>& scene,
 	const std::shared_ptr<GameObject>& parent)
 {
-	auto currentGameObject = scene->CreateGameObject(std::to_wstring(GetName()));
-	currentGameObject->transform->SetLocalSRTMatrix(_localTransform);
+	auto currentGameObject = scene->CreateGameObject(std::to_wstring(GetName()),
+		IsBone() ? GameObjectType::Deactivate : GameObjectType::Dynamic);
+	currentGameObject->_transform->SetLocalSRTMatrix(_localTransform);
 	currentGameObject->SetParent(parent);
 
 	for (auto& meshIndex : _meshIndexList)

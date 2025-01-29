@@ -9,10 +9,13 @@
 #include "Camera.h"
 #include "CameraManager.h"
 
-void Scene::AddGameObject(const std::shared_ptr<GameObject> gameObject)
+void Scene::AddGameObject(const std::shared_ptr<GameObject>& gameObject)
 {
 	gameObject->SetScene(GetCast<Scene>());
-	_gameObjects.push_back(gameObject);
+    if (gameObject->GetType() == GameObjectType::Deactivate)
+        _gameObjects_deactivate.push_back(gameObject);
+    else
+		_gameObjects.push_back(gameObject);
 }
 
 void Scene::Init()
@@ -140,8 +143,6 @@ void Scene::RenderEnd()
 
         ptr->SetDestroy();
     }
-    
-
 }
 
 void Scene::Finish()
@@ -165,13 +166,23 @@ void Scene::ExecuteDestroyGameObjects()
             gameObject->Destroy();
             _gameObjects.erase(it);
         }
+        else
+        {
+            it = std::find(_gameObjects_deactivate.begin(), _gameObjects_deactivate.end(), gameObject);
+            if (it != _gameObjects_deactivate.end())
+            {
+                gameObject->Destroy();
+                _gameObjects_deactivate.erase(it);
+            }
+        }
     }
 }
 
 
-std::shared_ptr<GameObject> Scene::CreateGameObject(const std::wstring& name)
+std::shared_ptr<GameObject> Scene::CreateGameObject(const std::wstring& name, GameObjectType type)
 {
 	auto gameObject = std::make_shared<GameObject>(name);
+    gameObject->SetType(type);
 	AddGameObject(gameObject);
 	gameObject->Init();
 	return gameObject;
@@ -192,8 +203,8 @@ bool Scene::RemoveAtGameObject(int index)
 {
     if (index >= 0 && index < this->_gameObjects.size()) {
         this->_gameObjects.erase(this->_gameObjects.begin() + index);
+        return true;
     }
-
     return false;
 }
 
@@ -214,9 +225,20 @@ std::shared_ptr<GameObject> Scene::Find(const std::wstring& name, bool includeDe
                 return false;
             return element->GetName() == name;
         });
-    if (iter == this->_gameObjects.end())
-        return nullptr;
-    return *iter;
+    if (iter != this->_gameObjects.end())
+		return *iter;
+
+    iter = std::find_if(this->_gameObjects_deactivate.begin(), this->_gameObjects_deactivate.end(),
+        [&](const std::shared_ptr<GameObject>& element)
+        {
+            if (!includeDestroy && element->IsDestroy())
+                return false;
+            return element->GetName() == name;
+        });
+    if (iter != this->_gameObjects_deactivate.end())
+        return *iter;
+
+    return nullptr;
 }
 
 int Scene::Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec, bool includeDestroy)
@@ -225,6 +247,14 @@ int Scene::Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObjec
     for (int i = 0; i < this->_gameObjects.size(); i++)
     {
         auto& current = this->_gameObjects[i];
+        if (!includeDestroy && current->IsDestroy())
+            continue;
+        if (current->GetName() == name)
+            vec.push_back(current);
+    }
+    for (int i = 0; i < this->_gameObjects_deactivate.size(); i++)
+    {
+        auto& current = this->_gameObjects_deactivate[i];
         if (!includeDestroy && current->IsDestroy())
             continue;
         if (current->GetName() == name)

@@ -3,6 +3,7 @@
 
 #include "GameObject.h"
 #include "Transform.h"
+#include "Mesh.h"
 
 
 SkinnedMeshRenderer::~SkinnedMeshRenderer()
@@ -54,33 +55,6 @@ void SkinnedMeshRenderer::RenderBegin()
 	Component::RenderBegin();
 }
 
-void SkinnedMeshRenderer::Rendering(const std::shared_ptr<Material>& material)
-{
-	auto& cmdList = Core::main->GetCmdList();
-
-	if (material != nullptr)
-		material->SetData();
-
-	GetOwner()->transform->SetData();
-
-	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
-
-	if (_mesh->GetVertexCount() != 0)
-	{
-
-		if (_mesh->GetIndexCount() != 0)
-		{
-			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
-			cmdList->IASetIndexBuffer(&_mesh->GetIndexView());
-			cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
-		}
-		else
-		{
-			cmdList->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
-			cmdList->DrawInstanced(_mesh->GetVertexCount(), 1, 0, 0);
-		}
-	}
-}
 
 void SkinnedMeshRenderer::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
@@ -93,10 +67,6 @@ void SkinnedMeshRenderer::SetDestroy()
 	Component::SetDestroy();
 }
 
-void SkinnedMeshRenderer::DestroyComponentOnly()
-{
-	Component::DestroyComponentOnly();
-}
 
 void SkinnedMeshRenderer::SetModel(const std::shared_ptr<Model>& model)
 {
@@ -117,4 +87,37 @@ void SkinnedMeshRenderer::AddMaterials(const std::vector<std::shared_ptr<Materia
 {
 	for (auto& ele : _materials)
 		this->_materials.push_back(ele);
+}
+
+void SkinnedMeshRenderer::Rendering(Material* material, Mesh* mesh)
+{
+	auto& cmdList = Core::main->GetCmdList();
+
+	if (material != nullptr)
+		material->SetData();
+
+	GetOwner()->_transform->SetData();
+
+	cmdList->IASetPrimitiveTopology(mesh->GetTopology());
+
+	if (mesh->GetVertexCount() != 0)
+	{
+
+		if (mesh->GetIndexCount() != 0)
+		{
+			cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());
+			cmdList->IASetIndexBuffer(&mesh->GetIndexView());
+			cmdList->DrawIndexedInstanced(mesh->GetIndexCount(), 1, 0, 0, 0);
+		}
+		else
+		{
+			cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());
+			cmdList->DrawInstanced(mesh->GetVertexCount(), 1, 0, 0);
+		}
+	}
+}
+
+void SkinnedMeshRenderer::DebugRendering()
+{
+
 }

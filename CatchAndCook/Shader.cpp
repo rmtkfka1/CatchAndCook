@@ -463,6 +463,15 @@ void Shader::Profile()
                 case D3D_RETURN_TYPE_UNORM:
                     registerInfo.elementType = "float";
                     break;
+                case D3D_RETURN_TYPE_SNORM:
+                    registerInfo.elementType = "float";
+                    break;
+                case D3D_RETURN_TYPE_DOUBLE:
+                    registerInfo.elementType = "double";
+                    break;
+                case D3D_RETURN_TYPE_MIXED:
+                    registerInfo.elementType = "struct";
+                    break;
                 case 0:
                     // SRV°¡ ¾Æ´Ò°æ¿ì
                     break;

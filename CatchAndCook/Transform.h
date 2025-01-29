@@ -33,13 +33,13 @@ public:
     vec3 GetUp();
     vec3 GetRight();
 
-    vec3 GetLocalEuler();
+    vec3 GetLocalEuler() const;
     const vec3& SetLocalRotation(const vec3& euler);
-    vec3 GetLocalPosition();
+    vec3 GetLocalPosition() const;
     const vec3& SetLocalPosition(const vec3& worldPos);
-    vec3 GetLocalScale();
+    vec3 GetLocalScale() const;
     const vec3& SetLocalScale(const vec3& worldScale);
-    Quaternion GetLocalRotation();
+    Quaternion GetLocalRotation() const;
     const Quaternion& SetLocalRotation(const Quaternion& quaternion);
 
     vec3 GetWorldPosition();
@@ -53,8 +53,8 @@ public:
     bool GetLocalToWorldMatrix_BottomUp(Matrix& localToWorld);
     bool GetLocalSRTMatrix(Matrix& localSRT);
     bool SetLocalSRTMatrix(Matrix& localSRT);
-    bool CheckLocalSRTUpdate();
-    bool CheckLocalMatrixUpdate();
+    bool CheckLocalSRTUpdate() const;
+    bool CheckLocalMatrixUpdate() const;
     bool CheckLocalToWorldMatrixUpdate();
     void TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool isParentUpdate = false);
     bool BottomUpLocalToWorldUpdate();

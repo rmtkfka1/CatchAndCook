@@ -214,7 +214,7 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="simple_mesh_ext.cpp" />
     <ClCompile Include="simple_mesh_LH.cpp" />
-    <ClCompile Include="SkinnedAnimator.cpp" />
+    <ClCompile Include="SkinnedHierarchy.cpp" />
     <ClCompile Include="SkinnedMeshRenderer.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteAction.cpp" />
@@ -277,7 +277,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="simple_mesh_ext.h" />
     <ClInclude Include="simple_mesh_LH.h" />
-    <ClInclude Include="SkinnedAnimator.h" />
+    <ClInclude Include="SkinnedHierarchy.h" />
     <ClInclude Include="SkinnedMeshRenderer.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteAction.h" />
