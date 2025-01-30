@@ -32,11 +32,10 @@ shared_ptr<Scene> SceneManager::AddScene(SceneType type)
 		break;
 	}
 
-	scene->Init();
-
-	if (_currentScene == nullptr)
+	if(_currentScene == nullptr)
 		_currentScene = scene;
 
+	scene->Init();
 	return scene;
 }
 

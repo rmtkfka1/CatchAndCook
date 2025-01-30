@@ -1,8 +1,8 @@
 #pragma once
 
+#include "GameObjectSetting.h"
 #include "IGuid.h"
 #include "RendererBase.h"
-
 
 class RendererBase;
 class GameObject;
@@ -36,9 +36,11 @@ public:
 	virtual void RenderEnd();
 	virtual void Finish();
 
-	std::shared_ptr<GameObject> CreateGameObject(const std::wstring& name, GameObjectType type = GameObjectType::Dynamic);
+	std::shared_ptr<GameObject> CreateGameObject(const std::wstring& name,GameObjectType type = GameObjectType::Dynamic);
 	std::shared_ptr<GameObject> Find(const std::wstring& name, bool includeDestroy = false);
 	int Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec, bool includeDestroy = false);
+	void AddChangeTypeQueue(const std::shared_ptr<GameObject>& gmaeObject, GameObjectType type);
+	void AddStartQueue(const std::shared_ptr<GameObject>& gameObject);
 	void AddDestroyQueue(const std::shared_ptr<GameObject>& gameObject);
 
 	void AddRenderer(Material* material, Mesh* mesh, RendererBase* renderBase);
@@ -55,8 +57,11 @@ protected:
 public:
 	std::vector<std::shared_ptr<GameObject>> _gameObjects;
 	std::vector<std::shared_ptr<GameObject>> _gameObjects_deactivate;
+
 	std::queue<std::shared_ptr<GameObject>> _destroyQueue;
 	std::queue<std::shared_ptr<Component>> _destroyComponentQueue;
+	std::queue<std::shared_ptr<GameObject>> _startQueue;
+	std::queue<std::pair<std::shared_ptr<GameObject>, GameObjectType>> _changeTypeQueue;
 
 	std::string _name;
 

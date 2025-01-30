@@ -205,6 +205,9 @@
     <ClCompile Include="Animation.cpp">
       <Filter>Resource\Model</Filter>
     </ClCompile>
+    <ClCompile Include="GameObjectSetting.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -384,6 +387,9 @@
     </ClInclude>
     <ClInclude Include="Animation.h">
       <Filter>Resource\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectSetting.h">
+      <Filter>GameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
