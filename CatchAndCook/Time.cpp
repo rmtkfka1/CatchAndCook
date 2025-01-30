@@ -7,7 +7,7 @@ unique_ptr<Time> Time::main=nullptr;
 void Time::Init()
 {
 	::QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&_frequency));
-	::QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&_prevCount)); // CPU Å¬·°
+	::QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&_prevCount)); // CPU í´ëŸ­
 
 	int i = 0;
 	for (auto& ele : _frameCount)
@@ -35,8 +35,8 @@ void Time::Update()
 		if (_frameTime[i] > delta)
 		{
 			_fps = static_cast<uint32>(std::round(_frameCount[i] / _frameTime[i]));
+			_frameCount[i] -= _frameCount[i] / _frameTime[i];
 			_frameTime[i] -= delta;
-			_frameCount[i] -= _fps;
 
 			WCHAR wchTxt[64];
 			swprintf_s(wchTxt, 64, L"FPS: %u", _fps);
