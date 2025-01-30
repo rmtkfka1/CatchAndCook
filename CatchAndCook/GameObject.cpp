@@ -8,6 +8,7 @@
 #include "Scene.h"
 
 std::queue<std::shared_ptr<Component>> GameObject::_componentDestroyQueue;
+
 GameObject::GameObject()
 {
 	_components.reserve(4);

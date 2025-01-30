@@ -25,13 +25,28 @@ void Scene::Init()
 
 void Scene::Update()
 {
+    while (!_changeTypeQueue.empty()) {
+        auto& current = _changeTypeQueue.front();
+        {
+            RemoveGameObject(current.first);
+            current.first->SetType(current.second);
+            AddGameObject(current.first);
+        }
+        _changeTypeQueue.pop();
+    }
+    while (!_startQueue.empty()) {
+        auto& current = _startQueue.front();
+        current->Start();
+        _startQueue.pop();
+    }
+
+
     for (auto& gameObject : _gameObjects)
-    {
-    	gameObject->Start();
-	    gameObject->Update();
-	}
+	    if(gameObject->GetType() == GameObjectType::Dynamic)
+            gameObject->Update();
     for (auto& gameObject : _gameObjects)
-        gameObject->Update2();
+        if(gameObject->GetType() == GameObjectType::Dynamic)
+            gameObject->Update2();
 }
 
 void Scene::RenderBegin()
@@ -40,9 +55,7 @@ void Scene::RenderBegin()
         ele.clear();
 
     for (auto& gameObject : _gameObjects)
-    {
-        gameObject->RenderBegin();
-    }
+    	gameObject->RenderBegin();
 }
 
 void Scene::Rendering()
@@ -82,9 +95,9 @@ void Scene::Rendering()
 
 	{ // Forward
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Forward)];
-        // ÀÌ°É Ãß°¡ÇÑ ÀÌÀ¯´Â, SortingÀ» ÇÑ¹ø µ¹¸®´Â°Ô
-        // ½¦ÀÌ´õ°¡ SetµÇ¸é¼­ PipelineStateÀÇ ¼³Á¤ÀÌ ¸®¼ÂµÇ´Â°Ô ¿ÀÈ÷·Á ¿À¹öÇìµå°¡ ´õ Å©±â ¶§¹®¿¡.
-        // ¿©±â¼­ SortingÀ» ÇØ¼­ ¹ÙÀÎµùÀÌ °»½ÅµÇ´Â È½¼ö¸¦ ÁÙÀÌ´Â°Ô ·»´õ¸µ ºÎÇÏ°¡ ´õ ÀûÀ½.
+        // ì´ê±¸ ì¶”ê°€í•œ ì´ìœ ëŠ”, Sortingì„ í•œë²ˆ ëŒë¦¬ëŠ”ê²Œ
+        // ì‰ì´ë”ê°€ Setë˜ë©´ì„œ PipelineStateì˜ ì„¤ì •ì´ ë¦¬ì…‹ë˜ëŠ”ê²Œ ì˜¤ížˆë ¤ ì˜¤ë²„í—¤ë“œê°€ ë” í¬ê¸° ë•Œë¬¸ì—.
+        // ì—¬ê¸°ì„œ Sortingì„ í•´ì„œ ë°”ì¸ë”©ì´ ê°±ì‹ ë˜ëŠ” íšŸìˆ˜ë¥¼ ì¤„ì´ëŠ”ê²Œ ë Œë”ë§ ë¶€í•˜ê°€ ë” ì ìŒ.
         ranges::sort(targets, [&](const RenderObjectStrucutre& s1, const RenderObjectStrucutre& s2) {
             if (s1.material->GetShader()->_info._renderOrder != s2.material->GetShader()->_info._renderOrder)
                 return (s1.material->GetShader()->_info._renderOrder < s2.material->GetShader()->_info._renderOrder);
@@ -110,7 +123,7 @@ void Scene::Rendering()
 
     { // Transparent
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Transparent)];
-        //¿©±â¼± Mesh¸»°í Camera Z±â¹Ý SortingÀÌ ÇÊ¿äÇÔ.
+        //ì—¬ê¸°ì„  Meshë§ê³  Camera Zê¸°ë°˜ Sortingì´ í•„ìš”í•¨.
         ranges::sort(targets, [&](const RenderObjectStrucutre& s1, const RenderObjectStrucutre& s2) {
             if (s1.material->GetShader()->_info._renderOrder != s2.material->GetShader()->_info._renderOrder)
                 return (s1.material->GetShader()->_info._renderOrder < s2.material->GetShader()->_info._renderOrder);
@@ -294,6 +307,16 @@ int Scene::Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObjec
             vec.push_back(current);
     }
     return vec.size() - startSize;
+}
+
+void Scene::AddChangeTypeQueue(const std::shared_ptr<GameObject>& gameObject, GameObjectType type)
+{
+    _changeTypeQueue.push(std::make_pair(gameObject, type));
+}
+
+void Scene::AddStartQueue(const std::shared_ptr<GameObject>& gameObject)
+{
+    _startQueue.push(gameObject);
 }
 
 void Scene::AddRenderer(Material* material, Mesh* mesh, RendererBase* renderBase)

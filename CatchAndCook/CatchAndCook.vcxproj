@@ -170,6 +170,7 @@
     <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="CbufferParam.cpp" />
     <ClCompile Include="convert_assimp.cpp" />
+    <ClCompile Include="GameObjectSetting.cpp" />
     <ClCompile Include="GeoMetryHelper.cpp" />
     <ClCompile Include="ICBufferInjector.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -247,6 +248,7 @@
     <ClInclude Include="CbufferParam.h" />
     <ClInclude Include="convert_assimp.h" />
     <ClInclude Include="convert_directx.h" />
+    <ClInclude Include="GameObjectSetting.h" />
     <ClInclude Include="GeoMetryHelper.h" />
     <ClInclude Include="ICBufferInjector.h" />
     <ClInclude Include="Component.h" />

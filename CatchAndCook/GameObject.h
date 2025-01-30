@@ -1,7 +1,9 @@
 #pragma once
 
+#include "GameObjectSetting.h"
 #include "IDelayDestroy.h"
 #include "IGuid.h"
+#include "SceneManager.h"
 
 class Scene;
 class Component;
@@ -9,17 +11,7 @@ class Transform;
 class Collider;
 class RendererBase;
 
-enum class GameObjectTag
-{
-	Defualt = 1 << 0,
-};
 
-enum class GameObjectType
-{
-	Dynamic = 0, // ����(�������� ����)
-	Static, // ����(ù�����ӵ���, ���� ��������)
-	Deactivate //��Ȱ��ȭ(����, ������ �Ѵ� X)
-};
 
 class GameObject : public IGuid, public IDelayDestroy
 {
@@ -49,6 +41,7 @@ public:
 		_components.push_back(component);
 		component->Init();
 		if (GetActive()) component->Enable();
+		SceneManager::main->GetCurrentScene()->AddStartQueue(GetCast<GameObject>());
 		return component;
 	};
 
@@ -67,7 +60,8 @@ public:
 		component->SetOwner(GetCast<GameObject>());
 		_components.push_back(parentComponent);
 		component->Init();
-		if (!IsFirst() && GetActive()) component->Enable();
+		if (GetActive()) component->Enable();
+		SceneManager::main->GetCurrentScene()->AddStartQueue(GetCast<GameObject>());
 	}
 
 	template <class T, class = std::enable_if_t<std::is_base_of_v<Component, T>>>

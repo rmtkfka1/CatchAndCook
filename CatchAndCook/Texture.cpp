@@ -181,7 +181,7 @@ void Texture::CreateStaticTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES init
 
         if (FAILED(hr))
         {
-            throw std::runtime_error("ÅØ½ºÃÄ »ý¼º ½ÇÆÐ");
+            throw std::runtime_error("í…ìŠ¤ì³ ìƒì„± ì‹¤íŒ¨");
         }
     }
 
@@ -316,20 +316,20 @@ void Texture::CopyCpuToGpu()
     UINT64 TotalBytes = 0;
 
     D3D12_RESOURCE_DESC Desc = _resource->GetDesc();
-    if (Desc.MipLevels != 1) // ¹Ó¸Ê ·¹º§Àº 1ÀÌ¾î¾ß ÇÔ
+    if (Desc.MipLevels != 1) // ë°‰ë§µ ë ˆë²¨ì€ 1ì´ì–´ì•¼ í•¨
         __debugbreak();
 
     auto& device = Core::main->GetDevice();
     auto& cmdList = Core::main->GetCmdList();
 
-    // ¼­ºê¸®¼Ò½º ¹ßÀÚ±¹ Á¤º¸ °¡Á®¿À±â
+    // ì„œë¸Œë¦¬ì†ŒìŠ¤ ë°œìžêµ­ ì •ë³´ ê°€ì ¸ì˜¤ê¸°
     device->GetCopyableFootprints(&Desc, 0, 1, 0, &Footprint, &Rows, &RowSize, &TotalBytes);
 
-    // ¸®¼Ò½º »óÅÂ¸¦ º¹»ç ´ë»óÀ¸·Î ÀüÈ¯
+    // ë¦¬ì†ŒìŠ¤ ìƒíƒœë¥¼ ë³µì‚¬ ëŒ€ìƒìœ¼ë¡œ ì „í™˜
     cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
         _resource.Get(), D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_DEST));
 
-    // ÅØ½ºÃ³ º¹»ç À§Ä¡ ¼³Á¤
+    // í…ìŠ¤ì²˜ ë³µì‚¬ ìœ„ì¹˜ ì„¤ì •
     D3D12_TEXTURE_COPY_LOCATION destLocation = {};
     destLocation.PlacedFootprint = Footprint;
     destLocation.pResource = _resource.Get();
@@ -341,10 +341,10 @@ void Texture::CopyCpuToGpu()
     srcLocation.pResource = _uploadResource.Get();
     srcLocation.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
 
-    // ÅØ½ºÃ³ º¹»ç ¼öÇà
+    // í…ìŠ¤ì²˜ ë³µì‚¬ ìˆ˜í–‰
     cmdList->CopyTextureRegion(&destLocation, 0, 0, 0, &srcLocation, nullptr);
 
-    // ¸®¼Ò½º »óÅÂ¸¦ ¿ø·¡ »óÅÂ·Î ÀüÈ¯
+    // ë¦¬ì†ŒìŠ¤ ìƒíƒœë¥¼ ì›ëž˜ ìƒíƒœë¡œ ì „í™˜
     cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
         _resource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE));
 }
