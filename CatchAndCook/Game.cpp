@@ -40,7 +40,7 @@ void Game::Init(HWND hwnd)
 	TextManager::main = make_unique<TextManager>();
 	TextManager::main->Init();
 		
-	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
+	auto scene = SceneManager::main->AddScene(SceneType::TestScene);
 	SceneManager::main->ChangeScene(scene);
 }
 
