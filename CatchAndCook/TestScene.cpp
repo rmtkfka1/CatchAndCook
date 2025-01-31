@@ -208,7 +208,7 @@ void TestScene::Init()
 		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
 
 		//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal_Sea"));
-		gameObject->_transform->SetLocalPosition(vec3(0, 10.0f, 0));
+		gameObject->_transform->SetLocalPosition(vec3(0, 0, 0));
 
 		material = make_shared<Material>();
 		material->SetShader(shader);
@@ -218,7 +218,7 @@ void TestScene::Init()
 
 		meshRenderer->AddMaterials({ material });
 
-		auto& mesh = GeoMetryHelper::LoadGripMeshControlPoints(2000.0f, 2000.0f, 100, 100);
+		auto& mesh = GeoMetryHelper::LoadGripMeshControlPoints(2000.0f, 2000.0f, 40, 40);
 		mesh->SetTopolgy((D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST));
 		meshRenderer->AddMesh(mesh);
 	}

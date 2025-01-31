@@ -2,8 +2,10 @@
 Texture2D g_tex_0 : register(t0);
 SamplerState g_sam_0 : register(s0);
 
-#define TessFactor 4
+#define TessFactor 64
 #define PI 3.14159f
+#define DIST_MAX 250.0f
+#define DIST_MIN 100.0f
 
 cbuffer test : register(b1)
 {
@@ -34,27 +36,28 @@ struct VS_IN
 
 struct VS_OUT
 {
-    float3 pos : POSITION;
+    float4 pos : POSITION;
+    float4 worldPos : POSITION1;
     float2 uv : TEXCOORD;
 };
 
 VS_IN WaveGeneration(VS_IN input)
 {
-    const int waveCount = 3; // ÆÄµ¿ÀÇ °³¼ö
-    float amplitudes[waveCount] = { 9.0f, 6.0f, 4.0f }; // °¢ ÆÄµ¿ÀÇ ÁøÆø (³ôÀÌ¸¦ ÁÙ¿© ÀÚ¿¬½º·´°Ô)
-    float wavelengths[waveCount] = { 500.0f, 300.0f, 200.0f }; // °¢ ÆÄµ¿ÀÇ ÆÄÀå (´õ ³ĞÀº ¹üÀ§)
-    float speeds[waveCount] = { 0.5f, 1.0f, 0.8f }; // °¢ ÆÄµ¿ÀÇ ¼Óµµ (¼Óµµ Á¶Á¤)
+    const int waveCount = 3; // íŒŒë™ì˜ ê°œìˆ˜
+    float amplitudes[waveCount] = { 9.0f, 6.0f, 4.0f }; // ê° íŒŒë™ì˜ ì§„í­ (ë†’ì´ë¥¼ ì¤„ì—¬ ìì—°ìŠ¤ëŸ½ê²Œ)
+    float wavelengths[waveCount] = { 500.0f, 300.0f, 200.0f }; // ê° íŒŒë™ì˜ íŒŒì¥ (ë” ë„“ì€ ë²”ìœ„)
+    float speeds[waveCount] = { 0.5f, 1.0f, 0.8f }; // ê° íŒŒë™ì˜ ì†ë„ (ì†ë„ ì¡°ì •)
 
     float2 waveDirections[waveCount] =
     {
-        normalize(float2(1.0f, 0.2f)), // ÁÖ ¹æÇâ (¿ìÃø ÇÏ´Ü ¹æÇâÀ¸·Î ÁøÇà)
-        normalize(float2(0.0f, 1.0f)), // ¼öÁ÷ ¹æÇâ (À§ÂÊ ¹æÇâ)
-        normalize(float2(-0.5f, 0.7f)) // ´ë°¢¼± ¹æÇâ (ÁÂÃø À§ÂÊ ¹æÇâ)
+        normalize(float2(1.0f, 0.2f)), // ì£¼ ë°©í–¥ (ìš°ì¸¡ í•˜ë‹¨ ë°©í–¥ìœ¼ë¡œ ì§„í–‰)
+        normalize(float2(0.0f, 1.0f)), // ìˆ˜ì§ ë°©í–¥ (ìœ„ìª½ ë°©í–¥)
+        normalize(float2(-0.5f, 0.7f)) // ëŒ€ê°ì„  ë°©í–¥ (ì¢Œì¸¡ ìœ„ìª½ ë°©í–¥)
     };
 
-    // ÃÊ±â À§Ä¡
+    // ì´ˆê¸° ìœ„ì¹˜
     float3 modifiedPos = input.pos;
-    float3 modifiedNormal = float3(0.0f, 0.0f, 0.0f); // ÃÊ±âÈ­ º¯°æ
+    float3 modifiedNormal = float3(0.0f, 0.0f, 0.0f); // ì´ˆê¸°í™” ë³€ê²½
 
     for (int i = 0; i < waveCount; i++)
     {
@@ -66,19 +69,19 @@ VS_IN WaveGeneration(VS_IN input)
         float wave = sin(dotProduct * frequency + phase);
         float waveDerivative = cos(dotProduct * frequency + phase);
 
-    // xz ¹× y ¹æÇâ º¯À§ Àû¿ë
+    // xz ë° y ë°©í–¥ ë³€ìœ„ ì ìš©
         modifiedPos.xz += amplitudes[i] * direction * waveDerivative;
         modifiedPos.y += amplitudes[i] * wave;
 
-    // ±â¿ï±â º¤ÅÍ °è»ê
+    // ê¸°ìš¸ê¸° ë²¡í„° ê³„ì‚°
         float3 tangentX = float3(direction.x, waveDerivative * direction.x, 0.0f);
         float3 tangentZ = float3(0.0f, waveDerivative * direction.y, direction.y);
 
-    // ¹ı¼± ±â¿©µµ ÇÕ»ê
+    // ë²•ì„  ê¸°ì—¬ë„ í•©ì‚°
         modifiedNormal += cross(tangentX, tangentZ);
     }
 
-    modifiedNormal = normalize(modifiedNormal); // Á¤±ÔÈ­
+    modifiedNormal = normalize(modifiedNormal); // ì •ê·œí™”
 
     VS_IN result;
     result.pos = modifiedPos;
@@ -90,9 +93,10 @@ VS_OUT VS_Main(VS_IN vin)
 {
     VS_OUT vout;
     
-    VS_IN result = WaveGeneration(vin);
-    
-    vout.pos = result.pos.xyz;
+    VS_IN result = WaveGeneration(vin); 
+    vout.pos = mul(float4(result.pos, 1.0f), WorldMat); 
+    vout.worldPos = vout.pos;
+    vout.pos = mul(vout.pos, VPMatrix);
     vout.uv = result.uv;
     
     return vout;
@@ -100,7 +104,7 @@ VS_OUT VS_Main(VS_IN vin)
 
 struct HS_OUT
 {
-    float3 pos : POSITION;
+    float4 pos : POSITION;
     float2 uv : TEXCOORD;
 };
 
@@ -111,19 +115,25 @@ struct PatchConstOutput
 };
 
 
-//ÆĞÄ¡´ÜÀ§·Î È£ÃâµÊ.
+//íŒ¨ì¹˜ë‹¨ìœ„ë¡œ í˜¸ì¶œë¨.
 PatchConstOutput ConstantHS(InputPatch<VS_OUT, 4> patch, uint patchID : SV_PrimitiveID)
 {
+    
+    float3 center = (patch[0].worldPos + patch[1].worldPos + patch[2].worldPos + patch[3].worldPos).xyz * 0.25f;
+    float dist = length(center.xz - cameraPos.xz);
+    
+    float tess = TessFactor * saturate((DIST_MAX - dist) / (DIST_MAX - DIST_MIN)) + 1.0f;
+
     PatchConstOutput pt;
-    
-    pt.edges[0] = TessFactor;
-    pt.edges[1] = TessFactor;
-    pt.edges[2] = TessFactor;
-    pt.edges[3] = TessFactor;
-    pt.inside[0] = TessFactor;
-    pt.inside[1] = TessFactor;
-    
+    pt.edges[0] = tess;
+    pt.edges[1] = tess;
+    pt.edges[2] = tess;
+    pt.edges[3] = tess;
+    pt.inside[0] = tess;
+    pt.inside[1] = tess;
+
     return pt;
+    
 };
 
 [domain("quad")]
@@ -134,7 +144,7 @@ PatchConstOutput ConstantHS(InputPatch<VS_OUT, 4> patch, uint patchID : SV_Primi
 [maxtessfactor(TessFactor)]
 HS_OUT HS_Main(InputPatch<VS_OUT, 4> patch, uint vertexID : SV_OutputControlPointID, uint patchId : SV_PrimitiveID)
 {
-    //4¹øÈ£ÃâµÊ.
+    //4ë²ˆí˜¸ì¶œë¨.
     HS_OUT hout;
     hout.pos = patch[vertexID].pos;
     hout.uv = patch[vertexID].uv;
@@ -151,17 +161,16 @@ struct DS_OUT
 [domain("quad")]
 DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad , PatchConstOutput patchConst, float2 location : SV_DomainLocation)
 {
-    //ÂÉ°³Áø Á¤Á¡°¹¼ö¸¸Å­ È£ÃâµÊ.
+    //ìª¼ê°œì§„ ì •ì ê°¯ìˆ˜ë§Œí¼ í˜¸ì¶œë¨.
     DS_OUT dout;
 
 	// Bilinear interpolation.
-    float3 v1 = lerp(quad[0].pos, quad[1].pos, location.x);
-    float3 v2 = lerp(quad[2].pos, quad[3].pos, location.x);
-    float3 posCoord = lerp(v1, v2, location.y);
+    float4 v1 = lerp(quad[0].pos, quad[1].pos, location.x);
+    float4 v2 = lerp(quad[2].pos, quad[3].pos, location.x);
+    float4 posCoord = lerp(v1, v2, location.y);
     
-    dout.pos = float4(posCoord, 1.0);
-    dout.pos = mul(dout.pos, VPMatrix);
-    
+    dout.pos = posCoord;
+
     float2 v3 = lerp(quad[0].uv, quad[1].uv, location.x);
     float2 v4 = lerp(quad[2].uv, quad[3].uv, location.x);
     float2 uvCoord = lerp(v3, v4, location.y);
