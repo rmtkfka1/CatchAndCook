@@ -2,7 +2,7 @@
 Texture2D g_tex_0 : register(t0);
 SamplerState g_sam_0 : register(s0);
 
-#define TessFactor 64
+#define TessFactor 8
 #define PI 3.14159f
 #define DIST_MAX 300.0f
 #define DIST_MIN 30.0f
@@ -116,8 +116,7 @@ struct PatchConstOutput
     float inside[2] : SV_InsideTessFactor;
 };
 
-
-//패치단위로 호출됨.
+//패치단위로 호출
 PatchConstOutput ConstantHS(InputPatch<VS_OUT, 4> patch, uint patchID : SV_PrimitiveID)
 {
     float3 center = (patch[0].pos + patch[1].pos + patch[2].pos + patch[3].pos).xyz * 0.25f;
@@ -135,7 +134,6 @@ PatchConstOutput ConstantHS(InputPatch<VS_OUT, 4> patch, uint patchID : SV_Primi
 
     return pt;
 }
-
 [domain("quad")]
 [partitioning("integer")]
 [outputtopology("triangle_cw")]
