@@ -41,23 +41,29 @@ struct VS_OUT
     float2 uv : TEXCOORD;
 };
 
-VS_IN WaveGeneration(VS_IN input)
+struct DS_OUT
 {
-    const int waveCount = 3; // 파동의 개수
-    float amplitudes[waveCount] = { 9.0f, 6.0f, 4.0f }; // 각 파동의 진폭 (높이를 줄여 자연스럽게)
-    float wavelengths[waveCount] = { 500.0f, 300.0f, 200.0f }; // 각 파동의 파장 (더 넓은 범위)
-    float speeds[waveCount] = { 0.5f, 1.0f, 0.8f }; // 각 파동의 속도 (속도 조정)
+    float4 pos : SV_POSITION;
+    float2 uv : TEXCOORD;
+};
+
+
+DS_OUT WaveGeneration(DS_OUT input)
+{
+    const int waveCount = 3;
+    float amplitudes[waveCount] = { 9.0f, 6.0f, 4.0f };
+    float wavelengths[waveCount] = { 500.0f, 300.0f, 200.0f };
+    float speeds[waveCount] = { 0.5f, 1.0f, 0.8f };
 
     float2 waveDirections[waveCount] =
     {
-        normalize(float2(1.0f, 0.2f)), // 주 방향 (우측 하단 방향으로 진행)
-        normalize(float2(0.0f, 1.0f)), // 수직 방향 (위쪽 방향)
-        normalize(float2(-0.5f, 0.7f)) // 대각선 방향 (좌측 위쪽 방향)
+        normalize(float2(1.0f, 0.2f)),
+        normalize(float2(0.0f, 1.0f)),
+        normalize(float2(-0.5f, 0.7f))
     };
 
-    // 초기 위치
-    float3 modifiedPos = input.pos;
-    float3 modifiedNormal = float3(0.0f, 0.0f, 0.0f); // 초기화 변경
+    float4 modifiedPos = input.pos;
+    float3 normalSum = float3(0.0f, 1.0f, 0.0f);
 
     for (int i = 0; i < waveCount; i++)
     {
@@ -65,39 +71,35 @@ VS_IN WaveGeneration(VS_IN input)
         float phase = speeds[i] * g_Time;
         float2 direction = waveDirections[i];
 
-        float dotProduct = dot(direction, input.pos.xz);
+        float dotProduct = dot(direction, modifiedPos.xz);
         float wave = sin(dotProduct * frequency + phase);
         float waveDerivative = cos(dotProduct * frequency + phase);
 
-    // xz 및 y 방향 변위 적용
         modifiedPos.xz += amplitudes[i] * direction * waveDerivative;
         modifiedPos.y += amplitudes[i] * wave;
 
-    // 기울기 벡터 계산
-        float3 tangentX = float3(direction.x, waveDerivative * direction.x, 0.0f);
-        float3 tangentZ = float3(0.0f, waveDerivative * direction.y, direction.y);
-
-    // 법선 기여도 합산
-        modifiedNormal += cross(tangentX, tangentZ);
+        float3 waveNormal = normalize(float3(-waveDerivative * direction.x, 1.0f, -waveDerivative * direction.y));
+        normalSum += waveNormal;
     }
 
-    modifiedNormal = normalize(modifiedNormal); // 정규화
+    normalSum = normalize(normalSum);
 
-    VS_IN result;
+    DS_OUT result;
     result.pos = modifiedPos;
     result.uv = input.uv;
     return result;
+    
+    
+    
 }
 
 VS_OUT VS_Main(VS_IN vin)
 {
     VS_OUT vout;
     
-    VS_IN result = WaveGeneration(vin); 
-    vout.pos = mul(float4(result.pos, 1.0f), WorldMat); 
+    vout.pos = mul(float4(vin.pos, 1.0f), WorldMat);
     vout.worldPos = vout.pos;
-    vout.pos = mul(vout.pos, VPMatrix);
-    vout.uv = result.uv;
+    vout.uv = vin.uv;
     
     return vout;
 }
@@ -118,11 +120,14 @@ struct PatchConstOutput
 //패치단위로 호출됨.
 PatchConstOutput ConstantHS(InputPatch<VS_OUT, 4> patch, uint patchID : SV_PrimitiveID)
 {
-    
     float3 center = (patch[0].worldPos + patch[1].worldPos + patch[2].worldPos + patch[3].worldPos).xyz * 0.25f;
     float dist = length(center.xz - cameraPos.xz);
-    
-    float tess = TessFactor * saturate((DIST_MAX - dist) / (DIST_MAX - DIST_MIN)) + 1.0f;
+
+    float tessMin = 2.0f;
+    float tessMax = 64.0f;
+
+    float t = saturate((dist - DIST_MIN) / (DIST_MAX - DIST_MIN));
+    float tess = lerp(tessMax, tessMin, t);
 
     PatchConstOutput pt;
     pt.edges[0] = tess;
@@ -133,8 +138,7 @@ PatchConstOutput ConstantHS(InputPatch<VS_OUT, 4> patch, uint patchID : SV_Primi
     pt.inside[1] = tess;
 
     return pt;
-    
-};
+}
 
 [domain("quad")]
 [partitioning("integer")]
@@ -152,14 +156,9 @@ HS_OUT HS_Main(InputPatch<VS_OUT, 4> patch, uint vertexID : SV_OutputControlPoin
     return hout;
 }
 
-struct DS_OUT
-{
-    float4 pos : SV_POSITION;
-    float2 uv : TEXCOORD;
-};
 
 [domain("quad")]
-DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad , PatchConstOutput patchConst, float2 location : SV_DomainLocation)
+DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 location : SV_DomainLocation)
 {
     //쪼개진 정점갯수만큼 호출됨.
     DS_OUT dout;
@@ -176,12 +175,15 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad , PatchConstOutput patchConst, float2
     float2 uvCoord = lerp(v3, v4, location.y);
     
     dout.uv = uvCoord;
+    
+    DS_OUT result = WaveGeneration(dout);
+    
+    result.pos = mul(result.pos, VPMatrix);
 
-    return dout;
+    return result;
 }
 
 float4 PS_Main(DS_OUT input) : SV_Target
 {
     return g_tex_0.Sample(g_sam_0, input.uv);
 }
-
