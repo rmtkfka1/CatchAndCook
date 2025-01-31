@@ -1,14 +1,6 @@
 #pragma once
 #include "Component.h"
-#include "RendererBase.h"
-#include "StructuredBuffer.h"
-
-struct test
-{
-	vec4 testcolor;
-};
-
-class testComponent : public Component, public RenderObjectSetter
+class testComponent : public Component
 {
 
 public:
@@ -26,11 +18,9 @@ public:
 	virtual void SetDestroy() override;
 	virtual void DestroyComponentOnly();
 
-	virtual void PushData() override;
-	virtual void SetData(Material* material = nullptr) override;
+
 
 private:
-	StructuredBuffer<test> _structuredBuffer;
-	vector<test> v;
+
 };
 

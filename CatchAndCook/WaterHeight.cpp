@@ -50,7 +50,7 @@ void WaterHeight::Destroy()
 }
 
 float WaterHeight::GetWaveHeight(float x,float z,float time)
-{
+{ 
 
     float height = 0.0f;
 

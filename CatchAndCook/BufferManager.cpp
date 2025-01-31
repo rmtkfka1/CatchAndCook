@@ -21,7 +21,7 @@ void BufferManager::Init()
 	CreateBufferPool(BufferType::CameraParam, sizeof(CameraParams), 10);
 	CreateBufferPool(BufferType::SpriteTextureParam, sizeof(SprtieTextureParam), 255);
 	CreateBufferPool(BufferType::SpriteWorldParam, sizeof(SpriteWorldParam), 255);
-	CreateBufferPool(BufferType::TestParam, sizeof(test), 255);
+
 
 	CreateBufferPool_Static(BufferType::BoneParam, sizeof(BoneParam), 128);
 

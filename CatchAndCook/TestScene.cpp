@@ -116,9 +116,10 @@ void TestScene::Init()
 		auto meshRenderer = root->AddComponent<MeshRenderer>();
 		meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal"));
 
+		root->_transform->SetLocalScale(vec3(10.0f,10.0f,10.0f));
+		root->AddComponent<WaterHeight>()->SetOffset(10.0f);
 		root->AddComponent<testComponent>();
-		root->AddComponent<WaterHeight>()->SetOffset(1.2f);
-
+	
 		material = make_shared<Material>();
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
@@ -133,36 +134,36 @@ void TestScene::Init()
 
 
 
-	//{
+	{
 
-	//	ShaderInfo info;
-	//	info._zTest = true;
-	//	info._stencilTest = false;
-	//	info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
 
-	//	shared_ptr<Shader> shader = make_shared<Shader>();
-	//	shader->Init(L"screenParticle.hlsl", StaticProp, ShaderArg{ {{"PS_Main", "ps"},{"VS_Main", "vs"},
-	//		{"GS_Main", "gs"}} }, info);
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->Init(L"screenParticle.hlsl", StaticProp, ShaderArg{ {{"PS_Main", "ps"},{"VS_Main", "vs"},
+			{"GS_Main", "gs"}} }, info);
 
-	//	shared_ptr<Material> material = make_shared<Material>();
+		shared_ptr<Material> material = make_shared<Material>();
 
-	//	shared_ptr<GameObject> object = CreateGameObject(L"testing_fire");
+		shared_ptr<GameObject> object = CreateGameObject(L"testing_fire");
 
-	//	object->_transform->SetLocalPosition(vec3(0, 0.0f, 50.0f));
-	//	auto meshRenderer = object->AddComponent<MeshRenderer>();
+		object->_transform->SetLocalPosition(vec3(0, 0.0f, 50.0f));
+		auto meshRenderer = object->AddComponent<MeshRenderer>();
 
-	//	object->AddComponent<ScreenParticle>();
-	//
-	//	material = make_shared<Material>();
-	//	material->SetShader(shader);
-	//	material->SetPass(RENDER_PASS::Forward);
-	//	meshRenderer->AddMaterials({ material });
+		object->AddComponent<ScreenParticle>();
+	
+		material = make_shared<Material>();
+		material->SetShader(shader);
+		material->SetPass(RENDER_PASS::Forward);
+		meshRenderer->AddMaterials({ material });
 
-	//	auto& mesh = GeoMetryHelper::LoadRectangleBox(10.0f);
-	//	mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
-	//	mesh->SetVertexCount(2048);
-	//	meshRenderer->AddMesh(mesh);
-	//};
+		auto& mesh = GeoMetryHelper::LoadRectangleBox(10.0f);
+		mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+		mesh->SetVertexCount(2048);
+		meshRenderer->AddMesh(mesh);
+	};
 
 
 

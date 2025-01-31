@@ -2,8 +2,10 @@
 #include "testComponent.h"
 #include "GameObject.h"
 #include <random>
-
-
+#include "GameObject.h"
+#include "Transform.h"
+#include "CameraManager.h"
+#include "Camera.h"
 std::random_device dre;
 std::mt19937 gen(dre());
 std::uniform_real_distribution<float> uid(0.0f, 1.0f);
@@ -16,40 +18,44 @@ testComponent::~testComponent()
 
 void testComponent::Init()
 {
-	v.resize(24);
 
-	_structuredBuffer.Init(v);
 
 }
 
 void testComponent::Start()
 {
-	if (GetOwner()->GetRenderer())
-	{
-		GetOwner()->GetRenderer()->AddSetter(static_pointer_cast<testComponent>(shared_from_this()));
-	}
+
 }
 
 void testComponent::Update()
 {
+	const float speed = 100.0f;
+	const float dt =Time::main->GetDeltaTime() *speed;
 
-	static float time = 0;
-	
-	time += Time::main->GetDeltaTime();
+	std::shared_ptr<Transform> transform =GetOwner()->_transform;
 
-	if (time > 1.0f)
+	if(transform==nullptr)
+		return;
+
+	if(Input::main->GetKey(KeyCode::UpArrow))
 	{
-		for (int i = 0; i < v.size(); ++i)
-		{
-			float r = uid(gen);
-			float g = uid(gen);
-			float b = uid(gen);
-			v[i].testcolor = vec4(r, g, b, 0); 
-		}
 
-		_structuredBuffer.Upload(v);
-		time = 0;
+		auto direction = CameraManager::main->GetActiveCamera()->GetCameraLook();
+		auto& pos =transform->GetLocalPosition();
+		transform->SetLocalPosition(pos + direction * dt);
+	
 	}
+
+	
+	if(Input::main->GetKey(KeyCode::DownArrow))
+	{
+
+		auto direction = CameraManager::main->GetActiveCamera()->GetCameraLook();
+		auto& pos =transform->GetLocalPosition();
+		transform->SetLocalPosition(pos - direction * dt);
+
+	}
+
 
 }
 
@@ -70,10 +76,7 @@ void testComponent::Disable()
 
 void testComponent::Destroy()
 {
-	if (GetOwner()->GetRenderer())
-	{
-		GetOwner()->GetRenderer()->RemoveSetters(static_pointer_cast<testComponent>(shared_from_this()));
-	}
+
 }
 
 void testComponent::RenderBegin()
@@ -96,13 +99,3 @@ void testComponent::DestroyComponentOnly()
 
 }
 
-void testComponent::PushData()
-{
-
-}
- 
-
-void testComponent::SetData(Material* material)
-{
-	material->SetHandle("Structured", _structuredBuffer.GetSRVHandle());
-}
