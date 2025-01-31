@@ -48,21 +48,21 @@ struct VS_OUT
 
 VS_IN WaveGeneration(VS_IN input)
 {
-    const int waveCount = 3; // ÆÄµ¿ÀÇ °³¼ö
-    float amplitudes[waveCount] = { 9.0f, 6.0f, 4.0f }; // °¢ ÆÄµ¿ÀÇ ÁøÆø (³ôÀÌ¸¦ ÁÙ¿© ÀÚ¿¬½º·´°Ô)
-    float wavelengths[waveCount] = { 500.0f, 300.0f, 200.0f }; // °¢ ÆÄµ¿ÀÇ ÆÄÀå (´õ ³ĞÀº ¹üÀ§)
-    float speeds[waveCount] = { 0.5f, 1.0f, 0.8f }; // °¢ ÆÄµ¿ÀÇ ¼Óµµ (¼Óµµ Á¶Á¤)
+    const int waveCount = 3; // íŒŒë™ì˜ ê°œìˆ˜
+    float amplitudes[waveCount] = { 9.0f, 6.0f, 4.0f }; // ê° íŒŒë™ì˜ ì§„í­ (ë†’ì´ë¥¼ ì¤„ì—¬ ìì—°ìŠ¤ëŸ½ê²Œ)
+    float wavelengths[waveCount] = { 500.0f, 300.0f, 200.0f }; // ê° íŒŒë™ì˜ íŒŒì¥ (ë” ë„“ì€ ë²”ìœ„)
+    float speeds[waveCount] = { 0.5f, 1.0f, 0.8f }; // ê° íŒŒë™ì˜ ì†ë„ (ì†ë„ ì¡°ì •)
 
     float2 waveDirections[waveCount] =
     {
-        normalize(float2(1.0f, 0.2f)), // ÁÖ ¹æÇâ (¿ìÃø ÇÏ´Ü ¹æÇâÀ¸·Î ÁøÇà)
-        normalize(float2(0.0f, 1.0f)), // ¼öÁ÷ ¹æÇâ (À§ÂÊ ¹æÇâ)
-        normalize(float2(-0.5f, 0.7f)) // ´ë°¢¼± ¹æÇâ (ÁÂÃø À§ÂÊ ¹æÇâ)
+        normalize(float2(1.0f, 0.2f)), // ì£¼ ë°©í–¥ (ìš°ì¸¡ í•˜ë‹¨ ë°©í–¥ìœ¼ë¡œ ì§„í–‰)
+        normalize(float2(0.0f, 1.0f)), // ìˆ˜ì§ ë°©í–¥ (ìœ„ìª½ ë°©í–¥)
+        normalize(float2(-0.5f, 0.7f)) // ëŒ€ê°ì„  ë°©í–¥ (ì¢Œì¸¡ ìœ„ìª½ ë°©í–¥)
     };
 
-    // ÃÊ±â À§Ä¡
+    // ì´ˆê¸° ìœ„ì¹˜
     float3 modifiedPos = input.pos;
-    float3 modifiedNormal = float3(0.0f, 0.0f, 0.0f); // ÃÊ±âÈ­ º¯°æ
+    float3 modifiedNormal = float3(0.0f, 0.0f, 0.0f); // ì´ˆê¸°í™” ë³€ê²½
 
     for (int i = 0; i < waveCount; i++)
     {
@@ -74,19 +74,19 @@ VS_IN WaveGeneration(VS_IN input)
         float wave = sin(dotProduct * frequency + phase);
         float waveDerivative = cos(dotProduct * frequency + phase);
 
-    // xz ¹× y ¹æÇâ º¯À§ Àû¿ë
+    // xz ë° y ë°©í–¥ ë³€ìœ„ ì ìš©
         modifiedPos.xz += amplitudes[i] * direction * waveDerivative;
         modifiedPos.y += amplitudes[i] * wave;
 
-    // ±â¿ï±â º¤ÅÍ °è»ê
+    // ê¸°ìš¸ê¸° ë²¡í„° ê³„ì‚°
         float3 tangentX = float3(direction.x, waveDerivative * direction.x, 0.0f);
         float3 tangentZ = float3(0.0f, waveDerivative * direction.y, direction.y);
 
-    // ¹ı¼± ±â¿©µµ ÇÕ»ê
+    // ë²•ì„  ê¸°ì—¬ë„ í•©ì‚°
         modifiedNormal += cross(tangentX, tangentZ);
     }
 
-    modifiedNormal = normalize(modifiedNormal); // Á¤±ÔÈ­
+    modifiedNormal = normalize(modifiedNormal); // ì •ê·œí™”
 
     VS_IN result;
     result.pos = modifiedPos;
@@ -101,7 +101,7 @@ VS_OUT VS_Main(VS_IN input)
 
     VS_IN result = WaveGeneration(input);
  
-    // ¿ùµå, ºä, ÇÁ·ÎÁ§¼Ç º¯È¯
+    // ì›”ë“œ, ë·°, í”„ë¡œì ì…˜ ë³€í™˜
     float4 worldPos = mul(float4(result.pos, 1.0f), WorldMat);
     
     output.worldPos = worldPos.xyz;

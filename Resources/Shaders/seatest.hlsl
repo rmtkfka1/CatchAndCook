@@ -52,7 +52,7 @@ struct DS_OUT
 DS_OUT WaveGeneration(DS_OUT input)
 {
     const int waveCount = 3;
-    float amplitudes[waveCount] = { 9.0f, 6.0f, 4.0f };
+    float amplitudes[waveCount] = { 11.0f, 9.0f, 7.0f };
     float wavelengths[waveCount] = { 500.0f, 300.0f, 200.0f };
     float speeds[waveCount] = { 0.5f, 1.0f, 0.8f };
 
