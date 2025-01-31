@@ -9,15 +9,17 @@ void WaterHeight::Init()
 
 void WaterHeight::Start()
 {
+
+
 }
 
 void WaterHeight::Update()
 {
-    if(GetOwner()->_transform)
+    if(auto transform = GetOwner()->_transform)
     {
-        auto& pos = GetOwner()->_transform->GetLocalPosition();
+        vec3 pos = transform->GetLocalPosition();
         pos.y = GetWaveHeight(pos.x,pos.z,Time::main->GetTime()) + _offset;
-        GetOwner()->_transform->SetLocalPosition(pos);
+        transform->SetLocalPosition(pos);
     }
 }
 
