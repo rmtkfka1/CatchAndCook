@@ -4,8 +4,10 @@ SamplerState g_sam_0 : register(s0);
 
 #define TessFactor 64
 #define PI 3.14159f
-#define DIST_MAX 250.0f
-#define DIST_MIN 100.0f
+#define DIST_MAX 300.0f
+#define DIST_MIN 30.0f
+
+static float4 sea_color = float4(0,0,1,1);
 
 cbuffer test : register(b1)
 {
@@ -37,7 +39,6 @@ struct VS_IN
 struct VS_OUT
 {
     float4 pos : POSITION;
-    float4 worldPos : POSITION1;
     float2 uv : TEXCOORD;
 };
 
@@ -98,7 +99,6 @@ VS_OUT VS_Main(VS_IN vin)
     VS_OUT vout;
     
     vout.pos = mul(float4(vin.pos, 1.0f), WorldMat);
-    vout.worldPos = vout.pos;
     vout.uv = vin.uv;
     
     return vout;
@@ -120,14 +120,10 @@ struct PatchConstOutput
 //패치단위로 호출됨.
 PatchConstOutput ConstantHS(InputPatch<VS_OUT, 4> patch, uint patchID : SV_PrimitiveID)
 {
-    float3 center = (patch[0].worldPos + patch[1].worldPos + patch[2].worldPos + patch[3].worldPos).xyz * 0.25f;
+    float3 center = (patch[0].pos + patch[1].pos + patch[2].pos + patch[3].pos).xyz * 0.25f;
     float dist = length(center.xz - cameraPos.xz);
-
-    float tessMin = 2.0f;
-    float tessMax = 64.0f;
-
-    float t = saturate((dist - DIST_MIN) / (DIST_MAX - DIST_MIN));
-    float tess = lerp(tessMax, tessMin, t);
+    
+    float tess = TessFactor * saturate((DIST_MAX - dist) / (DIST_MAX - DIST_MIN)) + 1.0f; //270
 
     PatchConstOutput pt;
     pt.edges[0] = tess;
@@ -185,5 +181,6 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 
 float4 PS_Main(DS_OUT input) : SV_Target
 {
-    return g_tex_0.Sample(g_sam_0, input.uv);
+    return sea_color;
+
 }
