@@ -14,6 +14,7 @@
 #include "StructuredBuffer.h"
 #include "Mesh.h"
 #include "ScreenParticle.h"
+#include "WaterHeight.h"
 
 void TestScene::Init()
 {
@@ -116,6 +117,7 @@ void TestScene::Init()
 		meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal"));
 
 		root->AddComponent<testComponent>();
+		root->AddComponent<WaterHeight>()->SetOffset(1.2f);
 
 		material = make_shared<Material>();
 		material->SetShader(shader);
@@ -192,12 +194,11 @@ void TestScene::Init()
 	}
 
 	{
-		//18������ => LOD ��� 240 ��� �����ҵ�.
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
 		info.cullingType = CullingType::WIREFRAME;
-		info.cullingType = CullingType::NONE;
+		//info.cullingType = CullingType::NONE;
 		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest", L"seatest.hlsl", StaticProp,
@@ -226,7 +227,6 @@ void TestScene::Init()
 
 
 	//{
-	//	/*meshRenderer->AddMesh(GeoMetryHelper::LoadGripMesh(2000.0f, 2000.0f, 4000, 4000));*/ 	//11������
 	//	ShaderInfo info;
 	//	info._zTest = true;
 	//	info._stencilTest = false;

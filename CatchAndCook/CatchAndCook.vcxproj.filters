@@ -208,6 +208,9 @@
     <ClCompile Include="GameObjectSetting.cpp">
       <Filter>GameObject</Filter>
     </ClCompile>
+    <ClCompile Include="WaterHeight.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -390,6 +393,9 @@
     </ClInclude>
     <ClInclude Include="GameObjectSetting.h">
       <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterHeight.h">
+      <Filter>Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

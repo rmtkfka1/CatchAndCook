@@ -76,7 +76,7 @@ DS_OUT WaveGeneration(DS_OUT input)
         float wave = sin(dotProduct * frequency + phase);
         float waveDerivative = cos(dotProduct * frequency + phase);
 
-        modifiedPos.xz += amplitudes[i] * direction * waveDerivative;
+        //modifiedPos.xz += amplitudes[i] * direction * waveDerivative;
         modifiedPos.y += amplitudes[i] * wave;
 
         float3 waveNormal = normalize(float3(-waveDerivative * direction.x, 1.0f, -waveDerivative * direction.y));
