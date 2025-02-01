@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "BufferManager.h"
-
 #include "Bone.h"
 #include "BufferPool.h"
 #include "Material.h"
@@ -8,6 +7,7 @@
 #include "Scene.h"
 #include "Sprite.h"
 #include "testComponent.h"
+#include "LightManager.h"
 void BufferManager::Init()
 {
 
@@ -21,7 +21,7 @@ void BufferManager::Init()
 	CreateBufferPool(BufferType::CameraParam, sizeof(CameraParams), 10);
 	CreateBufferPool(BufferType::SpriteTextureParam, sizeof(SprtieTextureParam), 255);
 	CreateBufferPool(BufferType::SpriteWorldParam, sizeof(SpriteWorldParam), 255);
-
+	CreateBufferPool(BufferType::LightParam,sizeof(LightParams),1);
 
 	CreateBufferPool_Static(BufferType::BoneParam, sizeof(BoneParam), 128);
 

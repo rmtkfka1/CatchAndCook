@@ -123,7 +123,6 @@ void TestScene::Init()
 		material = make_shared<Material>();
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
-		material->SetInjector({ InjectorManager::main->Get(BufferType::MateriaSubParam) });
 		material->SetHandle("g_tex_0", texture->GetSRVCpuHandle());
 
 		meshRenderer->AddMaterials({ material });

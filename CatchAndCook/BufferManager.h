@@ -11,8 +11,8 @@ enum class BufferType
 	SpriteWorldParam,
 	SpriteTextureParam,
 	TestParam,
-	DefaultMaterialParam
-
+	DefaultMaterialParam,
+	LightParam,
 };
 
 class CBufferPool;

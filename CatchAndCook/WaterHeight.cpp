@@ -41,6 +41,7 @@ void WaterHeight::RenderBegin()
 
 void WaterHeight::Collision(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other)
 {
+
 }
 
 void WaterHeight::SetDestroy()

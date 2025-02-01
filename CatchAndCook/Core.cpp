@@ -318,6 +318,7 @@ void Core::SetPipelineState(Shader* shader)
         currentShader = shader;
         currentStencil = -1;
     }
+
     if (currentShader != nullptr)
     {
         GetCmdList()->SetPipelineState(currentShader->_pipelineState.Get());

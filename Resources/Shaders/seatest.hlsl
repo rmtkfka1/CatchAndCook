@@ -34,20 +34,29 @@ struct VS_IN
 {
     float3 pos : POSITION;
     float2 uv : TEXCOORD;
+    float3 normal : NORMAL;
 };
 
 struct VS_OUT
 {
     float4 pos : POSITION;
     float2 uv : TEXCOORD;
+    float3 normal : NORMAL;
 };
 
 struct DS_OUT
 {
     float4 pos : SV_POSITION;
     float2 uv : TEXCOORD;
+    float3 normal : NORMAL;
 };
 
+struct HS_OUT
+{
+    float4 pos : POSITION;
+    float2 uv : TEXCOORD;
+    float3 normal : NORMAL;
+};
 
 DS_OUT WaveGeneration(DS_OUT input)
 {
@@ -55,6 +64,7 @@ DS_OUT WaveGeneration(DS_OUT input)
     float amplitudes[waveCount] = { 11.0f, 9.0f, 7.0f };
     float wavelengths[waveCount] = { 500.0f, 300.0f, 200.0f };
     float speeds[waveCount] = { 0.5f, 1.0f, 0.8f };
+    float steepnesses[waveCount] = { 0.5f, 0.4f, 0.3f }; // 스티프니스 추가
 
     float2 waveDirections[waveCount] =
     {
@@ -76,7 +86,7 @@ DS_OUT WaveGeneration(DS_OUT input)
         float wave = sin(dotProduct * frequency + phase);
         float waveDerivative = cos(dotProduct * frequency + phase);
 
-        modifiedPos.xz += amplitudes[i] * direction * waveDerivative;
+        modifiedPos.xz += steepnesses[i] * amplitudes[i] * direction * waveDerivative;
         modifiedPos.y += amplitudes[i] * wave;
 
         float3 waveNormal = normalize(float3(-waveDerivative * direction.x, 1.0f, -waveDerivative * direction.y));
@@ -88,10 +98,8 @@ DS_OUT WaveGeneration(DS_OUT input)
     DS_OUT result;
     result.pos = modifiedPos;
     result.uv = input.uv;
+    result.normal = normalSum;
     return result;
-    
-    
-    
 }
 
 VS_OUT VS_Main(VS_IN vin)
@@ -99,16 +107,14 @@ VS_OUT VS_Main(VS_IN vin)
     VS_OUT vout;
     
     vout.pos = mul(float4(vin.pos, 1.0f), WorldMat);
+    vout.normal = mul(float4(vin.normal, 0.0f), WorldMat);
     vout.uv = vin.uv;
+   
     
     return vout;
 }
 
-struct HS_OUT
-{
-    float4 pos : POSITION;
-    float2 uv : TEXCOORD;
-};
+
 
 struct PatchConstOutput
 {
@@ -146,6 +152,7 @@ HS_OUT HS_Main(InputPatch<VS_OUT, 4> patch, uint vertexID : SV_OutputControlPoin
     HS_OUT hout;
     hout.pos = patch[vertexID].pos;
     hout.uv = patch[vertexID].uv;
+    hout.normal = patch[vertexID].normal;
     
     return hout;
 }
@@ -170,9 +177,17 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
     
     dout.uv = uvCoord;
     
+    
+    float3 v5 = lerp(quad[0].normal, quad[1].normal, location.x);
+    float3 v6 = lerp(quad[2].normal, quad[3].normal, location.x);
+    float3 normal = lerp(v5, v6, location.y);
+    
+    dout.normal = normal;
+    
     DS_OUT result = WaveGeneration(dout);
     
     result.pos = mul(result.pos, VPMatrix);
+    
 
     return result;
 }

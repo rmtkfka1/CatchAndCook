@@ -6,8 +6,8 @@
 #include "BufferPool.h"
 #include "BufferManager.h"
 #include "RendererBase.h"
-// SCENE -> Æ®¸®±¸Á¶ / MATERIAL CAMERA MESHRENDER SCRIPTS LIGHT  / RENDERPASS / MODEL / RESOURCEMANAGER / INSTANCING
-// 1.12 Àü±îÁö ¿£Áø±¸Á¶¿Ï¼º.
+// SCENE -> íŠ¸ë¦¬êµ¬ì¡° / MATERIAL CAMERA MESHRENDER SCRIPTS LIGHT  / RENDERPASS / MODEL / RESOURCEMANAGER / INSTANCING
+// 1.12 ì „ê¹Œì§€ ì—”ì§„êµ¬ì¡°ì™„ì„±.
 
 void Transform::SetDestroy()
 {
@@ -214,11 +214,11 @@ const vec3& Transform::SetWorldPosition(const vec3& worldPos)
 {
     auto parent = GetOwner();
     if (parent) parent = parent->parent.lock();
-    if (parent)
+    if(parent)
     {
         Matrix mat;
         parent->_transform->GetLocalToWorldMatrix_BottomUp(mat);
-        _localPosition = vec3::Transform(worldPos, mat.Invert());
+        _localPosition = vec3::Transform(worldPos,  mat.Invert());
     }
     else
         _localPosition = worldPos;
@@ -344,7 +344,7 @@ bool Transform::SetLocalSRTMatrix(Matrix& localSRT)
     vec3 position;
     Quaternion rotation;
     vec3 scale;
-    // Çà·ÄÀ» À§Ä¡, È¸Àü, ½ºÄÉÀÏ·Î ºĞÇØ
+    // í–‰ë ¬ì„ ìœ„ì¹˜, íšŒì „, ìŠ¤ì¼€ì¼ë¡œ ë¶„í•´
     std::memcpy(&_localSRTMatrix, &localSRT, sizeof(Matrix));
     if (localSRT.Decompose(scale, rotation, position))
     {
@@ -354,7 +354,7 @@ bool Transform::SetLocalSRTMatrix(Matrix& localSRT)
         _needLocalUpdated = false;
         return true;
     }
-    std::cout << "ºĞÇØ ½ÇÆĞ\n";
+    std::cout << "ë¶„í•´ ì‹¤íŒ¨\n";
     return false;
 }
 
@@ -370,7 +370,7 @@ bool Transform::CheckLocalMatrixUpdate() const
 
 bool Transform::CheckLocalToWorldMatrixUpdate()
 {
-    //bottom-up check ¹æ½Ä
+    //bottom-up check ë°©ì‹
     bool needUpdate = false;
     auto currentObj = GetOwner();
     while (currentObj != nullptr && (!needUpdate))
