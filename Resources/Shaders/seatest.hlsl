@@ -1,4 +1,6 @@
 #include "GLOBAL.hlsl"
+#include  "Light.hlsl"
+
 Texture2D g_tex_0 : register(t0);
 SamplerState g_sam_0 : register(s0);
 
@@ -7,7 +9,7 @@ SamplerState g_sam_0 : register(s0);
 #define DIST_MAX 300.0f
 #define DIST_MIN 30.0f
 
-static float4 sea_color = float4(0,0,1,1);
+static float4 sea_color = float4(0.3f,0.3f,1.0f,1.0f);
 
 cbuffer test : register(b1)
 {
@@ -39,7 +41,7 @@ struct VS_IN
 
 struct VS_OUT
 {
-    float4 pos : POSITION;
+    float4 pos : SV_Position;
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
 };
@@ -53,7 +55,7 @@ struct DS_OUT
 
 struct HS_OUT
 {
-    float4 pos : POSITION;
+    float4 pos : SV_Position;
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
 };
@@ -89,16 +91,17 @@ DS_OUT WaveGeneration(DS_OUT input)
         modifiedPos.xz += steepnesses[i] * amplitudes[i] * direction * waveDerivative;
         modifiedPos.y += amplitudes[i] * wave;
 
-        float3 waveNormal = normalize(float3(-waveDerivative * direction.x, 1.0f, -waveDerivative * direction.y));
-        normalSum += waveNormal;
+        //float3 waveNormal = normalize(float3(-waveDerivative * direction.x, 1.0f, -waveDerivative * direction.y));
+        //normalSum += waveNormal;
     }
 
-    normalSum = normalize(normalSum);
+    //normalSum = normalize(normalSum);
 
     DS_OUT result;
     result.pos = modifiedPos;
     result.uv = input.uv;
-    result.normal = normalSum;
+    result.normal = input.normal;
+    //result.normal = normalSum;
     return result;
 }
 
@@ -194,6 +197,34 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 
 float4 PS_Main(DS_OUT input) : SV_Target
 {
-    return sea_color;
+    
+    
+    float3 color;
+    
+    float4 worldPos = mul(input.pos, InvertVPMatrix);
+    float3 WolrdNormal = input.normal;
+    float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
+
+    for (int i = 0; i < g_lightCount; ++i)
+    {
+        if (g_lights[i].mateiral.lightType == 0)
+        {
+            color += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, WolrdNormal.xyz, toEye);
+        }
+        //else if (g_lights[i].mateiral.lightType == 1)
+        //{
+        //    color += ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
+        //}
+        //else if (g_lights[i].mateiral.lightType == 2)
+        //{
+        //    color += ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
+        //}
+    }
+    
+    //return  sea_color;
+
+    return float4(color, 1.0f) * sea_color;
+    
+
 
 }
