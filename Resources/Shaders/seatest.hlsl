@@ -66,6 +66,7 @@ VS_IN WaveGeneration(VS_IN input)
     float amplitudes[waveCount] = { 11.0f, 9.0f, 7.0f };
     float wavelengths[waveCount] = { 500.0f, 300.0f, 200.0f };
     float speeds[waveCount] = { 0.5f, 1.0f, 0.8f };
+    float steepnesses[waveCount] = { 0.5f, 0.4f, 0.3f }; // 스티프니스 추가
 
     float2 waveDirections[waveCount] =
     {
@@ -83,11 +84,15 @@ VS_IN WaveGeneration(VS_IN input)
         float frequency = 2 * PI / wavelengths[i];
         float phase = speeds[i] * g_Time;
         float2 direction = waveDirections[i];
+        float steepness = steepnesses[i];
 
         float dotProduct = dot(direction, input.pos.xz);
         float wave = sin(dotProduct * frequency + phase);
         float waveDerivative = cos(dotProduct * frequency + phase);
 
+        // Gerstner Waves 적용
+        modifiedPos.x += steepness * amplitudes[i] * direction.x * waveDerivative;
+        modifiedPos.z += steepness * amplitudes[i] * direction.y * waveDerivative;
         modifiedPos.y += amplitudes[i] * wave;
 
         // 편미분 계산
@@ -107,6 +112,7 @@ VS_IN WaveGeneration(VS_IN input)
 
     return result;
 }
+
 
 VS_OUT VS_Main(VS_IN input)
 {
@@ -181,7 +187,7 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 
     float3 v5 = lerp(quad[0].normal, quad[1].normal, location.x);
     float3 v6 = lerp(quad[2].normal, quad[3].normal, location.x);
-    float3 normal = normalize(lerp(v5, v6, location.y)); // 보간 후 정규화
+    float3 normal = normalize(lerp(v5, v6, location.y)); 
     dout.normal = mul(float4(normal, 0.0f), WorldMat);
     
     return dout;
