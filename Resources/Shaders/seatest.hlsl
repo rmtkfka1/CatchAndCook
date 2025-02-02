@@ -60,13 +60,12 @@ struct HS_OUT
     float3 normal : NORMAL;
 };
 
-DS_OUT WaveGeneration(DS_OUT input)
+VS_IN WaveGeneration(VS_IN input)
 {
     const int waveCount = 3;
-    float amplitudes[waveCount] = { 11.0f, 9.0f, 7.0f };
+    float amplitudes[waveCount] = {11.0f, 9.0f, 7.0f };
     float wavelengths[waveCount] = { 500.0f, 300.0f, 200.0f };
     float speeds[waveCount] = { 0.5f, 1.0f, 0.8f };
-    float steepnesses[waveCount] = { 0.5f, 0.4f, 0.3f }; // 스티프니스 추가
 
     float2 waveDirections[waveCount] =
     {
@@ -75,8 +74,8 @@ DS_OUT WaveGeneration(DS_OUT input)
         normalize(float2(-0.5f, 0.7f))
     };
 
-    float4 modifiedPos = input.pos;
-    float3 normalSum = float3(0.0f, 1.0f, 0.0f);
+    float3 modifiedPos = input.pos;
+    float3 normalSum = float3(0.0f, 0.0f, 0.0f); // 초기 법선 (0으로 초기화)
 
     for (int i = 0; i < waveCount; i++)
     {
@@ -84,40 +83,45 @@ DS_OUT WaveGeneration(DS_OUT input)
         float phase = speeds[i] * g_Time;
         float2 direction = waveDirections[i];
 
-        float dotProduct = dot(direction, modifiedPos.xz);
+        float dotProduct = dot(direction, input.pos.xz);
         float wave = sin(dotProduct * frequency + phase);
-        float waveDerivative = cos(dotProduct * frequency + phase);
+        float waveDerivative = cos(dotProduct * frequency + phase) * frequency;
 
-        modifiedPos.xz += steepnesses[i] * amplitudes[i] * direction * waveDerivative;
+        // 높이 변위 적용
         modifiedPos.y += amplitudes[i] * wave;
 
-        //float3 waveNormal = normalize(float3(-waveDerivative * direction.x, 1.0f, -waveDerivative * direction.y));
-        //normalSum += waveNormal;
+        // 법선 기울기 계산
+        float3 tangent = float3(1.0f, waveDerivative * direction.x * amplitudes[i], 0.0f);
+        float3 binormal = float3(0.0f, waveDerivative * direction.y * amplitudes[i], 1.0f);
+
+        float3 normal = normalize(cross(binormal, tangent));
+        normalSum += normal;
     }
 
-    //normalSum = normalize(normalSum);
+    // 최종 정규화
+    normalSum = normalize(normalSum);
 
-    DS_OUT result;
+    VS_IN result;
     result.pos = modifiedPos;
-    result.uv = input.uv;
-    result.normal = input.normal;
-    //result.normal = normalSum;
+    result.normal = normalSum;
+    result.uv = input.uv; // UV 유지
+
     return result;
 }
 
-VS_OUT VS_Main(VS_IN vin)
+VS_OUT VS_Main(VS_IN input)
 {
-    VS_OUT vout;
-    
-    vout.pos = mul(float4(vin.pos, 1.0f), WorldMat);
-    vout.normal = mul(float4(vin.normal, 0.0f), WorldMat);
-    vout.uv = vin.uv;
-   
-    
-    return vout;
+    VS_OUT output = (VS_OUT) 0;
+
+    VS_IN result = WaveGeneration(input);
+ 
+    // 월드, 뷰, 프로젝션 변환
+    float4 worldPos = mul(float4(result.pos.xyz, 1.0f), WorldMat);
+    output.pos = worldPos;
+    output.uv = input.uv;
+    output.normal = input.normal;
+    return output;
 }
-
-
 
 struct PatchConstOutput
 {
@@ -164,67 +168,35 @@ HS_OUT HS_Main(InputPatch<VS_OUT, 4> patch, uint vertexID : SV_OutputControlPoin
 [domain("quad")]
 DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 location : SV_DomainLocation)
 {
-    //쪼개진 정점갯수만큼 호출됨.
     DS_OUT dout;
-
-	// Bilinear interpolation.
+    
     float4 v1 = lerp(quad[0].pos, quad[1].pos, location.x);
     float4 v2 = lerp(quad[2].pos, quad[3].pos, location.x);
     float4 posCoord = lerp(v1, v2, location.y);
-    
-    dout.pos = posCoord;
+    dout.pos = mul(posCoord, VPMatrix);
 
     float2 v3 = lerp(quad[0].uv, quad[1].uv, location.x);
     float2 v4 = lerp(quad[2].uv, quad[3].uv, location.x);
     float2 uvCoord = lerp(v3, v4, location.y);
-    
     dout.uv = uvCoord;
-    
-    
+
     float3 v5 = lerp(quad[0].normal, quad[1].normal, location.x);
     float3 v6 = lerp(quad[2].normal, quad[3].normal, location.x);
-    float3 normal = lerp(v5, v6, location.y);
+    float3 normal = normalize(lerp(v5, v6, location.y)); // 보간 후 정규화
+    dout.normal = mul(float4(normal, 0.0f), WorldMat);
     
-    dout.normal = normal;
-    
-    DS_OUT result = WaveGeneration(dout);
-    
-    result.pos = mul(result.pos, VPMatrix);
-    
-
-    return result;
+    return dout;
 }
 
 float4 PS_Main(DS_OUT input) : SV_Target
 {
-    
     
     float3 color;
     
     float4 worldPos = mul(input.pos, InvertVPMatrix);
     float3 WolrdNormal = input.normal;
     float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
-
-    for (int i = 0; i < g_lightCount; ++i)
-    {
-        if (g_lights[i].mateiral.lightType == 0)
-        {
-            color += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, WolrdNormal.xyz, toEye);
-        }
-        //else if (g_lights[i].mateiral.lightType == 1)
-        //{
-        //    color += ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
-        //}
-        //else if (g_lights[i].mateiral.lightType == 2)
-        //{
-        //    color += ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
-        //}
-    }
     
-    //return  sea_color;
-
-    return float4(color, 1.0f) * sea_color;
-    
-
-
+    return float4(WolrdNormal, 1.0f);
+  
 }

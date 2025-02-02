@@ -1,4 +1,6 @@
 #include "GLOBAL.hlsl"
+#include  "Light.hlsl"
+
 Texture2D g_tex_0 : register(t0);
 SamplerState g_sam_0 : register(s0);
 
@@ -49,7 +51,7 @@ struct VS_OUT
 VS_IN WaveGeneration(VS_IN input)
 {
     const int waveCount = 3; // 파동의 개수
-    float amplitudes[waveCount] = { 9.0f, 6.0f, 4.0f }; // 각 파동의 진폭 (높이를 줄여 자연스럽게)
+    float amplitudes[waveCount] = { 11.0f, 9.0f, 7.0f }; // 각 파동의 진폭 (높이를 줄여 자연스럽게)
     float wavelengths[waveCount] = { 500.0f, 300.0f, 200.0f }; // 각 파동의 파장 (더 넓은 범위)
     float speeds[waveCount] = { 0.5f, 1.0f, 0.8f }; // 각 파동의 속도 (속도 조정)
 
@@ -105,8 +107,6 @@ VS_OUT VS_Main(VS_IN input)
     float4 worldPos = mul(float4(result.pos, 1.0f), WorldMat);
     
     output.worldPos = worldPos.xyz;
-
-    
     output.pos = mul(worldPos, VPMatrix);
     output.uv = input.uv;
     output.worldNormal = normalize(mul(float4(result.normal, 0.0f), WorldMat).xyz);
@@ -115,5 +115,29 @@ VS_OUT VS_Main(VS_IN input)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    return float4(1, 0, 0, 0);
+    float3 color;
+    
+    float4 worldPos = mul(input.pos, InvertVPMatrix);
+    float3 WolrdNormal = input.worldNormal;
+    float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
+
+    for (int i = 0; i < g_lightCount; ++i)
+    {
+        if (g_lights[i].mateiral.lightType == 0)
+        {
+            color += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, WolrdNormal.xyz, toEye);
+        }
+        else if (g_lights[i].mateiral.lightType == 1)
+        {
+            color += ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
+        }
+        else if (g_lights[i].mateiral.lightType == 2)
+        {
+            color += ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
+        }
+    }
+    
+    return float4(WolrdNormal * 0.5f + 0.5f, 1.0f); // 노말을 시각적으로 확인
+    
+    return float4(color, 1.0f);
 }

@@ -133,37 +133,36 @@ void TestScene::Init()
 
 
 
-	/*{
+	//{
 
-		ShaderInfo info;
-		info._zTest = true;
-		info._stencilTest = false;
-		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+	//	ShaderInfo info;
+	//	info._zTest = true;
+	//	info._stencilTest = false;
+	//	info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
 
-		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"screenParticle.hlsl", StaticProp, ShaderArg{ {{"PS_Main", "ps"},{"VS_Main", "vs"},
-			{"GS_Main", "gs"}} }, info);
+	//	shared_ptr<Shader> shader = make_shared<Shader>();
+	//	shader->Init(L"screenParticle.hlsl", StaticProp, ShaderArg{ {{"PS_Main", "ps"},{"VS_Main", "vs"},
+	//		{"GS_Main", "gs"}} }, info);
 
-		shared_ptr<Material> material = make_shared<Material>();
+	//	shared_ptr<Material> material = make_shared<Material>();
 
-		shared_ptr<GameObject> object = CreateGameObject(L"testing_fire");
+	//	shared_ptr<GameObject> object = CreateGameObject(L"testing_fire");
 
-		object->_transform->SetLocalPosition(vec3(0, 0.0f, 50.0f));
-		auto meshRenderer = object->AddComponent<MeshRenderer>();
+	//	object->_transform->SetLocalPosition(vec3(0, 0.0f, 50.0f));
+	//	auto meshRenderer = object->AddComponent<MeshRenderer>();
 
-		object->AddComponent<ScreenParticle>();
-	
-		material = make_shared<Material>();
-		material->SetShader(shader);
-		material->SetPass(RENDER_PASS::Forward);
-		meshRenderer->AddMaterials({ material });
+	//	object->AddComponent<ScreenParticle>();
+	//
+	//	material = make_shared<Material>();
+	//	material->SetShader(shader);
+	//	material->SetPass(RENDER_PASS::Forward);
+	//	meshRenderer->AddMaterials({ material });
 
-		auto& mesh = GeoMetryHelper::LoadRectangleBox(10.0f);
-		mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
-		mesh->SetVertexCount(2048);
-		meshRenderer->AddMesh(mesh);
-	};
-*/
+	//	auto& mesh = GeoMetryHelper::LoadRectangleBox(10.0f);
+	//	mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+	//	mesh->SetVertexCount(2048);
+	//	meshRenderer->AddMesh(mesh);
+	//};
 
 
 
@@ -201,26 +200,26 @@ void TestScene::Init()
 		//info.cullingType = CullingType::NONE;
 		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest", L"seatest.hlsl", StaticProp,
-			ShaderArg{ {{"VS_Main", "vs"}, {"PS_Main", "ps"}, {"HS_Main", "hs"},{"DS_Main", "ds"}  }}, info);
-	
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest",L"seatest.hlsl",StaticProp,
+			ShaderArg{{{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}}},info);
+
 		shared_ptr<Material> material = make_shared<Material>();
 
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"grid_orgin");
 		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
 
 		//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal_Sea"));
-		gameObject->_transform->SetLocalPosition(vec3(0, 0, 0));
+		gameObject->_transform->SetLocalPosition(vec3(0,0,0));
 
 		material = make_shared<Material>();
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
-		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
-		material->SetHandle("g_tex_0", texture->GetSRVCpuHandle());
+		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start",L"Textures/start.jpg");
+		material->SetHandle("g_tex_0",texture->GetSRVCpuHandle());
 
-		meshRenderer->AddMaterials({ material });
+		meshRenderer->AddMaterials({material});
 
-		auto& mesh = GeoMetryHelper::LoadGripMeshControlPoints(2000.0f, 2000.0f, 100, 100);
+		auto& mesh = GeoMetryHelper::LoadGripMeshControlPoints(2000.0f,2000.0f,100,100);
 		mesh->SetTopolgy((D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST));
 		meshRenderer->AddMesh(mesh);
 	}
@@ -230,7 +229,7 @@ void TestScene::Init()
 	//	ShaderInfo info;
 	//	info._zTest = true;
 	//	info._stencilTest = false;
-	//	info.cullingType = CullingType::WIREFRAME;
+	//	info.cullingType = CullingType::NONE;
 
 	//	shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"testgrid", L"sea.hlsl", StaticProp,
 	//		ShaderArg{}, info);
@@ -245,10 +244,9 @@ void TestScene::Init()
 	//	material = make_shared<Material>();
 	//	material->SetShader(shader);
 	//	material->SetPass(RENDER_PASS::Forward);
-	//	material->SetHandle("g_tex_0", ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle());
 
 	//	meshRenderer->AddMaterials({ material });
-	//	meshRenderer->AddMesh(GeoMetryHelper::LoadGripMesh(2000.0f, 2000.0f, 4000, 4000));
+	//	meshRenderer->AddMesh(GeoMetryHelper::LoadGripMesh(2000.0f, 2000.0f,700,700));
 	//}
 
 #pragma region sprite
