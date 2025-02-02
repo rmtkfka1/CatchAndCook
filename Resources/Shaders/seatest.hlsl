@@ -94,7 +94,7 @@ VS_IN WaveGeneration(VS_IN input)
         float3 tangent = float3(1.0f, waveDerivative * direction.x * amplitudes[i], 0.0f);
         float3 binormal = float3(0.0f, waveDerivative * direction.y * amplitudes[i], 1.0f);
 
-        float3 normal = normalize(cross(binormal, tangent));
+        float3 normal = normalize(cross(tangent, binormal));
         normalSum += normal;
     }
 
@@ -197,6 +197,6 @@ float4 PS_Main(DS_OUT input) : SV_Target
     float3 WolrdNormal = input.normal;
     float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
     
-    return float4(WolrdNormal, 1.0f);
+    return g_tex_0.Sample(g_sam_0, input.uv);
   
 }
