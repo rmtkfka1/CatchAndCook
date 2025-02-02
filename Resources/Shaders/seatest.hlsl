@@ -124,7 +124,10 @@ VS_OUT VS_Main(VS_IN input)
     float4 worldPos = mul(float4(result.pos.xyz, 1.0f), WorldMat);
     output.pos = worldPos;
     output.uv = input.uv;
-    output.normal = result.normal;
+
+    float3x3 normalMatrix = (float3x3) transpose(InvertViewMatrix); // 또는 WorldMat의 역전치 행렬
+    output.normal = mul(result.normal, normalMatrix);
+    
     return output;
 }
 
@@ -188,7 +191,8 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
     float3 v5 = lerp(quad[0].normal, quad[1].normal, location.x);
     float3 v6 = lerp(quad[2].normal, quad[3].normal, location.x);
     float3 normal = normalize(lerp(v5, v6, location.y)); 
-    dout.normal = mul(float4(normal, 0.0f), WorldMat);
+    
+    dout.normal = normal;
     
     return dout;
 }
@@ -199,24 +203,25 @@ float4 PS_Main(DS_OUT input) : SV_Target
     
     float4 worldPos = mul(input.pos, InvertVPMatrix);
     float3 WolrdNormal = input.normal;
+    
     float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
 
     for (int i = 0; i < g_lightCount; ++i)
     {
         if (g_lights[i].mateiral.lightType == 0)
         {
-            color += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, WolrdNormal.xyz, toEye);
+            color += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, WolrdNormal.xyz, -toEye);
         }
         else if (g_lights[i].mateiral.lightType == 1)
         {
-            color += ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
+            color += ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, -toEye);
         }
         else if (g_lights[i].mateiral.lightType == 2)
         {
-            color += ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
+            color += ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, -toEye);
         }
     }
     
-    return float4(color, 1.0f);
+    return float4(color, 1.0f) * sea_color;
   
 }
