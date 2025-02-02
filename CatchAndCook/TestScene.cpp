@@ -225,29 +225,29 @@ void TestScene::Init()
 	}
 
 
-	//{
-	//	ShaderInfo info;
-	//	info._zTest = true;
-	//	info._stencilTest = false;
-	//	info.cullingType = CullingType::NONE;
+	/*{
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
 
-	//	shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"testgrid", L"sea.hlsl", StaticProp,
-	//		ShaderArg{}, info);
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"testgrid", L"sea.hlsl", StaticProp,
+			ShaderArg{}, info);
 
-	//	shared_ptr<Material> material = make_shared<Material>();
+		shared_ptr<Material> material = make_shared<Material>();
 
-	//	shared_ptr<GameObject> gameObject = CreateGameObject(L"grid");
-	//	auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+		shared_ptr<GameObject> gameObject = CreateGameObject(L"grid");
+		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
 
-	//	gameObject->_transform->SetLocalPosition(vec3(100.0f, 0, 0));
+		gameObject->_transform->SetLocalPosition(vec3(100.0f, 0, 0));
 
-	//	material = make_shared<Material>();
-	//	material->SetShader(shader);
-	//	material->SetPass(RENDER_PASS::Forward);
+		material = make_shared<Material>();
+		material->SetShader(shader);
+		material->SetPass(RENDER_PASS::Forward);
 
-	//	meshRenderer->AddMaterials({ material });
-	//	meshRenderer->AddMesh(GeoMetryHelper::LoadGripMesh(2000.0f, 2000.0f,700,700));
-	//}
+		meshRenderer->AddMaterials({ material });
+		meshRenderer->AddMesh(GeoMetryHelper::LoadGripMesh(2000.0f, 2000.0f,700,700));
+	}*/
 
 #pragma region sprite
 	//for (int i = 0; i < 1; ++i)
