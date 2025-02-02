@@ -222,6 +222,6 @@ float4 PS_Main(DS_OUT input) : SV_Target
         }
     }
     
-    return float4(color, 1.0f) * sea_color;
+    return float4(color, 1.0f) * g_tex_0.Sample(g_sam_0, input.uv);
   
 }

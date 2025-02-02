@@ -214,7 +214,7 @@ void TestScene::Init()
 		material = make_shared<Material>();
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
-		shared_ptr<Texture> texture = ResourceManager::main->GetNoneTexture();
+		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"Sea",L"Textures/sea.jpg");
 		material->SetHandle("g_tex_0",texture->GetSRVCpuHandle());
 
 		meshRenderer->AddMaterials({material});
