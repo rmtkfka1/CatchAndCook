@@ -2,8 +2,9 @@
 #include  "Light.hlsl"
 
 Texture2D g_tex_0 : register(t0);
+Texture2D g_tex_1 : register(t1);
 SamplerState g_sam_0 : register(s0);
-
+SamplerState g_sam_1 : register(s1);
 #define TessFactor 8
 #define PI 3.14159f
 #define DIST_MAX 300.0f

@@ -68,7 +68,7 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float4 WolrdNormal = input.worldNormal;
     float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
 
-    
+  
     for (int i = 0; i < g_lightCount; ++i)
     {
         if (g_lights[i].mateiral.lightType == 0)
