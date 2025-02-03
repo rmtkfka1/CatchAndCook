@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Transform.h"
 #include "Mesh.h"
+#include "SkinnedHierarchy.h"
 
 
 SkinnedMeshRenderer::~SkinnedMeshRenderer()
@@ -24,6 +25,22 @@ void SkinnedMeshRenderer::Init()
 void SkinnedMeshRenderer::Start()
 {
 	Component::Start();
+
+	//std::vector<std::shared_ptr<GameObject>> _boneRoots;
+	//GetOwner()->GetRoot()->GetChildsAllByName(_boneName, _boneRoots);
+	//if(!_boneRoots.empty())
+	//{
+	//	std::shared_ptr<SkinnedHierarchy> hierarchy = _boneRoots[0]->GetComponent<SkinnedHierarchy>();
+	//	if(hierarchy == nullptr)
+	//		_boneRoots[0]->AddComponent<SkinnedHierarchy>();
+	//}
+	auto root = GetOwner()->GetParent();
+	if (root != nullptr)
+	{
+		_hierarchy = root->GetComponent<SkinnedHierarchy>();
+		if(_hierarchy.lock() == nullptr)
+			_hierarchy = root->AddComponent<SkinnedHierarchy>();
+	}
 }
 
 void SkinnedMeshRenderer::Update()

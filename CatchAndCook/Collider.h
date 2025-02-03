@@ -1,10 +1,16 @@
-#pragma once
+
 #include "Component.h"
 
-class SkinnedHierarchy : public Component
+
+class Collision
 {
 public:
-	~SkinnedHierarchy() override;
+};
+
+class Collider : public Component
+{
+public:
+	~Collider() override;
 	bool IsExecuteAble() override;
 	void Init() override;
 	void Start() override;
@@ -16,8 +22,4 @@ public:
 	void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
 	void SetDestroy() override;
 	void Destroy() override;
-
-	void SetBoneList(std::shared_ptr<std::shared_ptr<Bone>> bones){ _boneList = bones;}
-	std::shared_ptr<std::shared_ptr<Bone>> _boneList;
 };
-

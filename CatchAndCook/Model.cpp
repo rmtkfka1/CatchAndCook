@@ -102,14 +102,14 @@ void Model::Init(const wstring& path, VertexType vertexType)
 		{
 			case VertexType::Vertex_Skinned:
 			{
-				LoadVertex(currentAIMesh, currentModelMesh->skinnedMeshList);
+				LoadVertex(currentAIMesh, currentMesh, currentModelMesh->skinnedMeshList);
 				LoadBone(currentAIMesh, currentModelMesh);
 				currentMesh->Init(currentModelMesh->skinnedMeshList, indexList);
 				break;
 			}
 			case VertexType::Vertex_Static:
 			{
-				LoadVertex(currentAIMesh, currentModelMesh->staticMeshList);
+				LoadVertex(currentAIMesh, currentMesh, currentModelMesh->staticMeshList);
 				currentMesh->Init(currentModelMesh->staticMeshList, indexList);
 				break;
 			}
@@ -133,12 +133,14 @@ void Model::DebugLog()
 
 
 template <>
-void Model::LoadVertex<Vertex_Skinned>(aiMesh* assimp_mesh, std::vector<Vertex_Skinned>& vertexs)
+void Model::LoadVertex<Vertex_Skinned>(aiMesh* assimp_mesh, std::shared_ptr<Mesh> mesh, std::vector<Vertex_Skinned>& vertexs)
 {
 	auto mesh2 = std::make_shared<Mesh>();
 
 	vertexs.reserve(assimp_mesh->mNumVertices);
 	Vertex_Skinned vert;
+	Vector3 min = Vector3(10000, 10000, 10000);
+	Vector3 max = -min;
 	for (int j = 0; j < assimp_mesh->mNumVertices; j++)
 	{
 		vert = {};
@@ -155,15 +157,21 @@ void Model::LoadVertex<Vertex_Skinned>(aiMesh* assimp_mesh, std::vector<Vertex_S
 		vert.boneWeight = Vector4::Zero;
 		vert.boneId = Vector4(-1, -1, -1, -1);
 		vertexs.push_back(vert);
+
+		Vector3::Min(min, vert.position, min);
+		Vector3::Max(max, vert.position, max);
 	}
+	mesh->SetBound(BoundingBox((max + min) / 2, (max - min) / 2));
 }
 
 template <>
-void Model::LoadVertex<Vertex_Static>(aiMesh* assimp_mesh, std::vector<Vertex_Static>& vertexs)
+void Model::LoadVertex<Vertex_Static>(aiMesh* assimp_mesh, std::shared_ptr<Mesh> mesh, std::vector<Vertex_Static>& vertexs)
 {
 	auto mesh2 = std::make_shared<Mesh>();
 	vertexs.reserve(assimp_mesh->mNumVertices);
 	Vertex_Static vert;
+	Vector3 min = Vector3(10000, 10000, 10000);
+	Vector3 max = -min;
 	for (int j = 0; j < assimp_mesh->mNumVertices; j++)
 	{
 		vert = {};
@@ -173,7 +181,11 @@ void Model::LoadVertex<Vertex_Static>(aiMesh* assimp_mesh, std::vector<Vertex_St
 		if (assimp_mesh->HasTextureCoords(0))
 			vert.uv = vec2(convert_assimp::Format(assimp_mesh->mTextureCoords[0][j]));
 		vertexs.push_back(vert);
+
+		Vector3::Min(min, vert.position, min);
+		Vector3::Max(max, vert.position, max);
 	}
+	mesh->SetBound(BoundingBox((max + min) / 2, (max - min) / 2));
 }
 
 void Model::LoadIndex(aiMesh* assimp_mesh, std::vector<uint32_t>& indexs)

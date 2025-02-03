@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "SkinnedHierarchy.h"
 
 class SkinnedMeshRenderer : public Component, public  RendererBase
 {
@@ -32,6 +33,8 @@ public:
 		_normalDebugShader = shader;
 	}
 
+	void SetBoneRootName(const std::wstring& name) { _boneName = name; };
+
 private:
 	std::shared_ptr<Model> _model;
 	std::vector<std::shared_ptr<Mesh>> _mesh;
@@ -39,5 +42,8 @@ private:
 	std::vector<std::shared_ptr<Material>> _sharedMaterials;
 
 	shared_ptr<Shader> _normalDebugShader;
+
+	std::wstring _boneName;
+	std::weak_ptr<SkinnedHierarchy> _hierarchy;
 };
 

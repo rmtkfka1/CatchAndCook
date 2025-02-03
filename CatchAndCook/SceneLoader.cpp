@@ -240,6 +240,7 @@ void SceneLoader::LinkComponent(json jsonData)
         auto skinnedmeshRenderer = IGuid::FindObjectByGuid<SkinnedMeshRenderer>(guid);
         auto meshInfo = jsonData["mesh"];
         auto modelName = std::to_wstring(meshInfo["modelName"].get<std::string>());
+        auto boneName = std::to_wstring(jsonData["boneRoot"].get<std::string>());
 
         auto model = ResourceManager::main->Get<Model>(modelName);
         if(model != nullptr)
@@ -262,6 +263,7 @@ void SceneLoader::LinkComponent(json jsonData)
             for(auto& mesh : meshes)
                 skinnedmeshRenderer->AddMesh(mesh->GetMesh());
             skinnedmeshRenderer->SetModel(model);
+            skinnedmeshRenderer->SetBoneRootName(boneName);
         } else
         {
             std::cout << "Json Load - Not Found Model : " << std::to_string(modelName) << "\n";

@@ -32,7 +32,7 @@ private:
 		_vertexCount = static_cast<uint32>(vec.size());
 		uint32 bufferSize = _vertexCount * sizeof(T);
 
-		//DEFAULT πˆ∆€ ª˝º∫
+		//DEFAULT Î≤ÑÌçº ÏÉùÏÑ±
 		ThrowIfFailed( Core::main->GetDevice()->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
 			D3D12_HEAP_FLAG_NONE,
@@ -59,7 +59,7 @@ private:
 		::memcpy(data, &vec[0], bufferSize);
 		uploadBuffer->Unmap(0, nullptr);
 
-		//∫πªÁ¿€æ˜
+		//Î≥µÏÇ¨ÏûëÏóÖ
 		auto& list  =Core::main->GetResCmdList();
 		list->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_vertexBuffer.Get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
 		list->CopyBufferRegion(_vertexBuffer.Get(), 0, uploadBuffer, 0, bufferSize);
@@ -89,9 +89,11 @@ public:
 	void SetTopolgy(D3D_PRIMITIVE_TOPOLOGY topology) { _topology = topology; }
 	D3D_PRIMITIVE_TOPOLOGY&  GetTopology() { return _topology; }
 
-	//struturedBuffer ¿ÃøÎ«“∂ß ªÁøÎ
+	//struturedBuffer Ïù¥Ïö©Ìï†Îïå ÏÇ¨Ïö©
 	void SetVertexCount(uint32 count) { _vertexCount = count; _noUseVertex = true; }
 
+	void SetBound(BoundingBox box){_bound = box;};
+	BoundingBox GetBound() const {return _bound;};
 
 private:
 	bool _noUseVertex=false;
@@ -106,7 +108,7 @@ private:
 	D3D12_INDEX_BUFFER_VIEW		_indexBufferView = {};
 	uint32 _indexCount = 0;
 
-
+	BoundingBox _bound;
 
 };
 

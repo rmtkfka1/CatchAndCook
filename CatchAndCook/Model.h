@@ -44,11 +44,11 @@ public:
 
 public:
 	template<class T>
-	static void LoadVertex(aiMesh* assimp_mesh, std::vector<T>& vertexs);
+	static void LoadVertex(aiMesh* assimp_mesh, std::shared_ptr<Mesh> mesh, std::vector<T>& vertexs);
 	template<>
-	static void LoadVertex<Vertex_Skinned>(aiMesh* assimp_mesh, std::vector<Vertex_Skinned>& vertexs);
+	static void LoadVertex<Vertex_Skinned>(aiMesh* assimp_mesh, std::shared_ptr<Mesh> mesh, std::vector<Vertex_Skinned>& vertexs);
 	template<>
-	static void LoadVertex<Vertex_Static>(aiMesh* assimp_mesh, std::vector<Vertex_Static>& vertexs);
+	static void LoadVertex<Vertex_Static>(aiMesh* assimp_mesh, std::shared_ptr<Mesh> mesh, std::vector<Vertex_Static>& vertexs);
 
 	static void LoadIndex(aiMesh* assimp_mesh, std::vector<uint32_t>& indexs);
 
