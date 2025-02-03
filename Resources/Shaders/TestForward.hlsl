@@ -52,5 +52,5 @@ VS_OUT VS_Main(VS_IN input)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-   return  _BaseMap.Sample(g_sam_0, input.uv);
+    return _BaseMap.Sample(g_sam_0, input.uv);
 }
