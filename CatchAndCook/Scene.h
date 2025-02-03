@@ -55,7 +55,7 @@ protected:
 	std::vector<std::shared_ptr<GameObject>> _dont_destroy_gameObjects;
 
 public:
-	std::vector<std::shared_ptr<GameObject>> _gameObjects;
+	std::vector<std::shared_ptr<GameObject>> _gameObjects; 
 	std::vector<std::shared_ptr<GameObject>> _gameObjects_deactivate;
 
 	std::queue<std::shared_ptr<GameObject>> _destroyQueue;

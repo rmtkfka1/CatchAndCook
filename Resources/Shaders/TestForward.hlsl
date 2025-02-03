@@ -45,7 +45,6 @@ VS_OUT VS_Main(VS_IN input)
     output.pos = mul(float4(input.pos, 1.0f), WorldMat);
     output.pos = mul(output.pos, VPMatrix);
 
-    
     output.uv = input.uv;
 
     return output;
