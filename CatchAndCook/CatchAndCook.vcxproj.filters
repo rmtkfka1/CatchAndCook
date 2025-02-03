@@ -208,6 +208,12 @@
     <ClCompile Include="GameObjectSetting.cpp">
       <Filter>GameObject</Filter>
     </ClCompile>
+    <ClCompile Include="WaterHeight.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="LightManager.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -391,6 +397,12 @@
     <ClInclude Include="GameObjectSetting.h">
       <Filter>GameObject</Filter>
     </ClInclude>
+    <ClInclude Include="WaterHeight.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="LightManager.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -439,6 +451,9 @@
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\color.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Light.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
   </ItemGroup>

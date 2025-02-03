@@ -1,4 +1,6 @@
 #include "GLOBAL.hlsl"
+#include  "Light.hlsl"
+
 Texture2D g_tex_0 : register(t0);
 SamplerState g_sam_0 : register(s0);
 
@@ -48,21 +50,21 @@ struct VS_OUT
 
 VS_IN WaveGeneration(VS_IN input)
 {
-    const int waveCount = 3; // ÆÄµ¿ÀÇ °³¼ö
-    float amplitudes[waveCount] = { 9.0f, 6.0f, 4.0f }; // °¢ ÆÄµ¿ÀÇ ÁøÆø (³ôÀÌ¸¦ ÁÙ¿© ÀÚ¿¬½º·´°Ô)
-    float wavelengths[waveCount] = { 500.0f, 300.0f, 200.0f }; // °¢ ÆÄµ¿ÀÇ ÆÄÀå (´õ ³ĞÀº ¹üÀ§)
-    float speeds[waveCount] = { 0.5f, 1.0f, 0.8f }; // °¢ ÆÄµ¿ÀÇ ¼Óµµ (¼Óµµ Á¶Á¤)
+    const int waveCount = 3;
+    float amplitudes[waveCount] = { 11.0f, 9.0f, 7.0f };
+    float wavelengths[waveCount] = { 500.0f, 300.0f, 200.0f };
+    float speeds[waveCount] = { 0.5f, 1.0f, 0.8f };
 
     float2 waveDirections[waveCount] =
     {
-        normalize(float2(1.0f, 0.2f)), // ÁÖ ¹æÇâ (¿ìÃø ÇÏ´Ü ¹æÇâÀ¸·Î ÁøÇà)
-        normalize(float2(0.0f, 1.0f)), // ¼öÁ÷ ¹æÇâ (À§ÂÊ ¹æÇâ)
-        normalize(float2(-0.5f, 0.7f)) // ´ë°¢¼± ¹æÇâ (ÁÂÃø À§ÂÊ ¹æÇâ)
+        normalize(float2(1.0f, 0.2f)),
+        normalize(float2(0.0f, 1.0f)),
+        normalize(float2(-0.5f, 0.7f))
     };
 
-    // ÃÊ±â À§Ä¡
     float3 modifiedPos = input.pos;
-    float3 modifiedNormal = float3(0.0f, 0.0f, 0.0f); // ÃÊ±âÈ­ º¯°æ
+    float dHdX = 0.0f; // x ë°©í–¥ í¸ë¯¸ë¶„
+    float dHdZ = 0.0f; // z ë°©í–¥ í¸ë¯¸ë¶„
 
     for (int i = 0; i < waveCount; i++)
     {
@@ -74,23 +76,22 @@ VS_IN WaveGeneration(VS_IN input)
         float wave = sin(dotProduct * frequency + phase);
         float waveDerivative = cos(dotProduct * frequency + phase);
 
-    // xz ¹× y ¹æÇâ º¯À§ Àû¿ë
-        modifiedPos.xz += amplitudes[i] * direction * waveDerivative;
         modifiedPos.y += amplitudes[i] * wave;
 
-    // ±â¿ï±â º¤ÅÍ °è»ê
-        float3 tangentX = float3(direction.x, waveDerivative * direction.x, 0.0f);
-        float3 tangentZ = float3(0.0f, waveDerivative * direction.y, direction.y);
+        // í¸ë¯¸ë¶„ ê³„ì‚°
+        float dWavedX = frequency * waveDerivative * direction.x;
+        float dWavedZ = frequency * waveDerivative * direction.y;
 
-    // ¹ı¼± ±â¿©µµ ÇÕ»ê
-        modifiedNormal += cross(tangentX, tangentZ);
+        dHdX += amplitudes[i] * dWavedX;
+        dHdZ += amplitudes[i] * dWavedZ;
     }
 
-    modifiedNormal = normalize(modifiedNormal); // Á¤±ÔÈ­
+    // ë²•ì„  ë²¡í„° ê³„ì‚°
+    float3 normal = normalize(float3(-dHdX, 1.0f, -dHdZ));
 
     VS_IN result;
     result.pos = modifiedPos;
-    result.normal = modifiedNormal;
+    result.normal = normal;
 
     return result;
 }
@@ -101,12 +102,10 @@ VS_OUT VS_Main(VS_IN input)
 
     VS_IN result = WaveGeneration(input);
  
-    // ¿ùµå, ºä, ÇÁ·ÎÁ§¼Ç º¯È¯
+    // ì›”ë“œ, ë·°, í”„ë¡œì ì…˜ ë³€í™˜
     float4 worldPos = mul(float4(result.pos, 1.0f), WorldMat);
     
     output.worldPos = worldPos.xyz;
-
-    
     output.pos = mul(worldPos, VPMatrix);
     output.uv = input.uv;
     output.worldNormal = normalize(mul(float4(result.normal, 0.0f), WorldMat).xyz);
@@ -115,5 +114,27 @@ VS_OUT VS_Main(VS_IN input)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    return float4(1, 0, 0, 0);
+    float3 color;
+    
+    float4 worldPos = mul(input.pos, InvertVPMatrix);
+    float3 WolrdNormal = input.worldNormal;
+    float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
+
+    for (int i = 0; i < g_lightCount; ++i)
+    {
+        if (g_lights[i].mateiral.lightType == 0)
+        {
+            color += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, WolrdNormal.xyz, toEye);
+        }
+        else if (g_lights[i].mateiral.lightType == 1)
+        {
+            color += ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
+        }
+        else if (g_lights[i].mateiral.lightType == 2)
+        {
+            color += ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
+        }
+    }
+    
+    return float4(color, 1.0f);
 }

@@ -14,6 +14,7 @@
 #include "Mesh.h"
 #include "Shader.h"
 #include "TextManager.h"
+#include "LightManager.h"
 
 void Game::Init(HWND hwnd)
 {
@@ -39,8 +40,23 @@ void Game::Init(HWND hwnd)
 
 	TextManager::main = make_unique<TextManager>();
 	TextManager::main->Init();
-		
-	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
+
+	LightManager::main = make_unique<LightManager>();
+	{
+		Light light;
+
+		light.direction = vec3(0,-1.0f,-1.0f);
+		light.material.ambient = vec3(1.0f,1.0f,1.0f);
+		light.material.diffuse = vec3(0.5f,0.5f,0.5f);
+		light.material.specular = vec3(1.0f,1.0f,1.0f);
+		light.material.shininess = 64.0f;
+		light.material.lightType = static_cast<int32>(LIGHT_TYPE::DIRECTIONAL_LIGHT);
+		light.strength = vec3(1.0f,1.0f,1.0f);
+		LightManager::main->PushLight(light);
+	}
+
+
+	auto scene = SceneManager::main->AddScene(SceneType::TestScene);
 	SceneManager::main->ChangeScene(scene);
 }
 
@@ -114,6 +130,7 @@ void Game::Run()
 
 	std::shared_ptr<Scene> currentScene = SceneManager::main->GetCurrentScene();
 	Core::main->RenderBegin();
+	LightManager::main->SetData();
 	currentScene->Update();
 	currentScene->RenderBegin();
 	currentScene->Rendering();
@@ -141,7 +158,7 @@ void Game::CameraUpdate()
 {
 	shared_ptr<Camera> camera = CameraManager::main->GetActiveCamera();
 
-	const float speed = 20.0f;
+	const float speed = 200.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;
 
 	if (Input::main->GetKey(KeyCode::W))

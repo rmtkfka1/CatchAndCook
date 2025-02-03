@@ -7,8 +7,8 @@
 unique_ptr<ResourceManager> ResourceManager::main =nullptr;
 std::wstring ResourceManager::path_model = L"../Resources/";
 
-//ui[ÀÏÁÖÀÏ]-> pass[1ÀÏ] -> ¹Ù´Ù±¸Çö[ÀÏÁÖÀÏ].
-//modelLoad(unity¿¬µ¿¼öÁ¤) -> TerrianSystem -> SkinnedMesh(animation) [15ÀÏ]-> //navymesh ½Ã½ºÅÛ 
+//ui[ì¼ì£¼ì¼]-> pass[1ì¼] -> ë°”ë‹¤êµ¬í˜„[ì¼ì£¼ì¼].
+//modelLoad(unityì—°ë™ìˆ˜ì •) -> TerrianSystem -> SkinnedMesh(animation) [15ì¼]-> //navymesh ì‹œìŠ¤í…œ 
 
 void ResourceManager::Init()
 {
@@ -104,5 +104,5 @@ void ResourceManager::CreateDefaultMaterial()
 void ResourceManager::CreateDefaultTexture()
 {
 	_noneTexture = Load<Texture>(L"None", L"Textures/Config/noneTexture.png");
-	Load<Texture>(L"None_Debug", L"Textures/Config/noneTexture_debug.png");
+	_noneTexture = Load<Texture>(L"None_Debug", L"Textures/Config/noneTexture_debug.png");
 }
