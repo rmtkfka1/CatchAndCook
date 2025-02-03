@@ -47,6 +47,7 @@ private:
     unordered_map<wstring, shared_ptr<Texture>> _textureMap;
 
     std::shared_ptr<Texture> _noneTexture;
+    std::shared_ptr<Texture> _noneTexture_debug;
 };
 
 template<typename T>
