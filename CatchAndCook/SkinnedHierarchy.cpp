@@ -96,13 +96,12 @@ void SkinnedHierarchy::Destroy()
 void SkinnedHierarchy::PushData()
 {
 	_cbuffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::BoneParam)->Alloc(1);
-	Matrix worldTrans;
+	GetOwner()->_transform->TopDownLocalToWorldUpdate(Matrix::Identity, true);
 	for (int i = 0; i < _boneList.size(); i++)
 	{
 		_finalMatrixList[i] = _boneOffsetMatrixList[i];
 		if (auto current = _boneNodeList[i].lock()) {
-			current->_transform->GetLocalToWorldMatrix(worldTrans);
-			_finalMatrixList[i] = _finalMatrixList[i] * worldTrans;
+			_finalMatrixList[i] = _finalMatrixList[i] * current->_transform->_localToWorldMatrix;
 		}
 	}
 	memcpy(_cbuffer->ptr, _finalMatrixList.data(), sizeof(Matrix) * _boneList.size());
@@ -110,5 +109,7 @@ void SkinnedHierarchy::PushData()
 
 void SkinnedHierarchy::SetData(Material* material)
 {
-	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(material->GetShader()->GetRegisterIndex("BoneParam"), _cbuffer->GPUAdress);
+	int index = material->GetShader()->GetRegisterIndex("BoneParam");
+	if(index != -1)
+		Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(index, _cbuffer->GPUAdress);
 }

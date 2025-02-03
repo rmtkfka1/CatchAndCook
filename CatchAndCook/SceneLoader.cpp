@@ -159,8 +159,10 @@ void SceneLoader::LinkGameObject(json jsonData)
 
     if (gameObject != nullptr)
     {
+        auto isActive = jsonData["active"].get<bool>();
         auto isStatic = jsonData["static"].get<bool>();
         auto isDeactivate = jsonData["deactivate"].get<bool>();
+
         gameObject->SetName(std::to_wstring(jsonData["name"].get<std::string>()));
 
         for (auto& componentGuid : jsonData["components"])
@@ -171,7 +173,8 @@ void SceneLoader::LinkGameObject(json jsonData)
         else
             gameObject->SetType(isStatic ? GameObjectType::Static : GameObjectType::Dynamic); // 수정이 필요함. Unity 쪽의 static 옵션 받아오게 해야함.
         _scene->AddGameObject(gameObject);
-        gameObject->Init();
+        gameObject->SetActiveSelf(isActive);
+    	gameObject->Init();
         gameObject->SetParent(parentObject);
     }
 /*return gameObject;*/
