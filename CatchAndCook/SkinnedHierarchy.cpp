@@ -29,7 +29,7 @@ void SkinnedHierarchy::Start()
 	for (int index = 0;index<_boneList.size();index++)
 	{
 		auto& bone = _boneList[index];
-		_boneOffsetMatrixList[index++] = bone->GetTransformMatrix();
+		_boneOffsetMatrixList[index] = bone->GetTransformMatrix();
 		{
 			std::vector<std::shared_ptr<GameObject>> obj;
 			auto name = to_wstring(bone->GetName());
