@@ -12,6 +12,7 @@ struct CBufferContainer
 	D3D12_CPU_DESCRIPTOR_HANDLE	CPUHandle; //Descriptor Table 에다가 핸들 복사할떄 사용
 	D3D12_GPU_VIRTUAL_ADDRESS   GPUAdress; //View 에다가 바로꼽아줄때 사용
 	void* ptr;
+	uint32 count = 1;
 };
 
 class CBufferPool
@@ -22,7 +23,8 @@ public:
 	~CBufferPool();
 	void Init(uint32 size, uint32 count);
 	void Reset();
-	CBufferContainer* Alloc(uint32 count=1);
+	CBufferContainer* Alloc(uint32 count = 1);
+	//void Free(CBufferContainer* cbuffer);
 
 private:
 

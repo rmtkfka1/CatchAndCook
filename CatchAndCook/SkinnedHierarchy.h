@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
 
-class SkinnedHierarchy : public Component
+class SkinnedHierarchy : public Component, public RenderObjectSetter
 {
 public:
 	~SkinnedHierarchy() override;
@@ -17,7 +17,17 @@ public:
 	void SetDestroy() override;
 	void Destroy() override;
 
-	void SetBoneList(std::shared_ptr<std::shared_ptr<Bone>> bones){ _boneList = bones;}
-	std::shared_ptr<std::shared_ptr<Bone>> _boneList;
+	void SetBoneList(std::vector<std::shared_ptr<Bone>> bones){ _boneList = bones;}
+	void PushData() override;
+	void SetData(Material* material) override;
+
+	std::unordered_map<std::wstring, std::weak_ptr<GameObject>> nodeObjectTable;
+
+	std::vector<std::shared_ptr<Bone>> _boneList;
+	std::array<Matrix, 256> _boneOffsetMatrixList;
+	std::array<std::weak_ptr<GameObject>, 256> _boneNodeList;
+	std::array<Matrix, 256> _finalMatrixList;
+
+	CBufferContainer* _cbuffer;
 };
 

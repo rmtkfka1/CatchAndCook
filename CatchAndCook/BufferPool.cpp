@@ -78,9 +78,10 @@ CBufferContainer* CBufferPool::Alloc(uint32 count)
 {
 	assert(_currentIndex <= _count);
 	CBufferContainer* data = &_container[_currentIndex];
-	_currentIndex+=count;
+	_currentIndex += data->count = count;
 	return data;
 }
+
 
 
 /*************************

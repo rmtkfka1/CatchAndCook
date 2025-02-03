@@ -283,12 +283,12 @@ void Model::SetNodeData()
 
 void Model::SetBoneData()
 {
-	boneCBuffer = Core::main->GetBufferManager()->GetBufferPool_Static(BufferType::BoneParam)->Alloc(1);
-	int offset = 0;
-	for (auto& bone : _modelBoneList) {
-		memcpy(static_cast<char*>(boneCBuffer->ptr) + offset, &bone->GetTransformMatrix(), sizeof(Matrix));
-		offset += sizeof(Matrix);
-	}
+	//boneCBuffer = Core::main->GetBufferManager()->GetBufferPool_Static(BufferType::BoneParam)->Alloc(1);
+	//int offset = 0;
+	//for (auto& bone : _modelBoneList) {
+	//	memcpy(static_cast<char*>(boneCBuffer->ptr) + offset, &bone->GetTransformMatrix(), sizeof(Matrix));
+	//	offset += sizeof(Matrix);
+	//}
 }
 
 void Model::AddBone(const std::shared_ptr<Bone>& bone)

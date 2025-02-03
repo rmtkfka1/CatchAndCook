@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "SkinnedHierarchy.h"
 
+#include "Bone.h"
+#include "SkinnedMeshRenderer.h"
+#include "Transform.h"
+
 SkinnedHierarchy::~SkinnedHierarchy()
 {
 }
@@ -13,11 +17,39 @@ bool SkinnedHierarchy::IsExecuteAble()
 void SkinnedHierarchy::Init()
 {
 	Component::Init();
+	for(auto&matrix : _boneOffsetMatrixList)
+		matrix = Matrix::Identity;
+	for (auto& matrix : _finalMatrixList)
+		matrix = Matrix::Identity;
 }
 
 void SkinnedHierarchy::Start()
 {
 	Component::Start();
+	for (int index = 0;index<_boneList.size();index++)
+	{
+		auto& bone = _boneList[index];
+		_boneOffsetMatrixList[index++] = bone->GetTransformMatrix();
+		{
+			std::vector<std::shared_ptr<GameObject>> obj;
+			auto name = to_wstring(bone->GetName());
+			GetOwner()->GetChildsAllByName(name, obj);
+			if (!obj.empty())
+				_boneNodeList[index] = obj[0];
+		}
+		{
+			std::vector<std::shared_ptr<GameObject>> obj;
+
+			auto name = to_wstring(bone->GetName());
+			GetOwner()->GetChildsAllByName(name, obj);
+			if (!obj.empty())
+				nodeObjectTable[name] = obj[0];
+		}
+	}
+	std::vector<std::shared_ptr<SkinnedMeshRenderer>> renderers;
+	GetOwner()->GetComponentsWithChilds(renderers);
+	for (auto& renderer : renderers)
+		renderer->AddSetter(GetCast<SkinnedHierarchy>());
 }
 
 void SkinnedHierarchy::Update()
@@ -43,6 +75,7 @@ void SkinnedHierarchy::Disable()
 void SkinnedHierarchy::RenderBegin()
 {
 	Component::RenderBegin();
+	PushData();
 }
 
 void SkinnedHierarchy::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
@@ -58,4 +91,24 @@ void SkinnedHierarchy::SetDestroy()
 void SkinnedHierarchy::Destroy()
 {
 	Component::Destroy();
+}
+
+void SkinnedHierarchy::PushData()
+{
+	_cbuffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::BoneParam)->Alloc(1);
+	Matrix worldTrans;
+	for (int i = 0; i < _boneList.size(); i++)
+	{
+		_finalMatrixList[i] = _boneOffsetMatrixList[i];
+		if (auto current = _boneNodeList[i].lock()) {
+			current->_transform->GetLocalToWorldMatrix(worldTrans);
+			_finalMatrixList[i] = _finalMatrixList[i] * worldTrans;
+		}
+	}
+	memcpy(_cbuffer->ptr, _finalMatrixList.data(), sizeof(Matrix) * _boneList.size());
+}
+
+void SkinnedHierarchy::SetData(Material* material)
+{
+	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(material->GetShader()->GetRegisterIndex("BoneParam"), _cbuffer->GPUAdress);
 }

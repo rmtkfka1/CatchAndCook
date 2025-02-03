@@ -254,7 +254,7 @@ void SceneLoader::LinkComponent(json jsonData)
                 auto shaderName = std::to_wstring(refJson_MaterialTable[guid]["shaderName"].get<std::string>());
                 auto shader = ResourceManager::main->Get<Shader>(shaderName);
                 if(shader == nullptr)
-                    shader = ResourceManager::main->Get<Shader>(L"DefaultForward");
+                    shader = ResourceManager::main->Get<Shader>(L"DefaultForward_Skinned");
                 material->SetShader(shader);
                 materials.push_back(material);
             }

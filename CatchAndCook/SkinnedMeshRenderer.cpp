@@ -38,8 +38,11 @@ void SkinnedMeshRenderer::Start()
 	if (root != nullptr)
 	{
 		_hierarchy = root->GetComponent<SkinnedHierarchy>();
-		if(_hierarchy.lock() == nullptr)
+		if (_hierarchy.lock() == nullptr)
+		{
 			_hierarchy = root->AddComponent<SkinnedHierarchy>();
+			_hierarchy.lock()->SetBoneList(_model->_modelBoneList);
+		}
 	}
 }
 
