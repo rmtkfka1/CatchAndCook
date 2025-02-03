@@ -30,7 +30,7 @@ void TestScene::Init()
 	{
 		auto& a = ResourceManager::main->Load<SceneLoader>(L"TestScene3",L"../Resources/Datas/Scenes/TestScene3.json");
 		auto& object= a->Load(GetCast<Scene>());
-		
+	
 	}
 
 #pragma region DebugXYZ
