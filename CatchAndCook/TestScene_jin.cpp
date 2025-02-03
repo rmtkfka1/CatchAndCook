@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "TestScene_jin.h"
 #include "MeshRenderer.h"
-
+#include "Transform.h"
 
 
 void TestScene_jin::Init()
@@ -44,6 +44,9 @@ void TestScene_jin::Init()
 	ResourceManager::main->Load<SceneLoader>(L"test", L"../Resources/Datas/Scenes/TestScene.json");
 	ResourceManager::main->Get<SceneLoader>(L"test")->Load(GetCast<Scene>());
 	std::cout << _gameObjects.size() << "\n";
+
+	Find(L"Neck")->_transform->SetLocalRotation(Vector3(0,180,0) * D2R);
+
 }
 
 void TestScene_jin::Update()
