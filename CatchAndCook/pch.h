@@ -1,6 +1,7 @@
 #pragma once
-#define WIN32_LEAN_AND_MEAN             // °ÅÀÇ »ç¿ëµÇÁö ¾Ê´Â ³»¿ëÀ» Windows Çì´õ¿¡¼­ Á¦¿ÜÇÕ´Ï´Ù.
+#define WIN32_LEAN_AND_MEAN             // ê±°ì˜ ì‚¬ìš©ë˜ì§€ ì•ŠëŠ” ë‚´ìš©ì„ Windows í—¤ë”ì—ì„œ ì œì™¸í•©ë‹ˆë‹¤.
 #define _HAS_STD_BYTE 0
+#define NOMINMAX
 
 #include <windows.h>
 #include <tchar.h>
@@ -45,7 +46,7 @@ using namespace Microsoft::WRL;
 #include <DirectXTex/DirectXTex.h>
 #include <DirectXTex/DirectXTex.inl>
 
-// °¢Á¾ lib
+// ê°ì¢… lib
 #pragma comment(lib, "DXGI.lib")
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "D3D12.lib")

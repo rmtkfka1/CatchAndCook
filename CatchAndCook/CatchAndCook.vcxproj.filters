@@ -214,8 +214,13 @@
     <ClCompile Include="LightManager.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
-    <ClCompile Include="Collider.cpp" />
-    <ClCompile Include="TerrainComponent.cpp" />
+    <ClCompile Include="TerrainComponent.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="BoundingCapsule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -366,9 +371,6 @@
     <ClInclude Include="testComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
-    <ClInclude Include="StructuredBuffer.h">
-      <Filter>Resource</Filter>
-    </ClInclude>
     <ClInclude Include="ScreenParticle.h">
       <Filter>Component</Filter>
     </ClInclude>
@@ -405,8 +407,16 @@
     <ClInclude Include="LightManager.h">
       <Filter>Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Collider.h" />
-    <ClInclude Include="TerrainComponent.h" />
+    <ClInclude Include="TerrainComponent.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="StructuredBuffer.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingCapsule.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
