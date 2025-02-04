@@ -214,6 +214,8 @@
     <ClCompile Include="LightManager.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
+    <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="TerrainComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -403,6 +405,8 @@
     <ClInclude Include="LightManager.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="Collider.h" />
+    <ClInclude Include="TerrainComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -454,6 +458,9 @@
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Light.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\TestForward_Skinned.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
   </ItemGroup>

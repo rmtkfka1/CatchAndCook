@@ -23,8 +23,8 @@ cbuffer cameraParams : register(b2)
 struct VS_IN
 {
     float3 pos : POSITION;
-    float3 normal : NORMAL;
     float2 uv : TEXCOORD0;
+    float3 normal : NORMAL;
 };
 
 struct VS_OUT
