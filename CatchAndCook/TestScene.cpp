@@ -20,6 +20,18 @@ void TestScene::Init()
 {
 	Scene::Init();
 
+
+	//{
+	//	auto& a = ResourceManager::main->Load<Model>(L"kind",L"../Resources/Models/Kindred/kindred_unity.fbx",VertexType::Vertex_Static);
+	//	auto& object =a->CreateGameObject(GetCast<Scene>());
+	//	object->_transform->SetLocalPosition(vec3(0,500.0f,0));
+	//}
+
+	{
+		auto& a = ResourceManager::main->Load<SceneLoader>(L"TestScene3",L"../Resources/Datas/Scenes/TestScene3.json");
+		auto& object= a->Load(GetCast<Scene>());
+	}
+
 #pragma region DebugXYZ
 	{
 

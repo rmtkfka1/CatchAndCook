@@ -54,7 +54,7 @@ void ResourceManager::CreateDefaultShader()
 		info._stencilTest = false;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"TestForward.hlsl", SkinProp, ShaderArg{}, info);
+		shader->Init(L"TestForward.hlsl", StaticProp, ShaderArg{}, info);
 		Add<Shader>(L"DefaultForward", shader);
 	}
 	{
