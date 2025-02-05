@@ -72,11 +72,12 @@ public:
 
     static bool RemoveGuid(const std::wstring& guid)
     {
-        auto iter = _GuidTable.find(guid);
+       /* auto iter = _GuidTable.find(guid);
         if (iter != _GuidTable.end()) {
             _GuidTable.erase(iter);
             return true;
-        }
+        }*/
+
         return false;
     }
 

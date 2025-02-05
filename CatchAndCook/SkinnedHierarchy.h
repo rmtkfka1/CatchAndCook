@@ -25,7 +25,7 @@ public:
 	std::unordered_map<std::wstring, std::weak_ptr<GameObject>> nodeObjectTable;
 
 	std::vector<std::shared_ptr<Bone>> _boneList;
-	std::array<Matrix, 256> _boneOffsetMatrixList;
+	std::array<Matrix, 256> _boneOffsetMatrixList; 
 	std::array<std::weak_ptr<GameObject>, 256> _boneNodeList;
 	std::array<Matrix, 256> _finalMatrixList;
 
