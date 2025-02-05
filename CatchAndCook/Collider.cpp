@@ -106,50 +106,47 @@ bool Collider::CheckCollision(Collider * other)
 	{
 		if(other->_type == CollisionType::Box)
 		{
-			return _bound.box.Intersects(other->GetBoundUnion().box);
+			return _bound.box.Intersects(other->_bound.box);
 		}
 		else if(other->_type == CollisionType::Sphere)
 		{
-			return _bound.box.Intersects(other->GetBoundUnion().sphere);
+			return _bound.box.Intersects(other->_bound.sphere);
 		} 
 		else if(other->_type == CollisionType::Frustum)
 		{
-			return _bound.box.Intersects(other->GetBoundUnion().frustum);
+			return _bound.box.Intersects(other->_bound.frustum);
 		}
-
 
 	}
 	else if(_type == CollisionType::Sphere)
 	{
 		if(other->_type == CollisionType::Box)
 		{
-			return _bound.sphere.Intersects(other->GetBoundUnion().box);
+			return _bound.sphere.Intersects(other->_bound.box);
 		}
 		else if(other->_type == CollisionType::Sphere)
 		{
-			return _bound.sphere.Intersects(other->GetBoundUnion().sphere);
+			return _bound.sphere.Intersects(other->_bound.sphere);
 		} 
 		else if(other->_type == CollisionType::Frustum)
 		{
-			return _bound.sphere.Intersects(other->GetBoundUnion().frustum);
+			return _bound.sphere.Intersects(other->_bound.frustum);
 		}
-
-
 	} 
 
 	else if(_type == CollisionType::Frustum)
 	{
 		if(other->_type == CollisionType::Box)
 		{
-			return _bound.frustum.Intersects(other->GetBoundUnion().box);
+			return _bound.frustum.Intersects(other->_bound.box);
 		} 
 		else if(other->_type == CollisionType::Sphere)
 		{
-			return _bound.frustum.Intersects(other->GetBoundUnion().sphere);
+			return _bound.frustum.Intersects(other->_bound.sphere);
 		}
 		else if(other->_type == CollisionType::Frustum)
 		{
-			return _bound.frustum.Intersects(other->GetBoundUnion().frustum);
+			return _bound.frustum.Intersects(other->_bound.frustum);
 		}
 
 
