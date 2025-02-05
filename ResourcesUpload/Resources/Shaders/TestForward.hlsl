@@ -23,8 +23,8 @@ cbuffer cameraParams : register(b2)
 struct VS_IN
 {
     float3 pos : POSITION;
-    float3 normal : NORMAL;
     float2 uv : TEXCOORD0;
+    float3 normal : NORMAL;
 };
 
 struct VS_OUT
@@ -45,7 +45,6 @@ VS_OUT VS_Main(VS_IN input)
     output.pos = mul(float4(input.pos, 1.0f), WorldMat);
     output.pos = mul(output.pos, VPMatrix);
 
-    
     output.uv = input.uv;
 
     return output;
@@ -53,5 +52,5 @@ VS_OUT VS_Main(VS_IN input)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-   return  _BaseMap.Sample(g_sam_0, input.uv);
+    return _BaseMap.Sample(g_sam_0, input.uv);
 }
