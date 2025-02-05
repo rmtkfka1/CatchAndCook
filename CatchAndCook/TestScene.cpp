@@ -15,6 +15,7 @@
 #include "Mesh.h"
 #include "ScreenParticle.h"
 #include "WaterHeight.h"
+#include "Terrain.h"
 
 void TestScene::Init()
 {
@@ -27,9 +28,14 @@ void TestScene::Init()
 	//	object->_transform->SetLocalPosition(vec3(0,500.0f,0));
 	//}
 
-	{
-		auto& a = ResourceManager::main->Load<SceneLoader>(L"TestScene3",L"../Resources/Datas/Scenes/TestScene3.json");
+	/*{
+		auto& a = ResourceManager::main->Load<SceneLoader>(L"TestScene1",L"../Resources/Datas/Scenes/TestScene1.json");
 		auto& object= a->Load(GetCast<Scene>());
+	}*/
+
+	{
+		shared_ptr<Terrain> terrain = make_shared<Terrain>(1000,1000,100,100);
+		terrain->SetHeightMap(L"../Resources/Textures/HeightMap/Terrain_Height.raw",L"../Resources/Textures/HeightMap/Terrain_Height.png");
 	}
 
 #pragma region DebugXYZ

@@ -215,7 +215,9 @@
       <Filter>Resource</Filter>
     </ClCompile>
     <ClCompile Include="Collider.cpp" />
-    <ClCompile Include="TerrainComponent.cpp" />
+    <ClCompile Include="Terrain.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -406,7 +408,9 @@
       <Filter>Resource</Filter>
     </ClInclude>
     <ClInclude Include="Collider.h" />
-    <ClInclude Include="TerrainComponent.h" />
+    <ClInclude Include="Terrain.h">
+      <Filter>Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -460,8 +464,6 @@
     <FxCompile Include="..\Resources\Shaders\Light.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\TestForward_Skinned.hlsl">
-      <Filter>HLSL</Filter>
-    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\TestForward_Skinned.hlsl" />
   </ItemGroup>
 </Project>
