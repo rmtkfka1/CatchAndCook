@@ -133,7 +133,7 @@ void TestScene::Init()
 		auto meshRenderer = root->AddComponent<MeshRenderer>();
 		meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal"));
 
-		root->_transform->SetLocalScale(vec3(10.0f,10.0f,10.0f));
+		root->_transform->SetLocalScale(vec3(1,1,1));
 		//root->AddComponent<WaterHeight>()->SetOffset(10.0f);
 		root->AddComponent<testComponent>();
 	
@@ -143,7 +143,7 @@ void TestScene::Init()
 		material->SetHandle("g_tex_0", texture->GetSRVCpuHandle());
 
 		meshRenderer->AddMaterials({ material });
-		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
+		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(6.0f));
 	
 	}
 
