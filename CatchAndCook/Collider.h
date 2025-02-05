@@ -19,6 +19,7 @@ union BoundingUnion
 class Collider : public Component
 {
 public:
+	Collider();
 	~Collider() override;
 	bool IsExecuteAble() override;
 	void Init() override;

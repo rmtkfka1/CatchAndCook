@@ -41,7 +41,7 @@ void TestScene_jin::Init()
 	//auto obj = model->CreateGameObject(GetCast<Scene>());
 	//std::cout << _gameObjects.size() << "\n";
 
-	ResourceManager::main->Load<SceneLoader>(L"test", L"../Resources/Datas/Scenes/TestScene.json");
+	ResourceManager::main->Load<SceneLoader>(L"test", L"../Resources/Datas/Scenes/TestScene2.json");
 	auto a = ResourceManager::main->Get<SceneLoader>(L"test");
 
 	a->Load(GetCast<Scene>());

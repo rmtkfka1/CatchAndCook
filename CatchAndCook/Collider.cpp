@@ -4,6 +4,11 @@
 #include "GameObject.h"
 #include "Transform.h"
 
+Collider::Collider() : _orgin(BoundingOrientedBox()), _bound(BoundingOrientedBox())
+{
+
+}
+
 Collider::~Collider()
 {
 }
@@ -76,9 +81,10 @@ void Collider::RenderBegin()
 void Collider::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 	Component::CollisionBegin(collider,other);
-	auto& components = GetOwner()->GetComponentAll();
+	auto a =  GetOwner();
+	auto& components = a->GetComponentAll();
 	for(auto& component : components)
-		if(component != collider)
+		if(component.get() != collider.get())
 			component->CollisionBegin(collider,other);
 }
 
@@ -88,7 +94,7 @@ void Collider::CollisionEnd(const std::shared_ptr<Collider>& collider, const std
 
 	auto& components = GetOwner()->GetComponentAll();
 	for(auto& component : components)
-		if(component != collider)
+		if(component != GetCast<Component>())
 			component->CollisionEnd(collider,other);
 }
 

@@ -8,6 +8,7 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "CameraManager.h"
+#include "ColliderManager.h"
 
 void Scene::AddGameObject(const std::shared_ptr<GameObject>& gameObject)
 {
@@ -47,6 +48,8 @@ void Scene::Update()
     for (auto& gameObject : _gameObjects)
         if(gameObject->GetType() == GameObjectType::Dynamic)
             gameObject->Update2();
+
+    ColliderManager::main->Update();
 }
 
 void Scene::RenderBegin()
