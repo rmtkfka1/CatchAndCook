@@ -149,6 +149,7 @@ void Game::Run()
 
 void Game::Release()
 {
+	ColliderManager::main.reset(nullptr);
 	SceneManager::main.reset(nullptr);
 	InjectorManager::main.reset(nullptr);
 	CameraManager::main.reset(nullptr);
@@ -156,8 +157,8 @@ void Game::Release()
 	ResourceManager::main.reset(nullptr);
 	Time::main.reset(nullptr);
 	Input::main.reset(nullptr);
-	IGuid::StaticRelease();
 	Core::main.reset(nullptr);
+	IGuid::StaticRelease();
 }
 
 void Game::CameraUpdate()
