@@ -1,6 +1,35 @@
 #include "pch.h"
 #include "Collider.h"
 
+
+Collision::Collision()
+{
+}
+
+Collision::Collision(CollisionType type)
+{
+	SetType(type);
+}
+
+void Collision::SetBound(BoundingBox box)
+{
+	_box = box;
+}
+void Collision::SetBound(BoundingSphere sphere)
+{
+	_sphere = sphere;
+}
+void Collision::SetBound(BoundingFrustum frustum)
+{
+	_frustum = frustum;
+}
+
+BoundingOrientedBox Collision::GetWorldBound(std::shared_ptr<Transform> transform)
+{
+}
+
+
+
 Collider::~Collider()
 {
 }

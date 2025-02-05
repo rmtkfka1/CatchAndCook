@@ -1,10 +1,37 @@
 
 #include "Component.h"
 
+enum class CollisionType
+{
+	Box,
+	Sphere,
+	Capsule,
+	Frustum
+};
 
 class Collision
 {
 public:
+	Collision();
+	Collision(CollisionType type);
+
+	CollisionType GetType(){
+		return _type;
+	};
+	void SetType(CollisionType type){
+		_type = type;
+	};
+
+	void SetBound(BoundingBox box);
+	void SetBound(BoundingSphere sphere);
+	void SetBound(BoundingFrustum frustum);
+	BoundingOrientedBox GetWorldBound(std::shared_ptr<Transform> transform);
+private:
+	CollisionType _type;
+
+	BoundingBox _box;
+	BoundingSphere _sphere;
+	BoundingFrustum _frustum;
 };
 
 class Collider : public Component

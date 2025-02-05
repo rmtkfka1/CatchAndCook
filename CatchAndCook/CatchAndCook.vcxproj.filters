@@ -371,9 +371,6 @@
     <ClInclude Include="testComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
-    <ClInclude Include="StructuredBuffer.h">
-      <Filter>Resource</Filter>
-    </ClInclude>
     <ClInclude Include="ScreenParticle.h">
       <Filter>Component</Filter>
     </ClInclude>
