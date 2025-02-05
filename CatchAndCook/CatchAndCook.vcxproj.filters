@@ -465,5 +465,8 @@
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\TestForward_Skinned.hlsl" />
+    <FxCompile Include="..\Resources\Shaders\Terrain.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

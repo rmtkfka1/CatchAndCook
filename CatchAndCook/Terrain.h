@@ -7,7 +7,7 @@ class Terrain:public Component,public RenderObjectSetter
 {
 
 public:
-	Terrain(int32 size_x,int32 size_y,int32 division_x,int32 division_y);
+	Terrain();
 	virtual ~Terrain() override;
 	void Init() override;
 	void Start() override;
@@ -26,11 +26,8 @@ public:
 public:
 	void SetHeightMap(const std::wstring& rawData,const std::wstring& pngData);
 
-
-	void ReadRawData(const std::wstring& path);
-
 private:
-	shared_ptr<Mesh> _mesh{};
+
 	shared_ptr<Texture> _heightMap{};
 
 	vec2 _size{};

@@ -2,9 +2,9 @@
 #include "Terrain.h"
 #include "GameObject.h"
 
-Terrain::Terrain(int32 size_x,int32 size_y,int32 division_x,int32 division_y)
+Terrain::Terrain()
 {
-	_mesh=GeoMetryHelper::LoadGripMesh(size_x,size_y,division_x,division_y);
+	
 }
 
 Terrain::~Terrain()
@@ -99,6 +99,7 @@ void Terrain::SetHeightMap(const std::wstring &rawData,const std::wstring &pngDa
     _size = vec2(width,height);
 
     _rawData = new WORD*[height];
+
     for(int y = 0; y < height; ++y)
     {
         _rawData[y] = new WORD[width];

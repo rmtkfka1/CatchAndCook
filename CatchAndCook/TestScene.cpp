@@ -33,10 +33,7 @@ void TestScene::Init()
 		auto& object= a->Load(GetCast<Scene>());
 	}*/
 
-	{
-		shared_ptr<Terrain> terrain = make_shared<Terrain>(1000,1000,100,100);
-		terrain->SetHeightMap(L"../Resources/Textures/HeightMap/Terrain_Height.raw",L"../Resources/Textures/HeightMap/Terrain_Height.png");
-	}
+
 
 #pragma region DebugXYZ
 	{
@@ -245,29 +242,39 @@ void TestScene::Init()
 	}
 
 
-	/*{
+	{
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::WIREFRAME;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"testgrid", L"sea.hlsl", StaticProp,
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest", L"Terrain.hlsl", StaticProp,
 			ShaderArg{}, info);
 
 		shared_ptr<Material> material = make_shared<Material>();
 
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"grid");
+
 		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
 
-		gameObject->_transform->SetLocalPosition(vec3(100.0f, 0, 0));
+		auto& terrain = gameObject->AddComponent<Terrain>();
+		terrain->SetHeightMap(L"../Resources/Textures/HeightMap/Terrain_Height.raw",L"../Resources/Textures/HeightMap/Terrain_Height.png");
+
+		gameObject->_transform->SetLocalPosition(vec3(0, 1000.0f, 0));
 
 		material = make_shared<Material>();
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
 
+
 		meshRenderer->AddMaterials({ material });
-		meshRenderer->AddMesh(GeoMetryHelper::LoadGripMesh(2000.0f, 2000.0f,700,700));
-	}*/
+		meshRenderer->AddMesh(GeoMetryHelper::LoadGripMesh(2000.0f, 2000.0f,50,50));
+	}
+
+	
+
+
+
 
 #pragma region sprite
 	//for (int i = 0; i < 1; ++i)
