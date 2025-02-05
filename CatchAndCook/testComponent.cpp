@@ -29,7 +29,7 @@ void testComponent::Start()
 
 void testComponent::Update()
 {
-	const float speed = 100.0f;
+	const float speed = 300.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;
 
 	std::shared_ptr<Transform> transform =GetOwner()->_transform;

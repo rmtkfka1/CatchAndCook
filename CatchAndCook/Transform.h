@@ -71,9 +71,9 @@ public:
 
 
 public:
-    bool _isLocalSRTChanged = true; //ÀÌ°Å È°¼ºÈ­½Ã ½Ã ¿ùµå¸ÅÆ®¸¯½º °»½Å.isLocalToWorldChanged ÀÌ°Å È°¼ºÈ­
-    bool _isLocalToWorldChanged = true; //ºÎ¸ğ°¡ local ¾÷µ¥ÀÌÆ® or ºÎ¸ğ world º¯°æ½Ã ÀÌ°Å true.worldtrsº¯°æ.
-
+    bool _isLocalSRTChanged = true; //ì´ê±° í™œì„±í™”ì‹œ ì‹œ ì›”ë“œë§¤íŠ¸ë¦­ìŠ¤ ê°±ì‹ .isLocalToWorldChanged ì´ê±° í™œì„±í™”
+    bool _isLocalToWorldChanged = true; //ë¶€ëª¨ê°€ local ì—…ë°ì´íŠ¸ or ë¶€ëª¨ world ë³€ê²½ì‹œ ì´ê±° true.worldtrsë³€ê²½.
+	bool _useTerrain = false;
 private:
     vec3 _localPosition = vec3::Zero;
     vec3 _localScale = vec3::One;
@@ -84,11 +84,11 @@ private:
     vec3 _right = vec3::Right;
 
     Matrix _prevLocalSRTMatrix = Matrix::Identity;
-    Matrix _localSRTMatrix = Matrix::Identity; // prev¶û ºñ±³ÈÄ °»½Å/ °»½Å½Ã islocal¸Ó½Ã±â true ¾Æ´Ï¸é false
+    Matrix _localSRTMatrix = Matrix::Identity; // prevë‘ ë¹„êµí›„ ê°±ì‹ / ê°±ì‹ ì‹œ islocalë¨¸ì‹œê¸° true ì•„ë‹ˆë©´ false
     Matrix _localToWorldMatrix = Matrix::Identity;
 
-    bool _needLocalUpdated = true; // ³ª ÀÚ½ÅÀÌ SRT °»½Å ÇØ¾ßÇØ.
-    bool _needLocalToWorldUpdated = true; // ºÎ¸ğ°¡ ¾÷µ¥ÀÌÆ® ‰çÀ»¶§ ³»°¡ º¯°æµÇ¾î¾ßÇÔÀ» Ç¥±â, À§¿¡²¨¶ûÀº ¿ªÇÒÀÌ Á¶±İ ´Ù¸¥°Ô. À§¿¡²« ÀÚ±â ±âÁØÀÌ¶ó, Àü ÇÁ·¹ÀÓÀÌ¶û °°À¸¸é ¹Ù²î´Âµ¥, ÀÌ°Ç ³»°¡ ¹Ù²î±â Àü±îÁö ¾È²¨Áü
+    bool _needLocalUpdated = true; // ë‚˜ ìì‹ ì´ SRT ê°±ì‹  í•´ì•¼í•´.
+    bool _needLocalToWorldUpdated = true; // ë¶€ëª¨ê°€ ì—…ë°ì´íŠ¸ ë¬ì„ë•Œ ë‚´ê°€ ë³€ê²½ë˜ì–´ì•¼í•¨ì„ í‘œê¸°, ìœ„ì—êº¼ë‘ì€ ì—­í• ì´ ì¡°ê¸ˆ ë‹¤ë¥¸ê²Œ. ìœ„ì—ê»€ ìê¸° ê¸°ì¤€ì´ë¼, ì „ í”„ë ˆì„ì´ë‘ ê°™ìœ¼ë©´ ë°”ë€ŒëŠ”ë°, ì´ê±´ ë‚´ê°€ ë°”ë€Œê¸° ì „ê¹Œì§€ ì•ˆêº¼ì§
     CBufferContainer* _cbufferContainer;
 
     friend class SkinnedHierarchy;

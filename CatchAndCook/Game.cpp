@@ -15,6 +15,7 @@
 #include "Shader.h"
 #include "TextManager.h"
 #include "LightManager.h"
+#include "TerrainManager.h"
 
 void Game::Init(HWND hwnd)
 {
@@ -27,6 +28,9 @@ void Game::Init(HWND hwnd)
 
 	ResourceManager::main = make_unique<ResourceManager>();
 	ResourceManager::main->Init();
+
+	TerrainManager::main = make_unique<TerrainManager>();
+
 	SceneManager::main = make_unique<SceneManager>();
 	CameraManager::main = make_unique<CameraManager>();
 

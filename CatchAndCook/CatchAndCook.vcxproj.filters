@@ -218,6 +218,9 @@
     <ClCompile Include="Terrain.cpp">
       <Filter>Component</Filter>
     </ClCompile>
+    <ClCompile Include="TerrainManager.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -410,6 +413,9 @@
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Terrain.h">
       <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainManager.h">
+      <Filter>Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

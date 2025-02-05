@@ -127,12 +127,14 @@ void TestScene::Init()
 		shared_ptr<Material> material = make_shared<Material>();
 
 		shared_ptr<GameObject> root = CreateGameObject(L"root_test");
+
+		root->GetComponent<Transform>()->_useTerrain=true;
 	
 		auto meshRenderer = root->AddComponent<MeshRenderer>();
 		meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal"));
 
 		root->_transform->SetLocalScale(vec3(10.0f,10.0f,10.0f));
-		root->AddComponent<WaterHeight>()->SetOffset(10.0f);
+		//root->AddComponent<WaterHeight>()->SetOffset(10.0f);
 		root->AddComponent<testComponent>();
 	
 		material = make_shared<Material>();
@@ -144,42 +146,6 @@ void TestScene::Init()
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
 	
 	}
-
-
-
-
-	//{
-
-	//	ShaderInfo info;
-	//	info._zTest = true;
-	//	info._stencilTest = false;
-	//	info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
-
-	//	shared_ptr<Shader> shader = make_shared<Shader>();
-	//	shader->Init(L"screenParticle.hlsl", StaticProp, ShaderArg{ {{"PS_Main", "ps"},{"VS_Main", "vs"},
-	//		{"GS_Main", "gs"}} }, info);
-
-	//	shared_ptr<Material> material = make_shared<Material>();
-
-	//	shared_ptr<GameObject> object = CreateGameObject(L"testing_fire");
-
-	//	object->_transform->SetLocalPosition(vec3(0, 0.0f, 50.0f));
-	//	auto meshRenderer = object->AddComponent<MeshRenderer>();
-
-	//	object->AddComponent<ScreenParticle>();
-	//
-	//	material = make_shared<Material>();
-	//	material->SetShader(shader);
-	//	material->SetPass(RENDER_PASS::Forward);
-	//	meshRenderer->AddMaterials({ material });
-
-	//	auto& mesh = GeoMetryHelper::LoadRectangleBox(10.0f);
-	//	mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
-	//	mesh->SetVertexCount(2048);
-	//	meshRenderer->AddMesh(mesh);
-	//};
-
-
 
 	{
 		ShaderInfo info;
@@ -262,7 +228,7 @@ void TestScene::Init()
 		auto& terrain = gameObject->AddComponent<Terrain>();
 		terrain->SetHeightMap(L"../Resources/Textures/HeightMap/Terrain_Height.raw",L"../Resources/Textures/HeightMap/Terrain_Height.png");
 
-		gameObject->_transform->SetLocalPosition(vec3(0, 1000.0f, 0));
+		gameObject->_transform->SetLocalPosition(vec3(513.0f/2, 0,513.0f/2));
 
 		material = make_shared<Material>();
 		material->SetHandle("g_tex_0",ResourceManager::main->Load<Texture>(L"Terrain",L"Textures/HeightMap/terrainAlbedo.png")->GetSRVCpuHandle());
@@ -271,16 +237,12 @@ void TestScene::Init()
 
 		meshRenderer->AddMaterials({ material });
 
-		auto& mesh = GeoMetryHelper::LoadGripMesh(2000.0f,2000.0f,30,30);
+		auto& mesh = GeoMetryHelper::LoadGripMesh(513.0f,513.0f,30,30);
 		mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 		meshRenderer->AddMesh(mesh);
 	}
 
 	
-
-
-
-
 #pragma region sprite
 	//for (int i = 0; i < 1; ++i)
 	//{

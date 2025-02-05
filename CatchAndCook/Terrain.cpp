@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "Terrain.h"
 #include "GameObject.h"
-
+#include "TerrainManager.h"
+#include "Transform.h"
 Terrain::Terrain()
 {
 	
@@ -33,11 +34,14 @@ void Terrain::Start()
 	{
 		GetOwner()->GetRenderer()->AddSetter(static_pointer_cast<Terrain>(shared_from_this()));
 	}
+
+	TerrainManager::main->PushTerrain(static_pointer_cast<Terrain>(shared_from_this()));
+
 }
 
 void Terrain::Update()
 {
-
+    
 }
 
 void Terrain::Update2()
@@ -100,9 +104,9 @@ void Terrain::SetHeightMap(const std::wstring &rawData,const std::wstring &pngDa
 
     _rawData = new WORD*[height];
 
-    for(int y = 0; y < height; ++y)
+    for(int z = 0; z < height; ++z)
     {
-        _rawData[y] = new WORD[width];
+        _rawData[z] = new WORD[width];
     }
 
     std::ifstream file(rawData,std::ios::binary);
@@ -112,26 +116,41 @@ void Terrain::SetHeightMap(const std::wstring &rawData,const std::wstring &pngDa
         return;
     }
 
-    for(int y = 0; y < height; ++y)
+    for(int z = 0; z < height; ++z)
     {
-        file.read(reinterpret_cast<char*>(_rawData[y]),width * sizeof(WORD));
+        file.read(reinterpret_cast<char*>(_rawData[z]),width * sizeof(WORD));
     }
 
     file.close();
 
     const int MaxHeight =1000;
 
-    for(int y=0; y<height; ++y)
+    for(int z=0; z<height; ++z)
     {
         for(int x=0; x<width; ++x)
         {
-            _rawData[y][x] = static_cast<float>(_rawData[y][x]) / 65535.0f * MaxHeight;
+            _rawData[z][x] = static_cast<float>(_rawData[z][x]) / 65535.0f * MaxHeight;
         };
     };
 
     std::cout << _rawData[0][0] << " ";
 
-};
+}
+WORD Terrain::TerrainGetHeight(float x,float z)
+{
+    vec3 terrainOrigin = GetOwner()->_transform->GetLocalPosition();
+
+	int32 ix = static_cast<int>(x);
+	int32 iz = static_cast<int>(z);
+
+	if(x < 0 || x >= _size.x || z < 0 || z >= _size.y)
+	{
+		return 0;
+	}
+   
+    return  terrainOrigin.y + _rawData[iz][ix];
+}
+
 
 
  

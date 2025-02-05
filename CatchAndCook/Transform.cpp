@@ -6,6 +6,8 @@
 #include "BufferPool.h"
 #include "BufferManager.h"
 #include "RendererBase.h"
+#include "TerrainManager.h"
+#include "Terrain.h"
 // SCENE -> 트리구조 / MATERIAL CAMERA MESHRENDER SCRIPTS LIGHT  / RENDERPASS / MODEL / RESOURCEMANAGER / INSTANCING
 // 1.12 전까지 엔진구조완성.
 
@@ -43,6 +45,14 @@ void Transform::Start()
 void Transform::Update()
 {
 	Component::Update();
+
+    if(_useTerrain)
+    {
+		auto height= TerrainManager::main->GetTerrains()[0]->TerrainGetHeight(GetLocalPosition().x,GetLocalPosition().z);
+		auto pos = GetLocalPosition();
+		pos.y =  height;
+		SetLocalPosition(pos);
+    }
 }
 
 void Transform::Update2()

@@ -25,9 +25,9 @@ public:
 
 public:
 	void SetHeightMap(const std::wstring& rawData,const std::wstring& pngData);
+	WORD TerrainGetHeight(float x,float z);
 
 private:
-
 	shared_ptr<Texture> _heightMap{};
 
 	vec2 _size{};
