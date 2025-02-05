@@ -134,14 +134,14 @@ VS_OUT VS_Main(VS_IN input)
 
 struct PatchConstOutput
 {
-    float edges[4] : SV_TessFactor;
-    float inside[2] : SV_InsideTessFactor;
+    float edges[3] : SV_TessFactor;
+    float inside[1] : SV_InsideTessFactor;
 };
 
 //패치단위로 호출
-PatchConstOutput ConstantHS(InputPatch<VS_OUT, 4> patch, uint patchID : SV_PrimitiveID)
+PatchConstOutput ConstantHS(InputPatch<VS_OUT, 3> patch, uint patchID : SV_PrimitiveID)
 {
-    float3 center = (patch[0].pos + patch[1].pos + patch[2].pos + patch[3].pos).xyz * 0.25f;
+    float3 center = (patch[0].pos + patch[1].pos + patch[2].pos).xyz /3.0f;
     float dist = length(center.xz - cameraPos.xz);
     
     float tess = TessFactor * saturate((DIST_MAX - dist) / (DIST_MAX - DIST_MIN)) + 1.0f; //270
@@ -150,19 +150,17 @@ PatchConstOutput ConstantHS(InputPatch<VS_OUT, 4> patch, uint patchID : SV_Primi
     pt.edges[0] = tess;
     pt.edges[1] = tess;
     pt.edges[2] = tess;
-    pt.edges[3] = tess;
     pt.inside[0] = tess;
-    pt.inside[1] = tess;
 
     return pt;
 }
-[domain("quad")]
+[domain("tri")]
 [partitioning("integer")]
 [outputtopology("triangle_cw")]
-[outputcontrolpoints(4)]
+[outputcontrolpoints(3)]
 [patchconstantfunc("ConstantHS")]
 [maxtessfactor(TessFactor)]
-HS_OUT HS_Main(InputPatch<VS_OUT, 4> patch, uint vertexID : SV_OutputControlPointID, uint patchId : SV_PrimitiveID)
+HS_OUT HS_Main(InputPatch<VS_OUT, 3> patch, uint vertexID : SV_OutputControlPointID, uint patchId : SV_PrimitiveID)
 {
     //4번호출됨.
     HS_OUT hout;
@@ -174,25 +172,17 @@ HS_OUT HS_Main(InputPatch<VS_OUT, 4> patch, uint vertexID : SV_OutputControlPoin
 }
 
 
-[domain("quad")]
-DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 location : SV_DomainLocation)
+[domain("tri")]
+DS_OUT DS_Main(OutputPatch<HS_OUT, 3> quad, PatchConstOutput patchConst, float3 location : SV_DomainLocation)
 {
     DS_OUT dout;
     
-    float4 v1 = lerp(quad[0].pos, quad[1].pos, location.x);
-    float4 v2 = lerp(quad[2].pos, quad[3].pos, location.x);
-    float4 posCoord = lerp(v1, v2, location.y);
-    dout.pos = mul(posCoord, VPMatrix);
-
-    float2 v3 = lerp(quad[0].uv, quad[1].uv, location.x);
-    float2 v4 = lerp(quad[2].uv, quad[3].uv, location.x);
-    float2 uvCoord = lerp(v3, v4, location.y);
-    dout.uv = uvCoord;
-
-    float3 v5 = lerp(quad[0].normal, quad[1].normal, location.x);
-    float3 v6 = lerp(quad[2].normal, quad[3].normal, location.x);
-    float3 normal = normalize(lerp(v5, v6, location.y)); 
-    
+    float3 pos = quad[0].pos * location.x + quad[1].pos * location.y + quad[2].pos * location.z;
+    float2 uv = quad[0].uv * location.x + quad[1].uv * location.y + quad[2].uv * location.z;
+    float3 normal = quad[0].normal * location.x + quad[1].normal * location.y + quad[2].normal * location.z;
+   
+    dout.pos = mul(float4(pos, 1.0f), VPMatrix);
+    dout.uv = uv;
     dout.normal = normal;
     
     return dout;

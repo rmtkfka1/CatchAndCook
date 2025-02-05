@@ -212,7 +212,7 @@ void TestScene::Init()
 		info._zTest = true;
 		info._stencilTest = false;
 		info.cullingType = CullingType::WIREFRAME;
-		info.cullingType = CullingType::NONE;
+	/*	info.cullingType = CullingType::NONE;*/
 		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest",L"seatest.hlsl",StaticProp,
@@ -236,8 +236,8 @@ void TestScene::Init()
 
 		meshRenderer->AddMaterials({material});
 
-		auto& mesh = GeoMetryHelper::LoadGripMeshControlPoints(2000.0f,2000.0f,100,100);
-		mesh->SetTopolgy((D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST));
+		auto& mesh = GeoMetryHelper::LoadGripMesh(2000.0f,2000.0f,100,100);
+		mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 		meshRenderer->AddMesh(mesh);
 	}
 
@@ -246,7 +246,7 @@ void TestScene::Init()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::WIREFRAME;
 		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest",L"Terrain.hlsl",StaticProp,
@@ -255,7 +255,7 @@ void TestScene::Init()
 
 		shared_ptr<Material> material = make_shared<Material>();
 
-		shared_ptr<GameObject> gameObject = CreateGameObject(L"grid");
+		shared_ptr<GameObject> gameObject = CreateGameObject(L"Terrain");
 
 		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
 
