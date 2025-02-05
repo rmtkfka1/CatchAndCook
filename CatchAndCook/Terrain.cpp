@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "TerrainManager.h"
 #include "Transform.h"
+
 Terrain::Terrain()
 {
 	
@@ -159,5 +160,5 @@ WORD Terrain::TerrainGetHeight(float x,float z)
     int iz = static_cast<int>(ratioZ * _size.y);
 
    
-    return terrainOrigin.y + _rawData[iz][ix];
+    return terrainOrigin.y + _rawData[iz][ix] + 0.5f; //temp는 임시적
 }

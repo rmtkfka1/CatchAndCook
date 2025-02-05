@@ -7,8 +7,8 @@ SamplerState g_sam_0 : register(s0);
 SamplerState g_sam_1 : register(s1);
 #define TessFactor 8
 #define PI 3.14159f
-#define DIST_MAX 500.0f
-#define DIST_MIN 100.0f
+#define DIST_MAX 700.0f
+#define DIST_MIN 30.0f
 
 static float4 sea_color = float4(0.3f, 0.3f, 1.0f, 1.0f);
 
@@ -60,7 +60,6 @@ struct HS_OUT
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
 };
-
 
 VS_OUT VS_Main(VS_IN input)
 {
