@@ -27,14 +27,14 @@ public:
 public:
 	void SetGridSize(vec2 size){_gridSize = size;}
 	void SetHeightMap(const std::wstring& rawData,const std::wstring& pngData);
-	WORD TerrainGetHeight(float x,float z);
+	float TerrainGetHeight(float x,float z);
 	bool IsExecuteAble() override;
 
 private:
 	shared_ptr<Texture> _heightMap{};
 	vec2 _gridSize= {1.0f,1.0f};
 	vec2 _size{};
-	WORD** _rawData{};
+	float** _rawData{};
 
 };
 

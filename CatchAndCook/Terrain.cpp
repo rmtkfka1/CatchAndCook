@@ -114,13 +114,14 @@ void Terrain::SetHeightMap(const std::wstring &rawData,const std::wstring &pngDa
 
     _size = vec2(width,height);
 
-    _rawData = new WORD*[height];
-
+    // float 배열 할당
+    _rawData = new float*[height];
     for(int z = 0; z < height; ++z)
     {
-        _rawData[z] = new WORD[width];
+        _rawData[z] = new float[width];
     }
 
+    // 파일 열기
     std::ifstream file(rawData,std::ios::binary);
     if(!file)
     {
@@ -128,28 +129,28 @@ void Terrain::SetHeightMap(const std::wstring &rawData,const std::wstring &pngDa
         return;
     }
 
+
+    WORD* tempRow = new WORD[width];
+
+    // 데이터 읽기
     for(int z = 0; z < height; ++z)
     {
-        file.read(reinterpret_cast<char*>(_rawData[z]),width * sizeof(WORD));
+        file.read(reinterpret_cast<char*>(tempRow),width * sizeof(WORD));
+
+        for(int x = 0; x < width; ++x)
+        {
+            _rawData[z][x] = static_cast<float>(tempRow[x]) / 65535.0f * 1000.0f;
+        }
     }
 
+    delete[] tempRow;  
     file.close();
 
-    const int MaxHeight =1000;
-
-    for(int z=0; z<height; ++z)
-    {
-        for(int x=0; x<width; ++x)
-        {
-            _rawData[z][x] = static_cast<float>(_rawData[z][x]) / 65535.0f * MaxHeight;
-        };
-    };
-
-    std::cout << _rawData[0][0] << " ";
-
+   
 }
 
-WORD Terrain::TerrainGetHeight(float x,float z)
+
+float Terrain::TerrainGetHeight(float x,float z)
 {
     vec3 terrainOrigin = GetOwner()->_transform->GetLocalPosition();
 

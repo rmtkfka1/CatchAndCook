@@ -7,7 +7,7 @@ SamplerState g_sam_0 : register(s0);
 SamplerState g_sam_1 : register(s1);
 #define TessFactor 8
 #define PI 3.14159f
-#define DIST_MAX 300.0f
+#define DIST_MAX 900.0f
 #define DIST_MIN 30.0f
 
 static float4 sea_color = float4(0.3f,0.3f,1.0f,1.0f);
@@ -133,20 +133,40 @@ struct PatchConstOutput
     float inside[1] : SV_InsideTessFactor;
 };
 
+float CalculateTessLevel(float3 cameraWorldPos, float3 patchPos, float min, float max, float maxLv)
+{
+    float distance = length(patchPos - cameraWorldPos);
+
+    if (distance < min)
+        return maxLv;
+    
+    if (distance > max)
+        return 1.f;
+
+    float ratio = (distance - min) / (max - min);
+    float level = (maxLv - 1.f) * (1.f - ratio);
+    
+    return level;
+}
+
+
 //패치단위로 호출
 PatchConstOutput ConstantHS(InputPatch<VS_OUT, 3> patch, uint patchID : SV_PrimitiveID)
 {
-    float3 center = (patch[0].pos + patch[1].pos + patch[2].pos).xyz /3.0f;
-    float dist = length(center.xz - cameraPos.xz);
-    
-    float tess = TessFactor * saturate((DIST_MAX - dist) / (DIST_MAX - DIST_MIN)) + 1.0f; //270
-
     PatchConstOutput pt;
-    pt.edges[0] = tess;
-    pt.edges[1] = tess;
-    pt.edges[2] = tess;
-    pt.inside[0] = tess;
+    
+    float3 edge0Pos = (patch[1].pos + patch[2].pos) / 2.f;
+    float3 edge1Pos = (patch[2].pos + patch[0].pos) / 2.f;
+    float3 edge2Pos = (patch[0].pos + patch[1].pos) / 2.f;
 
+    float edge0TessLevel = CalculateTessLevel(cameraPos.xyz, edge0Pos, DIST_MIN, DIST_MAX, TessFactor);
+    float edge1TessLevel = CalculateTessLevel(cameraPos.xyz, edge1Pos, DIST_MIN, DIST_MAX, TessFactor);
+    float edge2TessLevel = CalculateTessLevel(cameraPos.xyz, edge2Pos, DIST_MIN, DIST_MAX, TessFactor);
+
+    pt.edges[0] = edge0TessLevel;
+    pt.edges[1] = edge1TessLevel;
+    pt.edges[2] = edge2TessLevel;
+    pt.inside[0] = edge2TessLevel;
     return pt;
 }
 [domain("tri")]
