@@ -69,7 +69,7 @@ void ColliderManager::Update()
 
 			if(src->CheckCollision(dest.get()))
 			{
-				if(!src->_collisionList.contains(dest.get()))
+				if(src->_collisionList.contains(dest.get())==false)
 				{
 					CallBackBegin(src,dest);
 					CallBackBegin(dest,src);
