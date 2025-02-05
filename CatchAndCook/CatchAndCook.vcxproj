@@ -171,6 +171,7 @@
     <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="CbufferParam.cpp" />
     <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="ColliderManager.cpp" />
     <ClCompile Include="convert_assimp.cpp" />
     <ClCompile Include="GameObjectSetting.cpp" />
     <ClCompile Include="GeoMetryHelper.cpp" />
@@ -254,6 +255,7 @@
     <ClInclude Include="CameraManager.h" />
     <ClInclude Include="CbufferParam.h" />
     <ClInclude Include="Collider.h" />
+    <ClInclude Include="ColliderManager.h" />
     <ClInclude Include="convert_assimp.h" />
     <ClInclude Include="convert_directx.h" />
     <ClInclude Include="GameObjectSetting.h" />

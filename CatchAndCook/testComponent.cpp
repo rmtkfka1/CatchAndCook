@@ -84,9 +84,19 @@ void testComponent::RenderBegin()
 
 }
 
-void testComponent::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+void testComponent::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 
+}
+
+void testComponent::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+{
+	Component::CollisionEnd(collider,other);
+}
+
+bool testComponent::IsExecuteAble()
+{
+	return Component::IsExecuteAble();
 }
 
 void testComponent::SetDestroy()

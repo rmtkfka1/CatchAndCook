@@ -99,9 +99,9 @@ void SkinnedMeshRenderer::RenderBegin()
 }
 
 
-void SkinnedMeshRenderer::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+void SkinnedMeshRenderer::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
-	Component::Collision(collider, other);
+	Component::CollisionBegin(collider, other);
 }
 
 

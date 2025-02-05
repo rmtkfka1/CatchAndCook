@@ -10,6 +10,7 @@
 #include "Transform.h"
 #include "CameraManager.h"
 #include "Camera.h"
+#include "ColliderManager.h"
 #include "Texture.h"
 #include "Mesh.h"
 #include "Shader.h"
@@ -32,6 +33,7 @@ void Game::Init(HWND hwnd)
 	TerrainManager::main = make_unique<TerrainManager>();
 
 	SceneManager::main = make_unique<SceneManager>();
+	ColliderManager::main = make_unique<ColliderManager>();
 	CameraManager::main = make_unique<CameraManager>();
 
 	InjectorManager::main = make_unique<InjectorManager>();

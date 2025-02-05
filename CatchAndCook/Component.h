@@ -27,7 +27,8 @@ public:
 	virtual void Enable(); 
 	virtual void Disable(); 
 	virtual void RenderBegin();
-	virtual void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
+	virtual void CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
+	virtual void CollisionEnd(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other);
 	virtual void SetDestroy() override;
 	virtual void Destroy();
 private:

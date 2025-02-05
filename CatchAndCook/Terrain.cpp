@@ -65,9 +65,20 @@ void Terrain::RenderBegin()
 
 }
 
-void Terrain::Collision(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other)
+void Terrain::CollisionBegin(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other)
 {
 
+}
+
+void Terrain::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+{
+	Component::CollisionEnd(collider,other);
+
+}
+
+bool Terrain::IsExecuteAble()
+{
+	return Component::IsExecuteAble();
 }
 
 void Terrain::SetDestroy()

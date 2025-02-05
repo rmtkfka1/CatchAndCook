@@ -273,33 +273,33 @@ void SceneLoader::LinkComponent(json jsonData)
             std::cout << "Json Load - Not Found Model : " << std::to_string(modelName) << "\n";
         }
     }
-    if (type == L"BoxCollider")
-    {
-        auto collider = IGuid::FindObjectByGuid<Collider>(guid);
-        Collision collision{ CollisionType::Box };
-        auto center = Vector3(
-            jsonData["center"][0].get<float>(),
-            jsonData["center"][1].get<float>(),
-            jsonData["center"][2].get<float>());
-        auto size = Vector3(
-            jsonData["size"][0].get<float>(),
-            jsonData["size"][1].get<float>(),
-            jsonData["size"][2].get<float>());
-        //collision.SetBox(center, size);
-        //collider->SetCollition(collision);
-    }
-    if (type == L"SphereCollider")
-    {
-        auto collider = IGuid::FindObjectByGuid<Collider>(guid);
-        Collision collision{ CollisionType::Sphere };
-        auto center = Vector3(
-            jsonData["center"][0].get<float>(),
-            jsonData["center"][1].get<float>(),
-            jsonData["center"][2].get<float>());
-        auto radius = jsonData["radius"].get<float>();
-    /*    collision.SetSphere(center, radius);
-        collider->SetCollition(collision);*/
-    }
+    //if (type == L"BoxCollider")
+    //{
+    //    auto collider = IGuid::FindObjectByGuid<Collider>(guid);
+    //    Collision collision{ CollisionType::Box };
+    //    auto center = Vector3(
+    //        jsonData["center"][0].get<float>(),
+    //        jsonData["center"][1].get<float>(),
+    //        jsonData["center"][2].get<float>());
+    //    auto size = Vector3(
+    //        jsonData["size"][0].get<float>(),
+    //        jsonData["size"][1].get<float>(),
+    //        jsonData["size"][2].get<float>());
+    //    collision.SetBox(center, size);
+    //    collider->SetCollition(collision);
+    //}
+    //if (type == L"SphereCollider")
+    //{
+    //    auto collider = IGuid::FindObjectByGuid<Collider>(guid);
+    //    Collision collision{ CollisionType::Sphere };
+    //    auto center = Vector3(
+    //        jsonData["center"][0].get<float>(),
+    //        jsonData["center"][1].get<float>(),
+    //        jsonData["center"][2].get<float>());
+    //    auto radius = jsonData["radius"].get<float>();
+    //    collision.SetSphere(center, radius);
+    //    collider->SetCollition(collision);
+    //}
 }
 
 void SceneLoader::LinkMaterial(json jsonData)

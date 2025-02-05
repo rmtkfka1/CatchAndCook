@@ -85,9 +85,19 @@ void Transform::RenderBegin()
     PushData();
 }
 
-void Transform::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+void Transform::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
-	Component::Collision(collider, other);
+	Component::CollisionBegin(collider, other);
+}
+
+void Transform::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+{
+	Component::CollisionEnd(collider,other);
+}
+
+bool Transform::IsExecuteAble()
+{
+	return Component::IsExecuteAble();
 }
 
 

@@ -57,7 +57,12 @@ void Component::RenderBegin()
 
 }
 
-void Component::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+void Component::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+{
+
+}
+
+void Component::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 
 }

@@ -221,6 +221,8 @@
     <ClCompile Include="TerrainManager.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
+    <ClCompile Include="BoundingCapsule.cpp" />
+    <ClCompile Include="ColliderManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -414,6 +416,9 @@
     <ClInclude Include="TerrainManager.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="BoundingCapsule.h" />
+    <ClInclude Include="StructuredBuffer.h" />
+    <ClInclude Include="ColliderManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">

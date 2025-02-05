@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Collider.h"
 
+#include "ColliderManager.h"
+
 
 Collision::Collision()
 {
@@ -48,6 +50,7 @@ void Collider::Init()
 void Collider::Start()
 {
 	Component::Start();
+	ColliderManager::main->AddCollider(GetCast<Collider>());
 }
 
 void Collider::Update()
@@ -75,9 +78,23 @@ void Collider::RenderBegin()
 	Component::RenderBegin();
 }
 
-void Collider::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+void Collider::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
-	Component::Collision(collider,other);
+	Component::CollisionBegin(collider,other);
+	auto& components = GetOwner()->GetComponentAll();
+	for(auto& component : components)
+		if(component != collider)
+			component->CollisionBegin(collider,other);
+}
+
+void Collider::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+{
+	Component::CollisionEnd(collider,other);
+
+	auto& components = GetOwner()->GetComponentAll();
+	for(auto& component : components)
+		if(component != collider)
+			component->CollisionEnd(collider,other);
 }
 
 void Collider::SetDestroy()
@@ -88,4 +105,5 @@ void Collider::SetDestroy()
 void Collider::Destroy()
 {
 	Component::Destroy();
+	ColliderManager::main->RemoveCollider(GetCast<Collider>());
 }

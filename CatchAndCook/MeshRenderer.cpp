@@ -103,9 +103,9 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh)
 	mesh->Redner();
 };
 
-void MeshRenderer::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+void MeshRenderer::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
-	Component::Collision(collider, other);
+	Component::CollisionBegin(collider, other);
 }
 
 void MeshRenderer::DebugRendering()

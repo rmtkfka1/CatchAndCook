@@ -47,7 +47,7 @@ void SpriteRenderer::RenderBegin()
 	SceneManager::main->GetCurrentScene()->AddRenderer(nullptr, this, RENDER_PASS::UI);
 }
 
-void SpriteRenderer::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+void SpriteRenderer::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 
 }

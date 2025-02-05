@@ -14,11 +14,11 @@ public:
 	virtual void Disable();
 	virtual void Destroy();
 	virtual void RenderBegin();
-	virtual void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
+	virtual void CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
+	void CollisionEnd(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other) override;
+	bool IsExecuteAble() override;
 	virtual void SetDestroy() override;
 	virtual void DestroyComponentOnly();
-
-
 
 private:
 

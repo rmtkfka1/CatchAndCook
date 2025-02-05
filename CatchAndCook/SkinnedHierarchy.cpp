@@ -78,9 +78,14 @@ void SkinnedHierarchy::RenderBegin()
 	PushData();
 }
 
-void SkinnedHierarchy::Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+void SkinnedHierarchy::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
-	Component::Collision(collider,other);
+	Component::CollisionBegin(collider,other);
+}
+
+void SkinnedHierarchy::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+{
+	Component::CollisionEnd(collider,other);
 }
 
 void SkinnedHierarchy::SetDestroy()

@@ -18,8 +18,10 @@ public:
 	void Disable() override;
 	void Destroy() override;
 	void RenderBegin() override;
-	void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
+	void CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
+    void CollisionEnd(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other) override;
 
+    bool IsExecuteAble() override;
     void PushData() override;
 	virtual void SetData(Material* material = nullptr) override;
 
@@ -69,9 +71,7 @@ public:
     vec3 WorldToLocal_Direction(const vec3& value);
     Quaternion WorldToLocal_Quaternion(const Quaternion& value);
 
-
-public:
-    bool _isLocalSRTChanged = true; //이거 활성화시 시 월드매트릭스 갱신.isLocalToWorldChanged 이거 활성화
+	bool _isLocalSRTChanged = true; //이거 활성화시 시 월드매트릭스 갱신.isLocalToWorldChanged 이거 활성화
     bool _isLocalToWorldChanged = true; //부모가 local 업데이트 or 부모 world 변경시 이거 true.worldtrs변경.
 	bool _useTerrain = false;
 private:

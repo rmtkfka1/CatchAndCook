@@ -3,6 +3,20 @@
 #include "Transform.h"
 
 
+WaterHeight::~WaterHeight()
+{
+}
+
+bool WaterHeight::IsExecuteAble()
+{
+	return Component::IsExecuteAble();
+}
+
+void WaterHeight::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+{
+	Component::CollisionEnd(collider,other);
+}
+
 void WaterHeight::Init()
 {
 }
@@ -39,7 +53,7 @@ void WaterHeight::RenderBegin()
 {
 }
 
-void WaterHeight::Collision(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other)
+void WaterHeight::CollisionBegin(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other)
 {
 
 }

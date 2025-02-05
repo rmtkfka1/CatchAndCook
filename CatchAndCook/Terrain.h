@@ -3,7 +3,7 @@
 #include "Component.h"
 #include "RendererBase.h"
 
-class Terrain:public Component,public RenderObjectSetter
+class Terrain : public Component,public RenderObjectSetter
 {
 
 public:
@@ -16,7 +16,8 @@ public:
 	void Enable() override;
 	void Disable() override;
 	void RenderBegin() override;
-	void Collision(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other) override;
+	void CollisionBegin(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other) override;
+	void CollisionEnd(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other) override;
 	void SetDestroy() override;
 	void Destroy() override;
 
@@ -27,6 +28,7 @@ public:
 	void SetGridSize(vec2 size){_gridSize = size;}
 	void SetHeightMap(const std::wstring& rawData,const std::wstring& pngData);
 	WORD TerrainGetHeight(float x,float z);
+	bool IsExecuteAble() override;
 
 private:
 	shared_ptr<Texture> _heightMap{};
