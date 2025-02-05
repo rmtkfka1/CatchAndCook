@@ -51,7 +51,7 @@ void TestScene::Init()
 		shared_ptr<GameObject> root = CreateGameObject(L"X");
 
 		root->_transform->SetLocalPosition(vec3(3000.0f, 0, 0.0f));
-		root->_transform->SetLocalScale(vec3(3000.0f, 0.1f, 0.1f));
+		root->_transform->SetLocalScale(vec3(3000.0f,1.0f,1.0f));
 		auto meshRenderer = root->AddComponent<MeshRenderer>();
 
 		material = make_shared<Material>();
@@ -77,7 +77,7 @@ void TestScene::Init()
 		shared_ptr<GameObject> root = CreateGameObject(L"X");
 
 		root->_transform->SetLocalPosition(vec3(0, 0, 3000.0f));
-		root->_transform->SetLocalScale(vec3(0.1f, 0.1f, 3000.0f));
+		root->_transform->SetLocalScale(vec3(1.0f,1.0f, 3000.0f));
 		auto meshRenderer = root->AddComponent<MeshRenderer>();
 
 		material = make_shared<Material>();
@@ -103,7 +103,7 @@ void TestScene::Init()
 		shared_ptr<GameObject> root = CreateGameObject(L"X");
 
 		root->_transform->SetLocalPosition(vec3(0, 3000.0f, 0.0f));
-		root->_transform->SetLocalScale(vec3(0.1f, 3000.0f, 0.1f));
+		root->_transform->SetLocalScale(vec3(1.0f, 3000.0f,1.0f));
 		auto meshRenderer = root->AddComponent<MeshRenderer>();
 
 		material = make_shared<Material>();
