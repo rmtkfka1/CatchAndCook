@@ -74,7 +74,7 @@ void TestScene::Init()
 
 		shared_ptr<Material> material = make_shared<Material>();
 
-		shared_ptr<GameObject> root = CreateGameObject(L"X");
+		shared_ptr<GameObject> root = CreateGameObject(L"Y");
 
 		root->_transform->SetLocalPosition(vec3(0, 0, 3000.0f));
 		root->_transform->SetLocalScale(vec3(1.0f,1.0f, 3000.0f));
@@ -100,7 +100,7 @@ void TestScene::Init()
 
 		shared_ptr<Material> material = make_shared<Material>();
 
-		shared_ptr<GameObject> root = CreateGameObject(L"X");
+		shared_ptr<GameObject> root = CreateGameObject(L"Z");
 
 		root->_transform->SetLocalPosition(vec3(0, 3000.0f, 0.0f));
 		root->_transform->SetLocalScale(vec3(1.0f, 3000.0f,1.0f));
@@ -246,10 +246,12 @@ void TestScene::Init()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::WIREFRAME;
+		info.cullingType = CullingType::NONE;
+		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest", L"Terrain.hlsl", StaticProp,
-			ShaderArg{}, info);
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest",L"Terrain.hlsl",StaticProp,
+		ShaderArg{{{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}}},info);
+
 
 		shared_ptr<Material> material = make_shared<Material>();
 
@@ -263,12 +265,15 @@ void TestScene::Init()
 		gameObject->_transform->SetLocalPosition(vec3(0, 1000.0f, 0));
 
 		material = make_shared<Material>();
+		material->SetHandle("g_tex_0",ResourceManager::main->Load<Texture>(L"Terrain",L"Textures/HeightMap/terrainAlbedo.png")->GetSRVCpuHandle());
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
 
-
 		meshRenderer->AddMaterials({ material });
-		meshRenderer->AddMesh(GeoMetryHelper::LoadGripMesh(2000.0f, 2000.0f,50,50));
+
+		auto& mesh = GeoMetryHelper::LoadGripMesh(2000.0f,2000.0f,30,30);
+		mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+		meshRenderer->AddMesh(mesh);
 	}
 
 	
