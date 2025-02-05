@@ -165,8 +165,8 @@ void Collider::SetBoundingBox(vec3 center,vec3 extents)
 {
 	_type = CollisionType::Box;
 
-	_orgin._box = BoundingBox(center,extents);
-	_bound._box = BoundingBox(center,extents);
+	_orgin._box = BoundingOrientedBox(center, extents, Quaternion::Identity);
+	_bound._box = BoundingOrientedBox(center, extents, Quaternion::Identity);
 }
 
 void Collider::SetBoundingSphere(vec3 center,float radius)

@@ -10,7 +10,7 @@ enum class CollisionType
 
 union BoundingUnion
 {
-	BoundingBox _box;
+	BoundingOrientedBox _box;
 	BoundingSphere _sphere;
 	BoundingFrustum _frustum;
 };
