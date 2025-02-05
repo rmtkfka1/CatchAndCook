@@ -289,7 +289,7 @@ void SceneLoader::LinkComponent(json jsonData)
             jsonData["size"][0].get<float>(),
             jsonData["size"][1].get<float>(),
             jsonData["size"][2].get<float>());
-        collider->SetBoundingBox(center, size);
+        collider->SetBoundingBox(center, size/2);
     }
     if (type == L"SphereCollider")
     {
