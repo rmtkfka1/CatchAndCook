@@ -95,7 +95,6 @@ void ColliderManager::CallBackBegin(const std::shared_ptr<Collider>& collider, c
 {
 	auto& components = collider->GetOwner()->GetComponentAll();
 	for(auto& component : components)
-		if(component != collider)
 			component->CollisionBegin(collider,other);
 }
 
@@ -103,6 +102,5 @@ void ColliderManager::CallBackEnd(const std::shared_ptr<Collider>& collider, con
 {
 	auto& components = collider->GetOwner()->GetComponentAll();
 	for(auto& component : components)
-		if(component != collider)
 			component->CollisionEnd(collider,other);
 }
