@@ -34,7 +34,6 @@ public:
 	void Destroy() override;
 
 public:
-
 	bool CheckCollision(Collider* other);
 	void SetBoundingBox(vec3 center,vec3 extents);
 	void SetBoundingSphere(vec3 center,float radius);
