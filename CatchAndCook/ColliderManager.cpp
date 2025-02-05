@@ -33,58 +33,59 @@ void ColliderManager::Update()
 
 	for(int i = 0;i<_dynamicColliders.size();++i)
 	{
-		auto& currentCollider = _dynamicColliders[i];
+		auto& src = _dynamicColliders[i];
 
 		for(int j = 0;j<_staticColliders.size();++j)
 		{
-			auto& otherCollider = _staticColliders[j];
+			auto& dest = _staticColliders[j];
 
-			if(currentCollider->CheckCollision(otherCollider.get()))
+			if(src->CheckCollision(dest.get()))
 			{
-				if(!otherCollider->_collisionList.contains(currentCollider.get()))
+				if(src->_collisionList.contains(dest.get())==false)
 				{
-					CallBackBegin(currentCollider,otherCollider);
-					CallBackBegin(otherCollider,currentCollider);
-					otherCollider->_collisionList.insert(currentCollider.get());
-					currentCollider->_collisionList.insert(otherCollider.get());
+					CallBackBegin(src,dest);
+					CallBackBegin(dest,src);
+					src->_collisionList.insert(dest.get());
+					dest->_collisionList.insert(src.get());
 				}
 			}
 
 			else
 			{
-				if(otherCollider->_collisionList.contains(currentCollider.get()))
+				if(src->_collisionList.contains(dest.get()))
 				{
-					CallBackEnd(currentCollider,otherCollider);
-					CallBackEnd(otherCollider,currentCollider);
-					otherCollider->_collisionList.erase(currentCollider.get());
-					currentCollider->_collisionList.erase(otherCollider.get());
+					CallBackEnd(src,dest);
+					CallBackEnd(dest,src);
+					src->_collisionList.erase(dest.get());
+					dest->_collisionList.erase(src.get());
+				
 				}
 			}
 		}
 
 		for(int j = i+1; j< _dynamicColliders.size(); ++j)
 		{
-			auto& otherCollider = _dynamicColliders[j];
+			auto& dest = _dynamicColliders[j];
 
-			// 그룹 개념 적용해야함.
-			// 그리고 if 충돌했을시
-			if(currentCollider->CheckCollision(otherCollider.get()))
+			if(src->CheckCollision(dest.get()))
 			{
-				if(!otherCollider->_collisionList.contains(currentCollider.get()))
+				if(!src->_collisionList.contains(dest.get()))
 				{
-					CallBackBegin(currentCollider,otherCollider);
-					CallBackBegin(otherCollider,currentCollider);
-					otherCollider->_collisionList.insert(currentCollider.get());
-					currentCollider->_collisionList.insert(otherCollider.get());
+					CallBackBegin(src,dest);
+					CallBackBegin(dest,src);
+					src->_collisionList.insert(dest.get());
+					dest->_collisionList.insert(src.get());
 				}
-			} else
+			}
+
+			else
 			{
-				if(otherCollider->_collisionList.contains(currentCollider.get())) 
+				if(src->_collisionList.contains(dest.get())) 
 				{
-					CallBackEnd(currentCollider,otherCollider);
-					CallBackEnd(otherCollider, currentCollider);
-					otherCollider->_collisionList.erase(currentCollider.get());
-					currentCollider->_collisionList.erase(otherCollider.get());
+					CallBackEnd(src,dest);
+					CallBackEnd(dest, src);
+					src->_collisionList.erase(dest.get());
+					dest->_collisionList.erase(src.get());
 				}
 			}
 		}
@@ -95,12 +96,12 @@ void ColliderManager::CallBackBegin(const std::shared_ptr<Collider>& collider, c
 {
 	auto& components = collider->GetOwner()->GetComponentAll();
 	for(auto& component : components)
-			component->CollisionBegin(collider,other);
+		component->CollisionBegin(collider,other);
 }
 
 void ColliderManager::CallBackEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 	auto& components = collider->GetOwner()->GetComponentAll();
 	for(auto& component : components)
-			component->CollisionEnd(collider,other);
+		component->CollisionEnd(collider,other);
 }
