@@ -227,8 +227,8 @@ void TestScene::Init()
 
 		auto& terrain = gameObject->AddComponent<Terrain>();
 		terrain->SetHeightMap(L"../Resources/Textures/HeightMap/Terrain_Height.raw",L"../Resources/Textures/HeightMap/Terrain_Height.png");
-
-		gameObject->_transform->SetLocalPosition(vec3(513.0f/2, 0,513.0f/2));
+		terrain->SetGridSize(vec2(2000.f,2000.f));
+		gameObject->_transform->SetLocalPosition(vec3(2000, 1000,1000));
 
 		material = make_shared<Material>();
 		material->SetHandle("g_tex_0",ResourceManager::main->Load<Texture>(L"Terrain",L"Textures/HeightMap/terrainAlbedo.png")->GetSRVCpuHandle());
@@ -237,7 +237,7 @@ void TestScene::Init()
 
 		meshRenderer->AddMaterials({ material });
 
-		auto& mesh = GeoMetryHelper::LoadGripMesh(513.0f,513.0f,30,30);
+		auto& mesh = GeoMetryHelper::LoadGripMesh(2000.0f,2000.0f,30,30);
 		mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 		meshRenderer->AddMesh(mesh);
 	}

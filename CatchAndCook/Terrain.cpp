@@ -136,21 +136,28 @@ void Terrain::SetHeightMap(const std::wstring &rawData,const std::wstring &pngDa
     std::cout << _rawData[0][0] << " ";
 
 }
+
 WORD Terrain::TerrainGetHeight(float x,float z)
 {
     vec3 terrainOrigin = GetOwner()->_transform->GetLocalPosition();
 
-	int32 ix = static_cast<int>(x);
-	int32 iz = static_cast<int>(z);
+    float tempX = x + _gridSize.x / 2;
+    float tempZ = z + _gridSize.y / 2 ;
 
-	if(x < 0 || x >= _size.x || z < 0 || z >= _size.y)
-	{
-		return 0;
-	}
+	tempX -= terrainOrigin.x;
+	tempZ -= terrainOrigin.z;
+
+    if(tempX < 0 || tempX >= _gridSize.x || tempZ < 0 || tempZ >= _gridSize.y)
+    {
+        return 0;
+    }
+
+    float ratioX = (tempX)/ _gridSize.x;
+    float ratioZ = (tempZ) / _gridSize.y;
+
+    int ix = static_cast<int>(ratioX * _size.x);
+    int iz = static_cast<int>(ratioZ * _size.y);
+
    
-    return  terrainOrigin.y + _rawData[iz][ix];
+    return terrainOrigin.y + _rawData[iz][ix];
 }
-
-
-
- 
