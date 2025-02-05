@@ -10,10 +10,8 @@ unique_ptr<ColliderManager> ColliderManager::main = nullptr;
 void ColliderManager::AddCollider(const std::shared_ptr<Collider>& collider)
 {
 	if(collider->GetOwner()->GetType() == GameObjectType::Static)
-		if(std::ranges::find(_staticColliders,collider) == _staticColliders.end())
 			_staticColliders.push_back(collider);
 	if(collider->GetOwner()->GetType() == GameObjectType::Dynamic)
-		if(std::ranges::find(_dynamicColliders,collider) == _dynamicColliders.end())
 			_dynamicColliders.push_back(collider);
 }
 
