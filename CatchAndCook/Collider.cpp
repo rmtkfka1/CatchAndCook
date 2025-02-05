@@ -1,37 +1,8 @@
 #include "pch.h"
 #include "Collider.h"
-
 #include "ColliderManager.h"
-
-
-Collision::Collision()
-{
-}
-
-Collision::Collision(CollisionType type)
-{
-	SetType(type);
-}
-
-void Collision::SetBound(BoundingBox box)
-{
-	_box = box;
-}
-void Collision::SetBound(BoundingSphere sphere)
-{
-	_sphere = sphere;
-}
-void Collision::SetBound(BoundingFrustum frustum)
-{
-	_frustum = frustum;
-}
-
-BoundingOrientedBox Collision::GetWorldBound(std::shared_ptr<Transform> transform)
-{
-	return BoundingOrientedBox();
-}
-
-
+#include "GameObject.h"
+#include "Transform.h"
 
 Collider::~Collider()
 {
@@ -56,6 +27,30 @@ void Collider::Start()
 void Collider::Update()
 {
 	Component::Update();
+
+	if(_type == CollisionType::Box)
+	{
+		auto onwerTransform = GetOwner()->_transform;
+		Matrix mat;
+		onwerTransform->GetLocalToWorldMatrix_BottomUp(mat);
+		_orgin._box.Transform(_bound._box,mat);
+	}
+
+	else if(_type == CollisionType::Sphere)
+	{
+		auto onwerTransform = GetOwner()->_transform;
+		Matrix mat;
+		onwerTransform->GetLocalToWorldMatrix_BottomUp(mat);
+		_orgin._sphere.Transform(_bound._sphere,mat);
+	} 
+
+	else if(_type == CollisionType::Frustum)
+	{
+		auto onwerTransform = GetOwner()->_transform;
+		Matrix mat;
+		onwerTransform->GetLocalToWorldMatrix_BottomUp(mat);
+		_orgin._frustum.Transform(_bound._frustum,mat);
+	}
 }
 
 void Collider::Update2()
@@ -106,4 +101,84 @@ void Collider::Destroy()
 {
 	Component::Destroy();
 	ColliderManager::main->RemoveCollider(GetCast<Collider>());
+}
+
+bool Collider::CheckCollision(Collider * other)
+{
+	if(_type == CollisionType::Box)
+	{
+		if(other->_type == CollisionType::Box)
+		{
+			return _bound._box.Intersects(other->GetBoundUnion()._box);
+		}
+		else if(other->_type == CollisionType::Sphere)
+		{
+			return _bound._box.Intersects(other->GetBoundUnion()._sphere);
+		} 
+		else if(other->_type == CollisionType::Frustum)
+		{
+			return _bound._box.Intersects(other->GetBoundUnion()._frustum);
+		}
+
+
+	}
+	else if(_type == CollisionType::Sphere)
+	{
+		if(other->_type == CollisionType::Box)
+		{
+			return _bound._sphere.Intersects(other->GetBoundUnion()._box);
+		}
+		else if(other->_type == CollisionType::Sphere)
+		{
+			return _bound._sphere.Intersects(other->GetBoundUnion()._sphere);
+		} 
+		else if(other->_type == CollisionType::Frustum)
+		{
+			return _bound._sphere.Intersects(other->GetBoundUnion()._frustum);
+		}
+
+
+	} 
+
+	else if(_type == CollisionType::Frustum)
+	{
+		if(other->_type == CollisionType::Box)
+		{
+			return _bound._frustum.Intersects(other->GetBoundUnion()._box);
+		} 
+		else if(other->_type == CollisionType::Sphere)
+		{
+			return _bound._frustum.Intersects(other->GetBoundUnion()._sphere);
+		}
+		else if(other->_type == CollisionType::Frustum)
+		{
+			return _bound._frustum.Intersects(other->GetBoundUnion()._frustum);
+		}
+
+
+	}
+
+	return false;
+}
+
+void Collider::SetBoundingBox(vec3 center,vec3 extents)
+{
+	_type = CollisionType::Box;
+
+	_orgin._box = BoundingBox(center,extents);
+	_bound._box = BoundingBox(center,extents);
+}
+
+void Collider::SetBoundingSphere(vec3 center,float radius)
+{
+	_type = CollisionType::Sphere;
+	_orgin._sphere = BoundingSphere(center,radius);
+	_bound._sphere = BoundingSphere(center,radius);
+}
+
+void Collider::SetBoundingFrustum(BoundingFrustum & boundingFrustum)
+{
+	_type = CollisionType::Frustum;
+	_orgin._frustum = boundingFrustum;
+	_bound._frustum = boundingFrustum;
 }

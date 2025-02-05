@@ -34,54 +34,57 @@ void ColliderManager::Update()
 	for(int i = 0;i<_dynamicColliders.size();++i)
 	{
 		auto& currentCollider = _dynamicColliders[i];
+
 		for(int j = 0;j<_staticColliders.size();++j)
 		{
 			auto& otherCollider = _staticColliders[j];
 
-			//그룹 개념 적용해야함.
-			// 그리고 if 충돌했을시
+			if(currentCollider->CheckCollision(otherCollider.get()))
 			{
-				if(!otherCollider->_collisionList.contains(currentCollider))
+				if(!otherCollider->_collisionList.contains(currentCollider.get()))
 				{
 					currentCollider->CollisionBegin(currentCollider,otherCollider);
 					otherCollider->CollisionBegin(otherCollider,currentCollider);
-					otherCollider->_collisionList.insert(currentCollider);
-					currentCollider->_collisionList.insert(otherCollider);
+					otherCollider->_collisionList.insert(currentCollider.get());
+					currentCollider->_collisionList.insert(otherCollider.get());
 				}
 			}
+
 			else
 			{
-				if(otherCollider->_collisionList.contains(currentCollider))
+				if(otherCollider->_collisionList.contains(currentCollider.get()))
 				{
 					currentCollider->CollisionEnd(currentCollider,otherCollider);
 					otherCollider->CollisionEnd(otherCollider,currentCollider);
-					otherCollider->_collisionList.erase(currentCollider);
-					currentCollider->_collisionList.erase(otherCollider);
+					otherCollider->_collisionList.erase(currentCollider.get());
+					currentCollider->_collisionList.erase(otherCollider.get());
 				}
 			}
 		}
+
 		for(int j = i+1; j< _dynamicColliders.size(); ++j)
 		{
 			auto& otherCollider = _dynamicColliders[j];
 
 			// 그룹 개념 적용해야함.
 			// 그리고 if 충돌했을시
+			if(currentCollider->CheckCollision(otherCollider.get()))
 			{
-				if(!otherCollider->_collisionList.contains(currentCollider))
+				if(!otherCollider->_collisionList.contains(currentCollider.get()))
 				{
 					currentCollider->CollisionBegin(currentCollider,otherCollider);
 					otherCollider->CollisionBegin(otherCollider,currentCollider);
-					otherCollider->_collisionList.insert(currentCollider);
-					currentCollider->_collisionList.insert(otherCollider);
+					otherCollider->_collisionList.insert(currentCollider.get());
+					currentCollider->_collisionList.insert(otherCollider.get());
 				}
 			} else
 			{
-				if(otherCollider->_collisionList.contains(currentCollider))
+				if(otherCollider->_collisionList.contains(currentCollider.get())) 
 				{
 					currentCollider->CollisionEnd(currentCollider,otherCollider);
 					otherCollider->CollisionEnd(otherCollider,currentCollider);
-					otherCollider->_collisionList.erase(currentCollider);
-					currentCollider->_collisionList.erase(otherCollider);
+					otherCollider->_collisionList.erase(currentCollider.get());
+					currentCollider->_collisionList.erase(otherCollider.get());
 				}
 			}
 		}

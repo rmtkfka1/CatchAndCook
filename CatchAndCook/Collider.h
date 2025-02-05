@@ -5,34 +5,16 @@ enum class CollisionType
 {
 	Box,
 	Sphere,
-	Capsule,
 	Frustum
 };
 
-class Collision
+union BoundingUnion
 {
-public:
-	Collision();
-	Collision(CollisionType type);
-
-	CollisionType GetType(){
-		return _type;
-	};
-	void SetType(CollisionType type){
-		_type = type;
-	};
-
-	void SetBound(BoundingBox box);
-	void SetBound(BoundingSphere sphere);
-	void SetBound(BoundingFrustum frustum);
-	BoundingOrientedBox GetWorldBound(std::shared_ptr<Transform> transform);
-private:
-	CollisionType _type;
-
 	BoundingBox _box;
 	BoundingSphere _sphere;
 	BoundingFrustum _frustum;
 };
+
 
 class Collider : public Component
 {
@@ -51,7 +33,21 @@ public:
 	void SetDestroy() override;
 	void Destroy() override;
 
+public:
+
+	bool CheckCollision(Collider* other);
+	void SetBoundingBox(vec3 center,vec3 extents);
+	void SetBoundingSphere(vec3 center,float radius);
+	void SetBoundingFrustum(BoundingFrustum& boundingFrustum);
+
+	BoundingUnion& GetBoundUnion() {return _bound;}
+
 private:
-	std::unordered_set<weak_ptr<Collider>> _collisionList;
+	std::unordered_set<Collider*> _collisionList;
 	friend class ColliderManager;
+
+private:
+	CollisionType _type;
+	BoundingUnion _orgin;
+	BoundingUnion _bound;
 };
