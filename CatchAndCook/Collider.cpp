@@ -26,6 +26,7 @@ void Collision::SetBound(BoundingFrustum frustum)
 
 BoundingOrientedBox Collision::GetWorldBound(std::shared_ptr<Transform> transform)
 {
+	return BoundingOrientedBox();
 }
 
 

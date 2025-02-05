@@ -285,8 +285,8 @@ void SceneLoader::LinkComponent(json jsonData)
             jsonData["size"][0].get<float>(),
             jsonData["size"][1].get<float>(),
             jsonData["size"][2].get<float>());
-        collision.SetBox(center, size);
-        collider->SetCollition(collision);
+        //collision.SetBox(center, size);
+        //collider->SetCollition(collision);
     }
     if (type == L"SphereCollider")
     {
@@ -297,8 +297,8 @@ void SceneLoader::LinkComponent(json jsonData)
             jsonData["center"][1].get<float>(),
             jsonData["center"][2].get<float>());
         auto radius = jsonData["radius"].get<float>();
-        collision.SetSphere(center, radius);
-        collider->SetCollition(collision);
+    /*    collision.SetSphere(center, radius);
+        collider->SetCollition(collision);*/
     }
 }
 
