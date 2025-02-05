@@ -81,21 +81,12 @@ void Collider::RenderBegin()
 void Collider::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 	Component::CollisionBegin(collider,other);
-	auto a =  GetOwner();
-	auto& components = a->GetComponentAll();
-	for(auto& component : components)
-		if(component.get() != collider.get())
-			component->CollisionBegin(collider,other);
+
 }
 
 void Collider::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 	Component::CollisionEnd(collider,other);
-
-	auto& components = GetOwner()->GetComponentAll();
-	for(auto& component : components)
-		if(component != GetCast<Component>())
-			component->CollisionEnd(collider,other);
 }
 
 void Collider::SetDestroy()

@@ -43,8 +43,8 @@ void ColliderManager::Update()
 			{
 				if(!otherCollider->_collisionList.contains(currentCollider.get()))
 				{
-					currentCollider->CollisionBegin(currentCollider,otherCollider);
-					otherCollider->CollisionBegin(otherCollider,currentCollider);
+					CallBackBegin(currentCollider,otherCollider);
+					CallBackBegin(otherCollider,currentCollider);
 					otherCollider->_collisionList.insert(currentCollider.get());
 					currentCollider->_collisionList.insert(otherCollider.get());
 				}
@@ -54,8 +54,8 @@ void ColliderManager::Update()
 			{
 				if(otherCollider->_collisionList.contains(currentCollider.get()))
 				{
-					currentCollider->CollisionEnd(currentCollider,otherCollider);
-					otherCollider->CollisionEnd(otherCollider,currentCollider);
+					CallBackEnd(currentCollider,otherCollider);
+					CallBackEnd(otherCollider,currentCollider);
 					otherCollider->_collisionList.erase(currentCollider.get());
 					currentCollider->_collisionList.erase(otherCollider.get());
 				}
@@ -72,8 +72,8 @@ void ColliderManager::Update()
 			{
 				if(!otherCollider->_collisionList.contains(currentCollider.get()))
 				{
-					currentCollider->CollisionBegin(currentCollider,otherCollider);
-					otherCollider->CollisionBegin(otherCollider,currentCollider);
+					CallBackBegin(currentCollider,otherCollider);
+					CallBackBegin(otherCollider,currentCollider);
 					otherCollider->_collisionList.insert(currentCollider.get());
 					currentCollider->_collisionList.insert(otherCollider.get());
 				}
@@ -81,12 +81,28 @@ void ColliderManager::Update()
 			{
 				if(otherCollider->_collisionList.contains(currentCollider.get())) 
 				{
-					currentCollider->CollisionEnd(currentCollider,otherCollider);
-					otherCollider->CollisionEnd(otherCollider,currentCollider);
+					CallBackEnd(currentCollider,otherCollider);
+					CallBackEnd(otherCollider, currentCollider);
 					otherCollider->_collisionList.erase(currentCollider.get());
 					currentCollider->_collisionList.erase(otherCollider.get());
 				}
 			}
 		}
 	}
+}
+
+void ColliderManager::CallBackBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+{
+	auto& components = collider->GetOwner()->GetComponentAll();
+	for(auto& component : components)
+		if(component != collider)
+			component->CollisionBegin(collider,other);
+}
+
+void ColliderManager::CallBackEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+{
+	auto& components = collider->GetOwner()->GetComponentAll();
+	for(auto& component : components)
+		if(component != collider)
+			component->CollisionEnd(collider,other);
 }
