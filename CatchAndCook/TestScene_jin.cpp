@@ -37,14 +37,17 @@ void TestScene_jin::Init()
 
 
 	//ResourceManager::main->Load<Model>(L"kind", L"../Resources/Models/Kindred/kindred_unity.fbx", VertexType::Vertex_Skinned);
+	//ResourceManager::main->Load<Model>(L"kind",L"../Resources/Models/testB.fbx",VertexType::Vertex_Skinned);
 	//auto model = ResourceManager::main->Get<Model>(L"kind");
 	//auto obj = model->CreateGameObject(GetCast<Scene>());
-	//std::cout << _gameObjects.size() << "\n";
+	//obj->_transform->SetWorldScale(vec3(100,100,100));
 
 	ResourceManager::main->Load<SceneLoader>(L"test", L"../Resources/Datas/Scenes/TestScene2.json");
 	auto a = ResourceManager::main->Get<SceneLoader>(L"test");
-
 	a->Load(GetCast<Scene>());
+
+
+	std::cout << _gameObjects.size() << "\n";
 
 
 	//a[0]->_transform->SetLocalRotation(Vector3(0,180,0) * D2R);

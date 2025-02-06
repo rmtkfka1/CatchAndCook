@@ -54,7 +54,8 @@ void AssimpPack::Init(std::wstring path, bool xFlip)
         aiProcess_JoinIdenticalVertices// �ߺ����� �� �ε��� ���� ������� ��ȯ
         //aiProcess_SortByPType // �������� Ÿ�Ժ��� ��������. aiProcess_Triangulate ���� ������ �ﰢ���� ���Ƽ� �ʿ� ����. �ϴ� �־�~ 
         | aiProcess_GlobalScale;
-    if (!xFlip)
+	xFlip = true;
+	if (!xFlip)
     {
         flag |= aiProcess_MakeLeftHanded;
         scene = importer->ReadFile(std::to_string(path + L"\0"), flag);
@@ -62,13 +63,18 @@ void AssimpPack::Init(std::wstring path, bool xFlip)
     else
     {
         scene = importer->ReadFile(std::to_string(path + L"\0"), flag);
-        MakeLeftHandedProcess leftHandedProcess;
-        leftHandedProcess.Execute(const_cast<aiScene*>(scene));
     }
 	if (scene == nullptr)
 	{
 		std::cout << "assimp load failed : path not found (" << std::to_string(path) << "\n";
 		assert(scene != nullptr);
+	}
+	if(!xFlip)
+	{
+	} else
+	{
+		MakeLeftHandedProcess leftHandedProcess;
+		leftHandedProcess.Execute(const_cast<aiScene*>(scene));
 	}
 	
 }
@@ -84,7 +90,49 @@ void Model::Init(const wstring& path, VertexType vertexType)
 	std::shared_ptr<AssimpPack> pack = std::make_shared<AssimpPack>();
 	pack->Init(path);
 	const aiScene* scene = pack->GetScene();
+	//aiMetadata* metadata = scene->mMetaData;
+	//for(unsigned int i = 0; i < metadata->mNumProperties; ++i) {
+	//	aiString key = metadata->mKeys[i];
+	//	aiMetadataEntry entry = metadata->mValues[i];
 
+	//	std::cout << "Key: " << key.C_Str() << " - ";
+
+	//	switch(entry.mType) {
+	//	case AI_AISTRING:
+	//	std::cout << "Value (String): " << static_cast<aiString*>(entry.mData)->C_Str();
+	//	break;
+	//	case AI_INT32:
+	//	std::cout << "Value (Int32): " << *static_cast<int32_t*>(entry.mData);
+	//	break;
+	//	case AI_UINT64:
+	//	std::cout << "Value (UInt64): " << *static_cast<uint64_t*>(entry.mData);
+	//	break;
+	//	case AI_FLOAT:
+	//	std::cout << "Value (Float): " << *static_cast<float*>(entry.mData);
+	//	break;
+	//	case AI_DOUBLE:
+	//	std::cout << "Value (Double): " << *static_cast<double*>(entry.mData);
+	//	break;
+	//	case AI_AIVECTOR3D:
+	//	{
+	//		aiVector3D vec = *static_cast<aiVector3D*>(entry.mData);
+	//		std::cout << "Value (Vector3D): (" << vec.x << ", " << vec.y << ", " << vec.z << ")";
+	//	}
+	//	break;
+	//	default:
+	//	std::cout << "Unknown type.";
+	//	break;
+	//	}
+	//	std::cout << std::endl;
+	//}
+	aiMetadata* metadata = scene->mMetaData;
+	for(unsigned int i = 0; i < metadata->mNumProperties; ++i) {
+		aiString key = metadata->mKeys[i];
+		aiMetadataEntry entry = metadata->mValues[i];
+		if(string(key.C_Str()) == "OriginalUpAxis")
+			if(std::abs(*static_cast<int32_t*>(entry.mData)) != 1)
+				std::cout << string("Model Warring : Axis Error. Need Unity Fix Tools.\n") << std::to_string(path) <<"\n";
+	}
 	// �ӽ�
 	auto model = GetCast<Model>();
 	// -------- �Ž� ���� --------

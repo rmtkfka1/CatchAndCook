@@ -16,16 +16,17 @@ void ResourceManager::Init()
 	CreateDefaultMesh();
 	CreateDefaultMaterial();
 	CreateDefaultTexture();
+	CreateDefaultModel();
 }
 
 void ResourceManager::CreateDefaultModel()
 {
-	ResourceManager::main->Load<Model>(L"Sphere", path_model + L"Models/Sphere.fbx", VertexType::Vertex_Static);
-	ResourceManager::main->Load<Model>(L"Rect", path_model + L"Models/Rect.fbx", VertexType::Vertex_Static);
-	ResourceManager::main->Load<Model>(L"Quad", path_model + L"Models/Quad.fbx", VertexType::Vertex_Static);
-	ResourceManager::main->Load<Model>(L"Cylinder", path_model + L"Models/Cylinder.fbx", VertexType::Vertex_Static);
-	ResourceManager::main->Load<Model>(L"Cube", path_model + L"Models/Cube.fbx", VertexType::Vertex_Static);
-	ResourceManager::main->Load<Model>(L"Capsule", path_model + L"Models/Capsule.fbx", VertexType::Vertex_Static);
+	ResourceManager::main->Load<Model>(L"Sphere", path_model + L"Models/Configs/Sphere.fbx", VertexType::Vertex_Static);
+	ResourceManager::main->Load<Model>(L"Rect", path_model + L"Models/Configs/Rect.fbx", VertexType::Vertex_Static);
+	ResourceManager::main->Load<Model>(L"Quad", path_model + L"Models/Configs/Quad.fbx", VertexType::Vertex_Static);
+	ResourceManager::main->Load<Model>(L"Cylinder", path_model + L"Models/Configs/Cylinder.fbx", VertexType::Vertex_Static);
+	ResourceManager::main->Load<Model>(L"Cube", path_model + L"Models/Configs/Cube.fbx", VertexType::Vertex_Static);
+	ResourceManager::main->Load<Model>(L"Capsule", path_model + L"Models/Configs/Capsule.fbx", VertexType::Vertex_Static);
 }
 
 void ResourceManager::CreateDefaultMesh()
