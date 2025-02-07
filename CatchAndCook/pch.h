@@ -129,6 +129,7 @@ namespace fs = std::filesystem;
 #include "GeoMetryHelper.h"
 #include "SceneManager.h"
 #include "SpriteAction.h"
+#include "Vertex.h"
 
 inline void ThrowIfFailed(HRESULT hr) {
     if (FAILED(hr)) {
