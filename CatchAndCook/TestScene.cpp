@@ -218,7 +218,6 @@ void TestScene::Init()
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest",L"Terrain.hlsl",StaticProp,
 		ShaderArg{{{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}}},info);
 
-
 		shared_ptr<Material> material = make_shared<Material>();
 
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"Terrain");
@@ -227,19 +226,15 @@ void TestScene::Init()
 
 		auto& terrain = gameObject->AddComponent<Terrain>();
 		terrain->SetHeightMap(L"../Resources/Textures/HeightMap/Terrain_Height.raw",L"../Resources/Textures/HeightMap/Terrain_Height.png");
-		terrain->SetGridSize(vec2(1000.0f,1000.0f));
+		terrain->SetGridSize(vec2(2000.0f,2000.0f));
 		gameObject->_transform->SetLocalPosition(vec3(-300, 1000,0));
-
+		  
 		material = make_shared<Material>();
 		material->SetHandle("g_tex_0",ResourceManager::main->Load<Texture>(L"Terrain",L"Textures/HeightMap/terrainAlbedo.png")->GetSRVCpuHandle());
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
 
 		meshRenderer->AddMaterials({ material });
-
-		auto& mesh = GeoMetryHelper::LoadGripMesh(1000.0f,1000.0f,300,300);
-		mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
-		meshRenderer->AddMesh(mesh);
 	}
 
 	

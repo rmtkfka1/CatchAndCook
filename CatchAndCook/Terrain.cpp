@@ -3,7 +3,8 @@
 #include "GameObject.h"
 #include "TerrainManager.h"
 #include "Transform.h"
-
+#include "Mesh.h"
+#include "MeshRenderer.h"
 Terrain::Terrain()
 {
 	
@@ -31,9 +32,16 @@ void Terrain::Start()
 {
 	Component::Start();
 
-	if(GetOwner()->GetRenderer())
+	if(auto &renderer =GetOwner()->GetRenderer())
 	{
-		GetOwner()->GetRenderer()->AddSetter(static_pointer_cast<Terrain>(shared_from_this()));
+		renderer->AddSetter(static_pointer_cast<Terrain>(shared_from_this()));
+
+		if(_gridMesh == nullptr)
+		{
+            assert(false);
+		}
+
+		dynamic_pointer_cast<MeshRenderer>(renderer)->AddMesh(_gridMesh);
 	}
 
 	TerrainManager::main->PushTerrain(static_pointer_cast<Terrain>(shared_from_this()));
@@ -88,9 +96,9 @@ void Terrain::SetDestroy()
 
 void Terrain::Destroy()
 {
-	if(GetOwner()->GetRenderer())
+	if(auto &renderer =GetOwner()->GetRenderer())
 	{
-		GetOwner()->GetRenderer()->RemoveSetters(static_pointer_cast<Terrain>(shared_from_this()));
+        renderer->RemoveSetters(static_pointer_cast<Terrain>(shared_from_this()));
 	}
 }
 
@@ -109,9 +117,12 @@ void Terrain::SetHeightMap(const std::wstring &rawData,const std::wstring &pngDa
     _heightMap = make_shared<Texture>();
     _heightMap->Init(pngData);
 
+    _gridMesh = GeoMetryHelper::LoadGripMesh(2000.0f,2000.0f,300,300);
+    _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+
     int width = static_cast<int>(_heightMap->GetResource()->GetDesc().Width);
     int height = static_cast<int>(_heightMap->GetResource()->GetDesc().Height);
-
+    
     _size = vec2(width,height);
 
     // float 배열 할당
