@@ -125,28 +125,26 @@ void Terrain::SetHeightMap(const std::wstring &rawData,const std::wstring &pngDa
    
 }
 
-
 float Terrain::TerrainGetHeight(float x,float z,float offset)
 {
     vec3 terrainOrigin = GetOwner()->_transform->GetLocalPosition();
 
-    float tempX = x + _gridXsize / 2;
-    float tempZ = z + _gridZsize / 2;
+    float tempX = x + _gridXsize * 0.5f;
+    float tempZ = z + _gridZsize * 0.5f;
 
-	tempX-= terrainOrigin.x;
-	tempZ-= terrainOrigin.z;
+    tempX-= terrainOrigin.x;
+    tempZ-= terrainOrigin.z;
 
-
-    if(tempX< 0 || tempZ >= _gridXsize-1 || tempZ < 0 || tempZ >= _gridZsize-1)
+    if(tempX< 0 || tempX >= _gridXsize-1 || tempZ < 0 || tempZ >= _gridZsize-1)
     {
         return 0;
     }
 
-    float ratioX = tempX / _gridXsize;
-    float ratioZ = tempZ/ _gridZsize;
+    float heightMapScaleX = _heightMapX / _gridXsize;
+    float heightMapScaleZ = _heightMapZ / _gridZsize;
 
-    float fx = ratioX * _heightMapX;
-    float fz = ratioZ * _heightMapZ;
+    float fx = tempX * heightMapScaleX;
+    float fz = tempZ * heightMapScaleZ;
 
     int ix = static_cast<int>(fx);
     int iz = static_cast<int>(fz);
@@ -169,6 +167,7 @@ float Terrain::TerrainGetHeight(float x,float z,float offset)
 
     return terrainOrigin.y + finalHeight + offset;
 }
+
 
 
 void Terrain::LoadTerrain(const std::wstring &rawData)
