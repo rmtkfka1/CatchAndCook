@@ -12,7 +12,7 @@ SamplerState g_sam_1 : register(s1);
 #define DIST_MAX 900.0f
 #define DIST_MIN 10.0f
 
-static float4 sea_color = float4(0.3f,0.3f,1.0f,1.0f);
+static float4 sea_color = float4(0.3f, 0.3f, 1.0f, 1.0f);
 
 cbuffer test : register(b1)
 {
@@ -138,10 +138,11 @@ struct PatchConstOutput
 float CalcTessFactor(float3 p)
 {
     float d = distance(p, g_cameraPos.xyz);
-    float s = saturate((d - DIST_MIN) / (DIST_MAX - DIST_MIN));
-    return pow(2, (lerp(G_MaxTess, G_MinTess, s)));
+    float s = smoothstep(DIST_MIN, DIST_MAX, d);
+    float tess = exp2(lerp(G_MaxTess, G_MinTess, s));
+    
+    return clamp(tess, 1.0f, 64.0f);
 }
-
 
 //패치단위로 호출
 PatchConstOutput ConstantHS(InputPatch<VS_OUT, 4> patch, uint patchID : SV_PrimitiveID)
