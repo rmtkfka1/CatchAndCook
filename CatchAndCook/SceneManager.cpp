@@ -6,12 +6,12 @@
 
 std::unique_ptr<SceneManager> SceneManager::main = nullptr;
 
-shared_ptr<Scene> SceneManager::AddScene(SceneType type)
+shared_ptr<Scene> SceneManager::AddScene(SceneType type, bool initExecute)
 {
-	if (_sceneTable.find(type) != _sceneTable.end())
-	{
-		assert(false && "Scene name already exists!");
-	}
+	//if (_sceneTable.find(type) != _sceneTable.end())
+	//{
+	//	assert(false && "Scene name already exists!");
+	//}
 
 	shared_ptr<Scene> scene;
 
@@ -19,35 +19,35 @@ shared_ptr<Scene> SceneManager::AddScene(SceneType type)
 	{
 	case::SceneType::TestScene:
 		scene = make_shared<TestScene>();
-		scene->InitGuid();
-		_sceneTable[SceneType::TestScene] = scene;
 		break;
 	case::SceneType::TestScene2:
 		scene = make_shared<TestScene_jin>();
-		scene->InitGuid();
-		_sceneTable[SceneType::TestScene2] = scene;
 		break;
-
 	default:
 		break;
 	}
 
+	scene->InitGuid();
+	scene->_type = type;
+	_sceneTable[type] = scene;
+
 	if(_currentScene == nullptr)
 		_currentScene = scene;
 
-	scene->Init();
+	if(initExecute)
+		scene->Init();
 	return scene;
 }
 
-void SceneManager::ChangeScene(const shared_ptr<Scene>& nextScene)
+void SceneManager::ChangeScene(const shared_ptr<Scene>& prevScene, const shared_ptr<Scene>& nextScene)
 {
-	auto currentScene = GetCurrentScene();
+	auto currentScene = prevScene;
 
 	std::vector<std::shared_ptr<GameObject>> dontObj;
 
 	if (currentScene != nullptr)
 	{
-		for (auto& obj : _currentScene->_dont_destroy_gameObjects)
+		for (auto& obj : prevScene->_dont_destroy_gameObjects)
 			if (!obj->IsDestroy())
 				obj->GetChildsAll(dontObj);
 	}
@@ -56,14 +56,25 @@ void SceneManager::ChangeScene(const shared_ptr<Scene>& nextScene)
 	{
 		nextScene->AddGameObject(obj);
 		nextScene->_dont_destroy_gameObjects.push_back(obj);
-		currentScene->RemoveGameObject(obj);
+		if(currentScene != nullptr)
+			currentScene->RemoveGameObject(obj);
 	}
-
-	currentScene->_dont_destroy_gameObjects.clear();
+	if(currentScene != nullptr)
+		currentScene->_dont_destroy_gameObjects.clear();
 	_currentScene = nextScene;
 }
 
 std::shared_ptr<Scene> SceneManager::FindScene(SceneType type)
 {
 	return _sceneTable[type];
+}
+
+void SceneManager::Reload()
+{
+	//SceneManager::GetCurrentScene()->_type
+	auto prevScene = GetCurrentScene();
+	auto nextScene = AddScene(prevScene->_type, false);
+	ChangeScene(prevScene, nextScene);
+	prevScene->Release();
+	nextScene->Init();
 }

@@ -21,9 +21,9 @@ public:
     SceneLoader();
     virtual ~SceneLoader();
 
-    std::unordered_map<std::wstring, json> refJson_GameObjectTable;
-    std::unordered_map<std::wstring, json> refJson_ComponentTable;
-    std::unordered_map<std::wstring, json> refJson_MaterialTable;
+    std::unordered_map<std::wstring, json*> refJson_GameObjectTable;
+    std::unordered_map<std::wstring, json*> refJson_ComponentTable;
+    std::unordered_map<std::wstring, json*> refJson_MaterialTable;
 
     std::vector<std::shared_ptr<Component>> componentCache;
     std::vector<std::shared_ptr<GameObject>> gameObjectCache;
@@ -31,13 +31,13 @@ public:
 
     std::shared_ptr<Scene> _scene;
 
-    void PrevProcessingGameObject(json data);
-    void PrevProcessingComponent(json data);
-    void PrevProcessingMaterial(json data);
+    void PrevProcessingGameObject(json& data);
+    void PrevProcessingComponent(json& data);
+    void PrevProcessingMaterial(json& data);
 
-    void LinkGameObject(json jsonData);
-    void LinkComponent(json jsonData);
-    void LinkMaterial(json jsonData);
+    void LinkGameObject(json& jsonData);
+    void LinkComponent(json& jsonData);
+    void LinkMaterial(json& jsonData);
 
 public:
     json originalJson;

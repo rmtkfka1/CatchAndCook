@@ -42,7 +42,7 @@ void TestScene_jin::Init()
 	//auto obj = model->CreateGameObject(GetCast<Scene>());
 	//obj->_transform->SetWorldScale(vec3(100,100,100));
 
-	ResourceManager::main->Load<SceneLoader>(L"test", L"../Resources/Datas/Scenes/TestScene2.json");
+	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/TestScene2.json");
 	auto a = ResourceManager::main->Get<SceneLoader>(L"test");
 	a->Load(GetCast<Scene>());
 

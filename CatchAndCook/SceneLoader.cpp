@@ -45,11 +45,11 @@ std::vector<std::shared_ptr<GameObject>> SceneLoader::Load(const std::shared_ptr
     }
 
     for (auto& ref : refJson_MaterialTable)
-        LinkMaterial(ref.second);
+        LinkMaterial(*ref.second);
     for (auto& ref : refJson_ComponentTable)
-        LinkComponent(ref.second);
+        LinkComponent(*ref.second);
     for (auto& ref : refJson_GameObjectTable)
-        LinkGameObject(ref.second);
+        LinkGameObject(*ref.second);
     std::vector<std::shared_ptr<GameObject>> result = gameObjectCache;
 
     std::cout << std::format("Load - {0}", std::to_string(this->_path)) << "\n";
@@ -78,21 +78,21 @@ void SceneLoader::Init(const std::wstring& path)
     originalJson = originalJson["references"];
 }
 
-void SceneLoader::PrevProcessingGameObject(json data)
+void SceneLoader::PrevProcessingGameObject(json& data)
 {
 	std::wstring guid = std::to_wstring(data["guid"].get<std::string>());
 	auto gameObject = CreateObject<GameObject>(guid);
     gameObject->SetParent(nullptr);
-	refJson_GameObjectTable[guid] = data;
+	refJson_GameObjectTable[guid] = &data;
 	gameObjectCache.emplace_back(gameObject);
 }
 
-void SceneLoader::PrevProcessingComponent(json data)
+void SceneLoader::PrevProcessingComponent(json& data)
 {
     std::wstring guid = std::to_wstring(data["guid"].get<std::string>());
     std::wstring type = std::to_wstring(data["type"].get<std::string>());
     std::shared_ptr<Component> component;
-    refJson_ComponentTable[guid] = data;
+    refJson_ComponentTable[guid] = &data;
 
 
     if (type == L"Transform")
@@ -138,11 +138,11 @@ void SceneLoader::PrevProcessingComponent(json data)
     componentCache.emplace_back(component);
 }
 
-void SceneLoader::PrevProcessingMaterial(json data)
+void SceneLoader::PrevProcessingMaterial(json& data)
 {
 	std::wstring guid = std::to_wstring(data["guid"].get<std::string>());
 	auto material = CreateObject<Material>(guid);
-	refJson_MaterialTable[guid] = data;
+	refJson_MaterialTable[guid] = &data;
 
 	for (auto& texture : data["datas"]["textures"]) {
         ResourceManager::main->Load<Texture>(
@@ -154,7 +154,7 @@ void SceneLoader::PrevProcessingMaterial(json data)
 	materialCache.emplace_back(material);
 }
 
-void SceneLoader::LinkGameObject(json jsonData)
+void SceneLoader::LinkGameObject(json& jsonData)
 {
 
     std::wstring guid = std::to_wstring(jsonData["guid"].get<std::string>());
@@ -186,7 +186,7 @@ void SceneLoader::LinkGameObject(json jsonData)
 /*return gameObject;*/
 }
 
-void SceneLoader::LinkComponent(json jsonData)
+void SceneLoader::LinkComponent(json& jsonData)
 {
     std::wstring guid = std::to_wstring(jsonData["guid"].get<std::string>());
     std::wstring type = std::to_wstring(jsonData["type"].get<std::string>());
@@ -223,11 +223,12 @@ void SceneLoader::LinkComponent(json jsonData)
         {
 	        std::vector<std::shared_ptr<ModelMesh>> meshes = model->FindMeshsByName(meshInfo["meshName"].get<std::string>());
             std::vector<std::shared_ptr<Material>> materials;
-            for (auto& materialGuid : jsonData["materials"])
+            for(auto& materialGuidJson : jsonData["materials"])
             {
-                auto guid = std::to_wstring(materialGuid.get<std::string>());
-                auto material = IGuid::FindObjectByGuid<Material>(guid);
-                auto shaderName = std::to_wstring(refJson_MaterialTable[guid]["shaderName"].get<std::string>());
+                auto materialGuid = std::to_wstring(materialGuidJson.get<std::string>());
+                auto material = IGuid::FindObjectByGuid<Material>(materialGuid);
+                auto& materialData = (*refJson_MaterialTable[materialGuid]);
+                auto shaderName = std::to_wstring(materialData["shaderName"].get<std::string>());
                 auto shader = ResourceManager::main->Get<Shader>(shaderName);
                 if (shader == nullptr)
                     shader = ResourceManager::main->Get<Shader>(L"DefaultForward");
@@ -256,11 +257,12 @@ void SceneLoader::LinkComponent(json jsonData)
         {
             std::vector<std::shared_ptr<ModelMesh>> meshes = model->FindMeshsByName(meshInfo["meshName"].get<std::string>());
             std::vector<std::shared_ptr<Material>> materials;
-            for(auto& materialGuid : jsonData["materials"])
+            for(auto& materialGuidJson : jsonData["materials"])
             {
-                auto guid = std::to_wstring(materialGuid.get<std::string>());
-                auto material = IGuid::FindObjectByGuid<Material>(guid);
-                auto shaderName = std::to_wstring(refJson_MaterialTable[guid]["shaderName"].get<std::string>());
+                auto materialGuid = std::to_wstring(materialGuidJson.get<std::string>());
+                auto material = IGuid::FindObjectByGuid<Material>(materialGuid);
+                auto& materialData = (*refJson_MaterialTable[materialGuid]);
+                auto shaderName = std::to_wstring(materialData["shaderName"].get<std::string>());
                 auto shader = ResourceManager::main->Get<Shader>(shaderName);
                 if(shader == nullptr)
                     shader = ResourceManager::main->Get<Shader>(L"DefaultForward_Skinned");
@@ -303,7 +305,7 @@ void SceneLoader::LinkComponent(json jsonData)
     }
 }
 
-void SceneLoader::LinkMaterial(json jsonData)
+void SceneLoader::LinkMaterial(json& jsonData)
 {
     std::wstring guid = std::to_wstring(jsonData["guid"].get<std::string>());
 

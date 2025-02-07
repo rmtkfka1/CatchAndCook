@@ -419,6 +419,9 @@
     <ClInclude Include="BoundingCapsule.h" />
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="ColliderManager.h" />
+    <ClInclude Include="SceneType.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">

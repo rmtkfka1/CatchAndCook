@@ -3,6 +3,7 @@
 #include "GameObjectSetting.h"
 #include "IGuid.h"
 #include "RendererBase.h"
+#include "SceneType.h"
 
 class RendererBase;
 class GameObject;
@@ -16,7 +17,6 @@ struct GlobalParam
 
 class Scene : public IGuid
 {
-
 
 private:
 	void AddGameObject(const std::shared_ptr<GameObject>& gameObject);
@@ -64,6 +64,7 @@ public:
 	std::queue<std::pair<std::shared_ptr<GameObject>, GameObjectType>> _changeTypeQueue;
 
 	std::string _name;
+	SceneType _type;
 
 	GlobalParam _globalParam;
 };

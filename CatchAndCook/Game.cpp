@@ -63,7 +63,6 @@ void Game::Init(HWND hwnd)
 
 
 	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
-	SceneManager::main->ChangeScene(scene);
 }
 
 void Game::PrevUpdate()
@@ -76,7 +75,10 @@ void Game::PrevUpdate()
 		_quit = true;
 		return;
 	}
-
+	if(Input::main->GetKeyDown(KeyCode::F5))
+	{
+		SceneManager::main->Reload();
+	}
 	if (Input::main->GetKeyDown(KeyCode::F9))
 	{
 		HWND hWnd = Core::main->GetHandle();
