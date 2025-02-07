@@ -14,7 +14,7 @@ Terrain::~Terrain()
 {
     if(_rawData)
     {
-        for(int y = 0; y < static_cast<int>(_size.y); ++y)
+        for(int y = 0; y < static_cast<int>(_heightMapSize.y); ++y)
         {
             delete[] _rawData[y];
         }
@@ -117,13 +117,14 @@ void Terrain::SetHeightMap(const std::wstring &rawData,const std::wstring &pngDa
     _heightMap = make_shared<Texture>();
     _heightMap->Init(pngData);
 
-    _gridMesh = GeoMetryHelper::LoadGripMesh(2000.0f,2000.0f,300,300);
-    _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
-
     int width = static_cast<int>(_heightMap->GetResource()->GetDesc().Width);
     int height = static_cast<int>(_heightMap->GetResource()->GetDesc().Height);
     
-    _size = vec2(width,height);
+    _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(width,height,33,33);
+    _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
+
+    _heightMapSize = vec2(width,height);
+    SetGridSize(vec2(width,height));
 
     // float 배열 할당
     _rawData = new float*[height];
@@ -181,8 +182,8 @@ float Terrain::TerrainGetHeight(float x,float z)
     float ratioX = (Coord.x)/ _gridSize.x;
     float ratioZ = (Coord.z) / _gridSize.y;
 
-    int ix = static_cast<int>(ratioX * _size.x);
-    int iz = static_cast<int>(ratioZ * _size.y);
+    int ix = static_cast<int>(ratioX * _heightMapSize.x);
+    int iz = static_cast<int>(ratioZ * _heightMapSize.y);
 
     return terrainOrigin.y + _rawData[iz][ix] + 6.0f; //temp는 임시적
 }

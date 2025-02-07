@@ -34,7 +34,7 @@ private:
 	shared_ptr<Mesh> _gridMesh{};
 	shared_ptr<Texture> _heightMap{};
 	vec2 _gridSize= {1.0f,1.0f};
-	vec2 _size{};
+	vec2 _heightMapSize{};
 	float** _rawData{};
 
 };
