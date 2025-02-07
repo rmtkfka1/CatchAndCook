@@ -23,18 +23,29 @@ public:
 
 	virtual void PushData() override;
 	virtual void SetData(Material* material =nullptr) override;
-
-public:
-	void SetGridSize(vec2 size){_gridSize = size;}
-	void SetHeightMap(const std::wstring& rawData,const std::wstring& pngData);
-	float TerrainGetHeight(float x,float z);
 	bool IsExecuteAble() override;
 
-private:
-	shared_ptr<Texture> _heightMap{};
-	vec2 _gridSize= {1.0f,1.0f};
-	vec2 _size{};
-	float** _rawData{};
+public:
+	void SetHeightMap(const std::wstring& rawData,const std::wstring& pngData, float scale);
+	float TerrainGetHeight(float x,float z, float offset);
 
+private:
+	void LoadTerrain(const std::wstring& rawData);
+	void Smooth();
+	bool InBounds(int32 i,int32 j);
+	float Average(int32 i,int32 j);
+private:
+	static const int CellsPerPatch = 64;
+
+	shared_ptr<Mesh> _gridMesh{};
+	shared_ptr<Texture> _heightMap{};
+	float _gridXsize=0;
+	float _gridZsize=0;
+
+	float _heightMapX=0;
+	float _heightMapZ=0;
+
+
+	vector<vector<float>> _heightMapData;
 };
 

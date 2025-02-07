@@ -178,7 +178,7 @@ void TestScene::Init()
 		info._zTest = true;
 		info._stencilTest = false;
 		info.cullingType = CullingType::WIREFRAME;
-		info.cullingType = CullingType::NONE;
+	/*	info.cullingType = CullingType::NONE;*/
 		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest",L"seatest.hlsl",StaticProp,
@@ -202,8 +202,8 @@ void TestScene::Init()
 
 		meshRenderer->AddMaterials({material});
 
-		auto& mesh = GeoMetryHelper::LoadGripMesh(2000.0f,2000.0f,100,100);
-		mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+		auto& mesh = GeoMetryHelper::LoadGripMeshControlPoints(2000.0f,2000.0f,20,20);
+		mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 		meshRenderer->AddMesh(mesh);
 	}
 
@@ -218,7 +218,6 @@ void TestScene::Init()
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest",L"Terrain.hlsl",StaticProp,
 		ShaderArg{{{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}}},info);
 
-
 		shared_ptr<Material> material = make_shared<Material>();
 
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"Terrain");
@@ -226,20 +225,15 @@ void TestScene::Init()
 		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
 
 		auto& terrain = gameObject->AddComponent<Terrain>();
-		terrain->SetHeightMap(L"../Resources/Textures/HeightMap/Terrain_Height.raw",L"../Resources/Textures/HeightMap/Terrain_Height.png");
-		terrain->SetGridSize(vec2(2000.f,2000.f));
-		gameObject->_transform->SetLocalPosition(vec3(2000, 1000,1000));
-
+		terrain->SetHeightMap(L"../Resources/Textures/HeightMap/Terrain_Height.raw",L"../Resources/Textures/HeightMap/Terrain_Height.png",1.0f);
+		gameObject->_transform->SetLocalPosition(vec3(0, 1000,0));
+		  
 		material = make_shared<Material>();
 		material->SetHandle("g_tex_0",ResourceManager::main->Load<Texture>(L"Terrain",L"Textures/HeightMap/terrainAlbedo.png")->GetSRVCpuHandle());
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
 
 		meshRenderer->AddMaterials({ material });
-
-		auto& mesh = GeoMetryHelper::LoadGripMesh(2000.0f,2000.0f,60,60);
-		mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
-		meshRenderer->AddMesh(mesh);
 	}
 
 	
