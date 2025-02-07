@@ -28,7 +28,9 @@ void Material::PushData()
 		memcpy(_cbufferContainer->ptr, (void*)&_params, sizeof(MaterialParams));
 	}
 
-	for (auto& injector : _injectors)
+	for (auto& injector : _shaderInjectors)
+		injector->Inject(GetCast<Material>());
+	for (auto& injector : _customInjectors)
 		injector->Inject(GetCast<Material>());
 }
 
@@ -40,9 +42,10 @@ void Material::SetData()
 	if(_useMaterialParams)
 		Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(4, _cbufferContainer->GPUAdress);
 
-	if (_shader)
-		for (auto& injector : _injectors)
-			injector->SetData(_shader);
+	for(auto& injector : _shaderInjectors)
+		injector->SetData(_shader);
+	for(auto& injector : _customInjectors)
+		injector->SetData(_shader);
 }
 
 void Material::PushHandle()

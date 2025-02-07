@@ -9,7 +9,7 @@ struct TestSubMaterialParam
 };
 
 CBUFFER_INJECTOR("popo", TestSubMaterialParam, 256, BufferType::MateriaSubParam, std::shared_ptr<Material>,
-	param.uv = Vector2(source->GetPropertyVector("uv"));
+	data.uv = Vector2(source->GetPropertyVector("uv"));
 )
 
 
@@ -19,11 +19,11 @@ struct DefaultMaterialParam
 	Vector4 _baseMapST;
 };
 
-CBUFFER_INJECTOR("DefaultMaterialParam", DefaultMaterialParam, 256, BufferType::MateriaSubParam, std::shared_ptr<Material>,
-	param.color = Vector4(source->GetPropertyVector("_Color"));
-	param._baseMapST = Vector4(source->GetPropertyVector("_BaseMap_ST"));
+CBUFFER_INJECTOR("DefaultMaterialParam", DefaultMaterialParam, 256, BufferType::DefaultMaterialParam, std::shared_ptr<Material>,
+	// data <- source
+	data.color = Vector4(source->GetPropertyVector("_Color"));
+	data._baseMapST = Vector4(source->GetPropertyVector("_BaseMap_ST"));
 )
-
 
 struct TerrainDetailsParam
 {
@@ -33,7 +33,7 @@ struct TerrainDetailsParam
 };
 
 CBUFFER_INJECTOR("TerrainDetailsParam", TerrainDetailsParam, 256, BufferType::TerrainDetailsParam, std::shared_ptr<Material>,
-	param.tileSize = Vector2(source->GetPropertyVector("tileSize"));
-	param.tileOffset = Vector2(source->GetPropertyVector("tileOffset"));
-	param.color = Vector4(source->GetPropertyVector("_Color"));
+	data.tileSize = Vector2(source->GetPropertyVector("tileSize"));
+	data.tileOffset = Vector2(source->GetPropertyVector("tileOffset"));
+	data.color = Vector4(source->GetPropertyVector("_Color"));
 )

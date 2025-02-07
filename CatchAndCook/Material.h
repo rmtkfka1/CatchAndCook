@@ -30,7 +30,13 @@ public:
 	Material(bool useMaterialParams) : _useMaterialParams(useMaterialParams) {};
 	virtual ~Material();
 
-	void SetShader(std::shared_ptr<Shader> shader) { _shader = shader; }
+	void SetShader(std::shared_ptr<Shader> shader)
+	{
+		_shader = shader;
+		_shaderInjectors.clear();
+		for(auto& type : shader->_cbufferInjectorTypes)
+			_shaderInjectors.push_back(InjectorManager::main->Get(type));
+	}
 
 	void SetPass(RENDER_PASS::PASS pass) {_pass = pass;};
 	RENDER_PASS::PASS& GetPass() { return _pass; };
@@ -45,7 +51,7 @@ public:
 	void PushData();
 	void SetData();
 
-	void SetInjector(const std::vector<std::shared_ptr<ICBufferInjector>>& injectors) { _injectors = injectors; }
+	void SetInjector(const std::vector<std::shared_ptr<ICBufferInjector>>& injectors) { _customInjectors = injectors; }
 
 	int GetPropertyInt(const std::string& name) { return _propertyInts[name]; };
 	void SetPropertyInt(const std::string& name, int data) { _propertyInts[name] = data; };
@@ -63,19 +69,20 @@ private:
 private:
 	shared_ptr<Shader> _shader;
 
-	std::unordered_map<std::string, int> _propertyInts; // Bool °ª
-	std::unordered_map<std::string, float> _propertyFloats; // 0~1 ½º,¹«½º´Ï½º Á¤º¸
+	std::unordered_map<std::string, int> _propertyInts; // Bool ê°’
+	std::unordered_map<std::string, float> _propertyFloats; // 0~1 ìŠ¤,ë¬´ìŠ¤ë‹ˆìŠ¤ ì •ë³´
 	std::unordered_map<std::string, vec4> _propertyVectors; // Color 
 	std::unordered_map<std::string, Matrix> _propertyMatrixs; // 
 	std::unordered_map<std::string, D3D12_CPU_DESCRIPTOR_HANDLE> _propertyHandle;
 
 	CBufferContainer* _cbufferContainer;
-	MaterialParams _params; // Ãß°¡ Á¤º¸ÇÔ¼ö ³Ñ°Ü¼­ µ¥ÀÌÅÍ ³Ö´Â ¼Â ÀÛ¾÷
+	MaterialParams _params; // ì¶”ê°€ ì •ë³´í•¨ìˆ˜ ë„˜ê²¨ì„œ ë°ì´í„° ë„£ëŠ” ì…‹ ì‘ì—…
 	bool _useMaterialParams = false;
 	RENDER_PASS::PASS _pass = RENDER_PASS::Forward;
 	int _stencilIndex = 0;
 
-	std::vector<std::shared_ptr<ICBufferInjector>> _injectors;
+	std::vector<std::shared_ptr<ICBufferInjector>> _customInjectors;
+	std::vector<std::shared_ptr<ICBufferInjector>> _shaderInjectors;
 };
 
 

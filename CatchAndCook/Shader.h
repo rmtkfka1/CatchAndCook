@@ -1,5 +1,6 @@
 #pragma once
 
+class ICBufferInjector;
 class Vertex;
 class RenderTarget;
 class Texture;
@@ -100,7 +101,7 @@ public:
     std::vector<ShaderCBufferInfo> cbuffers;
     std::vector<int> tRegisterTable;
 
-    //shader shaderType names ´ÜÀ§·Î
+    //shader shaderType names ë‹¨ìœ„ë¡œ
     std::unordered_map<std::string, ShaderStructInfo> _typeToStructTable;
     std::unordered_map<std::string, ShaderCBufferInfo> _nameToCBufferTable;
     std::unordered_map<std::string, ShaderRegisterInfo> _nameToRegisterTable;
@@ -188,12 +189,14 @@ public:
     std::unordered_map<std::string, std::shared_ptr<ShaderCode>> _shaderCodeTable;
     ShaderInfo _info;
     ShaderProfileInfo _profileInfo;
+    std::vector<BufferType> _cbufferInjectorTypes;
 
 public:
     D3D12_GRAPHICS_PIPELINE_STATE_DESC _pipelineDesc = {};
     ComPtr<ID3D12PipelineState> _pipelineState;
 
     void InitPipeLine(const std::vector<VertexProp>& prop);
+    void InitInjector(const std::vector<BufferType>& injectors);
     void SetInfo(const ShaderInfo& info);
     void Profile();
 

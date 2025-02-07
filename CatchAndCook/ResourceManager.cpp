@@ -56,6 +56,7 @@ void ResourceManager::CreateDefaultShader()
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->Init(L"TestForward.hlsl", StaticProp, ShaderArg{}, info);
+		shader->InitInjector({BufferType::DefaultMaterialParam});
 		Add<Shader>(L"DefaultForward", shader);
 	}
 	{
@@ -66,6 +67,7 @@ void ResourceManager::CreateDefaultShader()
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->Init(L"TestForward_Skinned.hlsl", SkinProp, ShaderArg{}, info);
+		shader->InitInjector({BufferType::DefaultMaterialParam});
 		Add<Shader>(L"DefaultForward_Skinned", shader);
 	}
 

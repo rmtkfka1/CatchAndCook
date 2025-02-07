@@ -137,7 +137,7 @@ void Shader::InitPipeLine(const std::vector<VertexProp>& prop)
     }
     _pipelineDesc.RasterizerState = resterizerDesc;
     _pipelineDesc.RasterizerState.FrontCounterClockwise = _info._wise == FrontWise::CCW ? TRUE : FALSE;
-    _pipelineDesc.RasterizerState.DepthClipEnable = TRUE; // ±íÀÌ°ª ¹üÀ§ ¹Û Â©¶ó³¿.
+    _pipelineDesc.RasterizerState.DepthClipEnable = TRUE; // ê¹Šì´ê°’ ë²”ìœ„ ë°– ì§¤ë¼ëƒ„.
     _pipelineDesc.RasterizerState.AntialiasedLineEnable = _info.cullingType == CullingType::WIREFRAME ? TRUE : FALSE;
     _pipelineDesc.RasterizerState.DepthBias = 0;
     _pipelineDesc.RasterizerState.SlopeScaledDepthBias = 0.0f;
@@ -205,8 +205,8 @@ void Shader::InitPipeLine(const std::vector<VertexProp>& prop)
 
     _pipelineDesc.DepthStencilState = depthStencilDesc;
 
-    //_pipelineDesc.BlendState.AlphaToCoverageEnable = FALSE; // ÇÊ¿ä¿¡ µû¶ó TRUE·Î ¼³Á¤
-    //_pipelineDesc.BlendState.IndependentBlendEnable = TRUE; // ¿©·¯ ·»´õ Å¸°Ù¿¡ ´ëÇØ ´Ù¸¥ ºí·»µù ¼³Á¤À» ¿øÇÒ °æ¿ì TRUE·Î ¼³Á¤
+    //_pipelineDesc.BlendState.AlphaToCoverageEnable = FALSE; // í•„ìš”ì— ë”°ë¼ TRUEë¡œ ì„¤ì •
+    //_pipelineDesc.BlendState.IndependentBlendEnable = TRUE; // ì—¬ëŸ¬ ë Œë” íƒ€ê²Ÿì— ëŒ€í•´ ë‹¤ë¥¸ ë¸”ë Œë”© ì„¤ì •ì„ ì›í•  ê²½ìš° TRUEë¡œ ì„¤ì •
 
 
     for (int i = 0; i < 8; i++)
@@ -299,6 +299,11 @@ void Shader::InitPipeLine(const std::vector<VertexProp>& prop)
     }
 
     ThrowIfFailed(device->CreateGraphicsPipelineState(&_pipelineDesc, IID_PPV_ARGS(&_pipelineState)));
+}
+
+void Shader::InitInjector(const std::vector<BufferType>& injectors)
+{
+    _cbufferInjectorTypes = injectors;
 }
 
 void Shader::SetInfo(const ShaderInfo& info)
@@ -473,7 +478,7 @@ void Shader::Profile()
                     registerInfo.elementType = "struct";
                     break;
                 case 0:
-                    // SRV°¡ ¾Æ´Ò°æ¿ì
+                    // SRVê°€ ì•„ë‹ê²½ìš°
                     break;
                 default:
                     std::cout << "Unknown Return Type: " << bindDesc.ReturnType << "\n";
@@ -619,12 +624,12 @@ std::shared_ptr<ShaderCode> Shader::LoadBlob(std::wstring path, std::string endP
     {
         std::ifstream shaderFile(shaderPath, std::ios::binary | std::ios::ate);
         if (!shaderFile.is_open())
-            std::cout << "Shader Compile Failed\n" << "¹Ì¸® ÄÄÆÄÀÏ µÈ ½¦ÀÌ´õ °æ·Î ½ÇÆĞ\n";
+            std::cout << "Shader Compile Failed\n" << "ë¯¸ë¦¬ ì»´íŒŒì¼ ëœ ì‰ì´ë” ê²½ë¡œ ì‹¤íŒ¨\n";
         std::streamsize size = shaderFile.tellg();
         shaderFile.seekg(0, std::ios::beg);
         shaderCode->_shaderPrecompiledBuffer.resize(size);
         if (!shaderFile.read(shaderCode->_shaderPrecompiledBuffer.data(), size))
-            std::cout << "Shader Compile Failed\n" << "¹Ì¸® ÄÄÆÄÀÏ µÈ ½¦ÀÌ´õ ÀĞ±â ½ÇÆĞ\n";
+            std::cout << "Shader Compile Failed\n" << "ë¯¸ë¦¬ ì»´íŒŒì¼ ëœ ì‰ì´ë” ì½ê¸° ì‹¤íŒ¨\n";
 
         shaderCode->_shaderByteCode.pShaderBytecode = shaderCode->_shaderPrecompiledBuffer.data();
         shaderCode->_shaderByteCode.BytecodeLength = shaderCode->_shaderPrecompiledBuffer.size();

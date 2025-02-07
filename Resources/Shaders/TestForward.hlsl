@@ -20,6 +20,12 @@ cbuffer cameraParams : register(b2)
     float4 cameraScreenData;
 };
 
+cbuffer DefaultMaterialParam : register(b7)
+{
+	float4 color;
+	float4 _baseMapST;
+};
+
 struct VS_IN
 {
     float3 pos : POSITION;
@@ -45,12 +51,12 @@ VS_OUT VS_Main(VS_IN input)
     output.pos = mul(float4(input.pos, 1.0f), WorldMat);
     output.pos = mul(output.pos, VPMatrix);
 
-    output.uv = input.uv;
+    output.uv = input.uv * _baseMapST.xy + _baseMapST.zw;
 
     return output;
 }
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    return _BaseMap.Sample(g_sam_0, input.uv);
+    return _BaseMap.Sample(g_sam_0, input.uv) * color;
 }
