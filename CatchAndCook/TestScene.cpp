@@ -225,7 +225,7 @@ void TestScene::Init()
 		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
 
 		auto& terrain = gameObject->AddComponent<Terrain>();
-		terrain->SetHeightMap(L"../Resources/Textures/HeightMap/Terrain_Height.raw",L"../Resources/Textures/HeightMap/Terrain_Height.png");
+		terrain->SetHeightMap(L"../Resources/Textures/HeightMap/Terrain_Height.raw",L"../Resources/Textures/HeightMap/Terrain_Height.png",1.0f);
 		gameObject->_transform->SetLocalPosition(vec3(0, 1000,0));
 		  
 		material = make_shared<Material>();

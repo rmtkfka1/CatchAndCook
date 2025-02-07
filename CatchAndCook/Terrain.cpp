@@ -5,6 +5,7 @@
 #include "Transform.h"
 #include "Mesh.h"
 #include "MeshRenderer.h"
+#include <algorithm>
 Terrain::Terrain()
 {
 	
@@ -12,15 +13,7 @@ Terrain::Terrain()
 
 Terrain::~Terrain()
 {
-    if(_rawData)
-    {
-        for(int y = 0; y < static_cast<int>(_heightMapSize.y); ++y)
-        {
-            delete[] _rawData[y];
-        }
-        delete[] _rawData;
-        _rawData = nullptr;
-    }
+   
 }
 
 void Terrain::Init()
@@ -112,28 +105,77 @@ void Terrain::SetData(Material * material)
 	material->SetHandle("heightMap",_heightMap->GetSRVCpuHandle());
 }
 
-void Terrain::SetHeightMap(const std::wstring &rawData,const std::wstring &pngData)
+void Terrain::SetHeightMap(const std::wstring &rawData,const std::wstring &pngData , float scale)
 {
+ 
     _heightMap = make_shared<Texture>();
     _heightMap->Init(pngData);
 
-    int width = static_cast<int>(_heightMap->GetResource()->GetDesc().Width);
-    int height = static_cast<int>(_heightMap->GetResource()->GetDesc().Height);
-    
-    _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(width,height,20,20);
+    _heightMapX = static_cast<int>(_heightMap->GetResource()->GetDesc().Width);
+    _heightMapZ = static_cast<int>(_heightMap->GetResource()->GetDesc().Height);
+
+	_gridXsize = _heightMapX * scale;
+	_gridZsize = _heightMapZ * scale;
+
+    _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(_gridXsize,_gridZsize,CellsPerPatch,CellsPerPatch);
     _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 
-    _heightMapSize = vec2(width,height);
-    SetGridSize(vec2(width,height));
+	LoadTerrain(rawData);
+    Smooth();
+   
+}
 
-    // float 배열 할당
-    _rawData = new float*[height];
-    for(int z = 0; z < height; ++z)
+
+float Terrain::TerrainGetHeight(float x,float z,float offset)
+{
+    vec3 terrainOrigin = GetOwner()->_transform->GetLocalPosition();
+
+    float tempX = x + _gridXsize / 2;
+    float tempZ = z + _gridZsize / 2;
+
+	tempX-= terrainOrigin.x;
+	tempZ-= terrainOrigin.z;
+
+
+    if(tempX< 0 || tempZ >= _gridXsize-1 || tempZ < 0 || tempZ >= _gridZsize-1)
     {
-        _rawData[z] = new float[width];
+        return 0;
     }
 
-    // 파일 열기
+    float ratioX = tempX / _gridXsize;
+    float ratioZ = tempZ/ _gridZsize;
+
+    float fx = ratioX * _heightMapX;
+    float fz = ratioZ * _heightMapZ;
+
+    int ix = static_cast<int>(fx);
+    int iz = static_cast<int>(fz);
+
+    // 경계를 넘어가는 경우 방지
+    int ix1 = std::min(ix + 1,(int)(_heightMapX - 1));
+    int iz1 = std::min(iz + 1,(int)(_heightMapZ - 1));
+
+    float hx0z0 = _heightMapData[iz][ix];
+    float hx1z0 = _heightMapData[iz][ix1];
+    float hx0z1 = _heightMapData[iz1][ix];
+    float hx1z1 = _heightMapData[iz1][ix1];
+
+    float tx = fx - ix;
+    float tz = fz - iz;
+
+    float h0 = hx0z0 * (1 - tx) + hx1z0 * tx;  // x 방향 보간
+    float h1 = hx0z1 * (1 - tx) + hx1z1 * tx;  // x 방향 보간
+    float finalHeight = h0 * (1 - tz) + h1 * tz; // z 방향 보간
+
+    return terrainOrigin.y + finalHeight + offset;
+}
+
+
+void Terrain::LoadTerrain(const std::wstring &rawData)
+{
+    _heightMapData.resize(_heightMapZ,vector<float>(_heightMapX,0.0f)); 
+
+
     std::ifstream file(rawData,std::ios::binary);
     if(!file)
     {
@@ -141,49 +183,65 @@ void Terrain::SetHeightMap(const std::wstring &rawData,const std::wstring &pngDa
         return;
     }
 
+    std::vector<WORD> tempRow((int)_heightMapX);
 
-    WORD* tempRow = new WORD[width];
-
-    // 데이터 읽기
-    for(int z = 0; z < height; ++z)
+    for(int z = 0; z < _heightMapZ; ++z)
     {
-        file.read(reinterpret_cast<char*>(tempRow),width * sizeof(WORD));
-
-        for(int x = 0; x < width; ++x)
+        if(!file.read(reinterpret_cast<char*>(tempRow.data()),_heightMapX * sizeof(WORD)))
         {
-            _rawData[z][x] = static_cast<float>(tempRow[x]) / 65535.0f * 1000.0f;
+            std::wcerr << L"Failed to read raw data from file: " << rawData << std::endl;
+            return;
+        }
+
+        for(int x = 0; x < _heightMapX; ++x)
+        {
+            _heightMapData[z][x] = static_cast<float>(tempRow[x]) / 65535.0f * 1000.0f;
         }
     }
 
-    delete[] tempRow;  
     file.close();
-
-   
 }
 
-
-float Terrain::TerrainGetHeight(float x,float z)
+void Terrain::Smooth()
 {
-    vec3 terrainOrigin = GetOwner()->_transform->GetLocalPosition();
+    vector<vector<float>> temp;
 
-    float tempX = x + _gridSize.x / 2;
-    float tempZ = z + _gridSize.y / 2 ;
+	temp = _heightMapData;
 
-    Matrix mat;
-    GetOwner()->_transform->GetLocalToWorldMatrix(mat);
-
-    vec3 Coord= vec3::Transform({tempX,0,tempZ},mat.Invert());
-
-    if(Coord.x < 0 || Coord.x >= _gridSize.x || Coord.z < 0 || Coord.z >= _gridSize.y)
+    for(uint32 i = 0; i < _heightMapZ; ++i)
     {
-        return 0;
+        for(uint32 j = 0; j <_heightMapX; ++j)
+        {
+            temp[i][j] = Average(i,j);
+        }
     }
 
-    float ratioX = (Coord.x)/ _gridSize.x;
-    float ratioZ = (Coord.z) / _gridSize.y;
+    _heightMapData = temp;
+}
 
-    int ix = static_cast<int>(ratioX * _heightMapSize.x);
-    int iz = static_cast<int>(ratioZ * _heightMapSize.y);
+bool Terrain::InBounds(int32 i,int32 j)
+{
+    return
+        i >= 0 && i < (int32)_heightMapZ &&
+        j >= 0 && j < (int32)_heightMapX;
+}
 
-    return terrainOrigin.y + _rawData[iz][ix] + 6.0f; //temp는 임시적
+float Terrain::Average(int32 i,int32 j)
+{
+    float avg = 0.0f;
+    float num = 0.0f;
+
+    for(int32 z = i - 1; z <= i + 1; ++z)
+    {
+        for(int32 x = j - 1; x <= j + 1; ++x)
+        {
+            if(InBounds(z,x))
+            {
+                avg += _heightMapData[z][x];
+                num += 1.0f;
+            }
+        }
+    }
+
+    return avg / num;
 }

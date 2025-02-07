@@ -48,7 +48,7 @@ void Transform::Update()
 
     if(_useTerrain)
     {
-		auto height= TerrainManager::main->GetTerrains()[0]->TerrainGetHeight(GetLocalPosition().x,GetLocalPosition().z);
+		auto height= TerrainManager::main->GetTerrains()[0]->TerrainGetHeight(GetLocalPosition().x,GetLocalPosition().z ,6.0f);
 		auto pos = GetLocalPosition();
 		pos.y =  height;
 		SetLocalPosition(pos);
