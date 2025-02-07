@@ -27,13 +27,13 @@ CBUFFER_INJECTOR("DefaultMaterialParam", DefaultMaterialParam, 256, BufferType::
 
 struct TerrainDetailsParam
 {
-	Vector2 tileSize;
-	Vector2 tileOffset;
-	Vector4 color;
+	int detailsCount;
+	Vector4 tileST[4];
+	//Vector4 color;
 };
 
 CBUFFER_INJECTOR("TerrainDetailsParam", TerrainDetailsParam, 256, BufferType::TerrainDetailsParam, std::shared_ptr<Material>,
-	data.tileSize = Vector2(source->GetPropertyVector("tileSize"));
+	/*data.tileST = Vector2(source->GetPropertyVector("tileST"));
 	data.tileOffset = Vector2(source->GetPropertyVector("tileOffset"));
-	data.color = Vector4(source->GetPropertyVector("_Color"));
+	data.color = Vector4(source->GetPropertyVector("_Color"));*/
 )
