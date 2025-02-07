@@ -135,17 +135,17 @@ float Terrain::TerrainGetHeight(float x,float z,float offset)
     tempX-= terrainOrigin.x;
     tempZ-= terrainOrigin.z;
 
-
-    if(tempX< 0 || tempZ >= _gridXsize-1 || tempZ < 0 || tempZ >= _gridZsize-1)
+    if(tempX< 0 || tempX >= _gridXsize-1 || tempZ < 0 || tempZ >= _gridZsize-1)
     {
         return 0;
     }
 
-    float ratioX = tempX / _gridXsize;
-    float ratioZ = tempZ/ _gridZsize;
+    float heightMapScaleX = _heightMapX / _gridXsize;
+    float heightMapScaleZ = _heightMapZ / _gridZsize;
 
-    float fx = ratioX * _heightMapX;
-    float fz = ratioZ * _heightMapZ;
+    float fx = tempX * heightMapScaleX;
+    float fz = tempZ * heightMapScaleZ;
+
 
     int ix = static_cast<int>(fx);
     int iz = static_cast<int>(fz);
