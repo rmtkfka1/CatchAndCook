@@ -9,7 +9,7 @@ SamplerState g_sam_1 : register(s1);
 #define G_MaxTess 4
 #define G_MinTess 1
 #define PI 3.14159f
-#define DIST_MAX 1000.0f
+#define DIST_MAX 2000.0f
 #define DIST_MIN 3.0f
 
 
