@@ -83,10 +83,7 @@ float CalcTessFactor(float3 p)
 {
     float d = distance(p, g_cameraPos.xyz);
 
-	// max norm in xz plane (useful to see detail levels from a bird's eye).
-	//float d = max( abs(p.x-gEyePosW.x), abs(p.z-gEyePosW.z) );
     float s = saturate((d - DIST_MIN) / (DIST_MAX - DIST_MIN));
-
     return pow(2, (lerp(G_MaxTess, G_MinTess, s)));
 }
 
