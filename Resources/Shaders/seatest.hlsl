@@ -188,7 +188,6 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 {
     DS_OUT dout;
     
- 
     dout.pos = lerp(
 		lerp(quad[0].pos, quad[1].pos, location.x),
 		lerp(quad[2].pos, quad[3].pos, location.x),
