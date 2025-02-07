@@ -120,7 +120,7 @@ void Terrain::SetHeightMap(const std::wstring &rawData,const std::wstring &pngDa
     int width = static_cast<int>(_heightMap->GetResource()->GetDesc().Width);
     int height = static_cast<int>(_heightMap->GetResource()->GetDesc().Height);
     
-    _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(width,height,33,33);
+    _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(width,height,20,20);
     _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 
     _heightMapSize = vec2(width,height);

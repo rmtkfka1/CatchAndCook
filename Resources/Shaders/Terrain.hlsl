@@ -82,7 +82,6 @@ struct PatchConstOutput
 float CalcTessFactor(float3 p)
 {
     float d = distance(p, g_cameraPos.xyz);
-
     float s = saturate((d - DIST_MIN) / (DIST_MAX - DIST_MIN));
     return pow(2, (lerp(G_MaxTess, G_MinTess, s)));
 }
