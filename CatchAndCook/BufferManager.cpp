@@ -57,3 +57,23 @@ void BufferManager::CreateBufferPool_Static(BufferType type, uint32 size, uint32
 	transformBuffer->Init(size, count);
 	_map_notReset[type] = transformBuffer;
 }
+
+shared_ptr<CBufferPool>& BufferManager::CreateAndGetBufferPool(BufferType type, uint32 size, uint32 count)
+{
+	if(_map.contains(type))
+		return _map[type];
+	shared_ptr<CBufferPool> transformBuffer = make_shared<CBufferPool>();
+	transformBuffer->Init(size,count);
+	_map[type] = transformBuffer;
+	return _map[type];
+}
+
+shared_ptr<CBufferPool>& BufferManager::CreateAndGetBufferPool_Static(BufferType type, uint32 size, uint32 count)
+{
+	if(_map_notReset.contains(type))
+		return _map_notReset[type];
+	shared_ptr<CBufferPool> transformBuffer = make_shared<CBufferPool>();
+	transformBuffer->Init(size,count);
+	_map_notReset[type] = transformBuffer;
+	return _map_notReset[type];
+}

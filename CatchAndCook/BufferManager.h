@@ -13,6 +13,7 @@ enum class BufferType
 	TestParam,
 	DefaultMaterialParam,
 	LightParam,
+	TerrainDetailsParam,
 };
 
 class CBufferPool;
@@ -31,6 +32,9 @@ public:
 
 	shared_ptr<CBufferPool>& GetBufferPool(BufferType type) { return _map[type]; }
 	shared_ptr<CBufferPool>& GetBufferPool_Static(BufferType type) { return _map_notReset[type]; }
+	shared_ptr<CBufferPool>& CreateAndGetBufferPool(BufferType type,uint32 size,uint32 count);
+	shared_ptr<CBufferPool>& CreateAndGetBufferPool_Static(BufferType type,uint32 size,uint32 count);
+
 	shared_ptr<TextureBufferPool>& GetTextureBufferPool() { return _textureBufferPool; }
 	shared_ptr<DescritporTable>& GetTable() { return _table; }
 

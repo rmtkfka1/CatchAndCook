@@ -38,7 +38,6 @@ void Game::Init(HWND hwnd)
 
 	InjectorManager::main = make_unique<InjectorManager>();
 	InjectorManager::main->Init();
-	InjectorManager::main->Register<TestSubMaterialParamInjector>(BufferType::MateriaSubParam);
 
 	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, static_pointer_cast<Camera>(make_shared<ThirdPersonCamera>()));
 	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0, 0, -5.0f));
