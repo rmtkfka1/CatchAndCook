@@ -6,11 +6,11 @@ Texture2D heightMap : register(t1);
 SamplerState g_sam_0 : register(s0);
 SamplerState g_sam_1 : register(s1);
 
-#define G_MaxTess 6
+#define G_MaxTess 4
 #define G_MinTess 1
 #define PI 3.14159f
-#define DIST_MAX 1500.0f
-#define DIST_MIN 10.0f
+#define DIST_MAX 2500.0f
+#define DIST_MIN 3.0f
 
 
 cbuffer test : register(b1)
