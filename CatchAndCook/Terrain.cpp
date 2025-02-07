@@ -129,8 +129,8 @@ float Terrain::TerrainGetHeight(float x,float z,float offset)
 {
     vec3 terrainOrigin = GetOwner()->_transform->GetLocalPosition();
 
-    float tempX = x + _gridXsize / 2;
-    float tempZ = z + _gridZsize / 2;
+    float tempX = x + _gridXsize * 0.5f;
+    float tempZ = z + _gridZsize * 0.5f;
 
     tempX-= terrainOrigin.x;
     tempZ-= terrainOrigin.z;
@@ -145,7 +145,6 @@ float Terrain::TerrainGetHeight(float x,float z,float offset)
 
     float fx = tempX * heightMapScaleX;
     float fz = tempZ * heightMapScaleZ;
-
 
     int ix = static_cast<int>(fx);
     int iz = static_cast<int>(fz);
