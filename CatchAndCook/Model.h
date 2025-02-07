@@ -43,6 +43,7 @@ public:
 	void DebugLog();
 
 public:
+
 	template<class T>
 	static void LoadVertex(aiMesh* assimp_mesh, std::shared_ptr<Mesh> mesh, std::vector<T>& vertexs);
 	template<>
