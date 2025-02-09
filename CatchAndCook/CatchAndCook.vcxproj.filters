@@ -223,6 +223,7 @@
     </ClCompile>
     <ClCompile Include="BoundingCapsule.cpp" />
     <ClCompile Include="ColliderManager.cpp" />
+    <ClCompile Include="Gizmo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -422,6 +423,7 @@
     <ClInclude Include="SceneType.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Gizmo.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -477,6 +479,9 @@
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\TestForward_Skinned.hlsl" />
     <FxCompile Include="..\Resources\Shaders\Terrain.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Gizmo.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
   </ItemGroup>

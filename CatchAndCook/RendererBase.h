@@ -23,6 +23,7 @@ public:
 class RendererBase
 {
 public:
+	virtual ~RendererBase() = default;
 	virtual void Rendering(Material* material, Mesh* mesh) = 0;
 	virtual void DebugRendering()=0;
 

@@ -25,6 +25,9 @@ void BufferManager::Init()
 
 	CreateBufferPool(BufferType::BoneParam, sizeof(BoneParam), 256);
 
+	CreateInstanceBufferPool(BufferType::TransformInstanceParam,sizeof(Matrix),1000,1);
+	CreateInstanceBufferPool(BufferType::GizmoInstanceParam,sizeof(Instance_Gizmo),10000,1);
+
 	{
 		_table = make_shared<DescritporTable>();
 		_table->Init(8*20000);
@@ -58,6 +61,14 @@ void BufferManager::CreateBufferPool_Static(BufferType type, uint32 size, uint32
 	_map_notReset[type] = transformBuffer;
 }
 
+void BufferManager::CreateInstanceBufferPool(BufferType type,uint32 elementSize,uint32 elementCount,uint32 bufferCount)
+{
+	shared_ptr<InstanceBufferPool> transformBuffer = make_shared<InstanceBufferPool>();
+	transformBuffer->Init(elementSize,elementCount,bufferCount);
+	_instanceMap[type] = transformBuffer;
+}
+
+
 shared_ptr<CBufferPool>& BufferManager::CreateAndGetBufferPool(BufferType type, uint32 size, uint32 count)
 {
 	if(_map.contains(type))
@@ -77,3 +88,4 @@ shared_ptr<CBufferPool>& BufferManager::CreateAndGetBufferPool_Static(BufferType
 	_map_notReset[type] = transformBuffer;
 	return _map_notReset[type];
 }
+

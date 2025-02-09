@@ -5,6 +5,7 @@
 #include "BufferManager.h"
 #include "BufferPool.h"
 #include "GameObject.h"
+#include "Gizmo.h"
 #include "SceneManager.h"
 #include "Shader.h"
 #include "Texture.h"
@@ -110,7 +111,7 @@ void MeshRenderer::CollisionBegin(const std::shared_ptr<Collider>& collider, con
 
 void MeshRenderer::DebugRendering()
 {
-	auto& cmdList = Core::main->GetCmdList();
+	/*auto& cmdList = Core::main->GetCmdList();
 
 	for (auto& mesh : _mesh)
 	{
@@ -139,7 +140,7 @@ void MeshRenderer::DebugRendering()
 			}
 
 		}
-	}
+	}*/
 }
 
 void MeshRenderer::SetDestroy()

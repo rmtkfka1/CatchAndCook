@@ -11,6 +11,7 @@
 #include "CameraManager.h"
 #include "Camera.h"
 #include "ColliderManager.h"
+#include "Gizmo.h"
 #include "Texture.h"
 #include "Mesh.h"
 #include "Shader.h"
@@ -38,6 +39,12 @@ void Game::Init(HWND hwnd)
 
 	InjectorManager::main = make_unique<InjectorManager>();
 	InjectorManager::main->Init();
+
+	//------------------
+
+	Gizmo::main = std::make_unique<Gizmo>();
+	Gizmo::main->Init();;
+
 
 	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, static_pointer_cast<Camera>(make_shared<ThirdPersonCamera>()));
 	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0, 0, -5.0f));
@@ -152,9 +159,9 @@ void Game::Release()
 {
 	ColliderManager::main.reset(nullptr);
 	SceneManager::main.reset(nullptr);
+	Gizmo::main.reset(nullptr);
 	InjectorManager::main.reset(nullptr);
 	CameraManager::main.reset(nullptr);
-	InjectorManager::main.reset(nullptr);
 	ResourceManager::main.reset(nullptr);
 	Time::main.reset(nullptr);
 	Input::main.reset(nullptr);

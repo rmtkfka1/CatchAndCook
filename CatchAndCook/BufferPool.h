@@ -9,10 +9,11 @@
 
 struct CBufferContainer
 {
-	D3D12_CPU_DESCRIPTOR_HANDLE	CPUHandle; //Descriptor Table ¿¡´Ù°¡ ÇÚµé º¹»çÇÒ‹š »ç¿ë
-	D3D12_GPU_VIRTUAL_ADDRESS   GPUAdress; //View ¿¡´Ù°¡ ¹Ù·Î²Å¾ÆÁÙ¶§ »ç¿ë
+	D3D12_CPU_DESCRIPTOR_HANDLE	CPUHandle; //Descriptor Table ì—ë‹¤ê°€ í•¸ë“¤ ë³µì‚¬í• ë–„ ì‚¬ìš©
+	D3D12_GPU_VIRTUAL_ADDRESS   GPUAdress; //View ì—ë‹¤ê°€ ë°”ë¡œê¼½ì•„ì¤„ë•Œ ì‚¬ìš©
 	void* ptr;
 	uint32 count = 1;
+	bool isAlloc = false;
 };
 
 class CBufferPool
@@ -111,8 +112,8 @@ public:
 	ComPtr<ID3D12DescriptorHeap>& GetDescriptorHeap() { return _heap; }
 private:
 	ComPtr<ID3D12DescriptorHeap> _heap;
-	uint32 _currentIndex=0; //ÇöÀç¸î°³ÇÒ´ç‰ç´ÂÁö
-	uint32 _count=0;  // handle °¹¼ö
+	uint32 _currentIndex=0; //í˜„ì¬ëª‡ê°œí• ë‹¹ë¬ëŠ”ì§€
+	uint32 _count=0;  // handle ê°¯ìˆ˜
 	uint32 _size = 0; 
 
 	D3D12_CPU_DESCRIPTOR_HANDLE _cpuHandle;
@@ -120,4 +121,68 @@ private:
 
 };
 
+
+/*************************
+*                        *
+*  InstanceBuffer Pool   *
+*                        *
+**************************/
+
+struct InstanceBufferContainer
+{
+	//D3D12_GPU_VIRTUAL_ADDRESS   GPUAdress; //View ì—ë‹¤ê°€ ë°”ë¡œê¼½ì•„ì¤„ë•Œ ì‚¬ìš©
+	D3D12_VERTEX_BUFFER_VIEW	_bufferView = {};
+	void* ptr;
+	uint32 elementCount = 1;
+	bool isAlloc = false;
+
+	int writeOffset = 0;
+	template<class T>
+	void AddData(const T& data)
+	{
+		assert(writeOffset < elementCount * sizeof(T));
+		memcpy(static_cast<char*>(ptr) + writeOffset, &data, sizeof(T));
+		writeOffset += sizeof(T);
+	}
+	template<class T>
+	void SetData(const T& data, int index)
+	{
+		assert(index < elementCount);
+		memcpy(static_cast<char*>(ptr) + index * sizeof(T), &data, sizeof(T));
+	}
+	void Free(){
+		isAlloc = false;
+		Clear();
+	}
+	void Clear(){
+		writeOffset = 0;
+	}
+};
+
+
+
+class InstanceBufferPool
+{
+
+public:
+	InstanceBufferPool();
+	~InstanceBufferPool();
+	void Init(uint32 size,uint32 elementCount, uint32 bufferCount);
+	void Reset();
+	InstanceBufferContainer* Alloc();
+
+private:
+	vector<InstanceBufferContainer> _containers;
+
+	ComPtr<ID3D12Resource> _resource;
+	void* offsetPtr = nullptr;
+
+	uint32 _currentIndex = 0;
+
+	uint32 _elementSize = 0;
+	uint32 _elementCount = 0;
+	uint32 _bufferSize = 0;
+	uint32 _bufferCount = 0;
+
+};
 

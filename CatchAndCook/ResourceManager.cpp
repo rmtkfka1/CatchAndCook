@@ -56,7 +56,7 @@ void ResourceManager::CreateDefaultShader()
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->Init(L"TestForward.hlsl", StaticProp, ShaderArg{}, info);
-		shader->InitInjector({BufferType::DefaultMaterialParam});
+		shader->SetInjector({BufferType::DefaultMaterialParam});
 		Add<Shader>(L"DefaultForward", shader);
 	}
 	{
@@ -67,7 +67,7 @@ void ResourceManager::CreateDefaultShader()
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->Init(L"TestForward_Skinned.hlsl", SkinProp, ShaderArg{}, info);
-		shader->InitInjector({BufferType::DefaultMaterialParam});
+		shader->SetInjector({BufferType::DefaultMaterialParam});
 		Add<Shader>(L"DefaultForward_Skinned", shader);
 	}
 
@@ -96,8 +96,18 @@ void ResourceManager::CreateDefaultShader()
 			{"GS_Main", "gs"}} }, info);
 		Add<Shader>(L"DebugNormal_Sea", shader);
 	}
+	{
 
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
 
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetInstanceProp(GizmoInstanceProp);
+		shader->Init(L"Gizmo.hlsl", {},ShaderArg{{{"PS_Main","ps"},{"VS_Main","vs"},{"GS_Main","gs"}}},info);
+		Add<Shader>(L"Gizmo",shader);
+	}
 }
 
 void ResourceManager::CreateDefaultMaterial()

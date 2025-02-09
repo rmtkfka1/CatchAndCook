@@ -76,9 +76,10 @@ void CBufferPool::Reset()
 
 CBufferContainer* CBufferPool::Alloc(uint32 count)
 {
-	assert(_currentIndex <= _count);
+	assert(_currentIndex < _count);
 	CBufferContainer* data = &_container[_currentIndex];
 	_currentIndex += data->count = count;
+	data->isAlloc = true;
 	return data;
 }
 
@@ -320,3 +321,79 @@ void DescritporTable::Reset()
 	_currentIndex = 0;
 }
 
+InstanceBufferPool::InstanceBufferPool()
+{
+}
+
+InstanceBufferPool::~InstanceBufferPool()
+{
+}
+
+void InstanceBufferPool::Init(uint32 size, uint32 elementCount, uint32 bufferCount)
+{
+
+	_elementSize = size;
+	_elementCount = elementCount;
+	_bufferCount = bufferCount;
+	_bufferSize = static_cast<uint64>(_elementSize) * _elementCount;
+
+	uint64 fullSize = _bufferSize * _bufferCount;
+
+	Core::main->GetDevice()->CreateCommittedResource(
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		D3D12_HEAP_FLAG_NONE,
+		&CD3DX12_RESOURCE_DESC::Buffer(fullSize),
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&_resource));
+
+
+	BYTE* ptr = nullptr;
+	CD3DX12_RANGE writeRange(0,0);
+	_resource->Map(0,&writeRange,reinterpret_cast<void**>(&ptr));
+	offsetPtr = ptr;
+	_containers.resize(_bufferCount);
+
+
+	D3D12_VERTEX_BUFFER_VIEW	_vertexBufferView = {};
+	_vertexBufferView.BufferLocation = _resource->GetGPUVirtualAddress();
+	_vertexBufferView.StrideInBytes = _elementSize;
+	_vertexBufferView.SizeInBytes = _bufferSize;
+
+	for(int i = 0; i < _bufferCount; i++)
+	{
+
+		_containers[i]._bufferView = _vertexBufferView;
+		_containers[i].ptr = ptr;
+		_containers[i].elementCount = _elementCount;
+		_containers[i].writeOffset = 0;
+		_containers[i].isAlloc = false;
+
+		_vertexBufferView.BufferLocation += _bufferSize;
+		ptr += _bufferSize;
+	}
+}
+
+void InstanceBufferPool::Reset()
+{
+	for(int i=0; i< _containers.size(); i++)
+	{
+		_containers[i].isAlloc = false;
+		_containers[i].writeOffset = 0;
+	}
+}
+
+InstanceBufferContainer* InstanceBufferPool::Alloc()
+{
+	for(int i=0; i<	_containers.size(); i++)
+	{
+		if(!_containers[i].isAlloc)
+		{
+			_containers[i].isAlloc = true;
+			_containers[i].writeOffset = 0;
+			return &_containers[i];
+		}
+	}
+	assert(false);
+	return nullptr;
+}
