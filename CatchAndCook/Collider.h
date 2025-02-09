@@ -36,14 +36,15 @@ public:
 
 public:
 	bool CheckCollision(Collider* other);
+
 	void SetBoundingBox(vec3 center,vec3 extents);
 	void SetBoundingSphere(vec3 center,float radius);
 	void SetBoundingFrustum(BoundingFrustum& boundingFrustum);
+	void CalculateBounding();
 
 	BoundingUnion& GetBoundUnion() {return _bound;}
 
 private:
-	std::unordered_set<Collider*> _collisionList;
 	friend class ColliderManager;
 
 private:
