@@ -2,6 +2,7 @@
 #include "Collider.h"
 #include "ColliderManager.h"
 #include "GameObject.h"
+#include "Gizmo.h"
 #include "Transform.h"
 
 Collider::Collider() : _orgin(BoundingOrientedBox()), _bound(BoundingOrientedBox())
@@ -27,35 +28,16 @@ void Collider::Start()
 {
 	Component::Start();
 	ColliderManager::main->AddCollider(GetCast<Collider>());
+
+	CalculateBounding();
 }
 
 void Collider::Update()
 {
 	Component::Update();
 
-	if(_type == CollisionType::Box)
-	{
-		auto onwerTransform = GetOwner()->_transform;
-		Matrix mat;
-		onwerTransform->GetLocalToWorldMatrix_BottomUp(mat);
-		_orgin.box.Transform(_bound.box,mat);
-	}
-
-	else if(_type == CollisionType::Sphere)
-	{
-		auto onwerTransform = GetOwner()->_transform;
-		Matrix mat;
-		onwerTransform->GetLocalToWorldMatrix_BottomUp(mat);
-		_orgin.sphere.Transform(_bound.sphere,mat);
-	} 
-
-	else if(_type == CollisionType::Frustum)
-	{
-		auto onwerTransform = GetOwner()->_transform;
-		Matrix mat;
-		onwerTransform->GetLocalToWorldMatrix_BottomUp(mat);
-		_orgin.frustum.Transform(_bound.frustum,mat);
-	}
+	if(GetOwner()->GetType() == GameObjectType::Dynamic)
+		CalculateBounding();
 }
 
 void Collider::Update2()
@@ -76,6 +58,28 @@ void Collider::Disable()
 void Collider::RenderBegin()
 {
 	Component::RenderBegin();
+
+	bool isCollision = ColliderManager::main->IsCollisionStay(GetCast<Collider>());
+	if(_type == CollisionType::Box)
+	{
+		Gizmo::Width(0.02f);
+		Gizmo::Box(_bound.box, !isCollision ? Vector4(0,1,0,1) : Vector4(1,0.5,0,1));
+		Gizmo::WidthRollBack();
+	}
+
+	else if(_type == CollisionType::Sphere)
+	{
+		Gizmo::Width(0.02f);
+		Gizmo::Sphere(_bound.sphere, !isCollision ? Vector4(0,1,0,1) : Vector4(1,0.5,0,1));
+		Gizmo::WidthRollBack();
+	}
+
+	else if(_type == CollisionType::Frustum)
+	{
+		Gizmo::Width(0.02f);
+		Gizmo::Frustum(_bound.frustum, !isCollision ? Vector4(0,1,0,1) : Vector4(1,0.5,0,1));
+		Gizmo::WidthRollBack();
+	}
 }
 
 void Collider::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
@@ -100,7 +104,7 @@ void Collider::Destroy()
 	ColliderManager::main->RemoveCollider(GetCast<Collider>());
 }
 
-bool Collider::CheckCollision(Collider * other)
+bool Collider::CheckCollision(Collider* other)
 {
 	if(_type == CollisionType::Box)
 	{
@@ -166,8 +170,8 @@ void Collider::SetBoundingBox(vec3 center,vec3 extents)
 void Collider::SetBoundingSphere(vec3 center,float radius)
 {
 	_type = CollisionType::Sphere;
-	_orgin.sphere = BoundingSphere(center,radius);
-	_bound.sphere = BoundingSphere(center,radius);
+	_orgin.sphere = BoundingSphere(center, radius);
+	_bound.sphere = BoundingSphere(center, radius);
 }
 
 void Collider::SetBoundingFrustum(BoundingFrustum & boundingFrustum)
@@ -175,4 +179,31 @@ void Collider::SetBoundingFrustum(BoundingFrustum & boundingFrustum)
 	_type = CollisionType::Frustum;
 	_orgin.frustum = boundingFrustum;
 	_bound.frustum = boundingFrustum;
+}
+
+void Collider::CalculateBounding()
+{
+	if(_type == CollisionType::Box)
+	{
+		auto onwerTransform = GetOwner()->_transform;
+		Matrix mat;
+		onwerTransform->GetLocalToWorldMatrix_BottomUp(mat);
+		_orgin.box.Transform(_bound.box,mat);
+	}
+
+	else if(_type == CollisionType::Sphere)
+	{
+		auto onwerTransform = GetOwner()->_transform;
+		Matrix mat;
+		onwerTransform->GetLocalToWorldMatrix_BottomUp(mat);
+		_orgin.sphere.Transform(_bound.sphere,mat);
+	}
+
+	else if(_type == CollisionType::Frustum)
+	{
+		auto onwerTransform = GetOwner()->_transform;
+		Matrix mat;
+		onwerTransform->GetLocalToWorldMatrix_BottomUp(mat);
+		_orgin.frustum.Transform(_bound.frustum,mat);
+	}
 }

@@ -55,3 +55,11 @@ std::vector<VertexProp> ColorProp
     VertexProp::uv0,
     VertexProp::color
 };
+
+std::vector<VertexProp> GizmoInstanceProp
+{
+    VertexProp::vec4_0,
+    VertexProp::vec3_0,
+    VertexProp::vec3_1,
+    VertexProp::float_0
+};

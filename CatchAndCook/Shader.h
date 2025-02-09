@@ -190,21 +190,22 @@ public:
     ShaderInfo _info;
     ShaderProfileInfo _profileInfo;
     std::vector<BufferType> _cbufferInjectorTypes;
+    std::vector<VertexProp> _instanceProp;
 
 public:
     D3D12_GRAPHICS_PIPELINE_STATE_DESC _pipelineDesc = {};
     ComPtr<ID3D12PipelineState> _pipelineState;
 
-    void InitPipeLine(const std::vector<VertexProp>& prop);
-    void InitInjector(const std::vector<BufferType>& injectors);
+    void InitPipeLine(const std::vector<VertexProp>& props);
+    void SetInjector(const std::vector<BufferType>& injectors);
+    void SetInstanceProp(const std::vector<VertexProp>& props);
     void SetInfo(const ShaderInfo& info);
     void Profile();
 
     int GetRegisterIndex(const std::string& name);
     std::vector<int>& GetTRegisterIndexs();
 
-    void Init(const std::wstring& path, std::vector<VertexProp>& prop , ShaderArg& shaderParams , const ShaderInfo& info = ShaderInfo());
+    void Init(const std::wstring& path, const std::vector<VertexProp>& prop, const ShaderArg& shaderParams, const ShaderInfo& info = ShaderInfo());
 protected:
     std::shared_ptr<ShaderCode> LoadBlob(std::wstring path, std::string endPointName, std::string shaderType);
 };
-

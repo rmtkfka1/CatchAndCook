@@ -21,12 +21,12 @@ void ResourceManager::Init()
 
 void ResourceManager::CreateDefaultModel()
 {
-	ResourceManager::main->Load<Model>(L"Sphere", path_model + L"Models/Configs/Sphere.fbx", VertexType::Vertex_Static);
-	ResourceManager::main->Load<Model>(L"Rect", path_model + L"Models/Configs/Rect.fbx", VertexType::Vertex_Static);
-	ResourceManager::main->Load<Model>(L"Quad", path_model + L"Models/Configs/Quad.fbx", VertexType::Vertex_Static);
-	ResourceManager::main->Load<Model>(L"Cylinder", path_model + L"Models/Configs/Cylinder.fbx", VertexType::Vertex_Static);
-	ResourceManager::main->Load<Model>(L"Cube", path_model + L"Models/Configs/Cube.fbx", VertexType::Vertex_Static);
-	ResourceManager::main->Load<Model>(L"Capsule", path_model + L"Models/Configs/Capsule.fbx", VertexType::Vertex_Static);
+	ResourceManager::main->Load<Model>(L"Sphere", path_model +	L"Configs/Sphere.fbx", VertexType::Vertex_Static);
+	ResourceManager::main->Load<Model>(L"Rect", path_model +		L"Configs/Rect.fbx", VertexType::Vertex_Static);
+	ResourceManager::main->Load<Model>(L"Quad", path_model +		L"Configs/Quad.fbx", VertexType::Vertex_Static);
+	ResourceManager::main->Load<Model>(L"Cylinder", path_model +	L"Configs/Cylinder.fbx", VertexType::Vertex_Static);
+	ResourceManager::main->Load<Model>(L"Cube", path_model +		L"Configs/Cube.fbx", VertexType::Vertex_Static);
+	ResourceManager::main->Load<Model>(L"Capsule", path_model +	L"Configs/Capsule.fbx", VertexType::Vertex_Static);
 }
 
 void ResourceManager::CreateDefaultMesh()
@@ -56,7 +56,7 @@ void ResourceManager::CreateDefaultShader()
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->Init(L"TestForward.hlsl", StaticProp, ShaderArg{}, info);
-		shader->InitInjector({BufferType::DefaultMaterialParam});
+		shader->SetInjector({BufferType::DefaultMaterialParam});
 		Add<Shader>(L"DefaultForward", shader);
 	}
 	{
@@ -67,7 +67,7 @@ void ResourceManager::CreateDefaultShader()
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->Init(L"TestForward_Skinned.hlsl", SkinProp, ShaderArg{}, info);
-		shader->InitInjector({BufferType::DefaultMaterialParam});
+		shader->SetInjector({BufferType::DefaultMaterialParam});
 		Add<Shader>(L"DefaultForward_Skinned", shader);
 	}
 
@@ -96,8 +96,18 @@ void ResourceManager::CreateDefaultShader()
 			{"GS_Main", "gs"}} }, info);
 		Add<Shader>(L"DebugNormal_Sea", shader);
 	}
+	{
 
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
 
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetInstanceProp(GizmoInstanceProp);
+		shader->Init(L"Gizmo.hlsl", {},ShaderArg{{{"PS_Main","ps"},{"VS_Main","vs"},{"GS_Main","gs"}}},info);
+		Add<Shader>(L"Gizmo",shader);
+	}
 }
 
 void ResourceManager::CreateDefaultMaterial()

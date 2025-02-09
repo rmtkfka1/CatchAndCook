@@ -5,6 +5,7 @@
 #include "simple_mesh_ext.h"
 #include "BufferPool.h"
 #include "BufferManager.h"
+#include "Gizmo.h"
 #include "RendererBase.h"
 #include "TerrainManager.h"
 #include "Terrain.h"
@@ -83,6 +84,13 @@ void Transform::RenderBegin()
 {
 	Component::RenderBegin();
     PushData();
+    auto o = GetWorldPosition();
+    auto f = GetForward();
+    auto u = GetUp();
+    auto r = GetRight();
+    Gizmo::Line(o, o + f, Vector4(0,0,1,1));
+    Gizmo::Line(o,o + u,Vector4(0,1,0,1));
+    Gizmo::Line(o,o + r,Vector4(1,0,0,1));
 }
 
 void Transform::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)

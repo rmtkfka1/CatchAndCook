@@ -9,6 +9,7 @@
 #include "Camera.h"
 #include "CameraManager.h"
 #include "ColliderManager.h"
+#include "Gizmo.h"
 
 void Scene::AddGameObject(const std::shared_ptr<GameObject>& gameObject)
 {
@@ -59,6 +60,7 @@ void Scene::RenderBegin()
 
     for (auto& gameObject : _gameObjects)
     	gameObject->RenderBegin();
+    Gizmo::main->RenderBegin();
 }
 
 void Scene::Rendering()
@@ -182,6 +184,13 @@ void Scene::DebugRendering()
             target->DebugRendering();
         }
     }
+    { // forward
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Debug)];
+        for(auto& [material,mesh,target] : targets) {
+            target->Rendering(material, mesh);
+            //target->DebugRendering();
+        }
+    }
 }
 
 void Scene::RenderEnd()
@@ -196,9 +205,9 @@ void Scene::RenderEnd()
 
 void Scene::Finish()
 {
+    Gizmo::main->Clear();
     Scene::ExecuteDestroyGameObjects();
     GameObject::ExecuteDestroyComponents();
-
 }
 
 void Scene::ExecuteDestroyGameObjects()

@@ -11,6 +11,7 @@
 #include "CameraManager.h"
 #include "Camera.h"
 #include "ColliderManager.h"
+#include "Gizmo.h"
 #include "Texture.h"
 #include "Mesh.h"
 #include "Shader.h"
@@ -38,6 +39,12 @@ void Game::Init(HWND hwnd)
 
 	InjectorManager::main = make_unique<InjectorManager>();
 	InjectorManager::main->Init();
+
+	//------------------
+
+	Gizmo::main = std::make_unique<Gizmo>();
+	Gizmo::main->Init();;
+
 
 	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, static_pointer_cast<Camera>(make_shared<ThirdPersonCamera>()));
 	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0, 0, -5.0f));
@@ -138,6 +145,19 @@ void Game::Run()
 	std::shared_ptr<Scene> currentScene = SceneManager::main->GetCurrentScene();
 	Core::main->RenderBegin();
 	LightManager::main->SetData();
+	//for(int i=0;i<10000;i++)
+	//{
+	//	float x = ((rand()%10000)/10000.0f)*100;
+	//	float y = ((rand()%10000)/10000.0f)*100;
+	//	Gizmo::Line(vec3(x,0,y),vec3(x,1,y));
+	//}
+	BoundingOrientedBox box(Vector3(0,0,0),Vector3(1,1,1)*0.5f, Quaternion::Identity);
+	BoundingSphere box2(Vector3(1,0,0), 0.5);
+	Gizmo::Width(0.02f);
+	Gizmo::Box(box);
+	Gizmo::Sphere(box2);
+	Gizmo::WidthRollBack();
+
 	currentScene->Update();
 	currentScene->RenderBegin();
 	currentScene->Rendering();
@@ -152,9 +172,9 @@ void Game::Release()
 {
 	ColliderManager::main.reset(nullptr);
 	SceneManager::main.reset(nullptr);
+	Gizmo::main.reset(nullptr);
 	InjectorManager::main.reset(nullptr);
 	CameraManager::main.reset(nullptr);
-	InjectorManager::main.reset(nullptr);
 	ResourceManager::main.reset(nullptr);
 	Time::main.reset(nullptr);
 	Input::main.reset(nullptr);
@@ -166,7 +186,7 @@ void Game::CameraUpdate()
 {
 	shared_ptr<Camera> camera = CameraManager::main->GetActiveCamera();
 
-	const float speed = 200.0f;
+	const float speed = 20.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;
 
 	if (Input::main->GetKey(KeyCode::W))

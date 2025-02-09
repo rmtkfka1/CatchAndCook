@@ -53,31 +53,19 @@ void ShaderInfo::SetDSTexture(const std::shared_ptr<Texture>& DSTexture)
     DSVFormat = DSTexture->GetFormat();
 }
 
-void Shader::InitPipeLine(const std::vector<VertexProp>& prop)
+void Shader::InitPipeLine(const std::vector<VertexProp>& vertexProp)
 {
     auto device = Core::main->GetDevice();
 
-    SelectorInfo vertexSetInfo = SelectorInfo::GetInfo(prop);
+    SelectorInfo vertexSetInfo = SelectorInfo::GetInfo(vertexProp);
 
-    std::vector<D3D12_INPUT_ELEMENT_DESC> _inputElementDesc;
-    _inputElementDesc.resize(vertexSetInfo.propCount);
-
-    for (int i = 0; i < _inputElementDesc.size(); i++)
+    std::vector<D3D12_INPUT_ELEMENT_DESC> _inputElementDesc = vertexSetInfo.GetVertexDescs();
+    if(!_instanceProp.empty())
     {
-        D3D12_INPUT_ELEMENT_DESC elementDesc = {};
-        std::string name = PropNameStrings[static_cast<int>(vertexSetInfo.props[i])].c_str();
-        elementDesc.SemanticName = PropNameStrings[static_cast<int>(vertexSetInfo.props[i])].c_str();
-        elementDesc.SemanticIndex = vertexSetInfo.propInfos[i].index;
-        elementDesc.InputSlot = 0;
-        elementDesc.AlignedByteOffset = vertexSetInfo.propInfos[i].byteOffset;
-        elementDesc.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
-        elementDesc.InstanceDataStepRate = 0;
-        elementDesc.Format = DXGI_FORMAT_R32_FLOAT;
-        if (vertexSetInfo.propInfos[i].size == 1) elementDesc.Format = DXGI_FORMAT_R32_FLOAT;
-        else if (vertexSetInfo.propInfos[i].size == 2) elementDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
-        else if (vertexSetInfo.propInfos[i].size == 3) elementDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
-        else if (vertexSetInfo.propInfos[i].size == 4) elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-        _inputElementDesc[i] = elementDesc;
+        SelectorInfo instanceSetInfo = SelectorInfo::GetInfo(_instanceProp);
+        std::vector<D3D12_INPUT_ELEMENT_DESC> descs = instanceSetInfo.GetInstanceDescs();
+        for(auto& instanceDesc : descs)
+            _inputElementDesc.push_back(instanceDesc);
     }
 
     _pipelineDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
@@ -301,9 +289,14 @@ void Shader::InitPipeLine(const std::vector<VertexProp>& prop)
     ThrowIfFailed(device->CreateGraphicsPipelineState(&_pipelineDesc, IID_PPV_ARGS(&_pipelineState)));
 }
 
-void Shader::InitInjector(const std::vector<BufferType>& injectors)
+void Shader::SetInjector(const std::vector<BufferType>& injectors)
 {
     _cbufferInjectorTypes = injectors;
+}
+
+void Shader::SetInstanceProp(const std::vector<VertexProp>& props)
+{
+    _instanceProp = props;
 }
 
 void Shader::SetInfo(const ShaderInfo& info)
@@ -638,7 +631,7 @@ std::shared_ptr<ShaderCode> Shader::LoadBlob(std::wstring path, std::string endP
     return shaderCode;
 }
 
-void Shader::Init(const std::wstring& path, std::vector<VertexProp>& prop, ShaderArg& shaderParams, const ShaderInfo& info)
+void Shader::Init(const std::wstring& path, const std::vector<VertexProp>& prop, const ShaderArg& shaderParams, const ShaderInfo& info)
 {
  
     for (auto& pair : shaderParams.shaderParams)
