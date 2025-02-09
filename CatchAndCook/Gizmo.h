@@ -7,7 +7,8 @@ public:
 	void Init();
 	void Clear();
 
-	static void Width(float width = 0.05f){ main->_width = width;};
+	static void WidthRollBack(){ main->_width = main->_prevWidth; }
+	static void Width(float width = 0.05f) { main->_prevWidth = main->_width; main->_width = width; };
 	static void Line(const Vector3& worldStart, const Vector3& worldEnd, const Vector4& Color = Vector4(1, 0, 0, 1));
 	static void Ray(const Vector3& worldStart, const Vector3& dir, float dis, const Vector4& Color = Vector4(1, 0, 0, 1));
 	static void Box(const BoundingOrientedBox& box, const Vector4& Color = Vector4(1, 0, 0, 1));
@@ -26,5 +27,6 @@ private:
 	InstanceBufferContainer* container;
 
 	float _width = 0.05f;
+	float _prevWidth = 0.05f;
 };
 

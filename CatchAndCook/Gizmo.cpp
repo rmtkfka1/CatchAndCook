@@ -44,12 +44,84 @@ void Gizmo::Ray(const Vector3& worldStart, const Vector3& dir, float dis, const 
 
 void Gizmo::Box(const BoundingOrientedBox& box, const Vector4& Color)
 {
+    XMFLOAT3 corners[8];
+    box.GetCorners(corners);
 
+    // 앞면 4개 엣지
+    Line(Vector3(corners[0].x,corners[0].y,corners[0].z),
+         Vector3(corners[1].x,corners[1].y,corners[1].z));
+    Line(Vector3(corners[1].x,corners[1].y,corners[1].z),
+         Vector3(corners[2].x,corners[2].y,corners[2].z));
+    Line(Vector3(corners[2].x,corners[2].y,corners[2].z),
+         Vector3(corners[3].x,corners[3].y,corners[3].z));
+    Line(Vector3(corners[3].x,corners[3].y,corners[3].z),
+         Vector3(corners[0].x,corners[0].y,corners[0].z));
+
+    // 뒷면 4개 엣지
+    Line(Vector3(corners[4].x,corners[4].y,corners[4].z),
+         Vector3(corners[5].x,corners[5].y,corners[5].z));
+    Line(Vector3(corners[5].x,corners[5].y,corners[5].z),
+         Vector3(corners[6].x,corners[6].y,corners[6].z));
+    Line(Vector3(corners[6].x,corners[6].y,corners[6].z),
+         Vector3(corners[7].x,corners[7].y,corners[7].z));
+    Line(Vector3(corners[7].x,corners[7].y,corners[7].z),
+         Vector3(corners[4].x,corners[4].y,corners[4].z));
+
+    // 앞면-뒷면 연결 4개 엣지
+    Line(Vector3(corners[0].x,corners[0].y,corners[0].z),
+         Vector3(corners[4].x,corners[4].y,corners[4].z));
+    Line(Vector3(corners[1].x,corners[1].y,corners[1].z),
+         Vector3(corners[5].x,corners[5].y,corners[5].z));
+    Line(Vector3(corners[2].x,corners[2].y,corners[2].z),
+         Vector3(corners[6].x,corners[6].y,corners[6].z));
+    Line(Vector3(corners[3].x,corners[3].y,corners[3].z),
+         Vector3(corners[7].x,corners[7].y,corners[7].z));
 }
 
-void Gizmo::Sphere(const BoundingSphere& box, const Vector4& Color)
+void Gizmo::Sphere(const BoundingSphere& sphere, const Vector4& Color)
 {
+    Vector3 center(sphere.Center.x,sphere.Center.y,sphere.Center.z);
+    float radius = sphere.Radius;
 
+    // 원(써클)을 얼마나 부드럽게 그릴지 결정 (세그먼트 수)
+    constexpr int segments = 36;
+    float step = XM_2PI / static_cast<float>(segments);
+
+    // 1) XY 평면 원 (z=0 축)
+    for(int i = 0; i < segments; i++)
+    {
+        float angle1 = i * step;
+        float angle2 = (i + 1) * step;
+
+        Vector3 p1 = center + Vector3(radius * cosf(angle1),radius * sinf(angle1),0.0f);
+        Vector3 p2 = center + Vector3(radius * cosf(angle2),radius * sinf(angle2),0.0f);
+
+        Gizmo::Line(p1,p2, Color);
+    }
+
+    // 2) YZ 평면 원 (x=0 축)
+    for(int i = 0; i < segments; i++)
+    {
+        float angle1 = i * step;
+        float angle2 = (i + 1) * step;
+
+        Vector3 p1 = center + Vector3(0.0f,radius * cosf(angle1),radius * sinf(angle1));
+        Vector3 p2 = center + Vector3(0.0f,radius * cosf(angle2),radius * sinf(angle2));
+
+        Gizmo::Line(p1,p2, Color);
+    }
+
+    // 3) XZ 평면 원 (y=0 축)
+    for(int i = 0; i < segments; i++)
+    {
+        float angle1 = i * step;
+        float angle2 = (i + 1) * step;
+
+        Vector3 p1 = center + Vector3(radius * cosf(angle1),0.0f,radius * sinf(angle1));
+        Vector3 p2 = center + Vector3(radius * cosf(angle2),0.0f,radius * sinf(angle2));
+
+        Gizmo::Line(p1,p2, Color);
+    }
 }
 
 void Gizmo::RenderBegin()
