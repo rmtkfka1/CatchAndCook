@@ -145,6 +145,13 @@ void Game::Run()
 	std::shared_ptr<Scene> currentScene = SceneManager::main->GetCurrentScene();
 	Core::main->RenderBegin();
 	LightManager::main->SetData();
+	for(int i=0;i<10000;i++)
+	{
+		float x = ((rand()%10000)/10000.0f)*100;
+		float y = ((rand()%10000)/10000.0f)*100;
+		Gizmo::Line(vec3(x,0,y),vec3(x,1,y));
+	}
+
 	currentScene->Update();
 	currentScene->RenderBegin();
 	currentScene->Rendering();

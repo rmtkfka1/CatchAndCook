@@ -7,11 +7,11 @@ public:
 	void Init();
 	void Clear();
 
-	static void Width(float width = 0.05f){_width = width;};
-	static void Line(Vector3 worldStart,Vector3 worldEnd, Vector4 Color = Vector4(1,0,0,1));
-	static void Ray(Vector3 worldStart, Vector3 dir,float dis, Vector4 Color = Vector4(1,0,0,1));
-	static void Box(BoundingOrientedBox box, Vector4 Color = Vector4(1,0,0,1));
-	static void Sphere(BoundingSphere box,Vector4 Color = Vector4(1,0,0,1));
+	static void Width(float width = 0.05f){ main->_width = width;};
+	static void Line(const Vector3& worldStart, const Vector3& worldEnd, const Vector4& Color = Vector4(1, 0, 0, 1));
+	static void Ray(const Vector3& worldStart, const Vector3& dir, float dis, const Vector4& Color = Vector4(1, 0, 0, 1));
+	static void Box(const BoundingOrientedBox& box, const Vector4& Color = Vector4(1, 0, 0, 1));
+	static void Sphere(const BoundingSphere& box, const Vector4& Color = Vector4(1, 0, 0, 1));
 	void RenderBegin();
 public:
 	void Rendering(Material* material, Mesh* mesh) override;
