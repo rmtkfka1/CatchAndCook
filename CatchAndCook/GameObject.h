@@ -139,7 +139,33 @@ public:
 		return count;
 	}
 
+	template <class T,class = std::enable_if_t<std::is_base_of_v<Component, T>>>
+	int GetComponentsWithParents(std::vector<std::shared_ptr<T>>& vec)
+	{
+		int count = vec.size();
+		for(auto& component : _components)
+		{
+			std::shared_ptr<T> downCast = std::dynamic_pointer_cast<T>(component);
+			if(downCast != nullptr)
+				vec.push_back(downCast);
+		}
 
+		count = vec.size() - count;
+
+		auto parent = GetParent();
+		if(parent != nullptr)
+			count += parent->GetComponentsWithChilds(vec);
+
+		return count;
+	}
+
+	template <class T>
+	std::vector<auto> GetComponentsWithParents(const T& func)
+	{
+		std::vector<auto> a;
+		a.push_back(func());
+		return a;
+	}
 
 
 private:

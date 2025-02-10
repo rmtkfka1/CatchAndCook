@@ -67,6 +67,11 @@ void Component::CollisionEnd(const std::shared_ptr<Collider>& collider, const st
 
 }
 
+void Component::ChangeParent(const std::shared_ptr<GameObject>& prev, const std::shared_ptr<GameObject>& current)
+{
+
+}
+
 
 void Component::SetDestroy()
 {
