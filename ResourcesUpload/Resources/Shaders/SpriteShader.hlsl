@@ -1,5 +1,5 @@
 
-Texture2D texDiffuse : register(t8);
+Texture2D texDiffuse : register(t18);
 SamplerState samplerDiffuse : register(s0);
 
 cbuffer GLOBAL_DATA : register(b0)

@@ -7,10 +7,9 @@ SamplerState g_sam_0 : register(s0);
 SamplerState g_sam_1 : register(s1);
 #define TessFactor 8
 #define PI 3.14159f
-#define DIST_MAX 700.0f
-#define DIST_MIN 30.0f
+#define DIST_MAX 3000.0f
+#define DIST_MIN 3.0f
 
-static float4 sea_color = float4(0.3f, 0.3f, 1.0f, 1.0f);
 
 cbuffer test : register(b1)
 {
@@ -61,6 +60,7 @@ struct HS_OUT
     float3 normal : NORMAL;
 };
 
+
 VS_OUT VS_Main(VS_IN input)
 {
     VS_OUT output = (VS_OUT) 0;
@@ -83,17 +83,11 @@ struct PatchConstOutput
 float CalculateTessLevel(float3 cameraWorldPos, float3 patchPos, float min, float max, float maxLv)
 {
     float distance = length(patchPos - cameraWorldPos);
-
-    if (distance < min)
-        return maxLv;
+    float ratio = smoothstep(min, max, distance);
     
-    if (distance > max)
-        return 1.f;
+    float level = lerp(maxLv, 1.0f, ratio);
 
-    float ratio = (distance - min) / (max - min);
-    float level = (maxLv - 1.f) * (1.f - ratio);
-    
-    return level;
+    return clamp(level, 1.0f, maxLv);
 }
 
 
@@ -119,11 +113,11 @@ PatchConstOutput ConstantHS(InputPatch<VS_OUT, 3> patch, uint patchID : SV_Primi
 }
 
 [domain("tri")]
-[partitioning("integer")]
+[partitioning("fractional_even")]
 [outputtopology("triangle_cw")]
 [outputcontrolpoints(3)]
 [patchconstantfunc("ConstantHS")]
-[maxtessfactor(TessFactor)]
+[maxtessfactor(64)]
 HS_OUT HS_Main(InputPatch<VS_OUT, 3> patch, uint vertexID : SV_OutputControlPointID, uint patchId : SV_PrimitiveID)
 {
     //4번호출됨.
@@ -146,7 +140,7 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 3> quad, PatchConstOutput patchConst, float3 
     float2 uv = quad[0].uv * location.x + quad[1].uv * location.y + quad[2].uv * location.z;
     float3 normal = quad[0].normal * location.x + quad[1].normal * location.y + quad[2].normal * location.z;
     
-    pos.y += heightMap.SampleLevel(g_sam_1, uv,0).r * 1000.0f;
+    pos.y += heightMap.SampleLevel(g_sam_1, uv, 0).r * 1000.0f;
     
     dout.uv = uv;
     dout.pos = mul(float4(pos, 1.0f), VPMatrix);
@@ -156,5 +150,5 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 3> quad, PatchConstOutput patchConst, float3 
 }
 float4 PS_Main(DS_OUT input) : SV_Target
 {
-    return g_tex_0.Sample(g_sam_0, input.uv);  
+    return g_tex_0.Sample(g_sam_0, input.uv);
 }

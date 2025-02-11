@@ -109,7 +109,7 @@ void Terrain::SetHeightMap(const std::wstring &rawData,const std::wstring &pngDa
 {
  
     _heightMap = make_shared<Texture>();
-    _heightMap->Init(pngData);
+    _heightMap->Init(pngData,TextureType::Texture2D,false);
 
     _heightMapX = static_cast<int>(_heightMap->GetResource()->GetDesc().Width);
     _heightMapZ = static_cast<int>(_heightMap->GetResource()->GetDesc().Height);
