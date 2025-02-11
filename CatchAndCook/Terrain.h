@@ -26,7 +26,7 @@ public:
 	bool IsExecuteAble() override;
 
 public:
-	void SetHeightMap(const std::wstring& rawData,const std::wstring& pngData, float scale);
+	void SetHeightMap(const std::wstring& rawData,const std::wstring& pngData,vec2 pos);
 	float TerrainGetHeight(float x,float z, float offset);
 
 private:

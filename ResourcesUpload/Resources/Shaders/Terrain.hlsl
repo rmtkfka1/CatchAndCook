@@ -5,11 +5,9 @@ Texture2D g_tex_0 : register(t0);
 Texture2D heightMap : register(t1);
 SamplerState g_sam_0 : register(s0);
 SamplerState g_sam_1 : register(s1);
-
-#define G_MaxTess 4
-#define G_MinTess 1
+#define TessFactor 8
 #define PI 3.14159f
-#define DIST_MAX 2000.0f
+#define DIST_MAX 3000.0f
 #define DIST_MIN 3.0f
 
 
@@ -62,6 +60,7 @@ struct HS_OUT
     float3 normal : NORMAL;
 };
 
+
 VS_OUT VS_Main(VS_IN input)
 {
     VS_OUT output = (VS_OUT) 0;
@@ -82,9 +81,12 @@ struct PatchConstOutput
 
 float CalcTessFactor(float3 p)
 {
-    float d = distance(p, g_cameraPos.xyz);
-    float s = saturate((d - DIST_MIN) / (DIST_MAX - DIST_MIN));
-    return pow(2, (lerp(G_MaxTess, G_MinTess, s)));
+    float distance = length(patchPos - cameraWorldPos);
+    float ratio = smoothstep(min, max, distance);
+    
+    float level = lerp(maxLv, 1.0f, ratio);
+
+    return clamp(level, 1.0f, maxLv);
 }
 
 
@@ -113,13 +115,13 @@ PatchConstOutput ConstantHS(InputPatch<VS_OUT, 4> patch, uint patchID : SV_Primi
     return pt;
 }
 
-[domain("quad")]
+[domain("tri")]
 [partitioning("fractional_even")]
 [outputtopology("triangle_cw")]
 [outputcontrolpoints(4)]
 [patchconstantfunc("ConstantHS")]
-[maxtessfactor(64.0f)]
-HS_OUT HS_Main(InputPatch<VS_OUT, 4> patch, uint vertexID : SV_OutputControlPointID, uint patchId : SV_PrimitiveID)
+[maxtessfactor(64)]
+HS_OUT HS_Main(InputPatch<VS_OUT, 3> patch, uint vertexID : SV_OutputControlPointID, uint patchId : SV_PrimitiveID)
 {
     //4번호출됨.
     HS_OUT hout;
@@ -153,7 +155,11 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 		lerp(quad[2].uv, quad[3].uv, location.x),
 		location.y);
     
-    dout.pos = mul(dout.pos, VPMatrix);
+    pos.y += heightMap.SampleLevel(g_sam_1, uv, 0).r * 1000.0f;
+    
+    dout.uv = uv;
+    dout.pos = mul(float4(pos, 1.0f), VPMatrix);
+    dout.normal = normal;
     
     return dout;
 }

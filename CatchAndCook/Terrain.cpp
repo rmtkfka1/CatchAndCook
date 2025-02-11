@@ -105,23 +105,23 @@ void Terrain::SetData(Material * material)
 	material->SetHandle("heightMap",_heightMap->GetSRVCpuHandle());
 }
 
-void Terrain::SetHeightMap(const std::wstring &rawData,const std::wstring &pngData , float scale)
+void Terrain::SetHeightMap(const std::wstring &rawData,const std::wstring &pngData ,vec2 pos)
 {
  
     _heightMap = make_shared<Texture>();
-    _heightMap->Init(pngData);
+    _heightMap->Init(pngData,TextureType::Texture2D,false);
 
     _heightMapX = static_cast<int>(_heightMap->GetResource()->GetDesc().Width);
     _heightMapZ = static_cast<int>(_heightMap->GetResource()->GetDesc().Height);
 
-	_gridXsize = _heightMapX * scale;
-	_gridZsize = _heightMapZ * scale;
+    _gridXsize = pos.x;
+    _gridZsize = pos.y;
 
-    _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(_gridXsize,_gridZsize,CellsPerPatch,CellsPerPatch);
-    _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
+    _gridMesh = GeoMetryHelper::LoadGripMesh(pos.x,pos.y,CellsPerPatch,CellsPerPatch);
+    _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 
 	LoadTerrain(rawData);
-    Smooth();
+    //Smooth();
    
 }
 
@@ -129,9 +129,11 @@ float Terrain::TerrainGetHeight(float x,float z,float offset)
 {
     vec3 terrainOrigin = GetOwner()->_transform->GetLocalPosition();
 
-    float tempX = x + _gridXsize * 0.5f;
-    float tempZ = z + _gridZsize * 0.5f;
+    //float tempX = x + _gridXsize * 0.5f;
+    //float tempZ = z + _gridZsize * 0.5f;
 
+    float tempX = x ;
+    float tempZ = z ;
     tempX-= terrainOrigin.x;
     tempZ-= terrainOrigin.z;
 
