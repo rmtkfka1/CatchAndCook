@@ -338,6 +338,9 @@ bool GameObject::SetParent(const std::shared_ptr<GameObject>& nextParentObj)
     }
     if (prevRootParent.lock() != this->rootParent.lock()) //root ����
         SetRootParent(this->rootParent.lock());
+
+    for(auto& component : _components)
+        component->ChangeParent(prevParentObj,nextParentObj);
 }
 
 void GameObject::SetRootParent(const std::shared_ptr<GameObject>& rootParent)

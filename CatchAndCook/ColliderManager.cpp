@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "ColliderManager.h"
 
+#include <algorithm>
+
 #include "Collider.h"
 
 
@@ -101,7 +103,7 @@ void ColliderManager::Update()
 
 bool ColliderManager::TotalCheckCollision(const std::shared_ptr<Collider>& a, const std::shared_ptr<Collider>& b)
 {
-	return a->CheckCollision(b.get());
+	return (a->groupId != b->groupId) && a->CheckCollision(b.get());
 }
 
 //무언가와 충돌하고 있는지 체크
@@ -135,4 +137,48 @@ void ColliderManager::CallBackEnd(const std::shared_ptr<Collider>& collider, con
 	auto& components = collider->GetOwner()->GetComponentAll();
 	for(auto& component : components)
 		component->CollisionEnd(collider,other);
+}
+
+
+RayHit ColliderManager::RayCast(const Ray& ray, const float& dis) const
+{
+	RayHit closestHit;
+	closestHit.distance = dis;  // 최대 충돌 거리(dis)로 초기화
+	bool hitFound = false;
+
+	// Static 콜라이더 목록 처리
+	for(const auto& collider : _staticColliders)
+	{
+		RayHit currentHit;
+		currentHit.distance = dis;  // 최대 거리로 초기화
+		if(collider->RayCast(ray,dis,currentHit))
+		{
+			if(!hitFound || currentHit.distance < closestHit.distance)
+			{
+				closestHit = currentHit;
+				hitFound = true;
+			}
+		}
+	}
+
+	for(const auto& collider : _dynamicColliders)
+	{
+		RayHit currentHit;
+		currentHit.distance = dis;
+		if(collider->RayCast(ray,dis,currentHit))
+		{
+			if(!hitFound || currentHit.distance < closestHit.distance)
+			{
+				closestHit = currentHit;
+				hitFound = true;
+			}
+		}
+	}
+
+	return closestHit;
+}
+
+void ColliderManager::RayCastAll(const Vector3& worldPos,const Vector3& dir,const float& dis, std::vector<RayHit>& hits)
+{
+	
 }

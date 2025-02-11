@@ -214,7 +214,6 @@
     <ClCompile Include="LightManager.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
-    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Terrain.cpp">
       <Filter>Component</Filter>
     </ClCompile>
@@ -224,6 +223,12 @@
     <ClCompile Include="BoundingCapsule.cpp" />
     <ClCompile Include="ColliderManager.cpp" />
     <ClCompile Include="Gizmo.cpp" />
+    <ClCompile Include="Collider.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsComponent.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -410,7 +415,6 @@
     <ClInclude Include="LightManager.h">
       <Filter>Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Collider.h" />
     <ClInclude Include="Terrain.h">
       <Filter>Component</Filter>
     </ClInclude>
@@ -424,6 +428,12 @@
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Gizmo.h" />
+    <ClInclude Include="Collider.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsComponent.h">
+      <Filter>Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">

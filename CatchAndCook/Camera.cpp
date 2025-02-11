@@ -1,10 +1,33 @@
 #include "pch.h"
 #include "Camera.h"
 
+#include "simple_mesh_ext.h"
+
 void Camera::Update()
 {
-    CalculateVPMatrix();
+    Calculate();
 }
+
+Vector3 Camera::GetScreenToWorldPosition(Vector2 mousePosition)
+{
+    auto cameraParam = _params;
+    auto screenToWorld = CreateViewportMatrix(Viewport(
+        cameraParam.cameraScreenData.z,cameraParam.cameraScreenData.w,
+        cameraParam.cameraScreenData.x,cameraParam.cameraScreenData.y
+    )).Invert() * cameraParam.InvertVPMatrix;
+    return Vector3::Transform(Vector3(mousePosition.x,mousePosition.y,0),screenToWorld);
+}
+
+Vector2 Camera::GetWorldToScreenPosition(Vector3 worldPosition)
+{
+    auto cameraParam = _params;
+    auto worldToScreen = cameraParam.VPMatrix * CreateViewportMatrix(Viewport(
+        cameraParam.cameraScreenData.z,cameraParam.cameraScreenData.w,
+        cameraParam.cameraScreenData.x,cameraParam.cameraScreenData.y
+    ));
+    return Vector2(Vector3::Transform(worldPosition, worldToScreen));
+}
+
 
 void Camera::SetCameraRotation(float yaw, float pitch, float roll)
 {
@@ -29,7 +52,7 @@ void Camera::SetCameraRotation(float yaw, float pitch, float roll)
     _cameraUp.Normalize();
 }
 
-void Camera::CalculateVPMatrix()
+void Camera::Calculate()
 {
     _params.cameraScreenData = vec4(
         WINDOW_WIDTH,
