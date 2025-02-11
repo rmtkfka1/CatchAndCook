@@ -114,14 +114,14 @@ void Terrain::SetHeightMap(const std::wstring &rawData,const std::wstring &pngDa
     _heightMapX = static_cast<int>(_heightMap->GetResource()->GetDesc().Width);
     _heightMapZ = static_cast<int>(_heightMap->GetResource()->GetDesc().Height);
 
-    _gridXsize = 2000;
-    _gridZsize = 2000;
+	_gridXsize = _heightMapX * scale;
+	_gridZsize = _heightMapZ * scale;
 
-    _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(2000,2000,20,20);
-    _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
+    _gridMesh = GeoMetryHelper::LoadGripMesh(_heightMapX,_heightMapZ,CellsPerPatch,CellsPerPatch);
+    _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 
 	LoadTerrain(rawData);
-    Smooth();
+    //Smooth();
    
 }
 

@@ -5,6 +5,7 @@ Texture2D g_tex_0 : register(t0);
 Texture2D g_tex_1 : register(t1);
 SamplerState g_sam_0 : register(s0);
 SamplerState g_sam_1 : register(s1);
+
 #define G_MaxTess 6
 #define G_MinTess 1
 
