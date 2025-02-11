@@ -16,6 +16,25 @@ union BoundingUnion
 	BoundingFrustum frustum;
 };
 
+struct WeakPtrHash
+{
+	template <typename T>
+	size_t operator()(const std::weak_ptr<T>& wp) const
+	{
+		if(auto sp = wp.lock())
+			return std::hash<std::shared_ptr<T>>{}(sp);
+		return 0;
+	}
+};
+
+struct WeakPtrEqual
+{
+	template <typename T>
+	bool operator()(const std::weak_ptr<T>& lhs,const std::weak_ptr<T>& rhs) const
+	{
+		return lhs.lock() == rhs.lock();
+	}
+};
 
 class Collider : public Component
 {
@@ -56,4 +75,6 @@ private:
 	BoundingUnion _bound;
 
 	int groupId = 0;
+
+	unordered_set<weak_ptr<Collider>,WeakPtrHash,WeakPtrEqual> _collisionList;
 };

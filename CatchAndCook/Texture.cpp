@@ -21,6 +21,7 @@ void Texture::Init(const wstring& path, TextureType type, bool relativePath)
 {
 
     wstring finalPath = path;
+
     if (relativePath)
         finalPath = _path + finalPath;
 

@@ -46,7 +46,6 @@ void testComponent::Update()
 	
 	}
 
-	
 	if(Input::main->GetKey(KeyCode::DownArrow))
 	{
 

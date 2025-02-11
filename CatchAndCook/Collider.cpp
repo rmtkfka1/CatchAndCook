@@ -67,7 +67,8 @@ void Collider::RenderBegin()
 {
 	Component::RenderBegin();
 
-	bool isCollision = ColliderManager::main->IsCollisionStay(GetCast<Collider>());
+	bool isCollision = _collisionList.empty();
+
 	if(_type == CollisionType::Box)
 	{
 		Gizmo::Width(0.02f);

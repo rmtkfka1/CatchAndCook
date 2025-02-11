@@ -42,8 +42,6 @@ void Core::Init(HWND hwnd)
     _rootSignature = make_shared<RootSignature>();
     _rootSignature->Init();
 
-
-
     Initalize = true;
 }
 

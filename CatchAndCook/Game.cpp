@@ -43,7 +43,7 @@ void Game::Init(HWND hwnd)
 	//------------------
 
 	Gizmo::main = std::make_unique<Gizmo>();
-	Gizmo::main->Init();;
+	Gizmo::main->Init();
 
 
 	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, static_pointer_cast<Camera>(make_shared<ThirdPersonCamera>()));
@@ -68,7 +68,7 @@ void Game::Init(HWND hwnd)
 	}
 
 
-	auto scene = SceneManager::main->AddScene(SceneType::TestScene);
+	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
 }
 
 void Game::PrevUpdate()
@@ -145,12 +145,6 @@ void Game::Run()
 	std::shared_ptr<Scene> currentScene = SceneManager::main->GetCurrentScene();
 	Core::main->RenderBegin();
 	LightManager::main->SetData();
-	//for(int i=0;i<10000;i++)
-	//{
-	//	float x = ((rand()%10000)/10000.0f)*100;
-	//	float y = ((rand()%10000)/10000.0f)*100;
-	//	Gizmo::Line(vec3(x,0,y),vec3(x,1,y));
-	//}
 
 	auto camera = CameraManager::main->GetActiveCamera();
 	camera->Calculate();
@@ -192,7 +186,7 @@ void Game::CameraUpdate()
 {
 	shared_ptr<Camera> camera = CameraManager::main->GetActiveCamera();
 
-	const float speed = 200.0f;
+	const float speed = 20.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;
 
 	if (Input::main->GetKey(KeyCode::W))

@@ -232,7 +232,7 @@ void TestScene::Init()
 		material->SetHandle("g_tex_0",ResourceManager::main->Load<Texture>(L"HeightMap",L"Textures/HeightMap/terrainAlbedo.png")->GetSRVCpuHandle());
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
-
+	
 		meshRenderer->AddMaterials({ material });
 	}
 

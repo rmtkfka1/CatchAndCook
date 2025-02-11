@@ -36,7 +36,9 @@ void Scene::Update()
         }
         _changeTypeQueue.pop();
     }
-    while (!_startQueue.empty()) {
+
+    while (!_startQueue.empty()) 
+    {
         auto& current = _startQueue.front();
         current->Start();
         _startQueue.pop();
@@ -60,6 +62,7 @@ void Scene::RenderBegin()
 
     for (auto& gameObject : _gameObjects)
     	gameObject->RenderBegin();
+
     Gizmo::main->RenderBegin();
 }
 
@@ -195,12 +198,7 @@ void Scene::DebugRendering()
 
 void Scene::RenderEnd()
 {
-    if (Input::main->GetKeyDown(KeyCode::P))
-    {
-        auto ptr = Find(L"root_test");
-
-        ptr->SetDestroy();
-    }
+  
 }
 
 void Scene::Finish()
