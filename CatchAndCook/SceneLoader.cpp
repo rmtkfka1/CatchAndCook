@@ -11,6 +11,7 @@
 #include "Transform.h"
 #include "MeshRenderer.h"
 #include "ModelMesh.h"
+#include "PhysicsComponent.h"
 #include "SkinnedMeshRenderer.h"
 
 
@@ -133,6 +134,11 @@ void SceneLoader::PrevProcessingComponent(json& data)
     {
         auto collider = CreateObject<Collider>(guid);
         component = collider;
+    }
+    if(type == L"Rigidbody")
+    {
+        auto pc = CreateObject<PhysicsComponent>(guid);
+        component = pc;
     }
 
     componentCache.emplace_back(component);
@@ -302,6 +308,11 @@ void SceneLoader::LinkComponent(json& jsonData)
             jsonData["center"][2].get<float>());
         auto radius = jsonData["radius"].get<float>();
         collider->SetBoundingSphere(center, radius);
+    }
+    if(type == L"Rigidbody")
+    {
+        auto collider = IGuid::FindObjectByGuid<PhysicsComponent>(guid);
+
     }
 }
 

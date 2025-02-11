@@ -55,11 +55,17 @@ public:
     vec3 GetCameraUp() { return _cameraUp; }
     vec3 GetCameraRight() { return _cameraRight; }
 
+    Vector3 GetScreenToWorldPosition(Vector2 mousePosition);
+    Vector2 GetWorldToScreenPosition(Vector3 worldPosition);
+
+
+    void SyncTransform(const std::shared_ptr<Transform>& transform);
+
     void SetCameraRotation(float yaw, float pitch, float roll);
     CameraParams& GetCameraParam() { return _params; }
     CameraType& GetCameraType() { return _type; }
+    void Calculate();
 private:
-    void CalculateVPMatrix();
 
 protected:
     vec3 _cameraPos = vec3(0, 0, 0);

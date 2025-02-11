@@ -7,9 +7,12 @@ public:
     static std::unordered_map<std::wstring, std::weak_ptr<IGuid>> _GuidTable;
 	static void StaticInit();
     static void StaticRelease();
+    static uint64_t AllocID();
+    static uint64_t idAllocator;
 
 protected:
     std::wstring guid;
+    uint64_t id = 0;
 
 public:
     IGuid();
@@ -24,6 +27,7 @@ public:
 
     void SetGUID(const std::wstring& str);
     std::wstring& GetGUID();
+    int GetInstanceID() const;
 
     //template <class T, class = std::enable_if_t<std::is_base_of_v<IGuid, T>>>
     void InitGuid()

@@ -160,11 +160,12 @@ public:
 	}
 
 	template <class T>
-	std::vector<auto> GetComponentsWithParents(const T& func)
+	void ForHierarchyAll(const T& func)
 	{
-		std::vector<auto> a;
-		a.push_back(func());
-		return a;
+		func(GetCast<GameObject>());
+		for(auto& child : _childs)
+			if(!child.expired())
+				child.lock()->ForHierarchyAll(func);
 	}
 
 
