@@ -32,6 +32,15 @@ cbuffer cameraParams : register(b2)
     float4 cameraScreenData;
 };
 
+cbuffer TerrainDetailsParam : register(b10)
+{
+	float3 fieldSize;
+    int padding;
+	int detailsCount;
+	float4 tileST[4];
+	//Vector4 color;
+};
+
 struct VS_IN
 {
     float3 pos : POSITION;
@@ -140,7 +149,7 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 3> quad, PatchConstOutput patchConst, float3 
     float2 uv = quad[0].uv * location.x + quad[1].uv * location.y + quad[2].uv * location.z;
     float3 normal = quad[0].normal * location.x + quad[1].normal * location.y + quad[2].normal * location.z;
     
-    pos.y += heightMap.SampleLevel(g_sam_1, uv, 0).r * 1000.0f;
+    pos.y += heightMap.SampleLevel(g_sam_1, uv, 0).r * fieldSize.y;
     
     dout.uv = uv;
     dout.pos = mul(float4(pos, 1.0f), VPMatrix);

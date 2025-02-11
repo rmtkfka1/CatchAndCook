@@ -46,12 +46,12 @@ void TestScene_jin::Init()
 	auto a = ResourceManager::main->Get<SceneLoader>(L"test");
 	a->Load(GetCast<Scene>());
 
-	int i=0;
-	Find(L"testB")->ForHierarchyAll([&](const std::shared_ptr<GameObject>& obj)
-	{
-		std::cout << std::to_string(obj->GetName()) <<"\n";
-	});
-	std::cout << i <<"\n";
+	//int i=0;
+	//Find(L"testB")->ForHierarchyAll([&](const std::shared_ptr<GameObject>& obj)
+	//{
+	//	std::cout << std::to_string(obj->GetName()) <<"\n";
+	//});
+	//std::cout << i <<"\n";
 	std::cout << _gameObjects.size() << "\n";
 
 

@@ -13,6 +13,7 @@
 #include "ModelMesh.h"
 #include "PhysicsComponent.h"
 #include "SkinnedMeshRenderer.h"
+#include "Terrain.h"
 
 
 SceneLoader::SceneLoader()
@@ -139,6 +140,11 @@ void SceneLoader::PrevProcessingComponent(json& data)
     {
         auto pc = CreateObject<PhysicsComponent>(guid);
         component = pc;
+    }
+    if(type == L"Terrain")
+    {
+        auto terr = CreateObject<Terrain>(guid);
+        component = terr;
     }
 
     componentCache.emplace_back(component);
@@ -313,6 +319,19 @@ void SceneLoader::LinkComponent(json& jsonData)
     {
         auto collider = IGuid::FindObjectByGuid<PhysicsComponent>(guid);
 
+    }
+    if(type == L"Terrain")
+    {
+        auto terrain = IGuid::FindObjectByGuid<Terrain>(guid);
+        std::wstring rawPath = to_wstring(jsonData["rawPath"].get<string>());
+        std::wstring pngPath = to_wstring(jsonData["pngPath"].get<string>());
+        float rawSize = jsonData["heightmapResolution"].get<float>();
+        auto fieldSize = Vector3(
+		    jsonData["size"][0].get<float>(),
+		    jsonData["size"][1].get<float>(),
+		    jsonData["size"][2].get<float>());
+
+		terrain->SetHeightMap(rawPath,pngPath, Vector2(rawSize,rawSize), fieldSize);
     }
 }
 
