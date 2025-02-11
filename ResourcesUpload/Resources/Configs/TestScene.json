@@ -1,0 +1,6872 @@
+{
+  "references": {
+    "GameObjects": [
+      {
+        "name": "GameObject (1)",
+        "guid": "555b1c76-74eb-4c68-a75b-551464f82cf6",
+        "active": true,
+        "static": false,
+        "deactivate": false,
+        "components": [
+          "55f19670-af8d-4091-878f-17e0d3e16bd7",
+          "265446f6-53f7-40a0-87c0-55c68eda13ef"
+        ],
+        "childs": [],
+        "parent": ""
+      },
+      {
+        "name": "GameObject",
+        "guid": "c868e1ea-e0b7-49ad-b17c-1743e7461ab5",
+        "active": true,
+        "static": false,
+        "deactivate": true,
+        "components": [
+          "f83423b4-a051-4060-99af-33fde54080f7",
+          "90e2a8f1-2d53-44cf-a375-a311a6877af5"
+        ],
+        "childs": [],
+        "parent": ""
+      },
+      {
+        "name": "hair",
+        "guid": "b0b00e80-a6a7-4ced-83ee-924d5228494c",
+        "active": true,
+        "static": true,
+        "deactivate": false,
+        "components": [
+          "acaecf3e-23a5-43ff-a056-0e7c2f0c4ca4",
+          "175c0169-ab7e-43f3-9ffb-a304be4e008b"
+        ],
+        "childs": [],
+        "parent": "2049f89f-0e8d-48b0-9116-9cdad4fe17b5"
+      },
+      {
+        "name": "clothes",
+        "guid": "f73c77eb-c3da-4cc4-92bd-e1d1e6d366ae",
+        "active": true,
+        "static": true,
+        "deactivate": false,
+        "components": [
+          "7bd773a9-0b5e-4719-8387-3f31edc14c7b",
+          "c60a23d6-67a6-46c0-a3fa-b29a83b2c940"
+        ],
+        "childs": [],
+        "parent": "2049f89f-0e8d-48b0-9116-9cdad4fe17b5"
+      },
+      {
+        "name": "bow",
+        "guid": "9018f54c-b9bf-423b-83b3-38fcac5f8c8a",
+        "active": true,
+        "static": true,
+        "deactivate": false,
+        "components": [
+          "2b8bda66-3583-4782-bb86-80aa6c1deb29",
+          "7dcfca04-b3bb-4911-9a5a-15a19122913d"
+        ],
+        "childs": [],
+        "parent": "2049f89f-0e8d-48b0-9116-9cdad4fe17b5"
+      },
+      {
+        "name": "body2",
+        "guid": "c97b537e-8255-4985-94a8-be1d4456a7ea",
+        "active": true,
+        "static": true,
+        "deactivate": false,
+        "components": [
+          "2fa2d514-1afe-45d4-87fc-bd26e70a9dc8",
+          "f8279091-efc6-4eaf-94f3-74d5d46d8bf0"
+        ],
+        "childs": [],
+        "parent": "2049f89f-0e8d-48b0-9116-9cdad4fe17b5"
+      },
+      {
+        "name": "body",
+        "guid": "528aaf5d-5fa0-411f-91d4-9015cb7a396a",
+        "active": true,
+        "static": true,
+        "deactivate": false,
+        "components": [
+          "5f345799-2427-4ff3-9f4d-d846aefbbcfa",
+          "d15f885a-bcd6-41fd-8fd8-2c7e36e2ce1f"
+        ],
+        "childs": [],
+        "parent": "2049f89f-0e8d-48b0-9116-9cdad4fe17b5"
+      },
+      {
+        "name": "Bip_R_Finger0Nub",
+        "guid": "d741f1cd-cb59-4f3a-91f5-18bc167d14c8",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "b3e7b0fd-951f-41ca-9d58-7e48bdf4c197"
+        ],
+        "childs": [],
+        "parent": "75c2c6b3-8381-40dd-8321-7126020c66f9"
+      },
+      {
+        "name": "Thumb2_R",
+        "guid": "75c2c6b3-8381-40dd-8321-7126020c66f9",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "4f174418-dab8-4bed-845c-9829879d096f"
+        ],
+        "childs": [
+          "d741f1cd-cb59-4f3a-91f5-18bc167d14c8"
+        ],
+        "parent": "74702f99-e49a-400e-bf4c-31d81406f3a3"
+      },
+      {
+        "name": "Thumb1_R",
+        "guid": "74702f99-e49a-400e-bf4c-31d81406f3a3",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "e1d2f8b0-deb6-4421-9e6e-dc0e8196ede1"
+        ],
+        "childs": [
+          "75c2c6b3-8381-40dd-8321-7126020c66f9"
+        ],
+        "parent": "2f3d7d18-2bba-4f5e-8a82-6e4ccd131393"
+      },
+      {
+        "name": "Thumb0_R",
+        "guid": "2f3d7d18-2bba-4f5e-8a82-6e4ccd131393",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "1ae7e253-c57e-4a4f-a426-001eefc6469a"
+        ],
+        "childs": [
+          "74702f99-e49a-400e-bf4c-31d81406f3a3"
+        ],
+        "parent": "e51d1dc2-ffd5-4d54-8550-377289c9a7cb"
+      },
+      {
+        "name": "Bip_R_Finger3Nub",
+        "guid": "752cb908-31f5-46de-bf57-4332e0140bb4",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "bdeab102-d4a9-4c56-b6ac-10a381e633bf"
+        ],
+        "childs": [],
+        "parent": "eba654db-58e3-451b-8980-581647fa5d43"
+      },
+      {
+        "name": "RingFinger3_R",
+        "guid": "eba654db-58e3-451b-8980-581647fa5d43",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "e3443bf2-363a-42ef-b276-a00d4e793ede"
+        ],
+        "childs": [
+          "752cb908-31f5-46de-bf57-4332e0140bb4"
+        ],
+        "parent": "05dee29d-75cc-4928-b993-52b8094367dd"
+      },
+      {
+        "name": "RingFinger2_R",
+        "guid": "05dee29d-75cc-4928-b993-52b8094367dd",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "53bd74fd-a5aa-4f12-a5a9-82a0b24c96bc"
+        ],
+        "childs": [
+          "eba654db-58e3-451b-8980-581647fa5d43"
+        ],
+        "parent": "4250508e-68e8-4caf-91c5-49fd4955c0fd"
+      },
+      {
+        "name": "RingFinger1_R",
+        "guid": "4250508e-68e8-4caf-91c5-49fd4955c0fd",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "f642e30b-2f00-4d76-8f12-91efab9a552b"
+        ],
+        "childs": [
+          "05dee29d-75cc-4928-b993-52b8094367dd"
+        ],
+        "parent": "e51d1dc2-ffd5-4d54-8550-377289c9a7cb"
+      },
+      {
+        "name": "Bip_R_Finger2Nub",
+        "guid": "d07d16f2-2368-4c40-be42-b0b183313acb",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "5135aaa7-2e23-4734-acd2-d7cc6867232a"
+        ],
+        "childs": [],
+        "parent": "e21f5336-78f1-4fef-bfc4-03cd4f4b6524"
+      },
+      {
+        "name": "MiddleFinger3_R",
+        "guid": "e21f5336-78f1-4fef-bfc4-03cd4f4b6524",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "8c82b338-d216-451d-88a2-8d7987c95efb"
+        ],
+        "childs": [
+          "d07d16f2-2368-4c40-be42-b0b183313acb"
+        ],
+        "parent": "64e62a63-515a-491f-944c-262105972eb9"
+      },
+      {
+        "name": "MiddleFinger2_R",
+        "guid": "64e62a63-515a-491f-944c-262105972eb9",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "be6bda0e-cf02-42aa-9d07-bf7e667e0d04"
+        ],
+        "childs": [
+          "e21f5336-78f1-4fef-bfc4-03cd4f4b6524"
+        ],
+        "parent": "460568b4-3cd2-45a6-9fa0-ec445c8e625d"
+      },
+      {
+        "name": "MiddleFinger1_R",
+        "guid": "460568b4-3cd2-45a6-9fa0-ec445c8e625d",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "1fa3b3ce-a0f6-483a-9196-f849c3de12e3"
+        ],
+        "childs": [
+          "64e62a63-515a-491f-944c-262105972eb9"
+        ],
+        "parent": "e51d1dc2-ffd5-4d54-8550-377289c9a7cb"
+      },
+      {
+        "name": "Bip_R_Finger4Nub",
+        "guid": "37ad06ce-d98d-448c-b1fa-41171cd5fe06",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "4fb05f9c-5b1f-424d-ac32-fbc371d54ae2"
+        ],
+        "childs": [],
+        "parent": "af4a4536-5ff0-4b09-a346-454e0ce6d1d6"
+      },
+      {
+        "name": "LittleFinger3_R",
+        "guid": "af4a4536-5ff0-4b09-a346-454e0ce6d1d6",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "395dfde7-f0cd-4e8e-9012-2e063be083e3"
+        ],
+        "childs": [
+          "37ad06ce-d98d-448c-b1fa-41171cd5fe06"
+        ],
+        "parent": "1894f530-3b35-4c64-9448-5caaa12ab2a7"
+      },
+      {
+        "name": "LittleFinger2_R",
+        "guid": "1894f530-3b35-4c64-9448-5caaa12ab2a7",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "8c22300e-c10d-4fba-9560-32d8daa212f0"
+        ],
+        "childs": [
+          "af4a4536-5ff0-4b09-a346-454e0ce6d1d6"
+        ],
+        "parent": "b31bec8a-4804-4528-81d3-05d5fbf80739"
+      },
+      {
+        "name": "LittleFinger1_R",
+        "guid": "b31bec8a-4804-4528-81d3-05d5fbf80739",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "bf03cd53-e538-4f33-a356-c8a5d44a90ee"
+        ],
+        "childs": [
+          "1894f530-3b35-4c64-9448-5caaa12ab2a7"
+        ],
+        "parent": "e51d1dc2-ffd5-4d54-8550-377289c9a7cb"
+      },
+      {
+        "name": "Bip_R_Finger1Nub",
+        "guid": "562532b9-172d-4d28-a183-2e204e89e686",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "2f011cdb-6554-4b2c-8218-80eb428793c4"
+        ],
+        "childs": [],
+        "parent": "5a6829cb-e4ba-42d2-a800-e9a1c51256d9"
+      },
+      {
+        "name": "IndexFinger3_R",
+        "guid": "5a6829cb-e4ba-42d2-a800-e9a1c51256d9",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "5b878f20-2b92-4966-aec3-40722005717f"
+        ],
+        "childs": [
+          "562532b9-172d-4d28-a183-2e204e89e686"
+        ],
+        "parent": "cb031bcb-43fb-4f2d-9f3a-264a3e31b7b1"
+      },
+      {
+        "name": "IndexFinger2_R",
+        "guid": "cb031bcb-43fb-4f2d-9f3a-264a3e31b7b1",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "a037d82f-4a87-4886-9810-c4d6d2b63966"
+        ],
+        "childs": [
+          "5a6829cb-e4ba-42d2-a800-e9a1c51256d9"
+        ],
+        "parent": "3b7acf73-148f-43a1-8beb-af8409f45abe"
+      },
+      {
+        "name": "IndexFinger1_R",
+        "guid": "3b7acf73-148f-43a1-8beb-af8409f45abe",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "326db660-65ef-4dcb-8294-9cd6d13c359b"
+        ],
+        "childs": [
+          "cb031bcb-43fb-4f2d-9f3a-264a3e31b7b1"
+        ],
+        "parent": "e51d1dc2-ffd5-4d54-8550-377289c9a7cb"
+      },
+      {
+        "name": "Right_wrist",
+        "guid": "e51d1dc2-ffd5-4d54-8550-377289c9a7cb",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "a5cd05f7-0148-4e09-8002-8641eebbdc55"
+        ],
+        "childs": [
+          "3b7acf73-148f-43a1-8beb-af8409f45abe",
+          "b31bec8a-4804-4528-81d3-05d5fbf80739",
+          "460568b4-3cd2-45a6-9fa0-ec445c8e625d",
+          "4250508e-68e8-4caf-91c5-49fd4955c0fd",
+          "2f3d7d18-2bba-4f5e-8a82-6e4ccd131393"
+        ],
+        "parent": "b9696fd8-1ee3-48c4-99cd-6dcc93f6f700"
+      },
+      {
+        "name": "Right_elbow",
+        "guid": "b9696fd8-1ee3-48c4-99cd-6dcc93f6f700",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "72391c45-7019-4805-b7da-e483b84e19bd"
+        ],
+        "childs": [
+          "e51d1dc2-ffd5-4d54-8550-377289c9a7cb"
+        ],
+        "parent": "db7e5c84-ced2-45d9-aecd-74a6d7a6001e"
+      },
+      {
+        "name": "Right_arm",
+        "guid": "db7e5c84-ced2-45d9-aecd-74a6d7a6001e",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "92c9904c-faea-4721-aa52-f0c1d52d4ed8"
+        ],
+        "childs": [
+          "b9696fd8-1ee3-48c4-99cd-6dcc93f6f700"
+        ],
+        "parent": "c7601061-fc3e-43d0-a288-5ca894bf2c8f"
+      },
+      {
+        "name": "Right_shoulder",
+        "guid": "c7601061-fc3e-43d0-a288-5ca894bf2c8f",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "f92dbe94-9c37-4252-afde-e3dddea5d1e3"
+        ],
+        "childs": [
+          "db7e5c84-ced2-45d9-aecd-74a6d7a6001e"
+        ],
+        "parent": "8adc6394-cb44-44b9-85a0-30e7b6a745d2"
+      },
+      {
+        "name": "Eye_R",
+        "guid": "f44c6100-d4b5-428f-b623-334bd8d1e70b",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "0e749f1d-e705-466b-81f1-5c964dad5403"
+        ],
+        "childs": [],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Eye_L",
+        "guid": "4a25e773-2b4b-4739-83e4-082484f0ecef",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "ae3a54f0-fbef-4cf0-a70a-7f7361f8d993"
+        ],
+        "childs": [],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair_FR_TwinNub",
+        "guid": "beb513f7-9714-4248-9305-88813811e8b4",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "ec4bc9a0-2979-42f0-9b83-e6d6aeb11f2c"
+        ],
+        "childs": [],
+        "parent": "00c0cb4a-57a8-4bd5-8c9d-67b1ccb5f069"
+      },
+      {
+        "name": "Bip_hair_FR_Twin05",
+        "guid": "00c0cb4a-57a8-4bd5-8c9d-67b1ccb5f069",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "be8f91b3-a378-4bf1-957e-5368eab2bc5e"
+        ],
+        "childs": [
+          "beb513f7-9714-4248-9305-88813811e8b4"
+        ],
+        "parent": "f7e3a133-24b5-48e3-8023-b84326dd7c43"
+      },
+      {
+        "name": "Bip_hair_FR_Twin04",
+        "guid": "f7e3a133-24b5-48e3-8023-b84326dd7c43",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "51f1f422-f391-490f-8295-89b22b006407"
+        ],
+        "childs": [
+          "00c0cb4a-57a8-4bd5-8c9d-67b1ccb5f069"
+        ],
+        "parent": "815f0d9b-8532-4a0a-90a3-bdae7a18a113"
+      },
+      {
+        "name": "Bip_hair_FR_Twin03",
+        "guid": "815f0d9b-8532-4a0a-90a3-bdae7a18a113",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "1cba6188-c872-4427-b4d4-7411ff437c7b"
+        ],
+        "childs": [
+          "f7e3a133-24b5-48e3-8023-b84326dd7c43"
+        ],
+        "parent": "c09dddf6-2bdf-42ad-9ad3-8a0a56536307"
+      },
+      {
+        "name": "Bip_hair_FR_Twin02",
+        "guid": "c09dddf6-2bdf-42ad-9ad3-8a0a56536307",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "c37224af-a819-4f9e-aed5-60572e86e237"
+        ],
+        "childs": [
+          "815f0d9b-8532-4a0a-90a3-bdae7a18a113"
+        ],
+        "parent": "b4cfb09d-3286-4b27-ad24-8a0fed6efd0f"
+      },
+      {
+        "name": "Bip_hair_FR_Twin",
+        "guid": "b4cfb09d-3286-4b27-ad24-8a0fed6efd0f",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "75e78c0f-2e06-4494-acb4-4feeb9f1b2dc"
+        ],
+        "childs": [
+          "c09dddf6-2bdf-42ad-9ad3-8a0a56536307"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair_FL_TwinNub",
+        "guid": "8b11082e-d744-4af9-9e12-bf3cace4e6a7",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "c348ccdc-3f24-4a9a-ae54-946107e463fb"
+        ],
+        "childs": [],
+        "parent": "150f1cc4-00cf-4c96-8298-e884d10d2f33"
+      },
+      {
+        "name": "Bip_hair_FL_Twin05",
+        "guid": "150f1cc4-00cf-4c96-8298-e884d10d2f33",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "6227b003-b97c-47f3-9ae9-8ebcb59f987b"
+        ],
+        "childs": [
+          "8b11082e-d744-4af9-9e12-bf3cace4e6a7"
+        ],
+        "parent": "2ad38422-4125-4e16-8399-b30f1f493646"
+      },
+      {
+        "name": "Bip_hair_FL_Twin04",
+        "guid": "2ad38422-4125-4e16-8399-b30f1f493646",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "b3ae2237-a6ed-4dd8-9ac7-234195fcadf5"
+        ],
+        "childs": [
+          "150f1cc4-00cf-4c96-8298-e884d10d2f33"
+        ],
+        "parent": "4d30211d-4644-4b22-8942-0a4c0c6985dc"
+      },
+      {
+        "name": "Bip_hair_FL_Twin03",
+        "guid": "4d30211d-4644-4b22-8942-0a4c0c6985dc",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "5bc19c22-f1ed-4235-a85d-1834fbde548e"
+        ],
+        "childs": [
+          "2ad38422-4125-4e16-8399-b30f1f493646"
+        ],
+        "parent": "32efb5f3-0ade-4746-b05b-7d4b8bd303cb"
+      },
+      {
+        "name": "Bip_hair_FL_Twin02",
+        "guid": "32efb5f3-0ade-4746-b05b-7d4b8bd303cb",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "5a64990a-ccfa-4089-9d8e-1e97c730dc88"
+        ],
+        "childs": [
+          "4d30211d-4644-4b22-8942-0a4c0c6985dc"
+        ],
+        "parent": "1709bb77-7434-4551-8f38-37676c0098b4"
+      },
+      {
+        "name": "Bip_hair_FL_Twin",
+        "guid": "1709bb77-7434-4551-8f38-37676c0098b4",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "13a892c9-d7f3-41a5-b4cb-5ff513e5feaa"
+        ],
+        "childs": [
+          "32efb5f3-0ade-4746-b05b-7d4b8bd303cb"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair_AhogeNub",
+        "guid": "5aaaea35-d14b-4009-b7c5-1da1cf54c232",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "b76be41d-1d40-4827-ab27-fadb68a11c76"
+        ],
+        "childs": [],
+        "parent": "f1215091-53b7-420c-b0b5-1d5ab1821bf8"
+      },
+      {
+        "name": "Bip_hair_Ahoge05",
+        "guid": "f1215091-53b7-420c-b0b5-1d5ab1821bf8",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "623ac38e-ad2e-4a87-b765-5e30e09454a4"
+        ],
+        "childs": [
+          "5aaaea35-d14b-4009-b7c5-1da1cf54c232"
+        ],
+        "parent": "414f70f0-fe0d-47d9-9809-f137c80e2720"
+      },
+      {
+        "name": "Bip_hair_Ahoge04",
+        "guid": "414f70f0-fe0d-47d9-9809-f137c80e2720",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "02e98224-f54e-44a7-988a-b5b3b607de52"
+        ],
+        "childs": [
+          "f1215091-53b7-420c-b0b5-1d5ab1821bf8"
+        ],
+        "parent": "c5b0b537-71d5-4893-96b9-f6d18dddc78c"
+      },
+      {
+        "name": "Bip_hair_Ahoge03",
+        "guid": "c5b0b537-71d5-4893-96b9-f6d18dddc78c",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "5853053a-f17a-4a54-9763-55b89045dd74"
+        ],
+        "childs": [
+          "414f70f0-fe0d-47d9-9809-f137c80e2720"
+        ],
+        "parent": "9510b37c-e5ba-4aef-8674-ba2e5bf6033f"
+      },
+      {
+        "name": "Bip_hair_Ahoge02",
+        "guid": "9510b37c-e5ba-4aef-8674-ba2e5bf6033f",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "5404c88a-9ac0-44ee-96f7-e0eec1a28638"
+        ],
+        "childs": [
+          "c5b0b537-71d5-4893-96b9-f6d18dddc78c"
+        ],
+        "parent": "2c1d749f-acfa-4644-967c-8321ede95467"
+      },
+      {
+        "name": "Bip_hair_Ahoge",
+        "guid": "2c1d749f-acfa-4644-967c-8321ede95467",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "44fb6c5b-aea9-4cd8-8a39-f301ac8ac705"
+        ],
+        "childs": [
+          "9510b37c-e5ba-4aef-8674-ba2e5bf6033f"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair17Nub",
+        "guid": "71bfe281-dcdb-4e66-8783-d5da8708af39",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "17eb3780-2278-4833-baa5-2e0bc1b56b4a"
+        ],
+        "childs": [],
+        "parent": "7fcf4c83-a2a0-4a3a-bba9-4643324460f9"
+      },
+      {
+        "name": "Bip_hair1705",
+        "guid": "7fcf4c83-a2a0-4a3a-bba9-4643324460f9",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "21761b7d-8cf1-4d4d-ae55-808575dafe01"
+        ],
+        "childs": [
+          "71bfe281-dcdb-4e66-8783-d5da8708af39"
+        ],
+        "parent": "11300168-d17c-48ac-9c11-717d710e9a6f"
+      },
+      {
+        "name": "Bip_hair1704",
+        "guid": "11300168-d17c-48ac-9c11-717d710e9a6f",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "09544f0f-9a92-454e-86b3-742c7b787a2e"
+        ],
+        "childs": [
+          "7fcf4c83-a2a0-4a3a-bba9-4643324460f9"
+        ],
+        "parent": "7bec1c97-07ed-4e96-a2f6-288e616a7d6d"
+      },
+      {
+        "name": "Bip_hair1703",
+        "guid": "7bec1c97-07ed-4e96-a2f6-288e616a7d6d",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "9edf279e-fb49-43e7-ac6a-7c3f0c1b8999"
+        ],
+        "childs": [
+          "11300168-d17c-48ac-9c11-717d710e9a6f"
+        ],
+        "parent": "f310fd93-ecb9-4c58-ac70-0425420f2a10"
+      },
+      {
+        "name": "Bip_hair1702",
+        "guid": "f310fd93-ecb9-4c58-ac70-0425420f2a10",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "32bb1622-50d1-4b4d-9a3f-e87f8533da5a"
+        ],
+        "childs": [
+          "7bec1c97-07ed-4e96-a2f6-288e616a7d6d"
+        ],
+        "parent": "50d75e00-72b8-427f-9cd6-97a6a597f37d"
+      },
+      {
+        "name": "Bip_hair17",
+        "guid": "50d75e00-72b8-427f-9cd6-97a6a597f37d",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "3f8c578d-b103-47ba-97dd-f2ecd96d5996"
+        ],
+        "childs": [
+          "f310fd93-ecb9-4c58-ac70-0425420f2a10"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair16Nub",
+        "guid": "61c0e40d-fff7-4e36-873e-104c5e1c8324",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "bdce4145-644f-438e-96a0-49739df16d7d"
+        ],
+        "childs": [],
+        "parent": "4de19167-e188-4e4f-8a80-a7df65b1e463"
+      },
+      {
+        "name": "Bip_hair1604",
+        "guid": "4de19167-e188-4e4f-8a80-a7df65b1e463",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "45fad278-3e6b-4707-be8f-9fa45687830e"
+        ],
+        "childs": [
+          "61c0e40d-fff7-4e36-873e-104c5e1c8324"
+        ],
+        "parent": "9d1be481-9882-4583-92f4-3166a7baae5f"
+      },
+      {
+        "name": "Bip_hair1603",
+        "guid": "9d1be481-9882-4583-92f4-3166a7baae5f",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "7ec3ce28-b616-4c78-978d-dde116e253b5"
+        ],
+        "childs": [
+          "4de19167-e188-4e4f-8a80-a7df65b1e463"
+        ],
+        "parent": "a06bd94f-3c1b-4169-97b9-fa00ce34fb16"
+      },
+      {
+        "name": "Bip_hair1602",
+        "guid": "a06bd94f-3c1b-4169-97b9-fa00ce34fb16",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "e929dbbb-665f-4300-bf48-df94d73f5078"
+        ],
+        "childs": [
+          "9d1be481-9882-4583-92f4-3166a7baae5f"
+        ],
+        "parent": "6e8aacdf-c4b1-4370-aad0-77f0d9c92dd5"
+      },
+      {
+        "name": "Bip_hair16",
+        "guid": "6e8aacdf-c4b1-4370-aad0-77f0d9c92dd5",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "634bd91b-4818-4a48-a055-f5fbf55fa55a"
+        ],
+        "childs": [
+          "a06bd94f-3c1b-4169-97b9-fa00ce34fb16"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair15Nub",
+        "guid": "f5143b65-1aa7-4403-a615-f3d6c91363bf",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "b46b49f8-76cb-48a9-a4a9-3418e282897e"
+        ],
+        "childs": [],
+        "parent": "cb34990e-4d6a-49e0-b65f-8b9f0354230a"
+      },
+      {
+        "name": "Bip_hair1502",
+        "guid": "cb34990e-4d6a-49e0-b65f-8b9f0354230a",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "b2f71938-76b7-4093-b8e3-e392681e3d7a"
+        ],
+        "childs": [
+          "f5143b65-1aa7-4403-a615-f3d6c91363bf"
+        ],
+        "parent": "650476a1-5a84-4dc5-b22a-b3fd25557f5b"
+      },
+      {
+        "name": "Bip_hair15",
+        "guid": "650476a1-5a84-4dc5-b22a-b3fd25557f5b",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "b3e9cbe6-27fa-4d47-a530-dfac3a68a0ca"
+        ],
+        "childs": [
+          "cb34990e-4d6a-49e0-b65f-8b9f0354230a"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair14Nub",
+        "guid": "c3cf962e-718f-4b43-8e76-b9e5fce22717",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "7de4d2fb-cba7-4521-8549-ea699f47f40a"
+        ],
+        "childs": [],
+        "parent": "3016f29a-5577-4b6f-9faf-3b2744853ce5"
+      },
+      {
+        "name": "Bip_hair14",
+        "guid": "3016f29a-5577-4b6f-9faf-3b2744853ce5",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "2fc6a3e6-3dd0-476e-85ca-54b9326897ee"
+        ],
+        "childs": [
+          "c3cf962e-718f-4b43-8e76-b9e5fce22717"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair13Nub",
+        "guid": "598a5941-c4de-41ff-91cf-8c959e47c223",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "be3702c2-1664-4762-899d-c239c463ac92"
+        ],
+        "childs": [],
+        "parent": "fd808e28-e645-481e-96cb-e8dafe604fcb"
+      },
+      {
+        "name": "Bip_hair13",
+        "guid": "fd808e28-e645-481e-96cb-e8dafe604fcb",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "3d673fc3-fc75-4cfc-a8d7-ebe83dd74cda"
+        ],
+        "childs": [
+          "598a5941-c4de-41ff-91cf-8c959e47c223"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair12Nub",
+        "guid": "24636ee1-d1ec-4318-be4a-aa6133540c18",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "97fa3fce-1ce2-4762-88e7-08380cc9fbb0"
+        ],
+        "childs": [],
+        "parent": "06d4f29f-e643-4cd2-ab8f-5ec91e1ea998"
+      },
+      {
+        "name": "Bip_hair1202",
+        "guid": "06d4f29f-e643-4cd2-ab8f-5ec91e1ea998",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "a5c02fdf-6a0c-48db-a0c2-46783029f361"
+        ],
+        "childs": [
+          "24636ee1-d1ec-4318-be4a-aa6133540c18"
+        ],
+        "parent": "de4e71a1-c984-4034-bcbe-40658cb9d7ef"
+      },
+      {
+        "name": "Bip_hair12",
+        "guid": "de4e71a1-c984-4034-bcbe-40658cb9d7ef",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "e5c009d2-96f9-48e8-be8c-584c6a49d15b"
+        ],
+        "childs": [
+          "06d4f29f-e643-4cd2-ab8f-5ec91e1ea998"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair11Nub",
+        "guid": "3230bde9-6715-4b5f-b200-3f39c4f3d5b8",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "41c072b0-4f71-43df-8e2e-9bc8b2181a27"
+        ],
+        "childs": [],
+        "parent": "8b24c59d-72a4-4666-9f53-78b869dd3712"
+      },
+      {
+        "name": "Bip_hair1102",
+        "guid": "8b24c59d-72a4-4666-9f53-78b869dd3712",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "018ba905-1e61-48a7-945d-8ba740f8ec3d"
+        ],
+        "childs": [
+          "3230bde9-6715-4b5f-b200-3f39c4f3d5b8"
+        ],
+        "parent": "7655e369-273f-441c-b9a2-82461b7b295b"
+      },
+      {
+        "name": "Bip_hair11",
+        "guid": "7655e369-273f-441c-b9a2-82461b7b295b",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "dd01173a-5c82-4e17-ba5d-013714dd4602"
+        ],
+        "childs": [
+          "8b24c59d-72a4-4666-9f53-78b869dd3712"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair10Nub",
+        "guid": "09d352a6-87cf-4b6b-b001-86f8532d0650",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "bea821b6-a959-467a-a001-7a5a205bd91d"
+        ],
+        "childs": [],
+        "parent": "ff19e899-346c-4808-8289-ab1d772375df"
+      },
+      {
+        "name": "Bip_hair1003",
+        "guid": "ff19e899-346c-4808-8289-ab1d772375df",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "d0642262-205b-4640-b8ee-e8e732eb8065"
+        ],
+        "childs": [
+          "09d352a6-87cf-4b6b-b001-86f8532d0650"
+        ],
+        "parent": "46177300-0d24-450f-a687-a4da24b11fc9"
+      },
+      {
+        "name": "Bip_hair1002",
+        "guid": "46177300-0d24-450f-a687-a4da24b11fc9",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "0c8d3d1a-5cfd-4085-8718-ac813b4f3890"
+        ],
+        "childs": [
+          "ff19e899-346c-4808-8289-ab1d772375df"
+        ],
+        "parent": "53ac8eca-6a9c-420a-8c93-c1be439b3e14"
+      },
+      {
+        "name": "Bip_hair10",
+        "guid": "53ac8eca-6a9c-420a-8c93-c1be439b3e14",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "c8a2936a-cfa2-4a2d-8933-95007126b7e0"
+        ],
+        "childs": [
+          "46177300-0d24-450f-a687-a4da24b11fc9"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair09Nub",
+        "guid": "ffd1200f-9ea1-4d96-b999-4ac04e09a649",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "912dbb76-4b86-4b12-b98f-d3baab6fce8e"
+        ],
+        "childs": [],
+        "parent": "fbac3594-e04d-467e-a1e5-6756ad58d72c"
+      },
+      {
+        "name": "Bip_hair0902",
+        "guid": "fbac3594-e04d-467e-a1e5-6756ad58d72c",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "950b018f-cf18-490d-a31d-abe8f4898cd7"
+        ],
+        "childs": [
+          "ffd1200f-9ea1-4d96-b999-4ac04e09a649"
+        ],
+        "parent": "efbc7248-e193-4b61-8b9f-9feb831e5819"
+      },
+      {
+        "name": "Bip_hair09",
+        "guid": "efbc7248-e193-4b61-8b9f-9feb831e5819",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "a86a1ea4-4921-4c1a-89c4-2ecf2b8b094a"
+        ],
+        "childs": [
+          "fbac3594-e04d-467e-a1e5-6756ad58d72c"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair08Nub",
+        "guid": "06adfca1-81ed-4941-8756-c88204e7d16c",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "1459c6c4-32e6-4e09-ab99-c5016bc7d2f6"
+        ],
+        "childs": [],
+        "parent": "5c70fa97-f4e4-4149-a9be-f79a7bc0506e"
+      },
+      {
+        "name": "Bip_hair08",
+        "guid": "5c70fa97-f4e4-4149-a9be-f79a7bc0506e",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "e2dc2d73-6b3c-449c-9bdb-9da7a6bf7278"
+        ],
+        "childs": [
+          "06adfca1-81ed-4941-8756-c88204e7d16c"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair07Nub",
+        "guid": "73a0b60b-fddc-4bc8-9654-28762934a2bc",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "d93679a0-cac9-4f5f-9af5-4dc08c64ab3f"
+        ],
+        "childs": [],
+        "parent": "6faf71d8-f400-4ca5-9f38-cb2f3bf424ad"
+      },
+      {
+        "name": "Bip_hair07",
+        "guid": "6faf71d8-f400-4ca5-9f38-cb2f3bf424ad",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "d59c9138-01ab-4af7-8f8a-2d7cb8676935"
+        ],
+        "childs": [
+          "73a0b60b-fddc-4bc8-9654-28762934a2bc"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair06Nub",
+        "guid": "05b84429-533d-44eb-aa88-697ddb69a47f",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "6ca8ceb4-a4c1-4ad2-b7eb-9168a5a1b97e"
+        ],
+        "childs": [],
+        "parent": "c5941e47-803f-47a4-9f9a-8d41409a1c98"
+      },
+      {
+        "name": "Bip_hair0602",
+        "guid": "c5941e47-803f-47a4-9f9a-8d41409a1c98",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "74951104-ef3c-47f3-b34e-8d68ed2331ac"
+        ],
+        "childs": [
+          "05b84429-533d-44eb-aa88-697ddb69a47f"
+        ],
+        "parent": "71fc8b53-73e5-4837-b813-bd0d0b29853d"
+      },
+      {
+        "name": "Bip_hair06",
+        "guid": "71fc8b53-73e5-4837-b813-bd0d0b29853d",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "e14a67b5-a5a8-469e-8152-e288cb36883c"
+        ],
+        "childs": [
+          "c5941e47-803f-47a4-9f9a-8d41409a1c98"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair05Nub",
+        "guid": "cfa196ed-5472-4d2e-8b12-47468ac0e5c2",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "6cbf43d1-8873-489d-9322-c2725fb57652"
+        ],
+        "childs": [],
+        "parent": "80f74570-bc7a-4354-b5c9-9c161ae27dd4"
+      },
+      {
+        "name": "Bip_hair0504",
+        "guid": "80f74570-bc7a-4354-b5c9-9c161ae27dd4",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "5507509a-088a-4b5b-a85e-1427e25de9c3"
+        ],
+        "childs": [
+          "cfa196ed-5472-4d2e-8b12-47468ac0e5c2"
+        ],
+        "parent": "79be61d3-9a1f-4a0c-bd20-a13d230292f7"
+      },
+      {
+        "name": "Bip_hair0503",
+        "guid": "79be61d3-9a1f-4a0c-bd20-a13d230292f7",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "ab7a909d-353f-4f4b-8575-2afa014c6a90"
+        ],
+        "childs": [
+          "80f74570-bc7a-4354-b5c9-9c161ae27dd4"
+        ],
+        "parent": "d6b13fb6-6964-4d05-a86b-0c55b989a10d"
+      },
+      {
+        "name": "Bip_hair0502",
+        "guid": "d6b13fb6-6964-4d05-a86b-0c55b989a10d",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "49db6073-61d5-448c-bd49-d244c5424cba"
+        ],
+        "childs": [
+          "79be61d3-9a1f-4a0c-bd20-a13d230292f7"
+        ],
+        "parent": "ab881081-db1e-4a9c-8c62-5adbde0a4fa0"
+      },
+      {
+        "name": "Bip_hair05",
+        "guid": "ab881081-db1e-4a9c-8c62-5adbde0a4fa0",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "b6b82fac-5fae-47cf-afd5-2f8f95e77ce4"
+        ],
+        "childs": [
+          "d6b13fb6-6964-4d05-a86b-0c55b989a10d"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair04Nub",
+        "guid": "7657b003-caca-466a-b442-33425dee0994",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "15466ab0-a301-4663-b6e9-e5578c24412f"
+        ],
+        "childs": [],
+        "parent": "9fadad8f-9aa4-4440-ab72-d63cbdde6dde"
+      },
+      {
+        "name": "Bip_hair0404",
+        "guid": "9fadad8f-9aa4-4440-ab72-d63cbdde6dde",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "08119187-7c42-4353-837e-091a2c45d4bd"
+        ],
+        "childs": [
+          "7657b003-caca-466a-b442-33425dee0994"
+        ],
+        "parent": "90870ea6-f43c-4e42-8433-e6e6ed91ddfa"
+      },
+      {
+        "name": "Bip_hair0403",
+        "guid": "90870ea6-f43c-4e42-8433-e6e6ed91ddfa",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "01f193b0-19ff-4ac7-80e1-73226f41758a"
+        ],
+        "childs": [
+          "9fadad8f-9aa4-4440-ab72-d63cbdde6dde"
+        ],
+        "parent": "e8178c6f-bdd0-4e6a-be87-74cc8d9f2d10"
+      },
+      {
+        "name": "Bip_hair0402",
+        "guid": "e8178c6f-bdd0-4e6a-be87-74cc8d9f2d10",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "b2b5f838-b609-4e98-9c0d-3b272933b9a2"
+        ],
+        "childs": [
+          "90870ea6-f43c-4e42-8433-e6e6ed91ddfa"
+        ],
+        "parent": "415e498e-e0b4-44b7-bfad-56926b11dbf2"
+      },
+      {
+        "name": "Bip_hair04",
+        "guid": "415e498e-e0b4-44b7-bfad-56926b11dbf2",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "e11f8206-8a47-40c4-b2c7-463b8b1f597b"
+        ],
+        "childs": [
+          "e8178c6f-bdd0-4e6a-be87-74cc8d9f2d10"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair03Nub",
+        "guid": "ee5de22f-53e9-4742-9c1f-118b9e26713e",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "5ee77117-ca54-4cad-a261-f011613080f4"
+        ],
+        "childs": [],
+        "parent": "62f34b45-d1b8-4c8c-aa73-31f08415b4c5"
+      },
+      {
+        "name": "Bip_hair0303",
+        "guid": "62f34b45-d1b8-4c8c-aa73-31f08415b4c5",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "6c0b6622-6686-4066-8c10-d804a03987fb"
+        ],
+        "childs": [
+          "ee5de22f-53e9-4742-9c1f-118b9e26713e"
+        ],
+        "parent": "ea3a5c16-42a9-4c00-b3c5-e7810c9171af"
+      },
+      {
+        "name": "Bip_hair0302",
+        "guid": "ea3a5c16-42a9-4c00-b3c5-e7810c9171af",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "4bf6d3bd-4203-435b-ad9b-16c2b19ed79e"
+        ],
+        "childs": [
+          "62f34b45-d1b8-4c8c-aa73-31f08415b4c5"
+        ],
+        "parent": "7aa08ca3-2942-416b-8f70-a1cbd4e0f2c3"
+      },
+      {
+        "name": "Bip_hair03",
+        "guid": "7aa08ca3-2942-416b-8f70-a1cbd4e0f2c3",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "f9e0d2ea-47e1-43e7-b126-4d03818cd704"
+        ],
+        "childs": [
+          "ea3a5c16-42a9-4c00-b3c5-e7810c9171af"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair02Nub",
+        "guid": "96f94ae3-26d6-48f8-8987-230460d1f0ad",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "8cf64243-b0fa-4b92-96e1-14c52fe793db"
+        ],
+        "childs": [],
+        "parent": "1b7d5249-6ccf-4b7a-b276-84c9ab46c786"
+      },
+      {
+        "name": "Bip_hair0204",
+        "guid": "1b7d5249-6ccf-4b7a-b276-84c9ab46c786",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "2c133179-f904-4ad1-b79a-cb185d10d137"
+        ],
+        "childs": [
+          "96f94ae3-26d6-48f8-8987-230460d1f0ad"
+        ],
+        "parent": "8d0821bd-d179-4e7d-9347-cbb0195eb824"
+      },
+      {
+        "name": "Bip_hair0203",
+        "guid": "8d0821bd-d179-4e7d-9347-cbb0195eb824",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "9c5acccf-9475-4286-9db2-b2e9c4dfbd6f"
+        ],
+        "childs": [
+          "1b7d5249-6ccf-4b7a-b276-84c9ab46c786"
+        ],
+        "parent": "4aea0315-cb72-4bd2-aad7-dd6f86bca127"
+      },
+      {
+        "name": "Bip_hair0202",
+        "guid": "4aea0315-cb72-4bd2-aad7-dd6f86bca127",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "0d14846e-a389-4cab-8b28-b501c50d6ab4"
+        ],
+        "childs": [
+          "8d0821bd-d179-4e7d-9347-cbb0195eb824"
+        ],
+        "parent": "f2e605a5-a1a9-4533-beaa-9bd0c894cc63"
+      },
+      {
+        "name": "Bip_hair02",
+        "guid": "f2e605a5-a1a9-4533-beaa-9bd0c894cc63",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "b8a6c700-69b1-4e4e-9003-692186bc95e1"
+        ],
+        "childs": [
+          "4aea0315-cb72-4bd2-aad7-dd6f86bca127"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Bip_hair01Nub",
+        "guid": "fd42c84a-a369-4ab4-b9ba-5cafb3354021",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "272a7022-32bf-4723-bac4-3be5944d4b84"
+        ],
+        "childs": [],
+        "parent": "5ee6f05d-d61d-4660-a807-60acb8f3c4b4"
+      },
+      {
+        "name": "Bip_hair0105",
+        "guid": "5ee6f05d-d61d-4660-a807-60acb8f3c4b4",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "c88a1a05-20b7-4854-8d46-84fa9a78ea3f"
+        ],
+        "childs": [
+          "fd42c84a-a369-4ab4-b9ba-5cafb3354021"
+        ],
+        "parent": "de86f590-bc37-43d6-a1db-43ef85eb0384"
+      },
+      {
+        "name": "Bip_hair0104",
+        "guid": "de86f590-bc37-43d6-a1db-43ef85eb0384",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "6b68fe0b-09f1-4e70-a722-1645449187d6"
+        ],
+        "childs": [
+          "5ee6f05d-d61d-4660-a807-60acb8f3c4b4"
+        ],
+        "parent": "637b0be4-4c99-4f64-9cf1-fb423141139b"
+      },
+      {
+        "name": "Bip_hair0103",
+        "guid": "637b0be4-4c99-4f64-9cf1-fb423141139b",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "f5bfda02-d21f-4a21-a2ac-716e44fb1722"
+        ],
+        "childs": [
+          "de86f590-bc37-43d6-a1db-43ef85eb0384"
+        ],
+        "parent": "6177fff9-468e-4baf-b8a2-6d4dfdb96860"
+      },
+      {
+        "name": "Bip_hair0102",
+        "guid": "6177fff9-468e-4baf-b8a2-6d4dfdb96860",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "18eac144-2670-454a-8ff8-1301d8714006"
+        ],
+        "childs": [
+          "637b0be4-4c99-4f64-9cf1-fb423141139b"
+        ],
+        "parent": "f0d96406-3b6e-4bab-86f0-e09f6d07d7d5"
+      },
+      {
+        "name": "Bip_hair01",
+        "guid": "f0d96406-3b6e-4bab-86f0-e09f6d07d7d5",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "5676eec1-b303-461e-adf7-a87dbf003a0e"
+        ],
+        "childs": [
+          "6177fff9-468e-4baf-b8a2-6d4dfdb96860"
+        ],
+        "parent": "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+      },
+      {
+        "name": "Head",
+        "guid": "af477c79-c2d3-49c4-849f-99a5bb2ded62",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "2ded74fb-b3cc-458f-9b70-f7755de3206c"
+        ],
+        "childs": [
+          "f0d96406-3b6e-4bab-86f0-e09f6d07d7d5",
+          "f2e605a5-a1a9-4533-beaa-9bd0c894cc63",
+          "7aa08ca3-2942-416b-8f70-a1cbd4e0f2c3",
+          "415e498e-e0b4-44b7-bfad-56926b11dbf2",
+          "ab881081-db1e-4a9c-8c62-5adbde0a4fa0",
+          "71fc8b53-73e5-4837-b813-bd0d0b29853d",
+          "6faf71d8-f400-4ca5-9f38-cb2f3bf424ad",
+          "5c70fa97-f4e4-4149-a9be-f79a7bc0506e",
+          "efbc7248-e193-4b61-8b9f-9feb831e5819",
+          "53ac8eca-6a9c-420a-8c93-c1be439b3e14",
+          "7655e369-273f-441c-b9a2-82461b7b295b",
+          "de4e71a1-c984-4034-bcbe-40658cb9d7ef",
+          "fd808e28-e645-481e-96cb-e8dafe604fcb",
+          "3016f29a-5577-4b6f-9faf-3b2744853ce5",
+          "650476a1-5a84-4dc5-b22a-b3fd25557f5b",
+          "6e8aacdf-c4b1-4370-aad0-77f0d9c92dd5",
+          "50d75e00-72b8-427f-9cd6-97a6a597f37d",
+          "2c1d749f-acfa-4644-967c-8321ede95467",
+          "1709bb77-7434-4551-8f38-37676c0098b4",
+          "b4cfb09d-3286-4b27-ad24-8a0fed6efd0f",
+          "4a25e773-2b4b-4739-83e4-082484f0ecef",
+          "f44c6100-d4b5-428f-b623-334bd8d1e70b"
+        ],
+        "parent": "8cb6f534-588d-4483-a7d2-3c99abb52abf"
+      },
+      {
+        "name": "Neck",
+        "guid": "8cb6f534-588d-4483-a7d2-3c99abb52abf",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "6efbc20d-ce40-445b-81e3-3b9d92bb03e7"
+        ],
+        "childs": [
+          "af477c79-c2d3-49c4-849f-99a5bb2ded62"
+        ],
+        "parent": "8adc6394-cb44-44b9-85a0-30e7b6a745d2"
+      },
+      {
+        "name": "Bip_L_Finger0Nub",
+        "guid": "3b6a4b31-4e39-4614-8379-8c50a71d9bba",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "638c11f2-fa79-4e15-b7f7-e33e6191482d"
+        ],
+        "childs": [],
+        "parent": "62f1a585-3efd-43ac-b79c-f78d3d0655d8"
+      },
+      {
+        "name": "Thumb2_L",
+        "guid": "62f1a585-3efd-43ac-b79c-f78d3d0655d8",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "92ef4d17-7be6-41d9-91ce-35c7ece42788"
+        ],
+        "childs": [
+          "3b6a4b31-4e39-4614-8379-8c50a71d9bba"
+        ],
+        "parent": "07d039de-19a6-4c3a-bb35-a8fccb9f24d2"
+      },
+      {
+        "name": "Thumb1_L",
+        "guid": "07d039de-19a6-4c3a-bb35-a8fccb9f24d2",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "ef8e9f81-e816-43c9-ac3f-96ffc3f07689"
+        ],
+        "childs": [
+          "62f1a585-3efd-43ac-b79c-f78d3d0655d8"
+        ],
+        "parent": "b13b0e7b-e858-4635-80ed-3c842782ca36"
+      },
+      {
+        "name": "Thumb0_L",
+        "guid": "b13b0e7b-e858-4635-80ed-3c842782ca36",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "500faaaf-2fbc-47d7-8d0c-623d74d7b062"
+        ],
+        "childs": [
+          "07d039de-19a6-4c3a-bb35-a8fccb9f24d2"
+        ],
+        "parent": "6dd0f958-ed36-48d7-b257-901cd276ffef"
+      },
+      {
+        "name": "Bip_L_Finger3Nub",
+        "guid": "cbc17e11-23b1-46e7-9c1f-2f9f005f26db",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "d3f633c8-ccb4-4910-892a-9a243f994fb2"
+        ],
+        "childs": [],
+        "parent": "9a8c9d05-77d2-49cf-96b4-187896b3f477"
+      },
+      {
+        "name": "RingFinger3_L",
+        "guid": "9a8c9d05-77d2-49cf-96b4-187896b3f477",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "4b1d5ed0-f966-4a65-b8c9-319fca2d4cb2"
+        ],
+        "childs": [
+          "cbc17e11-23b1-46e7-9c1f-2f9f005f26db"
+        ],
+        "parent": "e2660321-3fd1-438c-9404-b42b6c032915"
+      },
+      {
+        "name": "RingFinger2_L",
+        "guid": "e2660321-3fd1-438c-9404-b42b6c032915",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "d4d80d38-9c6f-440d-9740-4efe23ba3ce8"
+        ],
+        "childs": [
+          "9a8c9d05-77d2-49cf-96b4-187896b3f477"
+        ],
+        "parent": "034287a6-72ea-4b04-b3b6-37f90be3b3aa"
+      },
+      {
+        "name": "RingFinger1_L",
+        "guid": "034287a6-72ea-4b04-b3b6-37f90be3b3aa",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "850e9dc7-07e9-4779-b675-8b8b8c02d035"
+        ],
+        "childs": [
+          "e2660321-3fd1-438c-9404-b42b6c032915"
+        ],
+        "parent": "6dd0f958-ed36-48d7-b257-901cd276ffef"
+      },
+      {
+        "name": "Bip_L_Finger2Nub",
+        "guid": "07bb8d8d-7fc1-410c-89c2-a7679c1d5c06",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "b7313921-c03d-4668-87e2-9ef610374f33"
+        ],
+        "childs": [],
+        "parent": "4eb6eaed-5980-41f2-838c-1adb02ebd481"
+      },
+      {
+        "name": "MiddleFinger3_L",
+        "guid": "4eb6eaed-5980-41f2-838c-1adb02ebd481",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "76056490-3540-4cf2-9f31-d3473ebdf1bb"
+        ],
+        "childs": [
+          "07bb8d8d-7fc1-410c-89c2-a7679c1d5c06"
+        ],
+        "parent": "d5739372-ae12-4282-9a89-47ce435ef6b0"
+      },
+      {
+        "name": "MiddleFinger2_L",
+        "guid": "d5739372-ae12-4282-9a89-47ce435ef6b0",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "70968b3b-cbab-4e2c-b415-0684b03669b5"
+        ],
+        "childs": [
+          "4eb6eaed-5980-41f2-838c-1adb02ebd481"
+        ],
+        "parent": "391d82f9-8aab-48d6-852a-d7230f56d3d6"
+      },
+      {
+        "name": "MiddleFinger1_L",
+        "guid": "391d82f9-8aab-48d6-852a-d7230f56d3d6",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "331b87a4-bebb-4847-bf6c-faa24a6875f0"
+        ],
+        "childs": [
+          "d5739372-ae12-4282-9a89-47ce435ef6b0"
+        ],
+        "parent": "6dd0f958-ed36-48d7-b257-901cd276ffef"
+      },
+      {
+        "name": "Bip_L_Finger4Nub",
+        "guid": "dacc8bdd-86f3-4c1b-8973-04b3b42bf12f",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "64e4d44a-1ed7-4153-b7bc-535b41776c92"
+        ],
+        "childs": [],
+        "parent": "ee4c98df-8d74-4f52-be70-6464d71a0de4"
+      },
+      {
+        "name": "LittleFinger3_L",
+        "guid": "ee4c98df-8d74-4f52-be70-6464d71a0de4",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "adb3108d-fda7-44c7-ab5e-40a25f715ce5"
+        ],
+        "childs": [
+          "dacc8bdd-86f3-4c1b-8973-04b3b42bf12f"
+        ],
+        "parent": "63bed46a-2116-4d80-b6f2-b9bf62a602d3"
+      },
+      {
+        "name": "LittleFinger2_L",
+        "guid": "63bed46a-2116-4d80-b6f2-b9bf62a602d3",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "a8895478-9359-4909-9bbd-036a3bb4617e"
+        ],
+        "childs": [
+          "ee4c98df-8d74-4f52-be70-6464d71a0de4"
+        ],
+        "parent": "6c32c7ea-3d6e-4d48-800a-92f14e35a186"
+      },
+      {
+        "name": "LittleFinger1_L",
+        "guid": "6c32c7ea-3d6e-4d48-800a-92f14e35a186",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "2ff73849-aa9d-42a0-b691-e9c6d462e28c"
+        ],
+        "childs": [
+          "63bed46a-2116-4d80-b6f2-b9bf62a602d3"
+        ],
+        "parent": "6dd0f958-ed36-48d7-b257-901cd276ffef"
+      },
+      {
+        "name": "Bip_L_Finger1Nub",
+        "guid": "d7b1b47b-0811-4082-8355-21e3c4e3990b",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "3ec9994e-7aef-4cc7-a4b5-be5c68e2a307"
+        ],
+        "childs": [],
+        "parent": "97de78a8-6eab-45c1-8c30-525c25662a1b"
+      },
+      {
+        "name": "IndexFinger3_L",
+        "guid": "97de78a8-6eab-45c1-8c30-525c25662a1b",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "5b16bc9a-b1e7-4fd1-b95c-e1a22159c468"
+        ],
+        "childs": [
+          "d7b1b47b-0811-4082-8355-21e3c4e3990b"
+        ],
+        "parent": "1ca6475b-cb19-47ad-8d74-bad9087473fd"
+      },
+      {
+        "name": "IndexFinger2_L",
+        "guid": "1ca6475b-cb19-47ad-8d74-bad9087473fd",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "ae2a110d-9d58-45b0-b258-d14c31af6952"
+        ],
+        "childs": [
+          "97de78a8-6eab-45c1-8c30-525c25662a1b"
+        ],
+        "parent": "586fde02-572d-4ebb-bb25-20884683ca5d"
+      },
+      {
+        "name": "IndexFinger1_L",
+        "guid": "586fde02-572d-4ebb-bb25-20884683ca5d",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "6d41d084-4925-4ef0-b6a6-90d0ab88c651"
+        ],
+        "childs": [
+          "1ca6475b-cb19-47ad-8d74-bad9087473fd"
+        ],
+        "parent": "6dd0f958-ed36-48d7-b257-901cd276ffef"
+      },
+      {
+        "name": "Left_wrist",
+        "guid": "6dd0f958-ed36-48d7-b257-901cd276ffef",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "aebe09df-e30f-42eb-b1ad-f330ef63d051"
+        ],
+        "childs": [
+          "586fde02-572d-4ebb-bb25-20884683ca5d",
+          "6c32c7ea-3d6e-4d48-800a-92f14e35a186",
+          "391d82f9-8aab-48d6-852a-d7230f56d3d6",
+          "034287a6-72ea-4b04-b3b6-37f90be3b3aa",
+          "b13b0e7b-e858-4635-80ed-3c842782ca36"
+        ],
+        "parent": "bb3a43a1-9e02-408c-a4f9-14b14c3d797a"
+      },
+      {
+        "name": "Left_elbow",
+        "guid": "bb3a43a1-9e02-408c-a4f9-14b14c3d797a",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "d6b75da7-4dff-4e92-bdf5-28b5644411dd"
+        ],
+        "childs": [
+          "6dd0f958-ed36-48d7-b257-901cd276ffef"
+        ],
+        "parent": "1389e81c-7011-469a-9345-3c7eae114b1f"
+      },
+      {
+        "name": "Left_arm",
+        "guid": "1389e81c-7011-469a-9345-3c7eae114b1f",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "cd97bf33-b4eb-4401-a32b-a96ed414a299"
+        ],
+        "childs": [
+          "bb3a43a1-9e02-408c-a4f9-14b14c3d797a"
+        ],
+        "parent": "faab199d-e019-403d-a0fd-20f18b08cc62"
+      },
+      {
+        "name": "Left_shoulder",
+        "guid": "faab199d-e019-403d-a0fd-20f18b08cc62",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "ca4079b1-dcbc-446a-b12e-175928f6f7f3"
+        ],
+        "childs": [
+          "1389e81c-7011-469a-9345-3c7eae114b1f"
+        ],
+        "parent": "8adc6394-cb44-44b9-85a0-30e7b6a745d2"
+      },
+      {
+        "name": "Upper_Chest",
+        "guid": "8adc6394-cb44-44b9-85a0-30e7b6a745d2",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "541d53fe-b0ba-49f9-b744-f53f58272bd6"
+        ],
+        "childs": [
+          "faab199d-e019-403d-a0fd-20f18b08cc62",
+          "8cb6f534-588d-4483-a7d2-3c99abb52abf",
+          "c7601061-fc3e-43d0-a288-5ca894bf2c8f"
+        ],
+        "parent": "c46462f1-4bee-46e6-8ff4-f3be0e5d4e36"
+      },
+      {
+        "name": "Chest",
+        "guid": "c46462f1-4bee-46e6-8ff4-f3be0e5d4e36",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "d6f71327-2ae9-456e-ae18-bb472afc3ba5"
+        ],
+        "childs": [
+          "8adc6394-cb44-44b9-85a0-30e7b6a745d2"
+        ],
+        "parent": "be37965f-2a17-4355-a052-9f36480cd073"
+      },
+      {
+        "name": "Spine",
+        "guid": "be37965f-2a17-4355-a052-9f36480cd073",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "292d77f0-3300-43c9-9a72-758b86e26548"
+        ],
+        "childs": [
+          "c46462f1-4bee-46e6-8ff4-f3be0e5d4e36"
+        ],
+        "parent": "5360bc24-f54e-4e72-a09a-ecadace95ff2"
+      },
+      {
+        "name": "Bip_R_Toe0Nub",
+        "guid": "63c7bad2-5d0e-4fd9-bc80-b76082bf94ad",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "74193add-1d32-4847-be16-9be789b34cbe"
+        ],
+        "childs": [],
+        "parent": "9d940708-e88c-41de-b7cb-a425f53ef307"
+      },
+      {
+        "name": "Right_toe",
+        "guid": "9d940708-e88c-41de-b7cb-a425f53ef307",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "c9d67d16-640d-4e7b-b5d4-19dc67b74d68"
+        ],
+        "childs": [
+          "63c7bad2-5d0e-4fd9-bc80-b76082bf94ad"
+        ],
+        "parent": "d3265423-b34c-48f9-8b8b-7734c4c500fb"
+      },
+      {
+        "name": "Right_ankle",
+        "guid": "d3265423-b34c-48f9-8b8b-7734c4c500fb",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "26aa305d-549c-4c9b-987c-284a56637aa5"
+        ],
+        "childs": [
+          "9d940708-e88c-41de-b7cb-a425f53ef307"
+        ],
+        "parent": "9d86361c-c060-4cf1-b002-50a288d2347f"
+      },
+      {
+        "name": "Right_knee",
+        "guid": "9d86361c-c060-4cf1-b002-50a288d2347f",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "ae271a66-454e-4f16-9742-3f2a8db46431"
+        ],
+        "childs": [
+          "d3265423-b34c-48f9-8b8b-7734c4c500fb"
+        ],
+        "parent": "e931a9f9-572b-4dd2-bc87-6639dceba22e"
+      },
+      {
+        "name": "Right_leg",
+        "guid": "e931a9f9-572b-4dd2-bc87-6639dceba22e",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "13da9f2c-579a-4d1d-aff4-2366d476adbe"
+        ],
+        "childs": [
+          "9d86361c-c060-4cf1-b002-50a288d2347f"
+        ],
+        "parent": "5360bc24-f54e-4e72-a09a-ecadace95ff2"
+      },
+      {
+        "name": "Bip_L_Toe0Nub",
+        "guid": "8881fd27-1e27-40c3-a67e-0d6e42ab340c",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "b335dcac-7fd1-477b-8a88-2959d87d9d6c"
+        ],
+        "childs": [],
+        "parent": "2dc0084c-4c03-48c7-9948-23aeeec9b5f8"
+      },
+      {
+        "name": "Left_toe",
+        "guid": "2dc0084c-4c03-48c7-9948-23aeeec9b5f8",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "b76fdc58-6102-481e-9776-355511f98750"
+        ],
+        "childs": [
+          "8881fd27-1e27-40c3-a67e-0d6e42ab340c"
+        ],
+        "parent": "8debcdb4-fbd4-4496-a39d-515f1d6ed043"
+      },
+      {
+        "name": "Left_ankle",
+        "guid": "8debcdb4-fbd4-4496-a39d-515f1d6ed043",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "d4be7644-dab3-4747-b2e0-06a0dd84bdd5"
+        ],
+        "childs": [
+          "2dc0084c-4c03-48c7-9948-23aeeec9b5f8"
+        ],
+        "parent": "5028ed8d-326f-48f2-bde4-2deb0c9d88ef"
+      },
+      {
+        "name": "Left_knee",
+        "guid": "5028ed8d-326f-48f2-bde4-2deb0c9d88ef",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "bd006469-85f8-4b9e-a0d1-1ab469b2e4aa"
+        ],
+        "childs": [
+          "8debcdb4-fbd4-4496-a39d-515f1d6ed043"
+        ],
+        "parent": "e27d8854-d060-4a0a-9c95-07b6187de2be"
+      },
+      {
+        "name": "Left_leg",
+        "guid": "e27d8854-d060-4a0a-9c95-07b6187de2be",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "6e2945cd-409a-4c61-9b53-4a0e4c270b75"
+        ],
+        "childs": [
+          "5028ed8d-326f-48f2-bde4-2deb0c9d88ef"
+        ],
+        "parent": "5360bc24-f54e-4e72-a09a-ecadace95ff2"
+      },
+      {
+        "name": "Hips",
+        "guid": "5360bc24-f54e-4e72-a09a-ecadace95ff2",
+        "active": true,
+        "static": true,
+        "deactivate": true,
+        "components": [
+          "b873f156-4723-4e2d-9fe2-9b1d34d61c73"
+        ],
+        "childs": [
+          "e27d8854-d060-4a0a-9c95-07b6187de2be",
+          "e931a9f9-572b-4dd2-bc87-6639dceba22e",
+          "be37965f-2a17-4355-a052-9f36480cd073"
+        ],
+        "parent": "a7f247c6-9b4c-4552-bdb5-79b79afbd0fa"
+      },
+      {
+        "name": "Armature",
+        "guid": "a7f247c6-9b4c-4552-bdb5-79b79afbd0fa",
+        "active": true,
+        "static": true,
+        "deactivate": false,
+        "components": [
+          "581ee7f8-dac4-42b6-ace0-ca0a9636206b"
+        ],
+        "childs": [
+          "5360bc24-f54e-4e72-a09a-ecadace95ff2"
+        ],
+        "parent": "2049f89f-0e8d-48b0-9116-9cdad4fe17b5"
+      },
+      {
+        "name": "kindred_unity",
+        "guid": "2049f89f-0e8d-48b0-9116-9cdad4fe17b5",
+        "active": true,
+        "static": true,
+        "deactivate": false,
+        "components": [
+          "871d8333-f9fd-44d0-8c5a-d54ad75e0e7d",
+          "ed48bb14-07f4-4d10-9967-94d6e8b64d85"
+        ],
+        "childs": [
+          "a7f247c6-9b4c-4552-bdb5-79b79afbd0fa",
+          "528aaf5d-5fa0-411f-91d4-9015cb7a396a",
+          "c97b537e-8255-4985-94a8-be1d4456a7ea",
+          "9018f54c-b9bf-423b-83b3-38fcac5f8c8a",
+          "f73c77eb-c3da-4cc4-92bd-e1d1e6d366ae",
+          "b0b00e80-a6a7-4ced-83ee-924d5228494c"
+        ],
+        "parent": ""
+      },
+      {
+        "name": "Sphere",
+        "guid": "6101a159-3e32-4400-af7a-8a567afb0cd3",
+        "active": true,
+        "static": false,
+        "deactivate": false,
+        "components": [
+          "87385abf-6350-4ef2-9213-79dee98abd48",
+          "b101224a-f866-4943-a4b4-2617cf773c93",
+          "23762bce-eb5d-4571-85de-1bfa2317ed52",
+          "63df7587-be28-41e7-a8e4-d0990fc7ed00"
+        ],
+        "childs": [],
+        "parent": ""
+      }
+    ],
+    "Materials": [
+      {
+        "name": "hair_002",
+        "guid": "ed894732-2a3f-4eb2-822f-b670420d05bb",
+        "shaderName": "DefaultForward_Skinned",
+        "renderOrder": 2000,
+        "culling": "back",
+        "datas": {
+          "textures": [
+            {
+              "name": "_BaseMap",
+              "path": "../Resources/Models/Kindred/tex/hair_texture.png",
+              "fileName": "hair_texture.png",
+              "originalName": "hair_texture"
+            }
+          ],
+          "floats": [
+            {
+              "name": "_QueueOffset",
+              "data": 0.0
+            },
+            {
+              "name": "_QueueControl",
+              "data": 0.0
+            }
+          ],
+          "ints": [],
+          "vectors": [
+            {
+              "name": "_Color",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_BaseMap_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_BaseMap_TexelSize",
+              "data": [
+                0.00048828125,
+                0.00048828125,
+                2048.0,
+                2048.0
+              ]
+            },
+            {
+              "name": "_BaseMap_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_Lightmaps_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_Lightmaps_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "unity_Lightmaps_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_LightmapsInd_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_LightmapsInd_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "unity_LightmapsInd_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_ShadowMasks_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_ShadowMasks_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "unity_ShadowMasks_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_Test2_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_Test2_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_Test2_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            }
+          ],
+          "matrixs": []
+        }
+      },
+      {
+        "name": "clothes_002",
+        "guid": "13afe8f6-3967-43e5-95ce-534aa99b6ab5",
+        "shaderName": "DefaultForward_Skinned",
+        "renderOrder": 2000,
+        "culling": "back",
+        "datas": {
+          "textures": [
+            {
+              "name": "_BaseMap",
+              "path": "../Resources/Models/Kindred/tex/clothes_texture.png",
+              "fileName": "clothes_texture.png",
+              "originalName": "clothes_texture"
+            },
+            {
+              "name": "_Test2",
+              "path": "../Resources/Models/Anbi/Ellen_Body_Map1_N.png",
+              "fileName": "Ellen_Body_Map1_N.png",
+              "originalName": "Ellen_Body_Map1_N"
+            }
+          ],
+          "floats": [
+            {
+              "name": "_QueueOffset",
+              "data": 0.0
+            },
+            {
+              "name": "_QueueControl",
+              "data": 0.0
+            }
+          ],
+          "ints": [],
+          "vectors": [
+            {
+              "name": "_Color",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_BaseMap_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_BaseMap_TexelSize",
+              "data": [
+                0.00048828125,
+                0.00048828125,
+                2048.0,
+                2048.0
+              ]
+            },
+            {
+              "name": "_BaseMap_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_Lightmaps_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_Lightmaps_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "unity_Lightmaps_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_LightmapsInd_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_LightmapsInd_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "unity_LightmapsInd_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_ShadowMasks_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_ShadowMasks_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "unity_ShadowMasks_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_Test2_TexelSize",
+              "data": [
+                0.00048828125,
+                0.00048828125,
+                2048.0,
+                2048.0
+              ]
+            },
+            {
+              "name": "_Test2_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_Test2_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            }
+          ],
+          "matrixs": []
+        }
+      },
+      {
+        "name": "bow_002",
+        "guid": "341ef566-4217-4bcd-b479-d3ea3614d9b6",
+        "shaderName": "DefaultForward_Skinned",
+        "renderOrder": 2000,
+        "culling": "back",
+        "datas": {
+          "textures": [
+            {
+              "name": "_BaseMap",
+              "path": "../Resources/Models/Kindred/tex/bow_texture.png",
+              "fileName": "bow_texture.png",
+              "originalName": "bow_texture"
+            }
+          ],
+          "floats": [
+            {
+              "name": "_QueueOffset",
+              "data": 0.0
+            },
+            {
+              "name": "_QueueControl",
+              "data": 0.0
+            }
+          ],
+          "ints": [],
+          "vectors": [
+            {
+              "name": "_Color",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_BaseMap_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_BaseMap_TexelSize",
+              "data": [
+                0.00048828125,
+                0.00048828125,
+                2048.0,
+                2048.0
+              ]
+            },
+            {
+              "name": "_BaseMap_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_Lightmaps_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_Lightmaps_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "unity_Lightmaps_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_LightmapsInd_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_LightmapsInd_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "unity_LightmapsInd_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_ShadowMasks_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_ShadowMasks_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "unity_ShadowMasks_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_Test2_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_Test2_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_Test2_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            }
+          ],
+          "matrixs": []
+        }
+      },
+      {
+        "name": "body_002",
+        "guid": "c48a77dd-0ca6-481d-b5f2-423d7b17cd4b",
+        "shaderName": "DefaultForward_Skinned",
+        "renderOrder": 2000,
+        "culling": "back",
+        "datas": {
+          "textures": [
+            {
+              "name": "_BaseMap",
+              "path": "../Resources/Models/Kindred/tex/Body_texture.png",
+              "fileName": "Body_texture.png",
+              "originalName": "Body_texture"
+            }
+          ],
+          "floats": [
+            {
+              "name": "_QueueOffset",
+              "data": 0.0
+            },
+            {
+              "name": "_QueueControl",
+              "data": 0.0
+            }
+          ],
+          "ints": [],
+          "vectors": [
+            {
+              "name": "_Color",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_BaseMap_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_BaseMap_TexelSize",
+              "data": [
+                0.00048828125,
+                0.00048828125,
+                2048.0,
+                2048.0
+              ]
+            },
+            {
+              "name": "_BaseMap_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_Lightmaps_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_Lightmaps_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "unity_Lightmaps_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_LightmapsInd_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_LightmapsInd_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "unity_LightmapsInd_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_ShadowMasks_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_ShadowMasks_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "unity_ShadowMasks_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_Test2_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_Test2_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_Test2_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            }
+          ],
+          "matrixs": []
+        }
+      },
+      {
+        "name": "Lit",
+        "guid": "a1ff8f52-6584-4bf6-9db7-046fe6efdb44",
+        "shaderName": "Lit",
+        "renderOrder": 2000,
+        "culling": "back",
+        "datas": {
+          "textures": [],
+          "floats": [
+            {
+              "name": "_SrcBlend",
+              "data": 1.0
+            },
+            {
+              "name": "_DstBlend",
+              "data": 0.0
+            },
+            {
+              "name": "_Cutoff",
+              "data": 0.5
+            },
+            {
+              "name": "_ZWrite",
+              "data": 1.0
+            },
+            {
+              "name": "_Glossiness",
+              "data": 0.5
+            },
+            {
+              "name": "_GlossMapScale",
+              "data": 1.0
+            },
+            {
+              "name": "_SmoothnessTextureChannel",
+              "data": 0.0
+            },
+            {
+              "name": "_Metallic",
+              "data": 0.0
+            },
+            {
+              "name": "_SpecularHighlights",
+              "data": 1.0
+            },
+            {
+              "name": "_GlossyReflections",
+              "data": 1.0
+            },
+            {
+              "name": "_BumpScale",
+              "data": 1.0
+            },
+            {
+              "name": "_Parallax",
+              "data": 0.02
+            },
+            {
+              "name": "_OcclusionStrength",
+              "data": 1.0
+            },
+            {
+              "name": "_DetailNormalMapScale",
+              "data": 1.0
+            },
+            {
+              "name": "_Cull",
+              "data": 2.0
+            },
+            {
+              "name": "_SrcBlendAlpha",
+              "data": 1.0
+            },
+            {
+              "name": "_DstBlendAlpha",
+              "data": 0.0
+            },
+            {
+              "name": "_AlphaToMask",
+              "data": 0.0
+            },
+            {
+              "name": "_WorkflowMode",
+              "data": 1.0
+            },
+            {
+              "name": "_Smoothness",
+              "data": 0.5
+            },
+            {
+              "name": "_EnvironmentReflections",
+              "data": 1.0
+            },
+            {
+              "name": "_DetailAlbedoMapScale",
+              "data": 1.0
+            },
+            {
+              "name": "_ClearCoatMask",
+              "data": 0.0
+            },
+            {
+              "name": "_ClearCoatSmoothness",
+              "data": 0.0
+            },
+            {
+              "name": "_Surface",
+              "data": 0.0
+            },
+            {
+              "name": "_Blend",
+              "data": 0.0
+            },
+            {
+              "name": "_AlphaClip",
+              "data": 0.0
+            },
+            {
+              "name": "_BlendModePreserveSpecular",
+              "data": 1.0
+            },
+            {
+              "name": "_AddPrecomputedVelocity",
+              "data": 0.0
+            },
+            {
+              "name": "_ReceiveShadows",
+              "data": 1.0
+            },
+            {
+              "name": "_QueueOffset",
+              "data": 0.0
+            }
+          ],
+          "ints": [],
+          "vectors": [
+            {
+              "name": "_MainTex_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_MainTex_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_MainTex_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_EmissionColor",
+              "data": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_Color",
+              "data": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+              ]
+            },
+            {
+              "name": "_MetallicGlossMap_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_MetallicGlossMap_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_MetallicGlossMap_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_BumpMap_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_BumpMap_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_BumpMap_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_ParallaxMap_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_ParallaxMap_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_ParallaxMap_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_OcclusionMap_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_OcclusionMap_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_OcclusionMap_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_EmissionMap_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_EmissionMap_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_EmissionMap_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_DetailMask_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_DetailMask_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_DetailMask_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_DetailAlbedoMap_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_DetailAlbedoMap_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_DetailAlbedoMap_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_DetailNormalMap_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_DetailNormalMap_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_DetailNormalMap_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_SpecColor",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_BaseMap_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_BaseMap_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_BaseMap_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_BaseColor",
+              "data": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+              ]
+            },
+            {
+              "name": "_SpecGlossMap_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "_SpecGlossMap_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "_SpecGlossMap_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_Lightmaps_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_Lightmaps_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "unity_Lightmaps_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_LightmapsInd_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_LightmapsInd_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "unity_LightmapsInd_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_ShadowMasks_ST",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "name": "unity_ShadowMasks_TexelSize",
+              "data": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            {
+              "name": "unity_ShadowMasks_HDR",
+              "data": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ]
+            }
+          ],
+          "matrixs": []
+        }
+      }
+    ],
+    "Components": [
+      {
+        "type": "Transform",
+        "guid": "55f19670-af8d-4091-878f-17e0d3e16bd7",
+        "position": [
+          -1.32,
+          2.62,
+          1.1
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "scale": [
+          1.8485,
+          1.8485,
+          1.8485
+        ]
+      },
+      {
+        "type": "SphereCollider",
+        "guid": "265446f6-53f7-40a0-87c0-55c68eda13ef",
+        "aabbCenter": [
+          -1.32,
+          2.62,
+          1.1
+        ],
+        "aabbExtent": [
+          0.92425,
+          0.924250066,
+          0.92425
+        ],
+        "isTrigger": false,
+        "colliderType": "sphere",
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "radius": 0.5
+      },
+      {
+        "type": "Transform",
+        "guid": "f83423b4-a051-4060-99af-33fde54080f7",
+        "position": [
+          -0.27,
+          0.07,
+          -4.97
+        ],
+        "rotation": [
+          0.0,
+          -0.00902991649,
+          0.0,
+          0.99995923
+        ],
+        "scale": [
+          7.2511,
+          6.425303,
+          1.24649417
+        ]
+      },
+      {
+        "type": "BoxCollider",
+        "guid": "90e2a8f1-2d53-44cf-a375-a311a6877af5",
+        "aabbCenter": [
+          -0.269999981,
+          0.06999993,
+          -4.97
+        ],
+        "aabbExtent": [
+          3.63621426,
+          3.21265149,
+          0.6886196
+        ],
+        "isTrigger": false,
+        "colliderType": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "size": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "acaecf3e-23a5-43ff-a056-0e7c2f0c4ca4",
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.7069847,
+          0.0,
+          0.0,
+          0.707228839
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "SkinnedMeshRenderer",
+        "guid": "175c0169-ab7e-43f3-9ffb-a304be4e008b",
+        "shadowCast": "On",
+        "mesh": {
+          "path": "../Resources/Models/Kindred/kindred_unity.fbx",
+          "fileName": "kindred_unity.fbx",
+          "modelName": "kindred_unity",
+          "meshName": "hair",
+          "boundCenter": [
+            0.0317214131,
+            0.09642168,
+            1.25545728
+          ],
+          "boundExtent": [
+            0.370689154,
+            0.2743575,
+            0.487241417
+          ]
+        },
+        "boneRoot": "Hips",
+        "materials": [
+          "ed894732-2a3f-4eb2-822f-b670420d05bb"
+        ],
+        "blendShapeCount": 0,
+        "blendShapes": {}
+      },
+      {
+        "type": "Transform",
+        "guid": "7bd773a9-0b5e-4719-8387-3f31edc14c7b",
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.7069847,
+          0.0,
+          0.0,
+          0.707228839
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "SkinnedMeshRenderer",
+        "guid": "c60a23d6-67a6-46c0-a3fa-b29a83b2c940",
+        "shadowCast": "On",
+        "mesh": {
+          "path": "../Resources/Models/Kindred/kindred_unity.fbx",
+          "fileName": "kindred_unity.fbx",
+          "modelName": "kindred_unity",
+          "meshName": "clothes",
+          "boundCenter": [
+            0.0,
+            -0.000697009265,
+            0.953917861
+          ],
+          "boundExtent": [
+            0.324373573,
+            0.146218747,
+            0.4617803
+          ]
+        },
+        "boneRoot": "Hips",
+        "materials": [
+          "13afe8f6-3967-43e5-95ce-534aa99b6ab5"
+        ],
+        "blendShapeCount": 0,
+        "blendShapes": {}
+      },
+      {
+        "type": "Transform",
+        "guid": "2b8bda66-3583-4782-bb86-80aa6c1deb29",
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.7069847,
+          0.0,
+          0.0,
+          0.707228839
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "SkinnedMeshRenderer",
+        "guid": "7dcfca04-b3bb-4911-9a5a-15a19122913d",
+        "shadowCast": "On",
+        "mesh": {
+          "path": "../Resources/Models/Kindred/kindred_unity.fbx",
+          "fileName": "kindred_unity.fbx",
+          "modelName": "kindred_unity",
+          "meshName": "bow",
+          "boundCenter": [
+            -0.346105635,
+            -0.0578962266,
+            0.8716566
+          ],
+          "boundExtent": [
+            0.642232656,
+            0.33247298,
+            0.28183645
+          ]
+        },
+        "boneRoot": "Hips",
+        "materials": [
+          "341ef566-4217-4bcd-b479-d3ea3614d9b6"
+        ],
+        "blendShapeCount": 0,
+        "blendShapes": {}
+      },
+      {
+        "type": "Transform",
+        "guid": "2fa2d514-1afe-45d4-87fc-bd26e70a9dc8",
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.7069847,
+          0.0,
+          0.0,
+          0.707228839
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "SkinnedMeshRenderer",
+        "guid": "f8279091-efc6-4eaf-94f3-74d5d46d8bf0",
+        "shadowCast": "On",
+        "mesh": {
+          "path": "../Resources/Models/Kindred/kindred_unity.fbx",
+          "fileName": "kindred_unity.fbx",
+          "modelName": "kindred_unity",
+          "meshName": "body2",
+          "boundCenter": [
+            0.00047416985,
+            -0.0101997927,
+            0.6922714
+          ],
+          "boundExtent": [
+            0.383530319,
+            0.119620346,
+            0.6924154
+          ]
+        },
+        "boneRoot": "Hips",
+        "materials": [
+          "c48a77dd-0ca6-481d-b5f2-423d7b17cd4b"
+        ],
+        "blendShapeCount": 0,
+        "blendShapes": {}
+      },
+      {
+        "type": "Transform",
+        "guid": "5f345799-2427-4ff3-9f4d-d846aefbbcfa",
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.7069847,
+          0.0,
+          0.0,
+          0.707228839
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "SkinnedMeshRenderer",
+        "guid": "d15f885a-bcd6-41fd-8fd8-2c7e36e2ce1f",
+        "shadowCast": "On",
+        "mesh": {
+          "path": "../Resources/Models/Kindred/kindred_unity.fbx",
+          "fileName": "kindred_unity.fbx",
+          "modelName": "kindred_unity",
+          "meshName": "body",
+          "boundCenter": [
+            1.49011612E-08,
+            0.00305916741,
+            1.49972785
+          ],
+          "boundExtent": [
+            0.102660172,
+            0.118787989,
+            0.125894666
+          ]
+        },
+        "boneRoot": "Hips",
+        "materials": [
+          "c48a77dd-0ca6-481d-b5f2-423d7b17cd4b"
+        ],
+        "blendShapeCount": 27,
+        "blendShapes": {
+          "vrc.v_aa": 0.0,
+          "vrc.v_ch": 0.0,
+          "vrc.v_dd": 0.0,
+          "vrc.v_e": 0.0,
+          "vrc.v_ff": 0.0,
+          "vrc.v_ih": 0.0,
+          "vrc.v_kk": 0.0,
+          "vrc.v_nn": 0.0,
+          "vrc.v_oh": 0.0,
+          "vrc.v_ou": 0.0,
+          "vrc.v_pp": 0.0,
+          "vrc.v_rr": 0.0,
+          "vrc.v_sil": 0.0,
+          "vrc.v_ss": 0.0,
+          "vrc.v_th": 0.0,
+          "pupil_small": 0.0,
+          "eye_big": 0.0,
+          "smile": 0.0,
+          "sad": 0.0,
+          "surprise": 0.0,
+          "blink_L": 0.0,
+          "blink_R": 0.0,
+          "blink": 0.0,
+          "look_Left": 0.0,
+          "look_right": 0.0,
+          "look_up": 0.0,
+          "look_down": 0.0
+        }
+      },
+      {
+        "type": "Transform",
+        "guid": "b3e7b0fd-951f-41ca-9d58-7e48bdf4c197",
+        "position": [
+          1.11758709E-08,
+          0.0312447324,
+          -5.96046448E-08
+        ],
+        "rotation": [
+          0.24534151,
+          -0.4915545,
+          0.66317904,
+          0.508306265
+        ],
+        "scale": [
+          0.9999999,
+          0.99999994,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "4f174418-dab8-4bed-845c-9829879d096f",
+        "position": [
+          7.4505806E-08,
+          0.0246970057,
+          -7.450581E-09
+        ],
+        "rotation": [
+          0.0119376881,
+          0.0620824,
+          -0.0324890278,
+          0.9974707
+        ],
+        "scale": [
+          1.0,
+          0.9999998,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "e1d2f8b0-deb6-4421-9e6e-dc0e8196ede1",
+        "position": [
+          -4.47034836E-08,
+          0.03596337,
+          -6.70552254E-08
+        ],
+        "rotation": [
+          -0.056615822,
+          -0.2199316,
+          0.10045,
+          0.9686767
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.00000012
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "1ae7e253-c57e-4a4f-a426-001eefc6469a",
+        "position": [
+          0.0287125744,
+          0.0233181287,
+          -0.00558984559
+        ],
+        "rotation": [
+          0.0381626,
+          0.3341865,
+          -0.239958152,
+          0.910649836
+        ],
+        "scale": [
+          1.0,
+          0.99999994,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "bdeab102-d4a9-4c56-b6ac-10a381e633bf",
+        "position": [
+          1.08033419E-07,
+          0.02632001,
+          -4.47034836E-08
+        ],
+        "rotation": [
+          -0.531091452,
+          0.5682116,
+          -0.466843,
+          0.420874178
+        ],
+        "scale": [
+          0.99999994,
+          1.00000012,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "e3443bf2-363a-42ef-b276-a00d4e793ede",
+        "position": [
+          1.3038516E-08,
+          0.0245792978,
+          7.450581E-09
+        ],
+        "rotation": [
+          -0.0857198238,
+          -0.0676888749,
+          0.01244413,
+          0.9939394
+        ],
+        "scale": [
+          0.9999999,
+          0.99999994,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "53bd74fd-a5aa-4f12-a5a9-82a0b24c96bc",
+        "position": [
+          4.284084E-08,
+          0.0386225656,
+          -2.79396772E-08
+        ],
+        "rotation": [
+          -0.05446607,
+          -0.0346908756,
+          0.0022582775,
+          0.9979103
+        ],
+        "scale": [
+          1.0,
+          0.99999994,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "f642e30b-2f00-4d76-8f12-91efab9a552b",
+        "position": [
+          -0.0166989714,
+          0.06987511,
+          0.0008968413
+        ],
+        "rotation": [
+          -0.013906627,
+          -0.13248755,
+          0.0959995538,
+          0.9864268
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "5135aaa7-2e23-4734-acd2-d7cc6867232a",
+        "position": [
+          -7.82310963E-08,
+          0.0275706165,
+          1.49011612E-08
+        ],
+        "rotation": [
+          -0.493968785,
+          0.5868457,
+          -0.5059588,
+          0.394477725
+        ],
+        "scale": [
+          1.0,
+          0.99999994,
+          0.9999999
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "8c82b338-d216-451d-88a2-8d7987c95efb",
+        "position": [
+          -3.7252903E-09,
+          0.02912512,
+          -2.98023224E-08
+        ],
+        "rotation": [
+          -0.0604930334,
+          -0.04827155,
+          0.008107709,
+          0.9969678
+        ],
+        "scale": [
+          0.9999999,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "be6bda0e-cf02-42aa-9d07-bf7e667e0d04",
+        "position": [
+          2.23517418E-08,
+          0.0431802161,
+          3.7252903E-08
+        ],
+        "rotation": [
+          -0.0841869041,
+          -0.05426469,
+          0.002554013,
+          0.994968057
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "1fa3b3ce-a0f6-483a-9196-f849c3de12e3",
+        "position": [
+          0.0004730858,
+          0.07363652,
+          0.00580771547
+        ],
+        "rotation": [
+          0.0127006071,
+          -0.102617845,
+          0.0910267,
+          0.99046576
+        ],
+        "scale": [
+          1.00000012,
+          1.00000012,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "4fb05f9c-5b1f-424d-ac32-fbc371d54ae2",
+        "position": [
+          -1.11758709E-08,
+          0.0204378478,
+          1.86264515E-08
+        ],
+        "rotation": [
+          0.446493953,
+          -0.5172257,
+          0.548309743,
+          -0.48215878
+        ],
+        "scale": [
+          0.9999998,
+          0.9999998,
+          0.9999999
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "395dfde7-f0cd-4e8e-9012-2e063be083e3",
+        "position": [
+          -5.029142E-08,
+          0.0187863968,
+          1.51339918E-08
+        ],
+        "rotation": [
+          -0.0309281666,
+          -0.0159136374,
+          -0.00256748148,
+          0.9993917
+        ],
+        "scale": [
+          0.99999994,
+          0.9999999,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "8c22300e-c10d-4fba-9560-32d8daa212f0",
+        "position": [
+          5.029142E-08,
+          0.03277497,
+          7.450581E-09
+        ],
+        "rotation": [
+          -0.0308355484,
+          -0.0145750791,
+          -0.0035113648,
+          0.99941206
+        ],
+        "scale": [
+          0.99999994,
+          1.0,
+          0.9999999
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "bf03cd53-e538-4f33-a356-c8a5d44a90ee",
+        "position": [
+          -0.0339926556,
+          0.05982525,
+          -0.007507078
+        ],
+        "rotation": [
+          -0.00302610453,
+          -0.11070586,
+          0.0863204,
+          0.9900929
+        ],
+        "scale": [
+          1.00000012,
+          1.00000012,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "2f011cdb-6554-4b2c-8218-80eb428793c4",
+        "position": [
+          -4.09781933E-08,
+          0.0259330813,
+          -7.450581E-09
+        ],
+        "rotation": [
+          -0.424595416,
+          0.635279834,
+          -0.565436959,
+          0.3105147
+        ],
+        "scale": [
+          1.00000012,
+          1.00000024,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "5b878f20-2b92-4966-aec3-40722005717f",
+        "position": [
+          1.86264515E-09,
+          0.024236273,
+          -1.49011612E-08
+        ],
+        "rotation": [
+          -0.0176401827,
+          -0.0140805244,
+          0.00312670949,
+          0.999740362
+        ],
+        "scale": [
+          1.0,
+          0.99999994,
+          0.9999999
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "a037d82f-4a87-4886-9810-c4d6d2b63966",
+        "position": [
+          -7.450581E-09,
+          0.034657225,
+          -7.450581E-09
+        ],
+        "rotation": [
+          -0.0889157,
+          -0.060996253,
+          0.008920568,
+          0.9941297
+        ],
+        "scale": [
+          1.00000012,
+          0.99999994,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "326db660-65ef-4dcb-8294-9cd6d13c359b",
+        "position": [
+          0.021506276,
+          0.0769091547,
+          0.006392467
+        ],
+        "rotation": [
+          0.021244159,
+          -0.114167243,
+          0.10632471,
+          0.987527
+        ],
+        "scale": [
+          1.0,
+          1.00000012,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "a5cd05f7-0148-4e09-8002-8641eebbdc55",
+        "position": [
+          2.79396772E-08,
+          0.178996369,
+          2.60770321E-08
+        ],
+        "rotation": [
+          -0.0356575176,
+          0.07669858,
+          -0.08661858,
+          0.9926445
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.00000012
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "72391c45-7019-4805-b7da-e483b84e19bd",
+        "position": [
+          -5.26197255E-08,
+          0.204043761,
+          2.561137E-08
+        ],
+        "rotation": [
+          -0.09687323,
+          0.0180382133,
+          -0.0689391345,
+          0.9927425
+        ],
+        "scale": [
+          1.0,
+          0.9999999,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "92c9904c-faea-4721-aa52-f0c1d52d4ed8",
+        "position": [
+          1.95577741E-08,
+          0.09861092,
+          -5.21540642E-08
+        ],
+        "rotation": [
+          -0.287325084,
+          -0.349373221,
+          0.235516444,
+          0.860182941
+        ],
+        "scale": [
+          1.0,
+          1.00000012,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "f92dbe94-9c37-4252-afde-e3dddea5d1e3",
+        "position": [
+          0.0242855716,
+          0.11847166,
+          -0.0007305636
+        ],
+        "rotation": [
+          0.62712723,
+          0.4183636,
+          0.519114733,
+          -0.40274477
+        ],
+        "scale": [
+          0.99999994,
+          0.9999999,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "0e749f1d-e705-466b-81f1-5c964dad5403",
+        "position": [
+          0.0415003374,
+          0.0789836645,
+          0.0290488712
+        ],
+        "rotation": [
+          0.000280981825,
+          0.707106769,
+          0.707106769,
+          -0.000280981825
+        ],
+        "scale": [
+          1.0,
+          0.9999998,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "ae3a54f0-fbef-4cf0-a70a-7f7361f8d993",
+        "position": [
+          -0.0415004045,
+          0.0789836645,
+          0.029048752
+        ],
+        "rotation": [
+          -0.000282015826,
+          0.707106769,
+          0.707106769,
+          0.000282015826
+        ],
+        "scale": [
+          1.0,
+          0.9999998,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "ec4bc9a0-2979-42f0-9b83-e6d6aeb11f2c",
+        "position": [
+          -9.778887E-09,
+          0.0557578355,
+          9.313226E-09
+        ],
+        "rotation": [
+          0.000388766115,
+          -8.55373437E-05,
+          8.363074E-05,
+          0.99999994
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "be8f91b3-a378-4bf1-957e-5368eab2bc5e",
+        "position": [
+          -6.519258E-09,
+          0.0544249341,
+          -1.3038516E-08
+        ],
+        "rotation": [
+          0.117009886,
+          -0.06580638,
+          0.07011538,
+          0.9884645
+        ],
+        "scale": [
+          0.99999994,
+          1.0,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "51f1f422-f391-490f-8295-89b22b006407",
+        "position": [
+          1.11758709E-08,
+          0.05070682,
+          2.98023224E-08
+        ],
+        "rotation": [
+          0.08932041,
+          -0.02810832,
+          0.03393332,
+          0.9950278
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "1cba6188-c872-4427-b4d4-7411ff437c7b",
+        "position": [
+          -4.656613E-08,
+          0.0411268361,
+          -3.7252903E-09
+        ],
+        "rotation": [
+          0.0535195842,
+          -0.0210278258,
+          0.0234122314,
+          0.998070836
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "c37224af-a819-4f9e-aed5-60572e86e237",
+        "position": [
+          2.98023224E-08,
+          0.03774101,
+          7.82310963E-08
+        ],
+        "rotation": [
+          0.197346389,
+          -0.144156978,
+          0.129958361,
+          0.960928738
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "75e78c0f-2e06-4494-acb4-4feeb9f1b2dc",
+        "position": [
+          0.07431766,
+          -0.08008134,
+          0.09940864
+        ],
+        "rotation": [
+          0.8614674,
+          0.235361487,
+          0.235361308,
+          0.383515269
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.00000012
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "c348ccdc-3f24-4a9a-ae54-946107e463fb",
+        "position": [
+          0.0,
+          0.05597416,
+          1.58324838E-08
+        ],
+        "rotation": [
+          0.000397594966,
+          1.46457469E-05,
+          1.45472595E-05,
+          0.99999994
+        ],
+        "scale": [
+          1.00000012,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "6227b003-b97c-47f3-9ae9-8ebcb59f987b",
+        "position": [
+          -9.313226E-10,
+          0.04595478,
+          5.029142E-08
+        ],
+        "rotation": [
+          0.1315388,
+          0.00551079772,
+          0.004056432,
+          0.9912874
+        ],
+        "scale": [
+          1.0,
+          0.99999994,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "b3ae2237-a6ed-4dd8-9ac7-234195fcadf5",
+        "position": [
+          0.0,
+          0.03875773,
+          4.33065E-08
+        ],
+        "rotation": [
+          0.105786249,
+          0.005801924,
+          0.00205580029,
+          0.994369864
+        ],
+        "scale": [
+          1.0,
+          0.9999999,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "5bc19c22-f1ed-4235-a85d-1834fbde548e",
+        "position": [
+          -4.19095159E-09,
+          0.0484149121,
+          3.678724E-08
+        ],
+        "rotation": [
+          0.05862789,
+          0.00403220346,
+          0.0005614844,
+          0.998271644
+        ],
+        "scale": [
+          0.99999994,
+          1.0,
+          0.9999999
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "5a64990a-ccfa-4089-9d8e-1e97c730dc88",
+        "position": [
+          4.656613E-09,
+          0.0691341758,
+          -1.53668225E-08
+        ],
+        "rotation": [
+          0.236190826,
+          0.0291693639,
+          -0.00578772975,
+          0.971251547
+        ],
+        "scale": [
+          0.9999999,
+          0.99999994,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "13a892c9-d7f3-41a5-b4cb-5ff513e5feaa",
+        "position": [
+          -0.0717216,
+          -0.0727818,
+          0.09063467
+        ],
+        "rotation": [
+          0.8927773,
+          0.010870955,
+          0.0108709959,
+          0.4502358
+        ],
+        "scale": [
+          0.99999994,
+          1.0,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "b76be41d-1d40-4827-ab27-fadb68a11c76",
+        "position": [
+          -2.7474016E-08,
+          0.06310997,
+          -7.532071E-08
+        ],
+        "rotation": [
+          -0.0003920994,
+          0.0002197056,
+          5.36428925E-05,
+          0.99999994
+        ],
+        "scale": [
+          0.999999762,
+          1.0,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "623ac38e-ad2e-4a87-b765-5e30e09454a4",
+        "position": [
+          0.0,
+          0.0429989621,
+          -1.792796E-07
+        ],
+        "rotation": [
+          -0.015782021,
+          -0.006100517,
+          -0.125438675,
+          0.9919571
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "02e98224-f54e-44a7-988a-b5b3b607de52",
+        "position": [
+          5.7742E-08,
+          0.0383266136,
+          -3.35276127E-08
+        ],
+        "rotation": [
+          -0.21815075,
+          0.150926933,
+          -0.04796854,
+          0.96298
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "5853053a-f17a-4a54-9763-55b89045dd74",
+        "position": [
+          5.58793545E-09,
+          0.03847345,
+          -1.53668225E-08
+        ],
+        "rotation": [
+          -0.271476984,
+          0.4835213,
+          0.5155214,
+          0.65325737
+        ],
+        "scale": [
+          0.99999994,
+          0.9999998,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "5404c88a-9ac0-44ee-96f7-e0eec1a28638",
+        "position": [
+          2.81725079E-08,
+          0.0384946838,
+          1.74622983E-08
+        ],
+        "rotation": [
+          0.0932929739,
+          0.134475,
+          0.103010558,
+          0.9811227
+        ],
+        "scale": [
+          1.0,
+          1.00000012,
+          1.00000012
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "44fb6c5b-aea9-4cd8-8a39-f301ac8ac705",
+        "position": [
+          -0.0145777864,
+          0.218262911,
+          0.0613245852
+        ],
+        "rotation": [
+          -0.06163755,
+          -0.23699151,
+          -0.2369915,
+          0.9401441
+        ],
+        "scale": [
+          1.0,
+          0.9999999,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "17eb3780-2278-4833-baa5-2e0bc1b56b4a",
+        "position": [
+          6.70552254E-08,
+          0.06823138,
+          3.7252903E-09
+        ],
+        "rotation": [
+          -0.0003236523,
+          0.000141366239,
+          0.000231939572,
+          0.99999994
+        ],
+        "scale": [
+          1.0,
+          1.00000012,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "21761b7d-8cf1-4d4d-ae55-808575dafe01",
+        "position": [
+          2.514571E-08,
+          0.09708855,
+          2.42143869E-08
+        ],
+        "rotation": [
+          -0.6000094,
+          0.6400645,
+          -0.229483709,
+          -0.4214777
+        ],
+        "scale": [
+          1.0,
+          1.00000024,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "09544f0f-9a92-454e-86b3-742c7b787a2e",
+        "position": [
+          -1.90921128E-08,
+          0.10463769,
+          -5.96046448E-08
+        ],
+        "rotation": [
+          -0.112992458,
+          -0.05681885,
+          -0.008230723,
+          0.9919358
+        ],
+        "scale": [
+          0.99999994,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "9edf279e-fb49-43e7-ac6a-7c3f0c1b8999",
+        "position": [
+          4.47034836E-08,
+          0.06912098,
+          -3.7252903E-08
+        ],
+        "rotation": [
+          0.584375858,
+          -0.5709563,
+          0.321938425,
+          -0.478403032
+        ],
+        "scale": [
+          1.0,
+          0.999999642,
+          0.9999999
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "32bb1622-50d1-4b4d-9a3f-e87f8533da5a",
+        "position": [
+          3.7252903E-09,
+          0.11279121,
+          -2.98023224E-08
+        ],
+        "rotation": [
+          0.1381135,
+          -0.234853536,
+          0.268073916,
+          0.9240697
+        ],
+        "scale": [
+          1.00000012,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "3f8c578d-b103-47ba-97dd-f2ecd96d5996",
+        "position": [
+          -0.120323092,
+          -0.2382406,
+          -0.06194828
+        ],
+        "rotation": [
+          0.972697139,
+          -0.1324589,
+          -0.132459074,
+          -0.137001842
+        ],
+        "scale": [
+          1.00000036,
+          1.0,
+          1.00000012
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "bdce4145-644f-438e-96a0-49739df16d7d",
+        "position": [
+          -3.7252903E-09,
+          0.0436084121,
+          -5.58793545E-08
+        ],
+        "rotation": [
+          -0.000382888858,
+          -0.000671255752,
+          0.000113142807,
+          0.9999997
+        ],
+        "scale": [
+          1.0,
+          0.9999999,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "45fad278-3e6b-4707-be8f-9fa45687830e",
+        "position": [
+          4.47034836E-08,
+          0.03471527,
+          -1.86264515E-08
+        ],
+        "rotation": [
+          0.237332091,
+          0.4746745,
+          -0.2528378,
+          0.8089689
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          0.9999999
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "7ec3ce28-b616-4c78-978d-dde116e253b5",
+        "position": [
+          -6.146729E-08,
+          0.05317142,
+          -1.49011612E-08
+        ],
+        "rotation": [
+          0.005555711,
+          0.185320884,
+          -0.162367389,
+          0.9691554
+        ],
+        "scale": [
+          0.9999998,
+          0.9999999,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "e929dbbb-665f-4300-bf48-df94d73f5078",
+        "position": [
+          -7.450581E-09,
+          0.0710842758,
+          2.23517418E-08
+        ],
+        "rotation": [
+          -0.127316177,
+          -0.101120226,
+          0.04635319,
+          0.9856047
+        ],
+        "scale": [
+          0.99999994,
+          0.99999994,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "634bd91b-4818-4a48-a055-f5fbf55fa55a",
+        "position": [
+          0.2777444,
+          -0.206157774,
+          -0.0684492141
+        ],
+        "rotation": [
+          0.9351781,
+          0.24472335,
+          0.2447234,
+          -0.07525256
+        ],
+        "scale": [
+          0.9999995,
+          0.9999998,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "b46b49f8-76cb-48a9-a4a9-3418e282897e",
+        "position": [
+          -1.11758709E-08,
+          0.0564669073,
+          -7.450581E-09
+        ],
+        "rotation": [
+          -0.000286391762,
+          -0.000362864463,
+          -0.000275389873,
+          0.9999999
+        ],
+        "scale": [
+          0.99999994,
+          0.99999994,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "b2f71938-76b7-4093-b8e3-e392681e3d7a",
+        "position": [
+          1.49011612E-08,
+          0.0592254773,
+          -7.4505806E-08
+        ],
+        "rotation": [
+          0.220438644,
+          0.204357088,
+          0.136103287,
+          0.943992
+        ],
+        "scale": [
+          1.0,
+          0.9999999,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "b3e9cbe6-27fa-4d47-a530-dfac3a68a0ca",
+        "position": [
+          0.290002972,
+          -0.242515087,
+          -0.147957981
+        ],
+        "rotation": [
+          -0.23104839,
+          -0.312601447,
+          -0.312601417,
+          0.8667049
+        ],
+        "scale": [
+          1.0,
+          1.00000012,
+          1.00000012
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "7de4d2fb-cba7-4521-8549-ea699f47f40a",
+        "position": [
+          5.58793545E-09,
+          0.0913943946,
+          -4.31900844E-08
+        ],
+        "rotation": [
+          -0.000397119351,
+          5.50775E-05,
+          -2.60355882E-05,
+          0.99999994
+        ],
+        "scale": [
+          1.0,
+          0.99999994,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "2fc6a3e6-3dd0-476e-85ca-54b9326897ee",
+        "position": [
+          0.0469696373,
+          -0.195684522,
+          -0.233221561
+        ],
+        "rotation": [
+          -0.533848763,
+          0.104507193,
+          0.104507253,
+          0.8325635
+        ],
+        "scale": [
+          0.9999999,
+          1.0,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "be3702c2-1664-4762-899d-c239c463ac92",
+        "position": [
+          -5.96046448E-08,
+          0.108640686,
+          2.98023224E-08
+        ],
+        "rotation": [
+          -0.0002220262,
+          0.000279150729,
+          0.000331376359,
+          0.9999999
+        ],
+        "scale": [
+          1.0,
+          0.99999994,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "3d673fc3-fc75-4cfc-a8d7-ebe83dd74cda",
+        "position": [
+          -0.136022165,
+          -0.223779768,
+          -0.193201572
+        ],
+        "rotation": [
+          -0.296983421,
+          0.308326572,
+          0.308326542,
+          0.8495118
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "97fa3fce-1ce2-4762-88e7-08380cc9fbb0",
+        "position": [
+          -1.49011612E-08,
+          0.0584578067,
+          -9.359792E-08
+        ],
+        "rotation": [
+          -0.000397831085,
+          -7.407198E-05,
+          -2.825274E-05,
+          0.99999994
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "a5c02fdf-6a0c-48db-a0c2-46783029f361",
+        "position": [
+          -7.450581E-09,
+          0.0419797972,
+          -8.312054E-08
+        ],
+        "rotation": [
+          0.4423846,
+          0.06936731,
+          -0.002992261,
+          0.894133747
+        ],
+        "scale": [
+          0.99999994,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "e5c009d2-96f9-48e8-be8c-584c6a49d15b",
+        "position": [
+          0.0441038,
+          -0.03872764,
+          -0.178111553
+        ],
+        "rotation": [
+          -0.773273051,
+          -0.108331241,
+          -0.108331256,
+          0.6152865
+        ],
+        "scale": [
+          0.99999994,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "41c072b0-4f71-43df-8e2e-9bc8b2181a27",
+        "position": [
+          0.0,
+          0.07644507,
+          -5.21540642E-08
+        ],
+        "rotation": [
+          -0.0003956808,
+          0.00017157945,
+          3.90857567E-05,
+          0.99999994
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "018ba905-1e61-48a7-945d-8ba740f8ec3d",
+        "position": [
+          2.23517418E-08,
+          0.04268425,
+          1.58324838E-08
+        ],
+        "rotation": [
+          0.597296059,
+          -0.167804852,
+          0.1199903,
+          0.775036335
+        ],
+        "scale": [
+          0.99999994,
+          1.00000012,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "dd01173a-5c82-4e17-ba5d-013714dd4602",
+        "position": [
+          -0.08684915,
+          -0.034694314,
+          -0.158318967
+        ],
+        "rotation": [
+          -0.8301253,
+          0.156516686,
+          0.156516761,
+          0.5117588
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "bea821b6-a959-467a-a001-7a5a205bd91d",
+        "position": [
+          3.7252903E-09,
+          0.0446099453,
+          1.49011612E-08
+        ],
+        "rotation": [
+          -0.000243942428,
+          -0.0003540405,
+          -0.0003130426,
+          0.9999999
+        ],
+        "scale": [
+          1.0,
+          0.99999994,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "d0642262-205b-4640-b8ee-e8e732eb8065",
+        "position": [
+          6.70552254E-08,
+          0.047560934,
+          -1.13621354E-07
+        ],
+        "rotation": [
+          0.610129952,
+          0.4398815,
+          0.189182684,
+          0.6312335
+        ],
+        "scale": [
+          1.00000012,
+          1.00000024,
+          1.00000012
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "0c8d3d1a-5cfd-4085-8718-ac813b4f3890",
+        "position": [
+          -5.96046448E-08,
+          0.0518827662,
+          -3.7252903E-08
+        ],
+        "rotation": [
+          0.2818416,
+          0.308262765,
+          -0.211423144,
+          0.8836514
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "c8a2936a-cfa2-4a2d-8933-95007126b7e0",
+        "position": [
+          0.121041477,
+          0.007061839,
+          -0.028959427
+        ],
+        "rotation": [
+          0.9498301,
+          0.2172379,
+          0.217238039,
+          -0.0586350523
+        ],
+        "scale": [
+          0.9999983,
+          0.9999996,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "912dbb76-4b86-4b12-b98f-d3baab6fce8e",
+        "position": [
+          -1.49011612E-08,
+          0.0360347331,
+          -5.401671E-08
+        ],
+        "rotation": [
+          -0.0003963968,
+          -0.0002059177,
+          -2.90908065E-05,
+          0.99999994
+        ],
+        "scale": [
+          0.99999994,
+          1.0,
+          1.00000012
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "950b018f-cf18-490d-a31d-abe8f4898cd7",
+        "position": [
+          3.7252903E-08,
+          0.0576452948,
+          -1.15484E-07
+        ],
+        "rotation": [
+          0.507928431,
+          0.237790912,
+          -0.107385367,
+          0.820934
+        ],
+        "scale": [
+          0.99999994,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "a86a1ea4-4921-4c1a-89c4-2ecf2b8b094a",
+        "position": [
+          0.09627429,
+          0.09436011,
+          -0.1121546
+        ],
+        "rotation": [
+          0.9014064,
+          0.218679011,
+          0.218679249,
+          -0.303026974
+        ],
+        "scale": [
+          1.00000012,
+          1.00000012,
+          1.00000012
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "1459c6c4-32e6-4e09-ab99-c5016bc7d2f6",
+        "position": [
+          -7.450581E-09,
+          0.0537327,
+          -2.6030466E-07
+        ],
+        "rotation": [
+          -0.000381633639,
+          0.000105978936,
+          -0.000121942445,
+          0.99999994
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "e2dc2d73-6b3c-449c-9bdb-9da7a6bf7278",
+        "position": [
+          -0.051386185,
+          0.07629907,
+          -0.149400175
+        ],
+        "rotation": [
+          0.8548559,
+          -0.127325013,
+          -0.127325058,
+          -0.4866191
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "d93679a0-cac9-4f5f-9af5-4dc08c64ab3f",
+        "position": [
+          6.98491931E-10,
+          0.0552583821,
+          1.47654646E-07
+        ],
+        "rotation": [
+          -0.0003923488,
+          -1.35747723E-05,
+          -5.666152E-05,
+          0.99999994
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "d59c9138-01ab-4af7-8f8a-2d7cb8676935",
+        "position": [
+          0.0197591856,
+          0.150231123,
+          -0.123649165
+        ],
+        "rotation": [
+          -0.683506548,
+          -0.0211335644,
+          -0.0211335663,
+          0.729332268
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "6ca8ceb4-a4c1-4ad2-b7eb-9168a5a1b97e",
+        "position": [
+          -3.7252903E-09,
+          0.06673531,
+          -6.146729E-08
+        ],
+        "rotation": [
+          -0.000386658241,
+          0.000319976447,
+          -9.610993E-05,
+          0.9999999
+        ],
+        "scale": [
+          1.0,
+          0.99999994,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "74951104-ef3c-47f3-b34e-8d68ed2331ac",
+        "position": [
+          -6.146729E-08,
+          0.08346569,
+          0.0
+        ],
+        "rotation": [
+          0.3262377,
+          -0.303244531,
+          0.21304892,
+          0.8696102
+        ],
+        "scale": [
+          1.0,
+          0.99999994,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "e14a67b5-a5a8-469e-8152-e288cb36883c",
+        "position": [
+          -0.130922869,
+          0.03261268,
+          -0.009677637
+        ],
+        "rotation": [
+          0.9512668,
+          -0.207270443,
+          -0.207270324,
+          -0.0957569256
+        ],
+        "scale": [
+          0.9999994,
+          0.9999999,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "6cbf43d1-8873-489d-9322-c2725fb57652",
+        "position": [
+          -4.19095159E-08,
+          0.0798512,
+          -1.62981451E-08
+        ],
+        "rotation": [
+          0.000360088859,
+          -0.0009690228,
+          -0.000169317747,
+          0.999999464
+        ],
+        "scale": [
+          0.99999994,
+          1.0,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "5507509a-088a-4b5b-a85e-1427e25de9c3",
+        "position": [
+          -1.49011612E-08,
+          0.07729529,
+          3.35276127E-08
+        ],
+        "rotation": [
+          0.09166796,
+          -0.743677557,
+          0.2625254,
+          0.607964754
+        ],
+        "scale": [
+          0.9999999,
+          0.9999998,
+          0.9999999
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "ab7a909d-353f-4f4b-8575-2afa014c6a90",
+        "position": [
+          5.58793545E-09,
+          0.08913572,
+          -3.7252903E-08
+        ],
+        "rotation": [
+          -0.152072847,
+          -0.3629657,
+          0.162134439,
+          0.904899061
+        ],
+        "scale": [
+          0.99999994,
+          0.99999994,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "49db6073-61d5-448c-bd49-d244c5424cba",
+        "position": [
+          -2.23517418E-08,
+          0.102757558,
+          2.98023224E-08
+        ],
+        "rotation": [
+          -0.266487,
+          -0.206336573,
+          0.03932338,
+          0.9406719
+        ],
+        "scale": [
+          0.9999999,
+          1.0,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "b6b82fac-5fae-47cf-afd5-2f8f95e77ce4",
+        "position": [
+          0.2751735,
+          -0.257907271,
+          -0.146226078
+        ],
+        "rotation": [
+          0.904400647,
+          0.30056107,
+          0.3005609,
+          -0.0372241363
+        ],
+        "scale": [
+          0.9999999,
+          0.9999999,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "15466ab0-a301-4663-b6e9-e5578c24412f",
+        "position": [
+          -6.98491931E-09,
+          0.10678412,
+          4.749745E-08
+        ],
+        "rotation": [
+          4.498315E-05,
+          -0.00301878178,
+          0.00039534815,
+          0.999995351
+        ],
+        "scale": [
+          0.99999994,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "08119187-7c42-4353-837e-091a2c45d4bd",
+        "position": [
+          6.70552254E-08,
+          0.14476046,
+          -7.450581E-09
+        ],
+        "rotation": [
+          -0.217165664,
+          -0.718725443,
+          0.200398132,
+          0.6293755
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "01f193b0-19ff-4ac7-80e1-73226f41758a",
+        "position": [
+          5.96046448E-08,
+          0.1443578,
+          2.98023224E-08
+        ],
+        "rotation": [
+          -0.3571818,
+          -0.0990169644,
+          -0.1310003,
+          0.9194867
+        ],
+        "scale": [
+          0.99999994,
+          0.9999999,
+          0.9999999
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "b2b5f838-b609-4e98-9c0d-3b272933b9a2",
+        "position": [
+          1.49011612E-08,
+          0.121976621,
+          -5.58793545E-08
+        ],
+        "rotation": [
+          -0.233040512,
+          0.008063597,
+          -0.167436048,
+          0.9579104
+        ],
+        "scale": [
+          0.9999999,
+          0.9999999,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "e11f8206-8a47-40c4-b2c7-463b8b1f597b",
+        "position": [
+          0.129303515,
+          -0.248399258,
+          -0.206893936
+        ],
+        "rotation": [
+          0.909962952,
+          0.194121987,
+          0.194121867,
+          -0.310806721
+        ],
+        "scale": [
+          0.9999999,
+          0.99999994,
+          0.9999999
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "5ee77117-ca54-4cad-a261-f011613080f4",
+        "position": [
+          -1.16415322E-09,
+          0.197248966,
+          2.32103048E-08
+        ],
+        "rotation": [
+          -0.000397833472,
+          -2.008514E-05,
+          1.43628986E-05,
+          0.99999994
+        ],
+        "scale": [
+          1.0,
+          1.00000012,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "6c0b6622-6686-4066-8c10-d804a03987fb",
+        "position": [
+          -2.32830644E-10,
+          0.179613188,
+          6.213668E-08
+        ],
+        "rotation": [
+          -0.364421546,
+          -0.0100808665,
+          0.009156374,
+          0.9311345
+        ],
+        "scale": [
+          1.00000012,
+          1.00000012,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "4bf6d3bd-4203-435b-ad9b-16c2b19ed79e",
+        "position": [
+          -1.39698386E-09,
+          0.11702995,
+          8.880306E-08
+        ],
+        "rotation": [
+          -0.31793654,
+          -0.00426093256,
+          0.00311602978,
+          0.948097348
+        ],
+        "scale": [
+          0.99999994,
+          1.00000024,
+          0.9999998
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "f9e0d2ea-47e1-43e7-b126-4d03818cd704",
+        "position": [
+          0.0119550079,
+          -0.247754455,
+          -0.209937945
+        ],
+        "rotation": [
+          0.936031044,
+          0.0057668956,
+          0.005766914,
+          -0.351822883
+        ],
+        "scale": [
+          0.99999994,
+          1.00000012,
+          1.00000036
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "8cf64243-b0fa-4b92-96e1-14c52fe793db",
+        "position": [
+          1.11758709E-08,
+          0.106784046,
+          -2.42143869E-08
+        ],
+        "rotation": [
+          -0.000204005424,
+          -1.91107247E-05,
+          0.000342039333,
+          0.99999994
+        ],
+        "scale": [
+          0.9999999,
+          0.99999994,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "2c133179-f904-4ad1-b79a-cb185d10d137",
+        "position": [
+          7.683411E-09,
+          0.106815182,
+          -1.49011612E-08
+        ],
+        "rotation": [
+          0.241430491,
+          -0.7129239,
+          0.2525412,
+          0.608008
+        ],
+        "scale": [
+          1.00000012,
+          0.99999994,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "9c5acccf-9475-4286-9db2-b2e9c4dfbd6f",
+        "position": [
+          7.450581E-09,
+          0.184704527,
+          -1.67638063E-08
+        ],
+        "rotation": [
+          -0.382331878,
+          0.189580247,
+          -0.06230792,
+          0.9022192
+        ],
+        "scale": [
+          1.00000012,
+          1.0,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "0d14846e-a389-4cab-8b28-b501c50d6ab4",
+        "position": [
+          1.49011612E-08,
+          0.09842832,
+          1.86264515E-08
+        ],
+        "rotation": [
+          -0.373941749,
+          0.115651973,
+          0.00367261446,
+          0.9202058
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "b8a6c700-69b1-4e4e-9003-692186bc95e1",
+        "position": [
+          -0.103063293,
+          -0.241534233,
+          -0.169616655
+        ],
+        "rotation": [
+          0.8957369,
+          -0.195109785,
+          -0.19510977,
+          -0.3485969
+        ],
+        "scale": [
+          1.00000012,
+          1.00000012,
+          1.00000012
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "272a7022-32bf-4723-bac4-3be5944d4b84",
+        "position": [
+          2.23517418E-08,
+          0.06514626,
+          8.568168E-08
+        ],
+        "rotation": [
+          -0.000384925952,
+          0.0003209068,
+          0.0001016024,
+          0.9999999
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "c88a1a05-20b7-4854-8d46-84fa9a78ea3f",
+        "position": [
+          -8.381903E-09,
+          0.04170733,
+          -5.96046448E-08
+        ],
+        "rotation": [
+          0.5068498,
+          -0.535639942,
+          0.241739988,
+          0.6306781
+        ],
+        "scale": [
+          0.999999762,
+          0.999999762,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "6b68fe0b-09f1-4e70-a722-1645449187d6",
+        "position": [
+          -1.76951289E-08,
+          0.107868887,
+          -2.98023224E-08
+        ],
+        "rotation": [
+          -9.62364138E-05,
+          8.072331E-05,
+          -3.37613747E-05,
+          1.0
+        ],
+        "scale": [
+          1.0,
+          1.00000012,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "f5bfda02-d21f-4a21-a2ac-716e44fb1722",
+        "position": [
+          -4.47034836E-08,
+          0.112097241,
+          7.450581E-09
+        ],
+        "rotation": [
+          -0.414579928,
+          0.279205739,
+          -0.104145423,
+          0.859838
+        ],
+        "scale": [
+          0.9999999,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "18eac144-2670-454a-8ff8-1301d8714006",
+        "position": [
+          -9.313226E-09,
+          0.106450081,
+          -1.88592821E-08
+        ],
+        "rotation": [
+          0.218562692,
+          -0.165654019,
+          0.08398171,
+          0.957985461
+        ],
+        "scale": [
+          0.9999999,
+          0.99999994,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "5676eec1-b303-461e-adf7-a87dbf003a0e",
+        "position": [
+          -0.165805772,
+          -0.0799666643,
+          -0.08184853
+        ],
+        "rotation": [
+          0.9716519,
+          -0.1660704,
+          -0.166070014,
+          0.0270933639
+        ],
+        "scale": [
+          1.00000167,
+          1.00000024,
+          1.00000012
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "2ded74fb-b3cc-458f-9b70-f7755de3206c",
+        "position": [
+          4.67507977E-15,
+          0.0532093458,
+          3.49245882E-10
+        ],
+        "rotation": [
+          -0.0003980716,
+          -5.458845E-10,
+          -5.45887169E-10,
+          0.99999994
+        ],
+        "scale": [
+          1.0,
+          1.00000012,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "6efbc20d-ce40-445b-81e3-3b9d92bb03e7",
+        "position": [
+          -8.881784E-15,
+          0.1698649,
+          5.587923E-09
+        ],
+        "rotation": [
+          0.107250862,
+          -1.355751E-07,
+          -1.35350149E-07,
+          0.994232
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "638c11f2-fa79-4e15-b7f7-e33e6191482d",
+        "position": [
+          -9.872019E-08,
+          0.03124462,
+          -2.23517418E-08
+        ],
+        "rotation": [
+          0.24533987,
+          0.49155426,
+          -0.6631805,
+          0.5083055
+        ],
+        "scale": [
+          0.99999994,
+          0.9999999,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "92ef4d17-7be6-41d9-91ce-35c7ece42788",
+        "position": [
+          2.23517418E-08,
+          0.0246969983,
+          1.86264515E-08
+        ],
+        "rotation": [
+          0.0119386967,
+          -0.06208562,
+          0.03249041,
+          0.997470438
+        ],
+        "scale": [
+          1.0,
+          0.9999998,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "ef8e9f81-e816-43c9-ac3f-96ffc3f07689",
+        "position": [
+          -1.11758709E-08,
+          0.0359634124,
+          -1.86264515E-08
+        ],
+        "rotation": [
+          -0.05661588,
+          0.2199332,
+          -0.100450858,
+          0.968676269
+        ],
+        "scale": [
+          1.0,
+          0.99999994,
+          0.9999999
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "500faaaf-2fbc-47d7-8d0c-623d74d7b062",
+        "position": [
+          -0.028712634,
+          0.02331804,
+          -0.005589786
+        ],
+        "rotation": [
+          0.038162116,
+          -0.3341841,
+          0.239956513,
+          0.910651147
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "d3f633c8-ccb4-4910-892a-9a243f994fb2",
+        "position": [
+          1.49011612E-08,
+          0.0263201073,
+          0.0
+        ],
+        "rotation": [
+          0.531090856,
+          0.5682102,
+          -0.4668434,
+          -0.420876324
+        ],
+        "scale": [
+          1.0,
+          1.00000012,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "4b1d5ed0-f966-4a65-b8c9-319fca2d4cb2",
+        "position": [
+          1.11758709E-08,
+          0.0245791953,
+          0.0
+        ],
+        "rotation": [
+          -0.0857188,
+          0.06768719,
+          -0.0124434084,
+          0.9939396
+        ],
+        "scale": [
+          1.0,
+          0.9999998,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "d4d80d38-9c6f-440d-9740-4efe23ba3ce8",
+        "position": [
+          1.3038516E-08,
+          0.0386227742,
+          -1.21071935E-08
+        ],
+        "rotation": [
+          -0.05446822,
+          0.03469238,
+          -0.00225859531,
+          0.997910142
+        ],
+        "scale": [
+          1.00000012,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "850e9dc7-07e9-4779-b675-8b8b8c02d035",
+        "position": [
+          0.016699,
+          0.0698748752,
+          0.000896696
+        ],
+        "rotation": [
+          -0.0139059993,
+          0.132487938,
+          -0.09599998,
+          0.9864267
+        ],
+        "scale": [
+          1.0,
+          1.00000012,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "b7313921-c03d-4668-87e2-9ef610374f33",
+        "position": [
+          -3.7252903E-08,
+          0.0275704563,
+          1.49011612E-08
+        ],
+        "rotation": [
+          0.493967265,
+          0.586841464,
+          -0.5059606,
+          -0.394483626
+        ],
+        "scale": [
+          0.99999994,
+          0.9999999,
+          0.9999999
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "76056490-3540-4cf2-9f31-d3473ebdf1bb",
+        "position": [
+          -8.381903E-08,
+          0.0291253775,
+          -1.49011612E-08
+        ],
+        "rotation": [
+          -0.0604952723,
+          0.0482697971,
+          -0.008105328,
+          0.996967733
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.00000012
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "70968b3b-cbab-4e2c-b415-0684b03669b5",
+        "position": [
+          5.58793545E-08,
+          0.0431804024,
+          7.450581E-09
+        ],
+        "rotation": [
+          -0.0841852352,
+          0.0542623848,
+          -0.00255264947,
+          0.9949683
+        ],
+        "scale": [
+          0.9999999,
+          0.99999994,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "331b87a4-bebb-4847-bf6c-faa24a6875f0",
+        "position": [
+          -0.000473015,
+          0.0736363754,
+          0.00580768567
+        ],
+        "rotation": [
+          0.0127007477,
+          0.102618113,
+          -0.09102746,
+          0.9904657
+        ],
+        "scale": [
+          0.9999999,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "64e4d44a-1ed7-4153-b7bc-535b41776c92",
+        "position": [
+          -3.7252903E-08,
+          0.0204377584,
+          0.0
+        ],
+        "rotation": [
+          -0.446495444,
+          -0.517221749,
+          0.5483096,
+          0.4821619
+        ],
+        "scale": [
+          0.9999999,
+          0.9999998,
+          0.9999999
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "adb3108d-fda7-44c7-ab5e-40a25f715ce5",
+        "position": [
+          6.33299351E-08,
+          0.0187864359,
+          -2.8871E-08
+        ],
+        "rotation": [
+          -0.0309286434,
+          0.0159147065,
+          0.002567046,
+          0.9993916
+        ],
+        "scale": [
+          0.9999998,
+          0.99999994,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "a8895478-9359-4909-9bbd-036a3bb4617e",
+        "position": [
+          -7.450581E-09,
+          0.0327751637,
+          3.7252903E-09
+        ],
+        "rotation": [
+          -0.030834822,
+          0.0145747429,
+          0.00351134432,
+          0.99941206
+        ],
+        "scale": [
+          0.9999999,
+          1.0,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "2ff73849-aa9d-42a0-b691-e9c6d462e28c",
+        "position": [
+          0.0339926742,
+          0.0598250628,
+          -0.00750730559
+        ],
+        "rotation": [
+          -0.00302597112,
+          0.11070618,
+          -0.0863211,
+          0.990092754
+        ],
+        "scale": [
+          0.9999998,
+          0.99999994,
+          0.9999999
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "3ec9994e-7aef-4cc7-a4b5-be5c68e2a307",
+        "position": [
+          2.23517418E-08,
+          0.0259330124,
+          4.47034836E-08
+        ],
+        "rotation": [
+          0.424594849,
+          0.6352779,
+          -0.5654376,
+          -0.310518146
+        ],
+        "scale": [
+          0.9999999,
+          0.9999999,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "5b16bc9a-b1e7-4fd1-b95c-e1a22159c468",
+        "position": [
+          -1.3038516E-08,
+          0.0242363214,
+          5.96046448E-08
+        ],
+        "rotation": [
+          -0.0176394265,
+          0.0140769,
+          -0.00312463823,
+          0.9997405
+        ],
+        "scale": [
+          0.99999994,
+          0.99999994,
+          0.9999999
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "ae2a110d-9d58-45b0-b258-d14c31af6952",
+        "position": [
+          -8.195639E-08,
+          0.0346574262,
+          -1.11758709E-08
+        ],
+        "rotation": [
+          -0.08891729,
+          0.06099831,
+          -0.008921938,
+          0.9941295
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.00000012
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "6d41d084-4925-4ef0-b6a6-90d0ab88c651",
+        "position": [
+          -0.0215062089,
+          0.07690899,
+          0.00639249
+        ],
+        "rotation": [
+          0.0212446079,
+          0.114167616,
+          -0.106324665,
+          0.987526953
+        ],
+        "scale": [
+          0.9999999,
+          1.0,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "aebe09df-e30f-42eb-b1ad-f330ef63d051",
+        "position": [
+          3.16649675E-08,
+          0.1789963,
+          2.98023224E-08
+        ],
+        "rotation": [
+          -0.0356577039,
+          -0.07669882,
+          0.086618796,
+          0.9926444
+        ],
+        "scale": [
+          1.0,
+          1.00000012,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "d6b75da7-4dff-4e92-bdf5-28b5644411dd",
+        "position": [
+          1.97906047E-08,
+          0.204043686,
+          1.95577741E-08
+        ],
+        "rotation": [
+          -0.09687309,
+          -0.01803902,
+          0.06893999,
+          0.9927424
+        ],
+        "scale": [
+          1.0,
+          1.00000012,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "cd97bf33-b4eb-4401-a32b-a96ed414a299",
+        "position": [
+          4.656613E-09,
+          0.0986108556,
+          -6.053597E-08
+        ],
+        "rotation": [
+          -0.2873252,
+          0.349372357,
+          -0.2355158,
+          0.8601834
+        ],
+        "scale": [
+          1.0,
+          0.9999999,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "ca4079b1-dcbc-446a-b12e-175928f6f7f3",
+        "position": [
+          -0.02428543,
+          0.11847169,
+          -0.000730636762
+        ],
+        "rotation": [
+          0.627127,
+          -0.418363571,
+          -0.519113362,
+          -0.402746975
+        ],
+        "scale": [
+          1.0,
+          0.99999994,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "541d53fe-b0ba-49f9-b744-f53f58272bd6",
+        "position": [
+          2.68882139E-16,
+          0.0611245,
+          -2.32830644E-10
+        ],
+        "rotation": [
+          -0.106324688,
+          1.365817E-07,
+          1.36883088E-07,
+          0.9943315
+        ],
+        "scale": [
+          1.0,
+          0.9999999,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "d6f71327-2ae9-456e-ae18-bb472afc3ba5",
+        "position": [
+          -2.16840434E-17,
+          0.1152381,
+          4.947651E-10
+        ],
+        "rotation": [
+          -0.000720651937,
+          -9.874288E-10,
+          -9.874289E-10,
+          0.999999762
+        ],
+        "scale": [
+          1.0,
+          0.9999999,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "292d77f0-3300-43c9-9a72-758b86e26548",
+        "position": [
+          -5.39384759E-10,
+          0.0530574322,
+          0.0269416664
+        ],
+        "rotation": [
+          0.000187071157,
+          2.56256627E-10,
+          2.562566E-10,
+          1.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "74193add-1d32-4847-be16-9be789b34cbe",
+        "position": [
+          -1.63506031E-09,
+          0.0123762274,
+          4.91064567E-12
+        ],
+        "rotation": [
+          3.68019926E-07,
+          0.7072289,
+          0.706984639,
+          -3.68146971E-07
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "c9d67d16-640d-4e7b-b5d4-19dc67b74d68",
+        "position": [
+          -3.98783E-09,
+          0.204895556,
+          7.22137372E-09
+        ],
+        "rotation": [
+          -5.49767E-07,
+          0.8933012,
+          -0.4494586,
+          -1.26015266E-06
+        ],
+        "scale": [
+          1.0,
+          1.00000024,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "26aa305d-549c-4c9b-987c-284a56637aa5",
+        "position": [
+          6.057258E-09,
+          0.427958637,
+          2.69853473E-10
+        ],
+        "rotation": [
+          -0.319880635,
+          -8.35069045E-07,
+          7.67801453E-07,
+          0.94745785
+        ],
+        "scale": [
+          1.0,
+          1.00000012,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "ae271a66-454e-4f16-9742-3f2a8db46431",
+        "position": [
+          5.95977534E-09,
+          0.342134774,
+          2.98660652E-10
+        ],
+        "rotation": [
+          0.0127308834,
+          3.476128E-08,
+          -3.21019655E-08,
+          0.999919
+        ],
+        "scale": [
+          1.0,
+          0.99999994,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "13da9f2c-579a-4d1d-aff4-2366d476adbe",
+        "position": [
+          0.0793273747,
+          -0.0261327624,
+          1.50874257E-07
+        ],
+        "rotation": [
+          0.999979734,
+          4.398877E-08,
+          -4.398876E-08,
+          0.006365884
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0001955
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "b335dcac-7fd1-477b-8a88-2959d87d9d6c",
+        "position": [
+          -1.63456571E-09,
+          0.012376246,
+          -5.47857072E-12
+        ],
+        "rotation": [
+          3.68019982E-07,
+          0.7072289,
+          0.706984639,
+          -3.681469E-07
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "b76fdc58-6102-481e-9776-355511f98750",
+        "position": [
+          -3.99180555E-09,
+          0.204895571,
+          -6.13742657E-09
+        ],
+        "rotation": [
+          -5.497941E-07,
+          0.89330107,
+          -0.449458748,
+          -1.26016619E-06
+        ],
+        "scale": [
+          1.0,
+          1.00000024,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "d4be7644-dab3-4747-b2e0-06a0dd84bdd5",
+        "position": [
+          -1.25733841E-08,
+          0.427958548,
+          1.50967516E-09
+        ],
+        "rotation": [
+          -0.319880664,
+          -6.60230739E-07,
+          6.798435E-07,
+          0.94745785
+        ],
+        "scale": [
+          1.0,
+          1.00000012,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "bd006469-85f8-4b9e-a0d1-1ab469b2e4aa",
+        "position": [
+          -5.40158E-09,
+          0.342134774,
+          5.320966E-10
+        ],
+        "rotation": [
+          0.0127308834,
+          -6.521375E-09,
+          6.16140872E-09,
+          0.999919
+        ],
+        "scale": [
+          1.0,
+          0.99999994,
+          0.99999994
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "6e2945cd-409a-4c61-9b53-4a0e4c270b75",
+        "position": [
+          -0.0793273747,
+          -0.0261327624,
+          -6.70552254E-08
+        ],
+        "rotation": [
+          0.999979734,
+          4.39887664E-08,
+          -4.39887629E-08,
+          0.006365884
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0001955
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "b873f156-4723-4e2d-9fe2-9b1d34d61c73",
+        "position": [
+          0.0,
+          0.0144653469,
+          0.960931361
+        ],
+        "rotation": [
+          0.7069847,
+          0.0,
+          0.0,
+          0.707228839
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "581ee7f8-dac4-42b6-ace0-ca0a9636206b",
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.7069847,
+          0.0,
+          0.0,
+          0.707228839
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Transform",
+        "guid": "871d8333-f9fd-44d0-8c5a-d54ad75e0e7d",
+        "position": [
+          3.723,
+          0.0,
+          -2.48
+        ],
+        "rotation": [
+          0.0,
+          -0.2936788,
+          0.0,
+          0.9559042
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "SphereCollider",
+        "guid": "ed48bb14-07f4-4d10-9967-94d6e8b64d85",
+        "aabbCenter": [
+          3.723,
+          1.26,
+          -2.48
+        ],
+        "aabbExtent": [
+          0.409999967,
+          0.409999967,
+          0.4100001
+        ],
+        "isTrigger": false,
+        "colliderType": "sphere",
+        "center": [
+          0.0,
+          1.26,
+          0.0
+        ],
+        "radius": 0.41
+      },
+      {
+        "type": "Transform",
+        "guid": "87385abf-6350-4ef2-9213-79dee98abd48",
+        "position": [
+          -1.421,
+          0.817,
+          0.861
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "MeshFilter",
+        "guid": "b101224a-f866-4943-a4b4-2617cf773c93",
+        "mesh": {
+          "path": "./Resources/Models/ConfigsSphere.fbx",
+          "fileName": "ConfigsSphere.fbx",
+          "modelName": "ConfigsSphere",
+          "meshName": "Sphere",
+          "boundCenter": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "boundExtent": [
+            0.5,
+            0.5,
+            0.5
+          ]
+        }
+      },
+      {
+        "type": "MeshRenderer",
+        "guid": "23762bce-eb5d-4571-85de-1bfa2317ed52",
+        "mesh": {
+          "path": "./Resources/Models/ConfigsSphere.fbx",
+          "fileName": "ConfigsSphere.fbx",
+          "modelName": "ConfigsSphere",
+          "meshName": "Sphere",
+          "boundCenter": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "boundExtent": [
+            0.5,
+            0.5,
+            0.5
+          ]
+        },
+        "shadowCast": "On",
+        "materials": [
+          "a1ff8f52-6584-4bf6-9db7-046fe6efdb44"
+        ]
+      },
+      {
+        "type": "SphereCollider",
+        "guid": "63df7587-be28-41e7-a8e4-d0990fc7ed00",
+        "aabbCenter": [
+          -1.421,
+          0.8169999,
+          0.861000061
+        ],
+        "aabbExtent": [
+          0.5,
+          0.49999997,
+          0.5
+        ],
+        "isTrigger": false,
+        "colliderType": "sphere",
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "radius": 0.5
+      }
+    ]
+  }
+}

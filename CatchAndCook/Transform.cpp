@@ -324,13 +324,13 @@ bool Transform::GetLocalToWorldMatrix(OUT Matrix& localToWorldMatrix)
         {
             auto root = owner->rootParent.lock();
             root->_transform->TopDownLocalToWorldUpdate(Matrix::Identity);
-            std::memcpy(&localToWorldMatrix, &this->_localToWorldMatrix, sizeof(Matrix));
+            localToWorldMatrix = this->_localToWorldMatrix;
             return _isLocalToWorldChanged;
         }
-        std::memcpy(&localToWorldMatrix, &this->_localToWorldMatrix, sizeof(Matrix));
+        localToWorldMatrix = this->_localToWorldMatrix;
         return _isLocalToWorldChanged;
     }
-    _isLocalToWorldChanged = GetLocalSRTMatrix(this->_prevLocalSRTMatrix);
+    localToWorldMatrix = _localToWorldMatrix;
     if (_isLocalToWorldChanged)
         localToWorldMatrix = this->_localToWorldMatrix = this->_localSRTMatrix;
     return _isLocalToWorldChanged;
@@ -341,11 +341,11 @@ bool Transform::GetLocalToWorldMatrix_BottomUp(Matrix& localToWorld)
     if (CheckLocalToWorldMatrixUpdate())
     {
         BottomUpLocalToWorldUpdate();
-        std::memcpy(&localToWorld, &_localToWorldMatrix, sizeof(Matrix));
+        localToWorld = _localToWorldMatrix;
         return _isLocalToWorldChanged;
     }
 
-    std::memcpy(&localToWorld, &_localToWorldMatrix, sizeof(Matrix));
+    localToWorld = _localToWorldMatrix;
     return _isLocalToWorldChanged;
 }
 
@@ -362,7 +362,7 @@ bool Transform::GetLocalSRTMatrix(Matrix& localSRT)
     }
 
     _isLocalSRTChanged |= _prevLocalSRTMatrix != _localSRTMatrix;
-    std::memcpy(&localSRT, &_localSRTMatrix, sizeof(Matrix));
+    localSRT = _localSRTMatrix;
     return _isLocalSRTChanged;
 }
 
@@ -372,7 +372,7 @@ bool Transform::SetLocalSRTMatrix(Matrix& localSRT)
     Quaternion rotation;
     vec3 scale;
     // 행렬을 위치, 회전, 스케일로 분해
-    std::memcpy(&_localSRTMatrix, &localSRT, sizeof(Matrix));
+    _localSRTMatrix = localSRT;
     if (localSRT.Decompose(scale, rotation, position))
     {
         _localScale = scale;

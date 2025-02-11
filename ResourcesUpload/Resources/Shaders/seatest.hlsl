@@ -5,10 +5,12 @@ Texture2D g_tex_0 : register(t0);
 Texture2D g_tex_1 : register(t1);
 SamplerState g_sam_0 : register(s0);
 SamplerState g_sam_1 : register(s1);
-#define TessFactor 8
+#define G_MaxTess 6
+#define G_MinTess 1
+
 #define PI 3.14159f
-#define DIST_MAX 300.0f
-#define DIST_MIN 30.0f
+#define DIST_MAX 900.0f
+#define DIST_MIN 10.0f
 
 static float4 sea_color = float4(0.3f,0.3f,1.0f,1.0f);
 
@@ -26,11 +28,11 @@ cbuffer cameraParams : register(b2)
     row_major Matrix InvertProjectionMatrix;
     row_major Matrix InvertVPMatrix;
 
-    float4 cameraPos;
-    float4 cameraLook;
-    float4 cameraUp;
-    float4 cameraFrustumData;
-    float4 cameraScreenData;
+    float4 g_cameraPos;
+    float4 g_cameraLook;
+    float4 g_cameraUp;
+    float4 g_cameraFrustumData;
+    float4 g_cameraScreenData;
 };
 
 struct VS_IN
@@ -61,13 +63,13 @@ struct HS_OUT
     float3 normal : NORMAL;
 };
 
-VS_IN WaveGeneration(VS_IN input)
+DS_OUT WaveGeneration(DS_OUT input)
 {
     const int waveCount = 3;
     float amplitudes[waveCount] = { 11.0f, 9.0f, 7.0f };
     float wavelengths[waveCount] = { 500.0f, 300.0f, 200.0f };
     float speeds[waveCount] = { 0.5f, 1.0f, 0.8f };
-    float steepnesses[waveCount] = { 0.5f, 0.4f, 0.3f }; // 스티프니스 추가
+    float steepnesses[waveCount] = { 0.5f, 0.4f, 0.3f };
 
     float2 waveDirections[waveCount] =
     {
@@ -76,9 +78,9 @@ VS_IN WaveGeneration(VS_IN input)
         normalize(float2(-0.5f, 0.7f))
     };
 
-    float3 modifiedPos = input.pos;
-    float dHdX = 0.0f; // x 방향 편미분
-    float dHdZ = 0.0f; // z 방향 편미분
+    float3 modifiedPos = input.pos.xyz;
+    float dHdX = 0.0f;
+    float dHdZ = 0.0f;
 
     for (int i = 0; i < waveCount; i++)
     {
@@ -107,60 +109,69 @@ VS_IN WaveGeneration(VS_IN input)
     // 법선 벡터 계산
     float3 normal = normalize(float3(-dHdX, 1.0f, -dHdZ));
 
-    VS_IN result;
-    result.pos = modifiedPos;
-    result.normal = normal;
+    input.pos = float4(modifiedPos, 1.0f);
+    input.normal = normal;
 
-    return result;
+    return input;
 }
-
 
 VS_OUT VS_Main(VS_IN input)
 {
     VS_OUT output = (VS_OUT) 0;
-
-    VS_IN result = WaveGeneration(input);
  
     // 월드, 뷰, 프로젝션 변환
-    float4 worldPos = mul(float4(result.pos.xyz, 1.0f), WorldMat);
+    float4 worldPos = mul(float4(input.pos.xyz, 1.0f), WorldMat);
     output.pos = worldPos;
     output.uv = input.uv;
 
-    float3x3 normalMatrix = (float3x3) transpose(InvertViewMatrix); // 또는 WorldMat의 역전치 행렬
-    output.normal = mul(result.normal, normalMatrix);
+    output.normal = mul(float4(input.normal, 0.0f), WorldMat);
     
     return output;
 }
 
 struct PatchConstOutput
 {
-    float edges[3] : SV_TessFactor;
-    float inside[1] : SV_InsideTessFactor;
+    float edges[4] : SV_TessFactor;
+    float inside[2] : SV_InsideTessFactor;
 };
 
-//패치단위로 호출
-PatchConstOutput ConstantHS(InputPatch<VS_OUT, 3> patch, uint patchID : SV_PrimitiveID)
+float CalcTessFactor(float3 p)
 {
-    float3 center = (patch[0].pos + patch[1].pos + patch[2].pos).xyz /3.0f;
-    float dist = length(center.xz - cameraPos.xz);
-    
-    float tess = TessFactor * saturate((DIST_MAX - dist) / (DIST_MAX - DIST_MIN)) + 1.0f; //270
+    float d = distance(p, g_cameraPos.xyz);
+    float s = saturate((d - DIST_MIN) / (DIST_MAX - DIST_MIN));
+    return pow(2, (lerp(G_MaxTess, G_MinTess, s)));
+}
 
+
+//패치단위로 호출
+PatchConstOutput ConstantHS(InputPatch<VS_OUT, 4> patch, uint patchID : SV_PrimitiveID)
+{
     PatchConstOutput pt;
-    pt.edges[0] = tess;
-    pt.edges[1] = tess;
-    pt.edges[2] = tess;
-    pt.inside[0] = tess;
+    
+    float3 e0 = 0.5f * (patch[0].pos.xyz + patch[2].pos.xyz);
+    float3 e1 = 0.5f * (patch[0].pos.xyz + patch[1].pos.xyz);
+    float3 e2 = 0.5f * (patch[1].pos.xyz + patch[3].pos.xyz);
+    float3 e3 = 0.5f * (patch[2].pos.xyz + patch[3].pos.xyz);
+    float3 c = 0.25f * (patch[0].pos.xyz + patch[1].pos.xyz + patch[2].pos.xyz + patch[3].pos.xyz);
 
+
+    pt.edges[0] = CalcTessFactor(e0);
+    pt.edges[1] = CalcTessFactor(e1);
+    pt.edges[2] = CalcTessFactor(e2);
+    pt.edges[3] = CalcTessFactor(e3);
+
+    pt.inside[0] = CalcTessFactor(c);
+    pt.inside[1] = pt.inside[0];
+    
     return pt;
 }
-[domain("tri")]
-[partitioning("integer")]
+[domain("quad")]
+[partitioning("fractional_even")]
 [outputtopology("triangle_cw")]
-[outputcontrolpoints(3)]
+[outputcontrolpoints(4)]
 [patchconstantfunc("ConstantHS")]
-[maxtessfactor(TessFactor)]
-HS_OUT HS_Main(InputPatch<VS_OUT, 3> patch, uint vertexID : SV_OutputControlPointID, uint patchId : SV_PrimitiveID)
+[maxtessfactor(64.0f)]
+HS_OUT HS_Main(InputPatch<VS_OUT, 4> patch, uint vertexID : SV_OutputControlPointID, uint patchId : SV_PrimitiveID)
 {
     //4번호출됨.
     HS_OUT hout;
@@ -172,19 +183,30 @@ HS_OUT HS_Main(InputPatch<VS_OUT, 3> patch, uint vertexID : SV_OutputControlPoin
 }
 
 
-[domain("tri")]
-DS_OUT DS_Main(OutputPatch<HS_OUT, 3> quad, PatchConstOutput patchConst, float3 location : SV_DomainLocation)
+[domain("quad")]
+DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 location : SV_DomainLocation)
 {
     DS_OUT dout;
     
-    float3 pos = quad[0].pos * location.x + quad[1].pos * location.y + quad[2].pos * location.z;
-    float2 uv = quad[0].uv * location.x + quad[1].uv * location.y + quad[2].uv * location.z;
-    float3 normal = quad[0].normal * location.x + quad[1].normal * location.y + quad[2].normal * location.z;
-   
-    dout.pos = mul(float4(pos, 1.0f), VPMatrix);
-    dout.uv = uv;
-    dout.normal = normal;
+    dout.pos = lerp(
+		lerp(quad[0].pos, quad[1].pos, location.x),
+		lerp(quad[2].pos, quad[3].pos, location.x),
+		location.y);
+
+    dout.uv = lerp(
+		lerp(quad[0].uv, quad[1].uv, location.x),
+		lerp(quad[2].uv, quad[3].uv, location.x),
+		location.y);
+
+    dout.uv = lerp(
+		lerp(quad[0].uv, quad[1].uv, location.x),
+		lerp(quad[2].uv, quad[3].uv, location.x),
+		location.y);
     
+    dout = WaveGeneration(dout);
+
+    dout.pos = mul(dout.pos, VPMatrix);
+
     return dout;
 }
 
