@@ -68,7 +68,7 @@ void Game::Init(HWND hwnd)
 	}
 
 
-	auto scene = SceneManager::main->AddScene(SceneType::TestScene);
+	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
 }
 
 void Game::PrevUpdate()

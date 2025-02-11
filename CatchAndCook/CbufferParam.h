@@ -3,9 +3,21 @@
 #include "ICBufferInjector.h"
 #include "Material.h"
 
-struct TestSubMaterialParam
+#define p1(n) float padding##n;
+#define p2(n) float padding##n[2];
+#define p3(n) float padding##n[3];
+
+struct alignas(16) TransformParam
+{
+	Matrix localToWorld;
+	Vector3 worldPos; p1(0);
+};
+
+
+struct alignas(16) TestSubMaterialParam
 {
 	vec2 uv;
+	p2(0);
 };
 
 CBUFFER_INJECTOR("popo", TestSubMaterialParam, 256, BufferType::MateriaSubParam, std::shared_ptr<Material>,
@@ -13,7 +25,7 @@ CBUFFER_INJECTOR("popo", TestSubMaterialParam, 256, BufferType::MateriaSubParam,
 )
 
 
-struct DefaultMaterialParam
+struct alignas(16) DefaultMaterialParam
 {
 	Vector4 color;
 	Vector4 _baseMapST;
@@ -25,9 +37,9 @@ CBUFFER_INJECTOR("DefaultMaterialParam", DefaultMaterialParam, 256, BufferType::
 	data._baseMapST = Vector4(source->GetPropertyVector("_BaseMap_ST"));
 )
 
-struct TerrainDetailsParam
+struct alignas(16) TerrainDetailsParam
 {
-	int detailsCount;
+	int detailsCount; p3(0);
 	Vector4 tileST[4];
 	//Vector4 color;
 };
