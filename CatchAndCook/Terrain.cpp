@@ -114,10 +114,10 @@ void Terrain::SetHeightMap(const std::wstring &rawData,const std::wstring &pngDa
     _heightMapX = static_cast<int>(_heightMap->GetResource()->GetDesc().Width);
     _heightMapZ = static_cast<int>(_heightMap->GetResource()->GetDesc().Height);
 
-	_gridXsize = _heightMapX * scale;
-	_gridZsize = _heightMapZ * scale;
+    _gridXsize = 2000;
+    _gridZsize = 2000;
 
-    _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(_heightMapX,_heightMapZ,CellsPerPatch,CellsPerPatch);
+    _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(2000,2000,20,20);
     _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 
 	LoadTerrain(rawData);
@@ -129,25 +129,43 @@ float Terrain::TerrainGetHeight(float x,float z,float offset)
 {
     vec3 terrainOrigin = GetOwner()->_transform->GetLocalPosition();
 
-    float tempX = x + _gridXsize/ 2;
-    float tempZ = z + _gridZsize / 2 ;
+    float tempX = x + _gridXsize * 0.5f;
+    float tempZ = z + _gridZsize * 0.5f;
 
-    tempX -= terrainOrigin.x;
-    tempZ -= terrainOrigin.z;
+    tempX-= terrainOrigin.x;
+    tempZ-= terrainOrigin.z;
 
-    if(tempX < 0 || tempX >= _gridXsize|| tempZ < 0 || tempZ >= _gridZsize)
+    if(tempX< 0 || tempX >= _gridXsize-1 || tempZ < 0 || tempZ >= _gridZsize-1)
     {
         return 0;
     }
 
-    float ratioX = (tempX)/ _gridXsize;
-    float ratioZ = (tempZ) /_gridZsize;
+    float heightMapScaleX = _heightMapX / _gridXsize;
+    float heightMapScaleZ = _heightMapZ / _gridZsize;
 
-    int ix = static_cast<int>(ratioX * _heightMapX);
-    int iz = static_cast<int>(ratioZ * _heightMapZ);
+    float fx = tempX * heightMapScaleX;
+    float fz = tempZ * heightMapScaleZ;
 
+    int ix = static_cast<int>(fx);
+    int iz = static_cast<int>(fz);
 
-    return terrainOrigin.y + _heightMapData[iz][ix] + offset; //temp는 임시적
+    // 경계를 넘어가는 경우 방지
+    int ix1 = std::min(ix + 1,(int)(_heightMapX - 1));
+    int iz1 = std::min(iz + 1,(int)(_heightMapZ - 1));
+
+    float hx0z0 = _heightMapData[iz][ix];
+    float hx1z0 = _heightMapData[iz][ix1];
+    float hx0z1 = _heightMapData[iz1][ix];
+    float hx1z1 = _heightMapData[iz1][ix1];
+
+    float tx = fx - ix;
+    float tz = fz - iz;
+
+    float h0 = hx0z0 * (1 - tx) + hx1z0 * tx;  // x 방향 보간
+    float h1 = hx0z1 * (1 - tx) + hx1z1 * tx;  // x 방향 보간
+    float finalHeight = h0 * (1 - tz) + h1 * tz; // z 방향 보간
+
+    return terrainOrigin.y + finalHeight + offset;
 }
 
 

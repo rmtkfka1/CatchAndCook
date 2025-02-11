@@ -67,7 +67,6 @@ VS_OUT VS_Main(VS_IN input)
     VS_OUT output = (VS_OUT) 0;
     
     output.pos = mul(float4(input.pos, 1.0f), WorldMat);
-    output.pos.y += heightMap.SampleLevel(g_sam_1, input.uv, 0).r * 1000.0f;
     output.normal = mul(float4(input.normal, 0.0f), WorldMat).xyz;
     output.uv = input.uv;
     
@@ -152,6 +151,7 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 		lerp(quad[2].uv, quad[3].uv, location.x),
 		location.y);
     
+    dout.pos.y += heightMap.SampleLevel(g_sam_1, dout.uv, 0).r * 1000.0f;
     dout.pos = mul(dout.pos, VPMatrix);
     
     return dout;
