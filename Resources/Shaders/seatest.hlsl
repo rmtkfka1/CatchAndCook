@@ -6,7 +6,7 @@ Texture2D g_tex_1 : register(t1);
 SamplerState g_sam_0 : register(s0);
 SamplerState g_sam_1 : register(s1);
 
-#define G_MaxTess 6
+#define G_MaxTess 4
 #define G_MinTess 1
 
 #define PI 3.14159f

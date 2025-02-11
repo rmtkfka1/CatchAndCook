@@ -27,6 +27,12 @@ cbuffer BoneParam : register(b6)
     row_major matrix boneMatrix[256];
 }
 
+cbuffer DefaultMaterialParam : register(b7)
+{
+	float4 color;
+	float4 _baseMapST;
+};
+
 struct VS_IN
 {
     float3 pos : POSITION;
@@ -81,5 +87,5 @@ VS_OUT VS_Main(VS_IN input)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-   return  _BaseMap.Sample(g_sam_0, input.uv);
+   return _BaseMap.Sample(g_sam_0, input.uv) * color;
 }
