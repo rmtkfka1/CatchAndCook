@@ -113,6 +113,18 @@ void Collider::Destroy()
 	ColliderManager::main->RemoveCollider(GetCast<Collider>());
 }
 
+bool Collider::IsCollision()
+{
+	return !_collisionList.empty();
+}
+
+
+bool Collider::IsCollision(const std::shared_ptr<Collider>& a)
+{
+	auto it = _collisionList.find(a);
+	return it != _collisionList.end();
+}
+
 bool Collider::CheckCollision(Collider* other)
 {
 	if(_type == CollisionType::Box)
