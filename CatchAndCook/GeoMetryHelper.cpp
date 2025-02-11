@@ -5,22 +5,22 @@
 shared_ptr<Mesh> GeoMetryHelper::LoadRectangleBox(const float scale)
 {
 
-    // ¸®¼Ò½º Å° »ı¼º
+    // ë¦¬ì†ŒìŠ¤ í‚¤ ìƒì„±
     std::wstring key = L"box" + std::to_wstring(scale);
 
-    // ÀÌ¹Ì ·ÎµåµÈ Mesh°¡ ÀÖ´Ù¸é ¹İÈ¯
+    // ì´ë¯¸ ë¡œë“œëœ Meshê°€ ìˆë‹¤ë©´ ë°˜í™˜
     shared_ptr<Mesh> mesh = ResourceManager::main->Get<Mesh>(key);
     if (mesh)
     {
         return mesh;
     }
 
-    // Vertex ¹× Index µ¥ÀÌÅÍ »ı¼º
+    // Vertex ë° Index ë°ì´í„° ìƒì„±
     vector<Vertex_Static> vertices;
-    vertices.reserve(24); // 6¸é x 4°³ Á¤Á¡
+    vertices.reserve(24); // 6ë©´ x 4ê°œ ì •ì 
 
     vector<uint32> indices;
-    indices.reserve(36); // 6¸é x 2°³ÀÇ »ï°¢Çü x 3°³ÀÇ ÀÎµ¦½º
+    indices.reserve(36); // 6ë©´ x 2ê°œì˜ ì‚¼ê°í˜• x 3ê°œì˜ ì¸ë±ìŠ¤
 
 
     float w2 = scale;
@@ -29,32 +29,32 @@ shared_ptr<Mesh> GeoMetryHelper::LoadRectangleBox(const float scale)
 
     vector<Vertex_Static> vec(24);
 
-    // ¾Õ¸é
+    // ì•ë©´
     vec[0] = Vertex_Static(vec3(-w2, -h2, -d2), vec2(0.0f, 1.0f), vec3(0.0f, 0.0f, -1.0f));
     vec[1] = Vertex_Static(vec3(-w2, +h2, -d2), vec2(0.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f));
     vec[2] = Vertex_Static(vec3(+w2, +h2, -d2), vec2(1.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f));
     vec[3] = Vertex_Static(vec3(+w2, -h2, -d2), vec2(1.0f, 1.0f), vec3(0.0f, 0.0f, -1.0f));
-    // µŞ¸é
+    // ë’·ë©´
     vec[4] = Vertex_Static(vec3(-w2, -h2, +d2), vec2(1.0f, 1.0f), vec3(0.0f, 0.0f, 1.0f));
     vec[5] = Vertex_Static(vec3(+w2, -h2, +d2), vec2(0.0f, 1.0f), vec3(0.0f, 0.0f, 1.0f));
     vec[6] = Vertex_Static(vec3(+w2, +h2, +d2), vec2(0.0f, 0.0f), vec3(0.0f, 0.0f, 1.0f));
     vec[7] = Vertex_Static(vec3(-w2, +h2, +d2), vec2(1.0f, 0.0f), vec3(0.0f, 0.0f, 1.0f));
-    // À­¸é
+    // ìœ—ë©´
     vec[8] = Vertex_Static(vec3(-w2, +h2, -d2), vec2(0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
     vec[9] = Vertex_Static(vec3(-w2, +h2, +d2), vec2(0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
     vec[10] = Vertex_Static(vec3(+w2, +h2, +d2), vec2(1.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
     vec[11] = Vertex_Static(vec3(+w2, +h2, -d2), vec2(1.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
-    // ¾Æ·§¸é
+    // ì•„ë«ë©´
     vec[12] = Vertex_Static(vec3(-w2, -h2, -d2), vec2(1.0f, 1.0f), vec3(0.0f, -1.0f, 0.0f));
     vec[13] = Vertex_Static(vec3(+w2, -h2, -d2), vec2(0.0f, 1.0f), vec3(0.0f, -1.0f, 0.0f));
     vec[14] = Vertex_Static(vec3(+w2, -h2, +d2), vec2(0.0f, 0.0f), vec3(0.0f, -1.0f, 0.0f));
     vec[15] = Vertex_Static(vec3(-w2, -h2, +d2), vec2(1.0f, 0.0f), vec3(0.0f, -1.0f, 0.0f));
-    // ¿ŞÂÊ¸é
+    // ì™¼ìª½ë©´
     vec[16] = Vertex_Static(vec3(-w2, -h2, +d2), vec2(0.0f, 1.0f), vec3(-1.0f, 0.0f, 0.0f));
     vec[17] = Vertex_Static(vec3(-w2, +h2, +d2), vec2(0.0f, 0.0f), vec3(-1.0f, 0.0f, 0.0f));
     vec[18] = Vertex_Static(vec3(-w2, +h2, -d2), vec2(1.0f, 0.0f), vec3(-1.0f, 0.0f, 0.0f));
     vec[19] = Vertex_Static(vec3(-w2, -h2, -d2), vec2(1.0f, 1.0f), vec3(-1.0f, 0.0f, 0.0f));
-    // ¿À¸¥ÂÊ¸é
+    // ì˜¤ë¥¸ìª½ë©´
     vec[20] = Vertex_Static(vec3(+w2, -h2, -d2), vec2(0.0f, 1.0f), vec3(1.0f, 0.0f, 0.0f));
     vec[21] = Vertex_Static(vec3(+w2, +h2, -d2), vec2(0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
     vec[22] = Vertex_Static(vec3(+w2, +h2, +d2), vec2(1.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
@@ -62,27 +62,27 @@ shared_ptr<Mesh> GeoMetryHelper::LoadRectangleBox(const float scale)
 
     vector<uint32> idx(36);
 
-    // ¾Õ¸é
+    // ì•ë©´
     idx[0] = 0; idx[1] = 1; idx[2] = 2;
     idx[3] = 0; idx[4] = 2; idx[5] = 3;
-    // µŞ¸é
+    // ë’·ë©´
     idx[6] = 4; idx[7] = 5; idx[8] = 6;
     idx[9] = 4; idx[10] = 6; idx[11] = 7;
-    // À­¸é
+    // ìœ—ë©´
     idx[12] = 8; idx[13] = 9; idx[14] = 10;
     idx[15] = 8; idx[16] = 10; idx[17] = 11;
-    // ¾Æ·§¸é
+    // ì•„ë«ë©´
     idx[18] = 12; idx[19] = 13; idx[20] = 14;
     idx[21] = 12; idx[22] = 14; idx[23] = 15;
-    // ¿ŞÂÊ¸é
+    // ì™¼ìª½ë©´
     idx[24] = 16; idx[25] = 17; idx[26] = 18;
     idx[27] = 16; idx[28] = 18; idx[29] = 19;
-    // ¿À¸¥ÂÊ¸é
+    // ì˜¤ë¥¸ìª½ë©´
     idx[30] = 20; idx[31] = 21; idx[32] = 22;
     idx[33] = 20; idx[34] = 22; idx[35] = 23;
 
 
-    // Mesh ÃÊ±âÈ­ ¹× ¸®¼Ò½º µî·Ï
+    // Mesh ì´ˆê¸°í™” ë° ë¦¬ì†ŒìŠ¤ ë“±ë¡
     mesh = make_shared<Mesh>();
     mesh->Init(vec, idx);
     ResourceManager::main->Add(key, mesh);
@@ -92,22 +92,22 @@ shared_ptr<Mesh> GeoMetryHelper::LoadRectangleBox(const float scale)
 
 shared_ptr<Mesh> GeoMetryHelper::LoadRectangleBoxWithColor(const float scale, vec4 color)
 {
-    // ¸®¼Ò½º Å° »ı¼º
+    // ë¦¬ì†ŒìŠ¤ í‚¤ ìƒì„±
     //std::wstring key = L"boxColor" + std::to_wstring(scale);
 
-    //// ÀÌ¹Ì ·ÎµåµÈ Mesh°¡ ÀÖ´Ù¸é ¹İÈ¯
+    //// ì´ë¯¸ ë¡œë“œëœ Meshê°€ ìˆë‹¤ë©´ ë°˜í™˜
     shared_ptr<Mesh> mesh;
     //if (mesh)
     //{
     //    return mesh;
     //}
 
-    // Vertex ¹× Index µ¥ÀÌÅÍ »ı¼º
+    // Vertex ë° Index ë°ì´í„° ìƒì„±
     vector<Vertex_Color> vertices;
-    vertices.reserve(24); // 6¸é x 4°³ Á¤Á¡
+    vertices.reserve(24); // 6ë©´ x 4ê°œ ì •ì 
 
     vector<uint32> indices;
-    indices.reserve(36); // 6¸é x 2°³ÀÇ »ï°¢Çü x 3°³ÀÇ ÀÎµ¦½º
+    indices.reserve(36); // 6ë©´ x 2ê°œì˜ ì‚¼ê°í˜• x 3ê°œì˜ ì¸ë±ìŠ¤
 
 
     float w2 = scale;
@@ -116,32 +116,32 @@ shared_ptr<Mesh> GeoMetryHelper::LoadRectangleBoxWithColor(const float scale, ve
 
     vector<Vertex_Color> vec(24);
 
-    // ¾Õ¸é
+    // ì•ë©´
     vec[0] = Vertex_Color(vec3(-w2, -h2, -d2), vec2(0.0f, 1.0f), color);
     vec[1] = Vertex_Color(vec3(-w2, +h2, -d2), vec2(0.0f, 0.0f), color);
     vec[2] = Vertex_Color(vec3(+w2, +h2, -d2), vec2(1.0f, 0.0f), color);
     vec[3] = Vertex_Color(vec3(+w2, -h2, -d2), vec2(1.0f, 1.0f), color);
-    // µŞ¸é
+    // ë’·ë©´
     vec[4] = Vertex_Color(vec3(-w2, -h2, +d2), vec2(1.0f, 1.0f), color);
     vec[5] = Vertex_Color(vec3(+w2, -h2, +d2), vec2(0.0f, 1.0f), color);
     vec[6] = Vertex_Color(vec3(+w2, +h2, +d2), vec2(0.0f, 0.0f), color);
     vec[7] = Vertex_Color(vec3(-w2, +h2, +d2), vec2(1.0f, 0.0f), color);
-    // À­¸é
+    // ìœ—ë©´
     vec[8] = Vertex_Color(vec3(-w2, +h2, -d2), vec2(0.0f, 1.0f), color);
     vec[9] = Vertex_Color(vec3(-w2, +h2, +d2), vec2(0.0f, 0.0f), color);
     vec[10] = Vertex_Color(vec3(+w2, +h2, +d2), vec2(1.0f, 0.0f),color);
     vec[11] = Vertex_Color(vec3(+w2, +h2, -d2), vec2(1.0f, 1.0f),color);
-    // ¾Æ·§¸é
+    // ì•„ë«ë©´
     vec[12] = Vertex_Color(vec3(-w2, -h2, -d2), vec2(1.0f, 1.0f),color);
     vec[13] = Vertex_Color(vec3(+w2, -h2, -d2), vec2(0.0f, 1.0f),color);
     vec[14] = Vertex_Color(vec3(+w2, -h2, +d2), vec2(0.0f, 0.0f),color);
     vec[15] = Vertex_Color(vec3(-w2, -h2, +d2), vec2(1.0f, 0.0f),color);
-    // ¿ŞÂÊ¸é
+    // ì™¼ìª½ë©´
     vec[16] = Vertex_Color(vec3(-w2, -h2, +d2), vec2(0.0f, 1.0f), color);
     vec[17] = Vertex_Color(vec3(-w2, +h2, +d2), vec2(0.0f, 0.0f), color);
     vec[18] = Vertex_Color(vec3(-w2, +h2, -d2), vec2(1.0f, 0.0f), color);
     vec[19] = Vertex_Color(vec3(-w2, -h2, -d2), vec2(1.0f, 1.0f), color);
-    // ¿À¸¥ÂÊ¸é
+    // ì˜¤ë¥¸ìª½ë©´
     vec[20] = Vertex_Color(vec3(+w2, -h2, -d2), vec2(0.0f, 1.0f),color);
     vec[21] = Vertex_Color(vec3(+w2, +h2, -d2), vec2(0.0f, 0.0f),color);
     vec[22] = Vertex_Color(vec3(+w2, +h2, +d2), vec2(1.0f, 0.0f),color);
@@ -149,27 +149,27 @@ shared_ptr<Mesh> GeoMetryHelper::LoadRectangleBoxWithColor(const float scale, ve
 
     vector<uint32> idx(36);
 
-    // ¾Õ¸é
+    // ì•ë©´
     idx[0] = 0; idx[1] = 1; idx[2] = 2;
     idx[3] = 0; idx[4] = 2; idx[5] = 3;
-    // µŞ¸é
+    // ë’·ë©´
     idx[6] = 4; idx[7] = 5; idx[8] = 6;
     idx[9] = 4; idx[10] = 6; idx[11] = 7;
-    // À­¸é
+    // ìœ—ë©´
     idx[12] = 8; idx[13] = 9; idx[14] = 10;
     idx[15] = 8; idx[16] = 10; idx[17] = 11;
-    // ¾Æ·§¸é
+    // ì•„ë«ë©´
     idx[18] = 12; idx[19] = 13; idx[20] = 14;
     idx[21] = 12; idx[22] = 14; idx[23] = 15;
-    // ¿ŞÂÊ¸é
+    // ì™¼ìª½ë©´
     idx[24] = 16; idx[25] = 17; idx[26] = 18;
     idx[27] = 16; idx[28] = 18; idx[29] = 19;
-    // ¿À¸¥ÂÊ¸é
+    // ì˜¤ë¥¸ìª½ë©´
     idx[30] = 20; idx[31] = 21; idx[32] = 22;
     idx[33] = 20; idx[34] = 22; idx[35] = 23;
 
 
-    // Mesh ÃÊ±âÈ­ ¹× ¸®¼Ò½º µî·Ï
+    // Mesh ì´ˆê¸°í™” ë° ë¦¬ì†ŒìŠ¤ ë“±ë¡
     mesh = make_shared<Mesh>();
     mesh->Init(vec, idx);
 
@@ -192,7 +192,7 @@ shared_ptr<Mesh> GeoMetryHelper::LoadRectangleMesh(const float scale)
 
     vector<Vertex_Static> vec(4);
 
-    // ¾Õ¸é
+    // ì•ë©´
     vec[0] = Vertex_Static(vec3(-scale, -scale, 0), vec2(0.0f, 1.0f), vec3(0.0f, 0.0f, -1.0f));
     vec[1] = Vertex_Static(vec3(-scale, +scale, 0), vec2(0.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f));
     vec[2] = Vertex_Static(vec3(+scale, +scale, 0), vec2(1.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f));
@@ -200,7 +200,7 @@ shared_ptr<Mesh> GeoMetryHelper::LoadRectangleMesh(const float scale)
 
     vector<uint32> idx(6);
 
-    // ¾Õ¸é
+    // ì•ë©´
     idx[0] = 0; idx[1] = 1; idx[2] = 2;
     idx[3] = 0; idx[4] = 2; idx[5] = 3;
 
@@ -232,11 +232,11 @@ shared_ptr<Mesh> GeoMetryHelper::LoadGripMeshControlPoints(float width, float he
     {
         vec3 startPoint = leftBottom + vec3(0, 0, dz * j);
 
-        //¾Æ·§ÁÙ
+        //ì•„ë«ì¤„
         for (int i = 0; i <= division_x; ++i)
         {
             Vertex_Static v;
-            //xz Æò¸é¿¡¼­ x ¹æÇâÀ¸·ÎÀÌµ¿.
+            //xz í‰ë©´ì—ì„œ x ë°©í–¥ìœ¼ë¡œì´ë™.
             v.position = startPoint;
             v.position.x += dx * i;
             v.normal = vec3(0, 1, 0);
@@ -254,7 +254,7 @@ shared_ptr<Mesh> GeoMetryHelper::LoadGripMeshControlPoints(float width, float he
 
         for (int i = 0; i < division_x; ++i)
         {
-            // 4°³ÀÇ Á¤Á¡À¸·Î ÀÌ·ç¾îÁø ÆĞÄ¡¸¦ ±¸¼º
+            // 4ê°œì˜ ì •ì ìœ¼ë¡œ ì´ë£¨ì–´ì§„ íŒ¨ì¹˜ë¥¼ êµ¬ì„±
             indices.push_back(offset + i);
             indices.push_back(offset + i + 1);
             indices.push_back(offset + i + division_x + 1);
@@ -288,11 +288,11 @@ shared_ptr<Mesh> GeoMetryHelper::LoadGripMesh(float width, float height, int div
     {
         vec3 startPoint = leftBottom + vec3(0, 0, dz * j);
 
-        //¾Æ·§ÁÙ
+        //ì•„ë«ì¤„
         for (int i = 0; i <= division_x; ++i)
         {
             Vertex_Static v;
-            //xz Æò¸é¿¡¼­ x ¹æÇâÀ¸·ÎÀÌµ¿.
+            //xz í‰ë©´ì—ì„œ x ë°©í–¥ìœ¼ë¡œì´ë™.
             v.position = startPoint;
             v.position.x += dx * i;
             v.normal = vec3(0, 1, 0);
@@ -310,18 +310,23 @@ shared_ptr<Mesh> GeoMetryHelper::LoadGripMesh(float width, float height, int div
 
         for (int i = 0; i < division_x; ++i)
         {
-            //À­ÂÊ
+            //ìœ—ìª½
             indices.push_back(offset + i);
             indices.push_back(offset + i + division_x + 1);
             indices.push_back(offset + (i + 1) + division_x + 1);
 
-            //¾Æ·§ÂÊ
+            //ì•„ë«ìª½
             indices.push_back(offset + i);
             indices.push_back(offset + i + 1 + division_x + 1);
             indices.push_back(offset + i + 1);
         }
     }
 
+	for(auto& vertice : vertices)
+	{
+        Matrix mat = Matrix::CreateTranslation(width/2,0,height/2);
+        vertice.position = vec3::Transform(vertice.position,mat);
+	}
 
     mesh->Init(vertices, indices);
 
@@ -339,7 +344,7 @@ shared_ptr<Mesh> GeoMetryHelper::LoadSprtieMesh()
 
     vector<Vertex_Color> vec(4);
 
-    // ¾Õ¸é
+    // ì•ë©´
     vec[0] = Vertex_Color(vec3(0.0f, 1.0f, 0), vec2(0.0f, 1.0f));
     vec[1] = Vertex_Color(vec3(0.0f, 0.0f, 0), vec2(0.0f, 0.0f));
     vec[2] = Vertex_Color(vec3(1.0f, 0.0f, 0), vec2(1.0f, 0.0f));

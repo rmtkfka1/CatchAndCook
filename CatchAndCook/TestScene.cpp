@@ -212,7 +212,7 @@ void TestScene::Init()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::WIREFRAME;
 		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest",L"Terrain.hlsl",StaticProp,
@@ -225,8 +225,8 @@ void TestScene::Init()
 		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
 
 		auto& terrain = gameObject->AddComponent<Terrain>();
-		terrain->SetHeightMap(L"../Resources/Textures/HeightMap/Terrain_Height.raw",L"../Resources/Textures/HeightMap/Terrain_Height.png",1.0f);
-		gameObject->_transform->SetLocalPosition(vec3(0, 50.0f,0));
+		terrain->SetHeightMap(L"../Resources/Textures/HeightMap/Terrain_Height.raw",L"../Resources/Textures/HeightMap/Terrain_Height.png",vec2(5000.0f,5000.0f));
+		gameObject->_transform->SetLocalPosition(vec3(0, 600.0f,0));
 		  
 		material = make_shared<Material>();
 		material->SetHandle("g_tex_0",ResourceManager::main->Load<Texture>(L"HeightMap",L"Textures/HeightMap/terrainAlbedo.png")->GetSRVCpuHandle());
