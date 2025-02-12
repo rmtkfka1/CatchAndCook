@@ -22,8 +22,11 @@ public:
 
 	void AddCollider(const std::shared_ptr<Collider>& collider);
 	void RemoveCollider(const std::shared_ptr<Collider>& collider);
-
 	void Update();
+
+	bool IsCollision(const std::shared_ptr<Collider>& a);
+	bool IsCollision(const std::shared_ptr<Collider>& a,const std::shared_ptr<Collider>& b);
+
 private:
 
 	void CallBackBegin(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other);

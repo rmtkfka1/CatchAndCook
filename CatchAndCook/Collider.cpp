@@ -118,14 +118,13 @@ bool Collider::IsCollision()
 	return !_collisionList.empty();
 }
 
-
-bool Collider::IsCollision(const std::shared_ptr<Collider>& a)
+bool Collider::IsCollision(const std::shared_ptr<Collider>& other)
 {
-	auto it = _collisionList.find(a);
+	auto it = _collisionList.find(other);
 	return it != _collisionList.end();
 }
 
-bool Collider::CheckCollision(Collider* other)
+bool Collider::CheckCollision(const std::shared_ptr<Collider>& other)
 {
 	if(_type == CollisionType::Box)
 	{

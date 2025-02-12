@@ -53,11 +53,13 @@ public:
 	void CollisionEnd(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other) override;
 	void SetDestroy() override;
 	void Destroy() override;
+
 public:
 	bool IsCollision();
-	bool CollisionStayContains(const std::shared_ptr<Collider>& a);
+	bool IsCollision(const std::shared_ptr<Collider>& a);
+
 public:
-	bool CheckCollision(Collider* other);
+	bool CheckCollision(const std::shared_ptr<Collider>& other);
 
 	bool RayCast(const Ray& ray, const float& dis, RayHit& hit);
 
@@ -70,7 +72,6 @@ public:
 
 private:
 	friend class ColliderManager;
-
 
 private:
 	CollisionType _type;

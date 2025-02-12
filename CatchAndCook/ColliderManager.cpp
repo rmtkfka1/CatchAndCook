@@ -124,11 +124,22 @@ void ColliderManager::Update()
 	}
 }
 
-bool ColliderManager::TotalCheckCollision(const std::shared_ptr<Collider>& a, const std::shared_ptr<Collider>& b)
+//무언가와 충돌하고 있는지 체크
+bool ColliderManager::IsCollision(const std::shared_ptr<Collider>& a) 
 {
-	return (a->groupId != b->groupId) && a->CheckCollision(b.get());
+	return a->IsCollision();
 }
 
+//특정누군가와 충돌하고 있는지 체크
+bool ColliderManager::IsCollision(const std::shared_ptr<Collider>& a,const std::shared_ptr<Collider>& b)
+{
+	return a->IsCollision(b);
+}
+
+bool ColliderManager::TotalCheckCollision(const std::shared_ptr<Collider>& a, const std::shared_ptr<Collider>& b)
+{
+	return (a->groupId != b->groupId) && a->CheckCollision(b);
+}
 
 void ColliderManager::CallBackBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
