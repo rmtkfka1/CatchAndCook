@@ -7,7 +7,7 @@ SamplerState g_sam_0 : register(s0);
 SamplerState g_sam_1 : register(s1);
 #define TessFactor 8
 #define PI 3.14159f
-#define DIST_MAX 3000.0f
+#define DIST_MAX 1000.0f
 #define DIST_MIN 3.0f
 
 

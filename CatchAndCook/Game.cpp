@@ -68,7 +68,7 @@ void Game::Init(HWND hwnd)
 	}
 
 
-	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
+	auto scene = SceneManager::main->AddScene(SceneType::TestScene);
 }
 
 void Game::PrevUpdate()
@@ -186,7 +186,7 @@ void Game::CameraUpdate()
 {
 	shared_ptr<Camera> camera = CameraManager::main->GetActiveCamera();
 
-	const float speed = 20.0f;
+	const float speed = 200.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;
 
 	if (Input::main->GetKey(KeyCode::W))

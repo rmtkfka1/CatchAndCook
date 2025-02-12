@@ -8,10 +8,6 @@ std::unique_ptr<SceneManager> SceneManager::main = nullptr;
 
 shared_ptr<Scene> SceneManager::AddScene(SceneType type, bool initExecute)
 {
-	//if (_sceneTable.find(type) != _sceneTable.end())
-	//{
-	//	assert(false && "Scene name already exists!");
-	//}
 
 	shared_ptr<Scene> scene;
 
@@ -36,6 +32,7 @@ shared_ptr<Scene> SceneManager::AddScene(SceneType type, bool initExecute)
 
 	if(initExecute)
 		scene->Init();
+
 	return scene;
 }
 
