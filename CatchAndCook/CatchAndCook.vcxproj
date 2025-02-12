@@ -164,7 +164,6 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Bone.cpp" />
-    <ClCompile Include="BoundingCapsule.cpp" />
     <ClCompile Include="BufferManager.cpp" />
     <ClCompile Include="BufferPool.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -250,7 +249,6 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Bone.h" />
-    <ClInclude Include="BoundingCapsule.h" />
     <ClInclude Include="BufferManager.h" />
     <ClInclude Include="BufferPool.h" />
     <ClInclude Include="Camera.h" />

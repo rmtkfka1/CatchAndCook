@@ -122,7 +122,7 @@ void ColliderManager::Update()
 			}
 		}
 	}
-}
+} 
 
 //무언가와 충돌하고 있는지 체크
 bool ColliderManager::IsCollision(const std::shared_ptr<Collider>& a) 
