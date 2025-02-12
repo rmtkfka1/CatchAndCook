@@ -25,7 +25,7 @@ public:
 	void Update();
 
 	bool IsCollision(const std::shared_ptr<Collider>& a);
-	bool IsCollision(const std::shared_ptr<Collider>& a,const std::shared_ptr<Collider>& b);
+	bool IsCollision(const std::shared_ptr<Collider>& src,const std::shared_ptr<Collider>& dest);
 
 private:
 
