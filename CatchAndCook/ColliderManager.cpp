@@ -131,9 +131,9 @@ bool ColliderManager::IsCollision(const std::shared_ptr<Collider>& a)
 }
 
 //특정누군가와 충돌하고 있는지 체크
-bool ColliderManager::IsCollision(const std::shared_ptr<Collider>& a,const std::shared_ptr<Collider>& b)
+bool ColliderManager::IsCollision(const std::shared_ptr<Collider>& src,const std::shared_ptr<Collider>& dest)
 {
-	return a->IsCollision(b);
+	return src->IsCollision(dest);
 }
 
 bool ColliderManager::TotalCheckCollision(const std::shared_ptr<Collider>& a, const std::shared_ptr<Collider>& b)
