@@ -13,6 +13,7 @@
 #include "ModelMesh.h"
 #include "PhysicsComponent.h"
 #include "SkinnedMeshRenderer.h"
+#include "Terrain.h"
 
 
 SceneLoader::SceneLoader()
@@ -139,6 +140,11 @@ void SceneLoader::PrevProcessingComponent(json& data)
     {
         auto pc = CreateObject<PhysicsComponent>(guid);
         component = pc;
+    }
+    if(type == L"Terrain")
+    {
+        auto terr = CreateObject<Terrain>(guid);
+        component = terr;
     }
 
     componentCache.emplace_back(component);
@@ -313,6 +319,69 @@ void SceneLoader::LinkComponent(json& jsonData)
     {
         auto collider = IGuid::FindObjectByGuid<PhysicsComponent>(guid);
 
+    }
+    if(type == L"Terrain")
+    {
+        auto terrain = IGuid::FindObjectByGuid<Terrain>(guid);
+        std::wstring rawPath = to_wstring(jsonData["rawPath"].get<string>());
+        std::wstring pngPath = to_wstring(jsonData["pngPath"].get<string>());
+        float rawSize = jsonData["heightmapResolution"].get<float>();
+        auto fieldSize = Vector3(
+		    jsonData["size"][0].get<float>(),
+		    jsonData["size"][1].get<float>(),
+		    jsonData["size"][2].get<float>());
+
+
+        auto material = make_shared<Material>();
+        //material->SetHandle("g_tex_0",ResourceManager::main->Load<Texture>(L"HeightMap",L"Textures/HeightMap/terrainAlbedo.png")->GetSRVCpuHandle());
+
+        int diffuseCount = jsonData["layers"].size();
+        for(int i = 0; i < diffuseCount; i++)
+        {
+            auto& layer = jsonData["layers"][i];
+            auto diffusePath = to_wstring(layer["diffuse"]["path"].get<string>());
+
+            auto active = Vector4(0,0,0,0);
+
+            auto diffuse = ResourceManager::main->Load<Texture>(diffusePath, diffusePath, TextureType::Texture2D, false);
+            material->SetHandle(std::format("_detailMap{0}",i), diffuse->GetSRVCpuHandle());
+            if(layer.contains("normal"))
+            {
+                auto normalPath = to_wstring(layer["normal"]["path"].get<string>());
+                auto normal = ResourceManager::main->Load<Texture>(normalPath, normalPath, TextureType::Texture2D,false);
+                material->SetHandle(std::format("_normalMap{0}",i), normal->GetSRVCpuHandle());
+                active.x = 1;
+            }
+            if(layer.contains("mask"))
+            {
+                auto maskPath = to_wstring(layer["mask"]["path"].get<string>());
+                auto mask = ResourceManager::main->Load<Texture>(maskPath,maskPath,TextureType::Texture2D,false);
+                material->SetHandle(std::format("_maskMap{0}",i),mask->GetSRVCpuHandle());
+                active.y = 1;
+            }
+            auto tile = Vector4(
+                layer["tileSize"][0].get<float>(),
+                layer["tileSize"][1].get<float>(),
+                layer["tileOffset"][0].get<float>(),
+                layer["tileOffset"][1].get<float>());
+            material->SetPropertyVector(std::format("_tileST{0}",i), tile);
+            material->SetPropertyVector(std::format("_active{0}",i), active);
+        }
+        int blendCount = jsonData["layerBlendTextures"].size();
+        for(int i = 0; i < blendCount; i++)
+        {
+            auto& layer = jsonData["layerBlendTextures"][i];
+            auto blendPath = to_wstring(layer.get<string>());
+            auto blend = ResourceManager::main->Load<Texture>(blendPath,blendPath,TextureType::Texture2D,false);
+            material->SetHandle(std::format("_blendMap{0}",i),blend->GetSRVCpuHandle());
+        }
+        
+        material->SetPropertyInt("detailsCount",diffuseCount);
+        material->SetPropertyInt("blendCount", blendCount);
+
+        terrain->SetMaterial(material);
+
+		terrain->SetHeightMap(rawPath,pngPath, Vector2(rawSize,rawSize), fieldSize);
     }
 }
 

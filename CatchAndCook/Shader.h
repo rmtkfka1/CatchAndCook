@@ -100,6 +100,7 @@ public:
     std::vector<ShaderRegisterInfo> registers;
     std::vector<ShaderCBufferInfo> cbuffers;
     std::vector<int> tRegisterTable;
+    int maxTRegister = 0;
 
     //shader shaderType names 단위로
     std::unordered_map<std::string, ShaderStructInfo> _typeToStructTable;

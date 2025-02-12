@@ -128,7 +128,7 @@ void TestScene::Init()
 
 		shared_ptr<GameObject> root = CreateGameObject(L"root_test");
 
-		root->GetComponent<Transform>()->_useTerrain=true;
+		//root->GetComponent<Transform>()->_useTerrain=true;
 	
 		auto meshRenderer = root->AddComponent<MeshRenderer>();
 		meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal"));

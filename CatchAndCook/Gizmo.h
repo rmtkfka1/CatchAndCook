@@ -27,7 +27,7 @@ private:
 	std::shared_ptr<Material> material;
 	InstanceBufferContainer* container;
 
-	float _width = 0.05f;
+	float _width = 0.02f;
 	float _prevWidth = 0.05f;
 };
 

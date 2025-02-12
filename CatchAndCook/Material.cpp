@@ -20,6 +20,10 @@ void Material::PushData()
 	////temp
 	//SetPropertyVector("uv", GetPropertyVector("uv") + vec4(0.01, 0, 0, 0));
 
+	if(_shader->_profileInfo.maxTRegister >= SRV_LONG_TABLE_REGISTER_OFFSET) {
+		_tableLongContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_LONG_TABLE_REGISTER_COUNT);
+	}
+
 	PushHandle();
 
 	if (_useMaterialParams)
@@ -38,6 +42,9 @@ void Material::SetData()
 {
 	//텍스쳐바인딩
 	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, _tableContainer.GPUHandle);
+	if(_shader->_profileInfo.maxTRegister >= SRV_LONG_TABLE_REGISTER_OFFSET) {
+		Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_LONG_TABLE_INDEX, _tableLongContainer.GPUHandle);
+	}
 
 	if(_useMaterialParams)
 		Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(4, _cbufferContainer->GPUAdress);
@@ -59,8 +66,14 @@ void Material::PushHandle()
 
 		if (index != -1)
 		{
-			copyCheckList[index] = true;
-			Core::main->GetBufferManager()->GetTable()->CopyHandle(_tableContainer.CPUHandle, handle, index);
+			if(index < SRV_TABLE_REGISTER_COUNT)
+			{
+				copyCheckList[index] = true;
+				Core::main->GetBufferManager()->GetTable()->CopyHandle(_tableContainer.CPUHandle,handle,index);
+			}
+			else if(index >= SRV_LONG_TABLE_REGISTER_OFFSET && (index < (SRV_LONG_TABLE_REGISTER_OFFSET + SRV_LONG_TABLE_REGISTER_COUNT))) {
+				Core::main->GetBufferManager()->GetTable()->CopyHandle(_tableLongContainer.CPUHandle,handle, index - SRV_LONG_TABLE_REGISTER_OFFSET);
+			}
 		}
 	}
 

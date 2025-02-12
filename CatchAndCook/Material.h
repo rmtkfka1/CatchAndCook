@@ -63,6 +63,7 @@ public:
 	void SetPropertyMatrix(const std::string& name, const Matrix& data) { _propertyMatrixs[name] = data; };
 
 	tableContainer _tableContainer;
+	tableContainer _tableLongContainer;
 
 private:
 	void PushHandle();
