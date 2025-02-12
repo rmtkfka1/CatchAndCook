@@ -47,6 +47,9 @@
     <Filter Include="07.Manager">
       <UniqueIdentifier>{82f13e75-8ffc-4bb2-8ca1-4e4e86b3f828}</UniqueIdentifier>
     </Filter>
+    <Filter Include="999.pch\garbage">
+      <UniqueIdentifier>{a46a5456-8b27-4435-a290-4c10da482d88}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -66,9 +69,6 @@
       <Filter>997.Utils</Filter>
     </ClCompile>
     <ClCompile Include="Input.cpp">
-      <Filter>997.Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Time.cpp">
       <Filter>997.Utils</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp" />
@@ -211,9 +211,6 @@
     <ClCompile Include="Gizmo.cpp">
       <Filter>997.Utils</Filter>
     </ClCompile>
-    <ClCompile Include="ColliderManager.cpp">
-      <Filter>03.Component</Filter>
-    </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>07.Manager</Filter>
     </ClCompile>
@@ -233,6 +230,12 @@
       <Filter>07.Manager</Filter>
     </ClCompile>
     <ClCompile Include="TextManager.cpp">
+      <Filter>07.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>07.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ColliderManager.cpp">
       <Filter>07.Manager</Filter>
     </ClCompile>
   </ItemGroup>
@@ -259,9 +262,6 @@
       <Filter>997.Utils</Filter>
     </ClInclude>
     <ClInclude Include="Input.h">
-      <Filter>997.Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Time.h">
       <Filter>997.Utils</Filter>
     </ClInclude>
     <ClInclude Include="Game.h" />
@@ -315,9 +315,6 @@
     </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>04.Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>997.Utils</Filter>
     </ClInclude>
     <ClInclude Include="ICBufferInjector.h">
       <Filter>997.Utils</Filter>
@@ -421,9 +418,6 @@
     <ClInclude Include="Gizmo.h">
       <Filter>997.Utils</Filter>
     </ClInclude>
-    <ClInclude Include="ColliderManager.h">
-      <Filter>03.Component</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceManager.h">
       <Filter>07.Manager</Filter>
     </ClInclude>
@@ -443,6 +437,15 @@
       <Filter>07.Manager</Filter>
     </ClInclude>
     <ClInclude Include="TextManager.h">
+      <Filter>07.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>999.pch\garbage</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>07.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="ColliderManager.h">
       <Filter>07.Manager</Filter>
     </ClInclude>
   </ItemGroup>
