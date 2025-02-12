@@ -13,6 +13,7 @@ class ICBufferInjector
 {
 private:
     int _staticIndex = -1;
+    std::any source;
 public:
 
     virtual ~ICBufferInjector() = default;

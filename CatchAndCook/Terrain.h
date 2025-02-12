@@ -25,6 +25,11 @@ public:
 	virtual void SetData(Material* material =nullptr) override;
 	bool IsExecuteAble() override;
 
+
+	void SetMaterial(const shared_ptr<Material>& material){
+		_material = material;
+	}
+
 public:
 	void SetHeightMap(const std::wstring &rawPath,const std::wstring &pngPath,const vec2& rawSize,const vec3& fieldSize);
 	float GetHeight(const Vector2& heightMapPosition) const;
@@ -45,7 +50,7 @@ private:
 	Vector2 _heightRawSize;
 	Vector2 _heightTextureSize;
 
-	shared_ptr<Material> material;
+	shared_ptr<Material> _material;
 
 	vector<vector<float>> _heightRawMapData;
 };

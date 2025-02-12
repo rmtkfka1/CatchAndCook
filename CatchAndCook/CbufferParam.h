@@ -41,13 +41,20 @@ struct alignas(16) TerrainDetailsParam
 {
 	Vector3 fieldSize; p1(0);
 	int detailsCount; p3(1);
-	Vector4 tileST[4];
+	int blendCount; p3(2);
+	Vector4 tileST[12];
+	Vector4 textureActive[12];
 	//Vector4 color;
 };
 
 CBUFFER_INJECTOR("TerrainDetailsParam",TerrainDetailsParam,256,BufferType::TerrainDetailsParam, std::shared_ptr<Material>,
 	data.fieldSize = Vector3(source->GetPropertyVector("fieldSize"));
-	/*data.tileST = Vector2(source->GetPropertyVector("tileST"));
-	data.tileOffset = Vector2(source->GetPropertyVector("tileOffset"));
+	data.detailsCount = source->GetPropertyInt("detailsCount");
+	data.blendCount = source->GetPropertyInt("blendCount");
+	for(int i=0;i<12;i++) {
+		data.tileST[i] = Vector4(source->GetPropertyVector(std::format("_tileST{0}", i)));
+		data.textureActive[i] = Vector4(source->GetPropertyVector(std::format("_active{0}",i)));
+	}
+	/*data.tileOffset = Vector2(source->GetPropertyVector("tileOffset"));
 	data.color = Vector4(source->GetPropertyVector("_Color"));*/
 )

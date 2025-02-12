@@ -47,13 +47,12 @@ void Transform::Update()
 {
 	Component::Update();
 
-  //  if(_useTerrain)
-  //  {
-		//auto height= TerrainManager::main->GetTerrains()[0]->GetLocalHeight(GetLocalPosition().x,GetLocalPosition().z ,6.0f);
-		//auto pos = GetLocalPosition();
-		//pos.y =  height;
-		//SetLocalPosition(pos);
-  //  }
+    //if(_useTerrain)
+    /*{
+        vec3 world = GetWorldPosition();
+		auto height= TerrainManager::main->GetTerrains()[0]->GetWorldHeight(world);
+		SetWorldPosition(vec3(world.x,height,world.z));
+    }*/
 }
 
 void Transform::Update2()

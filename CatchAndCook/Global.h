@@ -11,9 +11,12 @@ extern DXGI_FORMAT DEPTH_STENCIL_FORMAT;
 
 extern size_t CBV_ROOT_INDEX_COUNT;
 extern size_t SRV_TABLE_INDEX;
+extern size_t SRV_LONG_TABLE_INDEX;
 extern size_t UAV_TABLE_INDEX;
 extern size_t SPRITE_TABLE_INDEX;
 const size_t SRV_TABLE_REGISTER_COUNT = 16;
+const size_t SRV_LONG_TABLE_REGISTER_COUNT = 68;
+const size_t SRV_LONG_TABLE_REGISTER_OFFSET = 32;
 extern size_t UAV_TABLE_REGISTER_COUNT;
 
 extern std::vector<VertexProp> SkinProp;

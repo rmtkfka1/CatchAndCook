@@ -540,8 +540,11 @@ void Shader::Profile()
                     registerInfo.bufferType = "textureCubeArray";
                     break;
                 }
-                if (registerInfo.registerType)
+                if(registerInfo.registerType == 't')
+                {
                     _profileInfo.tRegisterTable.push_back(registerInfo.registerIndex);
+                    _profileInfo.maxTRegister = std::max(_profileInfo.maxTRegister,registerInfo.registerIndex);
+                }
                 registerInfo.registerTypeString = registerInfo.registerType +
                     std::to_string(registerInfo.registerIndex);
                 str::trim(registerInfo.registerTypeString);

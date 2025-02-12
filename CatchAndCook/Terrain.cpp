@@ -18,7 +18,7 @@ Terrain::~Terrain()
 
 void Terrain::Init()
 {
-
+    GetOwner()->AddComponent<MeshRenderer>();
 }
 
 void Terrain::Start()
@@ -34,18 +34,12 @@ void Terrain::Start()
     shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest",L"Terrain.hlsl",StaticProp,
     ShaderArg{{{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}}},info);
     shader->SetInjector({BufferType::TerrainDetailsParam});
-    material = make_shared<Material>();
-
-
-    auto meshRenderer = GetOwner()->AddComponent<MeshRenderer>();
-    //SetHeightMap(L"../Resources/Textures/HeightMap/Terrain_Height.raw",L"../Resources/Textures/HeightMap/Terrain_Height.png",vec3(10.0f, 10, 10.0f));
-    material = make_shared<Material>();
-    //material->SetHandle("g_tex_0",ResourceManager::main->Load<Texture>(L"HeightMap",L"Textures/HeightMap/terrainAlbedo.png")->GetSRVCpuHandle());
-    material->SetPropertyVector("fieldSize", Vector4(_fieldSize));
-    material->SetShader(shader);
-    material->SetPass(RENDER_PASS::Forward);
-
-    meshRenderer->AddMaterials({material});
+    
+    _material->SetPropertyVector("fieldSize",Vector4(_fieldSize));
+    _material->SetShader(shader);
+    _material->SetPass(RENDER_PASS::Forward);
+    auto meshRenderer = GetOwner()->GetComponent<MeshRenderer>();
+    meshRenderer->AddMaterials({_material});
 
 	if(auto renderer = GetOwner()->GetRenderer())
 	{
@@ -193,7 +187,7 @@ float Terrain::GetWorldHeight(const Vector3& worldPosition)
     Vector3 localPosition;
     Vector3::Transform(worldPosition, invMatrix,localPosition);
     float tempX = localPosition.x;
-    float tempZ = localPosition.y;
+    float tempZ = localPosition.z;
     float finalH = GetHeight(Vector2((tempX / _fieldSize.x) * _heightRawSize.x,(tempZ / _fieldSize.z) * _heightRawSize.y));
     
     return matrix.Translation().y + finalH;

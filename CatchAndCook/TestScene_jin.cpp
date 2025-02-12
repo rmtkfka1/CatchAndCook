@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "TestScene_jin.h"
 #include "MeshRenderer.h"
+#include "testComponent.h"
 #include "Transform.h"
 
 
@@ -35,6 +36,38 @@ void TestScene_jin::Init()
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
 	}
 
+
+	{
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"test",L"test.hlsl",StaticProp,
+			ShaderArg{},info);
+
+		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start",L"Textures/start.jpg");
+		shared_ptr<Material> material = make_shared<Material>();
+
+		shared_ptr<GameObject> root = CreateGameObject(L"root_test");
+
+		//root->GetComponent<Transform>()->_useTerrain=true;
+
+		auto meshRenderer = root->AddComponent<MeshRenderer>();
+		meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal"));
+
+		root->_transform->SetLocalScale(vec3(1,1,1));
+		//root->AddComponent<WaterHeight>()->SetOffset(10.0f);
+		root->AddComponent<testComponent>();
+
+		material = make_shared<Material>();
+		material->SetShader(shader);
+		material->SetPass(RENDER_PASS::Forward);
+		material->SetHandle("g_tex_0",texture->GetSRVCpuHandle());
+
+		meshRenderer->AddMaterials({material});
+		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(10.0f));
+
+	}
 
 	//ResourceManager::main->Load<Model>(L"kind", L"../Resources/Models/Kindred/kindred_unity.fbx", VertexType::Vertex_Skinned);
 	//ResourceManager::main->Load<Model>(L"kind",L"../Resources/Models/testB.fbx",VertexType::Vertex_Skinned);
