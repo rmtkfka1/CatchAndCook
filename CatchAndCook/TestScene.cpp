@@ -134,7 +134,7 @@ void TestScene::Init()
 		meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal"));
 
 		root->_transform->SetLocalScale(vec3(1,1,1));
-		//root->AddComponent<WaterHeight>()->SetOffset(10.0f);
+	/*	root->AddComponent<WaterHeight>()->SetOffset(6.0f);*/
 		root->AddComponent<testComponent>();
 	
 		material = make_shared<Material>();
