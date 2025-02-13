@@ -2,7 +2,6 @@
 #include "Transform_b1.hlsl"
 #include "Camera_b2.hlsl"
 
-
 cbuffer DefaultMaterialParam : register(b7)
 {
 	float4 color;
@@ -24,6 +23,8 @@ struct VS_OUT
 };
 
 Texture2D _BaseMap : register(t0);
+SamplerState g_sam_0 : register(s0);
+SamplerState g_sam_1 : register(s1);
 
 VS_OUT VS_Main(VS_IN input)
 {
@@ -39,5 +40,5 @@ VS_OUT VS_Main(VS_IN input)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    return _BaseMap.Sample(sampler_lerp, input.uv) * color;
+    return _BaseMap.Sample(g_sam_0, input.uv) * color;
 }

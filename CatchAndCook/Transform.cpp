@@ -109,10 +109,11 @@ bool Transform::IsExecuteAble()
 
 void Transform::PushData()
 {
-    Matrix matrix;
-    GetLocalToWorldMatrix(matrix);
+    TransformParam transParam;
+    GetLocalToWorldMatrix(transParam.localToWorld);
+    transParam.worldPos = transParam.localToWorld.Translation();
     _cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::TransformParam)->Alloc(1);
-    memcpy(_cbufferContainer->ptr, (void*)&matrix, sizeof(Matrix));
+    memcpy(_cbufferContainer->ptr, (void*)&transParam, sizeof(TransformParam));
 }
 
 void Transform::SetData(Material* material)

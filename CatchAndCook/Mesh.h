@@ -22,7 +22,7 @@ public:
 		CreateVertxBuffer(vec);
 	}
 
-	void Redner();
+	void Redner(int instanceCount = 1);
 
 private:
 

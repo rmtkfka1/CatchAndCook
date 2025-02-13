@@ -1,10 +1,11 @@
-#include "GLOBAL.hlsl"
-#include  "Light.hlsl"
+#include "Global_b0.hlsl"
+#include "Transform_b1.hlsl"
+#include "Camera_b2.hlsl"
+
+#include  "Light_b3.hlsl"
 
 Texture2D g_tex_0 : register(t0);
 Texture2D g_tex_1 : register(t1);
-SamplerState g_sam_0 : register(s0);
-SamplerState g_sam_1 : register(s1);
 
 #define G_MaxTess 4
 #define G_MinTess 1
@@ -15,26 +16,6 @@ SamplerState g_sam_1 : register(s1);
 
 static float4 sea_color = float4(0.3f, 0.3f, 1.0f, 1.0f);
 
-cbuffer test : register(b1)
-{
-    row_major matrix WorldMat;
-}
-
-cbuffer cameraParams : register(b2)
-{
-    row_major Matrix ViewMatrix;
-    row_major Matrix ProjectionMatrix;
-    row_major Matrix VPMatrix;
-    row_major Matrix InvertViewMatrix;
-    row_major Matrix InvertProjectionMatrix;
-    row_major Matrix InvertVPMatrix;
-
-    float4 g_cameraPos;
-    float4 g_cameraLook;
-    float4 g_cameraUp;
-    float4 g_cameraFrustumData;
-    float4 g_cameraScreenData;
-};
 
 struct VS_IN
 {
@@ -121,11 +102,11 @@ VS_OUT VS_Main(VS_IN input)
     VS_OUT output = (VS_OUT) 0;
  
     // 월드, 뷰, 프로젝션 변환
-    float4 worldPos = mul(float4(input.pos.xyz, 1.0f), WorldMat);
+    float4 worldPos = mul(float4(input.pos.xyz, 1.0f), LocalToWorldMatrix);
     output.pos = worldPos;
     output.uv = input.uv;
 
-    output.normal = mul(float4(input.normal, 0.0f), WorldMat);
+    output.normal = mul(float4(input.normal, 0.0f), LocalToWorldMatrix);
     
     return output;
 }
@@ -138,7 +119,7 @@ struct PatchConstOutput
 
 float CalcTessFactor(float3 p)
 {
-    float d = distance(p, g_cameraPos.xyz);
+    float d = distance(p, cameraPos.xyz);
     float s = smoothstep(DIST_MIN, DIST_MAX, d);
     float tess = exp2(lerp(G_MaxTess, G_MinTess, s));
     
@@ -237,6 +218,6 @@ float4 PS_Main(DS_OUT input) : SV_Target
         }
     }
     
-    return float4(color, 1.0f) * g_tex_0.Sample(g_sam_0, input.uv);
+    return float4(color, 1.0f) * g_tex_0.Sample(sampler_lerp, input.uv);
   
 }

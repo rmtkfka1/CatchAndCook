@@ -15,7 +15,7 @@ void BufferManager::Init()
 	_textureBufferPool->Init(2000, 5, 5);
 
 	CreateBufferPool(BufferType::GlobalParam, sizeof(GlobalParam), 1);
-	CreateBufferPool(BufferType::TransformParam, sizeof(Matrix), 20480);
+	CreateBufferPool(BufferType::TransformParam, sizeof(TransformParam), 20480);
 	CreateBufferPool(BufferType::MateriaParam, sizeof(MaterialParams), 20000);
 	CreateBufferPool(BufferType::MateriaSubParam, sizeof(TestSubMaterialParam),20000);
 	CreateBufferPool(BufferType::CameraParam, sizeof(CameraParams), 10);
@@ -25,7 +25,7 @@ void BufferManager::Init()
 
 	CreateBufferPool(BufferType::BoneParam, sizeof(BoneParam), 256);
 
-	CreateInstanceBufferPool(BufferType::TransformInstanceParam,sizeof(Matrix),1000,1);
+	CreateInstanceBufferPool(BufferType::TransformInstanceParam,sizeof(TransformParam),1000,1);
 	CreateInstanceBufferPool(BufferType::GizmoInstanceParam,sizeof(Instance_Gizmo),10000,1);
 
 	{

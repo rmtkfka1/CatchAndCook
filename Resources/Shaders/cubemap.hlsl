@@ -1,3 +1,7 @@
+#include "Global_b0.hlsl"
+#include "Transform_b1.hlsl"
+#include "Camera_b2.hlsl"
+
 struct VS_IN
 {
     float3 localPos : POSITION;
@@ -9,36 +13,15 @@ struct VS_OUT
     float3 localPos : TEXCOORD;
 };
 
-cbuffer Transform : register(b1)
-{
-    row_major matrix WorldMat;
-}
-
-cbuffer cameraParams : register(b2)
-{
-    row_major Matrix ViewMatrix;
-    row_major Matrix ProjectionMatrix;
-    row_major Matrix VPMatrix;
-    row_major Matrix InvertViewMatrix;
-    row_major Matrix InvertProjectionMatrix;
-    row_major Matrix InvertVPMatrix;
-
-    float cameraPos;
-    float cameraUp;
-    float cameraFrustumData;
-    float cameraScreenData;
-};
-
 TextureCube g_tex_0 : register(t0);
-SamplerState g_sam_0 : register(s0);
 
 VS_OUT VS_Main(VS_IN input)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    // ·ÎÄÃ ÁÂÇ¥¸¦ ±×´ë·Î Àü´Ş
+    // ë¡œì»¬ ì¢Œí‘œë¥¼ ê·¸ëŒ€ë¡œ ì „ë‹¬
     output.localPos = input.localPos;
-    // TranslationÀº ÇÏÁö ¾Ê°í Rotation¸¸ Àû¿ëÇÑ´Ù
+    // Translationì€ í•˜ì§€ ì•Šê³  Rotationë§Œ ì ìš©í•œë‹¤
     float4 clipSpacePos = mul(float4(input.localPos, 0), VPMatrix);
     output.pos = clipSpacePos.xyww;
     
@@ -49,5 +32,5 @@ VS_OUT VS_Main(VS_IN input)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    return g_tex_0.Sample(g_sam_0, input.localPos);  
+    return g_tex_0.Sample(sampler_lerp, input.localPos);  
 }

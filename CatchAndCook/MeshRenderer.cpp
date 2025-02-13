@@ -101,7 +101,16 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh)
 	if (material != nullptr)
 		material->SetData();
 
-	mesh->Redner();
+	if(HasInstance())
+	{
+		Core::main->GetCmdList()->IASetVertexBuffers(1,1,&_instanceBuffer->_bufferView);
+		mesh->Redner(_instanceBuffer->writeOffset);
+	}
+	else
+	{
+		mesh->Redner();
+	}
+
 };
 
 void MeshRenderer::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
@@ -174,5 +183,11 @@ void MeshRenderer::AddSharedMaterials(const std::vector<std::shared_ptr<Material
 {
 	for (auto& ele : _materials)
 		this->_sharedMaterials.push_back(ele);
+}
+
+void MeshRenderer::SetInstance(InstanceBufferContainer* _instance)
+{
+	_instanceBuffer = _instance;
+	_hasInstance = _instanceBuffer != nullptr;
 }
 

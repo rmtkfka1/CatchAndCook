@@ -1,14 +1,7 @@
-#include "GLOBAL.hlsl"
-#include  "Light.hlsl"
-
-Texture2D heightMap : register(t0);
-
-SamplerState sample_lerp : register(s0);
-SamplerState sample_point : register(s1);
-SamplerState sample_aniso4 : register(s2);
-SamplerState sample_aniso8 : register(s3);
-SamplerState sample_aniso16 : register(s4);
-SamplerState sample_shadow : register(s5);
+#include "Global_b0.hlsl"
+#include "Transform_b1.hlsl"
+#include "Camera_b2.hlsl"
+#include  "Light_b3.hlsl"
 
 
 #define TessFactor 8
@@ -16,27 +9,6 @@ SamplerState sample_shadow : register(s5);
 #define DIST_MAX 1000.0f
 #define DIST_MIN 3.0f
 
-
-cbuffer test : register(b1)
-{
-    row_major matrix WorldMat;
-}
-
-cbuffer cameraParams : register(b2)
-{
-    row_major Matrix ViewMatrix;
-    row_major Matrix ProjectionMatrix;
-    row_major Matrix VPMatrix;
-    row_major Matrix InvertViewMatrix;
-    row_major Matrix InvertProjectionMatrix;
-    row_major Matrix InvertVPMatrix;
-
-    float4 cameraPos;
-    float4 cameraLook;
-    float4 cameraUp;
-    float4 cameraFrustumData;
-    float4 cameraScreenData;
-};
 
 cbuffer TerrainDetailsParam : register(b10)
 {
@@ -81,6 +53,8 @@ struct HS_OUT
     float2 uvTile : TEXCOORD1;
     float3 normal : NORMAL;
 };
+
+Texture2D heightMap : register(t0);
 
 Texture2D _detailMap0 :     register(t32);
 Texture2D _detailMap1 :     register(t33);
@@ -138,8 +112,8 @@ VS_OUT VS_Main(VS_IN input)
 {
     VS_OUT output = (VS_OUT) 0;
     
-    output.pos = mul(float4(input.pos, 1.0f), WorldMat);
-    output.normal = mul(float4(input.normal, 0.0f), WorldMat).xyz;
+    output.pos = mul(float4(input.pos, 1.0f), LocalToWorldMatrix);
+    output.normal = mul(float4(input.normal, 0.0f), LocalToWorldMatrix).xyz;
     output.uv = input.uv;
     output.uvTile = input.uv * fieldSize.xz;
     
@@ -216,7 +190,7 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 3> quad, PatchConstOutput patchConst, float3 
     float2 uvTile = quad[0].uvTile * location.x + quad[1].uvTile * location.y + quad[2].uvTile * location.z;
     float3 normal = quad[0].normal * location.x + quad[1].normal * location.y + quad[2].normal * location.z;
     
-    pos.y += heightMap.SampleLevel(sample_point, uv, 0).r * fieldSize.y;
+    pos.y += heightMap.SampleLevel(sampler_point, uv, 0).r * fieldSize.y;
     
     dout.uv = uv;
     dout.pos = mul(float4(pos, 1.0f), VPMatrix);
@@ -234,54 +208,54 @@ float4 PS_Main(DS_OUT input) : SV_Target
 
     if (blendCount <= 1)
     {
-		blend = _blendMap0.Sample(sample_lerp, input.uv);
+		blend = _blendMap0.Sample(sampler_lerp, input.uv);
         float2 tileUV0 = input.uvTile / tileST[0].xy + tileST[0].zw;
         float2 tileUV1 = input.uvTile / tileST[1].xy + tileST[1].zw;
     	float2 tileUV2 = input.uvTile / tileST[2].xy + tileST[2].zw;
     	float2 tileUV3 = input.uvTile / tileST[3].xy + tileST[3].zw;
-        float4 mask0 = (textureActive[0].g == 0) ? 1 : (_maskMap0.Sample(sample_lerp, tileUV0));
-    	float4 mask1 = (textureActive[1].g == 0) ? 1 : (_maskMap1.Sample(sample_lerp, tileUV1));
-    	float4 mask2 = (textureActive[2].g == 0) ? 1 : (_maskMap2.Sample(sample_lerp, tileUV2));
-    	float4 mask3 = (textureActive[3].g == 0) ? 1 : (_maskMap3.Sample(sample_lerp, tileUV3));
+        float4 mask0 = (textureActive[0].g == 0) ? 1 : (_maskMap0.Sample(sampler_lerp, tileUV0));
+    	float4 mask1 = (textureActive[1].g == 0) ? 1 : (_maskMap1.Sample(sampler_lerp, tileUV1));
+    	float4 mask2 = (textureActive[2].g == 0) ? 1 : (_maskMap2.Sample(sampler_lerp, tileUV2));
+    	float4 mask3 = (textureActive[3].g == 0) ? 1 : (_maskMap3.Sample(sampler_lerp, tileUV3));
 
-    	finalColor += _detailMap0.Sample(sample_lerp, tileUV0) * mask0.g * blend.x;
-        finalColor += _detailMap1.Sample(sample_lerp, tileUV1) * mask1.g * blend.y;
-        finalColor += _detailMap2.Sample(sample_lerp, tileUV2) * mask2.g * blend.z;
-        finalColor += _detailMap3.Sample(sample_lerp, tileUV3) * mask3.g * blend.w;
+    	finalColor += _detailMap0.Sample(sampler_lerp, tileUV0) * mask0.g * blend.x;
+        finalColor += _detailMap1.Sample(sampler_lerp, tileUV1) * mask1.g * blend.y;
+        finalColor += _detailMap2.Sample(sampler_lerp, tileUV2) * mask2.g * blend.z;
+        finalColor += _detailMap3.Sample(sampler_lerp, tileUV3) * mask3.g * blend.w;
     }
     if (blendCount <= 2)
     {
-        blend = _blendMap1.Sample(sample_lerp, input.uv);
+        blend = _blendMap1.Sample(sampler_lerp, input.uv);
         float2 tileUV0 = input.uvTile / tileST[4].xy + tileST[4].zw;
         float2 tileUV1 = input.uvTile / tileST[5].xy + tileST[5].zw;
     	float2 tileUV2 = input.uvTile / tileST[6].xy + tileST[6].zw;
     	float2 tileUV3 = input.uvTile / tileST[7].xy + tileST[7].zw;
-        float4 mask0 =(textureActive[4].g == 0) ? 1 :  (_maskMap4.Sample(sample_lerp, tileUV0));
-    	float4 mask1 =(textureActive[5].g == 0) ? 1 :  (_maskMap5.Sample(sample_lerp, tileUV1));
-    	float4 mask2 =(textureActive[6].g == 0) ? 1 : (_maskMap6.Sample(sample_lerp, tileUV2) );
-    	float4 mask3 =(textureActive[7].g == 0) ? 1 : (_maskMap7.Sample(sample_lerp, tileUV3) );
+        float4 mask0 =(textureActive[4].g == 0) ? 1 :  (_maskMap4.Sample(sampler_lerp, tileUV0));
+    	float4 mask1 =(textureActive[5].g == 0) ? 1 :  (_maskMap5.Sample(sampler_lerp, tileUV1));
+    	float4 mask2 =(textureActive[6].g == 0) ? 1 : (_maskMap6.Sample(sampler_lerp, tileUV2) );
+    	float4 mask3 =(textureActive[7].g == 0) ? 1 : (_maskMap7.Sample(sampler_lerp, tileUV3) );
 
-    	finalColor += _detailMap4.Sample(sample_lerp, tileUV0) * mask0.g * blend.x;
-        finalColor += _detailMap5.Sample(sample_lerp, tileUV1) * mask1.g * blend.y;
-        finalColor += _detailMap6.Sample(sample_lerp, tileUV2) * mask2.g * blend.z;
-        finalColor += _detailMap7.Sample(sample_lerp, tileUV3) * mask3.g * blend.w;
+    	finalColor += _detailMap4.Sample(sampler_lerp, tileUV0) * mask0.g * blend.x;
+        finalColor += _detailMap5.Sample(sampler_lerp, tileUV1) * mask1.g * blend.y;
+        finalColor += _detailMap6.Sample(sampler_lerp, tileUV2) * mask2.g * blend.z;
+        finalColor += _detailMap7.Sample(sampler_lerp, tileUV3) * mask3.g * blend.w;
     }
     if (blendCount <= 3)
     {
-        blend = _blendMap2.Sample(sample_lerp, input.uv);
+        blend = _blendMap2.Sample(sampler_lerp, input.uv);
         float2 tileUV0 = input.uvTile / tileST[8].xy + tileST[8].zw;
         float2 tileUV1 = input.uvTile / tileST[9].xy + tileST[9].zw;
     	float2 tileUV2 = input.uvTile / tileST[10].xy + tileST[10].zw;
     	float2 tileUV3 = input.uvTile / tileST[11].xy + tileST[11].zw;
-        float4 mask0 = (textureActive[8].g == 0) ? 1 : _maskMap8.Sample(sample_lerp, tileUV0);
-    	float4 mask1 = (textureActive[9].g == 0) ? 1 : _maskMap9.Sample(sample_lerp, tileUV1);
-    	float4 mask2 = (textureActive[10].g == 0) ? 1 :_maskMap10.Sample(sample_lerp, tileUV2);
-    	float4 mask3 = (textureActive[11].g == 0) ? 1 :_maskMap11.Sample(sample_lerp, tileUV3);
+        float4 mask0 = (textureActive[8].g == 0) ? 1 : _maskMap8.Sample(sampler_lerp, tileUV0);
+    	float4 mask1 = (textureActive[9].g == 0) ? 1 : _maskMap9.Sample(sampler_lerp, tileUV1);
+    	float4 mask2 = (textureActive[10].g == 0) ? 1 :_maskMap10.Sample(sampler_lerp, tileUV2);
+    	float4 mask3 = (textureActive[11].g == 0) ? 1 :_maskMap11.Sample(sampler_lerp, tileUV3);
 
-    	finalColor += _detailMap8.Sample(sample_lerp, tileUV0) * mask0.g * blend.x;
-        finalColor += _detailMap9.Sample(sample_lerp, tileUV1) * mask1.g * blend.y;
-        finalColor += _detailMap10.Sample(sample_lerp, tileUV2) * mask2.g * blend.z;
-        finalColor += _detailMap11.Sample(sample_lerp, tileUV3) * mask3.g * blend.w;
+    	finalColor += _detailMap8.Sample(sampler_lerp, tileUV0) * mask0.g * blend.x;
+        finalColor += _detailMap9.Sample(sampler_lerp, tileUV1) * mask1.g * blend.y;
+        finalColor += _detailMap10.Sample(sampler_lerp, tileUV2) * mask2.g * blend.z;
+        finalColor += _detailMap11.Sample(sampler_lerp, tileUV3) * mask3.g * blend.w;
     }
     //blend = _blendMap0.Sample(sample_lerp, input.uv);
     //finalColor = _detailMap0.Sample(sample_lerp, input.uvTile / tileST[0].xy + tileST[0].zw) * blend.x;//  / tileST[0].xy + tileST[0].zw

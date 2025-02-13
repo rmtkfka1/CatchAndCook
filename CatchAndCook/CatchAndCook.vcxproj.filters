@@ -50,6 +50,9 @@
     <Filter Include="999.pch\garbage">
       <UniqueIdentifier>{a46a5456-8b27-4435-a290-4c10da482d88}</UniqueIdentifier>
     </Filter>
+    <Filter Include="998.HLSL\Module">
+      <UniqueIdentifier>{cacc5c22-d724-4fa9-9e3e-cf72a8fc745f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -117,9 +120,6 @@
     </ClCompile>
     <ClCompile Include="ICBufferInjector.cpp">
       <Filter>997.Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="CbufferParam.cpp">
-      <Filter>999.pch</Filter>
     </ClCompile>
     <ClCompile Include="convert_assimp.cpp">
       <Filter>999.pch\extern</Filter>
@@ -238,6 +238,9 @@
     <ClCompile Include="ColliderManager.cpp">
       <Filter>07.Manager</Filter>
     </ClCompile>
+    <ClCompile Include="CbufferParam.cpp">
+      <Filter>07.Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -318,9 +321,6 @@
     </ClInclude>
     <ClInclude Include="ICBufferInjector.h">
       <Filter>997.Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="CbufferParam.h">
-      <Filter>999.pch</Filter>
     </ClInclude>
     <ClInclude Include="convert_assimp.h">
       <Filter>999.pch\extern</Filter>
@@ -448,6 +448,9 @@
     <ClInclude Include="ColliderManager.h">
       <Filter>07.Manager</Filter>
     </ClInclude>
+    <ClInclude Include="CbufferParam.h">
+      <Filter>07.Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -474,9 +477,6 @@
     <FxCompile Include="..\Resources\Shaders\cubemap.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\GLOBAL.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\TestForward.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
@@ -498,9 +498,6 @@
     <FxCompile Include="..\Resources\Shaders\color.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Light.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Terrain.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
@@ -509,6 +506,24 @@
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\TestForward_Skinned.hlsl">
       <Filter>998.HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Global_b0.hlsl">
+      <Filter>998.HLSL\Module</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Transform_b1.hlsl">
+      <Filter>998.HLSL\Module</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Tree.hlsl">
+      <Filter>998.HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Camera_b2.hlsl">
+      <Filter>998.HLSL\Module</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Skinned_b6.hlsl">
+      <Filter>998.HLSL\Module</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Light_b3.hlsl">
+      <Filter>998.HLSL\Module</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

@@ -1,31 +1,11 @@
-#include "GLOBAL.hlsl"
-#include  "Light.hlsl"
+#include "Global_b0.hlsl"
+#include "Transform_b1.hlsl"
+#include "Camera_b2.hlsl"
+#include "Light_b3.hlsl"
 
-Texture2D g_tex_0 : register(t0);
-SamplerState g_sam_0 : register(s0);
 
 #define PI 3.14159f
 
-cbuffer test : register(b1)
-{
-    row_major matrix WorldMat;
-}
-
-cbuffer cameraParams : register(b2)
-{
-    row_major Matrix ViewMatrix;
-    row_major Matrix ProjectionMatrix;
-    row_major Matrix VPMatrix;
-    row_major Matrix InvertViewMatrix;
-    row_major Matrix InvertProjectionMatrix;
-    row_major Matrix InvertVPMatrix;
-
-    float4 cameraPos;
-    float4 cameraLook;
-    float4 cameraUp;
-    float4 cameraFrustumData;
-    float4 cameraScreenData;
-};
 
 cbuffer popo : register(b7)
 {
@@ -47,6 +27,8 @@ struct VS_OUT
     float2 uv : TEXCOORD;
     float3 worldNormal : NORMAL;
 };
+
+Texture2D g_tex_0 : register(t0);
 
 VS_IN WaveGeneration(VS_IN input)
 {
@@ -103,12 +85,12 @@ VS_OUT VS_Main(VS_IN input)
     VS_IN result = WaveGeneration(input);
  
     // 월드, 뷰, 프로젝션 변환
-    float4 worldPos = mul(float4(result.pos, 1.0f), WorldMat);
+    float4 worldPos = mul(float4(result.pos, 1.0f), LocalToWorldMatrix);
     
     output.worldPos = worldPos.xyz;
     output.pos = mul(worldPos, VPMatrix);
     output.uv = input.uv;
-    output.worldNormal = normalize(mul(float4(result.normal, 0.0f), WorldMat).xyz);
+    output.worldNormal = normalize(mul(float4(result.normal, 0.0f), LocalToWorldMatrix).xyz);
     return output;
 }
 

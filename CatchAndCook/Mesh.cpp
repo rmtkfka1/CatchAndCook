@@ -13,7 +13,7 @@ Mesh::~Mesh()
 
 }
 
-void Mesh::Redner()
+void Mesh::Redner(int instanceCount)
 {
 	auto& cmdList = Core::main->GetCmdList();
 	cmdList->IASetPrimitiveTopology(_topology);
@@ -28,18 +28,18 @@ void Mesh::Redner()
 			{
 				cmdList->IASetVertexBuffers(0, 1, &_vertexBufferView);
 				cmdList->IASetIndexBuffer(&_indexBufferView);
-				cmdList->DrawIndexedInstanced(_indexCount, 1, 0, 0, 0);
+				cmdList->DrawIndexedInstanced(_indexCount,instanceCount, 0, 0, 0);
 			}
 			else
 			{
 				cmdList->IASetVertexBuffers(0, 1, &_vertexBufferView);
-				cmdList->DrawInstanced(_vertexCount, 1, 0, 0);
+				cmdList->DrawInstanced(_vertexCount,instanceCount, 0, 0);
 			}
 		}
 	}
 	else
 	{
-		cmdList->DrawInstanced(_vertexCount, 1, 0, 0);
+		cmdList->DrawInstanced(_vertexCount,instanceCount, 0, 0);
 	}
 }
 
@@ -49,7 +49,7 @@ void Mesh::CreateIndexBuffer(vector<uint32>& vec)
 	_indexCount = static_cast<uint32>(vec.size());
 	uint32 bufferSize = _indexCount * sizeof(uint32);
 
-	//DEFAULT ¹öÆÛ »ý¼º
+	//DEFAULT ë²„í¼ ìƒì„±
 	ThrowIfFailed(Core::main->GetDevice()->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
 		D3D12_HEAP_FLAG_NONE,
@@ -60,7 +60,7 @@ void Mesh::CreateIndexBuffer(vector<uint32>& vec)
 
 
 
-	//UPLOAD ¹öÆÛ »ý¼º
+	//UPLOAD ë²„í¼ ìƒì„±
 	ID3D12Resource* uploadBuffer = nullptr;
 
 	ThrowIfFailed(Core::main->GetDevice()->CreateCommittedResource(
@@ -79,7 +79,7 @@ void Mesh::CreateIndexBuffer(vector<uint32>& vec)
 	uploadBuffer->Unmap(0, nullptr);
 
 	auto& list  = Core::main->GetResCmdList();
-	//º¹»çÀÛ¾÷
+	//ë³µì‚¬ìž‘ì—…
 	list->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_IndexBuffer.Get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
 	list->CopyBufferRegion(_IndexBuffer.Get(), 0, uploadBuffer, 0, bufferSize);
 	list->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_IndexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER));
