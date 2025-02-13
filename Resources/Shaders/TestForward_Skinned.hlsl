@@ -23,10 +23,10 @@ struct VS_IN
 
 struct VS_OUT
 {
-    float4 positionOS : SV_Position;
-    float4 positionWS : SV_Position;
-    float3 normalOS : NORMAL;
-    float3 normalWS : NORMAL;
+    float4 positionCS : SV_Position;
+    float4 positionWS : PositionWS;
+    float3 normalOS : NormalOS;
+    float3 normalWS : NormalWS;
     float2 uv : TEXCOORD0;
 };
 
@@ -36,8 +36,8 @@ VS_OUT VS_Main(VS_IN input)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    output.positionOS = TransformLocalToWorld(float4(input.pos, 1.0f), input.boneIds, input.boneWs);
-    output.positionWS = TransformWorldToClip(output.positionOS);
+    output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f), input.boneIds, input.boneWs);
+    output.positionCS =  TransformWorldToClip(output.positionWS);
     output.normalOS = input.normal;
     output.normalWS = TransformNormalLocalToWorld(output.normalOS);
     output.uv = input.uv;
