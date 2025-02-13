@@ -11,17 +11,19 @@ cbuffer Transform : register(b1)
 	row_major matrix WorldToLocalMatrix;
     float3 worldPosition;
 }
-float3 NormalUnpack(float3 normalSample)
+float3 NormalUnpack(float3 normalSample, float power)
 {
 	if (dot(normalSample, normalSample) > 2.999)
 		return float3(0,0,1);
-	return normalSample * 2.0 - 1.0;
+	float3 norm = normalSample * 2.0 - 1.0;
+	norm.xy *= power;
+	return normalize(norm);
 }
 
-float4 TransformLocalToTangent(float3 localPos, float3 normalOS, float3 tangentOS)
+float4 TransformSpaceToTangent(float3 localPos, float3 normalS, float3 tangentS)
 {
-    float3 N = normalOS;
-    float3 T = normalize(tangentOS - dot(tangentOS, N) * N);
+    float3 N = normalS;
+    float3 T = normalize(tangentS - dot(tangentS, N) * N);
     float3 B = cross(T, N);
 
 	float4x4 localToTangent = float4x4(
@@ -33,11 +35,11 @@ float4 TransformLocalToTangent(float3 localPos, float3 normalOS, float3 tangentO
 	return mul(localPos, localToTangent);
 }
 
-float4 TransformTangentToLocal(float4 tangentPos, float3 normalOS, float3 tangentOS)
+float4 TransformTangentToSpace(float4 tangentPos, float3 normalS, float3 tangentS)
 {
-    // 정규화된 tangentOS 및 normal 계산
-    float3 N = normalOS;
-    float3 T = normalize(tangentOS - dot(tangentOS, N) * N);
+    // 정규화된 tangentS 및 normal 계산
+    float3 N = normalS;
+    float3 T = normalize(tangentS - dot(tangentS, N) * N);
     float3 B = cross(T, N);
 
     float4x4 tangentToLocal = float4x4(

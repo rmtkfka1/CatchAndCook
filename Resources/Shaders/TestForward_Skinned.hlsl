@@ -27,9 +27,11 @@ struct VS_OUT
     float4 positionCS : SV_Position;
     float4 positionWS : PositionWS;
     float3 normalOS : NormalOS;
-    float3 tangentOS : TangentOS;
     float3 normalWS : NormalWS;
+    float3 tangentOS : TangentOS;
+    float3 tangentWS : TangentWS;
     float2 uv : TEXCOORD0;
+    float3 test : Position0;
 };
 
 Texture2D _BaseMap : register(t0);
@@ -42,16 +44,17 @@ VS_OUT VS_Main(VS_IN input)
     output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f), input.boneIds, input.boneWs);
     output.positionCS =  TransformWorldToClip(output.positionWS);
     output.normalOS = input.normal;
-    output.normalWS = TransformNormalLocalToWorld(output.normalOS);
+    output.normalWS = TransformNormalLocalToWorld(output.normalOS, input.boneIds, input.boneWs);
     output.tangentOS = input.tangent;
-    output.uv = input.uv;
+    output.tangentWS = TransformNormalLocalToWorld(input.tangent, input.boneIds, input.boneWs);
 
+    output.uv = input.uv;
+    output.test = TransformWorldToLocal(float4(normalize(float3(0,1,-1)), 0)).xyz;
     return output;
 }
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    float3 normalMapOS = TransformTangentToLocal(float4(NormalUnpack(_BumpMap.Sample(sampler_lerp, input.uv)), 0), input.normalOS, input.tangentOS);
-    float3 normalMapWS = TransformNormalLocalToWorld(normalMapOS);
-	return _BaseMap.Sample(sampler_lerp, input.uv) * color * dot(normalMapWS, normalize(float3(0,1,-1)));
+    float3 normalMapwS = TransformTangentToSpace(float4(NormalUnpack(_BumpMap.Sample(sampler_lerp, input.uv), 0.2f), 0), input.normalWS, input.tangentWS);
+	return _BaseMap.Sample(sampler_lerp, input.uv) * color * dot(normalMapwS, normalize(float3(0,1,-1)));
 }
