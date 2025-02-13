@@ -31,7 +31,7 @@ void Terrain::Start()
     info.cullingType = CullingType::BACK;
     info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
-    shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest",L"Terrain.hlsl",StaticProp,
+    shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest",L"Terrain.hlsl", GeoMetryProp,
     ShaderArg{{{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}}},info);
     shader->SetInjector({BufferType::TerrainDetailsParam});
     

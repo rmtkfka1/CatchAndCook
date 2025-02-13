@@ -46,6 +46,14 @@ std::vector<VertexProp> StaticProp
     VertexProp::pos,
     VertexProp::uv0,
     VertexProp::normal,
+    VertexProp::tangent,
+    //VertexProp::uv1
+};
+std::vector<VertexProp> GeoMetryProp
+{
+    VertexProp::pos,
+    VertexProp::uv0,
+    VertexProp::normal
     //VertexProp::uv1
 };
 

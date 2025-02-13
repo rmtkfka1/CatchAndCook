@@ -21,6 +21,7 @@ extern size_t UAV_TABLE_REGISTER_COUNT;
 
 extern std::vector<VertexProp> SkinProp;
 extern std::vector<VertexProp> StaticProp;
+extern std::vector<VertexProp> GeoMetryProp;
 extern std::vector<VertexProp> ColorProp;
 extern std::vector<VertexProp> GizmoInstanceProp;
 

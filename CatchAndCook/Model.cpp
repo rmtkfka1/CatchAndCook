@@ -228,6 +228,8 @@ void Model::LoadVertex<Vertex_Static>(aiMesh* assimp_mesh, std::shared_ptr<Mesh>
 			vert.normal = convert_assimp::Format(assimp_mesh->mNormals[j]);
 		if (assimp_mesh->HasTextureCoords(0))
 			vert.uv = vec2(convert_assimp::Format(assimp_mesh->mTextureCoords[0][j]));
+		if(assimp_mesh->HasTangentsAndBitangents())
+			vert.tangent = convert_assimp::Format(assimp_mesh->mTangents[j]);
 		vertexs.push_back(vert);
 
 		Vector3::Min(min, vert.position, min);

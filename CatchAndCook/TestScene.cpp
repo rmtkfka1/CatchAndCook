@@ -23,7 +23,7 @@ void TestScene::Init()
 
 
 	//{
-	//	auto& a = ResourceManager::main->Load<Model>(L"kind",L"../Resources/Models/Kindred/kindred_unity.fbx",VertexType::Vertex_Static);
+	//	auto& a = ResourceManager::main->Load<Model>(L"kind",L"../Resources/Models/Kindred/kindred_unity.fbx",VertexType::Vertex_GeoMetry);
 	//	auto& object =a->CreateGameObject(GetCast<Scene>());
 	//	object->_transform->SetLocalPosition(vec3(0,500.0f,0));
 	//}
@@ -120,7 +120,7 @@ void TestScene::Init()
 		info._zTest = true;
 		info._stencilTest = false;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"test", L"test.hlsl", StaticProp,
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"test", L"test.hlsl", GeoMetryProp,
 			ShaderArg{}, info);
 
 		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
@@ -153,7 +153,7 @@ void TestScene::Init()
 		info._stencilTest = false;
 		info.cullingType = CullingType::NONE;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"cubemap", L"cubemap.hlsl", StaticProp,
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"cubemap", L"cubemap.hlsl",GeoMetryProp,
 			ShaderArg{}, info);
 
 		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"cubemap", L"Textures/cubemap/output.dds", TextureType::CubeMap);
@@ -181,7 +181,7 @@ void TestScene::Init()
 		//info.cullingType = CullingType::NONE;
 		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest",L"seatest.hlsl",StaticProp,
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest",L"seatest.hlsl",GeoMetryProp,
 			ShaderArg{{{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}}},info);
 
 		shared_ptr<Material> material = make_shared<Material>();

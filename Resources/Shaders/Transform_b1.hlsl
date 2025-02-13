@@ -13,6 +13,8 @@ cbuffer Transform : register(b1)
 }
 float3 NormalUnpack(float3 normalSample)
 {
+	if (dot(normalSample, normalSample) > 2.999)
+		return float3(0,0,1);
 	return normalSample * 2.0 - 1.0;
 }
 
@@ -20,13 +22,13 @@ float4 TransformLocalToTangent(float3 localPos, float3 normalOS, float3 tangentO
 {
     float3 N = normalOS;
     float3 T = normalize(tangentOS - dot(tangentOS, N) * N);
-    float3 B = cross(N, T);
+    float3 B = cross(T, N);
 
 	float4x4 localToTangent = float4x4(
-         float4(T, 0),
-         float4(B, 0),
-         float4(N, 0),
-         float4(0, 0, 0, 1)
+         float4(T.x, B.x, N.x, 0),
+         float4(T.y, B.y, N.y, 0),
+         float4(T.z, B.z, N.z, 0),
+         float4(0,   0,   0,   1)
     );
 	return mul(localPos, localToTangent);
 }
@@ -36,13 +38,13 @@ float4 TransformTangentToLocal(float4 tangentPos, float3 normalOS, float3 tangen
     // 정규화된 tangentOS 및 normal 계산
     float3 N = normalOS;
     float3 T = normalize(tangentOS - dot(tangentOS, N) * N);
-    float3 B = cross(N, T);
+    float3 B = cross(T, N);
 
     float4x4 tangentToLocal = float4x4(
-         float4(T.x, B.x, N.x, 0),
-         float4(T.y, B.y, N.y, 0),
-         float4(T.z, B.z, N.z, 0),
-         float4(0,   0,   0,   1)
+         float4(T, 0),
+         float4(B, 0),
+         float4(N, 0),
+         float4(0, 0, 0, 1)
     );
     
     return mul(tangentPos, tangentToLocal);
@@ -64,7 +66,7 @@ float4 TransformLocalToWorld(float4 localPos, float4 boneIds, float4 boneWs)
 float3 TransformNormalLocalToWorld(float3 normal)
 {
 	float4x4 worldIT = transpose(WorldToLocalMatrix);
-	return  normalize(mul(normal, (float3x3)worldIT));
+	return normalize(mul(normal, (float3x3)worldIT));
 }
 
 float3 TransformNormalLocalToWorld(float3 normal, float4 boneIds, float4 boneWs)
@@ -115,4 +117,3 @@ float4 TransformClipToView(float4 clipPos)
 }
 
 #endif
-//output.pos = mul(output.pos, VPMatrix);

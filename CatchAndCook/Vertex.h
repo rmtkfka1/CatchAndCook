@@ -518,12 +518,20 @@ struct Vertex_Skinned
     vec4 boneWeight = vec4(0, 0, 0, 0);
 };
 
-struct Vertex_Static
+struct Vertex_GeoMetry
 {
     vec3 position = vec3(0, 0, 0);
     vec2 uv;
     vec3 normal = vec3(0, 0, 1);
 };
+struct Vertex_Static
+{
+    vec3 position = vec3(0,0,0);
+    vec2 uv;
+    vec3 normal = vec3(0,0,1);
+    vec3 tangent = vec3(0,1,0);
+};
+
 
 struct Vertex_Color
 {

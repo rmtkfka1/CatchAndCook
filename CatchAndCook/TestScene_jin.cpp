@@ -16,7 +16,7 @@ void TestScene_jin::Init()
 		info._stencilTest = false;
 		info.cullingType = CullingType::NONE;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"cubemap",L"cubemap.hlsl",StaticProp,
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"cubemap",L"cubemap.hlsl",GeoMetryProp,
 			ShaderArg{},info);
 
 		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"cubemap",L"Textures/cubemap/output.dds",TextureType::CubeMap);
@@ -42,7 +42,7 @@ void TestScene_jin::Init()
 		info._zTest = true;
 		info._stencilTest = false;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"test",L"test.hlsl",StaticProp,
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"test",L"test.hlsl", GeoMetryProp,
 			ShaderArg{},info);
 
 		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start",L"Textures/start.jpg");

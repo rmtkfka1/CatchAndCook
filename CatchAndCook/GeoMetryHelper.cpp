@@ -16,7 +16,7 @@ shared_ptr<Mesh> GeoMetryHelper::LoadRectangleBox(const float scale)
     }
 
     // Vertex 및 Index 데이터 생성
-    vector<Vertex_Static> vertices;
+    vector<Vertex_GeoMetry> vertices;
     vertices.reserve(24); // 6면 x 4개 정점
 
     vector<uint32> indices;
@@ -27,38 +27,38 @@ shared_ptr<Mesh> GeoMetryHelper::LoadRectangleBox(const float scale)
     float h2 = scale;
     float d2 = scale;
 
-    vector<Vertex_Static> vec(24);
+    vector<Vertex_GeoMetry> vec(24);
 
     // 앞면
-    vec[0] = Vertex_Static(vec3(-w2, -h2, -d2), vec2(0.0f, 1.0f), vec3(0.0f, 0.0f, -1.0f));
-    vec[1] = Vertex_Static(vec3(-w2, +h2, -d2), vec2(0.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f));
-    vec[2] = Vertex_Static(vec3(+w2, +h2, -d2), vec2(1.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f));
-    vec[3] = Vertex_Static(vec3(+w2, -h2, -d2), vec2(1.0f, 1.0f), vec3(0.0f, 0.0f, -1.0f));
+    vec[0] = Vertex_GeoMetry(vec3(-w2, -h2, -d2), vec2(0.0f, 1.0f), vec3(0.0f, 0.0f, -1.0f));
+    vec[1] = Vertex_GeoMetry(vec3(-w2, +h2, -d2), vec2(0.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f));
+    vec[2] = Vertex_GeoMetry(vec3(+w2, +h2, -d2), vec2(1.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f));
+    vec[3] = Vertex_GeoMetry(vec3(+w2, -h2, -d2), vec2(1.0f, 1.0f), vec3(0.0f, 0.0f, -1.0f));
     // 뒷면
-    vec[4] = Vertex_Static(vec3(-w2, -h2, +d2), vec2(1.0f, 1.0f), vec3(0.0f, 0.0f, 1.0f));
-    vec[5] = Vertex_Static(vec3(+w2, -h2, +d2), vec2(0.0f, 1.0f), vec3(0.0f, 0.0f, 1.0f));
-    vec[6] = Vertex_Static(vec3(+w2, +h2, +d2), vec2(0.0f, 0.0f), vec3(0.0f, 0.0f, 1.0f));
-    vec[7] = Vertex_Static(vec3(-w2, +h2, +d2), vec2(1.0f, 0.0f), vec3(0.0f, 0.0f, 1.0f));
+    vec[4] = Vertex_GeoMetry(vec3(-w2, -h2, +d2), vec2(1.0f, 1.0f), vec3(0.0f, 0.0f, 1.0f));
+    vec[5] = Vertex_GeoMetry(vec3(+w2, -h2, +d2), vec2(0.0f, 1.0f), vec3(0.0f, 0.0f, 1.0f));
+    vec[6] = Vertex_GeoMetry(vec3(+w2, +h2, +d2), vec2(0.0f, 0.0f), vec3(0.0f, 0.0f, 1.0f));
+    vec[7] = Vertex_GeoMetry(vec3(-w2, +h2, +d2), vec2(1.0f, 0.0f), vec3(0.0f, 0.0f, 1.0f));
     // 윗면
-    vec[8] = Vertex_Static(vec3(-w2, +h2, -d2), vec2(0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
-    vec[9] = Vertex_Static(vec3(-w2, +h2, +d2), vec2(0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
-    vec[10] = Vertex_Static(vec3(+w2, +h2, +d2), vec2(1.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
-    vec[11] = Vertex_Static(vec3(+w2, +h2, -d2), vec2(1.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
+    vec[8] = Vertex_GeoMetry(vec3(-w2, +h2, -d2), vec2(0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
+    vec[9] = Vertex_GeoMetry(vec3(-w2, +h2, +d2), vec2(0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+    vec[10] = Vertex_GeoMetry(vec3(+w2, +h2, +d2), vec2(1.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+    vec[11] = Vertex_GeoMetry(vec3(+w2, +h2, -d2), vec2(1.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
     // 아랫면
-    vec[12] = Vertex_Static(vec3(-w2, -h2, -d2), vec2(1.0f, 1.0f), vec3(0.0f, -1.0f, 0.0f));
-    vec[13] = Vertex_Static(vec3(+w2, -h2, -d2), vec2(0.0f, 1.0f), vec3(0.0f, -1.0f, 0.0f));
-    vec[14] = Vertex_Static(vec3(+w2, -h2, +d2), vec2(0.0f, 0.0f), vec3(0.0f, -1.0f, 0.0f));
-    vec[15] = Vertex_Static(vec3(-w2, -h2, +d2), vec2(1.0f, 0.0f), vec3(0.0f, -1.0f, 0.0f));
+    vec[12] = Vertex_GeoMetry(vec3(-w2, -h2, -d2), vec2(1.0f, 1.0f), vec3(0.0f, -1.0f, 0.0f));
+    vec[13] = Vertex_GeoMetry(vec3(+w2, -h2, -d2), vec2(0.0f, 1.0f), vec3(0.0f, -1.0f, 0.0f));
+    vec[14] = Vertex_GeoMetry(vec3(+w2, -h2, +d2), vec2(0.0f, 0.0f), vec3(0.0f, -1.0f, 0.0f));
+    vec[15] = Vertex_GeoMetry(vec3(-w2, -h2, +d2), vec2(1.0f, 0.0f), vec3(0.0f, -1.0f, 0.0f));
     // 왼쪽면
-    vec[16] = Vertex_Static(vec3(-w2, -h2, +d2), vec2(0.0f, 1.0f), vec3(-1.0f, 0.0f, 0.0f));
-    vec[17] = Vertex_Static(vec3(-w2, +h2, +d2), vec2(0.0f, 0.0f), vec3(-1.0f, 0.0f, 0.0f));
-    vec[18] = Vertex_Static(vec3(-w2, +h2, -d2), vec2(1.0f, 0.0f), vec3(-1.0f, 0.0f, 0.0f));
-    vec[19] = Vertex_Static(vec3(-w2, -h2, -d2), vec2(1.0f, 1.0f), vec3(-1.0f, 0.0f, 0.0f));
+    vec[16] = Vertex_GeoMetry(vec3(-w2, -h2, +d2), vec2(0.0f, 1.0f), vec3(-1.0f, 0.0f, 0.0f));
+    vec[17] = Vertex_GeoMetry(vec3(-w2, +h2, +d2), vec2(0.0f, 0.0f), vec3(-1.0f, 0.0f, 0.0f));
+    vec[18] = Vertex_GeoMetry(vec3(-w2, +h2, -d2), vec2(1.0f, 0.0f), vec3(-1.0f, 0.0f, 0.0f));
+    vec[19] = Vertex_GeoMetry(vec3(-w2, -h2, -d2), vec2(1.0f, 1.0f), vec3(-1.0f, 0.0f, 0.0f));
     // 오른쪽면
-    vec[20] = Vertex_Static(vec3(+w2, -h2, -d2), vec2(0.0f, 1.0f), vec3(1.0f, 0.0f, 0.0f));
-    vec[21] = Vertex_Static(vec3(+w2, +h2, -d2), vec2(0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
-    vec[22] = Vertex_Static(vec3(+w2, +h2, +d2), vec2(1.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
-    vec[23] = Vertex_Static(vec3(+w2, -h2, +d2), vec2(1.0f, 1.0f), vec3(1.0f, 0.0f, 0.0f));
+    vec[20] = Vertex_GeoMetry(vec3(+w2, -h2, -d2), vec2(0.0f, 1.0f), vec3(1.0f, 0.0f, 0.0f));
+    vec[21] = Vertex_GeoMetry(vec3(+w2, +h2, -d2), vec2(0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
+    vec[22] = Vertex_GeoMetry(vec3(+w2, +h2, +d2), vec2(1.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
+    vec[23] = Vertex_GeoMetry(vec3(+w2, -h2, +d2), vec2(1.0f, 1.0f), vec3(1.0f, 0.0f, 0.0f));
 
     vector<uint32> idx(36);
 
@@ -190,13 +190,13 @@ shared_ptr<Mesh> GeoMetryHelper::LoadRectangleMesh(const float scale)
         return mesh;
     }
 
-    vector<Vertex_Static> vec(4);
+    vector<Vertex_GeoMetry> vec(4);
 
     // 앞면
-    vec[0] = Vertex_Static(vec3(-scale, -scale, 0), vec2(0.0f, 1.0f), vec3(0.0f, 0.0f, -1.0f));
-    vec[1] = Vertex_Static(vec3(-scale, +scale, 0), vec2(0.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f));
-    vec[2] = Vertex_Static(vec3(+scale, +scale, 0), vec2(1.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f));
-    vec[3] = Vertex_Static(vec3(+scale, -scale, 0), vec2(1.0f, 1.0f), vec3(0.0f, 0.0f, -1.0f));
+    vec[0] = Vertex_GeoMetry(vec3(-scale, -scale, 0), vec2(0.0f, 1.0f), vec3(0.0f, 0.0f, -1.0f));
+    vec[1] = Vertex_GeoMetry(vec3(-scale, +scale, 0), vec2(0.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f));
+    vec[2] = Vertex_GeoMetry(vec3(+scale, +scale, 0), vec2(1.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f));
+    vec[3] = Vertex_GeoMetry(vec3(+scale, -scale, 0), vec2(1.0f, 1.0f), vec3(0.0f, 0.0f, -1.0f));
 
     vector<uint32> idx(6);
 
@@ -220,7 +220,7 @@ shared_ptr<Mesh> GeoMetryHelper::LoadGripMeshControlPoints(float width, float he
     const float dx = width / division_x;
     const float dz = height / division_z;
 
-    vector<Vertex_Static> vertices;
+    vector<Vertex_GeoMetry> vertices;
 
     vertices.reserve((division_x + 1) * (division_z + 1));
 
@@ -235,7 +235,7 @@ shared_ptr<Mesh> GeoMetryHelper::LoadGripMeshControlPoints(float width, float he
         //아랫줄
         for (int i = 0; i <= division_x; ++i)
         {
-            Vertex_Static v;
+            Vertex_GeoMetry v;
             //xz 평면에서 x 방향으로이동.
             v.position = startPoint;
             v.position.x += dx * i;
@@ -276,7 +276,7 @@ shared_ptr<Mesh> GeoMetryHelper::LoadGripMesh(float width, float height, int div
     const float dx = width / division_x;
     const float dz = height / division_z;
 
-    vector<Vertex_Static> vertices;
+    vector<Vertex_GeoMetry> vertices;
 
     vertices.reserve((division_x + 1) * (division_z + 1));
 
@@ -291,7 +291,7 @@ shared_ptr<Mesh> GeoMetryHelper::LoadGripMesh(float width, float height, int div
         //아랫줄
         for (int i = 0; i <= division_x; ++i)
         {
-            Vertex_Static v;
+            Vertex_GeoMetry v;
             //xz 평면에서 x 방향으로이동.
             v.position = startPoint;
             v.position.x += dx * i;
