@@ -10,9 +10,15 @@
 struct alignas(16) TransformParam
 {
 	Matrix localToWorld;
+	Matrix worldToLocal;
 	Vector3 worldPos; p1(0);
 };
 
+struct BoneParam
+{
+	Matrix boneMatrixs[256];
+	Matrix boneInvertMatrixs[256];
+};
 
 struct alignas(16) TestSubMaterialParam
 {

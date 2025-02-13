@@ -111,7 +111,8 @@ void Transform::PushData()
 {
     TransformParam transParam;
     GetLocalToWorldMatrix(transParam.localToWorld);
-    transParam.worldPos = transParam.localToWorld.Translation();
+    transParam.localToWorld.Invert(transParam.worldToLocal);
+	transParam.worldPos = transParam.localToWorld.Translation();
     _cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::TransformParam)->Alloc(1);
     memcpy(_cbufferContainer->ptr, (void*)&transParam, sizeof(TransformParam));
 }

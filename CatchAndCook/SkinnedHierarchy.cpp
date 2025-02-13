@@ -107,9 +107,11 @@ void SkinnedHierarchy::PushData()
 		_finalMatrixList[i] = _boneOffsetMatrixList[i];
 		if (auto current = _boneNodeList[i].lock()) {
 			_finalMatrixList[i] = _finalMatrixList[i] * current->_transform->_localToWorldMatrix;
+			_finalMatrixList[i].Invert(_finalInvertMatrixList[i]);
 		}
 	}
 	memcpy(_cbuffer->ptr, _finalMatrixList.data(), sizeof(Matrix) * _boneList.size());
+	memcpy(&(static_cast<BoneParam*>(_cbuffer->ptr)->boneInvertMatrixs), _finalInvertMatrixList.data(),sizeof(Matrix) * _boneList.size());
 }
 
 void SkinnedHierarchy::SetData(Material* material)

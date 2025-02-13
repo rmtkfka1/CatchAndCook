@@ -32,10 +32,8 @@ VS_OUT VS_Main(VS_IN input)
 {
     VS_OUT output = (VS_OUT) 0;
 
-
-    float4 localPos = float4(input.pos, 1.0f);
-    float4 worldPos = CalculateBone(localPos, input.boneIds, input.boneWs);
-    output.pos = mul(worldPos, VPMatrix);
+    output.pos = TransformLocalToWorld(float4(input.pos, 1.0f), input.boneIds, input.boneWs);
+    output.pos = TransformWorldToClip(output.pos);
 
     
     output.uv = input.uv;

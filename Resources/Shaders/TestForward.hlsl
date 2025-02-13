@@ -29,8 +29,8 @@ VS_OUT VS_Main(VS_IN input)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    output.pos = mul(float4(input.pos, 1.0f), LocalToWorldMatrix);
-    output.pos = mul(output.pos, VPMatrix);
+    output.pos = TransformLocalToWorld(float4(input.pos, 1.0f));
+    output.pos = TransformWorldToClip(output.pos);
 
     output.uv = input.uv * _baseMapST.xy + _baseMapST.zw;
 

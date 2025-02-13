@@ -27,7 +27,9 @@ public:
 	std::vector<std::shared_ptr<Bone>> _boneList;
 	std::array<Matrix, 256> _boneOffsetMatrixList; 
 	std::array<std::weak_ptr<GameObject>, 256> _boneNodeList;
+
 	std::array<Matrix, 256> _finalMatrixList;
+	std::array<Matrix,256> _finalInvertMatrixList;
 
 	CBufferContainer* _cbuffer;
 };
