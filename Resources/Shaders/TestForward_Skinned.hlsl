@@ -1,7 +1,9 @@
+
+#define SKINNED
 #include "Global_b0.hlsl"
 #include "Transform_b1.hlsl"
 #include "Camera_b2.hlsl"
-#include "Skinned_b6.hlsl"
+#include "Skinned_b5.hlsl"
 
 
 cbuffer DefaultMaterialParam : register(b7)
@@ -21,9 +23,11 @@ struct VS_IN
 
 struct VS_OUT
 {
-    float4 pos : SV_Position;
+    float4 positionOS : SV_Position;
+    float4 positionWS : SV_Position;
+    float3 normalOS : NORMAL;
+    float3 normalWS : NORMAL;
     float2 uv : TEXCOORD0;
-    float3 normal : NORMAL;
 };
 
 Texture2D _BaseMap : register(t0);
@@ -32,10 +36,10 @@ VS_OUT VS_Main(VS_IN input)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    output.pos = TransformLocalToWorld(float4(input.pos, 1.0f), input.boneIds, input.boneWs);
-    output.pos = TransformWorldToClip(output.pos);
-
-    
+    output.positionOS = TransformLocalToWorld(float4(input.pos, 1.0f), input.boneIds, input.boneWs);
+    output.positionWS = TransformWorldToClip(output.positionOS);
+    output.normalOS = input.normal;
+    output.normalWS = TransformNormalLocalToWorld(output.normalOS);
     output.uv = input.uv;
 
     return output;

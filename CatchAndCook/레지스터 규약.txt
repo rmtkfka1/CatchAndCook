@@ -34,3 +34,5 @@ b6 =
 b7 = 
 
 
+
+#define SKINNED // 스킨드 활성화

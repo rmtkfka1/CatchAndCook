@@ -2,16 +2,50 @@
 #ifndef INCLUDE_TRANSFORM
 #define INCLUDE_TRANSFORM
 
-#define SKINNED
-
 #include "Camera_b2.hlsl"
-#include "Skinned_b6.hlsl"
+#include "Skinned_b5.hlsl"
 
 cbuffer Transform : register(b1)
 {
     row_major matrix LocalToWorldMatrix;
 	row_major matrix WorldToLocalMatrix;
     float3 worldPosition;
+}
+float3 NormalUnpack(float3 normalSample)
+{
+	return normalSample * 2.0 - 1.0;
+}
+
+float4 TransformLocalToTangent(float3 localPos, float3 normalOS, float3 tangentOS)
+{
+    float3 N = normalOS;
+    float3 T = normalize(tangentOS - dot(tangentOS, N) * N);
+    float3 B = cross(N, T);
+
+	float4x4 localToTangent = float4x4(
+         float4(T, 0),
+         float4(B, 0),
+         float4(N, 0),
+         float4(0, 0, 0, 1)
+    );
+	return mul(localPos, localToTangent);
+}
+
+float4 TransformTangentToLocal(float4 tangentPos, float3 normalOS, float3 tangentOS)
+{
+    // 정규화된 tangentOS 및 normal 계산
+    float3 N = normalOS;
+    float3 T = normalize(tangentOS - dot(tangentOS, N) * N);
+    float3 B = cross(N, T);
+
+    float4x4 tangentToLocal = float4x4(
+         float4(T.x, B.x, N.x, 0),
+         float4(T.y, B.y, N.y, 0),
+         float4(T.z, B.z, N.z, 0),
+         float4(0,   0,   0,   1)
+    );
+    
+    return mul(tangentPos, tangentToLocal);
 }
 
 float4 TransformLocalToWorld(float4 localPos)
@@ -25,6 +59,20 @@ float4 TransformLocalToWorld(float4 localPos, float4 boneIds, float4 boneWs)
 	return CalculateBone(localPos, boneIds, boneWs);
 	#endif
 	return TransformLocalToWorld(localPos);
+}
+
+float3 TransformNormalLocalToWorld(float3 normal)
+{
+	float4x4 worldIT = transpose(WorldToLocalMatrix);
+	return  normalize(mul(normal, (float3x3)worldIT));
+}
+
+float3 TransformNormalLocalToWorld(float3 normal, float4 boneIds, float4 boneWs)
+{
+	#ifdef SKINNED
+	return CalculateBoneNormal(normal, boneIds, boneWs);
+	#endif
+	return TransformNormalLocalToWorld(normal);
 }
 
 
