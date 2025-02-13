@@ -1,7 +1,7 @@
 #include "Global_b0.hlsl"
 #include "Transform_b1.hlsl"
 #include "Camera_b2.hlsl"
-#include  "Light_b3.hlsl"
+#include "Light_b3.hlsl"
 
 
 #define TessFactor 8
@@ -15,9 +15,9 @@ cbuffer TerrainDetailsParam : register(b10)
 	float3 fieldSize;
     float padding0;
 	int detailsCount;
-    float2 padding2;
+    float3 padding2;
 	int blendCount;
-    float2 padding3;
+    float3 padding3;
 	float4 tileST[12];
     float4  textureActive[12];
 	//Vector4 color;
@@ -206,7 +206,7 @@ float4 PS_Main(DS_OUT input) : SV_Target
     float4 finalColor = float4(0,0,0,0);
 	float4 blend;
 
-    if (blendCount <= 1)
+    if (blendCount >= 1)
     {
 		blend = _blendMap0.Sample(sampler_lerp, input.uv);
         float2 tileUV0 = input.uvTile / tileST[0].xy + tileST[0].zw;
@@ -218,12 +218,12 @@ float4 PS_Main(DS_OUT input) : SV_Target
     	float4 mask2 = (textureActive[2].g == 0) ? 1 : (_maskMap2.Sample(sampler_lerp, tileUV2));
     	float4 mask3 = (textureActive[3].g == 0) ? 1 : (_maskMap3.Sample(sampler_lerp, tileUV3));
 
-    	finalColor += _detailMap0.Sample(sampler_lerp, tileUV0) * mask0.g * blend.x;
+    	finalColor = _detailMap0.Sample(sampler_lerp, tileUV0) * mask0.g * blend.x;
         finalColor += _detailMap1.Sample(sampler_lerp, tileUV1) * mask1.g * blend.y;
         finalColor += _detailMap2.Sample(sampler_lerp, tileUV2) * mask2.g * blend.z;
         finalColor += _detailMap3.Sample(sampler_lerp, tileUV3) * mask3.g * blend.w;
     }
-    if (blendCount <= 2)
+    if (blendCount >= 2)
     {
         blend = _blendMap1.Sample(sampler_lerp, input.uv);
         float2 tileUV0 = input.uvTile / tileST[4].xy + tileST[4].zw;
@@ -240,24 +240,28 @@ float4 PS_Main(DS_OUT input) : SV_Target
         finalColor += _detailMap6.Sample(sampler_lerp, tileUV2) * mask2.g * blend.z;
         finalColor += _detailMap7.Sample(sampler_lerp, tileUV3) * mask3.g * blend.w;
     }
-    if (blendCount <= 3)
+    if (blendCount >= 3)
     {
         blend = _blendMap2.Sample(sampler_lerp, input.uv);
         float2 tileUV0 = input.uvTile / tileST[8].xy + tileST[8].zw;
         float2 tileUV1 = input.uvTile / tileST[9].xy + tileST[9].zw;
     	float2 tileUV2 = input.uvTile / tileST[10].xy + tileST[10].zw;
     	float2 tileUV3 = input.uvTile / tileST[11].xy + tileST[11].zw;
-        float4 mask0 = (textureActive[8].g == 0) ? 1 : _maskMap8.Sample(sampler_lerp, tileUV0);
-    	float4 mask1 = (textureActive[9].g == 0) ? 1 : _maskMap9.Sample(sampler_lerp, tileUV1);
-    	float4 mask2 = (textureActive[10].g == 0) ? 1 :_maskMap10.Sample(sampler_lerp, tileUV2);
-    	float4 mask3 = (textureActive[11].g == 0) ? 1 :_maskMap11.Sample(sampler_lerp, tileUV3);
+        float4 mask0 = (textureActive[8 ].g == 0) ? 1 : _maskMap8.Sample (sampler_lerp, tileUV0);
+    	float4 mask1 = (textureActive[9 ].g == 0) ? 1 : _maskMap9.Sample (sampler_lerp, tileUV1);
+    	float4 mask2 = (textureActive[10].g == 0) ? 1 :_maskMap10.Sample (sampler_lerp, tileUV2);
+    	float4 mask3 = (textureActive[11].g == 0) ? 1 :_maskMap11.Sample (sampler_lerp, tileUV3);
 
-    	finalColor += _detailMap8.Sample(sampler_lerp, tileUV0) * mask0.g * blend.x;
-        finalColor += _detailMap9.Sample(sampler_lerp, tileUV1) * mask1.g * blend.y;
-        finalColor += _detailMap10.Sample(sampler_lerp, tileUV2) * mask2.g * blend.z;
-        finalColor += _detailMap11.Sample(sampler_lerp, tileUV3) * mask3.g * blend.w;
+    	finalColor += _detailMap8.Sample    (sampler_lerp, tileUV0) * mask0.g * blend.x;
+        finalColor += _detailMap9.Sample    (sampler_lerp, tileUV1) * mask1.g * blend.y;
+        finalColor += _detailMap10.Sample   (sampler_lerp, tileUV2) * mask2.g * blend.z;
+        finalColor += _detailMap11.Sample   (sampler_lerp, tileUV3) * mask3.g * blend.w;
     }
     //blend = _blendMap0.Sample(sample_lerp, input.uv);
     //finalColor = _detailMap0.Sample(sample_lerp, input.uvTile / tileST[0].xy + tileST[0].zw) * blend.x;//  / tileST[0].xy + tileST[0].zw
+
+    //float2 tileUV0 = input.uvTile / tileST[0].xy + tileST[0].zw;
+    //float4 mask0 = (textureActive[0].g == 0) ? 1 : (_maskMap0.Sample(sampler_lerp, tileUV0));
+    //finalColor = _detailMap0.Sample(sampler_lerp, tileUV0) * mask0.g * _blendMap0.Sample(sampler_lerp, input.uv).x;
     return finalColor;
 }
