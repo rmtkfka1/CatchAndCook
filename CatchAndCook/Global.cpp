@@ -72,3 +72,8 @@ std::vector<VertexProp> GizmoInstanceProp
     VertexProp::vec3_1,
     VertexProp::float_0
 };
+
+std::vector<VertexProp> TransformInstanceProp
+{
+    VertexProp::matrix_0
+};

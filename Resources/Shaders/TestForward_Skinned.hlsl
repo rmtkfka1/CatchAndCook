@@ -1,5 +1,4 @@
 
-#define SKINNED
 #include "Global_b0.hlsl"
 #include "Transform_b1.hlsl"
 #include "Camera_b2.hlsl"
@@ -18,8 +17,11 @@ struct VS_IN
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
     float2 uv : TEXCOORD0;
+
+    #ifdef SKINNED
     float4 boneIds : BONEIDs;
     float4 boneWs : BONEWs;
+	#endif
 };
 
 struct VS_OUT
@@ -41,12 +43,19 @@ VS_OUT VS_Main(VS_IN input)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f), input.boneIds, input.boneWs);
+	float4 boneIds = 0;
+    float4 boneWs = 0;
+    #ifdef SKINNED
+    boneIds = input.boneIds;
+    boneWs = input.boneWs;
+    #endif
+
+    output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f), boneIds, boneWs);
     output.positionCS =  TransformWorldToClip(output.positionWS);
     output.normalOS = input.normal;
-    output.normalWS = TransformNormalLocalToWorld(output.normalOS, input.boneIds, input.boneWs);
+    output.normalWS = TransformNormalLocalToWorld(output.normalOS, boneIds, boneWs);
     output.tangentOS = input.tangent;
-    output.tangentWS = TransformNormalLocalToWorld(input.tangent, input.boneIds, input.boneWs);
+    output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs);
 
     output.uv = input.uv;
     output.test = TransformWorldToLocal(float4(normalize(float3(0,1,-1)), 0)).xyz;
