@@ -2,5 +2,6 @@
 enum class SceneType
 {
 	TestScene,
-	TestScene2
+	TestScene2,
+	TestSceneMapEditor
 };

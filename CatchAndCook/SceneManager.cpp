@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "TestScene.h"
 #include "TestScene_jin.h"
+#include "TestScene_MapEditor.h"
 
 std::unique_ptr<SceneManager> SceneManager::main = nullptr;
 
@@ -19,6 +20,9 @@ shared_ptr<Scene> SceneManager::AddScene(SceneType type, bool initExecute)
 	case::SceneType::TestScene2:
 		scene = make_shared<TestScene_jin>();
 		break;
+	case::SceneType::TestSceneMapEditor:
+		scene = make_shared<TestScene_MapEditor>();
+	break;
 	default:
 		break;
 	}

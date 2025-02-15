@@ -239,6 +239,7 @@
     </ClCompile>
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="TestScene_jin.cpp" />
+    <ClCompile Include="TestScene_MapEditor.cpp" />
     <ClCompile Include="TextManager.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Time.cpp" />
@@ -310,6 +311,7 @@
     <ClInclude Include="testComponent.h" />
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="TestScene_jin.h" />
+    <ClInclude Include="TestScene_MapEditor.h" />
     <ClInclude Include="TextManager.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Time.h" />
