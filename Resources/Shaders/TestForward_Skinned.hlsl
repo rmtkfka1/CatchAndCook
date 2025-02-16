@@ -1,5 +1,4 @@
 
-#define SKINNED
 #include "Global_b0.hlsl"
 #include "Transform_b1.hlsl"
 #include "Camera_b2.hlsl"

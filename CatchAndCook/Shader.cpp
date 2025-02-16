@@ -289,6 +289,13 @@ void Shader::InitPipeLine(const std::vector<VertexProp>& vertexProp)
     ThrowIfFailed(device->CreateGraphicsPipelineState(&_pipelineDesc, IID_PPV_ARGS(&_pipelineState)));
 }
 
+void Shader::SetMacro(const std::vector<D3D_SHADER_MACRO>& macros)
+{
+    _macros = macros;
+    if(_macros.size() == 0 || _macros[_macros.size() - 1].Name != nullptr)
+        _macros.push_back(D3D_SHADER_MACRO(nullptr, nullptr));
+}
+
 void Shader::SetInjector(const std::vector<BufferType>& injectors)
 {
     _cbufferInjectorTypes = injectors;
@@ -601,7 +608,7 @@ std::shared_ptr<ShaderCode> Shader::LoadBlob(std::wstring path, std::string endP
 
         ComPtr<ID3DBlob> _shaderBlob;
 
-        HRESULT resurt = ::D3DCompileFromFile(shaderPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+        HRESULT resurt = ::D3DCompileFromFile(shaderPath.c_str(),_macros.data(), D3D_COMPILE_STANDARD_FILE_INCLUDE
             , functionName.c_str(), version.c_str(), compileFlag, 0,
             _shaderBlob.GetAddressOf(), shaderCode->_errorBlob.GetAddressOf());
 

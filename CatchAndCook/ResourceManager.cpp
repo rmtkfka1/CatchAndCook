@@ -55,8 +55,8 @@ void ResourceManager::CreateDefaultShader()
 		info._stencilTest = false;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"TestForward.hlsl", StaticProp, ShaderArg{}, info);
 		shader->SetInjector({BufferType::DefaultMaterialParam});
+		shader->Init(L"TestForward.hlsl", StaticProp, ShaderArg{}, info);
 		Add<Shader>(L"DefaultForward", shader);
 	}
 	{
@@ -66,8 +66,9 @@ void ResourceManager::CreateDefaultShader()
 		info._stencilTest = false;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"TestForward_Skinned.hlsl", SkinProp, ShaderArg{}, info);
 		shader->SetInjector({BufferType::DefaultMaterialParam});
+		shader->SetMacro({{"SKINNED",nullptr}});
+		shader->Init(L"TestForward_Skinned.hlsl", SkinProp, ShaderArg{}, info);
 		Add<Shader>(L"DefaultForward_Skinned", shader);
 	}
 

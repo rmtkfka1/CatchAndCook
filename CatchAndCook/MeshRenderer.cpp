@@ -60,7 +60,8 @@ void MeshRenderer::Destroy()
 {
 	Component::Destroy();
 
-
+	if(HasInstance())
+		_instanceBuffer->Free();
 }
 
 void MeshRenderer::RenderBegin()

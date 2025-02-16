@@ -192,13 +192,15 @@ public:
     ShaderProfileInfo _profileInfo;
     std::vector<BufferType> _cbufferInjectorTypes;
     std::vector<VertexProp> _instanceProp;
+    std::vector<D3D_SHADER_MACRO> _macros = {{nullptr,nullptr}};
 
 public:
     D3D12_GRAPHICS_PIPELINE_STATE_DESC _pipelineDesc = {};
     ComPtr<ID3D12PipelineState> _pipelineState;
 
     void InitPipeLine(const std::vector<VertexProp>& props);
-    void SetInjector(const std::vector<BufferType>& injectors);
+    void SetMacro(const std::vector<D3D_SHADER_MACRO>& macros);
+	void SetInjector(const std::vector<BufferType>& injectors);
     void SetInstanceProp(const std::vector<VertexProp>& props);
     void SetInfo(const ShaderInfo& info);
     void Profile();
