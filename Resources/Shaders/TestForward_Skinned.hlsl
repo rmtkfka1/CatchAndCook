@@ -18,8 +18,15 @@ struct VS_IN
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
     float2 uv : TEXCOORD0;
+    
+    #ifdef SKINNED
     float4 boneIds : BONEIDs;
     float4 boneWs : BONEWs;
+	#endif
+    #ifdef INSTANCED
+    MATRIX_DEFINE(instance_trs, 0);
+    MATRIX_DEFINE(instance_invert_trs, 1);
+	#endif
 };
 
 struct VS_OUT
@@ -41,12 +48,42 @@ VS_OUT VS_Main(VS_IN input)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f), input.boneIds, input.boneWs);
-    output.positionCS =  TransformWorldToClip(output.positionWS);
+    float4x4 l2wMatrix = LocalToWorldMatrix;
+    float4x4 w2lMatrix = WorldToLocalMatrix;
+    float4 boneIds = 0;
+    float4 boneWs = 0;
+
+    #ifdef INSTANCED
+		l2wMatrix = MATRIX(input.instance_trs);
+		w2lMatrix = MATRIX(input.instance_invert_trs);
+    #endif
+    #ifdef SKINNED
+	    boneIds = input.boneIds;
+	    boneWs = input.boneWs;
+    #endif
+
+
+
+
+
     output.normalOS = input.normal;
-    output.normalWS = TransformNormalLocalToWorld(output.normalOS, input.boneIds, input.boneWs);
     output.tangentOS = input.tangent;
-    output.tangentWS = TransformNormalLocalToWorld(input.tangent, input.boneIds, input.boneWs);
+
+	#ifdef INSTANCED
+		output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f),  boneIds, boneWs, l2wMatrix);
+    #else
+        output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f),  boneIds, boneWs);
+	#endif
+	output.positionCS =  TransformWorldToClip(output.positionWS);
+
+    #ifdef INSTANCED
+		output.normalWS = TransformNormalLocalToWorld(output.normalOS, boneIds, boneWs, w2lMatrix);
+		output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix);
+	#else
+        output.normalWS = TransformNormalLocalToWorld(input.normal, boneIds, boneWs);
+		output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs);
+	#endif
+
 
     output.uv = input.uv;
     output.test = TransformWorldToLocal(float4(normalize(float3(0,1,-1)), 0)).xyz;
@@ -55,6 +92,6 @@ VS_OUT VS_Main(VS_IN input)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    float3 normalMapwS = TransformTangentToSpace(float4(NormalUnpack(_BumpMap.Sample(sampler_lerp, input.uv), 0.2f), 0), input.normalWS, input.tangentWS);
+    float3 normalMapwS = TransformTangentToSpace(float4(NormalUnpack(_BumpMap.Sample(sampler_lerp, input.uv), 0.5f), 0), input.normalWS, input.tangentWS);
 	return _BaseMap.Sample(sampler_lerp, input.uv) * color * dot(normalMapwS, normalize(float3(0,1,-1)));
 }

@@ -549,6 +549,12 @@ struct Instance_Gizmo
     float strock = 2;
 };
 
+struct Instance_Transform
+{
+	Matrix localToWorld = Matrix::Identity;
+    Matrix worldToLocal = Matrix::Identity;
+    vec3 worldPosition;
+};
 
 //struct Vertex_Full
 //{

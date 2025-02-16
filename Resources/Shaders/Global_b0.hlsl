@@ -75,4 +75,12 @@ float4x4 Inverse(float4x4 m)
     return inv;
 }
 
+#define MATRIX_DEFINE(mat, num) \
+    float4 mat##_r0 : MATRIX_##num##_0; \
+    float4 mat##_r1 : MATRIX_##num##_1; \
+    float4 mat##_r2 : MATRIX_##num##_2; \
+    float4 mat##_r3 : MATRIX_##num##_3
+
+#define MATRIX(mat) float4x4( mat##_r0, mat##_r1, mat##_r2, mat##_r3 )
+
 #endif

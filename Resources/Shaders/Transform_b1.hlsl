@@ -11,6 +11,7 @@ cbuffer Transform : register(b1)
 	row_major matrix WorldToLocalMatrix;
     float3 worldPosition;
 }
+
 float3 NormalUnpack(float3 normalSample, float power)
 {
 	if (dot(normalSample, normalSample) > 2.999)
@@ -20,7 +21,7 @@ float3 NormalUnpack(float3 normalSample, float power)
 	return normalize(norm);
 }
 
-float4 TransformSpaceToTangent(float3 localPos, float3 normalS, float3 tangentS)
+float4 TransformSpaceToTangent(float4 localPos, float3 normalS, float3 tangentS)
 {
     float3 N = normalS;
     float3 T = normalize(tangentS - dot(tangentS, N) * N);
@@ -92,6 +93,51 @@ float4 TransformWorldToLocal(float4 worldPos, float4 boneIds, float4 boneWs)
 	#endif
 	return TransformWorldToLocal(worldPos);
 }
+
+
+// 직접 행렬을 지정하는것 --
+float4 TransformLocalToWorld(float4 localPos, float4x4 l2w)
+{
+	return mul(localPos, l2w);
+}
+
+float4 TransformLocalToWorld(float4 localPos, float4 boneIds, float4 boneWs, float4x4 l2w)
+{
+	#ifdef SKINNED
+	return CalculateBone(localPos, boneIds, boneWs);
+	#endif
+	return TransformLocalToWorld(localPos, l2w);
+}
+
+float3 TransformNormalLocalToWorld(float3 normal, float4x4 w2l)
+{
+	float4x4 worldIT = transpose(w2l);
+	return normalize(mul(normal, (float3x3)worldIT));
+}
+
+float3 TransformNormalLocalToWorld(float3 normal, float4 boneIds, float4 boneWs, float4x4 l2w)
+{
+	#ifdef SKINNED
+	return CalculateBoneNormal(normal, boneIds, boneWs);
+	#endif
+	return TransformNormalLocalToWorld(normal, l2w);
+}
+
+
+float4 TransformWorldToLocal(float4 worldPos, float4x4 w2l)
+{
+	return mul(worldPos, w2l);
+}
+
+float4 TransformWorldToLocal(float4 worldPos, float4 boneIds, float4 boneWs, float4x4 w2l)
+{
+	#ifdef SKINNED
+	return CalculateBoneInvert(worldPos, boneIds, boneWs);
+	#endif
+	return TransformWorldToLocal(worldPos, w2l);
+}
+//--------------------------------------------------------------------------------------------
+
 
 float4 TransformWorldToView(float4 worldPos)
 {
