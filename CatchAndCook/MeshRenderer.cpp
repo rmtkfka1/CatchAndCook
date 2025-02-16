@@ -175,6 +175,11 @@ void MeshRenderer::AddMaterials(const std::vector<std::shared_ptr<Material>>& _m
 		this->_uniqueMaterials.push_back(ele);
 }
 
+std::vector<std::shared_ptr<Material>>& MeshRenderer::GetMaterials()
+{
+	return _uniqueMaterials;
+}
+
 void MeshRenderer::SetSharedMaterials(const std::vector<std::shared_ptr<Material>>& _materials)
 {
 	this->_sharedMaterials = _materials;

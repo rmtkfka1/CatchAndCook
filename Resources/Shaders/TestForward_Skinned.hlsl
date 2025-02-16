@@ -2,6 +2,7 @@
 #include "Global_b0.hlsl"
 #include "Transform_b1.hlsl"
 #include "Camera_b2.hlsl"
+#include "Light_b3.hlsl"
 #include "Skinned_b5.hlsl"
 
 
@@ -25,6 +26,7 @@ struct VS_IN
     #ifdef INSTANCED
     MATRIX_DEFINE(instance_trs, 0);
     MATRIX_DEFINE(instance_invert_trs, 1);
+    float3 instance_worldPos : FLOAT3_0;
 	#endif
 };
 
@@ -47,8 +49,8 @@ VS_OUT VS_Main(VS_IN input)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    float4x4 l2wMatrix = LocalToWorldMatrix;
-    float4x4 w2lMatrix = WorldToLocalMatrix;
+    row_major float4x4 l2wMatrix = LocalToWorldMatrix;
+    row_major float4x4 w2lMatrix = WorldToLocalMatrix;
     float4 boneIds = 0;
     float4 boneWs = 0;
 
@@ -91,6 +93,6 @@ VS_OUT VS_Main(VS_IN input)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    float3 normalMapwS = TransformTangentToSpace(float4(NormalUnpack(_BumpMap.Sample(sampler_lerp, input.uv), 0.5f), 0), input.normalWS, input.tangentWS);
-	return _BaseMap.Sample(sampler_lerp, input.uv) * color * dot(normalMapwS, normalize(float3(0,1,-1)));
+    float3 totalNormalWS = TransformTangentToSpace(float4(NormalUnpack(_BumpMap.Sample(sampler_lerp, input.uv), 0.2), 0), input.normalWS, input.tangentWS);
+	return _BaseMap.Sample(sampler_lerp, input.uv) * color * (dot(totalNormalWS, normalize(float3(0,1,-1))) * 0.5 + 0.5);
 }

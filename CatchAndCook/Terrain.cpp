@@ -49,6 +49,28 @@ void Terrain::Start()
 		dynamic_pointer_cast<MeshRenderer>(renderer)->AddMesh(_gridMesh);
 	}
 
+
+
+
+	for(int i = 0; i<_instances.size();i++)
+	{
+        auto instanceBuffer = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::TransformInstanceParam)->Alloc();
+        memcpy(instanceBuffer->ptr,_instancesDatas[i].data(), _instancesDatas[i].size() * sizeof(Instance_Transform));
+		instanceBuffer->writeOffset = _instancesDatas[i].size() * sizeof(Instance_Transform);
+
+        std::vector<std::shared_ptr<MeshRenderer>> renderers;
+        _instances[i].lock()->GetComponentsWithChilds<MeshRenderer>(renderers);
+
+		for(auto& renderer : renderers)
+		{
+			renderer->SetInstance(instanceBuffer);
+            for(auto& material : renderer->GetMaterials())
+                material->SetShader(ResourceManager::main->Get<Shader>(L"DefaultForward_Instanced"));
+		}
+	}
+
+
+
 	TerrainManager::main->PushTerrain(static_pointer_cast<Terrain>(shared_from_this()));
 
 }

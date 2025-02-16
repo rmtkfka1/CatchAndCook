@@ -115,12 +115,12 @@ float3 TransformNormalLocalToWorld(float3 normal, float4x4 w2l)
 	return normalize(mul(normal, (float3x3)worldIT));
 }
 
-float3 TransformNormalLocalToWorld(float3 normal, float4 boneIds, float4 boneWs, float4x4 l2w)
+float3 TransformNormalLocalToWorld(float3 normal, float4 boneIds, float4 boneWs, float4x4 w2l)
 {
 	#ifdef SKINNED
 	return CalculateBoneNormal(normal, boneIds, boneWs);
 	#endif
-	return TransformNormalLocalToWorld(normal, l2w);
+	return TransformNormalLocalToWorld(normal, w2l);
 }
 
 

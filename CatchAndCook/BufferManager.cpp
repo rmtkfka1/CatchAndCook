@@ -25,7 +25,7 @@ void BufferManager::Init()
 
 	CreateBufferPool(BufferType::BoneParam, sizeof(BoneParam), 256);
 
-	CreateInstanceBufferPool(BufferType::TransformInstanceParam,sizeof(TransformParam),1000,1);
+	CreateInstanceBufferPool(BufferType::TransformInstanceParam,sizeof(Instance_Transform),2000,128);
 	CreateInstanceBufferPool(BufferType::GizmoInstanceParam,sizeof(Instance_Gizmo),10000,1);
 
 	{
