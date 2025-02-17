@@ -105,7 +105,7 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh)
 	if(HasInstance())
 	{
 		Core::main->GetCmdList()->IASetVertexBuffers(1,1,&_instanceBuffer->_bufferView);
-		mesh->Redner(_instanceBuffer->writeOffset);
+		mesh->Redner(_instanceBuffer->writeIndex);
 	}
 	else
 	{

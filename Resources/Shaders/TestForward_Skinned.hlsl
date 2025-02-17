@@ -20,6 +20,9 @@ struct VS_IN
     float2 uv : TEXCOORD0;
     
     #ifdef SKINNED
+    float2 uv1 : TEXCOORD1;
+    float2 uv2 : TEXCOORD2;
+    float4 color : COLOR;
     float4 boneIds : BONEIDs;
     float4 boneWs : BONEWs;
 	#endif
@@ -39,7 +42,6 @@ struct VS_OUT
     float3 tangentOS : TangentOS;
     float3 tangentWS : TangentWS;
     float2 uv : TEXCOORD0;
-    float3 test : Position0;
 };
 
 Texture2D _BaseMap : register(t0);
@@ -87,12 +89,12 @@ VS_OUT VS_Main(VS_IN input)
 
 
     output.uv = input.uv;
-    output.test = TransformWorldToLocal(float4(normalize(float3(0,1,-1)), 0)).xyz;
     return output;
 }
-
+[earlydepthstencil]
 float4 PS_Main(VS_OUT input) : SV_Target
 {
     float3 totalNormalWS = TransformTangentToSpace(float4(NormalUnpack(_BumpMap.Sample(sampler_lerp, input.uv), 0.2), 0), input.normalWS, input.tangentWS);
+    //float3 totalNormalWS = float3(0,1,0);
 	return _BaseMap.Sample(sampler_lerp, input.uv) * color * (dot(totalNormalWS, normalize(float3(0,1,-1))) * 0.5 + 0.5);
 }

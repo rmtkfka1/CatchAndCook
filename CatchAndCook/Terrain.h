@@ -34,7 +34,7 @@ public:
 			_instances.push_back(instance);
 	}
 	void SetInstanceDatas(const vector<vector<Instance_Transform>>& instancesDatas){
-		_instancesDatas = instancesDatas;
+		_instanceDatas = instancesDatas;
 	}
 
 public:
@@ -59,7 +59,8 @@ private:
 
 	shared_ptr<Material> _material;
 	vector<weak_ptr<GameObject>> _instances;
-	vector<vector<Instance_Transform>> _instancesDatas;
+	vector<vector<Instance_Transform>> _instanceDatas;
+	vector<InstanceBufferContainer*> _instanceBuffers;
 
 	vector<vector<float>> _heightRawMapData;
 };

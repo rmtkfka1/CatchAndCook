@@ -137,12 +137,14 @@ struct InstanceBufferContainer
 	bool isAlloc = false;
 
 	int writeOffset = 0;
+	int writeIndex = 0;
 	template<class T>
 	void AddData(const T& data)
 	{
 		assert(writeOffset < elementCount * sizeof(T));
 		memcpy(static_cast<char*>(ptr) + writeOffset, &data, sizeof(T));
 		writeOffset += sizeof(T);
+		++writeIndex;
 	}
 	template<class T>
 	void SetData(const T& data, int index)
@@ -150,12 +152,18 @@ struct InstanceBufferContainer
 		assert(index < elementCount);
 		memcpy(static_cast<char*>(ptr) + index * sizeof(T), &data, sizeof(T));
 	}
+	void SetIndex(int index, int size)
+	{
+		writeIndex = index;
+		writeOffset = index * size;
+	}
 	void Free(){
 		isAlloc = false;
 		Clear();
 	}
 	void Clear(){
 		writeOffset = 0;
+		writeIndex = 0;
 	}
 };
 
