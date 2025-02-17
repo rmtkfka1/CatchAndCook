@@ -375,12 +375,51 @@ void SceneLoader::LinkComponent(json& jsonData)
             auto blend = ResourceManager::main->Load<Texture>(blendPath,blendPath,TextureType::Texture2D,false);
             material->SetHandle(std::format("_blendMap{0}",i),blend->GetSRVCpuHandle());
         }
+
+        vector<shared_ptr<GameObject>> instances;
+        vector<vector<Instance_Transform>> instancesDatas;
+
+        int instanceTableCount = jsonData["instanceTable"].size();
+        for(int i = 0; i < instanceTableCount; i++)
+        {
+            std::shared_ptr<GameObject> obj = IGuid::FindObjectByGuid<GameObject>(to_wstring(jsonData["instanceTable"][i].get<string>()));
+            if(obj != nullptr) {
+                instances.push_back(obj);
+            }
+        }
+
+        instancesDatas.resize(instanceTableCount);
+        int instanceCount = jsonData["instanceCount"].get<float>();
+        for(int i = 0; i < instanceCount; i++)
+        {
+            auto currentInst = jsonData["instanceDatas"][i];
+            int index = currentInst["index"].get<int>();
+            auto pos = Vector3(
+                currentInst["position"][0].get<float>(),
+                currentInst["position"][1].get<float>(),
+                currentInst["position"][2].get<float>());
+            auto rot = Quaternion::CreateFromAxisAngle(Vector3::Up,currentInst["rotation"].get<float>());
+            auto scale = Vector3(
+                currentInst["scale"][0].get<float>(),
+                currentInst["scale"][1].get<float>(),
+                currentInst["scale"][2].get<float>());
+            Matrix InvertTRS;
+        	auto trs = Matrix::CreateScale(scale) *
+                Matrix::CreateFromQuaternion(rot) *
+                Matrix::CreateTranslation(pos);
+			trs.Invert(InvertTRS);
+
+            instancesDatas[index].push_back({trs, InvertTRS, pos});
+        }
+
+        //instanceTable
         
         material->SetPropertyInt("detailsCount",diffuseCount);
         material->SetPropertyInt("blendCount", blendCount);
 
         terrain->SetMaterial(material);
-
+        terrain->SetInstances(instances);
+		terrain->SetInstanceDatas(instancesDatas);
 		terrain->SetHeightMap(rawPath,pngPath, Vector2(rawSize,rawSize), fieldSize);
     }
 }

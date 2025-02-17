@@ -6,6 +6,10 @@
 #include "Mesh.h"
 #include "MeshRenderer.h"
 #include <algorithm>
+
+#include "Camera.h"
+#include "CameraManager.h"
+
 Terrain::Terrain()
 {
 	
@@ -49,13 +53,49 @@ void Terrain::Start()
 		dynamic_pointer_cast<MeshRenderer>(renderer)->AddMesh(_gridMesh);
 	}
 
+
+
+    _instanceBuffers.resize(_instances.size());
+	for(int i = 0; i<_instances.size();i++)
+	{
+        auto instanceBuffer = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::TransformInstanceParam)->Alloc();
+        memcpy(instanceBuffer->ptr,_instanceDatas[i].data(), _instanceDatas[i].size() * sizeof(Instance_Transform));
+        instanceBuffer->SetIndex(_instanceDatas[i].size(),sizeof(Instance_Transform));
+		//instanceBuffer->writeOffset = _instanceDatas[i].size() * sizeof(Instance_Transform);
+        _instanceBuffers[i] = instanceBuffer;
+
+        std::vector<std::shared_ptr<MeshRenderer>> renderers;
+        _instances[i].lock()->GetComponentsWithChilds<MeshRenderer>(renderers);
+
+		for(auto& renderer : renderers)
+		{
+			renderer->SetInstance(instanceBuffer);
+            for(auto& material : renderer->GetMaterials())
+                material->SetShader(ResourceManager::main->Get<Shader>(L"DefaultForward_Instanced"));
+		}
+	}
+
+
+
 	TerrainManager::main->PushTerrain(static_pointer_cast<Terrain>(shared_from_this()));
 
 }
 
 void Terrain::Update()
 {
-    
+    Vector3 cameraPos = Vector3(CameraManager::main->GetActiveCamera()->GetCameraPos().x,0,CameraManager::main->GetActiveCamera()->GetCameraPos().z);
+    if(false)
+    for(int i=0;i<_instanceDatas.size();++i)
+    {
+        _instanceBuffers[i]->Clear();
+        for(int j=0;j<_instanceDatas[i].size();j++)
+        {
+            if(Vector3::Distance(Vector3(_instanceDatas[i][j].worldPosition.x, 0,_instanceDatas[i][j].worldPosition.z), cameraPos) < 10)
+            {
+                _instanceBuffers[i]->AddData(_instanceDatas[i][j]);
+            }
+        }
+    }
 }
 
 void Terrain::Update2()

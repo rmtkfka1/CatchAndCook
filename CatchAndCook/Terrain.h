@@ -29,6 +29,13 @@ public:
 	void SetMaterial(const shared_ptr<Material>& material){
 		_material = material;
 	}
+	void SetInstances(const vector<shared_ptr<GameObject>>& instances){
+		for(auto& instance : instances)
+			_instances.push_back(instance);
+	}
+	void SetInstanceDatas(const vector<vector<Instance_Transform>>& instancesDatas){
+		_instanceDatas = instancesDatas;
+	}
 
 public:
 	void SetHeightMap(const std::wstring &rawPath,const std::wstring &pngPath,const vec2& rawSize,const vec3& fieldSize);
@@ -51,6 +58,9 @@ private:
 	Vector2 _heightTextureSize;
 
 	shared_ptr<Material> _material;
+	vector<weak_ptr<GameObject>> _instances;
+	vector<vector<Instance_Transform>> _instanceDatas;
+	vector<InstanceBufferContainer*> _instanceBuffers;
 
 	vector<vector<float>> _heightRawMapData;
 };

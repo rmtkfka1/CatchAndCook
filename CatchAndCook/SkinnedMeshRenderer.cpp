@@ -150,6 +150,11 @@ void SkinnedMeshRenderer::AddMaterials(const std::vector<std::shared_ptr<Materia
 		this->_uniqueMaterials.push_back(ele);
 }
 
+std::vector<std::shared_ptr<Material>>& SkinnedMeshRenderer::GetMaterials()
+{
+	return _uniqueMaterials;
+}
+
 
 void SkinnedMeshRenderer::SetSharedMaterials(const std::vector<std::shared_ptr<Material>>& _materials)
 {

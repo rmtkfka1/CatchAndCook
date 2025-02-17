@@ -33,10 +33,10 @@ std::vector<VertexProp> SkinProp
     VertexProp::pos,
 	VertexProp::normal,
     VertexProp::tangent,
-    VertexProp::color,
     VertexProp::uv0,
     VertexProp::uv1,
     VertexProp::uv2,
+    VertexProp::color,
     VertexProp::bone_ids,
     VertexProp::bone_weights,
 };
@@ -44,9 +44,9 @@ std::vector<VertexProp> SkinProp
 std::vector<VertexProp> StaticProp
 {
     VertexProp::pos,
-    VertexProp::uv0,
     VertexProp::normal,
     VertexProp::tangent,
+    VertexProp::uv0,
     //VertexProp::uv1
 };
 std::vector<VertexProp> GeoMetryProp
@@ -75,5 +75,7 @@ std::vector<VertexProp> GizmoInstanceProp
 
 std::vector<VertexProp> TransformInstanceProp
 {
-    VertexProp::matrix_0
+    VertexProp::matrix_0,
+	VertexProp::matrix_1,
+	VertexProp::vec3_0,
 };

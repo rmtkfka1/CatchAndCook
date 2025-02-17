@@ -512,8 +512,8 @@ struct Vertex_Skinned
     vec3 position = vec3(0, 0, 0);
     vec3 normal = vec3(0, 0, 1);
     vec3 tangent = vec3(0, 1, 0);
+    std::array<vec2,3> uvs;
     vec4 color = vec4(1,1,1,1);
-    std::array<vec2, 3> uvs;
     vec4 boneId = vec4(-1, -1, -1, -1);
     vec4 boneWeight = vec4(0, 0, 0, 0);
 };
@@ -527,9 +527,9 @@ struct Vertex_GeoMetry
 struct Vertex_Static
 {
     vec3 position = vec3(0,0,0);
-    vec2 uv;
     vec3 normal = vec3(0,0,1);
     vec3 tangent = vec3(0,1,0);
+    vec2 uv;
 };
 
 
@@ -549,6 +549,12 @@ struct Instance_Gizmo
     float strock = 2;
 };
 
+struct Instance_Transform
+{
+	Matrix localToWorld = Matrix::Identity;
+    Matrix worldToLocal = Matrix::Identity;
+    vec3 worldPosition;
+};
 
 //struct Vertex_Full
 //{

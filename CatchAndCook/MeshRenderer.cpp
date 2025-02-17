@@ -105,7 +105,7 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh)
 	if(HasInstance())
 	{
 		Core::main->GetCmdList()->IASetVertexBuffers(1,1,&_instanceBuffer->_bufferView);
-		mesh->Redner(_instanceBuffer->writeOffset);
+		mesh->Redner(_instanceBuffer->writeIndex);
 	}
 	else
 	{
@@ -173,6 +173,11 @@ void MeshRenderer::AddMaterials(const std::vector<std::shared_ptr<Material>>& _m
 {
 	for (auto& ele : _materials)
 		this->_uniqueMaterials.push_back(ele);
+}
+
+std::vector<std::shared_ptr<Material>>& MeshRenderer::GetMaterials()
+{
+	return _uniqueMaterials;
 }
 
 void MeshRenderer::SetSharedMaterials(const std::vector<std::shared_ptr<Material>>& _materials)

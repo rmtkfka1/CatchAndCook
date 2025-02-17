@@ -12,9 +12,9 @@ cbuffer DefaultMaterialParam : register(b7)
 struct VS_IN
 {
     float3 pos : POSITION;
-    float2 uv : TEXCOORD0;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
+    float2 uv : TEXCOORD0;
 };
 
 struct VS_OUT
