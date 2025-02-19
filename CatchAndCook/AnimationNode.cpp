@@ -49,7 +49,7 @@ void AnimationNode::SetRotation(aiAnimation* anim, aiNodeAnim* animNode)
 
     for(int i = 0; i < animNode->mNumRotationKeys; i++)
     {
-        keyFrame._time = animNode->mRotationKeys[i].mTime;
+        keyFrame._tick = animNode->mRotationKeys[i].mTime;
         keyFrame._time = keyFrame._tick / anim->mTicksPerSecond;
         keyFrame.rotation = Quaternion(animNode->mRotationKeys[i].mValue.x,
                                        animNode->mRotationKeys[i].mValue.y,
@@ -68,7 +68,7 @@ void AnimationNode::SetScale(aiAnimation* anim, aiNodeAnim* animNode)
 
     for(int i = 0; i < animNode->mNumScalingKeys; i++)
     {
-        keyFrame._time = animNode->mScalingKeys[i].mTime;
+        keyFrame._tick = animNode->mScalingKeys[i].mTime;
         keyFrame._time = keyFrame._tick / anim->mTicksPerSecond;
         keyFrame.scale = vec3(animNode->mScalingKeys[i].mValue.x,
                               animNode->mScalingKeys[i].mValue.y,
@@ -170,6 +170,7 @@ Matrix AnimationNode::CalculateTransformMatrix(const double& time) const
             Vector3::Lerp(key0.scale,key1.scale, t,interpolatedScale);
         }
     }
+
     //hasScale
     Matrix matrix = Matrix::CreateTranslation(interpolatedPosition);
 
