@@ -169,16 +169,10 @@ void Model::Init(const wstring& path, VertexType vertexType)
 		currentModelMesh->SetIndex(i);
 		_modelMeshList.push_back(currentModelMesh);
 	}
-	
-	_rootNode = AddNode(scene->mRootNode);
 
-	auto a = _nameToNodeTable;
-	for(int i=0;i<scene->mNumAnimations;i++)
-	{
-		auto anim = std::make_shared<Animation>();
-		anim->Init(scene->mAnimations[i],scene->mRootNode);
-		_animationList.push_back(anim);
-	}
+	LoadNode(scene->mRootNode);
+	for(int i=0; i<scene->mNumAnimations; i++)
+		LoadAnimation(scene->mAnimations[i], scene->mRootNode);
 
 	SetNodeData();
 	SetBoneData();
@@ -379,6 +373,20 @@ void Model::LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& cu
 	
 }
 
+void Model::LoadNode(aiNode* root)
+{
+	_rootNode = AddNode(root);
+}
+
+void Model::LoadAnimation(aiAnimation* aiAnim, aiNode* root)
+{
+	auto anim = std::make_shared<Animation>();
+	anim->Init(aiAnim, root);
+	_animationList.push_back(anim);
+	_nameToAnimationTable[to_string(anim->GetName())] = anim;
+	ResourceManager::main->Add(anim->GetName(), anim);
+}
+
 void Model::SetNodeData()
 {
 	for (auto& bone : _modelBoneList)
@@ -413,8 +421,7 @@ std::shared_ptr<ModelNode> Model::AddNode(aiNode* rootNode)
 {
 	auto currentNode = std::make_shared<ModelNode>();
 	currentNode->Init(GetCast<Model>(), rootNode);
-	_modelNodeList.push_back(currentNode);
-
+	
 	for (int i = 0; i < rootNode->mNumChildren; i++) {
 		AddNode(rootNode->mChildren[i])->SetParent(currentNode);
 	}

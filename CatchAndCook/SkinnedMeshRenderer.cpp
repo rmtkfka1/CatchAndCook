@@ -26,14 +26,6 @@ void SkinnedMeshRenderer::Start()
 {
 	Component::Start();
 
-	//std::vector<std::shared_ptr<GameObject>> _boneRoots;
-	//GetOwner()->GetRoot()->GetChildsAllByName(_boneName, _boneRoots);
-	//if(!_boneRoots.empty())
-	//{
-	//	std::shared_ptr<SkinnedHierarchy> hierarchy = _boneRoots[0]->GetComponent<SkinnedHierarchy>();
-	//	if(hierarchy == nullptr)
-	//		_boneRoots[0]->AddComponent<SkinnedHierarchy>();
-	//}
 	auto root = GetOwner()->GetParent();
 	if (root != nullptr)
 	{
@@ -42,7 +34,7 @@ void SkinnedMeshRenderer::Start()
 		{
 			_hierarchy = root->AddComponent<SkinnedHierarchy>();
 			_hierarchy.lock()->SetBoneList(_model->_modelBoneList);
-			_hierarchy.lock()->SetNodeList(_model->_modelNodeList);
+			_hierarchy.lock()->SetNodeList(_model->_modelOriginalNodeList);
 		}
 	}
 }

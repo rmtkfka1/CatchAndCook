@@ -2,7 +2,7 @@
 #include "SkinnedHierarchy.h"
 
 #include "Animation.h"
-#include "AnimationPartition.h"
+#include "AnimationNode.h"
 #include "Bone.h"
 #include "ModelNode.h"
 #include "SkinnedMeshRenderer.h"
@@ -51,6 +51,7 @@ void SkinnedHierarchy::Start()
 			GetOwner()->GetChildsAllByName(name, obj);
 			if (!obj.empty())
 				nodeObjectTable[name] = obj[0];
+			nodeObjectList.push_back(obj.empty() ? nullptr : obj[0]);
 		}
 	}
 	std::vector<std::shared_ptr<SkinnedMeshRenderer>> renderers;
@@ -71,20 +72,18 @@ void SkinnedHierarchy::Update2()
 {
 	Component::Update2();
 
-	for(auto& data : this->animation->_partitions)
+	for(auto& animNode : this->animation->_nodeLists)
 	{
-		auto it = nodeObjectTable.find(data.first);
+		auto it = nodeObjectTable.find(animNode->GetNodeName());
 		if(it != nodeObjectTable.end())
 		{
 			auto obj = it->second.lock();
 			if(obj != nullptr)
 			{
 				auto transform = obj->_transform;
-				auto& partition = data.second;
 				auto time = (Time::main->GetTime() * 30.0f);
-				while(time > 5 * 30)
-					time -= 5 * 30;
-				auto matrix = partition->CalculateTransformMatrix(time);
+
+				auto matrix = animNode->CalculateTransformMatrix(time);
 				transform->SetLocalSRTMatrix(matrix);
 			}
 		}

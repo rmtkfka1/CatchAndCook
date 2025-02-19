@@ -1,13 +1,15 @@
 #pragma once
 
 
-class AnimationPartition;
+class AnimationNode;
 
 class Animation
 {
 public:
 	Animation();
 	virtual ~Animation();
+
+	void Init(aiAnimation* anim,aiNode* root);
 
 	void SetName(const wstring& name){
 		_name = name;
@@ -17,9 +19,14 @@ public:
 	}
 	wstring _name;
 
-	void Init(aiAnimation* anim, aiNode* root);
+	double _ticksPerSecond;
+	double _duration;
+	double _totalTime;
 
-	std::unordered_map<wstring, std::shared_ptr<AnimationPartition>> _partitions;
+	bool _isLoop = false;
+	bool _isApplyTransform = false;
 
+	std::unordered_map<wstring, std::shared_ptr<AnimationNode>> _nodeTables;
+	std::vector<std::shared_ptr<AnimationNode>> _nodeLists;
 };
 

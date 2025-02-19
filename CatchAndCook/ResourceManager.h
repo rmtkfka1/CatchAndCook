@@ -7,6 +7,7 @@ class Shader;
 class Mesh;
 class Texture;
 class Scene;
+class Animation;
 
 class ResourceManager
 {
@@ -21,6 +22,7 @@ public:
     void CreateDefaultShader();
     void CreateDefaultMaterial();
     void CreateDefaultTexture();
+    void CreateDefaultAnimation();
 
     template<typename T>
     shared_ptr<T> Load(const wstring& key ,const wstring& path);
@@ -48,6 +50,7 @@ private:
     unordered_map<wstring, shared_ptr<Mesh>> _meshMap;
     unordered_map<wstring, shared_ptr<Model>> _modelMap;
     unordered_map<wstring, shared_ptr<Texture>> _textureMap;
+    unordered_map<wstring, shared_ptr<Animation>> _animationMap;
 
     std::shared_ptr<Texture> _noneTexture;
     std::shared_ptr<Texture> _noneTexture_debug;
@@ -133,6 +136,10 @@ inline unordered_map<wstring, shared_ptr<T>>& ResourceManager::GetResourceMap()
     else if constexpr (is_same_v<T, Texture>)
     {
         return _textureMap;
+    }
+    else if constexpr (is_same_v<T, Animation>)
+    {
+        return _animationMap;
     }
 
     else

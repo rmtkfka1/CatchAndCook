@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Animation.h"
 
-#include "AnimationPartition.h"
+#include "AnimationNode.h"
 #include "AnimationKeyFrame.h"
 
 
@@ -17,6 +17,11 @@ void Animation::Init(aiAnimation* anim, aiNode* root)
 {
 	//root
 	SetName(to_wstring(convert_assimp::Format(anim->mName)));
+
+	_duration = anim->mDuration;
+	_ticksPerSecond = (anim->mTicksPerSecond != 0) ? anim->mTicksPerSecond : 25.0;
+	_totalTime = _duration / _ticksPerSecond;
+
 	for(int i=0;i<anim->mNumChannels;i++)
 	{
 		
@@ -30,16 +35,19 @@ void Animation::Init(aiAnimation* anim, aiNode* root)
 			originalName = originalList[0];
 		}
 		
-		auto part = _partitions[originalName];
+		auto part = _nodeTables[originalName];
 		if(part == nullptr)
 		{
-			part = std::make_shared<AnimationPartition>();
+			part = std::make_shared<AnimationNode>();
 			part->SetNodeName(originalName);
-			_partitions[originalName] = part;
+			_nodeTables[originalName] = part;
+			_nodeLists.push_back(part);
 		}
-		part->SetTRS(anim->mChannels[i]);
+		part->SetKeyFrames(anim, anim->mChannels[i]);
 	}
-	for(auto& part : _partitions)
+
+
+	for(auto& part : _nodeTables)
 	{
 		Vector3 pos,scale;
 		Quaternion rot;

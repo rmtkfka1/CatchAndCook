@@ -3,16 +3,16 @@
 
 class AnimationKeyFrame;
 
-class AnimationPartition
+class AnimationNode
 {
 public:
-	AnimationPartition();
-	virtual ~AnimationPartition();
+	AnimationNode();
+	virtual ~AnimationNode();
 
-	void SetTRS(aiNodeAnim* anim);
-	void SetPosition(aiNodeAnim* anim);
-	void SetRotation(aiNodeAnim* anim);
-	void SetScale(aiNodeAnim* anim);
+	void SetKeyFrames(aiAnimation* anim, aiNodeAnim* animNode);
+	void SetPosition(aiAnimation* anim, aiNodeAnim* animNode);
+	void SetRotation(aiAnimation* anim, aiNodeAnim* animNode);
+	void SetScale(aiAnimation* anim, aiNodeAnim* animNode);
 	void SetPose(Matrix& matrix);
 	void SetOffsetPosition(const Vector3& position);
 	void SetOffsetScale(const Vector3& scale);
@@ -37,12 +37,16 @@ public:
 	Quaternion offsetPostRotation = Quaternion::Identity;
 	Vector3 offsetScale = Vector3::One;
 
+	bool hasScale = false;
+	bool hasPreRotation = false;
+	bool hasPostRotation = false;
+
 	vector<AnimationKeyFrame> _keyFrame_positions;
 	vector<AnimationKeyFrame> _keyFrame_rotations;
 	vector<AnimationKeyFrame> _keyFrame_scales;
 };
 
-inline void AnimationPartition::SetPose(Matrix& matrix)
+inline void AnimationNode::SetPose(Matrix& matrix)
 {
 	matrix.Decompose(offsetScale,offsetRotation,offsetPosition);
 }

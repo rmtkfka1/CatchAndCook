@@ -18,6 +18,7 @@ public:
 	}
 
 	double _time = 0;
+	double _tick = 0;
 	union
 	{
 		vec3 position;

@@ -1,99 +1,106 @@
 #include "pch.h"
-#include "AnimationPartition.h"
+#include "AnimationNode.h"
+
 
 #include <algorithm>
 
 #include "AnimationKeyFrame.h"
 
 
-AnimationPartition::AnimationPartition()
+AnimationNode::AnimationNode()
 {
 
 }
 
-AnimationPartition::~AnimationPartition()
+AnimationNode::~AnimationNode()
 {
 
 }
 
-void AnimationPartition::SetTRS(aiNodeAnim* anim)
+void AnimationNode::SetKeyFrames(aiAnimation* anim, aiNodeAnim* animNode)
 {
-	SetPosition(anim);
-	SetRotation(anim);
-	SetScale(anim);
+	SetPosition(anim, animNode);
+	SetRotation(anim, animNode);
+	SetScale(anim, animNode);
 }
 
-void AnimationPartition::SetPosition(aiNodeAnim* anim)
+void AnimationNode::SetPosition(aiAnimation* anim, aiNodeAnim* animNode)
 {
     AnimationKeyFrame keyFrame;
 
-	if(anim->mNumPositionKeys <= 1)
+	if(animNode->mNumPositionKeys <= 1)
         return;
 
-    for(int i=0;i<anim->mNumPositionKeys;i++)
+    for(int i=0;i<animNode->mNumPositionKeys;i++)
     {
-        keyFrame._time = anim->mPositionKeys[i].mTime;
-        keyFrame.position = vec3(anim->mPositionKeys[i].mValue.x,anim->mPositionKeys[i].mValue.y,anim->mPositionKeys[i].mValue.z);
+        keyFrame._tick = animNode->mPositionKeys[i].mTime;
+        keyFrame._time = keyFrame._tick / anim->mTicksPerSecond;
+        keyFrame.position = vec3(animNode->mPositionKeys[i].mValue.x,animNode->mPositionKeys[i].mValue.y,animNode->mPositionKeys[i].mValue.z);
 		_keyFrame_positions.push_back(keyFrame);
     }
 }
 
-void AnimationPartition::SetRotation(aiNodeAnim* anim)
+void AnimationNode::SetRotation(aiAnimation* anim, aiNodeAnim* animNode)
 {
     AnimationKeyFrame keyFrame;
 
-    if(anim->mNumRotationKeys <= 1)
+    if(animNode->mNumRotationKeys <= 1)
         return;
 
-    for(int i = 0; i < anim->mNumRotationKeys; i++)
+    for(int i = 0; i < animNode->mNumRotationKeys; i++)
     {
-        keyFrame._time = anim->mRotationKeys[i].mTime;
-        keyFrame.rotation = Quaternion(anim->mRotationKeys[i].mValue.x,
-                                       anim->mRotationKeys[i].mValue.y,
-                                       anim->mRotationKeys[i].mValue.z,
-                                       anim->mRotationKeys[i].mValue.w);
+        keyFrame._time = animNode->mRotationKeys[i].mTime;
+        keyFrame._time = keyFrame._tick / anim->mTicksPerSecond;
+        keyFrame.rotation = Quaternion(animNode->mRotationKeys[i].mValue.x,
+                                       animNode->mRotationKeys[i].mValue.y,
+                                       animNode->mRotationKeys[i].mValue.z,
+                                       animNode->mRotationKeys[i].mValue.w);
 		_keyFrame_rotations.push_back(keyFrame);
     }
 }
 
-void AnimationPartition::SetScale(aiNodeAnim* anim)
+void AnimationNode::SetScale(aiAnimation* anim, aiNodeAnim* animNode)
 {
     AnimationKeyFrame keyFrame;
 
-    if(anim->mNumScalingKeys <= 1)
+    if(animNode->mNumScalingKeys <= 1)
         return;
 
-    for(int i = 0; i < anim->mNumScalingKeys; i++)
+    for(int i = 0; i < animNode->mNumScalingKeys; i++)
     {
-        keyFrame._time = anim->mScalingKeys[i].mTime;
-        keyFrame.scale = vec3(anim->mScalingKeys[i].mValue.x,
-                              anim->mScalingKeys[i].mValue.y,
-                              anim->mScalingKeys[i].mValue.z);
+        keyFrame._time = animNode->mScalingKeys[i].mTime;
+        keyFrame._time = keyFrame._tick / anim->mTicksPerSecond;
+        keyFrame.scale = vec3(animNode->mScalingKeys[i].mValue.x,
+                              animNode->mScalingKeys[i].mValue.y,
+                              animNode->mScalingKeys[i].mValue.z);
 		_keyFrame_scales.push_back(keyFrame);
     }
 }
 
-void AnimationPartition::SetOffsetPosition(const Vector3& position)
+void AnimationNode::SetOffsetPosition(const Vector3& position)
 {
 	offsetPosition = position;
 }
 
-void AnimationPartition::SetOffsetScale(const Vector3& scale)
+void AnimationNode::SetOffsetScale(const Vector3& scale)
 {
 	offsetScale = scale;
+    hasScale = true;
 }
 
-void AnimationPartition::SetOffsetPreRotation(const Quaternion& q)
+void AnimationNode::SetOffsetPreRotation(const Quaternion& quat)
 {
-	offsetPreRotation = q;
+	offsetPreRotation = quat;
+    hasPreRotation = true;
 }
 
-void AnimationPartition::SetOffsetPostRotation(const Quaternion& q)
+void AnimationNode::SetOffsetPostRotation(const Quaternion& quat)
 {
-	offsetPostRotation = q;
+	offsetPostRotation = quat;
+    hasPostRotation = true;
 }
 
-int AnimationPartition::FindKeyFrameIndex(const vector<AnimationKeyFrame>& keyFrames, const double& time)
+int AnimationNode::FindKeyFrameIndex(const vector<AnimationKeyFrame>& keyFrames, const double& time)
 {
     if(keyFrames.empty())
         return -1;
@@ -108,11 +115,12 @@ int AnimationPartition::FindKeyFrameIndex(const vector<AnimationKeyFrame>& keyFr
     return static_cast<int>(std::distance(keyFrames.begin(), it)) - 1;
 }
 
-Matrix AnimationPartition::CalculateTransformMatrix(const double& time) const
+Matrix AnimationNode::CalculateTransformMatrix(const double& time) const
 {
     Vector3 interpolatedPosition = offsetPosition;
     Quaternion interpolatedRotation = offsetRotation;
     Vector3 interpolatedScale = offsetScale;
+
     {
         const size_t keyCount = _keyFrame_positions.size();
         if(keyCount != 0)
@@ -143,7 +151,6 @@ Matrix AnimationPartition::CalculateTransformMatrix(const double& time) const
             const double dt = key1._time - key0._time;
             const double t = (dt != 0.f) ? (time - key0._time) / dt : 0.f;
             Quaternion::Slerp(key0.rotation,key1.rotation, t,interpolatedRotation);
-            interpolatedRotation = interpolatedRotation;
         }
     }
 
@@ -163,8 +170,16 @@ Matrix AnimationPartition::CalculateTransformMatrix(const double& time) const
             Vector3::Lerp(key0.scale,key1.scale, t,interpolatedScale);
         }
     }
+    //hasScale
+    Matrix matrix = Matrix::CreateTranslation(interpolatedPosition);
 
-    return Matrix::CreateScale(interpolatedScale) *
-        Matrix::CreateFromQuaternion(offsetPostRotation * interpolatedRotation * offsetPreRotation) *
-        Matrix::CreateTranslation(interpolatedPosition);
+    if(hasPreRotation)
+        interpolatedRotation = interpolatedRotation * offsetPreRotation;
+    if(hasPostRotation)
+        interpolatedRotation = offsetPostRotation * interpolatedRotation;
+    matrix = Matrix::CreateFromQuaternion(interpolatedRotation) * matrix;
+    if(hasScale)
+        matrix = Matrix::CreateScale(interpolatedScale) * matrix;
+
+    return matrix;
 }

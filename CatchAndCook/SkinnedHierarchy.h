@@ -28,6 +28,7 @@ public:
 	std::shared_ptr<Animation> animation;
 
 	std::unordered_map<std::wstring, std::weak_ptr<GameObject>> nodeObjectTable;
+	vector<std::weak_ptr<GameObject>> nodeObjectList;
 
 	std::vector<std::shared_ptr<Bone>> _boneList;
 	std::vector<wstring> _nodeNameList;
