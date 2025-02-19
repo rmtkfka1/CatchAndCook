@@ -16,16 +16,34 @@ AnimationPartition::~AnimationPartition()
 
 }
 
-void AnimationPartition::Init(aiNodeAnim* anim)
+void AnimationPartition::SetTRS(aiNodeAnim* anim)
 {
-    SetNodeName(to_wstring(convert_assimp::Format(anim->mNodeName)));
-	AnimationKeyFrame keyFrame;
+	SetPosition(anim);
+	SetRotation(anim);
+	SetScale(anim);
+}
+
+void AnimationPartition::SetPosition(aiNodeAnim* anim)
+{
+    AnimationKeyFrame keyFrame;
+
+	if(anim->mNumPositionKeys <= 1)
+        return;
+
     for(int i=0;i<anim->mNumPositionKeys;i++)
     {
         keyFrame._time = anim->mPositionKeys[i].mTime;
-		keyFrame.position = vec3(anim->mPositionKeys[i].mValue.x,anim->mPositionKeys[i].mValue.y,anim->mPositionKeys[i].mValue.z);
+        keyFrame.position = vec3(anim->mPositionKeys[i].mValue.x,anim->mPositionKeys[i].mValue.y,anim->mPositionKeys[i].mValue.z);
 		_keyFrame_positions.push_back(keyFrame);
     }
+}
+
+void AnimationPartition::SetRotation(aiNodeAnim* anim)
+{
+    AnimationKeyFrame keyFrame;
+
+    if(anim->mNumRotationKeys <= 1)
+        return;
 
     for(int i = 0; i < anim->mNumRotationKeys; i++)
     {
@@ -34,8 +52,16 @@ void AnimationPartition::Init(aiNodeAnim* anim)
                                        anim->mRotationKeys[i].mValue.y,
                                        anim->mRotationKeys[i].mValue.z,
                                        anim->mRotationKeys[i].mValue.w);
-        _keyFrame_rotations.push_back(keyFrame);
+		_keyFrame_rotations.push_back(keyFrame);
     }
+}
+
+void AnimationPartition::SetScale(aiNodeAnim* anim)
+{
+    AnimationKeyFrame keyFrame;
+
+    if(anim->mNumScalingKeys <= 1)
+        return;
 
     for(int i = 0; i < anim->mNumScalingKeys; i++)
     {
@@ -43,8 +69,28 @@ void AnimationPartition::Init(aiNodeAnim* anim)
         keyFrame.scale = vec3(anim->mScalingKeys[i].mValue.x,
                               anim->mScalingKeys[i].mValue.y,
                               anim->mScalingKeys[i].mValue.z);
-        _keyFrame_scales.push_back(keyFrame);
+		_keyFrame_scales.push_back(keyFrame);
     }
+}
+
+void AnimationPartition::SetOffsetPosition(const Vector3& position)
+{
+	offsetPosition = position;
+}
+
+void AnimationPartition::SetOffsetScale(const Vector3& scale)
+{
+	offsetScale = scale;
+}
+
+void AnimationPartition::SetOffsetPreRotation(const Quaternion& q)
+{
+	offsetPreRotation = q;
+}
+
+void AnimationPartition::SetOffsetPostRotation(const Quaternion& q)
+{
+	offsetPostRotation = q;
 }
 
 int AnimationPartition::FindKeyFrameIndex(const vector<AnimationKeyFrame>& keyFrames, const double& time)
@@ -64,13 +110,15 @@ int AnimationPartition::FindKeyFrameIndex(const vector<AnimationKeyFrame>& keyFr
 
 Matrix AnimationPartition::CalculateTransformMatrix(const double& time) const
 {
-    Vector3 interpolatedPosition = Vector3::Zero;
-    Quaternion interpolatedRotation = Quaternion::Identity;
-    Vector3 interpolatedScale = Vector3(1.f,1.f,1.f);
+    Vector3 interpolatedPosition = offsetPosition;
+    Quaternion interpolatedRotation = offsetRotation;
+    Vector3 interpolatedScale = offsetScale;
     {
         const size_t keyCount = _keyFrame_positions.size();
         if(keyCount != 0)
         {
+            if(keyCount == 1)
+                interpolatedPosition = _keyFrame_positions[0].position;
             int index = FindKeyFrameIndex(_keyFrame_positions,time);
             index = std::max(index,0);
             int nextIndex = (index + 1 < keyCount) ? index + 1 : 0;
@@ -85,6 +133,8 @@ Matrix AnimationPartition::CalculateTransformMatrix(const double& time) const
         const size_t keyCount = _keyFrame_rotations.size();
         if(keyCount != 0)
         {
+            if(keyCount == 1)
+                interpolatedRotation = _keyFrame_rotations[0].rotation;
             int index = FindKeyFrameIndex(_keyFrame_rotations,time);
             index = std::max(index,0);
             int nextIndex = (index + 1 < keyCount) ? index + 1 : 0;
@@ -93,6 +143,7 @@ Matrix AnimationPartition::CalculateTransformMatrix(const double& time) const
             const double dt = key1._time - key0._time;
             const double t = (dt != 0.f) ? (time - key0._time) / dt : 0.f;
             Quaternion::Slerp(key0.rotation,key1.rotation, t,interpolatedRotation);
+            interpolatedRotation = interpolatedRotation;
         }
     }
 
@@ -100,6 +151,8 @@ Matrix AnimationPartition::CalculateTransformMatrix(const double& time) const
         const size_t keyCount = _keyFrame_scales.size();
         if(keyCount != 0)
         {
+            if(keyCount == 1)
+                interpolatedScale = _keyFrame_scales[0].scale;
             int index = FindKeyFrameIndex(_keyFrame_scales,time);
             index = std::max(index,0);
             int nextIndex = (index + 1 < keyCount) ? index + 1 : 0;
@@ -112,6 +165,6 @@ Matrix AnimationPartition::CalculateTransformMatrix(const double& time) const
     }
 
     return Matrix::CreateScale(interpolatedScale) *
-        Matrix::CreateFromQuaternion(interpolatedRotation) *
+        Matrix::CreateFromQuaternion(offsetPostRotation * interpolatedRotation * offsetPreRotation) *
         Matrix::CreateTranslation(interpolatedPosition);
 }

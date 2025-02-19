@@ -42,6 +42,7 @@ void SkinnedMeshRenderer::Start()
 		{
 			_hierarchy = root->AddComponent<SkinnedHierarchy>();
 			_hierarchy.lock()->SetBoneList(_model->_modelBoneList);
+			_hierarchy.lock()->SetNodeList(_model->_modelNodeList);
 		}
 	}
 }

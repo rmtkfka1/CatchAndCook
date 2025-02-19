@@ -17,7 +17,7 @@ public:
 	}
 	wstring _name;
 
-	void Init(aiAnimation* anim);
+	void Init(aiAnimation* anim, aiNode* root);
 
 	std::unordered_map<wstring, std::shared_ptr<AnimationPartition>> _partitions;
 

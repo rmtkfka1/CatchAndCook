@@ -172,10 +172,11 @@ void Model::Init(const wstring& path, VertexType vertexType)
 	
 	_rootNode = AddNode(scene->mRootNode);
 
+	auto a = _nameToNodeTable;
 	for(int i=0;i<scene->mNumAnimations;i++)
 	{
 		auto anim = std::make_shared<Animation>();
-		anim->Init(scene->mAnimations[i]);
+		anim->Init(scene->mAnimations[i],scene->mRootNode);
 		_animationList.push_back(anim);
 	}
 
@@ -329,7 +330,21 @@ void Model::LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& cu
 	{
 		aiBone* currentAIBone = currentAIMesh->mBones[boneIndex];
 		std::string boneName = convert_assimp::Format(currentAIBone->mName);
+		std::string nodeName = boneName;
+		aiNode* boneNode = currentAIBone->mNode;
+		if(boneNode != nullptr)
+			nodeName = convert_assimp::Format(currentAIBone->mNode->mName);
+
 		auto bone = FindBoneByName(boneName);
+		if(bone == nullptr)
+		{
+			bone = std::make_shared<Bone>();
+			bone->SetName(boneName);
+			bone->SetNodeName(nodeName);
+			bone->SetTransformMatrix(convert_assimp::Format(currentAIBone->mOffsetMatrix));
+			AddBone(bone);
+		}
+
 		if(currentAIBone->mNumWeights == 0)
 		{
 			for(int boneVertexIndex = 0; boneVertexIndex < vertexs.size(); boneVertexIndex++)
@@ -337,7 +352,6 @@ void Model::LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& cu
 				auto& currentVertex = vertexs[boneVertexIndex];
 				int findIndex = -1;
 				float* idArray = &currentVertex.boneId.x;
-				float* weightArray = &currentVertex.boneWeight.x;
 
 				const int MAX_BONE_COUNT = 4;
 

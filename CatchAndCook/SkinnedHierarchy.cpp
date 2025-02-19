@@ -4,6 +4,7 @@
 #include "Animation.h"
 #include "AnimationPartition.h"
 #include "Bone.h"
+#include "ModelNode.h"
 #include "SkinnedMeshRenderer.h"
 #include "Transform.h"
 
@@ -28,21 +29,25 @@ void SkinnedHierarchy::Init()
 void SkinnedHierarchy::Start()
 {
 	Component::Start();
-	for (int index = 0;index<_boneList.size();index++)
+	for(int index = 0;index<_boneList.size();index++)
 	{
 		auto& bone = _boneList[index];
 		_boneOffsetMatrixList[index] = bone->GetTransformMatrix();
 		{
 			std::vector<std::shared_ptr<GameObject>> obj;
 			auto name = to_wstring(bone->GetName());
-			GetOwner()->GetChildsAllByName(name, obj);
-			if (!obj.empty())
+			GetOwner()->GetChildsAllByName(name,obj);
+			if(!obj.empty())
 				_boneNodeList[index] = obj[0];
 		}
+	}
+	//_nodeNameList
+	for(int index = 0;index<_nodeNameList.size();index++)
+	{
 		{
 			std::vector<std::shared_ptr<GameObject>> obj;
 
-			auto name = to_wstring(bone->GetName());
+			auto name = _nodeNameList[index];
 			GetOwner()->GetChildsAllByName(name, obj);
 			if (!obj.empty())
 				nodeObjectTable[name] = obj[0];
@@ -54,7 +59,7 @@ void SkinnedHierarchy::Start()
 		renderer->AddSetter(GetCast<SkinnedHierarchy>());
 
 	if(renderers.size() != 0)
-		SetAnimation(renderers[0]->_model->_animationList[3]);
+		SetAnimation(renderers[0]->_model->_animationList[0]);
 }
 
 void SkinnedHierarchy::Update()
@@ -120,6 +125,12 @@ void SkinnedHierarchy::SetDestroy()
 void SkinnedHierarchy::Destroy()
 {
 	Component::Destroy();
+}
+
+void SkinnedHierarchy::SetNodeList(const std::vector<std::shared_ptr<ModelNode>>& nodes)
+{
+	for(auto& name : nodes)
+		_nodeNameList.push_back(to_wstring(name->GetName()));
 }
 
 void SkinnedHierarchy::PushData()
