@@ -74,9 +74,10 @@ void SkinnedMeshRenderer::Destroy()
 void SkinnedMeshRenderer::RenderBegin()
 {
 	Component::RenderBegin();
-
+	
 	for(int i = 0; i < _mesh.size(); i++)
 	{
+		auto a = GetOwner();
 		auto currentMesh = _mesh[i];
 		auto currentMaterial = _uniqueMaterials[i % _mesh.size()];
 		currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);

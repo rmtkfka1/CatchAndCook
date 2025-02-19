@@ -22,6 +22,10 @@ public:
 	void PushData() override;
 	void SetData(Material* material) override;
 
+	void SetAnimation(const std::shared_ptr<Animation>& animation);
+
+	std::shared_ptr<Animation> animation;
+
 	std::unordered_map<std::wstring, std::weak_ptr<GameObject>> nodeObjectTable;
 
 	std::vector<std::shared_ptr<Bone>> _boneList;

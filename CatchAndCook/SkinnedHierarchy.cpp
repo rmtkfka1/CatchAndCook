@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "SkinnedHierarchy.h"
 
+#include "Animation.h"
+#include "AnimationPartition.h"
 #include "Bone.h"
 #include "SkinnedMeshRenderer.h"
 #include "Transform.h"
@@ -50,6 +52,9 @@ void SkinnedHierarchy::Start()
 	GetOwner()->GetComponentsWithChilds(renderers);
 	for (auto& renderer : renderers)
 		renderer->AddSetter(GetCast<SkinnedHierarchy>());
+
+	if(renderers.size() != 0)
+		SetAnimation(renderers[0]->_model->_animationList[3]);
 }
 
 void SkinnedHierarchy::Update()
@@ -60,6 +65,25 @@ void SkinnedHierarchy::Update()
 void SkinnedHierarchy::Update2()
 {
 	Component::Update2();
+
+	for(auto& data : this->animation->_partitions)
+	{
+		auto it = nodeObjectTable.find(data.first);
+		if(it != nodeObjectTable.end())
+		{
+			auto obj = it->second.lock();
+			if(obj != nullptr)
+			{
+				auto transform = obj->_transform;
+				auto& partition = data.second;
+				auto time = (Time::main->GetTime() * 30.0f);
+				while(time > 5 * 30)
+					time -= 5 * 30;
+				auto matrix = partition->CalculateTransformMatrix(time);
+				transform->SetLocalSRTMatrix(matrix);
+			}
+		}
+	}
 }
 
 void SkinnedHierarchy::Enable()
@@ -119,4 +143,9 @@ void SkinnedHierarchy::SetData(Material* material)
 	int index = material->GetShader()->GetRegisterIndex("BoneParam");
 	if(index != -1)
 		Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(index, _cbuffer->GPUAdress);
+}
+
+void SkinnedHierarchy::SetAnimation(const std::shared_ptr<Animation>& animation)
+{
+	this->animation = animation;
 }

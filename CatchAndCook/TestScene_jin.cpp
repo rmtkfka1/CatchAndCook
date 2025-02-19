@@ -79,8 +79,9 @@ void TestScene_jin::Init()
 	auto a = ResourceManager::main->Get<SceneLoader>(L"test");
 	a->Load(GetCast<Scene>());
 
+
 	//int i=0;
-	//Find(L"testB")->ForHierarchyAll([&](const std::shared_ptr<GameObject>& obj)
+	auto c = Find(L"Lisa_Weapon_1");
 	//{
 	//	std::cout << std::to_string(obj->GetName()) <<"\n";
 	//});

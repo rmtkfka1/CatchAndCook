@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "Model.h"
+
+#include "Animation.h"
 #include "Bone.h"
 #include "GameObject.h"
 #include "Component.h"
@@ -167,8 +169,15 @@ void Model::Init(const wstring& path, VertexType vertexType)
 		currentModelMesh->SetIndex(i);
 		_modelMeshList.push_back(currentModelMesh);
 	}
-
+	
 	_rootNode = AddNode(scene->mRootNode);
+
+	for(int i=0;i<scene->mNumAnimations;i++)
+	{
+		auto anim = std::make_shared<Animation>();
+		anim->Init(scene->mAnimations[i]);
+		_animationList.push_back(anim);
+	}
 
 	SetNodeData();
 	SetBoneData();
@@ -267,7 +276,6 @@ void Model::LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& cu
 		if (boneNode != nullptr)
 			nodeName = convert_assimp::Format(currentAIBone->mNode->mName);
 
-
 		auto bone = FindBoneByName(boneName);
 		if (bone == nullptr)
 		{
@@ -288,9 +296,12 @@ void Model::LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& cu
 			const int MAX_BONE_COUNT = 4;
 
 			// ���� �Ⱦ��� ID�� �ִ��� ����
-			for (int l = MAX_BONE_COUNT - 1; l >= 0; --l)
-				if (idArray[l] == -1)
+			for(int l = 0; l < MAX_BONE_COUNT; ++l)
+				if(idArray[l] == -1)
+				{
 					findIndex = l;
+					break;
+				}
 			// ���� ������ ����
 			if (findIndex == -1)
 			{
@@ -309,6 +320,39 @@ void Model::LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& cu
 			{
 				(&currentVertex.boneId.x)[findIndex] = static_cast<float>(bone->GetIndex());
 				(&currentVertex.boneWeight.x)[findIndex] = currentAIBone->mWeights[boneVertexIndex].mWeight;
+			}
+		}
+	}
+
+	// Index만 존재하는 케이스에 대한 처리
+	for(int boneIndex = 0; boneIndex < currentAIMesh->mNumBones; boneIndex++)
+	{
+		aiBone* currentAIBone = currentAIMesh->mBones[boneIndex];
+		std::string boneName = convert_assimp::Format(currentAIBone->mName);
+		auto bone = FindBoneByName(boneName);
+		if(currentAIBone->mNumWeights == 0)
+		{
+			for(int boneVertexIndex = 0; boneVertexIndex < vertexs.size(); boneVertexIndex++)
+			{
+				auto& currentVertex = vertexs[boneVertexIndex];
+				int findIndex = -1;
+				float* idArray = &currentVertex.boneId.x;
+				float* weightArray = &currentVertex.boneWeight.x;
+
+				const int MAX_BONE_COUNT = 4;
+
+				// ���� �Ⱦ��� ID�� �ִ��� ����
+				for(int l = 0; l < MAX_BONE_COUNT; ++l)
+					if(idArray[l] == -1)
+					{
+						findIndex = l;
+						break;
+					}
+				if((currentVertex.boneId.x + currentVertex.boneId.y + currentVertex.boneId.z + currentVertex.boneId.w == -4) && findIndex != -1)
+				{
+					(&currentVertex.boneId.x)[findIndex] = static_cast<float>(bone->GetIndex());
+					(&currentVertex.boneWeight.x)[findIndex] = 1;
+				}
 			}
 		}
 	}

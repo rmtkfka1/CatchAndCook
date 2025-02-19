@@ -46,5 +46,7 @@ private:
 
 	std::wstring _boneName;
 	std::weak_ptr<SkinnedHierarchy> _hierarchy;
+
+	friend class SkinnedHierarchy;
 };
 
