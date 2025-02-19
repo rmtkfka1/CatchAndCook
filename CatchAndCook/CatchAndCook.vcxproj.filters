@@ -53,6 +53,9 @@
     <Filter Include="998.HLSL\Module">
       <UniqueIdentifier>{cacc5c22-d724-4fa9-9e3e-cf72a8fc745f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04.Resource\Model\Animation">
+      <UniqueIdentifier>{daa03aca-f69a-4ef8-9f6f-2323bc6c8549}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -190,9 +193,6 @@
     <ClCompile Include="TestScene_jin.cpp">
       <Filter>06.Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>04.Resource\Model</Filter>
-    </ClCompile>
     <ClCompile Include="GameObjectSetting.cpp">
       <Filter>01.GameObject</Filter>
     </ClCompile>
@@ -240,6 +240,15 @@
     </ClCompile>
     <ClCompile Include="CbufferParam.cpp">
       <Filter>07.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationKeyFrame.cpp">
+      <Filter>04.Resource\Model\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationNode.cpp">
+      <Filter>04.Resource\Model\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>04.Resource\Model\Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -391,9 +400,6 @@
     <ClInclude Include="TestScene_jin.h">
       <Filter>06.Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>04.Resource\Model</Filter>
-    </ClInclude>
     <ClInclude Include="GameObjectSetting.h">
       <Filter>01.GameObject</Filter>
     </ClInclude>
@@ -450,6 +456,15 @@
     </ClInclude>
     <ClInclude Include="CbufferParam.h">
       <Filter>07.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationNode.h">
+      <Filter>04.Resource\Model\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationKeyFrame.h">
+      <Filter>04.Resource\Model\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>04.Resource\Model\Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -519,10 +534,13 @@
     <FxCompile Include="..\Resources\Shaders\Camera_b2.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Skinned_b6.hlsl">
+    <FxCompile Include="..\Resources\Shaders\Light_b3.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Light_b3.hlsl">
+    <FxCompile Include="..\Resources\Shaders\TestForward_Instance.hlsl">
+      <Filter>998.HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Skinned_b5.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
   </ItemGroup>

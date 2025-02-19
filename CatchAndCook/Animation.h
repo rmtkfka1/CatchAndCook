@@ -11,6 +11,8 @@ public:
 
 	void Init(aiAnimation* anim,aiNode* root);
 
+	double CalculateTime(double time) const;
+
 	void SetName(const wstring& name){
 		_name = name;
 	}

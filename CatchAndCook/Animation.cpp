@@ -83,3 +83,10 @@ void Animation::Init(aiAnimation* anim, aiNode* root)
 
 	}
 }
+
+double Animation::CalculateTime(double time) const
+{
+	if(_totalTime == 0)
+		return time;
+	return std::fmod(time,_totalTime);
+}

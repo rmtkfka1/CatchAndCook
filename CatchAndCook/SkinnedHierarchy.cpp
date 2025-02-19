@@ -72,6 +72,7 @@ void SkinnedHierarchy::Update2()
 {
 	Component::Update2();
 
+	auto time = this->animation->CalculateTime(Time::main->GetTime());
 	for(auto& animNode : this->animation->_nodeLists)
 	{
 		auto it = nodeObjectTable.find(animNode->GetNodeName());
@@ -81,8 +82,6 @@ void SkinnedHierarchy::Update2()
 			if(obj != nullptr)
 			{
 				auto transform = obj->_transform;
-				auto time = (Time::main->GetTime() * 30.0f);
-
 				auto matrix = animNode->CalculateTransformMatrix(time);
 				transform->SetLocalSRTMatrix(matrix);
 			}
