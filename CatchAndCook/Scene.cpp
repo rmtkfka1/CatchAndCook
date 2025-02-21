@@ -75,6 +75,7 @@ void Scene::Rendering()
     auto& cmdList = Core::main->GetCmdList();
 
     Core::main->GetRenderTarget()->ClearDepth();
+
     //ShadowPass(cmdList);
     DefferedPass(cmdList);
     FinalRender(cmdList);

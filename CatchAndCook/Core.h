@@ -42,8 +42,6 @@ public:
 	shared_ptr<RootSignature>& GetRootSignature() { return _rootSignature; };
 	shared_ptr<BufferManager>& GetBufferManager() { return _bufferManager; }
 
-	void SetPipelineState(Shader* shader);
-	void SetPipelineSetting(Material* material);
 
 private:
 	void AdjustWinodwSize();
@@ -83,12 +81,10 @@ private:
 
 	HWND _hwnd{0};
 
-	Shader* currentShader = nullptr;
-	int currentStencil = -1;
+
 public:
 	
 public:
-	//temp
-	//array<std::vector<std::shared_ptr<Packet>>, RENDER_PASS::Count> passPackets;
+	
 };
 
