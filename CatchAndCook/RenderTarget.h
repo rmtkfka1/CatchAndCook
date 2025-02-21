@@ -54,7 +54,7 @@ public:
 	void RenderEnd();
 	void ClearDepth();
 
-	array<shared_ptr<Texture>, SWAP_CHAIN_FRAME_COUNT> GetRenderTargetAll() { return _RenderTargets; }
+
 	shared_ptr<Texture> GetRenderTarget() { return _RenderTargets[_RenderTargetIndex]; }
 	shared_ptr<Texture> GetDSTexture() { return _DSTexture; };
 private:
@@ -66,3 +66,33 @@ private:
 	D3D12_RECT		_scissorRect = {};
 	uint32	_RenderTargetIndex = 0;
 };
+
+
+
+/*************************
+*                        *
+*         GBuffer        *
+*                        *
+**************************/
+class Texture;
+
+class GBuffer
+{
+public:
+	static const uint32 _count = 4;
+
+	GBuffer();
+	~GBuffer();
+
+	void Init();
+	void RenderBegin();
+	void RenderEnd();
+
+	shared_ptr<Texture>& GetTexture(int32 index);
+
+private:
+	array<shared_ptr<Texture>,_count> _textures = {nullptr,};
+	D3D12_VIEWPORT _viewport;
+	D3D12_RECT _scissorRect;
+};
+

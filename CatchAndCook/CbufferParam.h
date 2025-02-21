@@ -30,7 +30,6 @@ CBUFFER_INJECTOR("popo", TestSubMaterialParam, 256, BufferType::MateriaSubParam,
 	data.uv = Vector2(source->GetPropertyVector("uv"));
 )
 
-
 struct alignas(16) DefaultMaterialParam
 {
 	Vector4 color;

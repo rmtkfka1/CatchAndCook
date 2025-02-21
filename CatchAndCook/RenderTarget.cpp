@@ -68,8 +68,6 @@ void RenderTarget::RenderBegin()
 {
 	ComPtr<ID3D12GraphicsCommandList> cmdList = Core::main->GetCmdList();
 
-	//ClearDepth();
-
 	const float BackColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	_RenderTargets[_RenderTargetIndex]->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
@@ -96,4 +94,100 @@ void RenderTarget::ClearDepth()
 void RenderTarget::ChangeIndex()
 {
 	_RenderTargetIndex = _swapChain->GetCurrentBackBufferIndex();
+}
+
+
+
+/*************************
+*                        *
+*         GBuffer        *
+*                        *
+**************************/
+
+GBuffer::GBuffer()
+{
+
+}
+
+GBuffer::~GBuffer()
+{
+
+}
+
+void GBuffer::Init()
+{
+	//Resize 할때 이미할당된 BufferPool 이있는경우 놓아줌.
+	for(int i = 0; i < _count; ++i)
+	{
+		if(_textures[i])
+		{
+			Core::main->GetBufferManager()->GetTextureBufferPool()->FreeRTVHandle(_textures[i]->GetRTVCpuHandle());
+			Core::main->GetBufferManager()->GetTextureBufferPool()->FreeSRVHandle(_textures[i]->GetSRVCpuHandle());
+			Core::main->GetBufferManager()->GetTextureBufferPool()->FreeSRVHandle(_textures[i]->GetUAVCpuHandle());
+		}
+	}
+
+	_viewport = D3D12_VIEWPORT{0.0f,0.0f,static_cast<float>(WINDOW_WIDTH),static_cast<float>(WINDOW_HEIGHT),0,1.0f};
+	_scissorRect = D3D12_RECT{0,0,static_cast<LONG>(WINDOW_WIDTH),static_cast<LONG>(WINDOW_HEIGHT)};
+
+	for(int i = 0; i < _count; ++i)
+	{
+		_textures[i] = make_shared<Texture>();
+	}
+
+	//position 정보
+	_textures[0]->CreateStaticTexture(DXGI_FORMAT_R32G32B32A32_FLOAT,D3D12_RESOURCE_STATE_COMMON,WINDOW_WIDTH,WINDOW_HEIGHT,TextureUsageFlags::RTV| TextureUsageFlags::SRV | TextureUsageFlags::UAV,false,true);
+	//normal 정보
+	_textures[1]->CreateStaticTexture(DXGI_FORMAT_R32G32B32A32_FLOAT,D3D12_RESOURCE_STATE_COMMON,WINDOW_WIDTH,WINDOW_HEIGHT,TextureUsageFlags::RTV | TextureUsageFlags::SRV | TextureUsageFlags::UAV,false,true);
+	//color 정보
+	_textures[2]->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM,D3D12_RESOURCE_STATE_COMMON,WINDOW_WIDTH,WINDOW_HEIGHT,TextureUsageFlags::RTV | TextureUsageFlags::SRV | TextureUsageFlags::UAV,false,true);
+	//depth 정보
+	_textures[3]->CreateStaticTexture(DXGI_FORMAT_R8_UNORM,D3D12_RESOURCE_STATE_COMMON,WINDOW_WIDTH,WINDOW_HEIGHT,TextureUsageFlags::RTV | TextureUsageFlags::SRV | TextureUsageFlags::UAV,false,true);
+}
+
+void GBuffer::RenderBegin()
+{
+	auto& list = Core::main->GetCmdList();
+	float arrFloat[4] = {0,0,0,0};
+
+	for(uint32 i = 0; i < _count; i++)
+	{
+		_textures[i]->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
+	}
+
+	for(uint32 i = 0; i < _count; i++)
+	{
+		list->ClearRenderTargetView(_textures[i]->GetRTVCpuHandle(),arrFloat,0,nullptr);
+	}
+
+	list->RSSetViewports(1,&_viewport);
+	list->RSSetScissorRects(1,&_scissorRect);
+	list->OMSetRenderTargets(_count,&_textures[0]->GetRTVCpuHandle(),TRUE,&_textures[0]->GetSharedDSVHandle());
+
+}
+
+void GBuffer::RenderEnd()
+{
+	auto& list = Core::main->GetCmdList();
+	auto& table = Core::main->GetBufferManager()->GetTable();
+
+	for(uint32 i = 0; i < _count; i++)
+	{
+		_textures[i]->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+	}
+
+	for(uint32 i = 0; i < _count; i++)
+	{
+		tableContainer container = table->Alloc(1);
+		table->CopyHandle(container.CPUHandle,_textures[i]->GetSRVCpuHandle(),0);
+		list->SetGraphicsRootDescriptorTable(GLOBAL_SRV_POSITION_INDEX+i,container.GPUHandle);
+	}
+}
+
+
+shared_ptr<Texture>& GBuffer::GetTexture(int32 index)
+{
+	assert(index < _count);
+
+	return _textures[index];
 }

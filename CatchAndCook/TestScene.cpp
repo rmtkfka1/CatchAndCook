@@ -116,12 +116,8 @@ void TestScene::Init()
 #pragma endregion
 
 	{
-		ShaderInfo info;
-		info._zTest = true;
-		info._stencilTest = false;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"test", L"test.hlsl", GeoMetryProp,
-			ShaderArg{}, info);
+		shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deferred");
 
 		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
 		shared_ptr<Material> material = make_shared<Material>();
@@ -139,8 +135,8 @@ void TestScene::Init()
 	
 		material = make_shared<Material>();
 		material->SetShader(shader);
-		material->SetPass(RENDER_PASS::Forward);
-		material->SetHandle("g_tex_0", texture->GetSRVCpuHandle());
+		material->SetPass(RENDER_PASS::Deffered);
+		material->SetHandle("_BaseMap", texture->GetSRVCpuHandle());
 
 		meshRenderer->AddMaterials({ material });
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(6.0f));

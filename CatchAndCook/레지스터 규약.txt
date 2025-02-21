@@ -9,9 +9,11 @@ s4 = 비등방 16x
 s5 = 그림자 샘플링
 
 // 16개
-t20 shadow_texture
-t21 opaque_texture
-t22 depth_texture
+Shaow_Texture :  register(t20);
+PositionTexture : register(t21);
+NormalTexture : register(t22);
+AlbedoTexture : register(t23);
+depthTexture : register(t24);
 
 // 지켜야할 이름 규칙
 diffuse_texture : _BaseMap

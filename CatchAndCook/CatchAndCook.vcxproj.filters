@@ -118,9 +118,6 @@
       <Filter>03.Component</Filter>
     </ClCompile>
     <ClCompile Include="TestMain.cpp" />
-    <ClCompile Include="Material.cpp">
-      <Filter>04.Resource</Filter>
-    </ClCompile>
     <ClCompile Include="ICBufferInjector.cpp">
       <Filter>997.Utils</Filter>
     </ClCompile>
@@ -250,6 +247,9 @@
     <ClCompile Include="Animation.cpp">
       <Filter>04.Resource\Model\Animation</Filter>
     </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>04.Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -324,9 +324,6 @@
     </ClInclude>
     <ClInclude Include="Transform.h">
       <Filter>03.Component</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>04.Resource</Filter>
     </ClInclude>
     <ClInclude Include="ICBufferInjector.h">
       <Filter>997.Utils</Filter>
@@ -466,6 +463,9 @@
     <ClInclude Include="Animation.h">
       <Filter>04.Resource\Model\Animation</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>04.Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -543,5 +543,7 @@
     <FxCompile Include="..\Resources\Shaders\Skinned_b5.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Deferred.hlsl" />
+    <FxCompile Include="..\Resources\Shaders\final.hlsl" />
   </ItemGroup>
 </Project>

@@ -9,7 +9,6 @@
 class Shader;
 class Texture;
 
-
 struct MaterialParams
 {
 	void SetInt(uint8 index, int32 value) { intParams[index] = value; }
@@ -17,10 +16,10 @@ struct MaterialParams
 	void SetMatrix(int index, Matrix mat) { MatrixParams[index] = mat; }
 	void SetVec4(uint8 index, vec4 vector) { vec4Params[index] = vector; }
 
-	array<int32, 4>		intParams { 0 }; 
-	array<vec4, 4>		vec4Params { vec4::One, vec4::One, vec4::One, vec4::One };
-	array<float, 4>		floatParams { 0 }; 
-	array<Matrix, 2>	MatrixParams { Matrix::Identity, Matrix::Identity };
+	array<int32, 4>		intParams{ 0 };
+	array<vec4, 4>		vec4Params{ vec4::One, vec4::One, vec4::One, vec4::One };
+	array<float, 4>		floatParams{ 0 };
+	array<Matrix, 2>	MatrixParams{ Matrix::Identity, Matrix::Identity };
 };
 
 class Material : public IGuid
@@ -34,11 +33,11 @@ public:
 	{
 		_shader = shader;
 		_shaderInjectors.clear();
-		for(auto& type : shader->_cbufferInjectorTypes)
+		for (auto& type : shader->_cbufferInjectorTypes)
 			_shaderInjectors.push_back(InjectorManager::main->Get(type));
 	}
 
-	void SetPass(RENDER_PASS::PASS pass) {_pass = pass;};
+	void SetPass(RENDER_PASS::PASS pass) { _pass = pass; };
 	RENDER_PASS::PASS& GetPass() { return _pass; };
 
 	void SetStencilIndex(int index) { _stencilIndex = index; };
@@ -70,14 +69,14 @@ private:
 private:
 	shared_ptr<Shader> _shader;
 
-	std::unordered_map<std::string, int> _propertyInts; // Bool ê°’
-	std::unordered_map<std::string, float> _propertyFloats; // 0~1 ìŠ¤,ë¬´ìŠ¤ë‹ˆìŠ¤ ì •ë³´
+	std::unordered_map<std::string, int> _propertyInts; // Bool °ª
+	std::unordered_map<std::string, float> _propertyFloats; // 0~1 ½º,¹«½º´Ï½º Á¤º¸
 	std::unordered_map<std::string, vec4> _propertyVectors; // Color 
 	std::unordered_map<std::string, Matrix> _propertyMatrixs; // 
 	std::unordered_map<std::string, D3D12_CPU_DESCRIPTOR_HANDLE> _propertyHandle;
 
 	CBufferContainer* _cbufferContainer;
-	MaterialParams _params; // ì¶”ê°€ ì •ë³´í•¨ìˆ˜ ë„˜ê²¨ì„œ ë°ì´í„° ë„£ëŠ” ì…‹ ì‘ì—…
+	MaterialParams _params; // Ãß°¡ Á¤º¸ÇÔ¼ö ³Ñ°Ü¼­ µ¥ÀÌÅÍ ³Ö´Â ¼Â ÀÛ¾÷
 	bool _useMaterialParams = false;
 	RENDER_PASS::PASS _pass = RENDER_PASS::Forward;
 	int _stencilIndex = 0;
