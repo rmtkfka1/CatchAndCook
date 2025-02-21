@@ -42,6 +42,7 @@ void Material::SetData()
 {
 	//텍스쳐바인딩
 	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, _tableContainer.GPUHandle);
+
 	if(_shader->_profileInfo.maxTRegister >= SRV_LONG_TABLE_REGISTER_OFFSET) {
 		Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_LONG_TABLE_INDEX, _tableLongContainer.GPUHandle);
 	}
@@ -51,6 +52,7 @@ void Material::SetData()
 
 	for(auto& injector : _shaderInjectors)
 		injector->SetData(_shader);
+
 	for(auto& injector : _customInjectors)
 		injector->SetData(_shader);
 }

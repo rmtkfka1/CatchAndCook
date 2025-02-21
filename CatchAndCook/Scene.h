@@ -24,6 +24,7 @@ private:
 	bool RemoveAtGameObject(int index);
 
 	void ExecuteDestroyGameObjects();
+	void GlobalSetting();
 
 public:
 	void SetName(const std::string& name) { _name = name; };
@@ -51,7 +52,7 @@ public:
 	friend class SceneLoader;
 
 protected:
-	std::array<std::vector<RenderObjectStrucutre>, RENDER_PASS::Count> _passObjects;
+	std::array<unordered_map<shared_ptr<Shader>,std::vector<RenderObjectStrucutre>>, RENDER_PASS::Count> _passObjects;
 	std::vector<std::shared_ptr<GameObject>> _dont_destroy_gameObjects;
 
 public:

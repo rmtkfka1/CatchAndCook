@@ -68,6 +68,86 @@ void Scene::RenderBegin()
 
 void Scene::Rendering()
 {
+    GlobalSetting();
+
+    auto& cmdList = Core::main->GetCmdList();
+
+    { // Shadow
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
+
+        for (auto& [shader, vec] : targets)
+        {
+			cmdList->SetPipelineState(ResourceManager::main->Get<Shader>(L"Shadow")->_pipelineState.Get());
+
+			for(auto& [material,mesh,target] : vec)
+			{
+				target->Rendering(nullptr,mesh);
+			}
+        }
+    }
+
+    { // Deffered
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deffered)];
+
+        for(auto& [shader,vec] : targets)
+        {
+            cmdList->SetPipelineState(shader->_pipelineState.Get());
+
+            for(auto& [material,mesh,target] : vec)
+            {
+                target->Rendering(material,mesh);
+            }
+        }
+    }
+
+	{ // Forward
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Forward)];
+
+        for(auto& [shader,vec] : targets)
+        {
+            cmdList->SetPipelineState(shader->_pipelineState.Get());
+
+            for(auto& [material,mesh,target] : vec)
+            {
+                target->Rendering(material,mesh);
+            }
+        }
+	}
+
+
+
+    { // Transparent
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Transparent)];
+
+        for(auto& [shader,vec] : targets)
+        {
+            cmdList->SetPipelineState(shader->_pipelineState.Get());
+
+            for(auto& [material,mesh,target] : vec)
+            {
+                target->Rendering(material,mesh);
+            }
+        }
+    }
+
+    {  //UI
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::UI)];
+
+        for(auto& [shader,vec] : targets)
+        {
+            if(shader)
+                cmdList->SetPipelineState(shader->_pipelineState.Get());
+
+            for(auto& [material,mesh,target] : vec)
+            {
+                target->Rendering(material,mesh);
+            }
+        }
+    }
+}
+
+void Scene::GlobalSetting()
+{
     auto& cmdList = Core::main->GetCmdList();
 
     CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
@@ -75,123 +155,53 @@ void Scene::Rendering()
     CameraManager::main->GetActiveCamera()->PushData();
     CameraManager::main->GetActiveCamera()->SetData();
 
-    _globalParam.window_size = vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
+    _globalParam.window_size = vec2(WINDOW_WIDTH,WINDOW_HEIGHT);
     _globalParam.Time = Time::main->GetTime();
     auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::GlobalParam)->Alloc(1);
-    memcpy(CbufferContainer->ptr, (void*)&_globalParam, sizeof(GlobalParam));
+    memcpy(CbufferContainer->ptr,(void*)&_globalParam,sizeof(GlobalParam));
 
-    cmdList->SetGraphicsRootConstantBufferView(0, CbufferContainer->GPUAdress);
-
-    { // Shadow
-        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
-
-        for (auto& [material, mesh,target] : targets)
-        {
-            target->Rendering(nullptr, mesh);
-        }
-    }
-
-    { // Deffered
-        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deffered)];
-
-        for (auto& [material, mesh, target] : targets)
-        {
-            Core::main->SetPipelineState(material->GetShader().get());
-            Core::main->SetPipelineSetting(material);
-            target->Rendering(material, mesh);
-        }
-    }
-
-	{ // Forward
-        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Forward)];
-        // 이걸 추가한 이유는, Sorting을 한번 돌리는게
-        // 쉐이더가 Set되면서 PipelineState의 설정이 리셋되는게 오히려 오버헤드가 더 크기 때문에.
-        // 여기서 Sorting을 해서 바인딩이 갱신되는 횟수를 줄이는게 렌더링 부하가 더 적음.
-        ranges::sort(targets, [&](const RenderObjectStrucutre& s1, const RenderObjectStrucutre& s2) {
-            if (s1.material->GetShader()->_info._renderOrder != s2.material->GetShader()->_info._renderOrder)
-                return (s1.material->GetShader()->_info._renderOrder < s2.material->GetShader()->_info._renderOrder);
-            if (s1.material->GetShader().get() != s2.material->GetShader().get())
-                return s1.material->GetShader().get() < s2.material->GetShader().get();
-            if (s1.mesh != s2.mesh)
-                return s1.mesh < s2.mesh;
-			return true;
-            });
-
-        for (auto& [material, mesh, target] : targets)
-        {
-            Core::main->SetPipelineState(material->GetShader().get());
-            Core::main->SetPipelineSetting(material);
-            target->Rendering(material, mesh);
-        }
-	}
-
-    { // CopyTexture
-        auto& cmd = Core::main->GetCmdList();
-        //cmd->CopyResource()
-    }
-
-    { // Transparent
-        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Transparent)];
-        //여기선 Mesh말고 Camera Z기반 Sorting이 필요함.
-        ranges::sort(targets, [&](const RenderObjectStrucutre& s1, const RenderObjectStrucutre& s2) {
-            if (s1.material->GetShader()->_info._renderOrder != s2.material->GetShader()->_info._renderOrder)
-                return (s1.material->GetShader()->_info._renderOrder < s2.material->GetShader()->_info._renderOrder);
-            if (s1.material->GetShader().get() != s2.material->GetShader().get())
-                return s1.material->GetShader().get() < s2.material->GetShader().get();
-            return true;
-            });
-
-        for (auto& [material, mesh, target] : targets)
-        {
-            Core::main->SetPipelineState(material->GetShader().get());
-            Core::main->SetPipelineSetting(material);
-            target->Rendering(material, mesh);
-        }
-    }
-
-    {  //UI
-        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::UI)];
-
-        for (auto& [material, mesh, target] : targets)
-        {
-            target->Rendering(nullptr, mesh);
-        }
-    }
+    cmdList->SetGraphicsRootConstantBufferView(0,CbufferContainer->GPUAdress);
 }
 
 void Scene::DebugRendering()
 {
-    { // Shadow
-        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
 
-        for (auto& [material, mesh, target] : targets)
-        {
-            target->DebugRendering();
-        }
-    }
+    auto& cmdList = Core::main->GetCmdList();
+
 
     { // Deffered
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deffered)];
 
-        for (auto& [material, mesh, target] : targets)
+        for(auto& [shader,vec] : targets)
         {
-            target->DebugRendering();
+            for(auto& [material,mesh,target] : vec)
+            {
+                target->DebugRendering();
+            }
         }
     }
 
     { // forward
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Forward)];
 
-        for (auto& [material, mesh, target] : targets)
+        for(auto& [shader,vec] : targets)
         {
-            target->DebugRendering();
+            for(auto& [material,mesh,target] : vec)
+            {
+                target->DebugRendering();
+            }
         }
     }
+
     { // forward
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Debug)];
-        for(auto& [material,mesh,target] : targets) {
-            target->Rendering(material, mesh);
-            //target->DebugRendering();
+
+        for(auto& [shader,vec] : targets)
+        {
+            for(auto& [material,mesh,target] : vec)
+            {
+                target->Rendering(material,mesh);
+            }
         }
     }
 }
@@ -336,7 +346,7 @@ void Scene::AddRenderer(Material* material, Mesh* mesh, RendererBase* renderBase
     {
         if (RENDER_PASS::HasFlag(material->GetPass(), RENDER_PASS::PASS(1 << i)))
         {
-            _passObjects[i].emplace_back(material, mesh, renderBase);
+            _passObjects[i][material->GetShader()].emplace_back(material,mesh,renderBase);
 
         }
     }
@@ -347,7 +357,7 @@ void Scene::AddRenderer(Mesh* mesh, RendererBase* renderBase, RENDER_PASS::PASS 
     for (int i = 0; i < RENDER_PASS::Count; i++)
         if (RENDER_PASS::HasFlag(pass, RENDER_PASS::PASS(1 << i)))
         {
-            _passObjects[i].emplace_back(nullptr, mesh, renderBase);
+            _passObjects[i][nullptr].emplace_back(nullptr,mesh,renderBase);
         }
 }
 
