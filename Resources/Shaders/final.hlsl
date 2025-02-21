@@ -1,8 +1,10 @@
+#include "Global_b0.hlsl"
 
 Texture2D PositionTexture : register(t21);
 Texture2D NormalTexture : register(t22);
 Texture2D AlbedoTexture : register(t23);
-SamplerState g_sam_0 : register(s0);
+Texture2D depthTexture : register(t24);
+
 
 struct VS_IN
 {
@@ -32,9 +34,10 @@ float4 PS_Main(VS_OUT input) : SV_Target
   
     float3 color;
     
-    float4 worldPos = PositionTexture.Sample(g_sam_0, input.uv);
-    float4 WolrdNormal = normalize(NormalTexture.Sample(g_sam_0, input.uv));
-    float4 AlbedoColor = AlbedoTexture.Sample(g_sam_0, input.uv);
+    float4 worldPos = PositionTexture.Sample(sampler_point, input.uv);
+    float4 WolrdNormal = normalize(NormalTexture.Sample(sampler_point, input.uv));
+    float4 AlbedoColor = AlbedoTexture.Sample(sampler_point, input.uv);
+    float Depth = depthTexture.Sample(sampler_point, input.uv).r;
     
     //float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
     

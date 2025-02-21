@@ -21,6 +21,7 @@ struct VS_OUT
     float3 worldPos : Position;
     float3 worldNormal : NORMAL;
     float2 uv : TEXCOORD;
+    float4 depth : DEPTH;
 
 };
 
@@ -31,19 +32,24 @@ VS_OUT VS_Main(VS_IN input)
     
     output.pos = mul(float4(input.pos, 1.0f), LocalToWorldMatrix);
     output.worldPos = output.pos.xyz;
-    output.pos = mul(output.pos, VPMatrix);
+    
+    float4 clipPos = mul(output.pos, VPMatrix);
+    output.pos = clipPos;
+    
     output.uv = input.uv;
     output.worldNormal = normalize(mul(float4(input.normal, 0.0f), LocalToWorldMatrix).xyz);
     
-    return output;
-};
+    output.depth = clipPos.z / clipPos.w;
 
+    return output;
+}
 
 struct PS_OUT
 {
     float4 position : SV_Target0;
     float4 normal : SV_Target1;
     float4 color : SV_Target2;
+    float depth : SV_Target3;
 };
 
 PS_OUT PS_Main(VS_OUT input) : SV_Target
@@ -54,5 +60,7 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     output.normal = float4(input.worldNormal, 1.0f);
     output.color = _BaseMap.Sample(sampler_lerp, input.uv);
     
+    output.depth = input.depth;
+
     return output;
-};
+}
