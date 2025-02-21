@@ -39,6 +39,9 @@ void Core::Init(HWND hwnd)
     _renderTarget = make_shared<RenderTarget>();
     _renderTarget->Init(_swapChain);
 
+	_gBuffer = make_shared<GBuffer>();
+	_gBuffer->Init();
+
     _rootSignature = make_shared<RootSignature>();
     _rootSignature->Init();
 
@@ -59,8 +62,7 @@ void Core::RenderBegin()
     _cmdList->SetGraphicsRootSignature(_rootSignature->GetGraphicsRootSignature().Get());
     _cmdList->SetDescriptorHeaps(1, _bufferManager->GetTable()->GetDescriptorHeap().GetAddressOf());
 
-    _renderTarget->RenderBegin(); //임시
-    _renderTarget->ClearDepth(); //임시 
+
 }
 
 

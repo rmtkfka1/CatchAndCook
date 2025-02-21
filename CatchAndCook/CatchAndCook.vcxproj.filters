@@ -519,11 +519,20 @@
     <FxCompile Include="..\Resources\Shaders\Camera_b2.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Skinned_b6.hlsl">
-      <Filter>998.HLSL\Module</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Light_b3.hlsl">
       <Filter>998.HLSL\Module</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\final.hlsl">
+      <Filter>998.HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Deferred.hlsl">
+      <Filter>998.HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Skinned_b5.hlsl">
+      <Filter>998.HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\TestForward_Instance.hlsl">
+      <Filter>998.HLSL</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

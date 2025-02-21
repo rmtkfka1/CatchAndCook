@@ -38,6 +38,7 @@ public:
 	ComPtr<ID3D12GraphicsCommandList>& GetResCmdList() { return _resCmdList; }
 	ComPtr<ID3D12CommandQueue>& GetCmdQueue() { return _cmdQueue; }
 	shared_ptr<RenderTarget>& GetRenderTarget() { return _renderTarget; }
+	shared_ptr<GBuffer>& GetGBuffer() {return _gBuffer;}
 	shared_ptr<RootSignature>& GetRootSignature() { return _rootSignature; };
 	shared_ptr<BufferManager>& GetBufferManager() { return _bufferManager; }
 
@@ -55,7 +56,7 @@ private:
 	void SetDebugLayerInfo();
 
 private:
-	
+	shared_ptr<GBuffer> _gBuffer;
 	shared_ptr<RenderTarget> _renderTarget;
 	shared_ptr<RootSignature> _rootSignature;
 	shared_ptr<BufferManager> _bufferManager;

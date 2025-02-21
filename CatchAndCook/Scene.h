@@ -26,6 +26,14 @@ private:
 	void ExecuteDestroyGameObjects();
 	void GlobalSetting();
 
+private:
+	void UiPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
+	void TransparentPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
+	void ForwardPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
+	void DefferedPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
+	void ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
+	void FinalRender(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
+
 public:
 	void SetName(const std::string& name) { _name = name; };
 

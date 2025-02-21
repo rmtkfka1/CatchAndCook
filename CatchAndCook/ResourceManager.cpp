@@ -31,11 +31,37 @@ void ResourceManager::CreateDefaultModel()
 
 void ResourceManager::CreateDefaultMesh()
 {
-
+	{
+		auto finalMesh =  GeoMetryHelper::LoadRectangleMesh(1.0f);
+		Add<Mesh>(L"finalMesh",finalMesh);
+	}
 }
 
 void ResourceManager::CreateDefaultShader()
 {
+	{
+		ShaderInfo info;
+		info.renderTargetCount=3;
+
+		info.RTVForamts[0]=DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[1]=DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[2]=DXGI_FORMAT_R8G8B8A8_UNORM;
+
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"Deferred",L"Deferred.hlsl",GeoMetryProp,
+			ShaderArg{},info);
+	}
+
+	{
+		ShaderInfo info;
+		info._zTest = false;
+		info._zWrite = false;
+		info._stencilTest = false;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->Init(L"final.hlsl",ColorProp,ShaderArg{},info);
+		Add<Shader>(L"finalShader",shader);
+	}
+
 	{
 
 		ShaderInfo info;

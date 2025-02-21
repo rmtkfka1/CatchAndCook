@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Scene.h"
-
 #include "Core.h"
 #include "GameObject.h"
 #include "RendererBase.h"
@@ -10,10 +9,12 @@
 #include "CameraManager.h"
 #include "ColliderManager.h"
 #include "Gizmo.h"
+#include "Mesh.h"
 
 void Scene::AddGameObject(const std::shared_ptr<GameObject>& gameObject)
 {
 	gameObject->SetScene(GetCast<Scene>());
+
     if (gameObject->GetType() == GameObjectType::Deactivate)
         _gameObjects_deactivate.push_back(gameObject);
     else
@@ -27,7 +28,8 @@ void Scene::Init()
 
 void Scene::Update()
 {
-    while (!_changeTypeQueue.empty()) {
+    while (!_changeTypeQueue.empty()) 
+    {
         auto& current = _changeTypeQueue.front();
         {
             RemoveGameObject(current.first);
@@ -72,26 +74,25 @@ void Scene::Rendering()
 
     auto& cmdList = Core::main->GetCmdList();
 
-    { // Shadow
-        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
+    Core::main->GetRenderTarget()->ClearDepth();
+    //ShadowPass(cmdList);
+    DefferedPass(cmdList);
+    FinalRender(cmdList);
+    ForwardPass(cmdList);
+    TransparentPass(cmdList);
+    UiPass(cmdList);
 
-        for (auto& [shader, vec] : targets)
-        {
-			cmdList->SetPipelineState(ResourceManager::main->Get<Shader>(L"Shadow")->_pipelineState.Get());
+}
 
-			for(auto& [material,mesh,target] : vec)
-			{
-				target->Rendering(nullptr,mesh);
-			}
-        }
-    }
-
-    { // Deffered
-        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deffered)];
+void Scene::UiPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
+{
+    {  //UI
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::UI)];
 
         for(auto& [shader,vec] : targets)
         {
-            cmdList->SetPipelineState(shader->_pipelineState.Get());
+            if(shader)
+                cmdList->SetPipelineState(shader->_pipelineState.Get());
 
             for(auto& [material,mesh,target] : vec)
             {
@@ -99,21 +100,10 @@ void Scene::Rendering()
             }
         }
     }
+}
 
-	{ // Forward
-        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Forward)];
-
-        for(auto& [shader,vec] : targets)
-        {
-            cmdList->SetPipelineState(shader->_pipelineState.Get());
-
-            for(auto& [material,mesh,target] : vec)
-            {
-                target->Rendering(material,mesh);
-            }
-        }
-	}
-
+void Scene::TransparentPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
+{
 
 
     { // Transparent
@@ -129,14 +119,18 @@ void Scene::Rendering()
             }
         }
     }
+}
 
-    {  //UI
-        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::UI)];
+void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
+{
+
+
+    { // Forward
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Forward)];
 
         for(auto& [shader,vec] : targets)
         {
-            if(shader)
-                cmdList->SetPipelineState(shader->_pipelineState.Get());
+            cmdList->SetPipelineState(shader->_pipelineState.Get());
 
             for(auto& [material,mesh,target] : vec)
             {
@@ -144,6 +138,55 @@ void Scene::Rendering()
             }
         }
     }
+}
+
+void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
+{
+	Core::main->GetGBuffer()->RenderBegin();
+
+    { // Deffered
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deffered)];
+
+        for(auto& [shader,vec] : targets)
+        {
+            cmdList->SetPipelineState(shader->_pipelineState.Get());
+            
+            for(auto& [material,mesh,target] : vec)
+            {
+                target->Rendering(material,mesh);
+            }
+        }
+    }
+
+    Core::main->GetGBuffer()->RenderEnd();
+}
+
+void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
+{
+    { // Shadow
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
+
+        for(auto& [shader,vec] : targets)
+        {
+            cmdList->SetPipelineState(ResourceManager::main->Get<Shader>(L"Shadow")->_pipelineState.Get());
+
+            for(auto& [material,mesh,target] : vec)
+            {
+                target->Rendering(nullptr,mesh);
+            }
+        }
+    }
+}
+
+void Scene::FinalRender(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	Core::main->GetRenderTarget()->RenderBegin();
+
+    auto& mesh = ResourceManager::main->Get<Mesh>(L"finalMesh");
+    auto& shader = ResourceManager::main->Get<Shader>(L"finalShader");
+
+    cmdList->SetPipelineState(shader->_pipelineState.Get());
+    mesh->Redner();
 }
 
 void Scene::GlobalSetting()
