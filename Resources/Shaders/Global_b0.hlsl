@@ -9,6 +9,11 @@ cbuffer GLOBAL_DATA : register(b0)
     float g_padding;
 };
 
+Texture2D PositionTexture : register(t21);
+Texture2D NormalTexture : register(t22);
+Texture2D AlbedoTexture : register(t23);
+Texture2D depthTexture : register(t24);
+
 SamplerState sampler_lerp : register(s0);
 SamplerState sampler_point : register(s1);
 SamplerState sampler_aniso4 : register(s2);

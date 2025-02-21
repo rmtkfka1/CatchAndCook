@@ -1,10 +1,6 @@
 #include "Global_b0.hlsl"
 
-Texture2D PositionTexture : register(t21);
-Texture2D NormalTexture : register(t22);
-Texture2D AlbedoTexture : register(t23);
-Texture2D depthTexture : register(t24);
-
+//[쉐이더정리][컬링처리]
 
 struct VS_IN
 {

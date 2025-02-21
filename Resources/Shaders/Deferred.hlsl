@@ -59,8 +59,7 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     
     output.position = float4(input.worldPos, 1.0f);
     output.normal = float4(input.worldNormal, 1.0f);
-    output.color = _BaseMap.Sample(sampler_lerp, input.uv);
-    
+    output.color = _BaseMap.Sample(sampler_lerp, input.uv); 
     output.depth = input.pos.z;
 
     return output;
