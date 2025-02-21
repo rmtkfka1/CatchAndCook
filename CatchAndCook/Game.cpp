@@ -185,7 +185,7 @@ void Game::CameraUpdate()
 {
 	shared_ptr<Camera> camera = CameraManager::main->GetActiveCamera();
 
-	const float speed = 20.0f;
+	const float speed = 60.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;
 
 	if (Input::main->GetKey(KeyCode::W))
@@ -214,6 +214,17 @@ void Game::CameraUpdate()
 		auto prevPos = camera->GetCameraPos();
 		auto direction = camera->GetCameraRight();
 		camera->SetCameraPos(-direction * dt + prevPos);
+	}
+	if(Input::main->GetKey(KeyCode::Space))
+	{
+		auto prevPos = camera->GetCameraPos();
+		camera->SetCameraPos(Vector3::Up * dt + prevPos);
+	}
+
+	if(Input::main->GetKey(KeyCode::Shift))
+	{
+		auto prevPos = camera->GetCameraPos();
+		camera->SetCameraPos(Vector3::Down * dt + prevPos);
 	}
 
 	if (Input::main->GetMouse(KeyCode::LeftMouse))

@@ -2,6 +2,7 @@
 #include "GameObject.h"
 
 
+class Animation;
 class Scene;
 class Bone;
 class ModelMesh;
@@ -26,11 +27,16 @@ class Model : public IGuid
 public:
 	std::vector<std::shared_ptr<ModelMesh>> _modelMeshList;
 	std::vector<std::shared_ptr<ModelNode>> _modelNodeList;
+	std::vector<std::shared_ptr<ModelNode>> _modelOriginalNodeList;
 	std::vector<std::shared_ptr<Bone>> _modelBoneList;
 
 	std::unordered_map<std::string, std::vector<std::shared_ptr<ModelMesh>>> _nameToMeshsTable;
 	std::unordered_map<std::string, std::shared_ptr<ModelNode>> _nameToNodeTable;
+	std::unordered_map<std::string,std::shared_ptr<ModelNode>> _nameToOriginalNodeTable;
 	std::unordered_map<std::string, std::shared_ptr<Bone>> _nameToBoneTable;
+	std::unordered_map<std::string, std::shared_ptr<Animation>> _nameToAnimationTable;
+
+	std::vector<std::shared_ptr<Animation>> _animationList;
 
 	std::shared_ptr<ModelNode> FindNodeByName(const string& name) { return _nameToNodeTable[name]; };
 	std::vector<std::shared_ptr<ModelMesh>> FindMeshsByName(const string& name) { return _nameToMeshsTable[name]; };
@@ -54,6 +60,8 @@ public:
 	static void LoadIndex(aiMesh* assimp_mesh, std::vector<uint32_t>& indexs);
 
 	void LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& currentModelMesh);
+	void LoadNode(aiNode* root);
+	void LoadAnimation(aiAnimation* aiAnim, aiNode* root);
 
 	void SetNodeData();
 	void SetBoneData();

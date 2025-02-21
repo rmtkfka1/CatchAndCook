@@ -1,7 +1,10 @@
 #include "pch.h"
 #include "SkinnedHierarchy.h"
 
+#include "Animation.h"
+#include "AnimationNode.h"
 #include "Bone.h"
+#include "ModelNode.h"
 #include "SkinnedMeshRenderer.h"
 #include "Transform.h"
 
@@ -26,30 +29,38 @@ void SkinnedHierarchy::Init()
 void SkinnedHierarchy::Start()
 {
 	Component::Start();
-	for (int index = 0;index<_boneList.size();index++)
+	for(int index = 0;index<_boneList.size();index++)
 	{
 		auto& bone = _boneList[index];
 		_boneOffsetMatrixList[index] = bone->GetTransformMatrix();
 		{
 			std::vector<std::shared_ptr<GameObject>> obj;
 			auto name = to_wstring(bone->GetName());
-			GetOwner()->GetChildsAllByName(name, obj);
-			if (!obj.empty())
+			GetOwner()->GetChildsAllByName(name,obj);
+			if(!obj.empty())
 				_boneNodeList[index] = obj[0];
 		}
+	}
+	//_nodeNameList
+	for(int index = 0;index<_nodeNameList.size();index++)
+	{
 		{
 			std::vector<std::shared_ptr<GameObject>> obj;
 
-			auto name = to_wstring(bone->GetName());
+			auto name = _nodeNameList[index];
 			GetOwner()->GetChildsAllByName(name, obj);
 			if (!obj.empty())
 				nodeObjectTable[name] = obj[0];
+			nodeObjectList.push_back(obj.empty() ? nullptr : obj[0]);
 		}
 	}
 	std::vector<std::shared_ptr<SkinnedMeshRenderer>> renderers;
 	GetOwner()->GetComponentsWithChilds(renderers);
 	for (auto& renderer : renderers)
 		renderer->AddSetter(GetCast<SkinnedHierarchy>());
+
+	if(renderers.size() != 0)
+		SetAnimation(renderers[0]->_model->_animationList[0]);
 }
 
 void SkinnedHierarchy::Update()
@@ -60,6 +71,22 @@ void SkinnedHierarchy::Update()
 void SkinnedHierarchy::Update2()
 {
 	Component::Update2();
+
+	auto time = this->animation->CalculateTime(Time::main->GetTime());
+	for(auto& animNode : this->animation->_nodeLists)
+	{
+		auto it = nodeObjectTable.find(animNode->GetNodeName());
+		if(it != nodeObjectTable.end())
+		{
+			auto obj = it->second.lock();
+			if(obj != nullptr)
+			{
+				auto transform = obj->_transform;
+				auto matrix = animNode->CalculateTransformMatrix(time);
+				transform->SetLocalSRTMatrix(matrix);
+			}
+		}
+	}
 }
 
 void SkinnedHierarchy::Enable()
@@ -98,6 +125,12 @@ void SkinnedHierarchy::Destroy()
 	Component::Destroy();
 }
 
+void SkinnedHierarchy::SetNodeList(const std::vector<std::shared_ptr<ModelNode>>& nodes)
+{
+	for(auto& name : nodes)
+		_nodeNameList.push_back(to_wstring(name->GetName()));
+}
+
 void SkinnedHierarchy::PushData()
 {
 	_cbuffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::BoneParam)->Alloc(1);
@@ -119,4 +152,9 @@ void SkinnedHierarchy::SetData(Material* material)
 	int index = material->GetShader()->GetRegisterIndex("BoneParam");
 	if(index != -1)
 		Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(index, _cbuffer->GPUAdress);
+}
+
+void SkinnedHierarchy::SetAnimation(const std::shared_ptr<Animation>& animation)
+{
+	this->animation = animation;
 }

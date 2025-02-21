@@ -53,7 +53,7 @@ VS_OUT VS_Main(VS_IN input)
 
     row_major float4x4 l2wMatrix = LocalToWorldMatrix;
     row_major float4x4 w2lMatrix = WorldToLocalMatrix;
-    float4 boneIds = 0;
+    float4 boneIds = float4(-1,-1,-1,-1);
     float4 boneWs = 0;
 
     #ifdef INSTANCED
