@@ -61,5 +61,5 @@ float4 PS_Main(VS_OUT input) : SV_Target
           
     //}
     
-    return float4(Depth, Depth, Depth, 1.0f);
+    return AlbedoColor;
 };

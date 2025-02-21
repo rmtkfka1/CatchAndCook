@@ -37,6 +37,8 @@ VS_OUT VS_Main(VS_IN input)
     output.pos = clipPos;
     
     output.uv = input.uv;
+    
+    //TODO: NORMAL MAPPING
     output.worldNormal = normalize(mul(float4(input.normal, 0.0f), LocalToWorldMatrix).xyz);
     
 
