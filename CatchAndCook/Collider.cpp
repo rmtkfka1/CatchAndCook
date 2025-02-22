@@ -35,6 +35,7 @@ void Collider::Start()
 
 	std::vector<std::shared_ptr<PhysicsComponent>> obj;
 	GetOwner()->GetComponentsWithParents(obj);
+	auto a = GetOwner();
 	if(!obj.empty())
 		groupId = obj[0]->GetInstanceID();
 
@@ -67,7 +68,7 @@ void Collider::RenderBegin()
 {
 	Component::RenderBegin();
 
-	bool isCollision = _collisionList.empty();
+	bool isCollision = ColliderManager::main->IsCollision(GetCast<Collider>());
 
 	if(_type == CollisionType::Box)
 	{
