@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 template <typename T>
 class StructuredBuffer
@@ -49,7 +49,7 @@ public:
 		Core::main->FlushResCMDQueue();
 
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING; // ±âº» ¸ÅÇÎ Ãß°¡
+		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING; // ê¸°ë³¸ ë§¤í•‘ ì¶”ê°€
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 		srvDesc.Buffer.NumElements = elementCount;
 		srvDesc.Buffer.StructureByteStride = elementSize;

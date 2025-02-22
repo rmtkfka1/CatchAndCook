@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "TestScene.h"
 #include "Shader.h"
 #include "Texture.h"
@@ -13,7 +13,6 @@
 #include "testComponent.h"
 #include "StructuredBuffer.h"
 #include "Mesh.h"
-#include "ScreenParticle.h"
 #include "WaterHeight.h"
 #include "Terrain.h"
 

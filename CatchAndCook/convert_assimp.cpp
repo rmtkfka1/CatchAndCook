@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 
 DirectX::SimpleMath::Matrix convert_assimp::Format(const aiMatrix4x4& mat)
 {

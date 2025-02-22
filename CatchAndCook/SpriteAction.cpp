@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "SpriteAction.h"
 #include "Sprite.h"
 
@@ -38,9 +38,9 @@ void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
         return;
 
     static Sprite* _dragSprite = nullptr;
-    static vec2 _lastMousePos; // ÀÌÀü ¸¶¿ì½º À§Ä¡ ÃßÀû º¯¼ö
+    static vec2 _lastMousePos; // ì´ì „ ë§ˆìš°ìŠ¤ ìœ„ì¹˜ ì¶”ì  ë³€ìˆ˜
 
-    // ¿ìÅ¬¸¯ ½ÃÀÛ
+    // ìš°í´ë¦­ ì‹œìž‘
     if (Input::main->GetMouseDown(key))
     {
         vec2 pos = Input::main->GetMouseDownPosition(key);
@@ -60,7 +60,7 @@ void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
         }
     }
 
-    // µå·¡±× Áß
+    // ë“œëž˜ê·¸ ì¤‘
     if (_dragSprite && Input::main->GetMouse(key))
     {
         vec2 pos = Input::main->GetMousePosition();
@@ -83,7 +83,7 @@ void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
         _lastMousePos = pos; 
     }
 
-    // ¿ìÅ¬¸¯ Á¾·á
+    // ìš°í´ë¦­ ì¢…ë£Œ
     if (_dragSprite && Input::main->GetMouseUp(key))
     {
         _dragSprite = nullptr;

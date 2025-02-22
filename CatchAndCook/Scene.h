@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "GameObjectSetting.h"
 #include "IGuid.h"

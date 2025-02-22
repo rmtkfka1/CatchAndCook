@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Global.h"
 #include "Core.h"
 #include "Vertex.h"

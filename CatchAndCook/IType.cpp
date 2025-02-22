@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "IType.h"
 
 
@@ -17,15 +17,15 @@ std::string& IType::GetTypeName()
     {
         std::string fullName = GetTypeFullName();
 
-        // "struct " ¶Ç´Â "class " °°Àº Á¢µÎ»ç Á¦°Å
+        // "struct " ë˜ëŠ” "class " ê°™ì€ ì ‘ë‘ì‚¬ ì œê±°
         size_t pos = fullName.find_last_of("::");
         if (pos != std::string::npos)
         {
             _className = fullName.substr(pos + 1);
         }
 
-        // º¹ÀâÇÑ ºÎºÐÀ» ´Ü¼øÈ­ (¿¹: "1Derived" -> "Derived")
-        // ¼ýÀÚ°¡ Æ÷ÇÔµÈ °æ¿ì Á¦°Å
+        // ë³µìž¡í•œ ë¶€ë¶„ì„ ë‹¨ìˆœí™” (ì˜ˆ: "1Derived" -> "Derived")
+        // ìˆ«ìžê°€ í¬í•¨ëœ ê²½ìš° ì œê±°
         for (size_t i = 0; i < _className.length(); ++i)
         {
             if (isdigit(_className[i]))

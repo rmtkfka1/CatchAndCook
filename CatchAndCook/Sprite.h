@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 class Mesh;
 class Texture;
@@ -174,10 +174,10 @@ private:
 	vector<SprtieTextureParam> _sprtieTextureParam;
 
 private:
-	float _frameRate{1.0f}; //  ¾Ö´Ï¸ŞÀÌ¼Ç ÁøÇà ¼Óµµ
-	float _currentTime{}; //ÇöÀç ¾Ö´Ï¸ŞÀÌ¼Ç ÁøÇà ½Ã°£
-	int32 _currentFrameIndex{}; // ÇöÀç ¾Ö´Ï¸ŞÀÌ¼Ç ÀÎµ¦½º
-	int32 _maxFrameIndex =0 ; // ÃÖ´ë ¾Ö´Ï¸ŞÀÌ¼Ç ÇÁ·¹ÀÓ
+	float _frameRate{1.0f}; //  ì• ë‹ˆë©”ì´ì…˜ ì§„í–‰ ì†ë„
+	float _currentTime{}; //í˜„ì¬ ì• ë‹ˆë©”ì´ì…˜ ì§„í–‰ ì‹œê°„
+	int32 _currentFrameIndex{}; // í˜„ì¬ ì• ë‹ˆë©”ì´ì…˜ ì¸ë±ìŠ¤
+	int32 _maxFrameIndex =0 ; // ìµœëŒ€ ì• ë‹ˆë©”ì´ì…˜ í”„ë ˆì„
 };
 
 
