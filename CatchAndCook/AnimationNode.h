@@ -20,7 +20,10 @@ public:
 	void SetOffsetPostRotation(const Quaternion& scale);
 
 	static int FindKeyFrameIndex(const vector<AnimationKeyFrame>& vec, const double& time);
-	Matrix CalculateTransformMatrix(const double& time) const;
+	Matrix CalculateTransformMatrix(const double& time, bool xyLock = false) const;
+	Vector3 CalculatePosition(const double& time) const;
+	Quaternion CalculateRotation(const double& time) const;
+	Vector3 CalculateScale(const double& time) const;
 
 	void SetNodeName(const wstring& name){
 		_nodeName = name;
@@ -29,7 +32,14 @@ public:
 		return _nodeName;
 	}
 
+	void SetRoot(bool tf) {
+		_isRoot = tf;
+	}
+	bool IsRoot() const {
+		return _isRoot;
+	}
 	wstring _nodeName;
+	bool _isRoot = false;
 
 	Vector3 offsetPosition = Vector3::Zero;
 	Quaternion offsetRotation = Quaternion::Identity;

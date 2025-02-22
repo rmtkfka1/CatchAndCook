@@ -37,6 +37,9 @@ public:
 	std::unordered_map<std::string, std::shared_ptr<Animation>> _nameToAnimationTable;
 
 	std::vector<std::shared_ptr<Animation>> _animationList;
+	std::shared_ptr<ModelNode> _rootNode;
+	std::shared_ptr<ModelNode> _rootBoneNode;
+
 
 	std::shared_ptr<ModelNode> FindNodeByName(const string& name) { return _nameToNodeTable[name]; };
 	std::vector<std::shared_ptr<ModelMesh>> FindMeshsByName(const string& name) { return _nameToMeshsTable[name]; };
@@ -62,9 +65,12 @@ public:
 	void LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& currentModelMesh);
 	void LoadNode(aiNode* root);
 	void LoadAnimation(aiAnimation* aiAnim, aiNode* root);
-
+	void LoadRootBone(aiScene* scene);
 	void SetNodeData();
-	void SetBoneData();
+
+
+	std::vector<std::shared_ptr<ModelNode>>& GetNodeList() { return  _modelNodeList; }
+	std::vector<std::shared_ptr<Bone>>& GetBoneList() { return  _modelBoneList; }
 
 private:
 	int AllocBoneID() { return _boneAllocator++; };
@@ -73,6 +79,4 @@ private:
 
 private:
 	int _boneAllocator = 0;
-	std::shared_ptr<ModelNode> _rootNode;
-	CBufferContainer* boneCBuffer;
 };

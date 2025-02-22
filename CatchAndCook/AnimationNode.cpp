@@ -115,7 +115,7 @@ int AnimationNode::FindKeyFrameIndex(const vector<AnimationKeyFrame>& keyFrames,
     return static_cast<int>(std::distance(keyFrames.begin(), it)) - 1;
 }
 
-Matrix AnimationNode::CalculateTransformMatrix(const double& time) const
+Matrix AnimationNode::CalculateTransformMatrix(const double& time, bool xyLock) const
 {
     Vector3 interpolatedPosition = offsetPosition;
     Quaternion interpolatedRotation = offsetRotation;
@@ -171,6 +171,9 @@ Matrix AnimationNode::CalculateTransformMatrix(const double& time) const
         }
     }
 
+    if (xyLock)
+        interpolatedPosition = Vector3(0, interpolatedPosition.y, 0);
+
     //hasScale
     Matrix matrix = Matrix::CreateTranslation(interpolatedPosition);
 
@@ -183,4 +186,77 @@ Matrix AnimationNode::CalculateTransformMatrix(const double& time) const
         matrix = Matrix::CreateScale(interpolatedScale) * matrix;
 
     return matrix;
+}
+
+Vector3 AnimationNode::CalculatePosition(const double& time) const
+{
+    Vector3 interpolatedPosition = offsetPosition;
+
+    {
+        const size_t keyCount = _keyFrame_positions.size();
+        if (keyCount != 0)
+        {
+            if (keyCount == 1)
+                interpolatedPosition = _keyFrame_positions[0].position;
+            int index = FindKeyFrameIndex(_keyFrame_positions, time);
+            index = std::max(index, 0);
+            int nextIndex = (index + 1 < keyCount) ? index + 1 : 0;
+            const auto& key0 = _keyFrame_positions[index];
+            const auto& key1 = _keyFrame_positions[nextIndex];
+            const double dt = key1._time - key0._time;
+            const double t = (dt != 0.f) ? (time - key0._time) / dt : 0.f;
+            Vector3::Lerp(key0.position, key1.position, t, interpolatedPosition);
+        }
+    }
+    return interpolatedPosition;
+}
+
+Quaternion AnimationNode::CalculateRotation(const double& time) const
+{
+    Quaternion interpolatedRotation = offsetRotation;
+    {
+        const size_t keyCount = _keyFrame_rotations.size();
+        if (keyCount != 0)
+        {
+            if (keyCount == 1)
+                interpolatedRotation = _keyFrame_rotations[0].rotation;
+            int index = FindKeyFrameIndex(_keyFrame_rotations, time);
+            index = std::max(index, 0);
+            int nextIndex = (index + 1 < keyCount) ? index + 1 : 0;
+            const auto& key0 = _keyFrame_rotations[index];
+            const auto& key1 = _keyFrame_rotations[nextIndex];
+            const double dt = key1._time - key0._time;
+            const double t = (dt != 0.f) ? (time - key0._time) / dt : 0.f;
+            Quaternion::Slerp(key0.rotation, key1.rotation, t, interpolatedRotation);
+        }
+    }
+
+    if (hasPreRotation)
+        interpolatedRotation = interpolatedRotation * offsetPreRotation;
+    if (hasPostRotation)
+        interpolatedRotation = offsetPostRotation * interpolatedRotation;
+    return interpolatedRotation;
+}
+
+Vector3 AnimationNode::CalculateScale(const double& time) const
+{
+    Vector3 interpolatedScale = offsetScale;
+    {
+        const size_t keyCount = _keyFrame_scales.size();
+        if (keyCount != 0)
+        {
+            if (keyCount == 1)
+                interpolatedScale = _keyFrame_scales[0].scale;
+            int index = FindKeyFrameIndex(_keyFrame_scales, time);
+            index = std::max(index, 0);
+            int nextIndex = (index + 1 < keyCount) ? index + 1 : 0;
+            const auto& key0 = _keyFrame_scales[index];
+            const auto& key1 = _keyFrame_scales[nextIndex];
+            const double dt = key1._time - key0._time;
+            const double t = (dt != 0.f) ? (time - key0._time) / dt : 0.f;
+            Vector3::Lerp(key0.scale, key1.scale, t, interpolatedScale);
+        }
+    }
+
+    return interpolatedScale;
 }

@@ -143,7 +143,7 @@ void Terrain::Destroy()
 {
 	if(auto renderer =GetOwner()->GetRenderer())
 	{
-        renderer->RemoveSetters(static_pointer_cast<Terrain>(shared_from_this()));
+        renderer->RemoveSetter(static_pointer_cast<Terrain>(shared_from_this()));
 	}
 }
 

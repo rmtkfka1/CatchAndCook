@@ -27,11 +27,9 @@ public:
 	virtual void Rendering(Material* material, Mesh* mesh) = 0;
 	virtual void DebugRendering()=0;
 
-	void AddSetter(std::shared_ptr<RenderObjectSetter> setter) { setters.push_back(setter); };
+	void AddSetter(const std::shared_ptr<RenderObjectSetter>& setter);
+	void RemoveSetter(const shared_ptr<RenderObjectSetter>& object);
 
-	std::vector<std::shared_ptr<RenderObjectSetter>> setters;
-
-	void RemoveSetters(shared_ptr<RenderObjectSetter> object);
-
+	std::vector<std::shared_ptr<RenderObjectSetter>> _setters;
 };
 

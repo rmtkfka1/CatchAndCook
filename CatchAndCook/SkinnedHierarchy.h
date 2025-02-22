@@ -18,28 +18,34 @@ public:
 	void SetDestroy() override;
 	void Destroy() override;
 
-	void SetBoneList(const std::vector<std::shared_ptr<Bone>>& bones){ _boneList = bones;}
+	void SetBoneList(const std::vector<std::shared_ptr<Bone>>& bones);
 	void SetNodeList(const std::vector<std::shared_ptr<ModelNode>>& nodes);
+	void SetModel(const std::shared_ptr<Model>& model);
 	void PushData() override;
 	void SetData(Material* material) override;
 
 	void SetAnimation(const std::shared_ptr<Animation>& animation);
+	void FindNodeObjects();
+	void Animate(const std::shared_ptr<Animation>& animation, double time);
 
 	std::shared_ptr<Animation> animation;
 
 	std::unordered_map<std::wstring, std::weak_ptr<GameObject>> nodeObjectTable;
-	vector<std::weak_ptr<GameObject>> nodeObjectList;
 
-	std::vector<std::shared_ptr<Bone>> _boneList;
+	vector<std::weak_ptr<GameObject>> nodeObjectList;
+	std::array<std::weak_ptr<GameObject>, 256> _boneNodeList;
+	std::weak_ptr<GameObject> _rootBone;
+
+	std::vector<wstring> _boneNameList;
 	std::vector<wstring> _nodeNameList;
 
 
 	std::array<Matrix, 256> _boneOffsetMatrixList; 
-	std::array<std::weak_ptr<GameObject>, 256> _boneNodeList;
 
 	std::array<Matrix, 256> _finalMatrixList;
-	std::array<Matrix,256> _finalInvertMatrixList;
+	std::array<Matrix, 256> _finalInvertMatrixList;
 
-	CBufferContainer* _cbuffer;
+	CBufferContainer* _boneCBuffer;
 };
+
 

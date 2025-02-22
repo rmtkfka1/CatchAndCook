@@ -118,6 +118,18 @@ public:
 		}
 		return vec.size() - prevCount;
 	}
+	template <class T, class = std::enable_if_t<std::is_base_of_v<Component, T>>>
+	std::vector<std::shared_ptr<T>> GetComponents()
+	{
+		std::vector<std::shared_ptr<T>> vec;
+		for (auto& component : _components)
+		{
+			std::shared_ptr<T> downCast = std::dynamic_pointer_cast<T>(component);
+			if (downCast != nullptr)
+				vec.push_back(downCast);
+		}
+		return vec;
+	}
 
 
 	template <class T, class = std::enable_if_t<std::is_base_of_v<Component, T>>>
@@ -139,6 +151,43 @@ public:
 		return count;
 	}
 
+	template <class T, class = std::enable_if_t<std::is_base_of_v<Component, T>>>
+	std::shared_ptr<T> GetComponentWithChilds()
+	{
+		for (auto& component : _components)
+		{
+			std::shared_ptr<T> downCast = std::dynamic_pointer_cast<T>(component);
+			if (downCast != nullptr)
+				return downCast;
+		}
+		for (auto& child : _childs)
+			if (!child.expired())
+			{
+				std::shared_ptr<T> result = child.lock()->GetComponentWithChilds<T>();
+				if (result != nullptr)
+					return result;
+			}
+		return nullptr;
+	}
+
+	template <class T, class = std::enable_if_t<std::is_base_of_v<Component, T>>>
+	std::vector<std::shared_ptr<T>> GetComponentsWithChilds()
+	{
+		std::vector<std::shared_ptr<T>> vec;
+		for (auto& component : _components)
+		{
+			std::shared_ptr<T> downCast = std::dynamic_pointer_cast<T>(component);
+			if (downCast != nullptr)
+				vec.push_back(downCast);
+		}
+
+		for (auto& child : _childs)
+			if (!child.expired())
+				child.lock()->GetComponentsWithChilds<T>(vec);
+
+		return vec;
+	}
+
 	template <class T,class = std::enable_if_t<std::is_base_of_v<Component, T>>>
 	int GetComponentsWithParents(std::vector<std::shared_ptr<T>>& vec)
 	{
@@ -154,9 +203,27 @@ public:
 
 		auto parent = GetParent();
 		if(parent != nullptr)
-			count += parent->GetComponentsWithChilds(vec);
+			count += parent->GetComponentsWithParents(vec);
 
 		return count;
+	}
+
+	template <class T, class = std::enable_if_t<std::is_base_of_v<Component, T>>>
+	std::vector<std::shared_ptr<T>> GetComponentsWithParents()
+	{
+		std::vector<std::shared_ptr<T>> vec;
+		for (auto& component : _components)
+		{
+			std::shared_ptr<T> downCast = std::dynamic_pointer_cast<T>(component);
+			if (downCast != nullptr)
+				vec.push_back(downCast);
+		}
+
+		auto parent = GetParent();
+		if (parent != nullptr)
+			parent->GetComponentsWithParents(vec);
+
+		return vec;
 	}
 
 	template <class T>

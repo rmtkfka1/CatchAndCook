@@ -91,7 +91,7 @@ inline shared_ptr<T> ResourceManager::LoadAlway(const wstring& key,const wstring
 {
     auto& Map = GetResourceMap<T>();
     shared_ptr<T> object = make_shared<T>();
-    object->Init(path,std::forward<Args>(args)...);
+    object->Init(path, std::forward<Args>(args)...);
     Map[key] = object;
     return object;
 }

@@ -3,6 +3,7 @@
 
 #include "AnimationNode.h"
 #include "AnimationKeyFrame.h"
+#include "ModelNode.h"
 
 
 Animation::Animation()
@@ -13,11 +14,10 @@ Animation::~Animation()
 {
 }
 
-void Animation::Init(aiAnimation* anim, aiNode* root)
+void Animation::Init(Model* model, aiAnimation* anim, aiNode* root)
 {
 	//root
 	SetName(to_wstring(convert_assimp::Format(anim->mName)));
-
 	_duration = anim->mDuration;
 	_ticksPerSecond = (anim->mTicksPerSecond != 0) ? anim->mTicksPerSecond : 25.0;
 	_totalTime = _duration / _ticksPerSecond;
@@ -34,7 +34,6 @@ void Animation::Init(aiAnimation* anim, aiNode* root)
 			vector<wstring> originalList = wstr::split(name, L"_$AssimpFbx$");
 			originalName = originalList[0];
 		}
-		
 		auto part = _nodeTables[originalName];
 		if(part == nullptr)
 		{
@@ -42,6 +41,11 @@ void Animation::Init(aiAnimation* anim, aiNode* root)
 			part->SetNodeName(originalName);
 			_nodeTables[originalName] = part;
 			_nodeLists.push_back(part);
+		}
+		if (model && model->_rootBoneNode && model->_rootBoneNode->GetOriginalName() == to_string(originalName))
+		{
+			_rootBoneNode = part;
+			part->SetRoot(true);
 		}
 		part->SetKeyFrames(anim, anim->mChannels[i]);
 	}

@@ -96,7 +96,7 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh)
 {
 	auto& cmdList = Core::main->GetCmdList();
 
-	for (auto& data : setters) //transform , etc 
+	for (auto& data : _setters) //transform , etc 
 		data->SetData(material);
 
 	if (material != nullptr)

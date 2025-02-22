@@ -134,7 +134,7 @@ void ScreenParticle::Destroy()
 {
     if (GetOwner()->GetRenderer())
     {
-        GetOwner()->GetRenderer()->RemoveSetters(static_pointer_cast<ScreenParticle>(shared_from_this()));
+        GetOwner()->GetRenderer()->RemoveSetter(static_pointer_cast<ScreenParticle>(shared_from_this()));
     }
 }
 

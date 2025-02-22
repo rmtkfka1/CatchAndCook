@@ -9,7 +9,7 @@ public:
 	Animation();
 	virtual ~Animation();
 
-	void Init(aiAnimation* anim,aiNode* root);
+	void Init(Model* model, aiAnimation* anim, aiNode* root);
 
 	double CalculateTime(double time) const;
 
@@ -30,5 +30,6 @@ public:
 
 	std::unordered_map<wstring, std::shared_ptr<AnimationNode>> _nodeTables;
 	std::vector<std::shared_ptr<AnimationNode>> _nodeLists;
+	std::shared_ptr<AnimationNode> _rootBoneNode;
 };
 

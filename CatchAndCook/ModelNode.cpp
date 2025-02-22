@@ -42,6 +42,11 @@ void ModelNode::SetParent(const std::shared_ptr<ModelNode>& object)
 	}
 }
 
+std::shared_ptr<ModelNode> ModelNode::GetParent()
+{
+	return _parent.lock();
+}
+
 void ModelNode::AddChild(const std::shared_ptr<ModelNode>& object)
 {
 	_childs.push_back(object);
