@@ -12,6 +12,7 @@ struct VS_IN
     float3 pos : POSITION;
     float3 normal : NORMAL;
     float2 uv : TEXCOORD;
+    float3 tangent : TANGENT;
  
 };
 
@@ -21,10 +22,9 @@ struct VS_OUT
     float3 worldPos : Position;
     float3 worldNormal : NORMAL;
     float2 uv : TEXCOORD;
-
-
+    float3 worldTangent : TANGENT;
+    
 };
-
 
 VS_OUT VS_Main(VS_IN input)
 {
@@ -38,11 +38,11 @@ VS_OUT VS_Main(VS_IN input)
     
     output.uv = input.uv;
     
-
-    //TODO: NORMAL MAPPING
-    output.worldNormal = normalize(mul(float4(input.normal, 0.0f), LocalToWorldMatrix).xyz);
+    output.worldNormal = TransformNormalLocalToWorld(input.normal);
+    output.worldTangent = TransformNormalLocalToWorld(input.tangent);
     
 
+   
     return output;
 }
 
@@ -62,6 +62,10 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     output.normal = float4(input.worldNormal, 1.0f);
     output.color = _BaseMap.Sample(sampler_lerp, input.uv); 
     output.depth = input.pos.z;
+    
+    float3 tangentSpace = NormalUnpack(_BumpMap.Sample(sampler_lerp, input.uv).xyz, 0.2f);
+    
+    output.normal = TransformTangentToSpace(float4(tangentSpace, 0.0f), input.worldNormal, input.worldTangent);
 
     return output;
 }

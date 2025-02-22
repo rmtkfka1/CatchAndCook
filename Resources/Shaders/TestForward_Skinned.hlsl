@@ -26,6 +26,7 @@ struct VS_IN
     float4 boneIds : BONEIDs;
     float4 boneWs : BONEWs;
 	#endif
+    
     #ifdef INSTANCED
     MATRIX_DEFINE(instance_trs, 0);
     MATRIX_DEFINE(instance_invert_trs, 1);
@@ -60,13 +61,12 @@ VS_OUT VS_Main(VS_IN input)
 		l2wMatrix = MATRIX(input.instance_trs);
 		w2lMatrix = MATRIX(input.instance_invert_trs);
     #endif
+    
+    
     #ifdef SKINNED
 	    boneIds = input.boneIds;
 	    boneWs = input.boneWs;
     #endif
-
-
-
 
 
     output.normalOS = input.normal;
@@ -94,6 +94,6 @@ VS_OUT VS_Main(VS_IN input)
 [earlydepthstencil]
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    float3 totalNormalWS = TransformTangentToSpace(float4(NormalUnpack(_BumpMap.Sample(sampler_lerp, input.uv), 0.2), 0), input.normalWS, input.tangentWS);
+    float3 totalNormalWS = TransformTangentToSpace(float4(NormalUnpack(_BumpMap.Sample(sampler_lerp, input.uv).xyz, 0.2), 0), input.normalWS, input.tangentWS);
 	return _BaseMap.Sample(sampler_lerp, input.uv) * color * (saturate(dot(totalNormalWS, normalize(float3(0,1,-1)))) * 0.7 + 0.3);
 }

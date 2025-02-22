@@ -16,9 +16,10 @@ float3 NormalUnpack(float3 normalSample, float power)
 {
 	if (dot(normalSample, normalSample) > 2.999)
 		return float3(0,0,1);
+	
 	float3 norm = normalSample * 2.0 - 1.0;
 	norm.xy *= power;
-	return normalize(norm);
+	return  normalize(norm);
 }
 
 float4 TransformSpaceToTangent(float4 localPos, float3 normalS, float3 tangentS)
@@ -36,6 +37,7 @@ float4 TransformSpaceToTangent(float4 localPos, float3 normalS, float3 tangentS)
 	return mul(localPos, localToTangent);
 }
 
+//[]->[]
 float4 TransformTangentToSpace(float4 tangentPos, float3 normalS, float3 tangentS)
 {
     // 정규화된 tangentS 및 normal 계산

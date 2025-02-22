@@ -76,15 +76,7 @@ void ResourceManager::CreateDefaultShader()
 		Add<Shader>(L"SpriteShader", shader);
 	}
 
-	{
 
-		ShaderInfo info;
-		info._stencilTest = false;
-
-		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"test.hlsl",GeoMetryProp,ShaderArg{},info);
-		Add<Shader>(L"test",shader);
-	}
 	
 	{
 
@@ -124,31 +116,8 @@ void ResourceManager::CreateDefaultShader()
 		Add<Shader>(L"DefaultForward_Instanced",shader);
 	}
 
-	{
 
-		ShaderInfo info;
-		info._zTest = true;
-		info._stencilTest = false;
-		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
 
-		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"normalDraw.hlsl", GeoMetryProp, ShaderArg{ {{"PS_Main", "ps"},{"VS_Main", "vs"},
-			{"GS_Main", "gs"}}}, info);
-		Add<Shader>(L"DebugNormal", shader);
-	}
-
-	{
-
-		ShaderInfo info;
-		info._zTest = true;
-		info._stencilTest = false;
-		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
-
-		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"normalDraw_sea.hlsl",GeoMetryProp, ShaderArg{ {{"PS_Main", "ps"},{"VS_Main", "vs"},
-			{"GS_Main", "gs"}} }, info);
-		Add<Shader>(L"DebugNormal_Sea", shader);
-	}
 	{
 
 		ShaderInfo info;

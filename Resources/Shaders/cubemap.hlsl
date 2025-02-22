@@ -25,7 +25,6 @@ VS_OUT VS_Main(VS_IN input)
     float4 clipSpacePos = mul(float4(input.localPos, 0), VPMatrix);
     output.pos = clipSpacePos.xyww;
     
-
     return output;
 }
 

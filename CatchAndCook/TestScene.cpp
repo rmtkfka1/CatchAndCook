@@ -144,7 +144,7 @@ void TestScene::Init()
 	//	meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(6.0f));
 
 
-		auto obj = ResourceManager::main->Get<Model>(L"Sphere")->CreateGameObject(static_pointer_cast<Scene>(shared_from_this()));
+		auto obj = ResourceManager::main->Get<Model>(L"Cube")->CreateGameObject(static_pointer_cast<Scene>(shared_from_this()));
 
 		shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
 		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start",L"Textures/start.jpg");
@@ -153,7 +153,8 @@ void TestScene::Init()
 		material->SetPass(RENDER_PASS::Deffered);
 		material->SetHandle("_BaseMap",texture->GetSRVCpuHandle());
 
-		obj->_transform->SetLocalScale(vec3(20.0f,20.0f,20.0f));
+
+		obj->_transform->SetLocalScale(vec3(30.0f,30.0f,30.0f));
 
 		vector<shared_ptr<MeshRenderer>> renderers;
 		auto a = obj->GetComponentsWithChilds(renderers);
@@ -192,7 +193,7 @@ void TestScene::Init()
 		info._zTest = true;
 		info._stencilTest = false;
 		info.cullingType = CullingType::WIREFRAME;
-		info.cullingType = CullingType::NONE;
+		//info.cullingType = CullingType::NONE;
 		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest",L"seatest.hlsl",GeoMetryProp,
