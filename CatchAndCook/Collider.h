@@ -56,7 +56,7 @@ public:
 
 public:
 	bool IsCollision();
-	bool IsCollision(const std::shared_ptr<Collider>& a);
+	bool IsCollision(const std::shared_ptr<Collider>& dest);
 
 public:
 	bool CheckCollision(const std::shared_ptr<Collider>& other);

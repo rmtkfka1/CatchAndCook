@@ -24,8 +24,9 @@ public:
 	void RemoveCollider(const std::shared_ptr<Collider>& collider);
 	void Update();
 
-	bool IsCollision(const std::shared_ptr<Collider>& a);
-	bool IsCollision(const std::shared_ptr<Collider>& src,const std::shared_ptr<Collider>& dest);
+	bool IsCollision(const std::shared_ptr<Collider>& src);
+	bool IsCollision(const std::shared_ptr<Collider>& src, const std::shared_ptr<Collider>& dest);
+	std::unordered_set<std::shared_ptr<Collider>>& GetCollisionList(const std::shared_ptr<Collider>& src);
 
 private:
 	void CallBackBegin(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other);
@@ -34,10 +35,12 @@ private:
 
 public:
 	RayHit RayCast(const Ray& ray,const float& dis) const;
+	void RayCastAll(const Vector3& worldPos,const Vector3& dir,const float& dis,std::vector<RayHit>& hits);
 	
 private:
 	std::vector<std::shared_ptr<Collider>> _staticColliders;
 	std::vector<std::shared_ptr<Collider>> _dynamicColliders;
+	std::unordered_map<std::shared_ptr<Collider>,std::unordered_set<std::shared_ptr<Collider>>> _colliderLinkTable;
 };
 
 
