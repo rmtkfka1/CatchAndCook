@@ -105,8 +105,6 @@ void Scene::UiPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
 void Scene::TransparentPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 {
-
-
     { // Transparent
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Transparent)];
 
@@ -125,7 +123,6 @@ void Scene::TransparentPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 {
 
-
     { // Forward
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Forward)];
 
@@ -135,6 +132,14 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
             for(auto& [material,mesh,target] : vec)
             {
+                if(target->IsCulling() == true)
+                {
+                    if(CameraManager::main->GetActiveCamera()->IsInFrustum(target->GetBound())==false)
+                    {
+                        continue;
+                    }
+                }
+
                 target->Rendering(material,mesh);
             }
         }
@@ -154,6 +159,14 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
             
             for(auto& [material,mesh,target] : vec)
             {
+				if(target->IsCulling() == true)
+				{
+                    if(CameraManager::main->GetActiveCamera()->IsInFrustum(target->GetBound())==false)
+                    {
+                        continue;
+                    }
+				}
+
                 target->Rendering(material,mesh);
             }
         }

@@ -27,7 +27,7 @@ void TestScene_jin::Init()
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"cubeMap");
 
 		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
-
+		meshRenderer->SetCulling(false);
 
 		material = make_shared<Material>();
 		material->SetShader(shader);
@@ -45,7 +45,7 @@ void TestScene_jin::Init()
 	//auto obj = model->CreateGameObject(GetCast<Scene>());
 	//obj->_transform->SetWorldScale(vec3(100,100,100));
 
-	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/MainField.json");
+	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/TestScene5.json");
 	auto a = ResourceManager::main->Get<SceneLoader>(L"test");
 	a->Load(GetCast<Scene>());
 

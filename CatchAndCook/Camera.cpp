@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #include "Camera.h"
-
+#include "Collider.h"
 #include "simple_mesh_ext.h"
 
 void Camera::Update()
@@ -93,6 +93,8 @@ void Camera::Calculate()
     _params.InvertProjectionMatrix = _params.ProjectionMatrix.Invert();
     _params.InvertVPMatrix = _params.VPMatrix.Invert();
 
+    _boundingFrsutum.CreateFromMatrix(_boundingFrsutum,_params.ProjectionMatrix);
+    _boundingFrsutum.Transform(_boundingFrsutum,_params.InvertViewMatrix);
 }
 
 void Camera::PushData()
@@ -140,6 +142,11 @@ void Camera::SetCameraRight(const vec3& right)
 
     _cameraUp = _cameraLook.Cross(_cameraRight);
     _cameraUp.Normalize();
+}
+
+bool Camera::IsInFrustum(BoundingBox& box)
+{
+    return _boundingFrsutum.Intersects(box);
 }
 
 /*************************

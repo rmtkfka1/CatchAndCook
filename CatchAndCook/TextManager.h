@@ -41,7 +41,6 @@ private:
 	void CreateSolidBrush();
 
 
-
 private:
 
 	ComPtr<ID2D1Device2> _device = nullptr;

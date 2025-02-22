@@ -147,7 +147,6 @@ void Game::Run()
 	LightManager::main->SetData();
 
 	auto camera = CameraManager::main->GetActiveCamera();
-	camera->Calculate();
 	Vector3 worldPos = camera->GetScreenToWorldPosition(Input::main->GetMousePosition());
 	Vector3 worldDir = (worldPos - camera->GetCameraPos());
 	worldDir.Normalize();

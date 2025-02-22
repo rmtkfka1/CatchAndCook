@@ -44,6 +44,7 @@ public:
 	{
 		return _isCulling;
 	};
+
 	BoundingBox _bound;
 	bool _isCulling = true;
 };
