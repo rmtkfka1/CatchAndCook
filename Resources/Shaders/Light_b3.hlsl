@@ -10,8 +10,10 @@ struct LightMateiral
 {
     float3 ambient;
     float shininess;
+    
     float3 diffuse;
     int lightType;
+    
     float3 specular;
     float dummy;
 };
@@ -19,19 +21,32 @@ struct LightMateiral
 struct Light
 {
     LightMateiral mateiral;
+    
     float3 strength;
     float fallOffStart;
+    
     float3 direction;
     float fallOffEnd;
+    
     float3 position;
     float spotPower;
 };
+
 
 cbuffer lighting : register(b3)
 {
     float3 g_eyeWorld;
     int g_lightCount;
+
     Light g_lights[MAX_LIGHTS];
+
+    int useRim = 1;
+    float3 rimColor;
+
+    float rimPower = 23.0f;
+    float rimStrength = 500.0f;
+    float dummy1 = 0;
+    float dummy2 = 0;
 };
 
 
@@ -46,14 +61,22 @@ float3 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 t
     float hdotn = dot(halfway, normal);
     float3 specular = mat.specular * pow(max(hdotn,0.0f), mat.shininess);
     return mat.ambient + (mat.diffuse + specular) * lightStrength;
+} 
+
+float3 Phong(float3 lightStrength, float3 lightVec, float3 normal, float3 toEye, LightMateiral mat)
+{
+    float3 reflectVec = reflect(-lightVec, normal);
+    float rdotv = max(dot(reflectVec, normalize(toEye)), 0.0f);
+    float3 specular = mat.specular * pow(rdotv, mat.shininess);
+    return mat.ambient + (mat.diffuse + specular) * lightStrength;
 }
 
 float3 ComputeDirectionalLight(Light L, LightMateiral mat, float3 normal, float3 toEye)
 {
-    float3 lightVec = normalize(-L.direction); //지표면에서 튀어나오는방향
+    float3 lightVec = normalize(-L.direction); // 빛의 반대 방향
     float ndotl = max(dot(normal, lightVec), 0.0f);
     float3 LightStrength = L.strength * ndotl;
-    return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
+    return Phong(LightStrength, lightVec, normal, toEye, mat);
 }
 
 float3 ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye)

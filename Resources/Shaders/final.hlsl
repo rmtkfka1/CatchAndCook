@@ -32,7 +32,7 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float3 color;
     
     float4 worldPos = PositionTexture.Sample(sampler_point, input.uv);
-    float4 WolrdNormal = normalize(NormalTexture.Sample(sampler_point, input.uv));
+    float3 WolrdNormal = normalize(NormalTexture.Sample(sampler_point, input.uv).xyz);
     float4 AlbedoColor = AlbedoTexture.Sample(sampler_lerp, input.uv);
     float Depth = depthTexture.Sample(sampler_point, input.uv).r;
     

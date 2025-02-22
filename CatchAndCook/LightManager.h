@@ -32,10 +32,12 @@ struct LightParams
 {
 	vec3 eyeWorldPos{};
 	int lightCount = 0;
+
 	Light light[5];
 
 	int useRim = 1;
 	vec3 rimColor = vec3(0,1.0f,0);
+
 	float rimPower = 23.0f;
 	float rimStrength = 500.0f;
 	float dummy1 = 0;
