@@ -67,12 +67,20 @@ void SkinnedMeshRenderer::Destroy()
 void SkinnedMeshRenderer::RenderBegin()
 {
 	Component::RenderBegin();
-	
+	auto owner = GetOwner()->_transform;
+	Matrix matrix;
+	owner->GetLocalToWorldMatrix_BottomUp(matrix);
+	BoundingBox box(Vector3(0,0,0),Vector3(5,5,5));
+
 	for(int i = 0; i < _mesh.size(); i++)
 	{
 		auto a = GetOwner();
 		auto currentMesh = _mesh[i];
 		auto currentMaterial = _uniqueMaterials[i % _mesh.size()];
+
+		box.Transform(box,matrix);
+		SetBound(box);
+
 		currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
 		currentMaterial->PushData();
 		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(),currentMesh.get(),this);

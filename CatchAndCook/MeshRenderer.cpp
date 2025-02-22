@@ -67,11 +67,17 @@ void MeshRenderer::Destroy()
 void MeshRenderer::RenderBegin()
 {
 	Component::RenderBegin();
+	auto owner = GetOwner()->_transform;
+	Matrix matrix;
+	owner->GetLocalToWorldMatrix_BottomUp(matrix);
 
 	for (int i = 0; i < _mesh.size(); i++)
 	{
 		auto currentMesh = _mesh[i];
 		auto currentMaterial = _uniqueMaterials[i % _mesh.size()];
+
+	 	SetBound(currentMesh->CalculateBound(matrix));
+
 		currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
 		currentMaterial->PushData();
 		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(), currentMesh.get(), this);

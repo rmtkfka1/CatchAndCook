@@ -92,8 +92,10 @@ public:
 	//struturedBuffer 이용할때 사용
 	void SetVertexCount(uint32 count) { _vertexCount = count; _noUseVertex = true; }
 
-	void SetBound(BoundingBox box){_bound = box;};
-	BoundingBox GetBound() const {return _bound;};
+	void SetBound(BoundingBox box){_originalBound = box;};
+	BoundingBox GetBound() const {return _originalBound;};
+
+	BoundingBox CalculateBound(const Matrix& worldMatrix) const;
 
 private:
 	bool _noUseVertex=false;
@@ -108,7 +110,6 @@ private:
 	D3D12_INDEX_BUFFER_VIEW		_indexBufferView = {};
 	uint32 _indexCount = 0;
 
-	BoundingBox _bound;
-
+	BoundingBox _originalBound;
 };
 

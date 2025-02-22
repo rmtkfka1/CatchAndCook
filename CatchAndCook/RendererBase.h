@@ -31,5 +31,20 @@ public:
 	void RemoveSetter(const shared_ptr<RenderObjectSetter>& object);
 
 	std::vector<std::shared_ptr<RenderObjectSetter>> _setters;
+	BoundingBox& GetBound() {
+		return _bound;
+	};
+	void SetBound(const BoundingBox& bound) {
+		_bound = bound;
+	};
+	void SetCulling(bool isCulling) {
+		_isCulling = isCulling;
+	};
+	bool IsCulling() const
+	{
+		return _isCulling;
+	};
+	BoundingBox _bound;
+	bool _isCulling = true;
 };
 

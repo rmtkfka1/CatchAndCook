@@ -1,5 +1,7 @@
 ﻿#include "pch.h"
 #include "TestScene_jin.h"
+
+#include "Gizmo.h"
 #include "MeshRenderer.h"
 #include "testComponent.h"
 #include "Transform.h"
@@ -55,7 +57,7 @@ void TestScene_jin::Init()
 	//});
 	//std::cout << i <<"\n";
 	std::cout << _gameObjects.size() << "\n";
-
+	
 
 	//a[0]->_transform->SetLocalRotation(Vector3(0,180,0) * D2R);
 }
@@ -63,6 +65,7 @@ void TestScene_jin::Init()
 void TestScene_jin::Update()
 {
 	Scene::Update();
+
 }
 
 void TestScene_jin::RenderBegin()

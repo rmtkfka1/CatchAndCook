@@ -96,4 +96,11 @@ void Mesh::CreateIndexBuffer(vector<uint32>& vec)
 		uploadBuffer = nullptr;
 	}
 
+}
+
+BoundingBox Mesh::CalculateBound(const Matrix& worldMatrix) const
+{
+	BoundingBox _finalBound;
+	_originalBound.Transform(_finalBound, worldMatrix);
+	return _finalBound;
 };
