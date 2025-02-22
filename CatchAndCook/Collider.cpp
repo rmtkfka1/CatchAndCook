@@ -116,13 +116,12 @@ void Collider::Destroy()
 
 bool Collider::IsCollision()
 {
-	return !_collisionList.empty();
+	return ColliderManager::main->IsCollision(GetCast<Collider>());
 }
 
 bool Collider::IsCollision(const std::shared_ptr<Collider>& other)
 {
-	auto it = _collisionList.find(other);
-	return it != _collisionList.end();
+	return ColliderManager::main->IsCollision(GetCast<Collider>(),other);
 }
 
 bool Collider::CheckCollision(const std::shared_ptr<Collider>& other)

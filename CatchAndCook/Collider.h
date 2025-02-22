@@ -79,6 +79,4 @@ private:
 	BoundingUnion _bound;
 
 	int groupId = 0;
-
-	unordered_set<weak_ptr<Collider>,WeakPtrHash,WeakPtrEqual> _collisionList;
 };
