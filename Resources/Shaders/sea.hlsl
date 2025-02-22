@@ -45,8 +45,8 @@ VS_IN WaveGeneration(VS_IN input)
     };
 
     float3 modifiedPos = input.pos;
-    float dHdX = 0.0f; // x 방향 편미분
-    float dHdZ = 0.0f; // z 방향 편미분
+    float dHdX = 0.0f; 
+    float dHdZ = 0.0f; 
 
     for (int i = 0; i < waveCount; i++)
     {

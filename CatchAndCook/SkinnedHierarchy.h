@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Component.h"
 
 class SkinnedHierarchy : public Component, public RenderObjectSetter

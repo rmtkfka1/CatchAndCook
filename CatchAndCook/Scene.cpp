@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Scene.h"
 #include "Core.h"
 #include "GameObject.h"
@@ -198,6 +198,8 @@ void Scene::GlobalSetting()
     CameraManager::main->GetActiveCamera()->Update();
     CameraManager::main->GetActiveCamera()->PushData();
     CameraManager::main->GetActiveCamera()->SetData();
+
+	/*cout << CameraManager::main->GetActiveCamera()->GetCameraLook().x << " " << CameraManager::main->GetActiveCamera()->GetCameraLook().y << " " << CameraManager::main->GetActiveCamera()->GetCameraLook().z << endl;*/
 
     _globalParam.window_size = vec2(WINDOW_WIDTH,WINDOW_HEIGHT);
     _globalParam.Time = Time::main->GetTime();

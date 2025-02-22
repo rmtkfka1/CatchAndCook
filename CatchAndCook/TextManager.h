@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 enum class FontColor
 {
@@ -32,7 +32,7 @@ public:
 public:
 	void Init();
 	void UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>& handle , BYTE* memory );
-	void PrintFontAll(); //»ç¿ëÇÒ¼öÀÖ´Â ¸ğµç ÆùÆ® ÄÜ¼Ö·Î Ãâ·Â.
+	void PrintFontAll(); //ì‚¬ìš©í• ìˆ˜ìˆëŠ” ëª¨ë“  í°íŠ¸ ì½˜ì†”ë¡œ ì¶œë ¥.
 
 	shared_ptr<TextHandle> AllocTextStrcture(int width ,int height , const WCHAR* font, FontColor color , float fontsize );
 
@@ -47,16 +47,16 @@ private:
 	ComPtr<ID2D1Device2> _device = nullptr;
 	ComPtr<ID2D1DeviceContext2> _context = nullptr;
 
-	ComPtr<ID2D1Bitmap1> _bitMapGpu = nullptr;     //·»´õÅ¸°Ù (GPU ¸Ş¸ğ¸®)
-	ComPtr<ID2D1Bitmap1> _bitMapReadBack = nullptr; //·»´õÅ¸°Ù (ReadBack :½Ã½ºÅÛ ¸Ş¸ğ¸®)
+	ComPtr<ID2D1Bitmap1> _bitMapGpu = nullptr;     //ë Œë”íƒ€ê²Ÿ (GPU ë©”ëª¨ë¦¬)
+	ComPtr<ID2D1Bitmap1> _bitMapReadBack = nullptr; //ë Œë”íƒ€ê²Ÿ (ReadBack :ì‹œìŠ¤í…œ ë©”ëª¨ë¦¬)
 
 	ComPtr<IDWriteFactory5> _factory = nullptr;
 
 	unordered_map<FontColor, ComPtr<ID2D1SolidColorBrush>> _brushMap;
 
-	//Ãß°¡ÀûÀÎ °øºÎÇÊ¿ä
+	//ì¶”ê°€ì ì¸ ê³µë¶€í•„ìš”
 	 
-	//IDWriteFontCollection1* m_pFontCollection = nullptr;  //ÆùÆ®°ü¸®.
+	//IDWriteFontCollection1* m_pFontCollection = nullptr;  //í°íŠ¸ê´€ë¦¬.
 	//DWRITE_LINE_METRICS*	m_pLineMetrics = nullptr;
 	//DWORD					m_dwMaxLineMetricsNum = 0;
 };

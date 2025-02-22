@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "TestScene.h"
 #include "Shader.h"
 #include "Texture.h"
@@ -13,7 +13,6 @@
 #include "testComponent.h"
 #include "StructuredBuffer.h"
 #include "Mesh.h"
-#include "ScreenParticle.h"
 #include "WaterHeight.h"
 #include "Terrain.h"
 
@@ -59,7 +58,10 @@ void TestScene::Init()
 		material->SetPass(RENDER_PASS::Forward);
 
 		meshRenderer->AddMaterials({ material });
+
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(1, 0, 0, 0)));
+
+		
 	}
 
 	{
@@ -117,30 +119,46 @@ void TestScene::Init()
 
 	{
 
-		shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deferred");
+	//	shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
 
-		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
+	//	shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
+	//	shared_ptr<Material> material = make_shared<Material>();
+
+	//	shared_ptr<GameObject> root = CreateGameObject(L"root_test");
+
+	//	//root->GetComponent<Transform>()->_useTerrain=true;
+	//
+	//	auto meshRenderer = root->AddComponent<MeshRenderer>();
+	//	//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal"));
+
+	//	root->_transform->SetLocalScale(vec3(1,1,1));
+	///*	root->AddComponent<WaterHeight>()->SetOffset(6.0f);*/
+	//	root->AddComponent<testComponent>();
+	//
+	//	material = make_shared<Material>();
+	//	material->SetShader(shader);
+	//	material->SetPass(RENDER_PASS::Deffered);
+	//	material->SetHandle("_BaseMap", texture->GetSRVCpuHandle());
+
+	//	meshRenderer->AddMaterials({ material });
+	//	meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(6.0f));
+
+
+		auto obj = ResourceManager::main->Get<Model>(L"Sphere")->CreateGameObject(static_pointer_cast<Scene>(shared_from_this()));
+
+		shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
+		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start",L"Textures/start.jpg");
 		shared_ptr<Material> material = make_shared<Material>();
-
-		shared_ptr<GameObject> root = CreateGameObject(L"root_test");
-
-		//root->GetComponent<Transform>()->_useTerrain=true;
-	
-		auto meshRenderer = root->AddComponent<MeshRenderer>();
-		meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal"));
-
-		root->_transform->SetLocalScale(vec3(1,1,1));
-	/*	root->AddComponent<WaterHeight>()->SetOffset(6.0f);*/
-		root->AddComponent<testComponent>();
-	
-		material = make_shared<Material>();
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Deffered);
-		material->SetHandle("_BaseMap", texture->GetSRVCpuHandle());
+		material->SetHandle("_BaseMap",texture->GetSRVCpuHandle());
 
-		meshRenderer->AddMaterials({ material });
-		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(6.0f));
+		obj->_transform->SetLocalScale(vec3(20.0f,20.0f,20.0f));
+
+		vector<shared_ptr<MeshRenderer>> renderers;
+		auto a = obj->GetComponentsWithChilds(renderers);
 	
+		renderers[0]->SetMaterials({material});
 	}
 
 	{
@@ -174,7 +192,7 @@ void TestScene::Init()
 		info._zTest = true;
 		info._stencilTest = false;
 		info.cullingType = CullingType::WIREFRAME;
-		//info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::NONE;
 		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest",L"seatest.hlsl",GeoMetryProp,

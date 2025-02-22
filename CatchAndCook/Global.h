@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Vertex.h"
 
 extern int WINDOW_WIDTH;

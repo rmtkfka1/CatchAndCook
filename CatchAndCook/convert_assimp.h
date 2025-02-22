@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <assimp/color4.h>
 #include <assimp/matrix3x3.h>

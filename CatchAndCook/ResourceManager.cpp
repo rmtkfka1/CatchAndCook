@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "ResourceManager.h"
 #include "Global.h"
 
@@ -48,7 +48,8 @@ void ResourceManager::CreateDefaultShader()
 		info.RTVForamts[2]=DXGI_FORMAT_R8G8B8A8_UNORM;
 		info.RTVForamts[3]=DXGI_FORMAT_R8_UNORM;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"Deferred",L"Deferred.hlsl",GeoMetryProp,
+
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"Deffered",L"Deferred.hlsl",StaticProp,
 			ShaderArg{},info);
 	}
 
@@ -73,6 +74,16 @@ void ResourceManager::CreateDefaultShader()
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->Init(L"SpriteShader.hlsl", ColorProp, ShaderArg{}, info);
 		Add<Shader>(L"SpriteShader", shader);
+	}
+
+	{
+
+		ShaderInfo info;
+		info._stencilTest = false;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->Init(L"test.hlsl",GeoMetryProp,ShaderArg{},info);
+		Add<Shader>(L"test",shader);
 	}
 	
 	{
@@ -150,6 +161,8 @@ void ResourceManager::CreateDefaultShader()
 		shader->Init(L"Gizmo.hlsl", {},ShaderArg{{{"PS_Main","ps"},{"VS_Main","vs"},{"GS_Main","gs"}}},info);
 		Add<Shader>(L"Gizmo",shader);
 	}
+
+
 }
 
 void ResourceManager::CreateDefaultMaterial()

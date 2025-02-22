@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Component.h"
 #include "Game.h"
 #include "GameObject.h"

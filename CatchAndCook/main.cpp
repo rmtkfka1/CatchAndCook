@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -40,13 +40,13 @@ int main()
 
 	AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, false);
 
-	// À©µµ¿ì¸¦ ¸¸µé¶§ À§¿¡¼­ °è»êÇÑ wr »ç¿ë
+	// ìœˆë„ìš°ë¥¼ ë§Œë“¤ë•Œ ìœ„ì—ì„œ ê³„ì‚°í•œ wr ì‚¬ìš©
 	HWND hwnd = CreateWindow(wc.lpszClassName, L"Game",
 		WS_OVERLAPPEDWINDOW,
-		100, // À©µµ¿ì ÁÂÃø »ó´ÜÀÇ x ÁÂÇ¥
-		100, // À©µµ¿ì ÁÂÃø »ó´ÜÀÇ y ÁÂÇ¥
-		wr.right - wr.left, // À©µµ¿ì °¡·Î ¹æÇâ ÇØ»óµµ
-		wr.bottom - wr.top, // À©µµ¿ì ¼¼·Î ¹æÇâ ÇØ»óµµ
+		100, // ìœˆë„ìš° ì¢Œì¸¡ ìƒë‹¨ì˜ x ì¢Œí‘œ
+		100, // ìœˆë„ìš° ì¢Œì¸¡ ìƒë‹¨ì˜ y ì¢Œí‘œ
+		wr.right - wr.left, // ìœˆë„ìš° ê°€ë¡œ ë°©í–¥ í•´ìƒë„
+		wr.bottom - wr.top, // ìœˆë„ìš° ì„¸ë¡œ ë°©í–¥ í•´ìƒë„
 		NULL, NULL, wc.hInstance, NULL);
 
 

@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Material.h"
 #include "Core.h"
 #include "BufferManager.h"
@@ -40,7 +40,7 @@ void Material::PushData()
 
 void Material::SetData()
 {
-	//ÅØ½ºÃÄ¹ÙÀÎµù
+	//í…ìŠ¤ì³ë°”ì¸ë”©
 	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, _tableContainer.GPUHandle);
 
 	if (_shader->_profileInfo.maxTRegister >= SRV_LONG_TABLE_REGISTER_OFFSET) {

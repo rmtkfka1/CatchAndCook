@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "SkinnedHierarchy.h"
 
 #include "Animation.h"

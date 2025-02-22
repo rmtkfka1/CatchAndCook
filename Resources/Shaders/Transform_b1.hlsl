@@ -94,7 +94,6 @@ float4 TransformWorldToLocal(float4 worldPos, float4 boneIds, float4 boneWs)
 	return TransformWorldToLocal(worldPos);
 }
 
-
 // 직접 행렬을 지정하는것 --
 float4 TransformLocalToWorld(float4 localPos, float4x4 l2w)
 {
@@ -106,6 +105,7 @@ float4 TransformLocalToWorld(float4 localPos, float4 boneIds, float4 boneWs, flo
 	#ifdef SKINNED
 	return CalculateBone(localPos, boneIds, boneWs);
 	#endif
+	
 	return TransformLocalToWorld(localPos, l2w);
 }
 
@@ -123,7 +123,6 @@ float3 TransformNormalLocalToWorld(float3 normal, float4 boneIds, float4 boneWs,
 	return TransformNormalLocalToWorld(normal, w2l);
 }
 
-
 float4 TransformWorldToLocal(float4 worldPos, float4x4 w2l)
 {
 	return mul(worldPos, w2l);
@@ -138,15 +137,16 @@ float4 TransformWorldToLocal(float4 worldPos, float4 boneIds, float4 boneWs, flo
 }
 //--------------------------------------------------------------------------------------------
 
-
 float4 TransformWorldToView(float4 worldPos)
 {
 	return mul(worldPos, ViewMatrix);
 }
+
 float4 TransformViewToWorld(float4 viewPos)
 {
 	return mul(viewPos, InvertViewMatrix);
 }
+
 float4 TransformWorldToClip(float4 worldPos)
 {
 	return mul(worldPos, VPMatrix);

@@ -166,9 +166,6 @@
     <ClCompile Include="StructuredBuffer.cpp">
       <Filter>04.Resource</Filter>
     </ClCompile>
-    <ClCompile Include="ScreenParticle.cpp">
-      <Filter>03.Component</Filter>
-    </ClCompile>
     <ClCompile Include="MeshRenderer.cpp">
       <Filter>03.Component\Renderer</Filter>
     </ClCompile>
@@ -373,9 +370,6 @@
     <ClInclude Include="testComponent.h">
       <Filter>03.Component</Filter>
     </ClInclude>
-    <ClInclude Include="ScreenParticle.h">
-      <Filter>03.Component</Filter>
-    </ClInclude>
     <ClInclude Include="MeshRenderer.h">
       <Filter>03.Component\Renderer</Filter>
     </ClInclude>
@@ -483,22 +477,22 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Resources\Shaders\test.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\SpriteShader.hlsl">
+    <FxCompile Include="..\Resources\Shaders\color.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\cubemap.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\TestForward.hlsl">
+    <FxCompile Include="..\Resources\Shaders\Deferred.hlsl">
+      <Filter>998.HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\final.hlsl">
+      <Filter>998.HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Gizmo.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\normalDraw.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\sea.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\normalDraw_sea.hlsl">
@@ -507,26 +501,29 @@
     <FxCompile Include="..\Resources\Shaders\screenParticle.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\sea.hlsl">
+      <Filter>998.HLSL</Filter>
+    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\seatest.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\color.hlsl">
+    <FxCompile Include="..\Resources\Shaders\SpriteShader.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Terrain.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Gizmo.hlsl">
+    <FxCompile Include="..\Resources\Shaders\test.hlsl">
+      <Filter>998.HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\TestForward.hlsl">
+      <Filter>998.HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\TestForward_Instance.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\TestForward_Skinned.hlsl">
       <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Global_b0.hlsl">
-      <Filter>998.HLSL\Module</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Transform_b1.hlsl">
-      <Filter>998.HLSL\Module</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Tree.hlsl">
       <Filter>998.HLSL</Filter>
@@ -537,13 +534,14 @@
     <FxCompile Include="..\Resources\Shaders\Light_b3.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\TestForward_Instance.hlsl">
-      <Filter>998.HLSL</Filter>
+    <FxCompile Include="..\Resources\Shaders\Global_b0.hlsl">
+      <Filter>998.HLSL\Module</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Skinned_b5.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Deferred.hlsl" />
-    <FxCompile Include="..\Resources\Shaders\final.hlsl" />
+    <FxCompile Include="..\Resources\Shaders\Transform_b1.hlsl">
+      <Filter>998.HLSL\Module</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
