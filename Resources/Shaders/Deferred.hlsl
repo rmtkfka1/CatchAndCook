@@ -10,9 +10,9 @@ Texture2D _BumpMap : register(t1);
 struct VS_IN
 {
     float3 pos : POSITION;
-    float2 uv : TEXCOORD;
     float3 normal : NORMAL;
-
+    float2 uv : TEXCOORD;
+ 
 };
 
 struct VS_OUT
@@ -38,6 +38,7 @@ VS_OUT VS_Main(VS_IN input)
     
     output.uv = input.uv;
     
+
     //TODO: NORMAL MAPPING
     output.worldNormal = normalize(mul(float4(input.normal, 0.0f), LocalToWorldMatrix).xyz);
     

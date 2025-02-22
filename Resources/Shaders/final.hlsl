@@ -1,4 +1,5 @@
 #include "Global_b0.hlsl"
+#include "Light_b3.hlsl"
 
 //[쉐이더정리][컬링처리]
 
@@ -32,30 +33,28 @@ float4 PS_Main(VS_OUT input) : SV_Target
     
     float4 worldPos = PositionTexture.Sample(sampler_point, input.uv);
     float4 WolrdNormal = normalize(NormalTexture.Sample(sampler_point, input.uv));
-    float4 AlbedoColor = AlbedoTexture.Sample(sampler_point, input.uv);
+    float4 AlbedoColor = AlbedoTexture.Sample(sampler_lerp, input.uv);
     float Depth = depthTexture.Sample(sampler_point, input.uv).r;
     
-    //float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
+    float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
     
-  
-    //for (int i = 0; i < g_lightCount; ++i)
-    //{
+    for (int i = 0; i < g_lightCount; ++i)
+    {
    
-    //    if (g_lights[i].mateiral.lightType == 0)
-    //    {
-        
-    //        color += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, WolrdNormal.xyz, toEye);
-    //    }
-    //    else if (g_lights[i].mateiral.lightType == 1)
-    //    {
-    //        color += ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
-    //    }
-    //    else if (g_lights[i].mateiral.lightType == 2)
-    //    {
-    //        color += ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
-    //    }
+        if (g_lights[i].mateiral.lightType == 0)
+        {
+            color += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, WolrdNormal.xyz, toEye);
+        }
+        else if (g_lights[i].mateiral.lightType == 1)
+        {
+            color += ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
+        }
+        else if (g_lights[i].mateiral.lightType == 2)
+        {
+            color += ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
+        }
           
-    //}
+    }
     
-    return AlbedoColor;
+    return float4(color, 1.0f) * AlbedoColor;
 };

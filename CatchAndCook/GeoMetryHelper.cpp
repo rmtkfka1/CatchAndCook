@@ -15,7 +15,8 @@ shared_ptr<Mesh> GeoMetryHelper::LoadRectangleBox(const float scale)
         return mesh;
     }
 
-    // Vertex 및 Index 데이터 생성
+    // 
+    // 및 Index 데이터 생성
     vector<Vertex_GeoMetry> vertices;
     vertices.reserve(24); // 6면 x 4개 정점
 

@@ -40,7 +40,6 @@ float CalcAttenuation(float d, float falloffStart, float falloffEnd)
     return saturate((falloffEnd - d) / (falloffEnd - falloffStart));
 }
 
-
 float3 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 toEye, LightMateiral mat)
 {
     float3 halfway = normalize(toEye + lightVec);

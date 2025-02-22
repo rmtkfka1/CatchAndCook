@@ -54,16 +54,17 @@ void Game::Init(HWND hwnd)
 	TextManager::main->Init();
 
 	LightManager::main = make_unique<LightManager>();
+
 	{
 		Light light;
 
 		light.direction = vec3(0,-1.0f,-1.0f);
-		light.material.ambient = vec3(1.0f,1.0f,1.0f);
-		light.material.diffuse = vec3(0.5f,0.5f,0.5f);
+		light.material.ambient = vec3(0,0,0);
+		light.material.diffuse = vec3(1.0f,1.0f,1.0f);
 		light.material.specular = vec3(1.0f,1.0f,1.0f);
 		light.material.shininess = 64.0f;
 		light.material.lightType = static_cast<int32>(LIGHT_TYPE::DIRECTIONAL_LIGHT);
-		light.strength = vec3(1.0f,1.0f,1.0f);
+		light.strength = vec3(10.0f,10.0f,10.0f);
 		LightManager::main->PushLight(light);
 	}
 
