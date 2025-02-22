@@ -45,7 +45,6 @@ void Game::Init(HWND hwnd)
 	Gizmo::main = std::make_unique<Gizmo>();
 	Gizmo::main->Init();
 
-
 	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, static_pointer_cast<Camera>(make_shared<ThirdPersonCamera>()));
 	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0, 0, -5.0f));
 	CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
@@ -63,7 +62,7 @@ void Game::Init(HWND hwnd)
 		light.material.ambient = vec3(0.1f,0.1f,0.1f);
 		light.material.diffuse = vec3(1.0f,1.0f,1.0f);
 		light.material.specular = vec3(1.0f,1.0,1.0);
-		light.material.shininess = 9.0f;
+		light.material.shininess = 32.0f;
 		light.material.lightType = static_cast<int32>(LIGHT_TYPE::DIRECTIONAL_LIGHT);
 		light.strength = vec3(3.0f,3.0f,3.0f);
 		LightManager::main->PushLight(light);

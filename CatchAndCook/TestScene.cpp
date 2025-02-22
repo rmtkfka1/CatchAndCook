@@ -119,7 +119,7 @@ void TestScene::Init()
 
 	{
 
-	//	shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deferred");
+	//	shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
 
 	//	shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
 	//	shared_ptr<Material> material = make_shared<Material>();
@@ -129,7 +129,7 @@ void TestScene::Init()
 	//	//root->GetComponent<Transform>()->_useTerrain=true;
 	//
 	//	auto meshRenderer = root->AddComponent<MeshRenderer>();
-	//	meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal"));
+	//	//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal"));
 
 	//	root->_transform->SetLocalScale(vec3(1,1,1));
 	///*	root->AddComponent<WaterHeight>()->SetOffset(6.0f);*/

@@ -28,38 +28,44 @@ shared_ptr<Mesh> GeoMetryHelper::LoadRectangleBox(const float scale)
     float h2 = scale;
     float d2 = scale;
 
-    vector<Vertex_GeoMetry> vec(24);
+    vector<Vertex_Static> vec(24);
 
-    // 앞면
-    vec[0] = Vertex_GeoMetry(vec3(-w2, -h2, -d2), vec2(0.0f, 1.0f), vec3(0.0f, 0.0f, -1.0f));
-    vec[1] = Vertex_GeoMetry(vec3(-w2, +h2, -d2), vec2(0.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f));
-    vec[2] = Vertex_GeoMetry(vec3(+w2, +h2, -d2), vec2(1.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f));
-    vec[3] = Vertex_GeoMetry(vec3(+w2, -h2, -d2), vec2(1.0f, 1.0f), vec3(0.0f, 0.0f, -1.0f));
-    // 뒷면
-    vec[4] = Vertex_GeoMetry(vec3(-w2, -h2, +d2), vec2(1.0f, 1.0f), vec3(0.0f, 0.0f, 1.0f));
-    vec[5] = Vertex_GeoMetry(vec3(+w2, -h2, +d2), vec2(0.0f, 1.0f), vec3(0.0f, 0.0f, 1.0f));
-    vec[6] = Vertex_GeoMetry(vec3(+w2, +h2, +d2), vec2(0.0f, 0.0f), vec3(0.0f, 0.0f, 1.0f));
-    vec[7] = Vertex_GeoMetry(vec3(-w2, +h2, +d2), vec2(1.0f, 0.0f), vec3(0.0f, 0.0f, 1.0f));
-    // 윗면
-    vec[8] = Vertex_GeoMetry(vec3(-w2, +h2, -d2), vec2(0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
-    vec[9] = Vertex_GeoMetry(vec3(-w2, +h2, +d2), vec2(0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
-    vec[10] = Vertex_GeoMetry(vec3(+w2, +h2, +d2), vec2(1.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
-    vec[11] = Vertex_GeoMetry(vec3(+w2, +h2, -d2), vec2(1.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
-    // 아랫면
-    vec[12] = Vertex_GeoMetry(vec3(-w2, -h2, -d2), vec2(1.0f, 1.0f), vec3(0.0f, -1.0f, 0.0f));
-    vec[13] = Vertex_GeoMetry(vec3(+w2, -h2, -d2), vec2(0.0f, 1.0f), vec3(0.0f, -1.0f, 0.0f));
-    vec[14] = Vertex_GeoMetry(vec3(+w2, -h2, +d2), vec2(0.0f, 0.0f), vec3(0.0f, -1.0f, 0.0f));
-    vec[15] = Vertex_GeoMetry(vec3(-w2, -h2, +d2), vec2(1.0f, 0.0f), vec3(0.0f, -1.0f, 0.0f));
-    // 왼쪽면
-    vec[16] = Vertex_GeoMetry(vec3(-w2, -h2, +d2), vec2(0.0f, 1.0f), vec3(-1.0f, 0.0f, 0.0f));
-    vec[17] = Vertex_GeoMetry(vec3(-w2, +h2, +d2), vec2(0.0f, 0.0f), vec3(-1.0f, 0.0f, 0.0f));
-    vec[18] = Vertex_GeoMetry(vec3(-w2, +h2, -d2), vec2(1.0f, 0.0f), vec3(-1.0f, 0.0f, 0.0f));
-    vec[19] = Vertex_GeoMetry(vec3(-w2, -h2, -d2), vec2(1.0f, 1.0f), vec3(-1.0f, 0.0f, 0.0f));
-    // 오른쪽면
-    vec[20] = Vertex_GeoMetry(vec3(+w2, -h2, -d2), vec2(0.0f, 1.0f), vec3(1.0f, 0.0f, 0.0f));
-    vec[21] = Vertex_GeoMetry(vec3(+w2, +h2, -d2), vec2(0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
-    vec[22] = Vertex_GeoMetry(vec3(+w2, +h2, +d2), vec2(1.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
-    vec[23] = Vertex_GeoMetry(vec3(+w2, -h2, +d2), vec2(1.0f, 1.0f), vec3(1.0f, 0.0f, 0.0f));
+    // 앞면 (법선: +Z 방향)
+    vec[0] = Vertex_Static(vec3(-w2,-h2,-d2),vec3(0,0,-1),vec3(1,0,0),vec2(0,1));
+    vec[1] = Vertex_Static(vec3(-w2,+h2,-d2),vec3(0,0,-1),vec3(1,0,0),vec2(0,0));
+    vec[2] = Vertex_Static(vec3(+w2,+h2,-d2),vec3(0,0,-1),vec3(1,0,0),vec2(1,0));
+    vec[3] = Vertex_Static(vec3(+w2,-h2,-d2),vec3(0,0,-1),vec3(1,0,0),vec2(1,1));
+
+    // 뒷면 (법선: +Z 방향)
+    vec[4] = Vertex_Static(vec3(-w2,-h2,+d2),vec3(0,0,1),vec3(-1,0,0),vec2(1,1));
+    vec[5] = Vertex_Static(vec3(+w2,-h2,+d2),vec3(0,0,1),vec3(-1,0,0),vec2(0,1));
+    vec[6] = Vertex_Static(vec3(+w2,+h2,+d2),vec3(0,0,1),vec3(-1,0,0),vec2(0,0));
+    vec[7] = Vertex_Static(vec3(-w2,+h2,+d2),vec3(0,0,1),vec3(-1,0,0),vec2(1,0));
+
+    // 윗면 (법선: +Y 방향)
+    vec[8] = Vertex_Static(vec3(-w2,+h2,-d2),vec3(0,1,0),vec3(1,0,0),vec2(0,1));
+    vec[9] = Vertex_Static(vec3(-w2,+h2,+d2),vec3(0,1,0),vec3(1,0,0),vec2(0,0));
+    vec[10] = Vertex_Static(vec3(+w2,+h2,+d2),vec3(0,1,0),vec3(1,0,0),vec2(1,0));
+    vec[11] = Vertex_Static(vec3(+w2,+h2,-d2),vec3(0,1,0),vec3(1,0,0),vec2(1,1));
+
+    // 아랫면 (법선: -Y 방향)
+    vec[12] = Vertex_Static(vec3(-w2,-h2,-d2),vec3(0,-1,0),vec3(1,0,0),vec2(1,1));
+    vec[13] = Vertex_Static(vec3(+w2,-h2,-d2),vec3(0,-1,0),vec3(1,0,0),vec2(0,1));
+    vec[14] = Vertex_Static(vec3(+w2,-h2,+d2),vec3(0,-1,0),vec3(1,0,0),vec2(0,0));
+    vec[15] = Vertex_Static(vec3(-w2,-h2,+d2),vec3(0,-1,0),vec3(1,0,0),vec2(1,0));
+
+    // 왼쪽면 (법선: -X 방향)
+    vec[16] = Vertex_Static(vec3(-w2,-h2,+d2),vec3(-1,0,0),vec3(0,0,-1),vec2(0,1));
+    vec[17] = Vertex_Static(vec3(-w2,+h2,+d2),vec3(-1,0,0),vec3(0,0,-1),vec2(0,0));
+    vec[18] = Vertex_Static(vec3(-w2,+h2,-d2),vec3(-1,0,0),vec3(0,0,-1),vec2(1,0));
+    vec[19] = Vertex_Static(vec3(-w2,-h2,-d2),vec3(-1,0,0),vec3(0,0,-1),vec2(1,1));
+
+    // 오른쪽면 (법선: +X 방향)
+    vec[20] = Vertex_Static(vec3(+w2,-h2,-d2),vec3(1,0,0),vec3(0,0,1),vec2(0,1));
+    vec[21] = Vertex_Static(vec3(+w2,+h2,-d2),vec3(1,0,0),vec3(0,0,1),vec2(0,0));
+    vec[22] = Vertex_Static(vec3(+w2,+h2,+d2),vec3(1,0,0),vec3(0,0,1),vec2(1,0));
+    vec[23] = Vertex_Static(vec3(+w2,-h2,+d2),vec3(1,0,0),vec3(0,0,1),vec2(1,1));
+
 
     vector<uint32> idx(36);
 
