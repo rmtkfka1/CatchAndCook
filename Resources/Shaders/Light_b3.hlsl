@@ -33,7 +33,7 @@ struct Light
 };
 
 
-cbuffer lighting : register(b3)
+cbuffer LightParams : register(b3)
 {
     float3 g_eyeWorld;
     int g_lightCount;
@@ -55,13 +55,13 @@ float CalcAttenuation(float d, float falloffStart, float falloffEnd)
     return saturate((falloffEnd - d) / (falloffEnd - falloffStart));
 }
 
-float3 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 toEye, LightMateiral mat)
-{
-    float3 halfway = normalize(toEye + lightVec);
-    float hdotn = dot(halfway, normal);
-    float3 specular = mat.specular * pow(max(hdotn,0.0f), mat.shininess);
-    return mat.ambient + (mat.diffuse + specular) * lightStrength;
-} 
+//float3 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 toEye, LightMateiral mat)
+//{
+//    float3 halfway = normalize(toEye + lightVec);
+//    float hdotn = dot(halfway, normal);
+//    float3 specular = mat.specular * pow(max(hdotn,0.0f), mat.shininess);
+//    return mat.ambient + (mat.diffuse + specular) * lightStrength;
+//} 
 
 float3 Phong(float3 lightStrength, float3 lightVec, float3 normal, float3 toEye, LightMateiral mat)
 {
