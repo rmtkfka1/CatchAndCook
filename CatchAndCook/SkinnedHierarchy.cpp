@@ -149,7 +149,7 @@ void SkinnedHierarchy::SetAnimation(const std::shared_ptr<Animation>& animation)
 
 void SkinnedHierarchy::FindNodeObjects()
 {
-	//ÀÌ¸§À¸·Î ¸ÅÄªÇØ¼­ Ã£¾Æ¿À±â
+	//ï¿½Ì¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Äªï¿½Ø¼ï¿½ Ã£ï¿½Æ¿ï¿½ï¿½ï¿½
 	std::vector<std::shared_ptr<GameObject>> obj;
 	for (int index = 0; index < _boneNameList.size(); index++)
 	{

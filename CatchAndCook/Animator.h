@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Component.h"
 #include "SkinnedHierarchy.h"
 
@@ -21,5 +21,6 @@ public:
 	void Destroy() override;
 
 	SkinnedHierarchy target;
+
 };
 
