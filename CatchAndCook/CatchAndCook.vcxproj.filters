@@ -477,9 +477,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Resources\Shaders\Camera_b2.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\color.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
@@ -495,12 +492,6 @@
     <FxCompile Include="..\Resources\Shaders\Gizmo.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Global_b0.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Light_b3.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\normalDraw.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
@@ -514,9 +505,6 @@
       <Filter>998.HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\seatest.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Skinned_b5.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\SpriteShader.hlsl">
@@ -537,11 +525,23 @@
     <FxCompile Include="..\Resources\Shaders\TestForward_Skinned.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Transform_b1.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Tree.hlsl">
       <Filter>998.HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Camera_b2.hlsl">
+      <Filter>998.HLSL\Module</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Light_b3.hlsl">
+      <Filter>998.HLSL\Module</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Global_b0.hlsl">
+      <Filter>998.HLSL\Module</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Skinned_b5.hlsl">
+      <Filter>998.HLSL\Module</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Transform_b1.hlsl">
+      <Filter>998.HLSL\Module</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
