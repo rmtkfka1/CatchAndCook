@@ -153,7 +153,7 @@ void TestScene::Init()
 		material->SetPass(RENDER_PASS::Deffered);
 		material->SetHandle("_BaseMap",texture->GetSRVCpuHandle());
 
-		obj->_transform->SetLocalScale(vec3(100.0f,100.0f,100.0f));
+		obj->_transform->SetLocalScale(vec3(20.0f,20.0f,20.0f));
 
 		vector<shared_ptr<MeshRenderer>> renderers;
 		auto a = obj->GetComponentsWithChilds(renderers);

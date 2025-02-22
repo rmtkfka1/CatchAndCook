@@ -44,13 +44,13 @@ float3 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 t
 {
     float3 halfway = normalize(toEye + lightVec);
     float hdotn = dot(halfway, normal);
-    float3 specular = mat.specular * pow(max(hdotn, 0.0f), mat.shininess);
+    float3 specular = mat.specular * pow(max(hdotn,0.0f), mat.shininess);
     return mat.ambient + (mat.diffuse + specular) * lightStrength;
 }
 
 float3 ComputeDirectionalLight(Light L, LightMateiral mat, float3 normal, float3 toEye)
 {
-    float3 lightVec = normalize(-L.direction);
+    float3 lightVec = normalize(-L.direction); //지표면에서 튀어나오는방향
     float ndotl = max(dot(normal, lightVec), 0.0f);
     float3 LightStrength = L.strength * ndotl;
     return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
@@ -78,7 +78,9 @@ float3 ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, 
         float att = CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
         LightStrength *= att;
         
-        return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
+        //return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
+        return mat.diffuse * LightStrength;
+
     }
 }
 
@@ -108,7 +110,8 @@ float3 ComputeSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal, f
         
         LightStrength *= spotFactor;
         
-        return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
+        //return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
+        return mat.diffuse * LightStrength;
     }
 }
 
