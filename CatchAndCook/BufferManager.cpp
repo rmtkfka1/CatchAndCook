@@ -15,7 +15,7 @@ void BufferManager::Init()
 	_textureBufferPool->Init(2000, 10, 5);
 
 	CreateBufferPool(BufferType::GlobalParam, sizeof(GlobalParam), 1);
-	CreateBufferPool(BufferType::TransformParam, sizeof(TransformParam), 1000);
+	CreateBufferPool(BufferType::TransformParam, sizeof(TransformParam), 10000);
 	CreateBufferPool(BufferType::MateriaParam, sizeof(MaterialParams),1000);
 	CreateBufferPool(BufferType::MateriaSubParam, sizeof(TestSubMaterialParam),1000);
 	CreateBufferPool(BufferType::CameraParam, sizeof(CameraParams), 10);
@@ -25,12 +25,12 @@ void BufferManager::Init()
 
 	CreateBufferPool(BufferType::BoneParam, sizeof(BoneParam), 256);
 
-	CreateInstanceBufferPool(BufferType::TransformInstanceParam,sizeof(Instance_Transform),2000,128);
-	CreateInstanceBufferPool(BufferType::GizmoInstanceParam,sizeof(Instance_Gizmo),10000,1);
+	CreateInstanceBufferPool(BufferType::TransformInstanceParam,sizeof(Instance_Transform),10000,128);
+	CreateInstanceBufferPool(BufferType::GizmoInstanceParam,sizeof(Instance_Gizmo),100000,1);
 	
 	{
 		_table = make_shared<DescritporTable>();
-		_table->Init(20000);
+		_table->Init(40000);
 	}
 
 

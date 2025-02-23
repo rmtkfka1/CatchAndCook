@@ -36,6 +36,7 @@ public:
 	static void Line(const Vector3& worldStart, const Vector3& worldEnd, const Vector4& Color = Vector4(1, 0, 0, 1));
 	static void Ray(const Vector3& worldStart, const Vector3& dir, float dis, const Vector4& Color = Vector4(1, 0, 0, 1));
 	static void Box(const BoundingOrientedBox& box, const Vector4& Color = Vector4(1, 0, 0, 1));
+	static void Box(const BoundingBox& box,const Vector4& Color = Vector4(1,0,0,1));
 	static void Frustum(const BoundingFrustum& frustum, const Vector4& Color = Vector4(1,0,0,1));
 	static void Sphere(const BoundingSphere& sphere, const Vector4& Color = Vector4(1, 0, 0, 1));
 	static void Text(const wstring& text, int fontSize, const Vector3& worldPos, const Vector3& worldDir,const Vector3& Up, const Vector4& Color = Vector4(1,0,0,1));

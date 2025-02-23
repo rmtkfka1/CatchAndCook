@@ -31,13 +31,12 @@ void MeshRenderer::Init()
 void MeshRenderer::Start()
 {
 	Component::Start();
-
-
 }
 
 void MeshRenderer::Update()
 {
 	Component::Update();
+
 }
 
 void MeshRenderer::Update2()
@@ -67,16 +66,30 @@ void MeshRenderer::Destroy()
 void MeshRenderer::RenderBegin()
 {
 	Component::RenderBegin();
+
 	auto owner = GetOwner()->_transform;
 	Matrix matrix;
 	owner->GetLocalToWorldMatrix_BottomUp(matrix);
+
+
+	BoundingBox totalBox;
+	for(int i = 0; i < _mesh.size(); i++)
+	{
+		auto currentMesh = _mesh[i];
+		auto bound = currentMesh->CalculateBound(matrix);
+		if(i == 0)
+			totalBox = bound;
+		else
+			BoundingBox::CreateMerged(totalBox,totalBox,bound);
+	}
+	SetBound(totalBox);
+
+	Gizmo::Box(GetBound());
 
 	for (int i = 0; i < _mesh.size(); i++)
 	{
 		auto currentMesh = _mesh[i];
 		auto currentMaterial = _uniqueMaterials[i % _mesh.size()];
-
-	 	SetBound(currentMesh->CalculateBound(matrix));
 
 		currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
 		currentMaterial->PushData();

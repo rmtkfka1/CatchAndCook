@@ -36,7 +36,7 @@ struct alignas(16) DefaultMaterialParam
 	Vector4 _baseMapST;
 };
 
-CBUFFER_INJECTOR("DefaultMaterialParam", DefaultMaterialParam, 256, BufferType::DefaultMaterialParam, std::shared_ptr<Material>,
+CBUFFER_INJECTOR("DefaultMaterialParam", DefaultMaterialParam, 2560, BufferType::DefaultMaterialParam, std::shared_ptr<Material>,
 	// data <- source
 	data.color = Vector4(source->GetPropertyVector("_Color"));
 	data._baseMapST = Vector4(source->GetPropertyVector("_BaseMap_ST"));

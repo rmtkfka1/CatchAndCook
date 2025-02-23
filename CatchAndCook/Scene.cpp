@@ -54,7 +54,7 @@ void Scene::Update()
         if(gameObject->GetType() == GameObjectType::Dynamic)
             gameObject->Update2();
 
-    ColliderManager::main->Update();
+    //ColliderManager::main->Update();
 }
 
 void Scene::RenderBegin()

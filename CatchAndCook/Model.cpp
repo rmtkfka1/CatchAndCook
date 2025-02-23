@@ -221,7 +221,7 @@ void Model::LoadVertex<Vertex_Static>(aiMesh* assimp_mesh, std::shared_ptr<Mesh>
 	auto mesh2 = std::make_shared<Mesh>();
 	vertexs.reserve(assimp_mesh->mNumVertices);
 	Vertex_Static vert;
-	Vector3 min = Vector3(10000, 10000, 10000);
+	Vector3 min = Vector3(100000, 100000, 100000);
 	Vector3 max = -min;
 	for (int j = 0; j < assimp_mesh->mNumVertices; j++)
 	{
