@@ -2,6 +2,7 @@
 #include "Vertex.h"
 
 
+class TextHandle;
 
 class GizmoTexture : public RendererBase
 {
@@ -10,7 +11,13 @@ public:
 
 	std::shared_ptr<Mesh> _mesh;
 	std::vector<std::shared_ptr<Texture>> textures;
+	std::vector<std::shared_ptr<Texture>> textTextures;
+	std::vector<shared_ptr<TextHandle>> handles;
+	std::vector<BYTE*> sysMemorys;
 	std::vector<TransformParam> transforms;
+
+	int textAllocator = 0;
+
 	void Clear();
 
 	~GizmoTexture() override;
@@ -32,7 +39,7 @@ public:
 	static void Frustum(const BoundingFrustum& frustum, const Vector4& Color = Vector4(1,0,0,1));
 	static void Sphere(const BoundingSphere& sphere, const Vector4& Color = Vector4(1, 0, 0, 1));
 	static void Text(const wstring& text, int fontSize, const Vector3& worldPos, const Vector3& worldDir,const Vector3& Up, const Vector4& Color = Vector4(1,0,0,1));
-	static void Texture(const std::shared_ptr<Texture>& texture,int fontSize,const Vector3& worldPos,const Vector3& worldDir,const Vector3& Up,const Vector4& Color = Vector4(1,0,0,1));
+	static void Image(const std::shared_ptr<Texture>& texture,const Vector3& worldPos,const Vector3& worldDir,const Vector3& Up,const Vector4& Color = Vector4(1,0,0,1));
 
 	void RenderBegin();
 public:
@@ -50,6 +57,6 @@ private:
 	float _width = 0.02f;
 	float _prevWidth = 0.05f;
 
-	GizmoTexture texture;
+	GizmoTexture textureGizmo;
 };
 

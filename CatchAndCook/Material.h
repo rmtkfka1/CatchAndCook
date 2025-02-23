@@ -108,9 +108,9 @@ private:
 //
 //	void SetData(const std::shared_ptr<Shader>& shader) override
 //	{
-//		int index = GetStaticRegisterIndex();
-//		if (shader) index = shader->GetRegisterIndex(cbufferName);
-//		if (index != -1) Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(
-//			index, _cbufferContainer->GPUAdress);
+//		int textAllocator = GetStaticRegisterIndex();
+//		if (shader) textAllocator = shader->GetRegisterIndex(cbufferName);
+//		if (textAllocator != -1) Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(
+//			textAllocator, _cbufferContainer->GPUAdress);
 //	}
 //};

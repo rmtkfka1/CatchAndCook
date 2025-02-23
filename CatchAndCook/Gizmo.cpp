@@ -2,6 +2,8 @@
 #include "Gizmo.h"
 
 #include "Mesh.h"
+#include "Texture.h"
+#include "TextManager.h"
 
 
 std::unique_ptr<Gizmo> Gizmo::main = nullptr;
@@ -13,17 +15,29 @@ void Gizmo::Init()
 	material->SetPass(RENDER_PASS::Debug);
 	container = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::GizmoInstanceParam)->Alloc();
 
-	texture.material = std::make_shared<Material>();
-    texture.material->SetShader(ResourceManager::main->Get<Shader>(L"GizmoTexture"));
-    texture.material->SetPass(RENDER_PASS::Debug);
+	textureGizmo.material = std::make_shared<Material>();
+    textureGizmo.material->SetShader(ResourceManager::main->Get<Shader>(L"GizmoTexture"));
+    textureGizmo.material->SetPass(RENDER_PASS::Debug);
     
-    texture._mesh = GeoMetryHelper::LoadRectMesh();
+    textureGizmo._mesh = GeoMetryHelper::LoadRectMesh();
+
+
+    for(int i=0;i<256;i++)
+    {
+        auto _textHandle =  TextManager::main->AllocTextStrcture(256,256,L"Arial", FontColor::CUSTOM, 30, vec4(1,1,1,1));
+        auto _sysMemory = new BYTE[(256 * 256 * 4)]();
+        auto _texture = std::make_shared<Texture>();
+        _texture->CreateDynamicTexture(DXGI_FORMAT_R8G8B8A8_UNORM,256,256);
+        textureGizmo.textTextures.push_back(_texture);
+        textureGizmo.sysMemorys.push_back(_sysMemory);
+        textureGizmo.handles.push_back(_textHandle);
+    }
 }
 
 void Gizmo::Clear()
 {
 	container->Clear();
-    texture.Clear();
+    textureGizmo.Clear();
 	lineDatas.clear();
 }
 
@@ -182,10 +196,18 @@ void Gizmo::Text(const wstring& text, int fontSize, const Vector3& worldPos, con
     param.localToWorld.Invert(param.worldToLocal);
     param.worldPos = worldPos;
 
-    main->texture.transforms.push_back(param);
+    auto texture = main->textureGizmo.textTextures[main->textureGizmo.textAllocator];
+    auto handle = main->textureGizmo.handles[main->textureGizmo.textAllocator];
+    auto memory = main->textureGizmo.sysMemorys[main->textureGizmo.textAllocator];
+    TextManager::main->UpdateToSysMemory(text,handle, memory,4);
+    main->textureGizmo.textAllocator++;
+
+
+    main->textureGizmo.transforms.push_back(param);
+    main->textureGizmo.textures.push_back(texture);
 }
 
-void Gizmo::Texture(const std::shared_ptr<::Texture>& texture, int fontSize, const Vector3& worldPos,
+void Gizmo::Image(const std::shared_ptr<::Texture>& texture, const Vector3& worldPos,
 	const Vector3& worldDir, const Vector3& Up, const Vector4& Color)
 {
     Vector3 right = Up.Cross(worldDir);
@@ -198,14 +220,14 @@ void Gizmo::Texture(const std::shared_ptr<::Texture>& texture, int fontSize, con
     param.localToWorld.Invert(param.worldToLocal);
     param.worldPos = worldPos;
 
-    main->texture.textures.push_back(texture);
-    main->texture.transforms.push_back(param);
+    main->textureGizmo.textures.push_back(texture);
+    main->textureGizmo.transforms.push_back(param);
 }
 
 void Gizmo::RenderBegin()
 {
 	SceneManager::main->GetCurrentScene()->AddRenderer(material.get(),nullptr,this);
-    SceneManager::main->GetCurrentScene()->AddRenderer(texture.material.get(), texture._mesh.get(), &texture);
+    SceneManager::main->GetCurrentScene()->AddRenderer(textureGizmo.material.get(), textureGizmo._mesh.get(), &textureGizmo);
 }
 
 void Gizmo::Rendering(Material* material, Mesh* mesh)
@@ -229,6 +251,7 @@ void GizmoTexture::Clear()
 {
     textures.clear();
     transforms.clear();
+    textAllocator = 0;
 }
 
 GizmoTexture::~GizmoTexture()
@@ -238,6 +261,12 @@ GizmoTexture::~GizmoTexture()
 void GizmoTexture::Rendering(Material* material, Mesh* mesh)
 {
     auto& cmdList = Core::main->GetCmdList();
+
+    for(int i=0;i<textAllocator;i++)
+    {
+        textTextures[i]->UpdateDynamicTexture(sysMemorys[i], 4);
+        textTextures[i]->CopyCpuToGpu();
+    }
     
     for(int i=0;i<textures.size();i++)
     {

@@ -30,5 +30,8 @@ VS_OUT VS_Main(VS_IN input)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
+    float4 color = _BaseMap.Sample(sampler_lerp, input.uv);
+    if (color.a  < 0.01)
+		discard;
     return _BaseMap.Sample(sampler_lerp, input.uv);
 }

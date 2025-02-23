@@ -47,7 +47,7 @@ public:
 	void UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>& handle, BYTE* memory, int dataSize = 4);
 	void PrintFontAll(); //사용할수있는 모든 폰트 콘솔로 출력.
 
-	shared_ptr<TextHandle> AllocTextStrcture(int width ,int height , const WCHAR* font, FontColor color , float fontsize );
+	shared_ptr<TextHandle> AllocTextStrcture(int width ,int height , const WCHAR* font, FontColor color , float fontsize, Vector4 fontColor = Vector4::One );
 
 private:
 	void InitD2D();

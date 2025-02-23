@@ -40,6 +40,9 @@ void Game::Init(HWND hwnd)
 	InjectorManager::main = make_unique<InjectorManager>();
 	InjectorManager::main->Init();
 
+	TextManager::main = make_unique<TextManager>();
+	TextManager::main->Init();
+
 	//------------------
 
 	Gizmo::main = std::make_unique<Gizmo>();
@@ -49,8 +52,6 @@ void Game::Init(HWND hwnd)
 	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0, 0, -5.0f));
 	CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
 
-	TextManager::main = make_unique<TextManager>();
-	TextManager::main->Init();
 
 	LightManager::main = make_unique<LightManager>();
 
