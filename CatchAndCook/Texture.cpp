@@ -275,7 +275,7 @@ void Texture::CreateDynamicTexture(DXGI_FORMAT format, uint32 width, uint32 heig
     device->CreateShaderResourceView(_resource.Get(), &srvDesc, _srvHandle);
 }
 
-void Texture::UpdateDynamicTexture(const BYTE* sysMemory)
+void Texture::UpdateDynamicTexture(const BYTE* sysMemory, int dataSize)
 {
     D3D12_RESOURCE_DESC Desc = _resource->GetDesc();
    
@@ -295,12 +295,12 @@ void Texture::UpdateDynamicTexture(const BYTE* sysMemory)
     BYTE* pDest = pMappedPtr;
 
     int width = Desc.Width;
-    int height =Desc.Height;
+    int height = Desc.Height;
 
     for (UINT y = 0; y < height; y++)
     {
-        memcpy(pDest, pSrc, width * 4);
-        pSrc += (width * 4);
+        memcpy(pDest, pSrc, width * dataSize);
+        pSrc += (width * dataSize);
         pDest += Footprint.Footprint.RowPitch;
     }
     // Unmap

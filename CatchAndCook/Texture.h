@@ -37,7 +37,7 @@ public:
 
 	//DynamicTexture 용
 	void CreateDynamicTexture(DXGI_FORMAT format ,uint32 width , uint32 height ); //only for srv
-	void UpdateDynamicTexture(const BYTE* sysMemory);
+	void UpdateDynamicTexture(const BYTE* sysMemory, int dataSize = 4);
 	void CopyCpuToGpu();
 	//////////
 

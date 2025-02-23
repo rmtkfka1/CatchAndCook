@@ -12,5 +12,6 @@ public:
 	static shared_ptr<Mesh> LoadGripMeshControlPoints(float width, float height, int division_x, int division_z);
 	static shared_ptr<Mesh> LoadGripMesh(float width, float height, int division_x, int division_z);
 	static shared_ptr<Mesh> LoadSprtieMesh();
+	static shared_ptr<Mesh> LoadRectMesh();
 };
 

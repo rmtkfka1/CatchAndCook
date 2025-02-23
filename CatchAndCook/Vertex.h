@@ -549,6 +549,11 @@ struct Instance_Gizmo
     float strock = 2;
 };
 
+struct Instance_GizmoText
+{
+    vec4 color = vec4(1.0f,1.0f,1.0f,1.0f);
+};
+
 struct Instance_Transform
 {
 	Matrix localToWorld = Matrix::Identity;

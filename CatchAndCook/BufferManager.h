@@ -21,6 +21,7 @@ enum class BufferType
 	// Instance
 	TransformInstanceParam,
 	GizmoInstanceParam,
+	GizmoTextInstanceParam,
 };
 
 class CBufferPool;

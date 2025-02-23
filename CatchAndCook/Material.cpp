@@ -15,6 +15,11 @@ void Material::SetHandle(std::string name, D3D12_CPU_DESCRIPTOR_HANDLE& field)
 	_propertyHandle[name] = field;
 }
 
+void Material::AllocTextureTable()
+{
+	_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
+}
+
 void Material::PushData()
 {
 	////temp

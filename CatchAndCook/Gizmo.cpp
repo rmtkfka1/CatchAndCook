@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "Gizmo.h"
 
+#include "Mesh.h"
+
 
 std::unique_ptr<Gizmo> Gizmo::main = nullptr;
 
@@ -10,11 +12,18 @@ void Gizmo::Init()
 	material->SetShader(ResourceManager::main->Get<Shader>(L"Gizmo"));
 	material->SetPass(RENDER_PASS::Debug);
 	container = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::GizmoInstanceParam)->Alloc();
+
+	texture.material = std::make_shared<Material>();
+    texture.material->SetShader(ResourceManager::main->Get<Shader>(L"GizmoTexture"));
+    texture.material->SetPass(RENDER_PASS::Debug);
+    
+    texture._mesh = GeoMetryHelper::LoadRectMesh();
 }
 
 void Gizmo::Clear()
 {
 	container->Clear();
+    texture.Clear();
 	lineDatas.clear();
 }
 
@@ -160,9 +169,43 @@ void Gizmo::Sphere(const BoundingSphere& sphere, const Vector4& Color)
     }
 }
 
+void Gizmo::Text(const wstring& text, int fontSize, const Vector3& worldPos, const Vector3& worldDir, const Vector3& Up, const Vector4& Color)
+{
+    Vector3 right = Up.Cross(worldDir);
+    Vector3 up = worldDir.Cross(right);
+    Matrix trs = Matrix::CreateWorld(worldPos,worldDir, up);
+    
+    Instance_GizmoText data;
+    TransformParam param;
+    data.color = Color;
+    param.localToWorld = trs;
+    param.localToWorld.Invert(param.worldToLocal);
+    param.worldPos = worldPos;
+
+    main->texture.transforms.push_back(param);
+}
+
+void Gizmo::Texture(const std::shared_ptr<::Texture>& texture, int fontSize, const Vector3& worldPos,
+	const Vector3& worldDir, const Vector3& Up, const Vector4& Color)
+{
+    Vector3 right = Up.Cross(worldDir);
+    Vector3 up = worldDir.Cross(right);
+    Matrix trs = Matrix::CreateWorld(worldPos,worldDir,up);
+
+    TransformParam param;
+    
+    param.localToWorld = trs;
+    param.localToWorld.Invert(param.worldToLocal);
+    param.worldPos = worldPos;
+
+    main->texture.textures.push_back(texture);
+    main->texture.transforms.push_back(param);
+}
+
 void Gizmo::RenderBegin()
 {
 	SceneManager::main->GetCurrentScene()->AddRenderer(material.get(),nullptr,this);
+    SceneManager::main->GetCurrentScene()->AddRenderer(texture.material.get(), texture._mesh.get(), &texture);
 }
 
 void Gizmo::Rendering(Material* material, Mesh* mesh)
@@ -180,4 +223,42 @@ void Gizmo::Rendering(Material* material, Mesh* mesh)
 void Gizmo::DebugRendering()
 {
 
+}
+
+void GizmoTexture::Clear()
+{
+    textures.clear();
+    transforms.clear();
+}
+
+GizmoTexture::~GizmoTexture()
+{
+}
+
+void GizmoTexture::Rendering(Material* material, Mesh* mesh)
+{
+    auto& cmdList = Core::main->GetCmdList();
+    
+    for(int i=0;i<textures.size();i++)
+    {
+        cmdList->SetPipelineState(material->GetShader()->_pipelineState.Get());
+
+        auto& texture = textures[i];
+        auto& transform = transforms[i];
+
+        auto _cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::TransformParam)->Alloc(1);
+        memcpy(_cbufferContainer->ptr,(void*)&transform,sizeof(TransformParam));
+        Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(1,_cbufferContainer->GPUAdress);
+
+        material->SetHandle("_BaseMap", texture->GetSRVCpuHandle());
+        material->AllocTextureTable();
+        material->PushData();
+        material->SetData();
+
+        mesh->Redner();
+    }
+}
+
+void GizmoTexture::DebugRendering()
+{
 }

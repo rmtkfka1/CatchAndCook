@@ -130,6 +130,18 @@ void ResourceManager::CreateDefaultShader()
 		shader->Init(L"Gizmo.hlsl", {},ShaderArg{{{"PS_Main","ps"},{"VS_Main","vs"},{"GS_Main","gs"}}},info);
 		Add<Shader>(L"Gizmo",shader);
 	}
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		info.cullingType = CullingType::BACK;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->Init(L"Gizmo_Text.hlsl", StaticProp, ShaderArg{{{"PS_Main","ps"},{"VS_Main","vs"}}}, info);
+		Add<Shader>(L"GizmoTexture",shader);
+	}
 
 
 }
@@ -140,6 +152,11 @@ void ResourceManager::CreateDefaultMaterial()
 
 void ResourceManager::CreateDefaultTexture()
 {
-	_noneTexture = Load<Texture>(L"None", L"Textures/Config/noneTexture.png");
-	_noneTexture_debug = Load<Texture>(L"None_Debug", L"Textures/Config/noneTexture_debug.png");
+	_noneTexture = Load<Texture>(L"none", L"Configs/noneTexture.png");
+	_noneTexture_debug = Load<Texture>(L"none_debug", L"Configs/noneTexture_debug.png");
+}
+
+void ResourceManager::CreateDefaultAnimation()
+{
+
 }

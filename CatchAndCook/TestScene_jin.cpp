@@ -39,32 +39,15 @@ void TestScene_jin::Init()
 	}
 
 
-	//ResourceManager::main->Load<Model>(L"kind", L"../Resources/Models/Kindred/kindred_unity.fbx", VertexType::Vertex_Skinned);
-	//ResourceManager::main->Load<Model>(L"kind",L"../Resources/Models/testB.fbx",VertexType::Vertex_Skinned);
-	//auto model = ResourceManager::main->Get<Model>(L"kind");
-	//auto obj = model->CreateGameObject(GetCast<Scene>());
-	//obj->_transform->SetWorldScale(vec3(100,100,100));
-
 	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/MainField.json");
-	auto a = ResourceManager::main->Get<SceneLoader>(L"test");
-	a->Load(GetCast<Scene>());
-
-
-	//int i=0;
-	auto c = Find(L"Lisa_Weapon_1");
-	//{
-	//	std::cout << std::to_string(obj->GetName()) <<"\n";
-	//});
-	//std::cout << i <<"\n";
-	std::cout << _gameObjects.size() << "\n";
-	
-
-	//a[0]->_transform->SetLocalRotation(Vector3(0,180,0) * D2R);
+	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
+	sceneLoader->Load(GetCast<Scene>());
 }
 
 void TestScene_jin::Update()
 {
 	Scene::Update();
+	Gizmo::Text(L"1234",10,vec3(1,1,1),vec3(0,0,-1),vec3(0,1,0));
 
 }
 

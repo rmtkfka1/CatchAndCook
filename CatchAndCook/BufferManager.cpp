@@ -27,7 +27,7 @@ void BufferManager::Init()
 
 	CreateInstanceBufferPool(BufferType::TransformInstanceParam,sizeof(Instance_Transform),2000,128);
 	CreateInstanceBufferPool(BufferType::GizmoInstanceParam,sizeof(Instance_Gizmo),10000,1);
-
+	
 	{
 		_table = make_shared<DescritporTable>();
 		_table->Init(20000);

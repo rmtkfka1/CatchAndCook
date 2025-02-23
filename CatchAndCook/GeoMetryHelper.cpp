@@ -367,3 +367,30 @@ shared_ptr<Mesh> GeoMetryHelper::LoadSprtieMesh()
     return mesh;
 
 }
+
+shared_ptr<Mesh> GeoMetryHelper::LoadRectMesh()
+{
+    shared_ptr<Mesh> mesh = ResourceManager::main->Get<Mesh>(L"RectMesh");
+
+    if(mesh) {
+        return mesh;
+    }
+
+    vector<Vertex_Static> vec(4);
+
+    // 앞면
+    vec[0] = Vertex_Static(vec3(0.0f,1.0f,0),vec3(0,0,1), vec3(0,1,0),vec2(0.0f,1.0f));
+    vec[1] = Vertex_Static(vec3(0.0f,0.0f,0),vec3(0,0,1),vec3(0,1,0),vec2(0.0f,0.0f));
+    vec[2] = Vertex_Static(vec3(1.0f,0.0f,0),vec3(0,0,1),vec3(0,1,0),vec2(1.0f,0.0f));
+    vec[3] = Vertex_Static(vec3(1.0f,1.0f,0),vec3(0,0,1),vec3(0,1,0),vec2(1.0f,1.0f));
+
+    vector<uint32> idx = {0,2,1,0,3,2};
+
+    mesh = make_shared<Mesh>();
+    mesh->Init(vec,idx);
+
+    ResourceManager::main->Add(L"RectMesh", mesh);
+
+    return mesh;
+
+}

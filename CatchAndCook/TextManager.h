@@ -4,6 +4,16 @@ enum class FontColor
 {
 	WHITE,
 	BLACK,
+	CUSTOM
+};
+
+enum class TextPivot
+{
+	Left = 0,
+	Middle = 1,
+	Right = 2,
+	Top = 3,
+	Bottom = 4
 };
 
 
@@ -17,7 +27,10 @@ public:
 	ComPtr<ID2D1Bitmap1> bitMapRead{};
 	ComPtr<ID2D1SolidColorBrush> brush{};
 	ComPtr<IDWriteTextFormat> font{};
-	FontColor fontcolor;
+	FontColor fontColor;
+	Vector4 _customFontColor = Vector4(1,1,1,1);
+	TextPivot pivotX = TextPivot::Left;
+	TextPivot pivotY = TextPivot::Top;
 	uint32 width{};
 	uint32 height{};
 	float fontSize{};
@@ -31,7 +44,7 @@ public:
 
 public:
 	void Init();
-	void UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>& handle , BYTE* memory );
+	void UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>& handle, BYTE* memory, int dataSize = 4);
 	void PrintFontAll(); //사용할수있는 모든 폰트 콘솔로 출력.
 
 	shared_ptr<TextHandle> AllocTextStrcture(int width ,int height , const WCHAR* font, FontColor color , float fontsize );

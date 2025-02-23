@@ -13,7 +13,7 @@ void TextManager::Init()
 
 }
 
-void TextManager::UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>& handle , BYTE* memory )
+void TextManager::UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>& handle, BYTE* memory, int dataSize)
 {
     IDWriteTextLayout* textLayout = nullptr;
 
@@ -36,12 +36,12 @@ void TextManager::UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>&
         // 텍스트 렌더링
         _context->BeginDraw();
 
-        if (handle->fontcolor == FontColor::WHITE)
+        if (handle->fontColor == FontColor::WHITE)
         {
             _context->Clear(D2D1::ColorF(D2D1::ColorF::Black));
         }
 
-        else if (handle->fontcolor == FontColor::BLACK)
+        else if (handle->fontColor == FontColor::BLACK)
         {
             _context->Clear(D2D1::ColorF(D2D1::ColorF::White));
         }
@@ -81,8 +81,8 @@ void TextManager::UpdateToSysMemory(const wstring& text, shared_ptr<TextHandle>&
 
     for (DWORD y = 0; y < (DWORD)height; y++)
     {
-        memcpy(pDest, pSrc, width * 4);
-        pDest += handle->width*4;
+        memcpy(pDest, pSrc, width * dataSize);
+        pDest += handle->width * dataSize;
         pSrc += mappedRect.pitch;
     }
 
@@ -127,7 +127,7 @@ shared_ptr<TextHandle> TextManager::AllocTextStrcture(int width, int height, con
     textHandle->height = height;
     textHandle->fontSize = fontsize;
     textHandle->brush = _brushMap[color];
-    textHandle->fontcolor = color;
+    textHandle->fontColor = color;
    
     uint32 dpi = ::GetDpiForWindow(Core::main->GetHandle());
 
@@ -164,9 +164,52 @@ shared_ptr<TextHandle> TextManager::AllocTextStrcture(int width, int height, con
             L"ko-kr",
             &textHandle->font
         ));
+        /*
+         DWRITE_TEXT_ALIGNMENT_LEADING
+		텍스트를 “시작(leading)” 모서리에 맞추는 정렬 방식입니다. 예를 들어, 좌측에서 우측으로 읽는 언어에서는 왼쪽 모서리에 정렬되며, 우측에서 좌측으로 읽는 언어에서는 오른쪽 모서리에 정렬됩니다.
 
+		DWRITE_TEXT_ALIGNMENT_TRAILING
+		텍스트를 “끝(trailing)” 모서리에 맞추는 방식입니다. 좌측에서 우측으로 읽는 경우 오른쪽, 우측에서 좌측으로 읽는 경우 왼쪽 모서리에 정렬됩니다.
+
+		DWRITE_TEXT_ALIGNMENT_CENTER
+		텍스트가 레이아웃 내에서 수평 중앙에 오도록 정렬하는 방식입니다.
+
+		DWRITE_TEXT_ALIGNMENT_JUSTIFIED
+		텍스트를 양쪽 끝에 고르게 배분하여, 양쪽 모서리가 모두 맞춰지도록 하는 정렬 방식입니다.
+
+		DWRITE_PARAGRAPH_ALIGNMENT_NEAR
+		텍스트 블록의 시작 부분(일반적으로 상단)에 문단을 정렬합니다.
+
+		DWRITE_PARAGRAPH_ALIGNMENT_FAR
+		텍스트 블록의 끝 부분(일반적으로 하단)에 문단을 정렬합니다.
+
+		DWRITE_PARAGRAPH_ALIGNMENT_CENTER
+		텍스트 블록 내에서 문단을 수직 중앙에 정렬합니다.
+         **/
+        switch(textHandle->pivotX)
+        {
+        case TextPivot::Left:
         ThrowIfFailed(textHandle->font.Get()->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+        break;
+        case TextPivot::Middle:
+        ThrowIfFailed(textHandle->font.Get()->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER));
+        break;
+        case TextPivot::Right:
+        ThrowIfFailed(textHandle->font.Get()->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING));
+        break;
+        }
+        switch(textHandle->pivotY)
+        {
+        case TextPivot::Top:
         ThrowIfFailed(textHandle->font.Get()->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
+        break;
+        case TextPivot::Middle:
+        ThrowIfFailed(textHandle->font.Get()->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER));
+        break;
+        case TextPivot::Bottom:
+        ThrowIfFailed(textHandle->font.Get()->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR));
+        break;
+        }
     };
 
     return textHandle;

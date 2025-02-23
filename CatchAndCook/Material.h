@@ -47,6 +47,7 @@ public:
 	shared_ptr<Shader> GetShader() { return _shader; }
 
 public:
+	void AllocTextureTable();
 	void PushData();
 	void SetData();
 
