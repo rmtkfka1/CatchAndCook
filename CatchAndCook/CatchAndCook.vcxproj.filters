@@ -247,6 +247,9 @@
     <ClCompile Include="Material.cpp">
       <Filter>04.Resource</Filter>
     </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>03.Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -460,6 +463,9 @@
     <ClInclude Include="Material.h">
       <Filter>04.Resource</Filter>
     </ClInclude>
+    <ClInclude Include="Animator.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -492,15 +498,6 @@
     <FxCompile Include="..\Resources\Shaders\Gizmo.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\normalDraw.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\normalDraw_sea.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\screenParticle.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\sea.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
@@ -513,19 +510,10 @@
     <FxCompile Include="..\Resources\Shaders\Terrain.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\test.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\TestForward.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\TestForward_Instance.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\TestForward_Skinned.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Tree.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Camera_b2.hlsl">
