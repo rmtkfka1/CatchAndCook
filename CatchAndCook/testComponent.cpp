@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "testComponent.h"
 #include "GameObject.h"
 #include <random>

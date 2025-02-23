@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "ColliderManager.h"
 
 #include <algorithm>
@@ -12,53 +12,30 @@ unique_ptr<ColliderManager> ColliderManager::main = nullptr;
 void ColliderManager::AddCollider(const std::shared_ptr<Collider>& collider)
 {
 	if(collider->GetOwner()->GetType() == GameObjectType::Static)
+		if(std::ranges::find(_staticColliders,collider) == _staticColliders.end())
 			_staticColliders.push_back(collider);
 	if(collider->GetOwner()->GetType() == GameObjectType::Dynamic)
+		if(std::ranges::find(_dynamicColliders,collider) == _dynamicColliders.end())
 			_dynamicColliders.push_back(collider);
+	_colliderLinkTable.emplace(collider, unordered_set<std::shared_ptr<Collider>>{});
 }
 
 void ColliderManager::RemoveCollider(const std::shared_ptr<Collider>& collider)
 {
 	if(collider->GetOwner()->GetType() == GameObjectType::Static)
-	{
 		if(auto it = std::ranges::find(_staticColliders,collider); it != _staticColliders.end())
-		{
-			for(auto& ele : collider->_collisionList)
-			{
-				if(auto sharedEle = ele.lock())
-				{
-					CallBackEnd(collider,sharedEle);
-					CallBackEnd(sharedEle,collider);
-				}
-			}
-
-			collider->_collisionList.clear();
-
 			_staticColliders.erase(it);
-		}
-	}
-
 	if(collider->GetOwner()->GetType() == GameObjectType::Dynamic)
-	{
 		if(auto it = std::ranges::find(_dynamicColliders,collider); it != _dynamicColliders.end())
-		{
-	
-			for(auto& ele : collider->_collisionList)
-			{
-				if(auto sharedEle = ele.lock())
-				{
-					CallBackEnd(collider,sharedEle);
-					CallBackEnd(sharedEle,collider);
-				}
-			}
-
-			collider->_collisionList.clear();
 			_dynamicColliders.erase(it);
-		}
+
+	for(auto& other : _colliderLinkTable[collider])
+	{
+		CallBackEnd(collider,other);
+		CallBackEnd(other,collider);
+		_colliderLinkTable[other].erase(collider);
 	}
-
-
-
+	_colliderLinkTable.erase(collider);
 	
 }
 
@@ -72,12 +49,12 @@ void ColliderManager::Update()
 		{
 			auto& dest = _staticColliders[j];
 
-			if(TotalCheckCollision(src, dest))
+			if(TotalCheckCollision(src,dest))
 			{
-				if(src->_collisionList.contains(dest)==false)
+				if(_colliderLinkTable[src].contains(dest) == false)
 				{
-					src->_collisionList.insert(dest);
-					dest->_collisionList.insert(src);
+					_colliderLinkTable[src].insert(dest);
+					_colliderLinkTable[dest].insert(src);
 					CallBackBegin(src,dest);
 					CallBackBegin(dest,src);
 				}
@@ -85,10 +62,10 @@ void ColliderManager::Update()
 
 			else
 			{
-				if(src->_collisionList.contains(dest))
+				if(_colliderLinkTable[src].contains(dest))
 				{
-					src->_collisionList.erase(dest);
-					dest->_collisionList.erase(src);
+					_colliderLinkTable[src].erase(dest);
+					_colliderLinkTable[dest].erase(src);
 					CallBackEnd(src,dest);
 					CallBackEnd(dest,src);
 				}
@@ -99,12 +76,12 @@ void ColliderManager::Update()
 		{
 			auto& dest = _dynamicColliders[j];
 
-			if(TotalCheckCollision(src, dest))
+			if(TotalCheckCollision(src,dest))
 			{
-				if(src->_collisionList.contains(dest)==false)
+				if(_colliderLinkTable[src].contains(dest) == false)
 				{
-					src->_collisionList.insert(dest);
-					dest->_collisionList.insert(src);
+					_colliderLinkTable[src].insert(dest);
+					_colliderLinkTable[dest].insert(src);
 					CallBackBegin(src,dest);
 					CallBackBegin(dest,src);
 				}
@@ -112,10 +89,10 @@ void ColliderManager::Update()
 
 			else
 			{
-				if(src->_collisionList.contains(dest))
+				if(_colliderLinkTable[src].contains(dest))
 				{
-					src->_collisionList.erase(dest);
-					dest->_collisionList.erase(src);
+					_colliderLinkTable[src].erase(dest);
+					_colliderLinkTable[dest].erase(src);
 					CallBackEnd(src,dest);
 					CallBackEnd(dest,src);
 				}
@@ -125,20 +102,30 @@ void ColliderManager::Update()
 } 
 
 //무언가와 충돌하고 있는지 체크
-bool ColliderManager::IsCollision(const std::shared_ptr<Collider>& a) 
+bool ColliderManager::IsCollision(const std::shared_ptr<Collider>& src)
 {
-	return a->IsCollision();
+	return _colliderLinkTable.find(src)->second.empty() == false;
 }
 
 //특정누군가와 충돌하고 있는지 체크
 bool ColliderManager::IsCollision(const std::shared_ptr<Collider>& src,const std::shared_ptr<Collider>& dest)
 {
+	auto it = _colliderLinkTable.find(src);
+	if(it != _colliderLinkTable.end())
+		return it->second.contains(dest);
 	return src->IsCollision(dest);
 }
 
-bool ColliderManager::TotalCheckCollision(const std::shared_ptr<Collider>& a, const std::shared_ptr<Collider>& b)
+std::unordered_set<std::shared_ptr<Collider>>& ColliderManager::GetCollisionList(const std::shared_ptr<Collider>& src)
 {
-	return (a->groupId != b->groupId) && a->CheckCollision(b);
+	return _colliderLinkTable.find(src)->second;
+}
+
+bool ColliderManager::TotalCheckCollision(const std::shared_ptr<Collider>& src, const std::shared_ptr<Collider>& dest)
+{
+	return (src->groupId != dest->groupId) &&
+		src->GetOwner()->GetActive() &&
+		dest->GetOwner()->GetActive() && src->CheckCollision(dest);
 }
 
 void ColliderManager::CallBackBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)

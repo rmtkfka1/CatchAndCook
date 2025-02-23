@@ -1,5 +1,7 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "TestScene_jin.h"
+
+#include "Gizmo.h"
 #include "MeshRenderer.h"
 #include "testComponent.h"
 #include "Transform.h"
@@ -25,7 +27,7 @@ void TestScene_jin::Init()
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"cubeMap");
 
 		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
-
+		meshRenderer->SetCulling(false);
 
 		material = make_shared<Material>();
 		material->SetShader(shader);
@@ -37,63 +39,18 @@ void TestScene_jin::Init()
 	}
 
 
-	{
-		ShaderInfo info;
-		info._zTest = true;
-		info._stencilTest = false;
-
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"test",L"test.hlsl", GeoMetryProp,
-			ShaderArg{},info);
-
-		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start",L"Textures/start.jpg");
-		shared_ptr<Material> material = make_shared<Material>();
-
-		shared_ptr<GameObject> root = CreateGameObject(L"root_test");
-
-		//root->GetComponent<Transform>()->_useTerrain=true;
-
-		auto meshRenderer = root->AddComponent<MeshRenderer>();
-		meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal"));
-
-		root->_transform->SetLocalScale(vec3(1,1,1));
-		//root->AddComponent<WaterHeight>()->SetOffset(10.0f);
-		root->AddComponent<testComponent>();
-
-		material = make_shared<Material>();
-		material->SetShader(shader);
-		material->SetPass(RENDER_PASS::Forward);
-		material->SetHandle("g_tex_0",texture->GetSRVCpuHandle());
-
-		meshRenderer->AddMaterials({material});
-		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(10.0f));
-
-	}
-
-	//ResourceManager::main->Load<Model>(L"kind", L"../Resources/Models/Kindred/kindred_unity.fbx", VertexType::Vertex_Skinned);
-	//ResourceManager::main->Load<Model>(L"kind",L"../Resources/Models/testB.fbx",VertexType::Vertex_Skinned);
-	//auto model = ResourceManager::main->Get<Model>(L"kind");
-	//auto obj = model->CreateGameObject(GetCast<Scene>());
-	//obj->_transform->SetWorldScale(vec3(100,100,100));
-
 	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/MainField.json");
-	auto a = ResourceManager::main->Get<SceneLoader>(L"test");
-	a->Load(GetCast<Scene>());
-
-	//int i=0;
-	//Find(L"testB")->ForHierarchyAll([&](const std::shared_ptr<GameObject>& obj)
-	//{
-	//	std::cout << std::to_string(obj->GetName()) <<"\n";
-	//});
-	//std::cout << i <<"\n";
-	std::cout << _gameObjects.size() << "\n";
-
-
-	//a[0]->_transform->SetLocalRotation(Vector3(0,180,0) * D2R);
+	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
+	sceneLoader->Load(GetCast<Scene>());
 }
 
 void TestScene_jin::Update()
 {
 	Scene::Update();
+	Gizmo::Text(L"1234sadfsdjkaflhsaldkfasdfasdfsadfsdafasdf",10,vec3(1,1,1),vec3(0,0,-1),vec3(0,1,0));
+	Gizmo::Text(L"안녕하세요",30,vec3(3,1,1),vec3(-0.707,0,-0.707),vec3(0,1,0));
+	Gizmo::Image(ResourceManager::main->Get<Texture>(L"none"), vec3(-2,0,2),vec3(0,0,-1),vec3(0,1,0));
+	Gizmo::Image(ResourceManager::main->Get<Texture>(L"none_debug"),vec3(-1,0,2),vec3(0.707,0,-0.707),vec3(0,1,0));
 }
 
 void TestScene_jin::RenderBegin()

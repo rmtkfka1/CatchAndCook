@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "ResourceManager.h"
 #include "Global.h"
 
@@ -31,11 +31,39 @@ void ResourceManager::CreateDefaultModel()
 
 void ResourceManager::CreateDefaultMesh()
 {
-
+	{
+		auto finalMesh =  GeoMetryHelper::LoadRectangleMesh(1.0f);
+		Add<Mesh>(L"finalMesh",finalMesh);
+	}
 }
 
 void ResourceManager::CreateDefaultShader()
 {
+	{
+		ShaderInfo info;
+		info.renderTargetCount=4;
+
+		info.RTVForamts[0]=DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[1]=DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[2]=DXGI_FORMAT_R8G8B8A8_UNORM;
+		info.RTVForamts[3]=DXGI_FORMAT_R8_UNORM;
+
+
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"Deffered",L"Deferred.hlsl",StaticProp,
+			ShaderArg{},info);
+	}
+
+	{
+		ShaderInfo info;
+		info._zTest = false;
+		info._zWrite = false;
+		info._stencilTest = false;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->Init(L"final.hlsl",ColorProp,ShaderArg{},info);
+		Add<Shader>(L"finalShader",shader);
+	}
+
 	{
 
 		ShaderInfo info;
@@ -47,6 +75,8 @@ void ResourceManager::CreateDefaultShader()
 		shader->Init(L"SpriteShader.hlsl", ColorProp, ShaderArg{}, info);
 		Add<Shader>(L"SpriteShader", shader);
 	}
+
+
 	
 	{
 
@@ -86,31 +116,8 @@ void ResourceManager::CreateDefaultShader()
 		Add<Shader>(L"DefaultForward_Instanced",shader);
 	}
 
-	{
 
-		ShaderInfo info;
-		info._zTest = true;
-		info._stencilTest = false;
-		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
 
-		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"normalDraw.hlsl", GeoMetryProp, ShaderArg{ {{"PS_Main", "ps"},{"VS_Main", "vs"},
-			{"GS_Main", "gs"}}}, info);
-		Add<Shader>(L"DebugNormal", shader);
-	}
-
-	{
-
-		ShaderInfo info;
-		info._zTest = true;
-		info._stencilTest = false;
-		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
-
-		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"normalDraw_sea.hlsl",GeoMetryProp, ShaderArg{ {{"PS_Main", "ps"},{"VS_Main", "vs"},
-			{"GS_Main", "gs"}} }, info);
-		Add<Shader>(L"DebugNormal_Sea", shader);
-	}
 	{
 
 		ShaderInfo info;
@@ -123,6 +130,20 @@ void ResourceManager::CreateDefaultShader()
 		shader->Init(L"Gizmo.hlsl", {},ShaderArg{{{"PS_Main","ps"},{"VS_Main","vs"},{"GS_Main","gs"}}},info);
 		Add<Shader>(L"Gizmo",shader);
 	}
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		info.cullingType = CullingType::BACK;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->Init(L"Gizmo_Text.hlsl", StaticProp, ShaderArg{{{"PS_Main","ps"},{"VS_Main","vs"}}}, info);
+		Add<Shader>(L"GizmoTexture",shader);
+	}
+
+
 }
 
 void ResourceManager::CreateDefaultMaterial()
@@ -131,6 +152,11 @@ void ResourceManager::CreateDefaultMaterial()
 
 void ResourceManager::CreateDefaultTexture()
 {
-	_noneTexture = Load<Texture>(L"None", L"Textures/Config/noneTexture.png");
-	_noneTexture_debug = Load<Texture>(L"None_Debug", L"Textures/Config/noneTexture_debug.png");
+	_noneTexture = Load<Texture>(L"none", L"Configs/noneTexture.png");
+	_noneTexture_debug = Load<Texture>(L"none_debug", L"Configs/noneTexture_debug.png");
+}
+
+void ResourceManager::CreateDefaultAnimation()
+{
+
 }

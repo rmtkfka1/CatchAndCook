@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 class InstanceBufferPool;
 
@@ -21,6 +21,7 @@ enum class BufferType
 	// Instance
 	TransformInstanceParam,
 	GizmoInstanceParam,
+	GizmoTextInstanceParam,
 };
 
 class CBufferPool;

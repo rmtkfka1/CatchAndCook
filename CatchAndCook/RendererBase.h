@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 class RendererBase;
@@ -27,11 +27,25 @@ public:
 	virtual void Rendering(Material* material, Mesh* mesh) = 0;
 	virtual void DebugRendering()=0;
 
-	void AddSetter(std::shared_ptr<RenderObjectSetter> setter) { setters.push_back(setter); };
+	void AddSetter(const std::shared_ptr<RenderObjectSetter>& setter);
+	void RemoveSetter(const shared_ptr<RenderObjectSetter>& object);
 
-	std::vector<std::shared_ptr<RenderObjectSetter>> setters;
+	std::vector<std::shared_ptr<RenderObjectSetter>> _setters;
+	BoundingBox& GetBound() {
+		return _bound;
+	};
+	void SetBound(const BoundingBox& bound) {
+		_bound = bound;
+	};
+	void SetCulling(bool isCulling) {
+		_isCulling = isCulling;
+	};
+	bool IsCulling() const
+	{
+		return _isCulling;
+	};
 
-	void RemoveSetters(shared_ptr<RenderObjectSetter> object);
-
+	BoundingBox _bound;
+	bool _isCulling = true;
 };
 

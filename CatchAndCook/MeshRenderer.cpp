@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Mesh.h"
 #include "Material.h"
 #include "MeshRenderer.h"
@@ -67,11 +67,17 @@ void MeshRenderer::Destroy()
 void MeshRenderer::RenderBegin()
 {
 	Component::RenderBegin();
+	auto owner = GetOwner()->_transform;
+	Matrix matrix;
+	owner->GetLocalToWorldMatrix_BottomUp(matrix);
 
 	for (int i = 0; i < _mesh.size(); i++)
 	{
 		auto currentMesh = _mesh[i];
 		auto currentMaterial = _uniqueMaterials[i % _mesh.size()];
+
+	 	SetBound(currentMesh->CalculateBound(matrix));
+
 		currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
 		currentMaterial->PushData();
 		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(), currentMesh.get(), this);
@@ -96,7 +102,7 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh)
 {
 	auto& cmdList = Core::main->GetCmdList();
 
-	for (auto& data : setters) //transform , etc 
+	for (auto& data : _setters) //transform , etc 
 		data->SetData(material);
 
 	if (material != nullptr)

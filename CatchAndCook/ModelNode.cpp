@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "ModelNode.h"
 
 #include "GameObject.h"
@@ -22,8 +22,14 @@ void ModelNode::Init(shared_ptr<Model> model, aiNode* node)
 	for (auto& meshIndex : _meshIndexList)
 		meshList.push_back(model->_modelMeshList[meshIndex]);
 
+	model->_modelNodeList.push_back(shared_from_this());
 	model->_nameToNodeTable[name] = shared_from_this();
 	model->_nameToMeshsTable[name] = meshList;
+	if(GetName().find("$AssimpFbx$") == std::string::npos)
+	{
+		model->_modelOriginalNodeList.push_back(shared_from_this());
+		model->_nameToOriginalNodeTable[name] = shared_from_this();
+	}
 
 }
 
@@ -34,6 +40,11 @@ void ModelNode::SetParent(const std::shared_ptr<ModelNode>& object)
 		_parent = object;
 		object->AddChild(shared_from_this());
 	}
+}
+
+std::shared_ptr<ModelNode> ModelNode::GetParent()
+{
+	return _parent.lock();
 }
 
 void ModelNode::AddChild(const std::shared_ptr<ModelNode>& object)

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "ICBufferInjector.h"
 #include "Material.h"
@@ -29,7 +29,6 @@ struct alignas(16) TestSubMaterialParam
 CBUFFER_INJECTOR("popo", TestSubMaterialParam, 256, BufferType::MateriaSubParam, std::shared_ptr<Material>,
 	data.uv = Vector2(source->GetPropertyVector("uv"));
 )
-
 
 struct alignas(16) DefaultMaterialParam
 {

@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 
 enum class TextureType
 {
@@ -35,9 +35,9 @@ public:
 		TextureUsageFlags usageFlags , bool Jump,bool depthShared, vec4 clearValue=vec4(0,0,0,0));
 
 
-	//DynamicTexture øÎ
+	//DynamicTexture Ïö©
 	void CreateDynamicTexture(DXGI_FORMAT format ,uint32 width , uint32 height ); //only for srv
-	void UpdateDynamicTexture(const BYTE* sysMemory);
+	void UpdateDynamicTexture(const BYTE* sysMemory, int dataSize = 4);
 	void CopyCpuToGpu();
 	//////////
 
@@ -67,7 +67,7 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE _dsvHandle;
 	DXGI_FORMAT _format;
 public:
-	D3D12_RESOURCE_STATES _state; // √ﬂ¿˚øÎ
+	D3D12_RESOURCE_STATES _state; // Ï∂îÏ†ÅÏö©
 
 };
 

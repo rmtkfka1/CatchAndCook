@@ -16,9 +16,10 @@ float3 NormalUnpack(float3 normalSample, float power)
 {
 	if (dot(normalSample, normalSample) > 2.999)
 		return float3(0,0,1);
+	
 	float3 norm = normalSample * 2.0 - 1.0;
 	norm.xy *= power;
-	return normalize(norm);
+	return  normalize(norm);
 }
 
 float4 TransformSpaceToTangent(float4 localPos, float3 normalS, float3 tangentS)
@@ -36,6 +37,7 @@ float4 TransformSpaceToTangent(float4 localPos, float3 normalS, float3 tangentS)
 	return mul(localPos, localToTangent);
 }
 
+//[]->[]
 float4 TransformTangentToSpace(float4 tangentPos, float3 normalS, float3 tangentS)
 {
     // 정규화된 tangentS 및 normal 계산
@@ -94,7 +96,6 @@ float4 TransformWorldToLocal(float4 worldPos, float4 boneIds, float4 boneWs)
 	return TransformWorldToLocal(worldPos);
 }
 
-
 // 직접 행렬을 지정하는것 --
 float4 TransformLocalToWorld(float4 localPos, float4x4 l2w)
 {
@@ -106,6 +107,7 @@ float4 TransformLocalToWorld(float4 localPos, float4 boneIds, float4 boneWs, flo
 	#ifdef SKINNED
 	return CalculateBone(localPos, boneIds, boneWs);
 	#endif
+	
 	return TransformLocalToWorld(localPos, l2w);
 }
 
@@ -123,7 +125,6 @@ float3 TransformNormalLocalToWorld(float3 normal, float4 boneIds, float4 boneWs,
 	return TransformNormalLocalToWorld(normal, w2l);
 }
 
-
 float4 TransformWorldToLocal(float4 worldPos, float4x4 w2l)
 {
 	return mul(worldPos, w2l);
@@ -138,15 +139,16 @@ float4 TransformWorldToLocal(float4 worldPos, float4 boneIds, float4 boneWs, flo
 }
 //--------------------------------------------------------------------------------------------
 
-
 float4 TransformWorldToView(float4 worldPos)
 {
 	return mul(worldPos, ViewMatrix);
 }
+
 float4 TransformViewToWorld(float4 viewPos)
 {
 	return mul(viewPos, InvertViewMatrix);
 }
+
 float4 TransformWorldToClip(float4 worldPos)
 {
 	return mul(worldPos, VPMatrix);

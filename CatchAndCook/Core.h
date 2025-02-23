@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "RenderTarget.h"
 
 
@@ -38,11 +38,10 @@ public:
 	ComPtr<ID3D12GraphicsCommandList>& GetResCmdList() { return _resCmdList; }
 	ComPtr<ID3D12CommandQueue>& GetCmdQueue() { return _cmdQueue; }
 	shared_ptr<RenderTarget>& GetRenderTarget() { return _renderTarget; }
+	shared_ptr<GBuffer>& GetGBuffer() {return _gBuffer;}
 	shared_ptr<RootSignature>& GetRootSignature() { return _rootSignature; };
 	shared_ptr<BufferManager>& GetBufferManager() { return _bufferManager; }
 
-	void SetPipelineState(Shader* shader);
-	void SetPipelineSetting(Material* material);
 
 private:
 	void AdjustWinodwSize();
@@ -55,7 +54,7 @@ private:
 	void SetDebugLayerInfo();
 
 private:
-	
+	shared_ptr<GBuffer> _gBuffer;
 	shared_ptr<RenderTarget> _renderTarget;
 	shared_ptr<RootSignature> _rootSignature;
 	shared_ptr<BufferManager> _bufferManager;
@@ -82,12 +81,10 @@ private:
 
 	HWND _hwnd{0};
 
-	Shader* currentShader = nullptr;
-	int currentStencil = -1;
+
 public:
 	
 public:
-	//temp
-	//array<std::vector<std::shared_ptr<Packet>>, RENDER_PASS::Count> passPackets;
+	
 };
 

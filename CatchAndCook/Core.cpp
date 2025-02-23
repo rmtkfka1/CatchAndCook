@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Core.h"
 #include "RenderTarget.h"
 #include "RootSignature.h"
@@ -39,6 +39,9 @@ void Core::Init(HWND hwnd)
     _renderTarget = make_shared<RenderTarget>();
     _renderTarget->Init(_swapChain);
 
+	_gBuffer = make_shared<GBuffer>();
+	_gBuffer->Init();
+
     _rootSignature = make_shared<RootSignature>();
     _rootSignature->Init();
 
@@ -59,8 +62,7 @@ void Core::RenderBegin()
     _cmdList->SetGraphicsRootSignature(_rootSignature->GetGraphicsRootSignature().Get());
     _cmdList->SetDescriptorHeaps(1, _bufferManager->GetTable()->GetDescriptorHeap().GetAddressOf());
 
-    _renderTarget->RenderBegin(); //임시
-    _renderTarget->ClearDepth(); //임시 
+
 }
 
 
@@ -99,6 +101,7 @@ void Core::ResizeWindowSize()
     Fence();
     AdjustWinodwSize();
     _renderTarget->ResizeWindowSize(_swapChain,_swapChainFlags);
+    _gBuffer->Init();
 }
 
 
@@ -309,27 +312,5 @@ void Core::SetDebugLayerInfo()
 }
 
 
-void Core::SetPipelineState(Shader* shader)
-{
-    if (currentShader != shader)
-    {
-        currentShader = shader;
-        currentStencil = -1;
-    }
-
-    if (currentShader != nullptr)
-    {
-        GetCmdList()->SetPipelineState(currentShader->_pipelineState.Get());
-    }
-}
-
-void Core::SetPipelineSetting(Material* material)
-{
-    if (currentStencil != material->GetStencilIndex())
-    {
-        currentStencil = material->GetStencilIndex();
-        GetCmdList()->OMSetStencilRef(static_cast<UINT>(currentStencil));
-    }
-}
 
 

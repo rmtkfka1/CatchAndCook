@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "TestScene.h"
 #include "Shader.h"
 #include "Texture.h"
@@ -13,7 +13,6 @@
 #include "testComponent.h"
 #include "StructuredBuffer.h"
 #include "Mesh.h"
-#include "ScreenParticle.h"
 #include "WaterHeight.h"
 #include "Terrain.h"
 
@@ -59,7 +58,10 @@ void TestScene::Init()
 		material->SetPass(RENDER_PASS::Forward);
 
 		meshRenderer->AddMaterials({ material });
+
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(1, 0, 0, 0)));
+
+		
 	}
 
 	{
@@ -116,35 +118,47 @@ void TestScene::Init()
 #pragma endregion
 
 	{
-		ShaderInfo info;
-		info._zTest = true;
-		info._stencilTest = false;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"test", L"test.hlsl", GeoMetryProp,
-			ShaderArg{}, info);
+	//	shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
 
-		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
-		shared_ptr<Material> material = make_shared<Material>();
+	//	shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
+	//	shared_ptr<Material> material = make_shared<Material>();
 
-		shared_ptr<GameObject> root = CreateGameObject(L"root_test");
+	//	shared_ptr<GameObject> root = CreateGameObject(L"root_test");
 
-		//root->GetComponent<Transform>()->_useTerrain=true;
-	
-		auto meshRenderer = root->AddComponent<MeshRenderer>();
-		meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal"));
+	//	//root->GetComponent<Transform>()->_useTerrain=true;
+	//
+	//	auto meshRenderer = root->AddComponent<MeshRenderer>();
+	//	//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal"));
 
-		root->_transform->SetLocalScale(vec3(1,1,1));
-	/*	root->AddComponent<WaterHeight>()->SetOffset(6.0f);*/
-		root->AddComponent<testComponent>();
-	
-		material = make_shared<Material>();
-		material->SetShader(shader);
-		material->SetPass(RENDER_PASS::Forward);
-		material->SetHandle("g_tex_0", texture->GetSRVCpuHandle());
+	//	root->_transform->SetLocalScale(vec3(1,1,1));
+	///*	root->AddComponent<WaterHeight>()->SetOffset(6.0f);*/
+	//	root->AddComponent<testComponent>();
+	//
+	//	material = make_shared<Material>();
+	//	material->SetShader(shader);
+	//	material->SetPass(RENDER_PASS::Deffered);
+	//	material->SetHandle("_BaseMap", texture->GetSRVCpuHandle());
 
-		meshRenderer->AddMaterials({ material });
-		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(6.0f));
-	
+	//	meshRenderer->AddMaterials({ material });
+	//	meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(6.0f));
+
+
+		auto obj = ResourceManager::main->Load<Model>(L"kinder",L"../Resources/Models/Kindred/kindred_unity.fbx",VertexType::Vertex_Static)->CreateGameObject(static_pointer_cast<Scene>(shared_from_this()));
+
+		shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
+
+		obj->_transform->SetLocalScale(vec3(30.0f,30.0f,30.0f));
+
+		vector<shared_ptr<MeshRenderer>> renderers;
+		auto a = obj->GetComponentsWithChilds(renderers);
+
+		for(int i=0; i<renderers.size(); ++i)
+		{
+			renderers[i]->GetMaterials()[0]->SetShader(shader);
+			renderers[i]->GetMaterials()[0]->SetPass(RENDER_PASS::Deffered);
+		}
+		
 	}
 
 	{

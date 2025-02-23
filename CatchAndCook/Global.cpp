@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Global.h"
 #include "Core.h"
 #include "Vertex.h"
@@ -6,7 +6,7 @@
 int WINDOW_WIDTH = 1280;
 int WINDOW_HEIGHT = 720;
 
-bool Initalize=false;
+bool Initalize = false;
 
 DXGI_FORMAT SWAP_CHAIN_FORMAT = DXGI_FORMAT_R8G8B8A8_UNORM;
 DXGI_FORMAT DEPTH_STENCIL_FORMAT = DXGI_FORMAT_D24_UNORM_S8_UINT;

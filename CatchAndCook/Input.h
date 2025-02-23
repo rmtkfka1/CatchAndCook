@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "pch.h"
 #include "input_module.h"
@@ -37,11 +37,11 @@ public:
 
     std::queue<InputEvent> _eventQueue;
 
-    //ÇÑ¹ø¸¸ ´­·ÈÀ»¶§ (ÃÖÃÊ)
+    //í•œë²ˆë§Œ ëˆŒë ¸ì„ë•Œ (ìµœì´ˆ)
     bool GetKeyDown(int keycode);
-    //²Ú´©¸£°íÀÖÀ»¶§ 
+    //ê¾¹ëˆ„ë¥´ê³ ìˆì„ë•Œ 
     bool GetKey(int keycode);
-    //Å°¸¦ ¾÷ÇßÀ»¶§
+    //í‚¤ë¥¼ ì—…í–ˆì„ë•Œ
     bool GetKeyUp(int keycode);
 
     bool GetMouseDown(int keycode);

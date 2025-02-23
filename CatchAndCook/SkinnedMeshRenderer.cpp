@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "SkinnedMeshRenderer.h"
 
 #include "GameObject.h"
@@ -26,14 +26,6 @@ void SkinnedMeshRenderer::Start()
 {
 	Component::Start();
 
-	//std::vector<std::shared_ptr<GameObject>> _boneRoots;
-	//GetOwner()->GetRoot()->GetChildsAllByName(_boneName, _boneRoots);
-	//if(!_boneRoots.empty())
-	//{
-	//	std::shared_ptr<SkinnedHierarchy> hierarchy = _boneRoots[0]->GetComponent<SkinnedHierarchy>();
-	//	if(hierarchy == nullptr)
-	//		_boneRoots[0]->AddComponent<SkinnedHierarchy>();
-	//}
 	auto root = GetOwner()->GetParent();
 	if (root != nullptr)
 	{
@@ -42,6 +34,7 @@ void SkinnedMeshRenderer::Start()
 		{
 			_hierarchy = root->AddComponent<SkinnedHierarchy>();
 			_hierarchy.lock()->SetBoneList(_model->_modelBoneList);
+			_hierarchy.lock()->SetNodeList(_model->_modelOriginalNodeList);
 		}
 	}
 }
@@ -74,11 +67,20 @@ void SkinnedMeshRenderer::Destroy()
 void SkinnedMeshRenderer::RenderBegin()
 {
 	Component::RenderBegin();
+	auto owner = GetOwner()->_transform;
+	Matrix matrix;
+	owner->GetLocalToWorldMatrix_BottomUp(matrix);
+	BoundingBox box(Vector3(0,0,0),Vector3(5,5,5));
 
 	for(int i = 0; i < _mesh.size(); i++)
 	{
+		auto a = GetOwner();
 		auto currentMesh = _mesh[i];
 		auto currentMaterial = _uniqueMaterials[i % _mesh.size()];
+
+		box.Transform(box,matrix);
+		SetBound(box);
+
 		currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
 		currentMaterial->PushData();
 		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(),currentMesh.get(),this);
@@ -114,7 +116,7 @@ void SkinnedMeshRenderer::Rendering(Material* material, Mesh* mesh)
 {
 	auto& cmdList = Core::main->GetCmdList();
 
-	for(auto& data : setters) //transform , etc 
+	for(auto& data : _setters) //transform , etc 
 		data->SetData(material);
 
 	if(material != nullptr)

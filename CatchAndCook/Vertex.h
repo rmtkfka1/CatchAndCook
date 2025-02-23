@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 using int8 = __int8;
 using int16 = __int16;
@@ -547,6 +547,11 @@ struct Instance_Gizmo
     vec3 position = vec3(0,0,0);
     vec3 position2 = vec3(0,0,0);
     float strock = 2;
+};
+
+struct Instance_GizmoText
+{
+    vec4 color = vec4(1.0f,1.0f,1.0f,1.0f);
 };
 
 struct Instance_Transform

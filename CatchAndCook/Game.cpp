@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Game.h"
 #include "Core.h"
 #include "GameObject.h"
@@ -40,35 +40,36 @@ void Game::Init(HWND hwnd)
 	InjectorManager::main = make_unique<InjectorManager>();
 	InjectorManager::main->Init();
 
+	TextManager::main = make_unique<TextManager>();
+	TextManager::main->Init();
+
 	//------------------
 
 	Gizmo::main = std::make_unique<Gizmo>();
 	Gizmo::main->Init();
 
-
 	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, static_pointer_cast<Camera>(make_shared<ThirdPersonCamera>()));
 	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0, 0, -5.0f));
 	CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
 
-	TextManager::main = make_unique<TextManager>();
-	TextManager::main->Init();
 
 	LightManager::main = make_unique<LightManager>();
+
 	{
 		Light light;
 
-		light.direction = vec3(0,-1.0f,-1.0f);
-		light.material.ambient = vec3(1.0f,1.0f,1.0f);
-		light.material.diffuse = vec3(0.5f,0.5f,0.5f);
+		light.direction = vec3(0.5f,-0.34f,0.79f);
+	
+		light.material.ambient = vec3(0.1f,0.1f,0.1f);
+		light.material.diffuse = vec3(1.0f,1.0f,1.0f);
 		light.material.specular = vec3(1.0f,1.0f,1.0f);
-		light.material.shininess = 64.0f;
+		light.material.shininess = 32.0f;
 		light.material.lightType = static_cast<int32>(LIGHT_TYPE::DIRECTIONAL_LIGHT);
-		light.strength = vec3(1.0f,1.0f,1.0f);
+		light.strength = vec3(3.0f,3.0f,3.0f);
 		LightManager::main->PushLight(light);
 	}
 
-
-	auto scene = SceneManager::main->AddScene(SceneType::TestSceneMapEditor);
+	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
 }
 
 void Game::PrevUpdate()
@@ -147,7 +148,6 @@ void Game::Run()
 	LightManager::main->SetData();
 
 	auto camera = CameraManager::main->GetActiveCamera();
-	camera->Calculate();
 	Vector3 worldPos = camera->GetScreenToWorldPosition(Input::main->GetMousePosition());
 	Vector3 worldDir = (worldPos - camera->GetCameraPos());
 	worldDir.Normalize();
@@ -186,7 +186,7 @@ void Game::CameraUpdate()
 {
 	shared_ptr<Camera> camera = CameraManager::main->GetActiveCamera();
 
-	const float speed = 20.0f;
+	const float speed = 60.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;
 
 	if (Input::main->GetKey(KeyCode::W))
@@ -215,6 +215,17 @@ void Game::CameraUpdate()
 		auto prevPos = camera->GetCameraPos();
 		auto direction = camera->GetCameraRight();
 		camera->SetCameraPos(-direction * dt + prevPos);
+	}
+	if(Input::main->GetKey(KeyCode::Space))
+	{
+		auto prevPos = camera->GetCameraPos();
+		camera->SetCameraPos(Vector3::Up * dt + prevPos);
+	}
+
+	if(Input::main->GetKey(KeyCode::Shift))
+	{
+		auto prevPos = camera->GetCameraPos();
+		camera->SetCameraPos(Vector3::Down * dt + prevPos);
 	}
 
 	if (Input::main->GetMouse(KeyCode::LeftMouse))

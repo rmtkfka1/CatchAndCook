@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "CameraManager.h"
 
 unique_ptr<CameraManager> CameraManager::main = nullptr;

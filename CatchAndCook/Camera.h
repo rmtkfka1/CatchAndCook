@@ -1,4 +1,7 @@
-#pragma once
+﻿#pragma once
+
+
+class Collider;
 
 enum class CameraType
 {
@@ -50,6 +53,7 @@ public:
     void SetCameraUp(const vec3& up);
     void SetCameraRight(const vec3& right);
 
+
     vec3 GetCameraPos() { return _cameraPos; }
     vec3 GetCameraLook() { return _cameraLook; }
     vec3 GetCameraUp() { return _cameraUp; }
@@ -58,14 +62,14 @@ public:
     Vector3 GetScreenToWorldPosition(Vector2 mousePosition);
     Vector2 GetWorldToScreenPosition(Vector3 worldPosition);
 
-
-    void SyncTransform(const std::shared_ptr<Transform>& transform);
-
     void SetCameraRotation(float yaw, float pitch, float roll);
     CameraParams& GetCameraParam() { return _params; }
     CameraType& GetCameraType() { return _type; }
-    void Calculate();
+
+    bool IsInFrustum(BoundingBox& box);
+
 private:
+    void Calculate();
 
 protected:
     vec3 _cameraPos = vec3(0, 0, 0);
@@ -87,6 +91,8 @@ protected:
     CameraParams _params;
     CameraType _type =CameraType::ThirdPersonCamera;
     CBufferContainer* _cbufferContainer;
+
+    BoundingFrustum _boundingFrsutum;
 };
 
 

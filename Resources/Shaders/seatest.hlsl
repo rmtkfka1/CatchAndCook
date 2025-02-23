@@ -181,9 +181,9 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 		lerp(quad[2].uv, quad[3].uv, location.x),
 		location.y);
 
-    dout.uv = lerp(
-		lerp(quad[0].uv, quad[1].uv, location.x),
-		lerp(quad[2].uv, quad[3].uv, location.x),
+    dout.normal = lerp(
+		lerp(quad[0].normal, quad[1].normal, location.x),
+		lerp(quad[2].normal, quad[3].normal, location.x),
 		location.y);
     
     dout = WaveGeneration(dout);
@@ -198,7 +198,7 @@ float4 PS_Main(DS_OUT input) : SV_Target
     float3 color;
     
     float4 worldPos = mul(input.pos, InvertVPMatrix);
-    float3 WolrdNormal = input.normal;
+    float3 WolrdNormal = normalize(input.normal);
     
     float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
 
@@ -210,11 +210,11 @@ float4 PS_Main(DS_OUT input) : SV_Target
         }
         else if (g_lights[i].mateiral.lightType == 1)
         {
-            color += ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, -toEye);
+            color += ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
         }
         else if (g_lights[i].mateiral.lightType == 2)
         {
-            color += ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, -toEye);
+            color += ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
         }
     }
     

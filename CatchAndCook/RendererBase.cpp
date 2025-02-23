@@ -1,14 +1,17 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "RendererBase.h"
 
 
-
-void RendererBase::RemoveSetters(shared_ptr<RenderObjectSetter> object)
+void RendererBase::AddSetter(const std::shared_ptr<RenderObjectSetter>& setter)
 {
-	auto it = std::find(setters.begin(), setters.end(), object);
+	auto it = ranges::find(_setters, setter);
+	if (it == _setters.end())
+		_setters.push_back(setter);
+}
 
-	if (it != setters.end())
-	{
-		setters.erase(it);
-	}
+void RendererBase::RemoveSetter(const shared_ptr<RenderObjectSetter>& object)
+{
+	auto it = ranges::find(_setters, object);
+	if (it != _setters.end())
+		_setters.erase(it);
 }

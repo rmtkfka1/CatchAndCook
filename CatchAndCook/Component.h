@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "IDelayDestroy.h"
 #include "IGuid.h"
 

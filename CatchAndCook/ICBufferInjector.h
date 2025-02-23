@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <any>
 
@@ -41,11 +41,11 @@ public: \
         memcpy(_cbufferContainer->ptr, &data, sizeof(STRUCT_TYPE));\
     } \
 	void SetData(const std::shared_ptr<Shader>& shader) override { \
-		int index = GetStaticRegisterIndex();\
+		int textAllocator = GetStaticRegisterIndex();\
         if(shader)\
-			index = shader->GetRegisterIndex(cbufferName); \
-        if (index != -1) \
-			Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(index, _cbufferContainer->GPUAdress);\
+			textAllocator = shader->GetRegisterIndex(cbufferName); \
+        if (textAllocator != -1) \
+			Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(textAllocator, _cbufferContainer->GPUAdress);\
 	}\
 };\
 class STRUCT_TYPE##InjectRegistrar { \

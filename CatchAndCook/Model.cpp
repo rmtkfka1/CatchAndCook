@@ -1,5 +1,7 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Model.h"
+
+#include "Animation.h"
 #include "Bone.h"
 #include "GameObject.h"
 #include "Component.h"
@@ -168,10 +170,11 @@ void Model::Init(const wstring& path, VertexType vertexType)
 		_modelMeshList.push_back(currentModelMesh);
 	}
 
-	_rootNode = AddNode(scene->mRootNode);
-
+	LoadNode(scene->mRootNode);
 	SetNodeData();
-	SetBoneData();
+    LoadRootBone(const_cast<aiScene*>(scene));
+	for(int i=0; i<scene->mNumAnimations; i++)
+		LoadAnimation(scene->mAnimations[i], scene->mRootNode);
 }
 
 void Model::DebugLog()
@@ -267,7 +270,6 @@ void Model::LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& cu
 		if (boneNode != nullptr)
 			nodeName = convert_assimp::Format(currentAIBone->mNode->mName);
 
-
 		auto bone = FindBoneByName(boneName);
 		if (bone == nullptr)
 		{
@@ -288,9 +290,12 @@ void Model::LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& cu
 			const int MAX_BONE_COUNT = 4;
 
 			// ���� �Ⱦ��� ID�� �ִ��� ����
-			for (int l = MAX_BONE_COUNT - 1; l >= 0; --l)
-				if (idArray[l] == -1)
+			for(int l = 0; l < MAX_BONE_COUNT; ++l)
+				if(idArray[l] == -1)
+				{
 					findIndex = l;
+					break;
+				}
 			// ���� ������ ����
 			if (findIndex == -1)
 			{
@@ -312,6 +317,52 @@ void Model::LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& cu
 			}
 		}
 	}
+
+	// Index만 존재하는 케이스에 대한 처리
+	for(int boneIndex = 0; boneIndex < currentAIMesh->mNumBones; boneIndex++)
+	{
+		aiBone* currentAIBone = currentAIMesh->mBones[boneIndex];
+		std::string boneName = convert_assimp::Format(currentAIBone->mName);
+		std::string nodeName = boneName;
+		aiNode* boneNode = currentAIBone->mNode;
+		if(boneNode != nullptr)
+			nodeName = convert_assimp::Format(currentAIBone->mNode->mName);
+
+		auto bone = FindBoneByName(boneName);
+		if(bone == nullptr)
+		{
+			bone = std::make_shared<Bone>();
+			bone->SetName(boneName);
+			bone->SetNodeName(nodeName);
+			bone->SetTransformMatrix(convert_assimp::Format(currentAIBone->mOffsetMatrix));
+			AddBone(bone);
+		}
+
+		if(currentAIBone->mNumWeights == 0)
+		{
+			for(int boneVertexIndex = 0; boneVertexIndex < vertexs.size(); boneVertexIndex++)
+			{
+				auto& currentVertex = vertexs[boneVertexIndex];
+				int findIndex = -1;
+				float* idArray = &currentVertex.boneId.x;
+
+				const int MAX_BONE_COUNT = 4;
+
+				// ���� �Ⱦ��� ID�� �ִ��� ����
+				for(int l = 0; l < MAX_BONE_COUNT; ++l)
+					if(idArray[l] == -1)
+					{
+						findIndex = l;
+						break;
+					}
+				if((currentVertex.boneId.x + currentVertex.boneId.y + currentVertex.boneId.z + currentVertex.boneId.w == -4) && findIndex != -1)
+				{
+					(&currentVertex.boneId.x)[findIndex] = static_cast<float>(bone->GetIndex());
+					(&currentVertex.boneWeight.x)[findIndex] = 1;
+				}
+			}
+		}
+	}
 	for (int vertexIndex = 0; vertexIndex < vertexs.size(); vertexIndex++)
 	{
 		auto& currentVertex = vertexs[vertexIndex];
@@ -319,6 +370,92 @@ void Model::LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& cu
 			currentVertex.boneWeight.Normalize();
 	}
 	
+}
+
+void Model::LoadNode(aiNode* root)
+{
+	_rootNode = AddNode(root);
+}
+
+void Model::LoadAnimation(aiAnimation* aiAnim, aiNode* root)
+{
+	auto anim = std::make_shared<Animation>();
+	anim->Init(this, aiAnim, root);
+	_animationList.push_back(anim);
+	_nameToAnimationTable[to_string(anim->GetName())] = anim;
+	ResourceManager::main->Add(anim->GetName(), anim);
+}
+
+void Model::LoadRootBone(aiScene* scene)
+{
+	if (!_modelBoneList.empty())
+	{
+		shared_ptr<ModelNode> findMeshNode;
+		for (auto& node : _modelOriginalNodeList)
+		{
+			if (node->IsMesh())
+			{
+				findMeshNode = node;
+				break;
+			}
+		}
+		if (findMeshNode != nullptr)
+			findMeshNode = findMeshNode->GetParent();
+		if (findMeshNode != nullptr)
+		{
+			shared_ptr<ModelNode> findBoneNode;
+			for (auto& node : _modelOriginalNodeList) {
+				if (node->IsBone()) {
+					findBoneNode = node;
+					break;
+				}
+			}
+			while (findBoneNode != nullptr && findBoneNode->GetParent() != findMeshNode)
+				findBoneNode = findBoneNode->GetParent();
+			if (findBoneNode != nullptr)
+				_rootBoneNode = findBoneNode;
+		}
+		else
+		{
+			std::set<std::string> animatedNodeNames;
+			for (unsigned int i = 0; i < scene->mNumAnimations; ++i) {
+				aiAnimation* anim = scene->mAnimations[i];
+				for (unsigned int j = 0; j < anim->mNumChannels; ++j) {
+					auto name = convert_assimp::Format(anim->mChannels[j]->mNodeName);
+					animatedNodeNames.insert(name);
+					if (name.find("$AssimpFbx$") != std::string::npos)
+					{
+						vector<string> originalList = str::split(name, "_$AssimpFbx$");
+						name = originalList[0];
+					}
+					animatedNodeNames.insert(name);
+				}
+			}
+
+			aiNode* rootBoneNode = nullptr;
+			for (const auto& name : animatedNodeNames)
+			{
+				aiNode* node = scene->mRootNode->FindNode(name.c_str());
+				if (node) {
+					// 부모가 애니메이션에 사용된 노드 집합에 없으면 최상위 본으로 판단
+					auto parentName = convert_assimp::Format(node->mParent->mName);
+					if (name.find("$AssimpFbx$") != std::string::npos)
+					{
+						vector<string> originalList = str::split(parentName, "_$AssimpFbx$");
+						parentName = originalList[0];
+					}
+					if (!node->mParent || animatedNodeNames.find(parentName) == animatedNodeNames.end()) {
+						rootBoneNode = node;
+						break;
+					}
+				}
+			}
+			if (rootBoneNode) {
+				if (auto node = _nameToNodeTable[convert_assimp::Format(rootBoneNode->mName)])
+					_rootBoneNode = node;
+			}
+		}
+	}
 }
 
 void Model::SetNodeData()
@@ -331,15 +468,6 @@ void Model::SetNodeData()
 	}
 }
 
-void Model::SetBoneData()
-{
-	//boneCBuffer = Core::main->GetBufferManager()->GetBufferPool_Static(BufferType::BoneParam)->Alloc(1);
-	//int offset = 0;
-	//for (auto& bone : _modelBoneList) {
-	//	memcpy(static_cast<char*>(boneCBuffer->ptr) + offset, &bone->GetTransformMatrix(), sizeof(Matrix));
-	//	offset += sizeof(Matrix);
-	//}
-}
 
 void Model::AddBone(const std::shared_ptr<Bone>& bone)
 {
@@ -355,8 +483,7 @@ std::shared_ptr<ModelNode> Model::AddNode(aiNode* rootNode)
 {
 	auto currentNode = std::make_shared<ModelNode>();
 	currentNode->Init(GetCast<Model>(), rootNode);
-	_modelNodeList.push_back(currentNode);
-
+	
 	for (int i = 0; i < rootNode->mNumChildren; i++) {
 		AddNode(rootNode->mChildren[i])->SetParent(currentNode);
 	}

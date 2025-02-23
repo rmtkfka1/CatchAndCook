@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "BufferManager.h"
 #include "IGuid.h"
@@ -9,7 +9,6 @@
 class Shader;
 class Texture;
 
-
 struct MaterialParams
 {
 	void SetInt(uint8 index, int32 value) { intParams[index] = value; }
@@ -17,10 +16,10 @@ struct MaterialParams
 	void SetMatrix(int index, Matrix mat) { MatrixParams[index] = mat; }
 	void SetVec4(uint8 index, vec4 vector) { vec4Params[index] = vector; }
 
-	array<int32, 4>		intParams { 0 }; 
-	array<vec4, 4>		vec4Params { vec4::One, vec4::One, vec4::One, vec4::One };
-	array<float, 4>		floatParams { 0 }; 
-	array<Matrix, 2>	MatrixParams { Matrix::Identity, Matrix::Identity };
+	array<int32, 4>		intParams{ 0 };
+	array<vec4, 4>		vec4Params{ vec4::One, vec4::One, vec4::One, vec4::One };
+	array<float, 4>		floatParams{ 0 };
+	array<Matrix, 2>	MatrixParams{ Matrix::Identity, Matrix::Identity };
 };
 
 class Material : public IGuid
@@ -34,11 +33,11 @@ public:
 	{
 		_shader = shader;
 		_shaderInjectors.clear();
-		for(auto& type : shader->_cbufferInjectorTypes)
+		for (auto& type : shader->_cbufferInjectorTypes)
 			_shaderInjectors.push_back(InjectorManager::main->Get(type));
 	}
 
-	void SetPass(RENDER_PASS::PASS pass) {_pass = pass;};
+	void SetPass(RENDER_PASS::PASS pass) { _pass = pass; };
 	RENDER_PASS::PASS& GetPass() { return _pass; };
 
 	void SetStencilIndex(int index) { _stencilIndex = index; };
@@ -48,6 +47,7 @@ public:
 	shared_ptr<Shader> GetShader() { return _shader; }
 
 public:
+	void AllocTextureTable();
 	void PushData();
 	void SetData();
 
@@ -108,9 +108,9 @@ private:
 //
 //	void SetData(const std::shared_ptr<Shader>& shader) override
 //	{
-//		int index = GetStaticRegisterIndex();
-//		if (shader) index = shader->GetRegisterIndex(cbufferName);
-//		if (index != -1) Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(
-//			index, _cbufferContainer->GPUAdress);
+//		int textAllocator = GetStaticRegisterIndex();
+//		if (shader) textAllocator = shader->GetRegisterIndex(cbufferName);
+//		if (textAllocator != -1) Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(
+//			textAllocator, _cbufferContainer->GPUAdress);
 //	}
 //};

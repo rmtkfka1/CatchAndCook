@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Sprite.h"
 #include "Mesh.h"
 #include "SpriteAction.h"
@@ -329,7 +329,7 @@ void TextSprite::Update()
 {
 	if (_textChanged)
 	{
-		TextManager::main->UpdateToSysMemory(_text, _textHandle, _sysMemory);
+		TextManager::main->UpdateToSysMemory(_text, _textHandle, _sysMemory, 4);
 	}
 
 	for (auto& action : _actions)
@@ -346,7 +346,7 @@ void TextSprite::Render()
 
 	if (_textChanged)
 	{
-		_texture->UpdateDynamicTexture(_sysMemory);
+		_texture->UpdateDynamicTexture(_sysMemory, 4);
 		_texture->CopyCpuToGpu();
 		_textChanged = false;
 	}
@@ -427,11 +427,29 @@ void TextSprite::CreateObject(int width, int height, const WCHAR* font, FontColo
 			}
 		}
 	}
+	else if(color == FontColor::CUSTOM)
+	{
+		SetClipingColor(vec4(0.0f,0.0f,0.0f,0.0f));
+
+		DWORD* pDest = (DWORD*)_sysMemory;
+		uint32_t colorData = 0;
+		colorData |= static_cast<int>(round(std::clamp(_textHandle->_customFontColor.x * 255.0,0.0,1.0)));
+		colorData |= static_cast<int>(round(std::clamp(_textHandle->_customFontColor.y * 255.0,0.0,1.0))) << 8;
+		colorData |= static_cast<int>(round(std::clamp(_textHandle->_customFontColor.z * 255.0,0.0,1.0))) << 16;
+		colorData |= static_cast<int>(round(std::clamp(_textHandle->_customFontColor.w * 255.0,0.0,1.0))) << 24;
+
+		for(DWORD y = 0; y < height; y++)
+		{
+			for(DWORD x = 0; x < width; x++)
+			{
+				pDest[x + width * y] = 0x00'00'00'00;
+			}
+		}
+	}
 	
 	_sprtieTextureParam.texSamplePos.x = 0;
 	_sprtieTextureParam.texSamplePos.y = 0;
 	_sprtieTextureParam.texSampleSize.x = width;
 	_sprtieTextureParam.texSampleSize.y = height;
 
-	
 }

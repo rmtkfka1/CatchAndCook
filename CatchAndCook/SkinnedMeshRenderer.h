@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Component.h"
 #include "SkinnedHierarchy.h"
 
@@ -46,5 +46,7 @@ private:
 
 	std::wstring _boneName;
 	std::weak_ptr<SkinnedHierarchy> _hierarchy;
+
+	friend class SkinnedHierarchy;
 };
 

@@ -53,6 +53,9 @@
     <Filter Include="998.HLSL\Module">
       <UniqueIdentifier>{cacc5c22-d724-4fa9-9e3e-cf72a8fc745f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04.Resource\Model\Animation">
+      <UniqueIdentifier>{daa03aca-f69a-4ef8-9f6f-2323bc6c8549}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -115,9 +118,6 @@
       <Filter>03.Component</Filter>
     </ClCompile>
     <ClCompile Include="TestMain.cpp" />
-    <ClCompile Include="Material.cpp">
-      <Filter>04.Resource</Filter>
-    </ClCompile>
     <ClCompile Include="ICBufferInjector.cpp">
       <Filter>997.Utils</Filter>
     </ClCompile>
@@ -166,9 +166,6 @@
     <ClCompile Include="StructuredBuffer.cpp">
       <Filter>04.Resource</Filter>
     </ClCompile>
-    <ClCompile Include="ScreenParticle.cpp">
-      <Filter>03.Component</Filter>
-    </ClCompile>
     <ClCompile Include="MeshRenderer.cpp">
       <Filter>03.Component\Renderer</Filter>
     </ClCompile>
@@ -189,9 +186,6 @@
     </ClCompile>
     <ClCompile Include="TestScene_jin.cpp">
       <Filter>06.Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>04.Resource\Model</Filter>
     </ClCompile>
     <ClCompile Include="GameObjectSetting.cpp">
       <Filter>01.GameObject</Filter>
@@ -240,6 +234,21 @@
     </ClCompile>
     <ClCompile Include="CbufferParam.cpp">
       <Filter>07.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationKeyFrame.cpp">
+      <Filter>04.Resource\Model\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationNode.cpp">
+      <Filter>04.Resource\Model\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>04.Resource\Model\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>04.Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>03.Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -316,9 +325,6 @@
     <ClInclude Include="Transform.h">
       <Filter>03.Component</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>04.Resource</Filter>
-    </ClInclude>
     <ClInclude Include="ICBufferInjector.h">
       <Filter>997.Utils</Filter>
     </ClInclude>
@@ -367,9 +373,6 @@
     <ClInclude Include="testComponent.h">
       <Filter>03.Component</Filter>
     </ClInclude>
-    <ClInclude Include="ScreenParticle.h">
-      <Filter>03.Component</Filter>
-    </ClInclude>
     <ClInclude Include="MeshRenderer.h">
       <Filter>03.Component\Renderer</Filter>
     </ClInclude>
@@ -390,9 +393,6 @@
     </ClInclude>
     <ClInclude Include="TestScene_jin.h">
       <Filter>06.Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>04.Resource\Model</Filter>
     </ClInclude>
     <ClInclude Include="GameObjectSetting.h">
       <Filter>01.GameObject</Filter>
@@ -451,6 +451,21 @@
     <ClInclude Include="CbufferParam.h">
       <Filter>07.Manager</Filter>
     </ClInclude>
+    <ClInclude Include="AnimationNode.h">
+      <Filter>04.Resource\Model\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationKeyFrame.h">
+      <Filter>04.Resource\Model\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>04.Resource\Model\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>04.Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -468,61 +483,52 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Resources\Shaders\test.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\SpriteShader.hlsl">
+    <FxCompile Include="..\Resources\Shaders\color.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\cubemap.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\TestForward.hlsl">
+    <FxCompile Include="..\Resources\Shaders\Deferred.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\normalDraw.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\sea.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\normalDraw_sea.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\screenParticle.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\seatest.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\color.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Terrain.hlsl">
+    <FxCompile Include="..\Resources\Shaders\final.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Gizmo.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\TestForward_Skinned.hlsl">
+    <FxCompile Include="..\Resources\Shaders\sea.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Global_b0.hlsl">
-      <Filter>998.HLSL\Module</Filter>
+    <FxCompile Include="..\Resources\Shaders\seatest.hlsl">
+      <Filter>998.HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Transform_b1.hlsl">
-      <Filter>998.HLSL\Module</Filter>
+    <FxCompile Include="..\Resources\Shaders\SpriteShader.hlsl">
+      <Filter>998.HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Tree.hlsl">
+    <FxCompile Include="..\Resources\Shaders\Terrain.hlsl">
+      <Filter>998.HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\TestForward.hlsl">
+      <Filter>998.HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\TestForward_Skinned.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Camera_b2.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Skinned_b6.hlsl">
+    <FxCompile Include="..\Resources\Shaders\Light_b3.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Light_b3.hlsl">
+    <FxCompile Include="..\Resources\Shaders\Global_b0.hlsl">
+      <Filter>998.HLSL\Module</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Skinned_b5.hlsl">
+      <Filter>998.HLSL\Module</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Transform_b1.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
   </ItemGroup>

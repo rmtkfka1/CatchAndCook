@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Collider.h"
 #include "ColliderManager.h"
 #include "GameObject.h"
@@ -35,6 +35,7 @@ void Collider::Start()
 
 	std::vector<std::shared_ptr<PhysicsComponent>> obj;
 	GetOwner()->GetComponentsWithParents(obj);
+	auto a = GetOwner();
 	if(!obj.empty())
 		groupId = obj[0]->GetInstanceID();
 
@@ -67,7 +68,7 @@ void Collider::RenderBegin()
 {
 	Component::RenderBegin();
 
-	bool isCollision = _collisionList.empty();
+	bool isCollision = ColliderManager::main->IsCollision(GetCast<Collider>());
 
 	if(_type == CollisionType::Box)
 	{
@@ -115,13 +116,12 @@ void Collider::Destroy()
 
 bool Collider::IsCollision()
 {
-	return !_collisionList.empty();
+	return ColliderManager::main->IsCollision(GetCast<Collider>());
 }
 
 bool Collider::IsCollision(const std::shared_ptr<Collider>& other)
 {
-	auto it = _collisionList.find(other);
-	return it != _collisionList.end();
+	return ColliderManager::main->IsCollision(GetCast<Collider>(),other);
 }
 
 bool Collider::CheckCollision(const std::shared_ptr<Collider>& other)

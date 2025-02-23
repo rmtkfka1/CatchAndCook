@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Terrain.h"
 #include "GameObject.h"
 #include "TerrainManager.h"
@@ -84,7 +84,7 @@ void Terrain::Start()
 void Terrain::Update()
 {
     Vector3 cameraPos = Vector3(CameraManager::main->GetActiveCamera()->GetCameraPos().x,0,CameraManager::main->GetActiveCamera()->GetCameraPos().z);
-    if(false)
+    
     for(int i=0;i<_instanceDatas.size();++i)
     {
         _instanceBuffers[i]->Clear();
@@ -92,6 +92,7 @@ void Terrain::Update()
         {
             if(Vector3::Distance(Vector3(_instanceDatas[i][j].worldPosition.x, 0,_instanceDatas[i][j].worldPosition.z), cameraPos) < 10)
             {
+                //Todo : 작업해야함.
                 _instanceBuffers[i]->AddData(_instanceDatas[i][j]);
             }
         }
@@ -143,7 +144,7 @@ void Terrain::Destroy()
 {
 	if(auto renderer =GetOwner()->GetRenderer())
 	{
-        renderer->RemoveSetters(static_pointer_cast<Terrain>(shared_from_this()));
+        renderer->RemoveSetter(static_pointer_cast<Terrain>(shared_from_this()));
 	}
 }
 
