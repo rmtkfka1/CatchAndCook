@@ -123,7 +123,9 @@ std::unordered_set<std::shared_ptr<Collider>>& ColliderManager::GetCollisionList
 
 bool ColliderManager::TotalCheckCollision(const std::shared_ptr<Collider>& src, const std::shared_ptr<Collider>& dest)
 {
-	return (src->groupId != dest->groupId) && src->CheckCollision(dest);
+	return (src->groupId != dest->groupId) &&
+		src->GetOwner()->GetActive() &&
+		dest->GetOwner()->GetActive() && src->CheckCollision(dest);
 }
 
 void ColliderManager::CallBackBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
