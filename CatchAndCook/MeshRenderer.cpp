@@ -75,8 +75,7 @@ void MeshRenderer::Destroy()
 {
 	Component::Destroy();
 
-	if(HasInstance())
-		_instanceBuffer->Free();
+
 }
 
 void MeshRenderer::RenderBegin()
@@ -94,7 +93,7 @@ void MeshRenderer::RenderBegin()
 
 		currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
 		currentMaterial->PushData();
-		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(), currentMesh.get(), this);
+		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(), currentMesh.get(), this, this->GetOwner().get());
 	}
 
 	for (int j = 0; j < _sharedMaterials.size(); j++)
@@ -106,7 +105,7 @@ void MeshRenderer::RenderBegin()
 			auto &currentMesh = _mesh[i];
 			currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
 			currentMaterial->PushData();
-			SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(), currentMesh.get(), this);
+			SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(),currentMesh.get(),this,this->GetOwner().get());
 		}
 	}
 
@@ -122,15 +121,26 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh)
 	if (material != nullptr)
 		material->SetData();
 
-	if(HasInstance())
-	{
-		Core::main->GetCmdList()->IASetVertexBuffers(1,1,&_instanceBuffer->_bufferView);
-		mesh->Redner(_instanceBuffer->writeIndex);
-	}
-	else
-	{
-		mesh->Redner();
-	}
+
+	mesh->Redner();
+
+}
+void MeshRenderer::Rendering(Material * material,Mesh * mesh,shared_ptr<StructuredBuffer<Instance_Transform>>& buffer)
+{
+
+	auto& cmdList = Core::main->GetCmdList();
+
+	buffer->Upload();
+	material->SetHandle("instanceDatas",buffer->GetSRVHandle());
+
+	for(auto& data : _setters) //transform , etc  
+		data->SetData(material);
+
+	if(material != nullptr)
+		material->SetData();
+
+	mesh->Redner(buffer->GetCount());
+	
 
 };
 
@@ -209,11 +219,5 @@ void MeshRenderer::AddSharedMaterials(const std::vector<std::shared_ptr<Material
 {
 	for (auto& ele : _materials)
 		this->_sharedMaterials.push_back(ele);
-}
-
-void MeshRenderer::SetInstance(InstanceBufferContainer* _instance)
-{
-	_instanceBuffer = _instance;
-	_hasInstance = _instanceBuffer != nullptr;
 }
 

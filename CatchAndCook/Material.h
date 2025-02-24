@@ -25,7 +25,7 @@ struct MaterialParams
 class Material : public IGuid
 {
 public:
-	Material() {};
+	Material() ;
 	Material(bool useMaterialParams) : _useMaterialParams(useMaterialParams) {};
 	virtual ~Material();
 
@@ -64,6 +64,9 @@ public:
 
 	tableContainer _tableContainer;
 	tableContainer _tableLongContainer;
+	uint32 GetID() {
+		return _instanceID;
+	}
 
 private:
 	void PushHandle();
@@ -81,6 +84,9 @@ private:
 	bool _useMaterialParams = false;
 	RENDER_PASS::PASS _pass = RENDER_PASS::Forward;
 	int _stencilIndex = 0;
+
+	uint32 _instanceID=0;
+	static uint32 _instanceIDGenator;
 
 	std::vector<std::shared_ptr<ICBufferInjector>> _customInjectors;
 	std::vector<std::shared_ptr<ICBufferInjector>> _shaderInjectors;

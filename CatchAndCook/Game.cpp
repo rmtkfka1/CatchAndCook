@@ -18,6 +18,7 @@
 #include "TextManager.h"
 #include "LightManager.h"
 #include "TerrainManager.h"
+#include "InstancingManager.h"
 
 void Game::Init(HWND hwnd)
 {
@@ -53,6 +54,7 @@ void Game::Init(HWND hwnd)
 	CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
 
 	LightManager::main = make_unique<LightManager>();
+	InstancingManager::main = make_unique<InstancingManager>();
 
 	{
 		Light light;

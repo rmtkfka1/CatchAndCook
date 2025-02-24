@@ -6,6 +6,13 @@
 #include "Texture.h"
 #include "Shader.h"
 
+uint32 Material::_instanceIDGenator =0;
+
+Material::Material()
+{
+	_instanceID  = _instanceIDGenator++;
+}
+
 Material::~Material()
 {
 

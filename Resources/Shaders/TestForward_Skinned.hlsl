@@ -6,6 +6,17 @@
 #include "Skinned_b5.hlsl"
 
 
+struct Instance_Transform
+{
+    row_major Matrix localToWorld;
+    row_major Matrix worldToLocal;
+    //float3 worldPosition;
+};
+
+
+StructuredBuffer<Instance_Transform> instanceDatas : register(t5);
+
+
 cbuffer DefaultMaterialParam : register(b7)
 {
 	float4 color;
@@ -38,62 +49,68 @@ struct VS_OUT
 {
     float4 positionCS : SV_Position;
     float4 positionWS : PositionWS;
-    float3 normalOS : NormalOS;
-    float3 normalWS : NormalWS;
-    float3 tangentOS : TangentOS;
-    float3 tangentWS : TangentWS;
+    //float3 normalOS : NormalOS;
+    //float3 normalWS : NormalWS;
+    //float3 tangentOS : TangentOS;
+    //float3 tangentWS : TangentWS;
     float2 uv : TEXCOORD0;
 };
 
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 
-VS_OUT VS_Main(VS_IN input)
+VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    row_major float4x4 l2wMatrix = LocalToWorldMatrix;
-    row_major float4x4 w2lMatrix = WorldToLocalMatrix;
-    float4 boneIds = float4(-1,-1,-1,-1);
-    float4 boneWs = 0;
+ //   row_major float4x4 l2wMatrix = LocalToWorldMatrix;
+ //   row_major float4x4 w2lMatrix = WorldToLocalMatrix;
+ //   float4 boneIds = float4(-1,-1,-1,-1);
+ //   float4 boneWs = 0;
 
-    #ifdef INSTANCED
-		l2wMatrix = MATRIX(input.instance_trs);
-		w2lMatrix = MATRIX(input.instance_invert_trs);
-    #endif
+ //   #ifdef INSTANCED
+	//	l2wMatrix = MATRIX(input.instance_trs);
+	//	w2lMatrix = MATRIX(input.instance_invert_trs);
+ //   #endif
     
     
-    #ifdef SKINNED
-	    boneIds = input.boneIds;
-	    boneWs = input.boneWs;
-    #endif
+ //   #ifdef SKINNED
+	//    boneIds = input.boneIds;
+	//    boneWs = input.boneWs;
+ //   #endif
 
 
-    output.normalOS = input.normal;
-    output.tangentOS = input.tangent;
+ //   output.normalOS = input.normal;
+ //   output.tangentOS = input.tangent;
 
-	#ifdef INSTANCED
-		output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f),  boneIds, boneWs, l2wMatrix);
-    #else
-        output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f),  boneIds, boneWs);
-	#endif
-	output.positionCS =  TransformWorldToClip(output.positionWS);
+	//#ifdef INSTANCED
+	//	output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f),  boneIds, boneWs, l2wMatrix);
+ //   #else
+ //       output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f),  boneIds, boneWs);
+	//#endif
+	//output.positionCS =  TransformWorldToClip(output.positionWS);
 
-    #ifdef INSTANCED
-		output.normalWS = TransformNormalLocalToWorld(output.normalOS, boneIds, boneWs, w2lMatrix);
-		output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix);
-	#else
-        output.normalWS = TransformNormalLocalToWorld(input.normal, boneIds, boneWs);
-		output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs);
-	#endif
-
+ //   #ifdef INSTANCED
+	//	output.normalWS = TransformNormalLocalToWorld(output.normalOS, boneIds, boneWs, w2lMatrix);
+	//	output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix);
+	//#else
+ //       output.normalWS = TransformNormalLocalToWorld(input.normal, boneIds, boneWs);
+	//	output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs);
+	//#endif
+    Instance_Transform data = instanceDatas[id];
+    
+    output.positionWS = mul(float4(input.pos, 1.0f), data.localToWorld);
+    output.positionCS = mul(output.positionWS, VPMatrix);
+    
     output.uv = input.uv;
     return output;
 }
 [earlydepthstencil]
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    float3 totalNormalWS = TransformTangentToSpace(float4(NormalUnpack(_BumpMap.Sample(sampler_lerp, input.uv).xyz, 0.2), 0), input.normalWS, input.tangentWS);
-    return _BaseMap.Sample(sampler_lerp, input.uv) * color * (saturate(dot(totalNormalWS, normalize(float3(0, 1, -1)))) * 0.7 + 0.3);
+    //float3 totalNormalWS = TransformTangentToSpace(float4(NormalUnpack(_BumpMap.Sample(sampler_lerp, input.uv).xyz, 0.2), 0), input.normalWS, input.tangentWS);
+    //return _BaseMap.Sample(sampler_lerp, input.uv) * color * (saturate(dot(totalNormalWS, normalize(float3(0, 1, -1)))) * 0.7 + 0.3);
+    
+    return _BaseMap.Sample(sampler_lerp, input.uv) * color;
 
 }

@@ -30,7 +30,7 @@ void BufferManager::Init()
 	
 	{
 		_table = make_shared<DescritporTable>();
-		_table->Init(40000);
+		_table->Init(60000);
 	}
 
 

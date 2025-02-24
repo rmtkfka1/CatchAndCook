@@ -21,6 +21,7 @@ public:
 
 	void SetModel(const std::shared_ptr<Model>& model);
 	void Rendering(Material* material, Mesh* mesh) override;
+	void Rendering(Material* material,Mesh* mesh,shared_ptr<StructuredBuffer<Instance_Transform>>& buffer) override;
 	void DebugRendering() override;
 
 

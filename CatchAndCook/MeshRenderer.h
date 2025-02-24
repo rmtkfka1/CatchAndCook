@@ -2,6 +2,7 @@
 #include "Component.h"
 #include "RendererBase.h"
 
+
 class Material;
 class Mesh;
 class Shader;
@@ -26,6 +27,7 @@ public:
 
 	//RendererBase
 	void Rendering(Material* material, Mesh* mesh) override;
+	void Rendering(Material* material, Mesh* mesh, shared_ptr<StructuredBuffer<Instance_Transform>>& buffer) override;
 	void DebugRendering() override;
 
 	//MeshRenderer
@@ -37,11 +39,7 @@ public:
 	void AddSharedMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
 	void SetDebugShader(shared_ptr<Shader>& shader) { _normalDebugShader = shader; }
 
-	void SetInstance(InstanceBufferContainer* _instance);
-	bool HasInstance() const
-	{
-		return _hasInstance;
-	};
+
 
 private:
 	std::vector<std::shared_ptr<Mesh>> _mesh;
@@ -50,7 +48,6 @@ private:
 	
 	shared_ptr<Shader> _normalDebugShader;
 
-	InstanceBufferContainer* _instanceBuffer;
-	bool _hasInstance = false;
+
 };
 
