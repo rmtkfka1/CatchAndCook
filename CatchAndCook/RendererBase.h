@@ -4,7 +4,7 @@
 
 class RendererBase;
 class Material;
-
+class Transform;
 
 struct RenderObjectStrucutre
 {
@@ -20,8 +20,6 @@ public:
 	virtual void PushData() =0;
 	virtual void SetData(Material* material =nullptr) = 0;
 };
-
-
 
 class RendererBase
 {

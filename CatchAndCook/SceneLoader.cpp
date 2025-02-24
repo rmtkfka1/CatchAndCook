@@ -409,8 +409,8 @@ void SceneLoader::LinkComponent(json& jsonData)
                 Matrix::CreateTranslation(pos);
 			trs.Invert(InvertTRS);
 
-            //instancesDatas[index].push_back({trs, InvertTRS, pos});
-            instancesDatas[index].push_back({trs,InvertTRS});
+            instancesDatas[index].push_back({trs, InvertTRS, pos});
+ /*           instancesDatas[index].push_back({trs,InvertTRS});*/
         }
 
         //instanceTable

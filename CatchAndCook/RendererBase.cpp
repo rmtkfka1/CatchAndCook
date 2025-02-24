@@ -15,3 +15,5 @@ void RendererBase::RemoveSetter(const shared_ptr<RenderObjectSetter>& object)
 	if (it != _setters.end())
 		_setters.erase(it);
 }
+
+

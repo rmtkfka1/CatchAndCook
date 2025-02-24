@@ -50,6 +50,7 @@ public:
 	void AllocTextureTable();
 	void PushData();
 	void SetData();
+	void PushHandle();
 
 	void SetInjector(const std::vector<std::shared_ptr<ICBufferInjector>>& injectors) { _customInjectors = injectors; }
 
@@ -69,7 +70,7 @@ public:
 	}
 
 private:
-	void PushHandle();
+
 private:
 	shared_ptr<Shader> _shader;
 

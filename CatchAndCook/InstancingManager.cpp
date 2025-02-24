@@ -7,6 +7,8 @@ unique_ptr<InstancingManager> InstancingManager::main;
 
 void InstancingManager::Render()
 {
+	//탑하나만 그렸을때 다1개씩
+
 	for(auto& [id,objects] : _objectMap)
 	{
 		for(auto& ele :objects)
@@ -16,7 +18,7 @@ void InstancingManager::Render()
 
 			Instance_Transform data;
 			data.localToWorld = mat;
-
+			data.worldToLocal = mat.Invert();
 			AddParam(id,data);
 		}
 		
@@ -33,7 +35,6 @@ void InstancingManager::Clear()
 	}
 
 	_objectMap.clear();
-
 }
 
 void InstancingManager::AddObject(RenderObjectStrucutre & obj)

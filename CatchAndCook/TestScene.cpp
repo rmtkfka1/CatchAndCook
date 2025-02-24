@@ -31,9 +31,9 @@ void TestScene::Init()
 		auto& a = ResourceManager::main->Load<SceneLoader>(L"TestScene1",L"../Resources/Datas/Scenes/TestScene1.json");
 		auto& object= a->Load(GetCast<Scene>());
 	}*/
-
+	shared_ptr<Material> sharedMaterial = make_shared<Material>();
 	{
-		shared_ptr<Material> material = make_shared<Material>();
+		//shared_ptr<Material> material = make_shared<Material>();
 		shared_ptr<Mesh> mesh =  GeoMetryHelper::LoadRectangleBoxWithColor(1.0f,vec4(1,0,0,0));
 
 		for(int i=0; i<10; ++i)
@@ -52,17 +52,17 @@ void TestScene::Init()
 			auto meshRenderer = root->AddComponent<MeshRenderer>();
 
 	
-			material->SetShader(shader);
-			material->SetPass(RENDER_PASS::Forward);
+			sharedMaterial->SetShader(shader);
+			sharedMaterial->SetPass(RENDER_PASS::Forward);
 
-			meshRenderer->AddMaterials({material});
+			meshRenderer->AddMaterials({sharedMaterial});
 
 			meshRenderer->AddMesh(mesh);
 		}
 	}
 
 	{
-		shared_ptr<Material> material = make_shared<Material>();
+		//shared_ptr<Material> material = make_shared<Material>();
 		shared_ptr<Mesh> mesh =  GeoMetryHelper::LoadRectangleBoxWithColor(1.0f,vec4(0,1,0,0));
 
 		for(int i=0; i<10; ++i)
@@ -81,10 +81,10 @@ void TestScene::Init()
 			auto meshRenderer = root->AddComponent<MeshRenderer>();
 
 	
-			material->SetShader(shader);
-			material->SetPass(RENDER_PASS::Forward);
+			sharedMaterial->SetShader(shader);
+			sharedMaterial->SetPass(RENDER_PASS::Forward);
 
-			meshRenderer->AddMaterials({material});
+			meshRenderer->AddMaterials({sharedMaterial});
 
 			meshRenderer->AddMesh(mesh);
 		}

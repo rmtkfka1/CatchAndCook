@@ -558,7 +558,7 @@ struct Instance_Transform
 {
 	Matrix localToWorld = Matrix::Identity;
     Matrix worldToLocal = Matrix::Identity;
-    //vec3 worldPosition;
+    vec3 worldPosition;
 };
 
 //struct Vertex_Full

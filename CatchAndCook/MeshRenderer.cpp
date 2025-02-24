@@ -127,12 +127,15 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh)
 }
 void MeshRenderer::Rendering(Material * material,Mesh * mesh,shared_ptr<StructuredBuffer<Instance_Transform>>& buffer)
 {
-
 	auto& cmdList = Core::main->GetCmdList();
 
 	buffer->Upload();
+	
 	material->SetHandle("instanceDatas",buffer->GetSRVHandle());
 
+	material->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
+	material->PushData();
+	
 	for(auto& data : _setters) //transform , etc  
 		data->SetData(material);
 
