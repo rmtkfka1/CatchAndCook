@@ -91,8 +91,8 @@ void MeshRenderer::RenderBegin()
 		auto currentMesh = _mesh[i];
 		auto currentMaterial = _uniqueMaterials[i % _mesh.size()];
 
-		currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
-		currentMaterial->PushData();
+		//currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
+		//currentMaterial->PushData();
 		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(), currentMesh.get(), this, this->GetOwner().get());
 	}
 
@@ -103,8 +103,8 @@ void MeshRenderer::RenderBegin()
 		for (int i = 0; i < _mesh.size(); i++)
 		{
 			auto &currentMesh = _mesh[i];
-			currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
-			currentMaterial->PushData();
+			//currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
+			//currentMaterial->PushData();
 			SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(),currentMesh.get(),this,this->GetOwner().get());
 		}
 	}

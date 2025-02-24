@@ -66,7 +66,7 @@ void Scene::RenderBegin()
     for (auto& gameObject : _gameObjects)
     	gameObject->RenderBegin();
 
-    Gizmo::main->RenderBegin();
+ /*   Gizmo::main->RenderBegin();*/
 }
 
 void Scene::Rendering()
