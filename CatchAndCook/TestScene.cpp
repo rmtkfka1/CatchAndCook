@@ -170,6 +170,7 @@ void TestScene::Init()
 
 		meshRenderer->AddMaterials({ material });
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
+		meshRenderer->SetCulling(false);
 	}
 
 	{
@@ -204,6 +205,7 @@ void TestScene::Init()
 		auto& mesh = GeoMetryHelper::LoadGripMeshControlPoints(2000.0f,2000.0f,20,20);
 		mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 		meshRenderer->AddMesh(mesh);
+		meshRenderer->SetCulling(false);
 	}
 
 
