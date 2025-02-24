@@ -25,6 +25,7 @@ void InstancingManager::Render()
 		objects[0].renderer->Rendering(objects[0].material,objects[0].mesh, _bufferMap[id]);
 	}
 
+	_objectMap.clear();
 }
 
 void InstancingManager::Clear()
@@ -33,8 +34,6 @@ void InstancingManager::Clear()
 	{
 		ele.second->Clear();
 	}
-
-	_objectMap.clear();
 }
 
 void InstancingManager::AddObject(RenderObjectStrucutre & obj)
