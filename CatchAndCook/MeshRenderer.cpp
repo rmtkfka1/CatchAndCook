@@ -31,6 +31,22 @@ void MeshRenderer::Init()
 void MeshRenderer::Start()
 {
 	Component::Start();
+
+	auto owner = GetOwner()->_transform;
+	Matrix matrix;
+	owner->GetLocalToWorldMatrix_BottomUp(matrix);
+
+	BoundingBox totalBox;
+	for(int i = 0; i < _mesh.size(); i++)
+	{
+		auto currentMesh = _mesh[i];
+		auto bound = currentMesh->CalculateBound(matrix);
+		if(i == 0)
+			totalBox = bound;
+		else
+			BoundingBox::CreateMerged(totalBox,totalBox,bound);
+	}
+	SetBound(totalBox);
 }
 
 void MeshRenderer::Update()
@@ -67,24 +83,9 @@ void MeshRenderer::RenderBegin()
 {
 	Component::RenderBegin();
 
-	auto owner = GetOwner()->_transform;
-	Matrix matrix;
-	owner->GetLocalToWorldMatrix_BottomUp(matrix);
+	
 
-
-	BoundingBox totalBox;
-	for(int i = 0; i < _mesh.size(); i++)
-	{
-		auto currentMesh = _mesh[i];
-		auto bound = currentMesh->CalculateBound(matrix);
-		if(i == 0)
-			totalBox = bound;
-		else
-			BoundingBox::CreateMerged(totalBox,totalBox,bound);
-	}
-	SetBound(totalBox);
-
-	Gizmo::Box(GetBound());
+	//Gizmo::Box(GetBound());
 
 	for (int i = 0; i < _mesh.size(); i++)
 	{

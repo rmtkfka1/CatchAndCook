@@ -52,7 +52,6 @@ void Game::Init(HWND hwnd)
 	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0, 0, -5.0f));
 	CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
 
-
 	LightManager::main = make_unique<LightManager>();
 
 	{
@@ -69,7 +68,7 @@ void Game::Init(HWND hwnd)
 		LightManager::main->PushLight(light);
 	}
 
-	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
+	auto scene = SceneManager::main->AddScene(SceneType::TestSceneMapEditor);
 }
 
 void Game::PrevUpdate()

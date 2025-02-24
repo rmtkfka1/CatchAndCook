@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "TestScene_MapEditor.h"
 #include "MeshRenderer.h"
 #include "testComponent.h"
@@ -32,6 +32,7 @@ void TestScene_MapEditor::Init()
 		material->SetPass(RENDER_PASS::Forward);
 		material->SetHandle("g_tex_0",texture->GetSRVCpuHandle());
 
+		meshRenderer->SetCulling(false);
 		meshRenderer->AddMaterials({material});
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
 	}
@@ -43,7 +44,7 @@ void TestScene_MapEditor::Init()
 	//auto obj = model->CreateGameObject(GetCast<Scene>());
 	//obj->_transform->SetWorldScale(vec3(100,100,100));
 
-	ResourceManager::main->LoadAlway<SceneLoader>(L"test",L"../Resources/Datas/Scenes/MainField.json");
+	ResourceManager::main->LoadAlway<SceneLoader>(L"test",L"../Resources/Datas/Scenes/TestScene9.json");
 	auto a = ResourceManager::main->Get<SceneLoader>(L"test");
 	a->Load(GetCast<Scene>());
 
@@ -54,7 +55,6 @@ void TestScene_MapEditor::Init()
 	//});
 	//std::cout << i <<"\n";
 	std::cout << _gameObjects.size() << "\n";
-
 
 	//a[0]->_transform->SetLocalRotation(Vector3(0,180,0) * D2R);
 }

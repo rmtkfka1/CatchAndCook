@@ -129,7 +129,6 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
         for(auto& [shader,vec] : targets)
         {
             cmdList->SetPipelineState(shader->_pipelineState.Get());
-
             for(auto& [material,mesh,target] : vec)
             {
                 if(target->IsCulling() == true)
