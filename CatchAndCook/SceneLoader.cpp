@@ -110,7 +110,8 @@ void SceneLoader::PrevProcessingComponent(json& data)
         auto mesh = data["mesh"];
         auto modelName = std::to_wstring(mesh["modelName"].get<std::string>());
         auto path = std::to_wstring(mesh["path"].get<std::string>());
-        auto pack = ResourceManager::main->Load<Model>(modelName, path, VertexType::Vertex_Static);
+        //auto pack = ResourceManager::main->Load<Model>(modelName, path, VertexType::Vertex_Static);
+        auto pack = ResourceManager::main->Load<Model>(path,path,VertexType::Vertex_Static);
     }
     if (type == L"SkinnedMeshRenderer")
     {
@@ -118,9 +119,12 @@ void SceneLoader::PrevProcessingComponent(json& data)
         component = meshRenderer;
 
         auto mesh = data["mesh"];
-        auto pack = ResourceManager::main->Load<Model>(
+        /*auto pack = ResourceManager::main->Load<Model>(
             std::to_wstring(mesh["modelName"].get<std::string>()),
-            std::to_wstring(mesh["path"].get<std::string>()), VertexType::Vertex_Skinned);
+            std::to_wstring(mesh["path"].get<std::string>()), VertexType::Vertex_Skinned);*/
+        auto pack = ResourceManager::main->Load<Model>(
+            std::to_wstring(mesh["path"].get<std::string>()),
+            std::to_wstring(mesh["path"].get<std::string>()),VertexType::Vertex_Skinned);
     }
     if (type == L"MeshFilter")
     {
@@ -158,7 +162,7 @@ void SceneLoader::PrevProcessingMaterial(json& data)
 
 	for (auto& texture : data["datas"]["textures"]) {
         ResourceManager::main->Load<Texture>(
-            std::to_wstring(texture["originalName"].get<std::string>()),
+            std::to_wstring(texture["path"].get<std::string>()),//std::to_wstring(texture["originalName"].get<std::string>()),
             std::to_wstring(texture["path"].get<std::string>()),
                 TextureType::Texture2D, false
 		);
@@ -229,8 +233,9 @@ void SceneLoader::LinkComponent(json& jsonData)
         auto meshRenderer = IGuid::FindObjectByGuid<MeshRenderer>(guid);
         auto meshInfo = jsonData["mesh"];
         auto modelName = std::to_wstring(meshInfo["modelName"].get<std::string>());
-
-        auto model = ResourceManager::main->Get<Model>(modelName);
+        
+        //auto model = ResourceManager::main->Get<Model>(modelName);
+        auto model = ResourceManager::main->Get<Model>(std::to_wstring(meshInfo["path"].get<std::string>()));
         if (model != nullptr)
         {
 	        std::vector<std::shared_ptr<ModelMesh>> meshes = model->FindMeshsByName(meshInfo["meshName"].get<std::string>());
@@ -264,7 +269,8 @@ void SceneLoader::LinkComponent(json& jsonData)
         auto modelName = std::to_wstring(meshInfo["modelName"].get<std::string>());
         auto boneName = std::to_wstring(jsonData["boneRoot"].get<std::string>());
 
-        auto model = ResourceManager::main->Get<Model>(modelName);
+        //auto model = ResourceManager::main->Get<Model>(modelName);
+        auto model = ResourceManager::main->Get<Model>(std::to_wstring(meshInfo["path"].get<std::string>()));
         if(model != nullptr)
         {
             std::vector<std::shared_ptr<ModelMesh>> meshes = model->FindMeshsByName(meshInfo["meshName"].get<std::string>());
@@ -333,7 +339,6 @@ void SceneLoader::LinkComponent(json& jsonData)
 
 
         auto material = make_shared<Material>();
-        //material->SetHandle("g_tex_0",ResourceManager::main->Load<Texture>(L"HeightMap",L"Textures/HeightMap/terrainAlbedo.png")->GetSRVCpuHandle());
 
         int diffuseCount = jsonData["layers"].size();
         for(int i = 0; i < diffuseCount; i++)
@@ -440,7 +445,7 @@ void SceneLoader::LinkMaterial(json& jsonData)
         auto a = std::to_wstring(texture["originalName"].get<std::string>());
         material->SetHandle(
             texture["name"].get<std::string>(),
-            ResourceManager::main->Get<Texture>(std::to_wstring(texture["originalName"].get<std::string>()))->GetSRVCpuHandle());
+            ResourceManager::main->Get<Texture>(std::to_wstring(texture["path"].get<std::string>()))->GetSRVCpuHandle());
     }
     for (auto& data : floats)
         material->SetPropertyFloat(data["name"].get<std::string>(), data["data"].get<float>());

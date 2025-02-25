@@ -49,7 +49,7 @@ private:
 	bool InBounds(int32 z, int32 x) const;
 	float Average(int32 i,int32 j);
 private:
-	static const int CellsPerPatch = 32;
+	static const int CellsPerPatch = 48;
 
 	shared_ptr<Mesh> _gridMesh{};
 	shared_ptr<Texture> _heightTexture{};

@@ -4,10 +4,10 @@
 #include "Light_b3.hlsl"
 
 
-#define TessFactor 8
+#define TessFactor 10
 #define PI 3.14159f
-#define DIST_MAX 1000.0f
-#define DIST_MIN 3.0f
+#define DIST_MAX 120.0f
+#define DIST_MIN 15.0f
 
 
 cbuffer TerrainDetailsParam : register(b10)
@@ -130,12 +130,13 @@ struct PatchConstOutput
 
 float CalculateTessLevel(float3 cameraWorldPos, float3 patchPos, float min, float max, float maxLv)
 {
-    float distance = length(patchPos - cameraWorldPos);
+    float distance = length(patchPos - float3(cameraWorldPos.x, 0, cameraWorldPos.z));
     float ratio = smoothstep(min, max, distance);
-    
-    float level = lerp(maxLv, 1.0f, ratio);
 
-    return clamp(level, 1.0f, maxLv);
+    ratio = pow(clamp(ratio,0,1), 0.4);
+
+    float level = lerp(maxLv, 1.0f, ratio);
+    return round(clamp(level, 1.0f, maxLv) * 10) / 10;
 }
 
 

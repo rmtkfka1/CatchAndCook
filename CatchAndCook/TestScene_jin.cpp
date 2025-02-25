@@ -39,7 +39,7 @@ void TestScene_jin::Init()
 	}
 
 
-	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/TestScene9.json");
+	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/MainField.json");
 	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
 	sceneLoader->Load(GetCast<Scene>());
 }
@@ -47,10 +47,10 @@ void TestScene_jin::Init()
 void TestScene_jin::Update()
 {
 	Scene::Update();
-	Gizmo::Text(L"1234sadfsdjkaflhsaldkfasdfasdfsadfsdafasdf",10,vec3(1,1,1),vec3(0,0,-1),vec3(0,1,0));
-	Gizmo::Text(L"안녕하세요",30,vec3(3,1,1),vec3(-0.707,0,-0.707),vec3(0,1,0));
-	Gizmo::Image(ResourceManager::main->Get<Texture>(L"none"), vec3(-2,0,2),vec3(0,0,-1),vec3(0,1,0));
-	Gizmo::Image(ResourceManager::main->Get<Texture>(L"none_debug"),vec3(-1,0,2),vec3(0.707,0,-0.707),vec3(0,1,0));
+	//Gizmo::Text(L"1234sadfsdjkaflhsaldkfasdfasdfsadfsdafasdf",10,vec3(1,1,1),vec3(0,0,-1),vec3(0,1,0));
+	//Gizmo::Text(L"안녕하세요",30,vec3(3,1,1),vec3(-0.707,0,-0.707),vec3(0,1,0));
+	//Gizmo::Image(ResourceManager::main->Get<Texture>(L"none"), vec3(-2,0,2),vec3(0,0,-1),vec3(0,1,0));
+	//Gizmo::Image(ResourceManager::main->Get<Texture>(L"none_debug"),vec3(-1,0,2),vec3(0.707,0,-0.707),vec3(0,1,0));
 }
 
 void TestScene_jin::RenderBegin()

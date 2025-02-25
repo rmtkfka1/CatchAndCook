@@ -47,7 +47,7 @@ void SkinnedHierarchy::Update()
 	if (animation->_nodeTables.contains(name))
 	{
 		auto pos = animation->_nodeTables[name]->CalculatePosition(animation->CalculateTime(Time::main->GetTime()));
-		GetOwner()->_transform->SetWorldPosition(Vector3(pos.x, 0, pos.z));
+		//GetOwner()->_transform->SetWorldPosition(Vector3(pos.x, 0, pos.z));
 	};
 }
 
@@ -191,7 +191,7 @@ void SkinnedHierarchy::Animate(const std::shared_ptr<Animation>& animation, doub
 			auto obj = it->second.lock();
 			if (obj != nullptr) {
 				auto transform = obj->_transform;
-				auto matrix = animNode->CalculateTransformMatrix(finalTime, animNode->IsRoot());
+				auto matrix = animNode->CalculateTransformMatrix(finalTime,animation->_isApplyTransform && animNode->IsRoot());
 				transform->SetLocalSRTMatrix(matrix);
 			}
 		}

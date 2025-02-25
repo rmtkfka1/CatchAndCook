@@ -54,7 +54,7 @@ void Scene::Update()
         if(gameObject->GetType() == GameObjectType::Dynamic)
             gameObject->Update2();
 
-    //ColliderManager::main->Update();
+    ColliderManager::main->Update();
 }
 
 void Scene::RenderBegin()
@@ -133,10 +133,10 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
             {
                 if(target->IsCulling() == true)
                 {
-                    if(CameraManager::main->GetActiveCamera()->IsInFrustum(target->GetBound())==false)
+                    /*if(CameraManager::main->GetActiveCamera()->IsInFrustum(target->GetBound())==false)
                     {
                         continue;
-                    }
+                    }*/
                 }
 
                 target->Rendering(material,mesh);

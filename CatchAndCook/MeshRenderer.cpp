@@ -83,14 +83,11 @@ void MeshRenderer::RenderBegin()
 {
 	Component::RenderBegin();
 
-	
-
-	//Gizmo::Box(GetBound());
 
 	for (int i = 0; i < _mesh.size(); i++)
 	{
 		auto currentMesh = _mesh[i];
-		auto currentMaterial = _uniqueMaterials[i % _mesh.size()];
+		auto currentMaterial = _uniqueMaterials[i % _uniqueMaterials.size()];
 
 		currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
 		currentMaterial->PushData();

@@ -59,5 +59,6 @@ private:
 	float _prevWidth = 0.05f;
 
 	GizmoTexture textureGizmo;
+	bool _ON = false;
 };
 

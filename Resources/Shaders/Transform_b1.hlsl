@@ -14,8 +14,8 @@ cbuffer Transform : register(b1)
 
 float3 NormalUnpack(float3 normalSample, float power)
 {
-	if (dot(normalSample, normalSample) > 2.999)
-		return float3(0,0,1);
+	if (dot(normalSample, normalSample) > 2.98)
+		return float3(0, 0, 1);
 	
 	float3 norm = normalSample * 2.0 - 1.0;
 	norm.xy *= power;
@@ -41,7 +41,36 @@ float4 TransformSpaceToTangent(float4 localPos, float3 normalS, float3 tangentS)
 float4 TransformTangentToSpace(float4 tangentPos, float3 normalS, float3 tangentS)
 {
     // 정규화된 tangentS 및 normal 계산
+    float3 N = normalize(normalS);
+    float3 T = normalize(tangentS - dot(tangentS, N) * N);
+    float3 B = cross(T, N);
+
+    float4x4 tangentToLocal = float4x4(
+         float4(T, 0),
+         float4(B, 0),
+         float4(N, 0),
+         float4(0, 0, 0, 1)
+    );
+    
+    return mul(tangentPos, tangentToLocal);
+}
+
+float3 TransformNormalTangentToSpace(float3 n, float3 normalS, float3 tangentS)
+{
     float3 N = normalS;
+    float3 T = normalize(tangentS - dot(tangentS, N) * N);
+    float3 B = cross(T, N);
+	B = cross(B, T);
+
+    float3 worldNormal = n.x * T + n.y * B + n.z * N;
+    return normalize(worldNormal);
+}
+
+//[]->[]
+float3 TransformNormalTangentToSpace(float4 tangentPos, float3 normalS, float3 tangentS)
+{
+    // 정규화된 tangentS 및 normal 계산
+    float3 N = normalize(normalS);
     float3 T = normalize(tangentS - dot(tangentS, N) * N);
     float3 B = cross(T, N);
 

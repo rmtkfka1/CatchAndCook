@@ -76,7 +76,7 @@ void SkinnedMeshRenderer::RenderBegin()
 	{
 		auto a = GetOwner();
 		auto currentMesh = _mesh[i];
-		auto currentMaterial = _uniqueMaterials[i % _mesh.size()];
+		auto currentMaterial = _uniqueMaterials[i % _uniqueMaterials.size()];
 
 		box.Transform(box,matrix);
 		SetBound(box);

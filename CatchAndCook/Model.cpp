@@ -44,7 +44,7 @@ void AssimpPack::Init(std::wstring path, bool xFlip)
         //aiProcess_PreTransformVertices | // root Node�� ������ ��� ���� ���� ���� ��źȭ. ���� ����.
         //aiProcess_ValidateDataStructure | // ���� ��ȿ�� �˻�
         //aiProcess_RemoveRedundantMaterials | // �ߺ��̳� �Ⱦ��°� ����
-        //aiProcess_FixInfacingNormals | //�߸� ����Ǽ� ���峭 ��� ���� ����
+        aiProcess_FixInfacingNormals | //�߸� ����Ǽ� ���峭 ��� ���� ����
         //aiProcess_FindDegenerates | //�ﰢ������ ���� ���Ĺ����� �����̳� ���� �ǹ����µ�, �̰� Line�̳� Point�� ��ȯ�ϴ°���. �Ⱦ��°� ����.
         //aiProcess_FindInvalidData | //��ȿ���� �ʴ� ������ ������ ����, ���� UV�� ������. �̷��� �����ϰ� ���� aiProcess_GenNormals������ ���Ӱ� �������ٰ���. �ִϸ��̼ǿ����� ������ �ִٰ���.
         //aiProcess_GenUVCoords  | //UV�� ��ü������ �����. �𵨸������� �����ϴ°� ��õ�ϰ�, UV�� ������ ���Ӱ� �����ϴ°���.

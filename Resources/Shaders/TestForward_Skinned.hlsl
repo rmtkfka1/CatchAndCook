@@ -93,7 +93,11 @@ VS_OUT VS_Main(VS_IN input)
 [earlydepthstencil]
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    float3 totalNormalWS = TransformTangentToSpace(float4(NormalUnpack(_BumpMap.Sample(sampler_lerp, input.uv).xyz, 0.2), 0), input.normalWS, input.tangentWS);
+    float3 totalNormalWS = TransformNormalTangentToSpace(NormalUnpack(_BumpMap.Sample(sampler_lerp, input.uv).xyz, 0.2), normalize(input.normalWS), normalize(input.tangentWS));
+    //float3 totalNormalWS = TransformNormalTangentToSpace(float3(0,0,1), normalize(input.normalWS), normalize(input.tangentWS));
+    //return float4(normalize(input.normalWS), 1);
+    //return float4(_BumpMap.Sample(sampler_lerp, input.uv).xyz, 1);
+	//return float4(normalize(totalNormalWS), 1)* 0.5 + 0.5;
     return _BaseMap.Sample(sampler_lerp, input.uv) * color * (saturate(dot(totalNormalWS, normalize(float3(0, 1, -1)))) * 0.7 + 0.3);
 
 }
