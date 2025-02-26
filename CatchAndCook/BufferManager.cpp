@@ -25,6 +25,8 @@ void BufferManager::Init()
 
 	CreateBufferPool(BufferType::BoneParam, sizeof(BoneParam), 256);
 
+	CreateStructuredBufferPool(BufferType::TransformParam, "TransformDatas", sizeof(Instance_Transform), 10000);
+
 	CreateInstanceBufferPool(BufferType::TransformInstanceParam,sizeof(Instance_Transform),10000,128);
 	CreateInstanceBufferPool(BufferType::GizmoInstanceParam,sizeof(Instance_Gizmo),100000,1);
 	
@@ -40,11 +42,13 @@ void BufferManager::Reset()
 {
 	_table->Reset();
 
-	for (auto& ele : _map)
-	{
+	for (auto& ele : _map) {
 		ele.second->Reset();
 	}
 
+	for(auto& ele : _structuredMap) {
+		ele.second->Clear();
+	}
 }
 
 void BufferManager::CreateBufferPool(BufferType type, uint32 size, uint32 count)
@@ -66,6 +70,14 @@ void BufferManager::CreateInstanceBufferPool(BufferType type,uint32 elementSize,
 	shared_ptr<InstanceBufferPool> transformBuffer = make_shared<InstanceBufferPool>();
 	transformBuffer->Init(elementSize,elementCount,bufferCount);
 	_instanceMap[type] = transformBuffer;
+}
+
+void BufferManager::CreateStructuredBufferPool(BufferType type,const string& name,uint32 elementSize, uint32 elementCount)
+{
+	shared_ptr<StructuredBuffer> strBuffer = make_shared<StructuredBuffer>();
+	strBuffer->Init(elementSize, elementCount);
+	_structuredMap[type] = strBuffer;
+	_structuredNameMappingTable[name] = BufferType::TransformParam;
 }
 
 

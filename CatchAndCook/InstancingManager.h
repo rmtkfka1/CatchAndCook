@@ -27,7 +27,6 @@ public:
 
 private:
 	map<uint64,vector<RenderObjectStrucutre>> _objectMap;
-	map<uint64,shared_ptr<StructuredBuffer<Instance_Transform>>> _bufferMap;
 
 };
 

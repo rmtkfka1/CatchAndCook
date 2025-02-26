@@ -14,7 +14,7 @@ struct Instance_Transform
 };
 
 
-StructuredBuffer<Instance_Transform> instanceDatas : register(t5);
+StructuredBuffer<Instance_Transform> TransformDatas : register(t5);
 
 
 cbuffer DefaultMaterialParam : register(b7)

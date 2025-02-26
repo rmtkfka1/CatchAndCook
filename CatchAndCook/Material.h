@@ -113,7 +113,7 @@ private:
 //		memcpy(_cbufferContainer->ptr, &param, sizeof(TestSubMaterialParam));
 //	}
 //
-//	void SetData(const std::shared_ptr<Shader>& shader) override
+//	void AddAtData(const std::shared_ptr<Shader>& shader) override
 //	{
 //		int textAllocator = GetStaticRegisterIndex();
 //		if (shader) textAllocator = shader->GetRegisterIndex(cbufferName);
