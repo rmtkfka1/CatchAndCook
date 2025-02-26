@@ -70,7 +70,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    Instance_Transform data = TransformDatas[offset[30 - STRUCTURED_BACKOFFSET] + id];
+    Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)] + id];
     
     //output.positionWS = mul(float4(input.pos, 1.0f), data.localToWorld);
     //output.positionCS = mul(output.positionWS, VPMatrix);
@@ -107,8 +107,8 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 		output.normalWS = TransformNormalLocalToWorld(output.normalOS, boneIds, boneWs, w2lMatrix);
 		output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix);
 #else
-    output.normalWS = TransformNormalLocalToWorld(input.normal, boneIds, boneWs);
-    output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs);
+    output.normalWS = TransformNormalLocalToWorld(input.normal, boneIds, boneWs, w2lMatrix);
+    output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix);
 	#endif
 
     return output;

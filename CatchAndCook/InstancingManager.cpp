@@ -37,7 +37,7 @@ void InstancingManager::Render()
 			assert(ROOT_OFFSET >= 0);
 			cmdList->SetGraphicsRootDescriptorTable(SRV_STRUCTURED_TABLE_INDEX + ROOT_OFFSET,table.GPUHandle);
 
-			param.offset[infos.registerIndex-30].x = offset;
+			param.offset[infos.registerIndex - SRV_STRUCTURED_TABLE_REGISTER_OFFSET].x = offset;
 		}
 		auto cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::InstanceOffsetParam)->Alloc(1);
 		memcpy(cbufferContainer->ptr, &param, sizeof(InstanceOffsetParam));
