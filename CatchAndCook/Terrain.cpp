@@ -48,6 +48,7 @@ void Terrain::Start()
 	if(auto renderer = GetOwner()->GetRenderer())
 	{
 		renderer->AddCbufferSetter(static_pointer_cast<Terrain>(shared_from_this()));
+
 		if(_gridMesh == nullptr)
             assert(false);
 		dynamic_pointer_cast<MeshRenderer>(renderer)->AddMesh(_gridMesh);

@@ -112,9 +112,9 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh,int instanceCount)
 {
 	auto& cmdList = Core::main->GetCmdList();
 
-	////// 이 코드는 CBuffer넣는
-	//for (auto& data : _cbufferSetters) //transform , etc 
-	//	data->SetData(material);
+	// 이 코드는 CBuffer넣는
+	for (auto& data : _cbufferSetters) //transform , etc 
+		data->SetData(material);
 
 	if (material != nullptr)
 		material->SetData();
