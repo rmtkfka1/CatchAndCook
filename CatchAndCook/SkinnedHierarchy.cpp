@@ -37,18 +37,20 @@ void SkinnedHierarchy::Start()
 
 	for (auto& renderer : GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>())
 		renderer->AddSetter(GetCast<SkinnedHierarchy>());
-	SetAnimation(GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>()[0]->_model->_animationList[0]);
+	//SetAnimation(GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>()[0]->_model->_animationList[0]);
 }
 
 void SkinnedHierarchy::Update()
 {
 	Component::Update();
-	auto name = to_wstring(GetOwner()->GetComponentWithChilds<SkinnedMeshRenderer>()->_model->_rootBoneNode->GetOriginalName());
-	if (animation->_nodeTables.contains(name))
+	//auto name = to_wstring(GetOwner()->GetComponentWithChilds<SkinnedMeshRenderer>()->_model->_rootBoneNode->GetOriginalName());
+	/*
+	if (false && animation->_nodeTables.contains(name))
 	{
 		auto pos = animation->_nodeTables[name]->CalculatePosition(animation->CalculateTime(Time::main->GetTime()));
 		//GetOwner()->_transform->SetWorldPosition(Vector3(pos.x, 0, pos.z));
 	};
+	*/
 }
 
 void SkinnedHierarchy::Update2()
