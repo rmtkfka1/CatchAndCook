@@ -250,6 +250,10 @@
     <ClCompile Include="Animator.cpp">
       <Filter>03.Component</Filter>
     </ClCompile>
+    <ClCompile Include="TestScene_MapEditor.cpp" />
+    <ClCompile Include="InstancingManager.cpp">
+      <Filter>07.Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -466,6 +470,10 @@
     <ClInclude Include="Animator.h">
       <Filter>03.Component</Filter>
     </ClInclude>
+    <ClInclude Include="TestScene_MapEditor.h" />
+    <ClInclude Include="InstancingManager.h">
+      <Filter>07.Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -531,5 +539,6 @@
     <FxCompile Include="..\Resources\Shaders\Transform_b1.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Gizmo_Text.hlsl" />
   </ItemGroup>
 </Project>

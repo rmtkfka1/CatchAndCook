@@ -10,6 +10,7 @@
 #include "ColliderManager.h"
 #include "Gizmo.h"
 #include "Mesh.h"
+#include "InstancingManager.h"
 
 void Scene::AddGameObject(const std::shared_ptr<GameObject>& gameObject)
 {
@@ -65,7 +66,7 @@ void Scene::RenderBegin()
     for (auto& gameObject : _gameObjects)
     	gameObject->RenderBegin();
 
-    Gizmo::main->RenderBegin();
+ /*   Gizmo::main->RenderBegin();*/
 }
 
 void Scene::Rendering()
@@ -95,7 +96,7 @@ void Scene::UiPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
             if(shader)
                 cmdList->SetPipelineState(shader->_pipelineState.Get());
 
-            for(auto& [material,mesh,target] : vec)
+            for(auto& [material,mesh,target,object] : vec)
             {
                 target->Rendering(material,mesh);
             }
@@ -112,7 +113,7 @@ void Scene::TransparentPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
         {
             cmdList->SetPipelineState(shader->_pipelineState.Get());
 
-            for(auto& [material,mesh,target] : vec)
+            for(auto& [material,mesh,target,object] : vec)
             {
                 target->Rendering(material,mesh);
             }
@@ -129,19 +130,24 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
         for(auto& [shader,vec] : targets)
         {
             cmdList->SetPipelineState(shader->_pipelineState.Get());
-            for(auto& [material,mesh,target] : vec)
+
+            for(auto& ele : vec)
             {
-                if(target->IsCulling() == true)
+                if(ele.renderer->IsCulling() == true)
                 {
-                    /*if(CameraManager::main->GetActiveCamera()->IsInFrustum(target->GetBound())==false)
+                    if(CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound())==false)
                     {
                         continue;
-                    }*/
+                    }
                 }
 
-                target->Rendering(material,mesh);
+				InstancingManager::main->AddObject(ele);
             }
+
+            InstancingManager::main->Render();
         }
+
+        
     }
 }
 
@@ -156,7 +162,7 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
         {
             cmdList->SetPipelineState(shader->_pipelineState.Get());
             
-            for(auto& [material,mesh,target] : vec)
+            for(auto& [material,mesh,target,object] : vec)
             {
 				if(target->IsCulling() == true)
 				{
@@ -183,7 +189,7 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
         {
             cmdList->SetPipelineState(ResourceManager::main->Get<Shader>(L"Shadow")->_pipelineState.Get());
 
-            for(auto& [material,mesh,target] : vec)
+            for(auto& [material,mesh,target,object] : vec)
             {
                 target->Rendering(nullptr,mesh);
             }
@@ -232,7 +238,7 @@ void Scene::DebugRendering()
 
         for(auto& [shader,vec] : targets)
         {
-            for(auto& [material,mesh,target] : vec)
+            for(auto& [material,mesh,target,object] : vec)
             {
                 target->DebugRendering();
             }
@@ -244,7 +250,7 @@ void Scene::DebugRendering()
 
         for(auto& [shader,vec] : targets)
         {
-            for(auto& [material,mesh,target] : vec)
+            for(auto& [material,mesh,target,object] : vec)
             {
                 target->DebugRendering();
             }
@@ -256,7 +262,7 @@ void Scene::DebugRendering()
 
         for(auto& [shader,vec] : targets)
         {
-            for(auto& [material,mesh,target] : vec)
+            for(auto& [material,mesh,target,object] : vec)
             {
                 target->Rendering(material,mesh);
             }
@@ -271,6 +277,7 @@ void Scene::RenderEnd()
 
 void Scene::Finish()
 {
+    InstancingManager::main->Clear(); 
     Gizmo::main->Clear();
     Scene::ExecuteDestroyGameObjects();
     GameObject::ExecuteDestroyComponents();
@@ -398,13 +405,13 @@ void Scene::AddStartQueue(const std::shared_ptr<GameObject>& gameObject)
     _startQueue.push(gameObject);
 }
 
-void Scene::AddRenderer(Material* material, Mesh* mesh, RendererBase* renderBase)
+void Scene::AddRenderer(Material* material, Mesh* mesh, RendererBase* renderBase  , GameObject* object)
 {
     for (int i = 0; i < RENDER_PASS::Count; i++)
     {
         if (RENDER_PASS::HasFlag(material->GetPass(), RENDER_PASS::PASS(1 << i)))
         {
-            _passObjects[i][material->GetShader()].emplace_back(material,mesh,renderBase);
+            _passObjects[i][material->GetShader()].emplace_back(material,mesh,renderBase,object);
 
         }
     }

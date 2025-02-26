@@ -96,7 +96,7 @@ public:
 	BoundingBox GetBound() const {return _originalBound;};
 
 	BoundingBox CalculateBound(const Matrix& worldMatrix) const;
-
+	uint32 GetID() {return _instanceID;}
 private:
 	bool _noUseVertex=false;
 
@@ -109,6 +109,9 @@ private:
 	ComPtr<ID3D12Resource>		_IndexBuffer;
 	D3D12_INDEX_BUFFER_VIEW		_indexBufferView = {};
 	uint32 _indexCount = 0;
+
+	uint32 _instanceID=0;
+	static uint32 _instanceIDGenator;
 
 	BoundingBox _originalBound;
 };

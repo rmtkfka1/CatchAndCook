@@ -3,6 +3,16 @@
 #include "Camera_b2.hlsl"
 
 
+struct Instance_Transform
+{
+    row_major Matrix localToWorld;
+    row_major Matrix worldToLocal;
+    //float3 worldPosition;
+};
+
+
+StructuredBuffer<Instance_Transform> instanceDatas : register(t5);
+
 
 struct VS_IN
 {
@@ -16,11 +26,13 @@ struct VS_OUT
     float4 color : COLOR;
 };
 
-VS_OUT VS_Main(VS_IN input)
+VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    output.pos = mul(float4(input.pos, 1.0f), LocalToWorldMatrix);
+    Instance_Transform data = instanceDatas[id];
+    
+    output.pos = mul(float4(input.pos, 1.0f), data.localToWorld);
     output.pos = mul(output.pos, VPMatrix);
 
     output.color = input.color;

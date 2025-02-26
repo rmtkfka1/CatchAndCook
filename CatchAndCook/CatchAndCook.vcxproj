@@ -189,6 +189,7 @@
     <ClCompile Include="guid_utility.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="input_module.cpp" />
+    <ClCompile Include="InstancingManager.cpp" />
     <ClCompile Include="IType.cpp" />
     <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="main.cpp">
@@ -281,6 +282,7 @@
     <ClInclude Include="guid_utility.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="input_module.h" />
+    <ClInclude Include="InstancingManager.h" />
     <ClInclude Include="IType.h" />
     <ClInclude Include="LightManager.h" />
     <ClInclude Include="Material.h" />

@@ -24,7 +24,7 @@ public:
 	//RendererBase
 	void DebugRendering() override;
 	void Rendering(Material* material, Mesh* mesh) override;
-
+	void Rendering(Material* material,Mesh* mesh,shared_ptr<StructuredBuffer<Instance_Transform>>& buffer) override;
 public:
 	template <typename T, typename = std::enable_if_t<std::is_base_of_v<Sprite, T>>>
 	void SetSprite(shared_ptr<T> sprite)

@@ -415,6 +415,7 @@ void SceneLoader::LinkComponent(json& jsonData)
 			trs.Invert(InvertTRS);
 
             instancesDatas[index].push_back({trs, InvertTRS, pos});
+ /*           instancesDatas[index].push_back({trs,InvertTRS});*/
         }
 
         //instanceTable

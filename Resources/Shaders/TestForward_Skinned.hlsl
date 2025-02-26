@@ -6,6 +6,17 @@
 #include "Skinned_b5.hlsl"
 
 
+struct Instance_Transform
+{
+    row_major Matrix localToWorld;
+    row_major Matrix worldToLocal;
+    float3 worldPosition;
+};
+
+
+StructuredBuffer<Instance_Transform> instanceDatas : register(t5);
+
+
 cbuffer DefaultMaterialParam : register(b7)
 {
 	float4 color;
@@ -48,46 +59,51 @@ struct VS_OUT
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 
-VS_OUT VS_Main(VS_IN input)
+VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    row_major float4x4 l2wMatrix = LocalToWorldMatrix;
-    row_major float4x4 w2lMatrix = WorldToLocalMatrix;
-    float4 boneIds = float4(-1,-1,-1,-1);
+    Instance_Transform data = instanceDatas[id];
+    
+    //output.positionWS = mul(float4(input.pos, 1.0f), data.localToWorld);
+    //output.positionCS = mul(output.positionWS, VPMatrix);
+    
+    //output.uv = input.uv;
+    row_major float4x4 l2wMatrix = data.localToWorld;
+    row_major float4x4 w2lMatrix = data.worldToLocal;
+    float4 boneIds = float4(-1, -1, -1, -1);
     float4 boneWs = 0;
 
-    #ifdef INSTANCED
+#ifdef INSTANCED
 		l2wMatrix = MATRIX(input.instance_trs);
 		w2lMatrix = MATRIX(input.instance_invert_trs);
-    #endif
+#endif
     
     
-    #ifdef SKINNED
+#ifdef SKINNED
 	    boneIds = input.boneIds;
 	    boneWs = input.boneWs;
-    #endif
+#endif
 
 
     output.normalOS = input.normal;
     output.tangentOS = input.tangent;
 
-	#ifdef INSTANCED
+#ifdef INSTANCED
 		output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f),  boneIds, boneWs, l2wMatrix);
-    #else
-        output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f),  boneIds, boneWs);
-	#endif
-	output.positionCS =  TransformWorldToClip(output.positionWS);
+#else
+    output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f), boneIds, boneWs,l2wMatrix);
+#endif
+    output.positionCS = TransformWorldToClip(output.positionWS);
 
-    #ifdef INSTANCED
+#ifdef INSTANCED
 		output.normalWS = TransformNormalLocalToWorld(output.normalOS, boneIds, boneWs, w2lMatrix);
 		output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix);
-	#else
-        output.normalWS = TransformNormalLocalToWorld(input.normal, boneIds, boneWs);
-		output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs);
+#else
+    output.normalWS = TransformNormalLocalToWorld(input.normal, boneIds, boneWs, w2lMatrix);
+    output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs);
 	#endif
 
-    output.uv = input.uv;
     return output;
 }
 [earlydepthstencil]

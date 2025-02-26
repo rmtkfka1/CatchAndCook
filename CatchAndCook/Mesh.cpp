@@ -2,10 +2,11 @@
 #include "Mesh.h"
 #include "Core.h"
 
+uint32 Mesh::_instanceIDGenator=0;
 
 Mesh::Mesh()
 {
-
+	_instanceID = _instanceIDGenator++;
 }
 Mesh::~Mesh()
 {
@@ -20,30 +21,23 @@ void Mesh::Redner(int instanceCount)
 	auto& cmdList = Core::main->GetCmdList();
 	cmdList->IASetPrimitiveTopology(_topology);
 
-	if (_noUseVertex == false)
+	if(_vertexCount != 0)
 	{
 
-		if (_vertexCount != 0)
+		if(_indexCount != 0)
 		{
-
-			if (_indexCount != 0)
-			{
-				cmdList->IASetVertexBuffers(0, 1, &_vertexBufferView);
-				cmdList->IASetIndexBuffer(&_indexBufferView);
-				cmdList->DrawIndexedInstanced(_indexCount, instanceCount, 0, 0, 0);
-			}
-			else
-			{
-				cmdList->IASetVertexBuffers(0, 1, &_vertexBufferView);
-				cmdList->DrawInstanced(_vertexCount, instanceCount, 0, 0);
-			}
+			cmdList->IASetVertexBuffers(0,1,&_vertexBufferView);
+			cmdList->IASetIndexBuffer(&_indexBufferView);
+			cmdList->DrawIndexedInstanced(_indexCount,instanceCount,0,0,0);
+		} else
+		{
+			cmdList->IASetVertexBuffers(0,1,&_vertexBufferView);
+			cmdList->DrawInstanced(_vertexCount,instanceCount,0,0);
 		}
 	}
-	else
-	{
-		cmdList->DrawInstanced(_vertexCount,instanceCount, 0, 0);
-	}
-}
+
+
+};
 
 void Mesh::CreateIndexBuffer(vector<uint32>& vec)
 {

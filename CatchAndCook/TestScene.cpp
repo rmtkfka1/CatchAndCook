@@ -33,9 +33,8 @@ void TestScene::Init()
 	}*/
 
 
-
 #pragma region DebugXYZ
-	{
+	/*{
 
 
 		ShaderInfo info;
@@ -114,7 +113,7 @@ void TestScene::Init()
 
 		meshRenderer->AddMaterials({ material });
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(0, 0, 1, 0)));
-	}
+	}*/
 #pragma endregion
 
 	{
@@ -144,20 +143,6 @@ void TestScene::Init()
 	//	meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(6.0f));
 
 
-		auto obj = ResourceManager::main->Load<Model>(L"kinder",L"../Resources/Models/Kindred/kindred_unity.fbx",VertexType::Vertex_Static)->CreateGameObject(static_pointer_cast<Scene>(shared_from_this()));
-
-		shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
-
-		obj->_transform->SetLocalScale(vec3(30.0f,30.0f,30.0f));
-
-		vector<shared_ptr<MeshRenderer>> renderers;
-		auto a = obj->GetComponentsWithChilds(renderers);
-
-		for(int i=0; i<renderers.size(); ++i)
-		{
-			renderers[i]->GetMaterials()[0]->SetShader(shader);
-			renderers[i]->GetMaterials()[0]->SetPass(RENDER_PASS::Deffered);
-		}
 		
 	}
 
@@ -185,6 +170,7 @@ void TestScene::Init()
 
 		meshRenderer->AddMaterials({ material });
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
+		meshRenderer->SetCulling(false);
 	}
 
 	{
@@ -219,6 +205,7 @@ void TestScene::Init()
 		auto& mesh = GeoMetryHelper::LoadGripMeshControlPoints(2000.0f,2000.0f,20,20);
 		mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 		meshRenderer->AddMesh(mesh);
+		meshRenderer->SetCulling(false);
 	}
 
 

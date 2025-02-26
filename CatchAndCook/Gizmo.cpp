@@ -270,9 +270,8 @@ void Gizmo::Image(const std::shared_ptr<::Texture>& texture, const Vector3& worl
 
 void Gizmo::RenderBegin()
 {
-    if(!main->_ON) return;
-	SceneManager::main->GetCurrentScene()->AddRenderer(material.get(),nullptr,this);
-    SceneManager::main->GetCurrentScene()->AddRenderer(textureGizmo.material.get(), textureGizmo._mesh.get(), &textureGizmo);
+	SceneManager::main->GetCurrentScene()->AddRenderer(material.get(),nullptr,this,nullptr);
+    SceneManager::main->GetCurrentScene()->AddRenderer(textureGizmo.material.get(), textureGizmo._mesh.get(), &textureGizmo,nullptr);
 }
 
 void Gizmo::Rendering(Material* material, Mesh* mesh)
@@ -286,6 +285,11 @@ void Gizmo::Rendering(Material* material, Mesh* mesh)
 	cmdList->IASetVertexBuffers(1,1,&container->_bufferView);
 	cmdList->DrawInstanced(2, lineDatas.size(),0,0);
 }
+
+void Gizmo::Rendering(Material * material,Mesh * mesh,shared_ptr<StructuredBuffer<Instance_Transform>>& buffer)
+{}
+
+
 
 void Gizmo::DebugRendering()
 {
@@ -332,6 +336,9 @@ void GizmoTexture::Rendering(Material* material, Mesh* mesh)
         mesh->Redner();
     }
 }
+
+void GizmoTexture::Rendering(Material * material,Mesh * mesh,shared_ptr<StructuredBuffer<Instance_Transform>>& buffer)
+{}
 
 void GizmoTexture::DebugRendering()
 {
