@@ -20,7 +20,7 @@ public:
 	void Destroy() override;
 
 	void SetModel(const std::shared_ptr<Model>& model);
-	void Rendering(Material* material, Mesh* mesh) override;
+	void Rendering(Material* material, Mesh* mesh, int instanceCount) override;
 	void DebugRendering() override;
 
 

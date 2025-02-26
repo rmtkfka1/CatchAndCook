@@ -274,7 +274,7 @@ void Gizmo::RenderBegin()
     SceneManager::main->GetCurrentScene()->AddRenderer(textureGizmo.material.get(), textureGizmo._mesh.get(), &textureGizmo,nullptr);
 }
 
-void Gizmo::Rendering(Material* material, Mesh* mesh)
+void Gizmo::Rendering(Material* material, Mesh* mesh, int instanceCount)
 {
 	auto& cmdList = Core::main->GetCmdList();
 
@@ -304,7 +304,7 @@ GizmoTexture::~GizmoTexture()
 {
 }
 
-void GizmoTexture::Rendering(Material* material, Mesh* mesh)
+void GizmoTexture::Rendering(Material* material, Mesh* mesh,int instanceCount)
 {
     auto& cmdList = Core::main->GetCmdList();
 

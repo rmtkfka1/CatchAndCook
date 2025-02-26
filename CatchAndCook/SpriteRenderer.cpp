@@ -63,7 +63,7 @@ void SpriteRenderer::SetDestroy()
 }
 
 
-void SpriteRenderer::Rendering(Material* material, Mesh* mesh)
+void SpriteRenderer::Rendering(Material* material, Mesh* mesh, int instanceCount)
 {
 	_sprite->Render();
 }

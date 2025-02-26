@@ -42,7 +42,7 @@ void InstancingManager::Render()
 		auto cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::InstanceOffsetParam)->Alloc(1);
 		memcpy(cbufferContainer->ptr, &param,sizeof(InstanceOffsetParam));
 		cmdList->SetGraphicsRootConstantBufferView(5, cbufferContainer->GPUAdress);
-		objects[0].renderer->Rendering(objects[0].material, objects[0].mesh);
+		objects[0].renderer->Rendering(objects[0].material, objects[0].mesh, objects.size());
 	}
 
 	_objectMap.clear();

@@ -26,7 +26,7 @@ public:
 	void SetDestroy() override;
 
 	//RendererBase
-	void Rendering(Material* material, Mesh* mesh) override;
+	void Rendering(Material* material, Mesh* mesh, int instanceCount = 1) override;
 	void DebugRendering() override;
 
 	//MeshRenderer

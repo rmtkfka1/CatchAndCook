@@ -29,7 +29,7 @@ class RendererBase
 {
 public:
 	virtual ~RendererBase() = default;
-	virtual void Rendering(Material* material, Mesh* mesh) = 0;
+	virtual void Rendering(Material* material, Mesh* mesh, int instanceCount = 1) = 0;
 	virtual void DebugRendering()=0;
 
 	void AddStructuredSetter(const std::shared_ptr<RenderStructuredSetter>& setter, BufferType type);

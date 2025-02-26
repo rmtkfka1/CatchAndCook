@@ -112,7 +112,7 @@ void SkinnedMeshRenderer::SetDestroy()
 	Component::SetDestroy();
 }
 
-void SkinnedMeshRenderer::Rendering(Material* material, Mesh* mesh)
+void SkinnedMeshRenderer::Rendering(Material* material, Mesh* mesh, int instanceCount)
 {
 	auto& cmdList = Core::main->GetCmdList();
 
@@ -122,7 +122,7 @@ void SkinnedMeshRenderer::Rendering(Material* material, Mesh* mesh)
 	if(material != nullptr)
 		material->SetData();
 
-	mesh->Redner();
+	mesh->Redner(instanceCount);
 }
 
 

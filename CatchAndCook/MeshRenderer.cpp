@@ -108,7 +108,7 @@ void MeshRenderer::RenderBegin()
 
 }
 
-void MeshRenderer::Rendering(Material* material, Mesh* mesh)
+void MeshRenderer::Rendering(Material* material, Mesh* mesh,int instanceCount)
 {
 	auto& cmdList = Core::main->GetCmdList();
 
@@ -119,7 +119,7 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh)
 	if (material != nullptr)
 		material->SetData();
 
-	mesh->Redner();
+	mesh->Redner(instanceCount);
 
 }
 //void MeshRenderer::Rendering(Material * material,Mesh * mesh,shared_ptr<StructuredBuffer<Instance_Transform>>& buffer)

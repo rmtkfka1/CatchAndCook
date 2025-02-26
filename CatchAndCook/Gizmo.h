@@ -21,7 +21,7 @@ public:
 	void Clear();
 
 	~GizmoTexture() override;
-	void Rendering(Material* material,Mesh* mesh) override;
+	void Rendering(Material* material,Mesh* mesh,int instanceCount) override;
 	void DebugRendering() override;
 };
 
@@ -44,7 +44,7 @@ public:
 
 	void RenderBegin();
 public:
-	void Rendering(Material* material, Mesh* mesh) override;
+	void Rendering(Material* material, Mesh* mesh,int instanceCount) override;
 	void DebugRendering() override;
 
 
