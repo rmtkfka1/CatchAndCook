@@ -112,12 +112,12 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh)
 {
 	auto& cmdList = Core::main->GetCmdList();
 
-	for (auto& data : _setters) //transform , etc 
+	//// 이 코드는 CBuffer넣는
+	for (auto& data : _cbufferSetters) //transform , etc 
 		data->SetData(material);
 
 	if (material != nullptr)
 		material->SetData();
-
 
 	mesh->Redner();
 
@@ -133,7 +133,7 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh)
 //	material->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
 //	material->PushData();
 //	
-//	for(auto& data : _setters) //transform , etc  
+//	for(auto& data : _structuredSetters) //transform , etc  
 //		data->SetData(material);
 //
 //	if(material != nullptr)

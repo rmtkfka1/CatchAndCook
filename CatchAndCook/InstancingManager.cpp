@@ -12,12 +12,37 @@ void InstancingManager::Render()
 	for(auto& [id, objects] : _objectMap)
 	{
 		auto shader = objects[0].material->GetShader();
-		//shader->_profileInfo.GetRegisterByName()
-		
-		objects[0].renderer->Rendering(objects[0].material,objects[0].mesh);
+		auto structuredInfo = shader->GetTRegisterStructured();
+		for(auto& infos : structuredInfo)
+		{
+			auto& name = infos.name;
+			auto bufferType = Core::main->GetBufferManager()->GetStructuredNameToBufferType(name);
+			auto pool = Core::main->GetBufferManager()->GetStructuredBufferPool(bufferType);
+			int offset = pool->GetOffset();
+
+			auto table = Core::main->GetBufferManager()->GetTable()->Alloc(1);
+
+			for(auto& object : objects)
+			{
+				auto setter = object.renderer->FindStructuredSetter(bufferType);
+				setter->SetData(pool.get());	
+			}
+
+			Core::main->GetBufferManager()->GetTable()->CopyHandle(table.CPUHandle,pool->GetSRVHandle(),0);
+			auto& cmdList = Core::main->GetCmdList();
+
+			int ROOT_OFFSET = (infos.registerIndex - SRV_STRUCTURED_TABLE_REGISTER_OFFSET); // 이게 레지스터 위치를 0으로 옮김.
+			cmdList->SetGraphicsRootDescriptorTable(SRV_STRUCTURED_TABLE_INDEX + ROOT_OFFSET, table.GPUHandle);
+		}
+		objects[0].renderer->Rendering(objects[0].material, objects[0].mesh);
 	}
 
 	_objectMap.clear();
+}
+
+void InstancingManager::Clear()
+{
+
 }
 
 

@@ -38,7 +38,7 @@ void Transform::Start()
 
     if (GetOwner()->GetRenderer())
     {
-        GetOwner()->GetRenderer()->AddSetter(static_pointer_cast<Transform>(shared_from_this()));
+        GetOwner()->GetRenderer()->AddStructuredSetter(static_pointer_cast<Transform>(shared_from_this()), BufferType::TransformParam);
     }
  
 }
@@ -82,7 +82,6 @@ void Transform::Destroy()
 void Transform::RenderBegin()
 {
 	Component::RenderBegin();
-    PushData();
     auto o = GetWorldPosition();
     auto f = GetForward();
     auto u = GetUp();
@@ -90,6 +89,9 @@ void Transform::RenderBegin()
     Gizmo::Line(o, o + f, Vector4(0,0,1,1));
     Gizmo::Line(o,o + u,Vector4(0,1,0,1));
     Gizmo::Line(o,o + r,Vector4(1,0,0,1));
+
+    Matrix matrix;
+    GetLocalToWorldMatrix(matrix);
 }
 
 void Transform::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
@@ -107,19 +109,15 @@ bool Transform::IsExecuteAble()
 	return Component::IsExecuteAble();
 }
 
-void Transform::PushData()
+
+
+void Transform::SetData(StructuredBuffer* buffer)
 {
     TransformParam transParam;
-    GetLocalToWorldMatrix(transParam.localToWorld);
-    transParam.localToWorld.Invert(transParam.worldToLocal);
-	transParam.worldPos = transParam.localToWorld.Translation();
-    _cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::TransformParam)->Alloc(1);
-    memcpy(_cbufferContainer->ptr, (void*)&transParam, sizeof(TransformParam));
-}
-
-void Transform::SetData(Material* material)
-{
-    Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(1, _cbufferContainer->GPUAdress);
+    transParam.localToWorld = _localToWorldMatrix;
+	transParam.localToWorld.Invert(transParam.worldToLocal);
+    transParam.worldPos = transParam.localToWorld.Translation();
+    buffer->AddData(transParam);
 }
 
 vec3 Transform::SetForward(const vec3& dir)

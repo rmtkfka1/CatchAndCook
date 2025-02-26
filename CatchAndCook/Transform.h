@@ -3,7 +3,7 @@
 
 struct CBufferContainer;
 
-class Transform : public Component, public RenderObjectSetter
+class Transform : public Component, public RenderStructuredSetter
 {
 public:
 	Transform();
@@ -22,8 +22,7 @@ public:
     void CollisionEnd(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other) override;
 
     bool IsExecuteAble() override;
-    void PushData() override;
-	virtual void SetData(Material* material = nullptr) override;
+	virtual void SetData(StructuredBuffer* buffer = nullptr) override;
 
 public:
 

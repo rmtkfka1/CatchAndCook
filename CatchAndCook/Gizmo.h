@@ -22,7 +22,6 @@ public:
 
 	~GizmoTexture() override;
 	void Rendering(Material* material,Mesh* mesh) override;
-	void Rendering(Material* material,Mesh* mesh,shared_ptr<StructuredBuffer<Instance_Transform>>& buffer) override;
 	void DebugRendering() override;
 };
 
@@ -46,7 +45,6 @@ public:
 	void RenderBegin();
 public:
 	void Rendering(Material* material, Mesh* mesh) override;
-	void Rendering(Material* material,Mesh* mesh,shared_ptr<StructuredBuffer<Instance_Transform>>& buffer) override;
 	void DebugRendering() override;
 
 

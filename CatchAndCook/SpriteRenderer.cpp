@@ -67,8 +67,3 @@ void SpriteRenderer::Rendering(Material* material, Mesh* mesh)
 {
 	_sprite->Render();
 }
-
-void SpriteRenderer::Rendering(Material * material,Mesh * mesh,shared_ptr<StructuredBuffer<Instance_Transform>>& buffer)
-{}
-
-

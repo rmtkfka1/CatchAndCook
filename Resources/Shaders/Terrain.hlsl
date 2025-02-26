@@ -56,55 +56,55 @@ struct HS_OUT
 
 Texture2D heightMap : register(t0);
 
-Texture2D _detailMap0 :     register(t32);
-Texture2D _detailMap1 :     register(t33);
-Texture2D _detailMap2 :     register(t34);
-Texture2D _detailMap3 :     register(t35);
+Texture2D _detailMap0 :     register(t40);
+Texture2D _detailMap1 :     register(t41);
+Texture2D _detailMap2 :     register(t42);
+Texture2D _detailMap3 :     register(t43);
 
-Texture2D _detailMap4 :     register(t36);
-Texture2D _detailMap5 :     register(t37);
-Texture2D _detailMap6 :     register(t38);
-Texture2D _detailMap7 :     register(t39);
+Texture2D _detailMap4 :     register(t44);
+Texture2D _detailMap5 :     register(t45);
+Texture2D _detailMap6 :     register(t46);
+Texture2D _detailMap7 :     register(t47);
 
-Texture2D _detailMap8 :     register(t40);
-Texture2D _detailMap9 :     register(t41);
-Texture2D _detailMap10 :    register(t42);
-Texture2D _detailMap11 :    register(t43);
+Texture2D _detailMap8 :     register(t48);
+Texture2D _detailMap9 :     register(t49);
+Texture2D _detailMap10 :    register(t50);
+Texture2D _detailMap11 :    register(t51);
 
-Texture2D _normalMap0 :     register(t44);
-Texture2D _normalMap1 :     register(t45);
-Texture2D _normalMap2 :     register(t46);
-Texture2D _normalMap3 :     register(t47);
+Texture2D _normalMap0 :     register(t52);
+Texture2D _normalMap1 :     register(t53);
+Texture2D _normalMap2 :     register(t54);
+Texture2D _normalMap3 :     register(t55);
                                       
-Texture2D _normalMap4 :     register(t48);
-Texture2D _normalMap5 :     register(t49);
-Texture2D _normalMap6 :     register(t50);
-Texture2D _normalMap7 :     register(t51);
+Texture2D _normalMap4 :     register(t56);
+Texture2D _normalMap5 :     register(t57);
+Texture2D _normalMap6 :     register(t58);
+Texture2D _normalMap7 :     register(t59);
                                       
-Texture2D _normalMap8 :     register(t52);
-Texture2D _normalMap9 :     register(t53);
-Texture2D _normalMap10 :    register(t53);
-Texture2D _normalMap11 :    register(t55);
+Texture2D _normalMap8 :     register(t60);
+Texture2D _normalMap9 :     register(t61);
+Texture2D _normalMap10 :    register(t62);
+Texture2D _normalMap11 :    register(t63);
 
-Texture2D _maskMap0 :     register(t56);
-Texture2D _maskMap1 :     register(t57);
-Texture2D _maskMap2 :     register(t58);
-Texture2D _maskMap3 :     register(t59);
+Texture2D _maskMap0 :     register(t64);
+Texture2D _maskMap1 :     register(t65);
+Texture2D _maskMap2 :     register(t66);
+Texture2D _maskMap3 :     register(t67);
            
-Texture2D _maskMap4 :     register(t60);
-Texture2D _maskMap5 :     register(t61);
-Texture2D _maskMap6 :     register(t62);
-Texture2D _maskMap7 :     register(t63);
+Texture2D _maskMap4 :     register(t68);
+Texture2D _maskMap5 :     register(t69);
+Texture2D _maskMap6 :     register(t70);
+Texture2D _maskMap7 :     register(t71);
                         
-Texture2D _maskMap8 :     register(t64);
-Texture2D _maskMap9 :     register(t65);
-Texture2D _maskMap10 :    register(t66);
-Texture2D _maskMap11 :    register(t67);
+Texture2D _maskMap8 :     register(t72);
+Texture2D _maskMap9 :     register(t73);
+Texture2D _maskMap10 :    register(t74);
+Texture2D _maskMap11 :    register(t75);
 
 
-Texture2D _blendMap0 :      register(t68);
-Texture2D _blendMap1 :      register(t69);
-Texture2D _blendMap2 :      register(t70);
+Texture2D _blendMap0 :      register(t76);
+Texture2D _blendMap1 :      register(t77);
+Texture2D _blendMap2 :      register(t78);
 
 
 

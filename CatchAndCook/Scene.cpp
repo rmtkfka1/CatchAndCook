@@ -140,7 +140,12 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                         continue;
                     }
                 }
-
+                if(ele.renderer->IsInstancing() == false)
+                {
+                    //여기서 CBuffer 넣어줘야
+                    InstancingManager::main->AddObject(ele);
+                    InstancingManager::main->Render();
+                }
 				InstancingManager::main->AddObject(ele);
             }
 
@@ -277,7 +282,6 @@ void Scene::RenderEnd()
 
 void Scene::Finish()
 {
-    InstancingManager::main->Clear(); 
     Gizmo::main->Clear();
     Scene::ExecuteDestroyGameObjects();
     GameObject::ExecuteDestroyComponents();

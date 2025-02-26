@@ -99,6 +99,7 @@ class ShaderProfileInfo
 public:
     std::vector<ShaderRegisterInfo> registers;
     std::vector<ShaderCBufferInfo> cbuffers;
+    std::vector<ShaderRegisterInfo> structuredBuffers;
     std::vector<int> tRegisterTable;
     int maxTRegister = 0;
 
@@ -206,9 +207,12 @@ public:
     void Profile();
 
     int GetRegisterIndex(const std::string& name);
+    std::vector<ShaderRegisterInfo>& GetTRegisterStructured();
+
     std::vector<int>& GetTRegisterIndexs();
 
     void Init(const std::wstring& path, const std::vector<VertexProp>& prop, const ShaderArg& shaderParams, const ShaderInfo& info = ShaderInfo());
 protected:
     std::shared_ptr<ShaderCode> LoadBlob(std::wstring path, std::string endPointName, std::string shaderType);
 };
+

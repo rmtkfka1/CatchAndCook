@@ -552,6 +552,7 @@ void Shader::Profile()
                     _profileInfo.tRegisterTable.push_back(registerInfo.registerIndex);
                     _profileInfo.maxTRegister = std::max(_profileInfo.maxTRegister,registerInfo.registerIndex);
                 }
+
                 registerInfo.registerTypeString = registerInfo.registerType +
                     std::to_string(registerInfo.registerIndex);
                 str::trim(registerInfo.registerTypeString);
@@ -560,6 +561,10 @@ void Shader::Profile()
                 {
                     _profileInfo._nameToRegisterTable.emplace(registerInfo.name, registerInfo);
                     _profileInfo.registers.push_back(registerInfo);
+                }
+                if(registerInfo.registerType == 't' && registerInfo.bufferType == "buffer")
+                {
+                    _profileInfo.structuredBuffers.push_back(registerInfo);
                 }
             }
         }
@@ -574,6 +579,11 @@ int Shader::GetRegisterIndex(const std::string& name)
 
     return -1;
 }
+std::vector<ShaderRegisterInfo>& Shader::GetTRegisterStructured()
+{
+    return _profileInfo.structuredBuffers;
+}
+
 std::vector<int>& Shader::GetTRegisterIndexs()
 {
     return _profileInfo.tRegisterTable;

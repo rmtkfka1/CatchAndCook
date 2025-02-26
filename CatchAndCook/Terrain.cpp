@@ -47,13 +47,12 @@ void Terrain::Start()
 
 	if(auto renderer = GetOwner()->GetRenderer())
 	{
-		renderer->AddSetter(static_pointer_cast<Terrain>(shared_from_this()));
+		renderer->AddCbufferSetter(static_pointer_cast<Terrain>(shared_from_this()));
 		if(_gridMesh == nullptr)
             assert(false);
 		dynamic_pointer_cast<MeshRenderer>(renderer)->AddMesh(_gridMesh);
+        renderer->SetInstancing(false);
 	}
-
-
 
  //   _instanceBuffers.resize(_instances.size());
 	//for(int i = 0; i<_instances.size();i++)
@@ -144,19 +143,15 @@ void Terrain::Destroy()
 {
 	if(auto renderer =GetOwner()->GetRenderer())
 	{
-        renderer->RemoveSetter(static_pointer_cast<Terrain>(shared_from_this()));
+        renderer->RemoveCbufferSetter(static_pointer_cast<Terrain>(shared_from_this()));
 	}
-}
-
-void Terrain::PushData()
-{
-
 }
 
 void Terrain::SetData(Material* material)
 {
-	material->SetHandle("heightMap", _heightTexture->GetSRVCpuHandle());
+    material->SetHandle("heightMap",_heightTexture->GetSRVCpuHandle());
 }
+
 
 void Terrain::SetHeightMap(const std::wstring &rawPath,const std::wstring &pngPath, const vec2& rawSize, const vec3& fieldSize)
 {

@@ -14,10 +14,14 @@ struct RenderObjectStrucutre
 	GameObject* object;
 };
 
-class RenderObjectSetter
+class RenderStructuredSetter
 {
 public:
-	virtual void PushData() =0;
+	virtual void SetData(StructuredBuffer* buffer = nullptr) = 0;
+};
+class RenderCBufferSetter
+{
+public:
 	virtual void SetData(Material* material =nullptr) = 0;
 };
 
@@ -28,10 +32,15 @@ public:
 	virtual void Rendering(Material* material, Mesh* mesh) = 0;
 	virtual void DebugRendering()=0;
 
-	void AddSetter(const std::shared_ptr<RenderObjectSetter>& setter);
-	void RemoveSetter(const shared_ptr<RenderObjectSetter>& object);
+	void AddStructuredSetter(const std::shared_ptr<RenderStructuredSetter>& setter, BufferType type);
+	void RemoveStructuredSetter(const shared_ptr<RenderStructuredSetter>& object);
 
-	std::vector<std::shared_ptr<RenderObjectSetter>> _setters;
+	void AddCbufferSetter(const std::shared_ptr<RenderCBufferSetter>& setter);
+	void RemoveCbufferSetter(const shared_ptr<RenderCBufferSetter>& object);
+
+	std::shared_ptr<RenderStructuredSetter>& FindStructuredSetter(const BufferType& type);
+
+	std::vector<std::shared_ptr<RenderCBufferSetter>> _cbufferSetters;
 
 	BoundingBox& GetBound() {
 		return _bound;
@@ -46,8 +55,20 @@ public:
 	{
 		return _isCulling;
 	};
+	void SetInstancing(bool instancing) {
+		_isInstancing = instancing;
+	};
+	bool IsInstancing() const
+	{
+		return _isInstancing;
+	};
 
 	BoundingBox _bound;
 	bool _isCulling = true;
+	bool _isInstancing = true;
+
+private:
+	std::unordered_map<BufferType,std::shared_ptr<RenderStructuredSetter>> _structuredSetters;
 };
+
 

@@ -40,7 +40,7 @@ public: \
         _cbufferContainer = Core::main->GetBufferManager()->CreateAndGetBufferPool(CBUFFER_TYPE, sizeof(STRUCT_TYPE), STRUCT_COUNT)->Alloc(1);\
         memcpy(_cbufferContainer->ptr, &data, sizeof(STRUCT_TYPE));\
     } \
-	void AddAtData(const std::shared_ptr<Shader>& shader) override { \
+	void SetData(const std::shared_ptr<Shader>& shader) override { \
 		int textAllocator = GetStaticRegisterIndex();\
         if(shader)\
 			textAllocator = shader->GetRegisterIndex(cbufferName); \

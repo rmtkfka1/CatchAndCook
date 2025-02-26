@@ -116,7 +116,7 @@ void SkinnedMeshRenderer::Rendering(Material* material, Mesh* mesh)
 {
 	auto& cmdList = Core::main->GetCmdList();
 
-	for(auto& data : _setters) //transform , etc 
+	for(auto& data : _cbufferSetters) //transform , etc 
 		data->SetData(material);
 
 	if(material != nullptr)
@@ -125,8 +125,6 @@ void SkinnedMeshRenderer::Rendering(Material* material, Mesh* mesh)
 	mesh->Redner();
 }
 
-void SkinnedMeshRenderer::Rendering(Material * material,Mesh * mesh,shared_ptr<StructuredBuffer<Instance_Transform>>& buffer)
-{}
 
 void SkinnedMeshRenderer::DebugRendering()
 {

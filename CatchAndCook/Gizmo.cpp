@@ -286,9 +286,6 @@ void Gizmo::Rendering(Material* material, Mesh* mesh)
 	cmdList->DrawInstanced(2, lineDatas.size(),0,0);
 }
 
-void Gizmo::Rendering(Material * material,Mesh * mesh,shared_ptr<StructuredBuffer<Instance_Transform>>& buffer)
-{}
-
 
 
 void Gizmo::DebugRendering()
@@ -336,9 +333,6 @@ void GizmoTexture::Rendering(Material* material, Mesh* mesh)
         mesh->Redner();
     }
 }
-
-void GizmoTexture::Rendering(Material * material,Mesh * mesh,shared_ptr<StructuredBuffer<Instance_Transform>>& buffer)
-{}
 
 void GizmoTexture::DebugRendering()
 {

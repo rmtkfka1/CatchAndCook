@@ -2,10 +2,10 @@
 #include "StructuredBuffer.h"
 #include "Core.h"
 
-void StructuredBuffer::Init(uint32 size, uint32 elementCount, uint32 bufferCount)
+void StructuredBuffer::Init(uint32 size, uint32 elementCount)
 {
 	_elementSize = size;
-	_elementCount = count;
+	_elementCount = elementCount;
 
 	uint64 bufferSize = _elementSize * _elementCount;
 

@@ -3,7 +3,7 @@
 #include "Component.h"
 #include "RendererBase.h"
 
-class Terrain : public Component,public RenderObjectSetter
+class Terrain : public Component, public RenderCBufferSetter
 {
 
 public:
@@ -21,8 +21,7 @@ public:
 	void SetDestroy() override;
 	void Destroy() override;
 
-	virtual void PushData() override;
-	virtual void SetData(Material* material =nullptr) override;
+	
 	bool IsExecuteAble() override;
 
 
@@ -48,6 +47,10 @@ private:
 	void Smooth();
 	bool InBounds(int32 z, int32 x) const;
 	float Average(int32 i,int32 j);
+
+public:
+	void SetData(Material* material) override;
+
 private:
 	static const int CellsPerPatch = 48;
 

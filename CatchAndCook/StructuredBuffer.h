@@ -10,15 +10,15 @@ public:
 	template<class T>
 	void AddData(const T& data)
 	{
-		memcpy(_mappedData + _writeByteOffset, &data, sizeof(data));
+		memcpy(static_cast<char*>(_mappedData) + _writeByteOffset, &data, sizeof(T));
 		_writeOffsetIndex++;
-		_writeByteOffset += sizeof(data);
+		_writeByteOffset += sizeof(T);
 	}
 
 	template<class T>
 	void AddAtData(const T& data, int index)
 	{
-		memcpy(_mappedData + index * sizeof(data), &data, sizeof(data));
+		memcpy(static_cast<char*>(_mappedData) + index * sizeof(T), &data, sizeof(T));
 	}
 
 	void Clear()
@@ -41,7 +41,7 @@ private:
 	uint32 _elementCount;
 	uint64 _elementSize;
 
-	void* _mappedData;
+	void* _mappedData = nullptr;
 	int _writeOffsetIndex = 0;
 	int _writeByteOffset = 0;
 };

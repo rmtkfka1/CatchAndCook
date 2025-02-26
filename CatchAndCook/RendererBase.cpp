@@ -2,18 +2,43 @@
 #include "RendererBase.h"
 
 
-void RendererBase::AddSetter(const std::shared_ptr<RenderObjectSetter>& setter)
+void RendererBase::AddStructuredSetter(const std::shared_ptr<RenderStructuredSetter>& setter, BufferType type)
 {
-	auto it = ranges::find(_setters, setter);
-	if (it == _setters.end())
-		_setters.push_back(setter);
+	auto it = _structuredSetters.find(type);
+	if(it == _structuredSetters.end())
+	{
+		_structuredSetters.emplace(type, setter);
+		//type _structuredSetters
+	}
 }
 
-void RendererBase::RemoveSetter(const shared_ptr<RenderObjectSetter>& object)
+void RendererBase::RemoveStructuredSetter(const shared_ptr<RenderStructuredSetter>& object)
 {
-	auto it = ranges::find(_setters, object);
-	if (it != _setters.end())
-		_setters.erase(it);
+	for(auto it = _structuredSetters.begin(); it != _structuredSetters.end(); )
+	{
+		if(it->second == object)
+			it = _structuredSetters.erase(it); // 삭제 후 iterator를 반환받음
+		else
+			++it;
+	}
 }
 
 
+void RendererBase::AddCbufferSetter(const std::shared_ptr<RenderCBufferSetter>& setter)
+{
+	auto it = ranges::find(_cbufferSetters, setter);
+	if(it == _cbufferSetters.end())
+		_cbufferSetters.push_back(setter);
+}
+
+void RendererBase::RemoveCbufferSetter(const shared_ptr<RenderCBufferSetter>& object)
+{
+	auto it = ranges::find(_cbufferSetters, object);
+	if(it != _cbufferSetters.end())
+		_cbufferSetters.erase(it);
+}
+
+std::shared_ptr<RenderStructuredSetter>& RendererBase::FindStructuredSetter(const BufferType& type)
+{
+	return _structuredSetters[type];
+}
