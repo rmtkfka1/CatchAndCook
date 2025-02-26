@@ -52,7 +52,7 @@ public:
 	void AddStartQueue(const std::shared_ptr<GameObject>& gameObject);
 	void AddDestroyQueue(const std::shared_ptr<GameObject>& gameObject);
 
-	void AddRenderer(Material* material, Mesh* mesh, RendererBase* renderBase, GameObject* object);
+	void AddRenderer(Material* material, Mesh* mesh, RendererBase* renderBase);
 	void AddRenderer(Mesh* mesh, RendererBase* renderBase, RENDER_PASS::PASS pass);
 
 	void Release();

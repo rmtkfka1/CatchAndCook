@@ -11,7 +11,6 @@ struct RenderObjectStrucutre
 	Material* material;
 	Mesh* mesh;
 	RendererBase* renderer;
-	GameObject* object;
 };
 
 class RenderStructuredSetter

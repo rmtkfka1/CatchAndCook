@@ -270,8 +270,8 @@ void Gizmo::Image(const std::shared_ptr<::Texture>& texture, const Vector3& worl
 
 void Gizmo::RenderBegin()
 {
-	SceneManager::main->GetCurrentScene()->AddRenderer(material.get(),nullptr,this,nullptr);
-    SceneManager::main->GetCurrentScene()->AddRenderer(textureGizmo.material.get(), textureGizmo._mesh.get(), &textureGizmo,nullptr);
+	SceneManager::main->GetCurrentScene()->AddRenderer(material.get(),nullptr,this);
+    SceneManager::main->GetCurrentScene()->AddRenderer(textureGizmo.material.get(), textureGizmo._mesh.get(), &textureGizmo);
 }
 
 void Gizmo::Rendering(Material* material, Mesh* mesh, int instanceCount)

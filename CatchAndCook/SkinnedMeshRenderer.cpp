@@ -83,7 +83,7 @@ void SkinnedMeshRenderer::RenderBegin()
 
 		currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
 		currentMaterial->PushData();
-		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(),currentMesh.get(),this,this->GetOwner().get());
+		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(),currentMesh.get(),this);
 	}
 
 	for(int j = 0; j < _sharedMaterials.size(); j++)
@@ -95,7 +95,7 @@ void SkinnedMeshRenderer::RenderBegin()
 			auto &currentMesh = _mesh[i];
 			currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
 			currentMaterial->PushData();
-			SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(),currentMesh.get(),this,this->GetOwner().get());
+			SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(),currentMesh.get(),this);
 		}
 	}
 }
