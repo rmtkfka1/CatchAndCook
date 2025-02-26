@@ -12,6 +12,15 @@ cbuffer Transform : register(b1)
     float3 worldPosition;
 }
 
+struct Instance_Transform
+{
+    row_major Matrix localToWorld;
+    row_major Matrix worldToLocal;
+    float4 worldPosition;
+};
+StructuredBuffer<Instance_Transform> TransformDatas : register(t30);
+
+
 float3 NormalUnpack(float3 normalSample, float power)
 {
 	if (dot(normalSample, normalSample) > 2.98)

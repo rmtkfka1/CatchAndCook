@@ -2,8 +2,6 @@
 #ifndef INCLUDE_GLOBAL
 #define INCLUDE_GLOBAL
 
-#define STRUCTURED_BACKOFFSET 30
-#define STRUCTURED_OFFSET(val) val - STRUCTURED_BACKOFFSET
 
 cbuffer GLOBAL_DATA : register(b0)
 {
@@ -12,6 +10,13 @@ cbuffer GLOBAL_DATA : register(b0)
     float g_padding;
 };
 
+#define STRUCTURED_BACKOFFSET 30
+#define STRUCTURED_OFFSET(val) val - STRUCTURED_BACKOFFSET
+
+cbuffer INSTANCE_OFFSET : register(b4)
+{
+    float4 offset[10];
+}
 
 Texture2D PositionTexture : register(t21);
 Texture2D NormalTexture : register(t22);

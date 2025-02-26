@@ -108,12 +108,17 @@ Texture2D _blendMap2 :      register(t78);
 
 
 
-VS_OUT VS_Main(VS_IN input)
+VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
     
-    output.pos = mul(float4(input.pos, 1.0f), LocalToWorldMatrix);
-    output.normal = mul(float4(input.normal, 0.0f), LocalToWorldMatrix).xyz;
+    Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
+    row_major float4x4 l2wMatrix = data.localToWorld;
+    row_major float4x4 w2lMatrix = data.worldToLocal;
+
+    output.pos = TransformLocalToWorld(float4(input.pos, 1.0f), l2wMatrix);;
+    output.normal = TransformNormalLocalToWorld(input.normal, w2lMatrix);
+
     output.uv = input.uv;
     output.uvTile = input.uv * fieldSize.xz;
     
