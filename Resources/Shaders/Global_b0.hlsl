@@ -2,6 +2,8 @@
 #ifndef INCLUDE_GLOBAL
 #define INCLUDE_GLOBAL
 
+#define STRUCTURED_BACKOFFSET 30
+
 cbuffer GLOBAL_DATA : register(b0)
 {
     float2 g_window_size;
@@ -9,10 +11,6 @@ cbuffer GLOBAL_DATA : register(b0)
     float g_padding;
 };
 
-cbuffer INSTANCE_OFFSET : register(b4)
-{
-    int instance_offset[128];
-};
 
 Texture2D PositionTexture : register(t21);
 Texture2D NormalTexture : register(t22);

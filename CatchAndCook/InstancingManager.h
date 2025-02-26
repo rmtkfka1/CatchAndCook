@@ -5,7 +5,10 @@
 
 struct InstanceOffsetParam
 {
-	std::array<int, 128> offsets;
+
+	//std::array<int, 128> offsets;
+	vec4 offset[10];
+
 };
 union InstanceID
 {

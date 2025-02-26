@@ -58,6 +58,11 @@ struct Instance_Transform
     float4 worldPosition;
 };
 
+cbuffer INSTANCE_OFFSET : register(b4)
+{
+    float offset[10];
+}
+
 
 StructuredBuffer<Instance_Transform> TransformDatas : register(t30);
 
@@ -65,7 +70,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    Instance_Transform data = TransformDatas[instance_offset[30] + id];
+    Instance_Transform data = TransformDatas[offset[30 - STRUCTURED_BACKOFFSET] + id];
     
     //output.positionWS = mul(float4(input.pos, 1.0f), data.localToWorld);
     //output.positionCS = mul(output.positionWS, VPMatrix);

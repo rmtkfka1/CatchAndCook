@@ -27,7 +27,7 @@ void BufferManager::Init()
 
 	CreateBufferPool(BufferType::BoneParam, sizeof(BoneParam), 256);
 
-	CreateStructuredBufferPool(BufferType::TransformParam, "TransformDatas", sizeof(Instance_Transform), 10000);
+	CreateStructuredBufferPool(BufferType::TransformParam, "TransformDatas", sizeof(Instance_Transform), 20000);
 
 	CreateBufferPool(BufferType::InstanceOffsetParam,sizeof(InstanceOffsetParam), 10000);
 	CreateInstanceBufferPool(BufferType::TransformInstanceParam,sizeof(Instance_Transform),10000,128);
