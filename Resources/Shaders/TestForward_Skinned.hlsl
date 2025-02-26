@@ -60,7 +60,7 @@ struct Instance_Transform
 
 cbuffer INSTANCE_OFFSET : register(b4)
 {
-    float offset[10];
+    float4 offset[10];
 }
 
 
@@ -70,7 +70,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)] + id];
+    Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
     
     //output.positionWS = mul(float4(input.pos, 1.0f), data.localToWorld);
     //output.positionCS = mul(output.positionWS, VPMatrix);
