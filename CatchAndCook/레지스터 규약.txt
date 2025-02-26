@@ -27,11 +27,12 @@ b0 = Glocal GameDatas (Time , value , windowSize )
 b1 = Transform 
 b2 = Camera
 b3 = MainLight
-b4 = MatrialParam
+b4 = Instance
+b5 = Bone
 
 //dynamcic System
-b5 = SpriteData
-b5 = SkinnedData
+b5 = 
+b5 = 
 b6 = 
 b7 = 
 

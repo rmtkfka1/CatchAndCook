@@ -11,8 +11,11 @@ void InstancingManager::Render()
 
 	for(auto& [id, objects] : _objectMap)
 	{
+		auto& cmdList = Core::main->GetCmdList();
 		auto shader = objects[0].material->GetShader();
 		auto structuredInfo = shader->GetTRegisterStructured();
+		InstanceOffsetParam param = {};
+
 		for(auto& infos : structuredInfo)
 		{
 			auto& name = infos.name;
@@ -25,15 +28,20 @@ void InstancingManager::Render()
 			for(auto& object : objects)
 			{
 				auto setter = object.renderer->FindStructuredSetter(bufferType);
-				setter->SetData(pool.get());	
+				setter->SetData(pool.get());
 			}
 
 			Core::main->GetBufferManager()->GetTable()->CopyHandle(table.CPUHandle,pool->GetSRVHandle(),0);
-			auto& cmdList = Core::main->GetCmdList();
 
 			int ROOT_OFFSET = (infos.registerIndex - SRV_STRUCTURED_TABLE_REGISTER_OFFSET); // 이게 레지스터 위치를 0으로 옮김.
-			cmdList->SetGraphicsRootDescriptorTable(SRV_STRUCTURED_TABLE_INDEX + ROOT_OFFSET, table.GPUHandle);
+			assert(ROOT_OFFSET >= 0);
+			cmdList->SetGraphicsRootDescriptorTable(SRV_STRUCTURED_TABLE_INDEX + ROOT_OFFSET,table.GPUHandle);
+
+			param.offsets[infos.registerIndex] = offset;
 		}
+		auto cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::InstanceOffsetParam)->Alloc(1);
+		memcpy(cbufferContainer->ptr, &param,sizeof(InstanceOffsetParam));
+		cmdList->SetGraphicsRootConstantBufferView(5, cbufferContainer->GPUAdress);
 		objects[0].renderer->Rendering(objects[0].material, objects[0].mesh);
 	}
 

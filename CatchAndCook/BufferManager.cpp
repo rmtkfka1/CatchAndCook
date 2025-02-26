@@ -4,6 +4,7 @@
 #include "BufferPool.h"
 #include "Material.h"
 #include "Camera.h"
+#include "InstancingManager.h"
 #include "Scene.h"
 #include "Sprite.h"
 #include "testComponent.h"
@@ -13,6 +14,7 @@ void BufferManager::Init()
 
 	_textureBufferPool = make_shared<TextureBufferPool>();
 	_textureBufferPool->Init(2000, 10, 5);
+
 
 	CreateBufferPool(BufferType::GlobalParam, sizeof(GlobalParam), 1);
 	CreateBufferPool(BufferType::TransformParam, sizeof(TransformParam), 10000);
@@ -27,6 +29,7 @@ void BufferManager::Init()
 
 	CreateStructuredBufferPool(BufferType::TransformParam, "TransformDatas", sizeof(Instance_Transform), 10000);
 
+	CreateBufferPool(BufferType::InstanceOffsetParam,sizeof(InstanceOffsetParam), 4096);
 	CreateInstanceBufferPool(BufferType::TransformInstanceParam,sizeof(Instance_Transform),10000,128);
 	CreateInstanceBufferPool(BufferType::GizmoInstanceParam,sizeof(Instance_Gizmo),100000,1);
 	

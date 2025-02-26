@@ -2,6 +2,11 @@
 
 #include "StructuredBuffer.h"
 
+
+struct InstanceOffsetParam
+{
+	std::array<int, 128> offsets;
+};
 union InstanceID
 {
 	struct

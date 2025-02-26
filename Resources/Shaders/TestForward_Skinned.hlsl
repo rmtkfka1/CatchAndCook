@@ -6,15 +6,6 @@
 #include "Skinned_b5.hlsl"
 
 
-struct Instance_Transform
-{
-    row_major Matrix localToWorld;
-    row_major Matrix worldToLocal;
-    float3 worldPosition;
-};
-
-
-StructuredBuffer<Instance_Transform> TransformDatas : register(t5);
 
 
 cbuffer DefaultMaterialParam : register(b7)
@@ -59,11 +50,22 @@ struct VS_OUT
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 
+
+struct Instance_Transform
+{
+    row_major Matrix localToWorld;
+    row_major Matrix worldToLocal;
+    float3 worldPosition;
+};
+
+
+StructuredBuffer<Instance_Transform> TransformDatas : register(t30);
+
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    Instance_Transform data = TransformDatas[id];
+    Instance_Transform data = TransformDatas[instance_offset[30] + id];
     
     //output.positionWS = mul(float4(input.pos, 1.0f), data.localToWorld);
     //output.positionCS = mul(output.positionWS, VPMatrix);
