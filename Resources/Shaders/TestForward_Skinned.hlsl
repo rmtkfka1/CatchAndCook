@@ -55,7 +55,7 @@ struct Instance_Transform
 {
     row_major Matrix localToWorld;
     row_major Matrix worldToLocal;
-    float3 worldPosition;
+    float4 worldPosition;
 };
 
 

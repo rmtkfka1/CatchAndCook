@@ -29,7 +29,7 @@ void BufferManager::Init()
 
 	CreateStructuredBufferPool(BufferType::TransformParam, "TransformDatas", sizeof(Instance_Transform), 10000);
 
-	CreateBufferPool(BufferType::InstanceOffsetParam,sizeof(InstanceOffsetParam), 4096);
+	CreateBufferPool(BufferType::InstanceOffsetParam,sizeof(InstanceOffsetParam), 10000);
 	CreateInstanceBufferPool(BufferType::TransformInstanceParam,sizeof(Instance_Transform),10000,128);
 	CreateInstanceBufferPool(BufferType::GizmoInstanceParam,sizeof(Instance_Gizmo),100000,1);
 	
