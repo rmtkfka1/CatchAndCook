@@ -36,6 +36,10 @@ b5 =
 b6 = 
 b7 = 
 
+//dynamcic System
+t30 = Transform
+t31 = SKINNED
 
 
 #define SKINNED // 스킨드 활성화
+#define INSTANCE //인풋 엘리먼트 인스턴싱 활성화

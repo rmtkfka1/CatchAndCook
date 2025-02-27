@@ -29,14 +29,33 @@ void SkinnedMeshRenderer::Start()
 	auto root = GetOwner()->GetParent();
 	if (root != nullptr)
 	{
-		_hierarchy = root->GetComponent<SkinnedHierarchy>();
-		if (_hierarchy.lock() == nullptr)
+		auto hierarchys = GetOwner()->GetComponentsWithParents<SkinnedHierarchy>();
+		if(!hierarchys.empty())
+			_hierarchy = hierarchys[0];
+		else
 		{
 			_hierarchy = root->AddComponent<SkinnedHierarchy>();
 			_hierarchy.lock()->SetBoneList(_model->_modelBoneList);
 			_hierarchy.lock()->SetNodeList(_model->_modelOriginalNodeList);
 		}
 	}
+
+	auto owner = GetOwner();
+	if(owner && owner->GetType() == GameObjectType::Static)
+	{
+		Matrix matrix;
+		owner->_transform->GetLocalToWorldMatrix_BottomUp(matrix);
+		BoundingBox totalBox;
+		for(int i = 0; i < _mesh.size(); i++) {
+			auto currentMesh = _mesh[i];
+			auto bound = currentMesh->CalculateBound(matrix);
+			if(i == 0) totalBox = bound;
+			else  BoundingBox::CreateMerged(totalBox,totalBox,bound);
+		}
+		SetBound(totalBox);
+	}
+
+	SetInstancing(false);
 }
 
 void SkinnedMeshRenderer::Update()
@@ -67,10 +86,13 @@ void SkinnedMeshRenderer::Destroy()
 void SkinnedMeshRenderer::RenderBegin()
 {
 	Component::RenderBegin();
+
 	auto owner = GetOwner()->_transform;
 	Matrix matrix;
 	owner->GetLocalToWorldMatrix_BottomUp(matrix);
 	BoundingBox box(Vector3(0,0,0),Vector3(5,5,5));
+	box.Transform(box,matrix);
+	SetBound(box);
 
 	for(int i = 0; i < _mesh.size(); i++)
 	{
@@ -78,11 +100,6 @@ void SkinnedMeshRenderer::RenderBegin()
 		auto currentMesh = _mesh[i];
 		auto currentMaterial = _uniqueMaterials[i % _uniqueMaterials.size()];
 
-		box.Transform(box,matrix);
-		SetBound(box);
-
-		currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
-		currentMaterial->PushData();
 		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(),currentMesh.get(),this);
 	}
 
@@ -93,8 +110,6 @@ void SkinnedMeshRenderer::RenderBegin()
 		for(int i = 0; i < _mesh.size(); i++)
 		{
 			auto &currentMesh = _mesh[i];
-			currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
-			currentMaterial->PushData();
 			SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(),currentMesh.get(),this);
 		}
 	}
@@ -106,7 +121,6 @@ void SkinnedMeshRenderer::CollisionBegin(const std::shared_ptr<Collider>& collid
 	Component::CollisionBegin(collider, other);
 }
 
-
 void SkinnedMeshRenderer::SetDestroy()
 {
 	Component::SetDestroy();
@@ -116,7 +130,7 @@ void SkinnedMeshRenderer::Rendering(Material* material, Mesh* mesh, int instance
 {
 	auto& cmdList = Core::main->GetCmdList();
 
-	for(auto& data : _cbufferSetters) //transform , etc 
+	for(auto& data : _cbufferSetters)
 		data->SetData(material);
 
 	if(material != nullptr)

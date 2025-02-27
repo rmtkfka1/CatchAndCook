@@ -36,21 +36,20 @@ void SkinnedHierarchy::Start()
 	auto o = _rootBone.lock();
 
 	for (auto& renderer : GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>())
-		renderer->AddStructuredSetter(GetCast<SkinnedHierarchy>(), BufferType::BoneParam);
-	//SetAnimation(GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>()[0]->_model->_animationList[0]);
+		renderer->AddCbufferSetter(GetCast<SkinnedHierarchy>());
+	SetAnimation(GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>()[0]->_model->_animationList[0]);
 }
 
 void SkinnedHierarchy::Update()
 {
 	Component::Update();
-	//auto name = to_wstring(GetOwner()->GetComponentWithChilds<SkinnedMeshRenderer>()->_model->_rootBoneNode->GetOriginalName());
-	/*
-	if (false && animation->_nodeTables.contains(name))
+	auto name = to_wstring(GetOwner()->GetComponentWithChilds<SkinnedMeshRenderer>()->_model->_rootBoneNode->GetOriginalName());
+	
+	if (animation->_nodeTables.contains(name))
 	{
 		auto pos = animation->_nodeTables[name]->CalculatePosition(animation->CalculateTime(Time::main->GetTime()));
-		//GetOwner()->_transform->SetWorldPosition(Vector3(pos.x, 0, pos.z));
 	};
-	*/
+	
 }
 
 void SkinnedHierarchy::Update2()
@@ -72,6 +71,33 @@ void SkinnedHierarchy::Disable()
 void SkinnedHierarchy::RenderBegin()
 {
 	Component::RenderBegin();
+
+	GetOwner()->_transform->TopDownLocalToWorldUpdate(Matrix::Identity, false);
+
+	int boneCount = _boneNameList.size();
+	for (int i = 0; i < boneCount; i++)
+	{
+		_finalMatrixList[i] = _boneOffsetMatrixList[i];
+		if (auto current = _boneNodeList[i].lock()) {
+			_finalMatrixList[i] = _finalMatrixList[i] * current->_transform->_localToWorldMatrix;
+			_finalMatrixList[i].Invert(_finalInvertMatrixList[i]);
+		}
+	}
+
+
+	GetOwner()->_transform->TopDownLocalToWorldUpdate(Matrix::Identity, false);
+
+	_boneCBuffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::BoneParam)->Alloc(1);
+	for (int i = 0; i < boneCount; i++)
+	{
+		_finalMatrixList[i] = _boneOffsetMatrixList[i];
+		if (auto current = _boneNodeList[i].lock()) {
+			_finalMatrixList[i] = _finalMatrixList[i] * current->_transform->_localToWorldMatrix;
+			_finalMatrixList[i].Invert(_finalInvertMatrixList[i]);
+		}
+	}
+	memcpy(&(static_cast<BoneParam*>(_boneCBuffer->ptr)->boneMatrixs), _finalMatrixList.data(), sizeof(Matrix) * boneCount);
+	memcpy(&(static_cast<BoneParam*>(_boneCBuffer->ptr)->boneInvertMatrixs), _finalInvertMatrixList.data(),sizeof(Matrix) * boneCount);
 }
 
 void SkinnedHierarchy::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
@@ -93,7 +119,7 @@ void SkinnedHierarchy::Destroy()
 {
 	Component::Destroy();
 	for (auto& renderer : GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>())
-		renderer->RemoveStructuredSetter(GetCast<SkinnedHierarchy>());
+		renderer->RemoveCbufferSetter(GetCast<SkinnedHierarchy>());
 }
 
 void SkinnedHierarchy::SetBoneList(const std::vector<std::shared_ptr<Bone>>& bones)
@@ -136,12 +162,13 @@ void SkinnedHierarchy::SetModel(const std::shared_ptr<Model>& model)
 	//memcpy(&(static_cast<BoneParam*>(_boneCBuffer->ptr)->boneInvertMatrixs), _finalInvertMatrixList.data(),sizeof(Matrix) * boneCount);
 //}
 
-void SkinnedHierarchy::SetData(StructuredBuffer* buffer)
+void SkinnedHierarchy::SetData(Material* material)
 {
-	//int index = buffer->GetShader()->GetRegisterIndex("BoneParam");
-	//if(index != -1)
-	//	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(index, _boneCBuffer->GPUAdress);
+	int index = material->GetShader()->GetRegisterIndex("BoneParam");
+	if(index != -1)
+		Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(index, _boneCBuffer->GPUAdress);
 }
+
 
 void SkinnedHierarchy::SetAnimation(const std::shared_ptr<Animation>& animation)
 {

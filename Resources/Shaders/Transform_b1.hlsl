@@ -175,6 +175,8 @@ float4 TransformWorldToLocal(float4 worldPos, float4 boneIds, float4 boneWs, flo
 	#endif
 	return TransformWorldToLocal(worldPos, w2l);
 }
+
+
 //--------------------------------------------------------------------------------------------
 
 float4 TransformWorldToView(float4 worldPos)

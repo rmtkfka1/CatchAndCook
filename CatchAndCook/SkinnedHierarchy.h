@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Component.h"
 
-class SkinnedHierarchy : public Component, public RenderStructuredSetter
+class SkinnedHierarchy : public Component, public RenderCBufferSetter
 {
 public:
 	~SkinnedHierarchy() override;
@@ -21,11 +21,12 @@ public:
 	void SetBoneList(const std::vector<std::shared_ptr<Bone>>& bones);
 	void SetNodeList(const std::vector<std::shared_ptr<ModelNode>>& nodes);
 	void SetModel(const std::shared_ptr<Model>& model);
-	void SetData(StructuredBuffer* buffer) override;
+	
 
 	void SetAnimation(const std::shared_ptr<Animation>& animation);
 	void FindNodeObjects();
 	void Animate(const std::shared_ptr<Animation>& animation, double time);
+	void SetData(Material* material) override;
 
 	std::shared_ptr<Animation> animation;
 
