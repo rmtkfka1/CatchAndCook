@@ -32,7 +32,7 @@ void Terrain::Init()
 void Terrain::Start()
 {
 	Component::Start();
-
+                                 
     ShaderInfo info;
     info._zTest = true;
     info._stencilTest = false;

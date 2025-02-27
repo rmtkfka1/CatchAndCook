@@ -97,12 +97,15 @@ DS_OUT WaveGeneration(DS_OUT input)
     return input;
 }
 
-VS_OUT VS_Main(VS_IN input)
+VS_OUT VS_Main(VS_IN input , uint id :SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
- 
+    
+    Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
+    row_major float4x4 l2wMatrix = data.localToWorld;
+    row_major float4x4 w2lMatrix = data.worldToLocal;
     // 월드, 뷰, 프로젝션 변환
-    float4 worldPos = mul(float4(input.pos.xyz, 1.0f), LocalToWorldMatrix);
+    float4 worldPos = mul(float4(input.pos.xyz, 1.0f), l2wMatrix);
     output.pos = worldPos;
     output.uv = input.uv;
 
