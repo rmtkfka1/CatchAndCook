@@ -10,6 +10,8 @@
 #include "Camera.h"
 #include "CameraManager.h"
 
+#define RECT_TERRAIN
+
 Terrain::Terrain()
 {
 	
@@ -25,6 +27,8 @@ void Terrain::Init()
     GetOwner()->AddComponent<MeshRenderer>();
 }
 
+
+
 void Terrain::Start()
 {
 	Component::Start();
@@ -32,11 +36,16 @@ void Terrain::Start()
     ShaderInfo info;
     info._zTest = true;
     info._stencilTest = false;
-    info.cullingType = CullingType::BACK;
+    info.cullingType = CullingType::WIREFRAME;
     info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
+    #ifdef RECT_TERRAIN
     shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest",L"TerrainQuad.hlsl", GeoMetryProp,
     ShaderArg{{{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}}},info);
+	#else
+    shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest",L"Terrain.hlsl",GeoMetryProp,
+    ShaderArg{{{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}}},info);
+    #endif
     shader->SetInjector({BufferType::TerrainDetailsParam});
     
     _material->SetPropertyVector("fieldSize",Vector4(_fieldSize));
@@ -163,8 +172,15 @@ void Terrain::SetHeightMap(const std::wstring &rawPath,const std::wstring &pngPa
     _heightRawSize = rawSize;
     _fieldSize = fieldSize;
 
+    #ifdef RECT_TERRAIN
     _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(_fieldSize.x,_fieldSize.z,CellsPerPatch,CellsPerPatch);
     _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
+	#else
+	_gridMesh = GeoMetryHelper::LoadGripMesh(_fieldSize.x,_fieldSize.z,CellsPerPatch,CellsPerPatch);
+    _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+    #endif // RECT_TERRAIN
+
+    
 
 	LoadTerrain(rawPath);
 }
