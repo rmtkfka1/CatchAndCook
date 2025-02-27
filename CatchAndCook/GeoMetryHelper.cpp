@@ -219,7 +219,7 @@ shared_ptr<Mesh> GeoMetryHelper::LoadRectangleMesh(const float scale)
     return mesh;
 }
 
-shared_ptr<Mesh> GeoMetryHelper::LoadGripMeshControlPoints(float width, float height, int division_x, int division_z)
+shared_ptr<Mesh> GeoMetryHelper::LoadGripMeshControlPoints(float width, float height, int division_x, int division_z, bool move)
 {
 
     shared_ptr<Mesh> mesh = make_shared<Mesh>();
@@ -270,10 +270,14 @@ shared_ptr<Mesh> GeoMetryHelper::LoadGripMeshControlPoints(float width, float he
     }
 
 
-    for(auto& vertice : vertices)
+    if(move)
     {
-        Matrix mat = Matrix::CreateTranslation(width/2,0,height/2);
-        vertice.position = vec3::Transform(vertice.position,mat);
+
+        for(auto& vertice : vertices)
+        {
+            Matrix mat = Matrix::CreateTranslation(width/2,0,height/2);
+            vertice.position = vec3::Transform(vertice.position,mat);
+        }
     }
 
     mesh->Init(vertices, indices);
