@@ -45,6 +45,7 @@ void Core::Init(HWND hwnd)
     _rootSignature = make_shared<RootSignature>();
     _rootSignature->Init();
 
+
     Initalize = true;
 }
 
@@ -60,6 +61,7 @@ void Core::RenderBegin()
     ThrowIfFailed(_cmdList->Reset(_cmdMemory.Get(), nullptr));
 
     _cmdList->SetGraphicsRootSignature(_rootSignature->GetGraphicsRootSignature().Get());
+    _cmdList->SetComputeRootSignature(_rootSignature->GetComputeRootSignature().Get());
     _cmdList->SetDescriptorHeaps(1, _bufferManager->GetTable()->GetDescriptorHeap().GetAddressOf());
 
 
