@@ -82,6 +82,7 @@ void Scene::Rendering()
     FinalRender(cmdList);
     ForwardPass(cmdList);
     TransparentPass(cmdList);
+    ComputePass(cmdList);
     UiPass(cmdList);
 
 }
@@ -211,6 +212,12 @@ void Scene::FinalRender(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
     cmdList->SetPipelineState(shader->_pipelineState.Get());
     mesh->Redner();
+}
+
+void Scene::ComputePass(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+    //후처리작업진행할거임.
+
 }
 
 void Scene::GlobalSetting()

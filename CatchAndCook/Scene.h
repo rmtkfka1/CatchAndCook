@@ -33,6 +33,7 @@ private:
 	void DefferedPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
 	void ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
 	void FinalRender(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
+	void ComputePass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
 
 public:
 	void SetName(const std::string& name) { _name = name; };
