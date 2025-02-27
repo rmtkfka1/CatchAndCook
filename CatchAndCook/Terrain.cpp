@@ -36,7 +36,7 @@ void Terrain::Start()
     ShaderInfo info;
     info._zTest = true;
     info._stencilTest = false;
-    info.cullingType = CullingType::WIREFRAME;
+    info.cullingType = CullingType::NONE;
     info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
     #ifdef RECT_TERRAIN

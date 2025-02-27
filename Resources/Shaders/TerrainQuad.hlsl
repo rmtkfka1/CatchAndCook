@@ -221,7 +221,7 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 		lerp(quad[2].uvTile, quad[3].uvTile, location.x),
 		location.y);
 
-    dout.pos.y += heightMap.SampleLevel(sampler_point, dout.uv, 0).r * fieldSize.y;
+    dout.pos.y += heightMap.SampleLevel(sampler_lerp, dout.uv, 0).r * fieldSize.y;
     dout.pos = mul(dout.pos, VPMatrix);
     
     return dout;
