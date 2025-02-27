@@ -250,9 +250,11 @@
     <ClCompile Include="Animator.cpp">
       <Filter>03.Component</Filter>
     </ClCompile>
-    <ClCompile Include="TestScene_MapEditor.cpp" />
     <ClCompile Include="InstancingManager.cpp">
       <Filter>07.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene_MapEditor.cpp">
+      <Filter>06.Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -470,9 +472,11 @@
     <ClInclude Include="Animator.h">
       <Filter>03.Component</Filter>
     </ClInclude>
-    <ClInclude Include="TestScene_MapEditor.h" />
     <ClInclude Include="InstancingManager.h">
       <Filter>07.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScene_MapEditor.h">
+      <Filter>06.Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -539,8 +543,10 @@
     <FxCompile Include="..\Resources\Shaders\Transform_b1.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Gizmo_Text.hlsl" />
     <FxCompile Include="..\Resources\Shaders\TerrainQuad.hlsl">
+      <Filter>998.HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Gizmo_Text.hlsl">
       <Filter>998.HLSL</Filter>
     </FxCompile>
   </ItemGroup>
