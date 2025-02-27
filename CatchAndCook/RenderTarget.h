@@ -57,10 +57,13 @@ public:
 
 	shared_ptr<Texture> GetRenderTarget() { return _RenderTargets[_RenderTargetIndex]; }
 	shared_ptr<Texture> GetDSTexture() { return _DSTexture; };
+	shared_ptr<Texture>& GetInterMediateTexture() {return _intermediateTexture;}
 private:
-
+	//[디퍼드렌더링,포워드렌더링] -> [ 중간텍스쳐 ] -> [후처리] -> [렌더타겟]
 	ComPtr<IDXGISwapChain3> _swapChain;
 	array<shared_ptr<Texture>, SWAP_CHAIN_FRAME_COUNT> _RenderTargets;
+
+	shared_ptr<Texture> _intermediateTexture;
 	shared_ptr<Texture> _DSTexture;
 	D3D12_VIEWPORT	_viewport = {};
 	D3D12_RECT		_scissorRect = {};
