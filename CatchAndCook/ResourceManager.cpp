@@ -123,6 +123,7 @@ void ResourceManager::CreateDefaultShader()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
 		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
