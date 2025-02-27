@@ -119,7 +119,6 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     row_major float4x4 w2lMatrix = data.worldToLocal;
 
     output.pos = TransformLocalToWorld(float4(input.pos, 1.0f), l2wMatrix);
-    output.pos.y += heightMap.SampleLevel(sampler_point, input.uv, 0).r * fieldSize.y;
     output.normal = TransformNormalLocalToWorld(input.normal, w2lMatrix);
 
     output.uv = input.uv;
@@ -146,7 +145,7 @@ float CalcTessFactor(float3 p)
     //return clamp(pow(2, lerp(G_MaxTess, G_MinTess, s)), 3.0f, 64.0f);
     
 
-    float d = distance(p, cameraPos.xyz);
+    float d = distance(float3(p.x,0,p.z), float3(cameraPos.x, 0, cameraPos.z));
     float s = smoothstep(DIST_MIN, DIST_MAX, d);
     return lerp(G_MaxTess, G_MinTess, s);
   
@@ -178,7 +177,7 @@ PatchConstOutput ConstantHS(InputPatch<VS_OUT, 4> patch, uint patchID : SV_Primi
 
 [domain("quad")]
 [partitioning("fractional_even")]
-[outputtopology("triangle_cw")]
+[outputtopology("triangle_ccw")]
 [outputcontrolpoints(4)]
 [patchconstantfunc("ConstantHS")]
 [maxtessfactor(64.0f)]
@@ -221,9 +220,8 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 		lerp(quad[0].uvTile, quad[1].uvTile, location.x),
 		lerp(quad[2].uvTile, quad[3].uvTile, location.x),
 		location.y);
-    
 
-    
+    dout.pos.y += heightMap.SampleLevel(sampler_lerp_clamp, dout.uv, 0).r * fieldSize.y;
     dout.pos = mul(dout.pos, VPMatrix);
     
     return dout;

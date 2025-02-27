@@ -8,7 +8,7 @@
 void RootSignature::Init()
 {
 	// 정적 샘플러 설정
-	D3D12_STATIC_SAMPLER_DESC samplerDesc[6] = {};
+	D3D12_STATIC_SAMPLER_DESC samplerDesc[7] = {};
 	samplerDesc[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
 	samplerDesc[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
@@ -36,6 +36,21 @@ void RootSignature::Init()
 	samplerDesc[1].ShaderRegister = 1;
 	samplerDesc[1].RegisterSpace = 0;
 	samplerDesc[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	samplerDesc[6].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc[6].AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	samplerDesc[6].AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	samplerDesc[6].AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	samplerDesc[6].MipLODBias = 0;
+	samplerDesc[6].MaxAnisotropy = 0;
+	samplerDesc[6].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+	samplerDesc[6].BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
+	samplerDesc[6].MinLOD = 0.0f;
+	samplerDesc[6].MaxLOD = D3D12_FLOAT32_MAX;
+	samplerDesc[6].ShaderRegister = 6;
+	samplerDesc[6].RegisterSpace = 0;
+	samplerDesc[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
 
 	samplerDesc[2].Filter = D3D12_FILTER_ANISOTROPIC;
 	samplerDesc[2].MinLOD = 0.0f;
@@ -136,7 +151,7 @@ void RootSignature::Init()
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 	rootSignatureDesc.NumParameters = param.size();
 	rootSignatureDesc.pParameters = param.data();
-	rootSignatureDesc.NumStaticSamplers = 6;
+	rootSignatureDesc.NumStaticSamplers = 7;
 	rootSignatureDesc.pStaticSamplers = samplerDesc;
 	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT
 		| D3D12_ROOT_SIGNATURE_FLAG_ALLOW_STREAM_OUTPUT;

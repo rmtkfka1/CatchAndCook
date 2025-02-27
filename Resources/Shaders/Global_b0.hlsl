@@ -29,6 +29,7 @@ SamplerState sampler_aniso4 : register(s2);
 SamplerState sampler_aniso8 : register(s3);
 SamplerState sampler_aniso16 : register(s4);
 SamplerState sampler_shadow : register(s5);
+SamplerState sampler_lerp_clamp : register(s6);
 
 
 
