@@ -4,10 +4,12 @@
 #include "Light_b3.hlsl"
 
 
-#define TessFactor 4
+#define G_MaxTess 8
+#define G_MinTess 1
+
 #define PI 3.14159f
 #define DIST_MAX 100.0f
-#define DIST_MIN 15.0f
+#define DIST_MIN 1.0f
 
 
 cbuffer TerrainDetailsParam : register(b10)
@@ -116,7 +118,8 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     row_major float4x4 l2wMatrix = data.localToWorld;
     row_major float4x4 w2lMatrix = data.worldToLocal;
 
-    output.pos = TransformLocalToWorld(float4(input.pos, 1.0f), l2wMatrix);;
+    output.pos = TransformLocalToWorld(float4(input.pos, 1.0f), l2wMatrix);
+    output.pos.y += heightMap.SampleLevel(sampler_point, input.uv, 0).r * fieldSize.y;
     output.normal = TransformNormalLocalToWorld(input.normal, w2lMatrix);
 
     output.uv = input.uv;
@@ -127,52 +130,59 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 
 struct PatchConstOutput
 {
-    float edges[3] : SV_TessFactor;
-    float inside[1] : SV_InsideTessFactor;
+    float edges[4] : SV_TessFactor;
+    float inside[2] : SV_InsideTessFactor;
 };
 
-
-
-float CalculateTessLevel(float3 cameraWorldPos, float3 patchPos, float min, float max, float maxLv)
+float CalcTessFactor(float3 p)
 {
-    float distance = length(patchPos - float3(cameraWorldPos.x, 0, cameraWorldPos.z));
-    float ratio = smoothstep(min, max, distance);
+    //float d = distance(p, cameraPos.xyz);
+    //float s = smoothstep(DIST_MIN, DIST_MAX, d);
+    //float tess = exp2(lerp(G_MaxTess, G_MinTess, s));
+    //return clamp(tess, 1.0f, 64.0f);
+    
+    //float d = distance(p, cameraPos.xyz);
+    //float s = saturate((d - DIST_MAX) / (DIST_MAX - DIST_MIN));
+    //return clamp(pow(2, lerp(G_MaxTess, G_MinTess, s)), 3.0f, 64.0f);
+    
 
-    ratio = pow(clamp(ratio,0,1), 0.4);
-
-    float level = lerp(maxLv, 1.0f, ratio);
-    return round(clamp(level, 1.0f, maxLv) * 10) / 10;
-}
-
+    float d = distance(p, cameraPos.xyz);
+    float s = smoothstep(DIST_MIN, DIST_MAX, d);
+    return lerp(G_MaxTess, G_MinTess, s);
+  
+};
 
 //패치단위로 호출
-PatchConstOutput ConstantHS(InputPatch<VS_OUT, 3> patch, uint patchID : SV_PrimitiveID)
+PatchConstOutput ConstantHS(InputPatch<VS_OUT, 4> patch, uint patchID : SV_PrimitiveID)
 {
 
     PatchConstOutput pt;
     
-    float3 edge0Pos = (patch[1].pos + patch[2].pos) / 2.f;
-    float3 edge1Pos = (patch[2].pos + patch[0].pos) / 2.f;
-    float3 edge2Pos = (patch[0].pos + patch[1].pos) / 2.f;
+    float3 e0 = 0.5f * (patch[0].pos.xyz + patch[2].pos.xyz);
+    float3 e1 = 0.5f * (patch[0].pos.xyz + patch[1].pos.xyz);
+    float3 e2 = 0.5f * (patch[1].pos.xyz + patch[3].pos.xyz);
+    float3 e3 = 0.5f * (patch[2].pos.xyz + patch[3].pos.xyz);
+    float3 c = 0.25f * (patch[0].pos.xyz + patch[1].pos.xyz + patch[2].pos.xyz + patch[3].pos.xyz);
 
-    float edge0TessLevel = CalculateTessLevel(cameraPos.xyz, edge0Pos, DIST_MIN, DIST_MAX, TessFactor);
-    float edge1TessLevel = CalculateTessLevel(cameraPos.xyz, edge1Pos, DIST_MIN, DIST_MAX, TessFactor);
-    float edge2TessLevel = CalculateTessLevel(cameraPos.xyz, edge2Pos, DIST_MIN, DIST_MAX, TessFactor);
 
-    pt.edges[0] = edge0TessLevel;
-    pt.edges[1] = edge1TessLevel;
-    pt.edges[2] = edge2TessLevel;
-    pt.inside[0] = edge2TessLevel;
+    pt.edges[0] = CalcTessFactor(e0);
+    pt.edges[1] = CalcTessFactor(e1);
+    pt.edges[2] = CalcTessFactor(e2);
+    pt.edges[3] = CalcTessFactor(e3);
+
+    pt.inside[0] = CalcTessFactor(c);
+    pt.inside[1] = pt.inside[0];
+    
     return pt;
 }
 
-[domain("tri")]
+[domain("quad")]
 [partitioning("fractional_even")]
 [outputtopology("triangle_cw")]
-[outputcontrolpoints(3)]
+[outputcontrolpoints(4)]
 [patchconstantfunc("ConstantHS")]
-[maxtessfactor(64)]
-HS_OUT HS_Main(InputPatch<VS_OUT, 3> patch, uint vertexID : SV_OutputControlPointID, uint patchId : SV_PrimitiveID)
+[maxtessfactor(64.0f)]
+HS_OUT HS_Main(InputPatch<VS_OUT, 4> patch, uint vertexID : SV_OutputControlPointID, uint patchId : SV_PrimitiveID)
 {
     //4번호출됨.
     HS_OUT hout;
@@ -186,26 +196,38 @@ HS_OUT HS_Main(InputPatch<VS_OUT, 3> patch, uint vertexID : SV_OutputControlPoin
 
 
 
-[domain("tri")]
-DS_OUT DS_Main(OutputPatch<HS_OUT, 3> quad, PatchConstOutput patchConst, float3 location : SV_DomainLocation)
+[domain("quad")]
+DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 location : SV_DomainLocation)
 {
     DS_OUT dout;
     
-    float3 pos = quad[0].pos * location.x + quad[1].pos * location.y + quad[2].pos * location.z;
-    float2 uv = quad[0].uv * location.x + quad[1].uv * location.y + quad[2].uv * location.z;
-    float2 uvTile = quad[0].uvTile * location.x + quad[1].uvTile * location.y + quad[2].uvTile * location.z;
-    float3 normal = quad[0].normal * location.x + quad[1].normal * location.y + quad[2].normal * location.z;
+  
+    dout.pos = lerp(
+		lerp(quad[0].pos, quad[1].pos, location.x),
+		lerp(quad[2].pos, quad[3].pos, location.x),
+		location.y);
+
+    dout.uv = lerp(
+		lerp(quad[0].uv, quad[1].uv, location.x),
+		lerp(quad[2].uv, quad[3].uv, location.x),
+		location.y);
+
+    dout.normal = lerp(
+		lerp(quad[0].normal, quad[1].normal, location.x),
+		lerp(quad[2].normal, quad[3].normal, location.x),
+		location.y);
     
-    pos.y += heightMap.SampleLevel(sampler_point, uv, 0).r * fieldSize.y;
+    dout.uvTile = lerp(
+		lerp(quad[0].uvTile, quad[1].uvTile, location.x),
+		lerp(quad[2].uvTile, quad[3].uvTile, location.x),
+		location.y);
     
-    dout.uv = uv;
-    dout.pos = mul(float4(pos, 1.0f), VPMatrix);
-    dout.normal = normal;
-    dout.uvTile = uvTile;
+
+    
+    dout.pos = mul(dout.pos, VPMatrix);
     
     return dout;
 }
-
 
 float4 PS_Main(DS_OUT input) : SV_Target
 {

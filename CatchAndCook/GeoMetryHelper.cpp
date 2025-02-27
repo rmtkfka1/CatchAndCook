@@ -270,6 +270,12 @@ shared_ptr<Mesh> GeoMetryHelper::LoadGripMeshControlPoints(float width, float he
     }
 
 
+    for(auto& vertice : vertices)
+    {
+        Matrix mat = Matrix::CreateTranslation(width/2,0,height/2);
+        vertice.position = vec3::Transform(vertice.position,mat);
+    }
+
     mesh->Init(vertices, indices);
 
     return mesh;

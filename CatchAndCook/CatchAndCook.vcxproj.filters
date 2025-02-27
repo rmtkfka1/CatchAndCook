@@ -540,5 +540,8 @@
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Gizmo_Text.hlsl" />
+    <FxCompile Include="..\Resources\Shaders\TerrainQuad.hlsl">
+      <Filter>998.HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

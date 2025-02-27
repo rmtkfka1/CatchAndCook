@@ -32,10 +32,10 @@ void Terrain::Start()
     ShaderInfo info;
     info._zTest = true;
     info._stencilTest = false;
-    info.cullingType = CullingType::BACK;
+    info.cullingType = CullingType::WIREFRAME;
     info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
-    shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest",L"Terrain.hlsl", GeoMetryProp,
+    shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest",L"TerrainQuad.hlsl", GeoMetryProp,
     ShaderArg{{{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}}},info);
     shader->SetInjector({BufferType::TerrainDetailsParam});
     
@@ -163,8 +163,8 @@ void Terrain::SetHeightMap(const std::wstring &rawPath,const std::wstring &pngPa
     _heightRawSize = rawSize;
     _fieldSize = fieldSize;
 
-    _gridMesh = GeoMetryHelper::LoadGripMesh(_fieldSize.x,_fieldSize.z,CellsPerPatch,CellsPerPatch);
-    _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+    _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(_fieldSize.x,_fieldSize.z,CellsPerPatch,CellsPerPatch);
+    _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 
 	LoadTerrain(rawPath);
 }
