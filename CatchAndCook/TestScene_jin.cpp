@@ -16,6 +16,7 @@ void TestScene_jin::Init()
 	Scene::Init();
 
 	{
+		if (false)
 		{
 			ShaderInfo info;
 			info._zTest = true;
@@ -80,7 +81,7 @@ void TestScene_jin::Init()
 	}
 
 
-	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/TestScene9.json");
+	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/MainField.json");
 	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
 	sceneLoader->Load(GetCast<Scene>());
 }
