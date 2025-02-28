@@ -8,6 +8,13 @@ cbuffer BoneParam : register(b5)
     row_major matrix InvertBoneMatrix[256];
 }
 
+struct BoneData
+{
+    row_major matrix BoneMatrix[256];
+    row_major matrix InvertBoneMatrix[256];
+};
+
+
 float4 CalculateBone(float4 localPosition, float4 bIds, float4 bWs)
 {
     return mul(localPosition, BoneMatrix[max(0, (int)bIds.x)]) * (bWs.x * step(-0.5, bIds.x))

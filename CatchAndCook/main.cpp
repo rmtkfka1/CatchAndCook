@@ -16,13 +16,13 @@ int main()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-
+	HINSTANCE hInst = GetModuleHandle(NULL);
 	WNDCLASSEX wc = { sizeof(WNDCLASSEX),
 				CS_CLASSDC,
 				WndProc,
 				0L,
 				0L,
-				GetModuleHandle(NULL),
+		hInst,
 				NULL,
 				NULL,
 				NULL,
@@ -55,6 +55,7 @@ int main()
 	UpdateWindow(hwnd);
 
 	game = make_unique<Game>();
+	game->SetHandle(hwnd, hInst);
 	game->Init(hwnd);
 
 	MSG msg = {};

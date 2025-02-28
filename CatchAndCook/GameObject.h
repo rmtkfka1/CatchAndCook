@@ -225,6 +225,22 @@ public:
 
 		return vec;
 	}
+	template <class T,class = std::enable_if_t<std::is_base_of_v<Component,T>>>
+	std::shared_ptr<T> GetComponentWithParents()
+	{
+		for(auto& component : _components)
+		{
+			std::shared_ptr<T> downCast = std::dynamic_pointer_cast<T>(component);
+			if(downCast != nullptr)
+				return downCast;
+		}
+
+		auto parent = GetParent();
+		if(parent != nullptr)
+			if(auto result = parent->GetComponentWithParents<T>())
+				return result;
+		return nullptr;
+	}
 
 	template <class T>
 	void ForHierarchyAll(const T& func)

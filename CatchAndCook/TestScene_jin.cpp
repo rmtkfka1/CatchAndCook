@@ -1,5 +1,9 @@
 ﻿#include "pch.h"
 #include "TestScene_jin.h"
+
+#include "Camera.h"
+#include "CameraManager.h"
+#include "ColliderManager.h"
 #include "Gizmo.h"
 #include "MeshRenderer.h"
 #include "testComponent.h"
@@ -76,7 +80,7 @@ void TestScene_jin::Init()
 	}
 
 
-	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/MainField.json");
+	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/TestScene9.json");
 	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
 	sceneLoader->Load(GetCast<Scene>());
 }
@@ -88,6 +92,18 @@ void TestScene_jin::Update()
 	//Gizmo::Text(L"안녕하세요",30,vec3(3,1,1),vec3(-0.707,0,-0.707),vec3(0,1,0));
 	//Gizmo::Image(ResourceManager::main->Get<Texture>(L"none"), vec3(-2,0,2),vec3(0,0,-1),vec3(0,1,0));
 	//Gizmo::Image(ResourceManager::main->Get<Texture>(L"none_debug"),vec3(-1,0,2),vec3(0.707,0,-0.707),vec3(0,1,0));
+
+
+	auto camera = CameraManager::main->GetActiveCamera();
+	Vector3 worldPos = camera->GetScreenToWorldPosition(Input::main->GetMousePosition());
+	Vector3 worldDir = (worldPos - camera->GetCameraPos());
+	worldDir.Normalize();
+	float dis = 1000;
+	auto a = ColliderManager::main->RayCast({worldPos,worldDir}, dis);
+	if(a)
+	{
+		Gizmo::Ray(a.worldPos, a.normal, 1);
+	}
 }
 
 void TestScene_jin::RenderBegin()

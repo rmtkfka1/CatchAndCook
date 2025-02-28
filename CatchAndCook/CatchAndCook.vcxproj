@@ -214,6 +214,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="PerformanceProfiler.cpp" />
     <ClCompile Include="PhysicsComponent.cpp" />
     <ClCompile Include="RendererBase.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
@@ -292,6 +293,7 @@
     <ClInclude Include="ModelMesh.h" />
     <ClInclude Include="ModelNode.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="PerformanceProfiler.h" />
     <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="RendererBase.h" />
     <ClInclude Include="RenderTarget.h" />

@@ -49,4 +49,18 @@ void Time::Update()
 
 }
 
+double Time::GetClockNow() const
+{
+	uint64 currentCount;
+	::QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&currentCount));
+	return static_cast<double>(currentCount) / static_cast<double>(_frequency);
+}
+
+double Time::GetDeltaTimeNow() const
+{
+	uint64 currentCount;
+	::QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&currentCount));
+	return (currentCount - _prevCount) / static_cast<double>(_frequency);
+}
+
 

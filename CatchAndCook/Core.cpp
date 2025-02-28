@@ -11,6 +11,7 @@
 #include "BufferManager.h"
 #include "Material.h"
 #include "MeshRenderer.h"
+#include "PerformanceProfiler.h"
 #include "SceneManager.h"
 unique_ptr<Core> Core::main=nullptr;
 
@@ -59,12 +60,9 @@ void Core::RenderBegin()
 {
     ThrowIfFailed(_cmdMemory->Reset());
     ThrowIfFailed(_cmdList->Reset(_cmdMemory.Get(), nullptr));
-
     _cmdList->SetGraphicsRootSignature(_rootSignature->GetGraphicsRootSignature().Get());
     _cmdList->SetComputeRootSignature(_rootSignature->GetComputeRootSignature().Get());
     _cmdList->SetDescriptorHeaps(1, _bufferManager->GetTable()->GetDescriptorHeap().GetAddressOf());
-
-
 }
 
 

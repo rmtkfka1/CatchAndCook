@@ -32,21 +32,20 @@ void MeshRenderer::Start()
 {
 	Component::Start();
 
-	auto owner = GetOwner()->_transform;
-	Matrix matrix;
-	owner->GetLocalToWorldMatrix_BottomUp(matrix);
-
-	BoundingBox totalBox;
-	for(int i = 0; i < _mesh.size(); i++)
+	auto owner = GetOwner();
+	if(owner && owner->GetType() == GameObjectType::Static)
 	{
-		auto currentMesh = _mesh[i];
-		auto bound = currentMesh->CalculateBound(matrix);
-		if(i == 0)
-			totalBox = bound;
-		else
-			BoundingBox::CreateMerged(totalBox,totalBox,bound);
+		Matrix matrix;
+		owner->_transform->GetLocalToWorldMatrix_BottomUp(matrix);
+		BoundingBox totalBox;
+		for(int i = 0; i < _mesh.size(); i++) {
+			auto currentMesh = _mesh[i];
+			auto bound = currentMesh->CalculateBound(matrix);
+			if(i == 0) totalBox = bound;
+			else  BoundingBox::CreateMerged(totalBox,totalBox,bound);
+		}
+		SetBound(totalBox);
 	}
-	SetBound(totalBox);
 }
 
 void MeshRenderer::Update()
@@ -82,14 +81,26 @@ void MeshRenderer::RenderBegin()
 {
 	Component::RenderBegin();
 
+	auto owner = GetOwner();
+	if(owner && owner->GetType() == GameObjectType::Dynamic)
+	{
+		Matrix matrix;
+		owner->_transform->GetLocalToWorldMatrix_BottomUp(matrix);
+		BoundingBox totalBox;
+		for(int i = 0; i < _mesh.size(); i++) {
+			auto currentMesh = _mesh[i];
+			auto bound = currentMesh->CalculateBound(matrix);
+			if(i == 0) totalBox = bound;
+			else  BoundingBox::CreateMerged(totalBox,totalBox,bound);
+		}
+		SetBound(totalBox);
+	}
 
 	for (int i = 0; i < _mesh.size(); i++)
 	{
 		auto currentMesh = _mesh[i];
 		auto currentMaterial = _uniqueMaterials[i % _uniqueMaterials.size()];
 
-		//currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
-		//currentMaterial->PushData();
 		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(), currentMesh.get(), this);
 	}
 
@@ -100,8 +111,6 @@ void MeshRenderer::RenderBegin()
 		for (int i = 0; i < _mesh.size(); i++)
 		{
 			auto &currentMesh = _mesh[i];
-			//currentMaterial->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
-			//currentMaterial->PushData();
 			SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(),currentMesh.get(),this);
 		}
 	}
@@ -122,27 +131,7 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh,int instanceCount)
 	mesh->Redner(instanceCount);
 
 }
-//void MeshRenderer::Rendering(Material * material,Mesh * mesh,shared_ptr<StructuredBuffer<Instance_Transform>>& buffer)
-//{
-//	auto& cmdList = Core::main->GetCmdList();
-//
-//	buffer->Upload();
-//	
-//	material->SetHandle("instanceDatas",buffer->GetSRVHandle());
-//
-//	material->_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
-//	material->PushData();
-//	
-//	for(auto& data : _structuredSetters) //transform , etc  
-//		data->SetData(material);
-//
-//	if(material != nullptr)
-//		material->SetData();
-//
-//	mesh->Redner(buffer->GetCount());
-//	
-//
-//};
+
 
 void MeshRenderer::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
@@ -151,36 +140,7 @@ void MeshRenderer::CollisionBegin(const std::shared_ptr<Collider>& collider, con
 
 void MeshRenderer::DebugRendering()
 {
-	/*auto& cmdList = Core::main->GetCmdList();
 
-	for (auto& mesh : _mesh)
-	{
-		if (_normalDebugShader)
-		{
-			cmdList->SetPipelineState(_normalDebugShader->_pipelineState.Get());
-
-			GetOwner()->_transform->AddAtData();
-
-			cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
-
-			if (mesh->GetVertexCount() != 0)
-			{
-				if (mesh->GetIndexCount() != 0)
-				{
-					cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());
-					cmdList->IASetIndexBuffer(&mesh->GetIndexView());
-					cmdList->DrawIndexedInstanced(mesh->GetIndexCount(), 1, 0, 0, 0);
-				}
-
-				else
-				{
-					cmdList->IASetVertexBuffers(0, 1, &mesh->GetVertexView());
-					cmdList->DrawInstanced(mesh->GetVertexCount(), 1, 0, 0);
-				}
-			}
-
-		}
-	}*/
 }
 
 void MeshRenderer::SetDestroy()

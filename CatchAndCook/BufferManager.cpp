@@ -13,25 +13,30 @@ void BufferManager::Init()
 {
 
 	_textureBufferPool = make_shared<TextureBufferPool>();
-	_textureBufferPool->Init(2000, 10, 5);
+	_textureBufferPool->Init(2000,10,5);
 
+	{
+		CreateBufferPool(BufferType::GlobalParam,sizeof(GlobalParam),1);
+		CreateBufferPool(BufferType::TransformParam,sizeof(TransformParam),1000);
+		CreateBufferPool(BufferType::MateriaParam,sizeof(MaterialParams),1000);
+		CreateBufferPool(BufferType::MateriaSubParam,sizeof(TestSubMaterialParam),1000);
+		CreateBufferPool(BufferType::CameraParam,sizeof(CameraParams),10);
+		CreateBufferPool(BufferType::SpriteTextureParam,sizeof(SprtieTextureParam),255);
+		CreateBufferPool(BufferType::SpriteWorldParam,sizeof(SpriteWorldParam),255);
+		CreateBufferPool(BufferType::LightParam,sizeof(LightParams),1);
 
-	CreateBufferPool(BufferType::GlobalParam, sizeof(GlobalParam), 1);
-	CreateBufferPool(BufferType::TransformParam, sizeof(TransformParam), 10000);
-	CreateBufferPool(BufferType::MateriaParam, sizeof(MaterialParams),1000);
-	CreateBufferPool(BufferType::MateriaSubParam, sizeof(TestSubMaterialParam),1000);
-	CreateBufferPool(BufferType::CameraParam, sizeof(CameraParams), 10);
-	CreateBufferPool(BufferType::SpriteTextureParam, sizeof(SprtieTextureParam), 255);
-	CreateBufferPool(BufferType::SpriteWorldParam, sizeof(SpriteWorldParam), 255);
-	CreateBufferPool(BufferType::LightParam,sizeof(LightParams),1);
+		CreateBufferPool(BufferType::BoneParam,sizeof(BoneParam),256);
+		CreateBufferPool(BufferType::InstanceOffsetParam,sizeof(InstanceOffsetParam),10000);
+	}
 
-	CreateBufferPool(BufferType::BoneParam, sizeof(BoneParam), 256);
+	{
+		CreateStructuredBufferPool(BufferType::TransformParam,"TransformDatas",sizeof(Instance_Transform),20000);
+	}
 
-	CreateStructuredBufferPool(BufferType::TransformParam, "TransformDatas", sizeof(Instance_Transform), 20000);
-
-	CreateBufferPool(BufferType::InstanceOffsetParam,sizeof(InstanceOffsetParam), 10000);
-	CreateInstanceBufferPool(BufferType::TransformInstanceParam,sizeof(Instance_Transform),10000,128);
-	CreateInstanceBufferPool(BufferType::GizmoInstanceParam,sizeof(Instance_Gizmo),100000,1);
+	{
+		CreateInstanceBufferPool(BufferType::TransformInstanceParam,sizeof(Instance_Transform),10000,128);
+		CreateInstanceBufferPool(BufferType::GizmoInstanceParam,sizeof(Instance_Gizmo),100000,1);
+	}
 	
 	{
 		_table = make_shared<DescritporTable>();

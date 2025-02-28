@@ -6,8 +6,6 @@
 #include "Skinned_b5.hlsl"
 
 
-
-
 cbuffer DefaultMaterialParam : register(b7)
 {
 	float4 color;
@@ -66,8 +64,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 		l2wMatrix = MATRIX(input.instance_trs);
 		w2lMatrix = MATRIX(input.instance_invert_trs);
 #endif
-    
-    
+
 #ifdef SKINNED
 	    boneIds = input.boneIds;
 	    boneWs = input.boneWs;
@@ -80,7 +77,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 #ifdef INSTANCED
 		output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f),  boneIds, boneWs, l2wMatrix);
 #else
-    output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f), boneIds, boneWs,l2wMatrix);
+    output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f), boneIds, boneWs, l2wMatrix);
 #endif
     output.positionCS = TransformWorldToClip(output.positionWS);
 
