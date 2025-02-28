@@ -11,7 +11,7 @@
 #include "BufferManager.h"
 #include "Material.h"
 #include "MeshRenderer.h"
-#include "PerformanceProfiler.h"
+#include "Profiler.h"
 #include "SceneManager.h"
 unique_ptr<Core> Core::main=nullptr;
 

@@ -30,7 +30,7 @@ struct BlockInfo
 	}
 };
 
-class PerformanceProfiler
+class Profiler
 {
 	unordered_map<string, BlockInfo> blockInfoTable;
 
@@ -38,11 +38,11 @@ class PerformanceProfiler
 	vector<string> blockOrder;
 	stack<string> blockStack;
 public:
-	static std::unique_ptr<PerformanceProfiler> main;
+	static std::unique_ptr<Profiler> main;
 
 	HWND hwnd;
 
-	PerformanceProfiler();
+	Profiler();
 	void Init(HWND hParent, HINSTANCE hinstance);
 	void Set(const string& key,BlockTag tag = BlockTag::CPU);
 	void Fin();

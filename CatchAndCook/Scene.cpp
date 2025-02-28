@@ -11,7 +11,7 @@
 #include "Gizmo.h"
 #include "Mesh.h"
 #include "InstancingManager.h"
-#include "PerformanceProfiler.h"
+#include "Profiler.h"
 
 void Scene::AddGameObject(const std::shared_ptr<GameObject>& gameObject)
 {
@@ -30,7 +30,7 @@ void Scene::Init()
 
 void Scene::Update()
 {
-    PerformanceProfiler::main->Set("Logic_Start");
+    Profiler::main->Set("Logic_Start");
     while (!_changeTypeQueue.empty()) 
     {
         auto& current = _changeTypeQueue.front();
@@ -48,23 +48,23 @@ void Scene::Update()
         current->Start();
         _startQueue.pop();
     }
-    PerformanceProfiler::main->Fin();
+    Profiler::main->Fin();
 
-    PerformanceProfiler::main->Set("Logic_Update1");
+    Profiler::main->Set("Logic_Update1");
     for (auto& gameObject : _gameObjects)
 	    if(gameObject->GetType() == GameObjectType::Dynamic)
             gameObject->Update();
-    PerformanceProfiler::main->Fin();
+    Profiler::main->Fin();
 
-    PerformanceProfiler::main->Set("Logic_Update2");
+    Profiler::main->Set("Logic_Update2");
     for (auto& gameObject : _gameObjects)
         if(gameObject->GetType() == GameObjectType::Dynamic)
             gameObject->Update2();
-    PerformanceProfiler::main->Fin();
+    Profiler::main->Fin();
 
-    PerformanceProfiler::main->Set("Logic_ColliderManager");
+    Profiler::main->Set("Logic_ColliderManager");
     ColliderManager::main->Update();
-    PerformanceProfiler::main->Fin();
+    Profiler::main->Fin();
 }
 
 void Scene::RenderBegin()
@@ -72,10 +72,10 @@ void Scene::RenderBegin()
     for (auto& ele : _passObjects)
         ele.clear();
 
-    PerformanceProfiler::main->Set("Render_RenderBegin");
+    Profiler::main->Set("Render_RenderBegin");
     for (auto& gameObject : _gameObjects)
     	gameObject->RenderBegin();
-    PerformanceProfiler::main->Fin();
+    Profiler::main->Fin();
  /*   Gizmo::main->RenderBegin();*/
 }
 

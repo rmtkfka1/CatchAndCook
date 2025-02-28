@@ -1,18 +1,18 @@
 ﻿#include "pch.h"
-#include "PerformanceProfiler.h"
+#include "Profiler.h"
 
-PerformanceProfiler::PerformanceProfiler()
+Profiler::Profiler()
 {
 }
-std::unique_ptr<PerformanceProfiler> PerformanceProfiler::main = nullptr;
+std::unique_ptr<Profiler> Profiler::main = nullptr;
 
-void PerformanceProfiler::Init(HWND hParent, HINSTANCE hinstance)
+void Profiler::Init(HWND hParent, HINSTANCE hinstance)
 {
 	hwnd = WinMain(hParent, hinstance);
 }
 
 
-void PerformanceProfiler::Set(const string& key, BlockTag tag)
+void Profiler::Set(const string& key, BlockTag tag)
 {
 	auto [it, tf] = blockInfoTable.try_emplace({key,{}});
 	auto& info = it->second;
@@ -24,7 +24,7 @@ void PerformanceProfiler::Set(const string& key, BlockTag tag)
 	blockStack.push(key);
 }
 
-void PerformanceProfiler::Fin()
+void Profiler::Fin()
 {
 	auto& info = blockInfoTable[blockStack.top()];
 	info._endTime = Time::main->GetClockNow();
@@ -32,7 +32,7 @@ void PerformanceProfiler::Fin()
 	blockStack.pop();
 }
 
-void PerformanceProfiler::Reset()
+void Profiler::Reset()
 {
 	InvalidateRect(hwnd,nullptr, TRUE);
 	UpdateWindow(hwnd);
@@ -43,7 +43,7 @@ void PerformanceProfiler::Reset()
 	blockOrder.clear();
 }
 
-LRESULT PerformanceProfiler::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT Profiler::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	if(msg == WM_PAINT) {
 		PAINTSTRUCT ps;
@@ -105,10 +105,10 @@ LRESULT PerformanceProfiler::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 	return 0;
 }
 
-HWND PerformanceProfiler::WinMain(HWND hParent,HINSTANCE hInst)
+HWND Profiler::WinMain(HWND hParent,HINSTANCE hInst)
 {
 	WNDCLASSA wc = {0};
-	wc.lpfnWndProc = PerformanceProfiler::WndProc; // static 함수여야 함
+	wc.lpfnWndProc = Profiler::WndProc; // static 함수여야 함
 	wc.hInstance = hInst;
 	wc.lpszClassName = "MySubWndClass";
 	RegisterClassA(&wc);

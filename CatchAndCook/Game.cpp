@@ -19,7 +19,7 @@
 #include "LightManager.h"
 #include "TerrainManager.h"
 #include "InstancingManager.h"
-#include "PerformanceProfiler.h"
+#include "Profiler.h"
 
 void Game::Init(HWND hwnd)
 {
@@ -30,8 +30,8 @@ void Game::Init(HWND hwnd)
 	Core::main = make_unique<Core>();
 	Core::main->Init(hwnd);
 
-	PerformanceProfiler::main = make_unique<PerformanceProfiler>();
-	PerformanceProfiler::main->Init(_hwnd,_hInstance);
+	Profiler::main = make_unique<Profiler>();
+	Profiler::main->Init(_hwnd,_hInstance);
 
 	ResourceManager::main = make_unique<ResourceManager>();
 	ResourceManager::main->Init();
@@ -139,7 +139,7 @@ void Game::PrevUpdate()
 
 void Game::Run()
 {
-	PerformanceProfiler::main->Set("Other");
+	Profiler::main->Set("Other");
 
 	Input::main->Update();
 	Time::main->Update();
@@ -151,36 +151,36 @@ void Game::Run()
 
 	std::shared_ptr<Scene> currentScene = SceneManager::main->GetCurrentScene();
 
-	PerformanceProfiler::main->Set("Other_Core");
+	Profiler::main->Set("Other_Core");
 	Core::main->RenderBegin();
-	PerformanceProfiler::main->Fin();
+	Profiler::main->Fin();
 
-	PerformanceProfiler::main->Set("Other_Light");
+	Profiler::main->Set("Other_Light");
 	LightManager::main->SetData();
-	PerformanceProfiler::main->Fin();
+	Profiler::main->Fin();
 
-	PerformanceProfiler::main->Fin();
+	Profiler::main->Fin();
 
 
 
-	PerformanceProfiler::main->Set("Logic_Total");
+	Profiler::main->Set("Logic_Total");
 		currentScene->Update();
 		currentScene->RenderBegin();
-	PerformanceProfiler::main->Fin();
+	Profiler::main->Fin();
 
-	PerformanceProfiler::main->Set("Rendering_Total", BlockTag::GPU);
-	PerformanceProfiler::main->Set("Rendering_PASS", BlockTag::GPU);
+	Profiler::main->Set("Rendering_Total", BlockTag::GPU);
+	Profiler::main->Set("Rendering_PASS", BlockTag::GPU);
 		currentScene->Rendering();
 		currentScene->DebugRendering();
 		currentScene->RenderEnd();
-	PerformanceProfiler::main->Fin();
-	PerformanceProfiler::main->Set("Rendering_GPU", BlockTag::GPU);
+	Profiler::main->Fin();
+	Profiler::main->Set("Rendering_GPU", BlockTag::GPU);
 		Core::main->RenderEnd();
-	PerformanceProfiler::main->Fin();
+	Profiler::main->Fin();
 		currentScene->Finish();
-	PerformanceProfiler::main->Fin();
+	Profiler::main->Fin();
 
-	PerformanceProfiler::main->Reset();
+	Profiler::main->Reset();
 }
 
 void Game::Release()
