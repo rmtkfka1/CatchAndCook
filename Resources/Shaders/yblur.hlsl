@@ -21,8 +21,8 @@ void CS_Main(int3 threadIndex : SV_DispatchThreadID)
 
     int2 texCoord = threadIndex.xy;
 
-    if (texCoord.x < 0 || texCoord.x >= g_window_size.x || texCoord.y < 0 || texCoord.y >= g_window_size.y)
-        return;
+    //if (texCoord.x < 0 || texCoord.x >= g_window_size.x || texCoord.y < 0 || texCoord.y >= g_window_size.y)
+    //    return;
 
     float3 blurColor = float3(0, 0, 0);
 
