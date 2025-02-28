@@ -136,11 +136,11 @@ void ComputeManager::Init()
 
 void ComputeManager::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
-	int threadGroupSizeX = 16;
-	int threadGroupSizeY = 16;
+	const int threadGroupSizeX = 16;
+	const int threadGroupSizeY = 16;
 
-	float dispatchX = (WINDOW_WIDTH + threadGroupSizeX - 1) / threadGroupSizeX;
-	float dispatchY = (WINDOW_HEIGHT + threadGroupSizeY - 1) / threadGroupSizeY;
+	int dispatchX = static_cast<int>(std::ceil(static_cast<float>(WINDOW_WIDTH) / threadGroupSizeX));
+	int dispatchY = static_cast<int>(std::ceil(static_cast<float>(WINDOW_HEIGHT) / threadGroupSizeY));
 
 	int32 dispath[3] = {dispatchX,dispatchY,1};
 
