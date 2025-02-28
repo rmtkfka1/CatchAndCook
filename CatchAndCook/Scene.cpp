@@ -11,6 +11,7 @@
 #include "Gizmo.h"
 #include "Mesh.h"
 #include "InstancingManager.h"
+#include "PerformanceProfiler.h"
 
 void Scene::AddGameObject(const std::shared_ptr<GameObject>& gameObject)
 {
@@ -29,6 +30,7 @@ void Scene::Init()
 
 void Scene::Update()
 {
+    PerformanceProfiler::main->Set("Logic_Start");
     while (!_changeTypeQueue.empty()) 
     {
         auto& current = _changeTypeQueue.front();
@@ -46,16 +48,23 @@ void Scene::Update()
         current->Start();
         _startQueue.pop();
     }
+    PerformanceProfiler::main->Fin();
 
-
+    PerformanceProfiler::main->Set("Logic_Update1");
     for (auto& gameObject : _gameObjects)
 	    if(gameObject->GetType() == GameObjectType::Dynamic)
             gameObject->Update();
+    PerformanceProfiler::main->Fin();
+
+    PerformanceProfiler::main->Set("Logic_Update2");
     for (auto& gameObject : _gameObjects)
         if(gameObject->GetType() == GameObjectType::Dynamic)
             gameObject->Update2();
+    PerformanceProfiler::main->Fin();
 
+    PerformanceProfiler::main->Set("Logic_ColliderManager");
     ColliderManager::main->Update();
+    PerformanceProfiler::main->Fin();
 }
 
 void Scene::RenderBegin()
@@ -63,9 +72,10 @@ void Scene::RenderBegin()
     for (auto& ele : _passObjects)
         ele.clear();
 
+    PerformanceProfiler::main->Set("Render_RenderBegin");
     for (auto& gameObject : _gameObjects)
     	gameObject->RenderBegin();
-
+    PerformanceProfiler::main->Fin();
  /*   Gizmo::main->RenderBegin();*/
 }
 
@@ -133,13 +143,13 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
             for(auto& ele : vec)
             {
-                //if(ele.renderer->IsCulling() == true)
-                //{
-                //    if(CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound())==false)
-                //    {
-                //        continue;
-                //    }
-                //}
+                if(ele.renderer->IsCulling() == true)
+                {
+                    if(CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound())==false)
+                    {
+                        continue;
+                    }
+                }
                 if(ele.renderer->IsInstancing() == false)
                 {
                     //여기서 CBuffer 넣어줘야

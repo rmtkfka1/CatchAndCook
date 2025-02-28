@@ -150,6 +150,11 @@ void SceneLoader::PrevProcessingComponent(json& data)
         auto terr = CreateObject<Terrain>(guid);
         component = terr;
     }
+    if(type == L"Animator")
+    {
+        auto terr = CreateObject<SkinnedHierarchy>(guid);
+        component = terr;
+    }
 
     componentCache.emplace_back(component);
 }
@@ -326,6 +331,13 @@ void SceneLoader::LinkComponent(json& jsonData)
         auto collider = IGuid::FindObjectByGuid<PhysicsComponent>(guid);
 
     }
+
+    if(type == L"Animator")
+    {
+        auto collider = IGuid::FindObjectByGuid<SkinnedHierarchy>(guid);
+
+    }
+
     if(type == L"Terrain")
     {
         auto terrain = IGuid::FindObjectByGuid<Terrain>(guid);

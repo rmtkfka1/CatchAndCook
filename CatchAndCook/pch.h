@@ -94,6 +94,11 @@ using namespace Microsoft::WRL;
 #include "nlohmann/json.hpp"
 
 
+#include "NVApi/nvapi.h"
+#pragma comment(lib, "NVApi/nvapi64.lib")
+
+
+
 using int8 = __int8;
 using int16 = __int16;
 using int32 = __int32;

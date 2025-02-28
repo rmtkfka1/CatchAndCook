@@ -33,11 +33,8 @@ void Collider::Start()
 	CalculateBounding();
 	groupId = GetInstanceID();
 
-	std::vector<std::shared_ptr<PhysicsComponent>> obj;
-	GetOwner()->GetComponentsWithParents(obj);
-	auto a = GetOwner();
-	if(!obj.empty())
-		groupId = obj[0]->GetInstanceID();
+	if(auto obj = GetOwner()->GetComponentWithParents<PhysicsComponent>())
+		groupId = obj->GetInstanceID();
 
 }
 

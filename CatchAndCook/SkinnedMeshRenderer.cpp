@@ -35,9 +35,8 @@ void SkinnedMeshRenderer::Start()
 		else
 		{
 			_hierarchy = root->AddComponent<SkinnedHierarchy>();
-			_hierarchy.lock()->SetBoneList(_model->_modelBoneList);
-			_hierarchy.lock()->SetNodeList(_model->_modelOriginalNodeList);
 		}
+		_hierarchy.lock()->SetModel(_model);
 	}
 
 	auto owner = GetOwner();
