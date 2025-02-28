@@ -3,6 +3,7 @@
 class Texture;
 class Shader;
 
+
 class ComputeBase
 {
 public:
@@ -16,6 +17,9 @@ public:
 	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList) = 0;
 
 protected:
+	virtual void Resize()=0;
+
+protected:
 	tableContainer _tableContainer{};
 
 };
@@ -24,6 +28,8 @@ protected:
 class Blur : public ComputeBase
 {
 public:
+
+
 	Blur();
 	virtual ~Blur();
 
@@ -33,6 +39,8 @@ public:
 	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
 
+private:
+	virtual void Resize();
 private:
 	void XBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 	void YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x ,int y ,int z);
@@ -45,6 +53,8 @@ private:
 	shared_ptr<Texture> _pongtexture;
 	shared_ptr<Shader> _XBlurshader;
 	shared_ptr<Shader> _YBlurshader;
+
+	friend class ComputeManager;
 };
 
 
@@ -57,7 +67,8 @@ public:
 public:
 	void Init();
 	void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList);
-
+public:
+	void Resize();
 private:
 	shared_ptr<Blur> _blur;
 

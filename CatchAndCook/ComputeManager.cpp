@@ -46,14 +46,14 @@ void Blur::Init()
 		info._computeShader = true;
 		_XBlurshader->Init(L"xblur.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
 	}
-
+	
 	{
 		_YBlurshader = make_shared<Shader>();
 		ShaderInfo info;
 		info._computeShader = true;
 		_YBlurshader->Init(L"yblur.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
 	}
-}
+};
 
 void Blur::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
@@ -108,7 +108,6 @@ void Blur::XBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList,int x, int y, int z)
 
 void Blur::YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
 {
-
 	auto& table = Core::main->GetBufferManager()->GetTable();
 	cmdList->SetPipelineState(_YBlurshader->_pipelineState.Get());
 
@@ -122,6 +121,21 @@ void Blur::YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z
 
 	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
 	cmdList->Dispatch(x, y, z);
+}
+
+void Blur::Resize()
+{
+	auto& textureBufferPool =Core::main->GetBufferManager()->GetTextureBufferPool();
+	textureBufferPool->FreeSRVHandle(_pingtexture->GetSRVCpuHandle());
+	textureBufferPool->FreeSRVHandle(_pingtexture->GetUAVCpuHandle());
+	textureBufferPool->FreeSRVHandle(_pongtexture->GetSRVCpuHandle());
+	textureBufferPool->FreeSRVHandle(_pongtexture->GetUAVCpuHandle());
+
+	_pingtexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
+		| TextureUsageFlags::SRV, false, false);
+
+	_pongtexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
+		| TextureUsageFlags::SRV, false, false);
 }
 
 /*************************
@@ -146,4 +160,9 @@ void ComputeManager::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
 	_blur->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
+}
+
+void ComputeManager::Resize()
+{
+	_blur->Resize();
 }

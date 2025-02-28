@@ -6,13 +6,13 @@
 #include "BufferPool.h"
 #include "Mesh.h"
 #include "Shader.h"
-#include "BufferPool.h"
 #include "GameObject.h"
 #include "BufferManager.h"
 #include "Material.h"
 #include "MeshRenderer.h"
 #include "Profiler.h"
 #include "SceneManager.h"
+#include "ComputeManager.h"
 unique_ptr<Core> Core::main=nullptr;
 
 Core::Core()
@@ -102,6 +102,8 @@ void Core::ResizeWindowSize()
     AdjustWinodwSize();
     _renderTarget->ResizeWindowSize(_swapChain,_swapChainFlags);
     _gBuffer->Init();
+	ComputeManager::main->Resize();
+
 }
 
 
