@@ -39,7 +39,7 @@ public:
 	ComPtr<ID3D12CommandQueue>& GetCmdQueue() { return _cmdQueue; }
 	shared_ptr<RenderTarget>& GetRenderTarget() { return _renderTarget; }
 	shared_ptr<GBuffer>& GetGBuffer() {return _gBuffer;}
-	shared_ptr<RootSignature>& GetRootSignature() { return _rootSignature; };
+	shared_ptr<RootSignature>& GetRootSignature() { return _rootSignature; }
 	shared_ptr<BufferManager>& GetBufferManager() { return _bufferManager; }
 
 

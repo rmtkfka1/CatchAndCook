@@ -69,8 +69,15 @@ void Shader::InitPipeLine(const std::vector<VertexProp>& vertexProp)
     }
 
     _pipelineDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
-    _pipelineDesc.pRootSignature = Core::main->GetRootSignature()->GetGraphicsRootSignature().Get();
-
+    if (_info._computeShader)
+    {
+        _cspipelineDesc.pRootSignature = Core::main->GetRootSignature()->GetComputeRootSignature().Get();
+    }
+    else
+    {
+        _pipelineDesc.pRootSignature = Core::main->GetRootSignature()->GetGraphicsRootSignature().Get();
+    }
+  
     _pipelineDesc.InputLayout = { _inputElementDesc.data(), static_cast<unsigned int>(_inputElementDesc.size()) };
 
     if (!_info._depthOnly)
@@ -284,9 +291,19 @@ void Shader::InitPipeLine(const std::vector<VertexProp>& vertexProp)
             _pipelineDesc.HS = _shaderCodeTable[shaderCode.first]->_shaderByteCode;
         if (shaderCode.first == "ds")
             _pipelineDesc.DS = _shaderCodeTable[shaderCode.first]->_shaderByteCode;
+        if (shaderCode.first == "cs")
+            _cspipelineDesc.CS = _shaderCodeTable[shaderCode.first]->_shaderByteCode;
     }
 
-    ThrowIfFailed(device->CreateGraphicsPipelineState(&_pipelineDesc, IID_PPV_ARGS(&_pipelineState)));
+    if (_info._computeShader)
+    {
+        ThrowIfFailed(device->CreateComputePipelineState(&_cspipelineDesc, IID_PPV_ARGS(&_pipelineState)));
+    }
+    else 
+    {
+        ThrowIfFailed(device->CreateGraphicsPipelineState(&_pipelineDesc, IID_PPV_ARGS(&_pipelineState)));
+    }
+   
 }
 
 void Shader::SetMacro(const std::vector<D3D_SHADER_MACRO>& macros)
@@ -633,6 +650,7 @@ std::shared_ptr<ShaderCode> Shader::LoadBlob(std::wstring path, std::string endP
         shaderCode->_blob = _shaderBlob;
         
     }
+
     if (ext == L".cso" || ext == L".CSO")
     {
         std::ifstream shaderFile(shaderPath, std::ios::binary | std::ios::ate);

@@ -1,0 +1,149 @@
+﻿#include "pch.h"
+#include "ComputeManager.h"
+#include "Shader.h"
+#include "Texture.h"
+unique_ptr<ComputeManager> ComputeManager::main = nullptr;
+
+/*************************
+*    ComputeBase         *
+**************************/
+
+ComputeBase::ComputeBase()
+{
+}
+
+ComputeBase::~ComputeBase()
+{
+}
+
+
+/*************************
+*			Blur         *
+**************************/
+
+Blur::Blur()
+{
+}
+
+Blur::~Blur()
+{
+}
+
+void Blur::Init()
+{
+	_pingtexture = make_shared<Texture>();
+	_pingtexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
+		| TextureUsageFlags::SRV, false, false);
+
+	_pongtexture = make_shared<Texture>();
+	_pongtexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
+		| TextureUsageFlags::SRV, false, false);
+
+
+	{
+		_XBlurshader = make_shared<Shader>();
+		ShaderInfo info;
+		info._computeShader = true;
+		_XBlurshader->Init(L"xblur.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
+	}
+
+	{
+		_YBlurshader = make_shared<Shader>();
+		ShaderInfo info;
+		info._computeShader = true;
+		_YBlurshader->Init(L"yblur.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
+	}
+}
+
+void Blur::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	auto& intermediateTexutre = Core::main->GetRenderTarget()->GetInterMediateTexture();
+
+	intermediateTexutre->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
+	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
+
+	cmdList->CopyResource(_pingtexture->GetResource().Get(), intermediateTexutre->GetResource().Get());
+}
+
+void Blur::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+	if (_on == false)
+		return;
+
+	DispatchBegin(cmdList);
+
+	for (int i = 0; i < _blurCount; ++i)
+	{
+		XBlur(cmdList, x, y, z);
+		YBlur(cmdList, x, y, z);
+	}
+
+	DispatchEnd(cmdList);
+}
+
+void Blur::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	auto& intermediateTexutre = Core::main->GetRenderTarget()->GetInterMediateTexture();
+	_pongtexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
+	intermediateTexutre->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
+	cmdList->CopyResource(intermediateTexutre->GetResource().Get(), _pongtexture->GetResource().Get());
+}
+
+void Blur::XBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList,int x, int y, int z)
+{
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	cmdList->SetPipelineState(_XBlurshader->_pipelineState.Get());
+
+	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+	_pongtexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
+	_tableContainer = table->Alloc(8);
+
+	table->CopyHandle(_tableContainer.CPUHandle, _pingtexture->GetSRVCpuHandle(), 0);
+	table->CopyHandle(_tableContainer.CPUHandle, _pongtexture->GetUAVCpuHandle(), 4);
+
+	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+	cmdList->Dispatch(x, y, z);
+}
+
+void Blur::YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	cmdList->SetPipelineState(_YBlurshader->_pipelineState.Get());
+
+	_pongtexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
+	_tableContainer = table->Alloc(8);
+
+	table->CopyHandle(_tableContainer.CPUHandle, _pongtexture->GetSRVCpuHandle(), 0);
+	table->CopyHandle(_tableContainer.CPUHandle, _pingtexture->GetUAVCpuHandle(), 4);
+
+	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+	cmdList->Dispatch(x, y, z);
+}
+
+/*************************
+*	ComputeManager       *
+**************************/
+
+void ComputeManager::Init()
+{
+	_blur = make_shared<Blur>();
+	_blur->Init();
+}
+
+void ComputeManager::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	int threadGroupSizeX = 16;
+	int threadGroupSizeY = 16;
+
+	float dispatchX = (WINDOW_WIDTH + threadGroupSizeX - 1) / threadGroupSizeX;
+	float dispatchY = (WINDOW_HEIGHT + threadGroupSizeY - 1) / threadGroupSizeY;
+
+	int32 dispath[3] = {dispatchX,dispatchY,1};
+
+	_blur->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+
+}

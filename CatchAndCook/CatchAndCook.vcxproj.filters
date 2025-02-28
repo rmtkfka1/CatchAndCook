@@ -56,6 +56,12 @@
     <Filter Include="04.Resource\Model\Animation">
       <UniqueIdentifier>{daa03aca-f69a-4ef8-9f6f-2323bc6c8549}</UniqueIdentifier>
     </Filter>
+    <Filter Include="998.HLSL\Graphics">
+      <UniqueIdentifier>{ceb81a86-a73e-4c42-b58d-d76dccad29f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="998.HLSL\Compute">
+      <UniqueIdentifier>{f91efac9-e156-4750-89bd-2470ed8b7e64}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -256,6 +262,8 @@
     <ClCompile Include="TestScene_MapEditor.cpp">
       <Filter>06.Scene</Filter>
     </ClCompile>
+    <ClCompile Include="ComputeManager.cpp" />
+    <ClCompile Include="Profiler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -478,6 +486,8 @@
     <ClInclude Include="TestScene_MapEditor.h">
       <Filter>06.Scene</Filter>
     </ClInclude>
+    <ClInclude Include="ComputeManager.h" />
+    <ClInclude Include="Profiler.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -495,39 +505,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Resources\Shaders\color.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\cubemap.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Deferred.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\final.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Gizmo.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\sea.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\seatest.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\SpriteShader.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Terrain.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\TestForward.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\TestForward_Skinned.hlsl">
-      <Filter>998.HLSL</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Camera_b2.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
@@ -543,11 +520,50 @@
     <FxCompile Include="..\Resources\Shaders\Transform_b1.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\TerrainQuad.hlsl">
-      <Filter>998.HLSL</Filter>
+    <FxCompile Include="..\Resources\Shaders\color.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\cubemap.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Deferred.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\final.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Gizmo.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Gizmo_Text.hlsl">
-      <Filter>998.HLSL</Filter>
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\sea.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\seatest.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\SpriteShader.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Terrain.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\TerrainQuad.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\TestForward.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\TestForward_Skinned.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\xblur.hlsl">
+      <Filter>998.HLSL\Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\yblur.hlsl">
+      <Filter>998.HLSL\Compute</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

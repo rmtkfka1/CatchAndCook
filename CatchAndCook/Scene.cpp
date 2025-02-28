@@ -12,6 +12,7 @@
 #include "Mesh.h"
 #include "InstancingManager.h"
 #include "Profiler.h"
+#include "ComputeManager.h"
 
 void Scene::AddGameObject(const std::shared_ptr<GameObject>& gameObject)
 {
@@ -227,7 +228,7 @@ void Scene::FinalRender(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 void Scene::ComputePass(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
     //후처리작업진행할거임.
-
+    ComputeManager::main->Dispatch(cmdList);
 }
 
 void Scene::GlobalSetting()
@@ -247,6 +248,7 @@ void Scene::GlobalSetting()
     memcpy(CbufferContainer->ptr,(void*)&_globalParam,sizeof(GlobalParam));
 
     cmdList->SetGraphicsRootConstantBufferView(0,CbufferContainer->GPUAdress);
+    cmdList->SetComputeRootConstantBufferView(0, CbufferContainer->GPUAdress);
 }
 
 void Scene::DebugRendering()

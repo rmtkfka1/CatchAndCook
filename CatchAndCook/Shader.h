@@ -147,6 +147,7 @@ public:
     bool _depthOnly = false;
     bool _stencilTest = false;
     bool _blendEnable = false;
+	bool _computeShader = false;
     int _stencilIndex = 0;
     int _renderOrder = 2000;
 
@@ -197,6 +198,7 @@ public:
 
 public:
     D3D12_GRAPHICS_PIPELINE_STATE_DESC _pipelineDesc = {};
+    D3D12_COMPUTE_PIPELINE_STATE_DESC _cspipelineDesc = {};
     ComPtr<ID3D12PipelineState> _pipelineState;
 
     void InitPipeLine(const std::vector<VertexProp>& props);

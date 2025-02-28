@@ -20,6 +20,7 @@
 #include "TerrainManager.h"
 #include "InstancingManager.h"
 #include "Profiler.h"
+#include "ComputeManager.h"
 
 void Game::Init(HWND hwnd)
 {
@@ -49,6 +50,8 @@ void Game::Init(HWND hwnd)
 	TextManager::main->Init();
 
 	//------------------
+	ComputeManager::main = make_unique<ComputeManager>();
+	ComputeManager::main->Init();
 
 	Gizmo::main = std::make_unique<Gizmo>();
 	Gizmo::main->Init();
