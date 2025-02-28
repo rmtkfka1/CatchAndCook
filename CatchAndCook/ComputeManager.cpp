@@ -111,13 +111,13 @@ void Blur::YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z
 	auto& table = Core::main->GetBufferManager()->GetTable();
 	cmdList->SetPipelineState(_YBlurshader->_pipelineState.Get());
 
-	_pongtexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	_pongtexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
 	_tableContainer = table->Alloc(8);
 
-	table->CopyHandle(_tableContainer.CPUHandle, _pongtexture->GetSRVCpuHandle(), 0);
 	table->CopyHandle(_tableContainer.CPUHandle, _pingtexture->GetUAVCpuHandle(), 4);
+	table->CopyHandle(_tableContainer.CPUHandle, _pongtexture->GetSRVCpuHandle(), 0);
 
 	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
 	cmdList->Dispatch(x, y, z);
