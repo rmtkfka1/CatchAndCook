@@ -31,8 +31,6 @@ void Core::Init(HWND hwnd)
 
     _hwnd = hwnd;
 
-    AdjustWinodwSize();
-
     InitDirectX12();
 
     {
@@ -59,12 +57,6 @@ void Core::Init(HWND hwnd)
 
 
     Initalize = true;
-}
-
-void Core::AdjustWinodwSize()
-{
-    RECT rect = { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT };
-    ::AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
 }
 
 void Core::RenderBegin()
@@ -120,7 +112,6 @@ void Core::FlushResCMDQueue()
 void Core::ResizeWindowSize()
 {
     Fence();
-    AdjustWinodwSize();
     _renderTarget->ResizeWindowSize(_swapChain,_swapChainFlags);
     _gBuffer->Init();
 	ComputeManager::main->Resize();

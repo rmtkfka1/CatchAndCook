@@ -44,7 +44,6 @@ public:
 	ComPtr<ID3D12DescriptorHeap>& GetImguiHeap() { return _imguiHeap; }
 
 private:
-	void AdjustWinodwSize();
 	void InitDirectX12();
 
 private:
