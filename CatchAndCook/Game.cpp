@@ -53,8 +53,11 @@ void Game::Init(HWND hwnd)
 	ComputeManager::main = make_unique<ComputeManager>();
 	ComputeManager::main->Init();
 
+#ifdef IMGUI_ON
 	ImguiManager::main = make_unique<ImguiManager>();
 	ImguiManager::main->Init();
+#endif // IMGUI_ON
+
 
 	Gizmo::main = std::make_unique<Gizmo>();
 	Gizmo::main->Init();

@@ -265,7 +265,6 @@
     <ClCompile Include="TestScene_MapEditor.cpp">
       <Filter>06.Scene</Filter>
     </ClCompile>
-    <ClCompile Include="ComputeManager.cpp" />
     <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="ImguiManager.cpp">
       <Filter>07.Manager</Filter>
@@ -290,6 +289,9 @@
     </ClCompile>
     <ClCompile Include="..\Dependency\Header\Imgui\imgui_impl_dx12.cpp">
       <Filter>999.pch\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputeManager.cpp">
+      <Filter>07.Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -513,7 +515,6 @@
     <ClInclude Include="TestScene_MapEditor.h">
       <Filter>06.Scene</Filter>
     </ClInclude>
-    <ClInclude Include="ComputeManager.h" />
     <ClInclude Include="Profiler.h" />
     <ClInclude Include="ImguiManager.h">
       <Filter>07.Manager</Filter>
@@ -541,6 +542,9 @@
     </ClInclude>
     <ClInclude Include="..\Dependency\Header\Imgui\imgui_impl_dx12.h">
       <Filter>999.pch\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeManager.h">
+      <Filter>07.Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
