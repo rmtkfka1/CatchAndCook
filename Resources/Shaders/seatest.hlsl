@@ -48,16 +48,16 @@ struct HS_OUT
 DS_OUT WaveGeneration(DS_OUT input)
 {
     const int waveCount = 3;
-    float amplitudes[waveCount] = { 11.0f, 9.0f, 7.0f };
-    float wavelengths[waveCount] = { 500.0f, 300.0f, 200.0f };
-    float speeds[waveCount] = { 0.5f, 1.0f, 0.8f };
+    float amplitudes[waveCount] = { 2.5f, 1.5f, 1.0f };
+    float wavelengths[waveCount] = { 150.0f, 200.0f, 150.0f };
+    float speeds[waveCount] = { 1.0f, 0.4f, 3.0f };
     float steepnesses[waveCount] = { 0.5f, 0.4f, 0.3f };
 
     float2 waveDirections[waveCount] =
     {
-        normalize(float2(1.0f, 0.2f)),
-        normalize(float2(0.3f, -1.0f)),
-        normalize(float2(-0.5f, 0.7f))
+        normalize(float2(0.4f, 0.2f)),
+        normalize(float2(0.7f, -1.0f)),
+        normalize(float2(0.5f, 0.7f))
     };
 
     float3 modifiedPos = input.pos.xyz;
@@ -198,6 +198,7 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 
 float4 PS_Main(DS_OUT input) : SV_Target
 {
+ 
     float3 color;
     
     float4 worldPos = mul(input.pos, InvertVPMatrix);
@@ -209,7 +210,7 @@ float4 PS_Main(DS_OUT input) : SV_Target
     {
         if (g_lights[i].mateiral.lightType == 0)
         {
-            color += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, WolrdNormal.xyz, -toEye);
+            color += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, WolrdNormal.xyz, toEye);
         }
         else if (g_lights[i].mateiral.lightType == 1)
         {
@@ -221,6 +222,6 @@ float4 PS_Main(DS_OUT input) : SV_Target
         }
     }
     
-    return float4(color, 1.0f) * g_tex_0.Sample(sampler_lerp, input.uv);
+    return float4(color, 1.0f) * sea_color;
   
 }

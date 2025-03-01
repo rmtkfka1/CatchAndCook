@@ -33,7 +33,7 @@ void TestScene_jin::Init()
 			auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
 
 			//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal_Sea"));
-			gameObject->_transform->SetLocalPosition(vec3(0,0,0));
+			gameObject->_transform->SetLocalPosition(vec3(0,8.5f,0));
 
 			material = make_shared<Material>();
 			material->SetShader(shader);
@@ -80,7 +80,7 @@ void TestScene_jin::Init()
 	}
 
 
-	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/TestScene9.json");
+	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/MainField.json");
 	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
 	sceneLoader->Load(GetCast<Scene>());
 }

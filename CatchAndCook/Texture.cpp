@@ -126,7 +126,6 @@ void Texture::Init(const wstring& path, TextureType type, bool relativePath)
 }
 
 
-
 void Texture::ResourceBarrier(D3D12_RESOURCE_STATES after)
 {
     if (_state == after)

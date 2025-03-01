@@ -48,7 +48,7 @@ private:
 private:
 	int32 _blurCount=50;
 
-	bool _on =true;
+	bool _on =false;
 	shared_ptr<Texture> _pingtexture;
 	shared_ptr<Texture> _pongtexture;
 	shared_ptr<Shader> _XBlurshader;
