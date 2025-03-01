@@ -57,7 +57,7 @@ void Blur::Init()
 
 void Blur::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
-	auto& intermediateTexutre = Core::main->GetRenderTarget()->GetInterMediateTexture();
+	auto& intermediateTexutre = Core::main->GetRenderTarget()->GetRenderTarget();
 
 	intermediateTexutre->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
 	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
@@ -83,7 +83,7 @@ void Blur::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, in
 
 void Blur::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
-	auto& intermediateTexutre = Core::main->GetRenderTarget()->GetInterMediateTexture();
+	auto& intermediateTexutre = Core::main->GetRenderTarget()->GetRenderTarget();
 	_pongtexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
 	intermediateTexutre->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
 	cmdList->CopyResource(intermediateTexutre->GetResource().Get(), _pongtexture->GetResource().Get());

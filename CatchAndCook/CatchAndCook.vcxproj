@@ -200,6 +200,7 @@
     <ClCompile Include="input_module.cpp" />
     <ClCompile Include="InstancingManager.cpp" />
     <ClCompile Include="IType.cpp" />
+    <ClCompile Include="LightingTest.cpp" />
     <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -304,6 +305,7 @@
     <ClInclude Include="input_module.h" />
     <ClInclude Include="InstancingManager.h" />
     <ClInclude Include="IType.h" />
+    <ClInclude Include="LightingTest.h" />
     <ClInclude Include="LightManager.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />

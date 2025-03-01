@@ -9,7 +9,7 @@ int WINDOW_HEIGHT = 720;
 bool Initalize = false;
 
 DXGI_FORMAT SWAP_CHAIN_FORMAT = DXGI_FORMAT_R8G8B8A8_UNORM;
-DXGI_FORMAT DEPTH_STENCIL_FORMAT = DXGI_FORMAT_D24_UNORM_S8_UINT;
+DXGI_FORMAT DEPTH_STENCIL_FORMAT = DXGI_FORMAT_D32_FLOAT;
 
 size_t CBV_ROOT_INDEX_COUNT = 12;
 
@@ -62,7 +62,7 @@ std::vector<VertexProp> GeoMetryProp
 std::vector<VertexProp> ColorProp
 { 
     VertexProp::pos,
-    //VertexProp::normal,
+    VertexProp::normal,
     VertexProp::uv0,
     VertexProp::color
 };

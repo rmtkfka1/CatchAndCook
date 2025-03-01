@@ -88,7 +88,7 @@ void Scene::Rendering()
 
     Core::main->GetRenderTarget()->ClearDepth();
 
-    //ShadowPass(cmdList);
+    ShadowPass(cmdList);
     DefferedPass(cmdList);
     FinalRender(cmdList);
     ForwardPass(cmdList);
@@ -216,7 +216,7 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
 void Scene::FinalRender(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
-	Core::main->GetRenderTarget()->RenderBegin();
+    Core::main->GetRenderTarget()->RenderBegin();
 
     auto& mesh = ResourceManager::main->Get<Mesh>(L"finalMesh");
     auto& shader = ResourceManager::main->Get<Shader>(L"finalShader");

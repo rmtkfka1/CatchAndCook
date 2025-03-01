@@ -82,6 +82,7 @@ void Core::RenderEnd()
 
     {
 #ifdef  IMGUI_ON
+		Core::main->GetRenderTarget()->GetRenderTarget()->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
         _cmdList->SetDescriptorHeaps(1, _imguiHeap.GetAddressOf());
         ImguiManager::main->Render();
 #endif //  IMGUI_ON
@@ -97,7 +98,7 @@ void Core::RenderEnd()
 
     Fence();
 
-    _swapChain->Present(0, 0);
+    _swapChain->Present(1, 0);
     _renderTarget->ChangeIndex();
     _bufferManager->Reset();
 }

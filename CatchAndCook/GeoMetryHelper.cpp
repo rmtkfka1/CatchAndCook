@@ -123,37 +123,41 @@ shared_ptr<Mesh> GeoMetryHelper::LoadRectangleBoxWithColor(const float scale, ve
 
     vector<Vertex_Color> vec(24);
 
-    // 앞면
-    vec[0] = Vertex_Color(vec3(-w2, -h2, -d2), vec2(0.0f, 1.0f), color);
-    vec[1] = Vertex_Color(vec3(-w2, +h2, -d2), vec2(0.0f, 0.0f), color);
-    vec[2] = Vertex_Color(vec3(+w2, +h2, -d2), vec2(1.0f, 0.0f), color);
-    vec[3] = Vertex_Color(vec3(+w2, -h2, -d2), vec2(1.0f, 1.0f), color);
-    // 뒷면
-    vec[4] = Vertex_Color(vec3(-w2, -h2, +d2), vec2(1.0f, 1.0f), color);
-    vec[5] = Vertex_Color(vec3(+w2, -h2, +d2), vec2(0.0f, 1.0f), color);
-    vec[6] = Vertex_Color(vec3(+w2, +h2, +d2), vec2(0.0f, 0.0f), color);
-    vec[7] = Vertex_Color(vec3(-w2, +h2, +d2), vec2(1.0f, 0.0f), color);
-    // 윗면
-    vec[8] = Vertex_Color(vec3(-w2, +h2, -d2), vec2(0.0f, 1.0f), color);
-    vec[9] = Vertex_Color(vec3(-w2, +h2, +d2), vec2(0.0f, 0.0f), color);
-    vec[10] = Vertex_Color(vec3(+w2, +h2, +d2), vec2(1.0f, 0.0f),color);
-    vec[11] = Vertex_Color(vec3(+w2, +h2, -d2), vec2(1.0f, 1.0f),color);
-    // 아랫면
-    vec[12] = Vertex_Color(vec3(-w2, -h2, -d2), vec2(1.0f, 1.0f),color);
-    vec[13] = Vertex_Color(vec3(+w2, -h2, -d2), vec2(0.0f, 1.0f),color);
-    vec[14] = Vertex_Color(vec3(+w2, -h2, +d2), vec2(0.0f, 0.0f),color);
-    vec[15] = Vertex_Color(vec3(-w2, -h2, +d2), vec2(1.0f, 0.0f),color);
-    // 왼쪽면
-    vec[16] = Vertex_Color(vec3(-w2, -h2, +d2), vec2(0.0f, 1.0f), color);
-    vec[17] = Vertex_Color(vec3(-w2, +h2, +d2), vec2(0.0f, 0.0f), color);
-    vec[18] = Vertex_Color(vec3(-w2, +h2, -d2), vec2(1.0f, 0.0f), color);
-    vec[19] = Vertex_Color(vec3(-w2, -h2, -d2), vec2(1.0f, 1.0f), color);
-    // 오른쪽면
-    vec[20] = Vertex_Color(vec3(+w2, -h2, -d2), vec2(0.0f, 1.0f),color);
-    vec[21] = Vertex_Color(vec3(+w2, +h2, -d2), vec2(0.0f, 0.0f),color);
-    vec[22] = Vertex_Color(vec3(+w2, +h2, +d2), vec2(1.0f, 0.0f),color);
-    vec[23] = Vertex_Color(vec3(+w2, -h2, +d2), vec2(1.0f, 1.0f),color);
+    // 앞면 (법선: (0, 0, -1))
+    vec[0] = Vertex_Color(vec3(-w2, -h2, -d2), vec3(0, 0, -1), vec2(0.0f, 1.0f), color);
+    vec[1] = Vertex_Color(vec3(-w2, +h2, -d2), vec3(0, 0, -1), vec2(0.0f, 0.0f), color);
+    vec[2] = Vertex_Color(vec3(+w2, +h2, -d2), vec3(0, 0, -1), vec2(1.0f, 0.0f), color);
+    vec[3] = Vertex_Color(vec3(+w2, -h2, -d2), vec3(0, 0, -1), vec2(1.0f, 1.0f), color);
 
+    // 뒷면 (법선: (0, 0, 1))
+    vec[4] = Vertex_Color(vec3(-w2, -h2, +d2), vec3(0, 0, 1), vec2(1.0f, 1.0f), color);
+    vec[5] = Vertex_Color(vec3(+w2, -h2, +d2), vec3(0, 0, 1), vec2(0.0f, 1.0f), color);
+    vec[6] = Vertex_Color(vec3(+w2, +h2, +d2), vec3(0, 0, 1), vec2(0.0f, 0.0f), color);
+    vec[7] = Vertex_Color(vec3(-w2, +h2, +d2), vec3(0, 0, 1), vec2(1.0f, 0.0f), color);
+
+    // 윗면 (법선: (0, 1, 0))
+    vec[8] = Vertex_Color(vec3(-w2, +h2, -d2), vec3(0, 1, 0), vec2(0.0f, 1.0f), color);
+    vec[9] = Vertex_Color(vec3(-w2, +h2, +d2), vec3(0, 1, 0), vec2(0.0f, 0.0f), color);
+    vec[10] = Vertex_Color(vec3(+w2, +h2, +d2), vec3(0, 1, 0), vec2(1.0f, 0.0f), color);
+    vec[11] = Vertex_Color(vec3(+w2, +h2, -d2), vec3(0, 1, 0), vec2(1.0f, 1.0f), color);
+
+    // 아랫면 (법선: (0, -1, 0))
+    vec[12] = Vertex_Color(vec3(-w2, -h2, -d2), vec3(0, -1, 0), vec2(1.0f, 1.0f), color);
+    vec[13] = Vertex_Color(vec3(+w2, -h2, -d2), vec3(0, -1, 0), vec2(0.0f, 1.0f), color);
+    vec[14] = Vertex_Color(vec3(+w2, -h2, +d2), vec3(0, -1, 0), vec2(0.0f, 0.0f), color);
+    vec[15] = Vertex_Color(vec3(-w2, -h2, +d2), vec3(0, -1, 0), vec2(1.0f, 0.0f), color);
+
+    // 왼쪽면 (법선: (-1, 0, 0))
+    vec[16] = Vertex_Color(vec3(-w2, -h2, +d2), vec3(-1, 0, 0), vec2(0.0f, 1.0f), color);
+    vec[17] = Vertex_Color(vec3(-w2, +h2, +d2), vec3(-1, 0, 0), vec2(0.0f, 0.0f), color);
+    vec[18] = Vertex_Color(vec3(-w2, +h2, -d2), vec3(-1, 0, 0), vec2(1.0f, 0.0f), color);
+    vec[19] = Vertex_Color(vec3(-w2, -h2, -d2), vec3(-1, 0, 0), vec2(1.0f, 1.0f), color);
+
+    // 오른쪽면 (법선: (1, 0, 0))
+    vec[20] = Vertex_Color(vec3(+w2, -h2, -d2), vec3(1, 0, 0), vec2(0.0f, 1.0f), color);
+    vec[21] = Vertex_Color(vec3(+w2, +h2, -d2), vec3(1, 0, 0), vec2(0.0f, 0.0f), color);
+    vec[22] = Vertex_Color(vec3(+w2, +h2, +d2), vec3(1, 0, 0), vec2(1.0f, 0.0f), color);
+    vec[23] = Vertex_Color(vec3(+w2, -h2, +d2), vec3(1, 0, 0), vec2(1.0f, 1.0f), color);
     vector<uint32> idx(36);
 
     // 앞면

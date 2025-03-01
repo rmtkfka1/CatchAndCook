@@ -536,6 +536,7 @@ struct Vertex_Static
 struct Vertex_Color
 {
     vec3 position = vec3(0, 0, 0);
+    vec3 normal;
     vec2 uv;
     vec4 color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 };
