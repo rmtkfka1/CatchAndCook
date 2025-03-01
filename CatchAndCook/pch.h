@@ -136,6 +136,11 @@ namespace fs = std::filesystem;
 #include "SpriteAction.h"
 #include "Vertex.h"
 
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "Imgui/imgui.h"
+#include "Imgui/imgui_impl_dx12.h"
+#include "Imgui/imgui_impl_win32.h"
+
 inline void ThrowIfFailed(HRESULT hr) {
     if (FAILED(hr)) {
         throw std::exception();

@@ -162,6 +162,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Dependency\Header\Imgui\imgui.cpp" />
+    <ClCompile Include="..\Dependency\Header\Imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\Dependency\Header\Imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\Dependency\Header\Imgui\imgui_impl_dx12.cpp" />
+    <ClCompile Include="..\Dependency\Header\Imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\Dependency\Header\Imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\Dependency\Header\Imgui\imgui_widgets.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationKeyFrame.cpp" />
     <ClCompile Include="AnimationNode.cpp" />
@@ -188,6 +195,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="guid_utility.cpp" />
+    <ClCompile Include="ImguiManager.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="input_module.cpp" />
     <ClCompile Include="InstancingManager.cpp" />
@@ -253,6 +261,14 @@
     <ClCompile Include="WaterHeight.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Dependency\Header\Imgui\imconfig.h" />
+    <ClInclude Include="..\Dependency\Header\Imgui\imgui.h" />
+    <ClInclude Include="..\Dependency\Header\Imgui\imgui_impl_dx12.h" />
+    <ClInclude Include="..\Dependency\Header\Imgui\imgui_impl_win32.h" />
+    <ClInclude Include="..\Dependency\Header\Imgui\imgui_internal.h" />
+    <ClInclude Include="..\Dependency\Header\Imgui\imstb_rectpack.h" />
+    <ClInclude Include="..\Dependency\Header\Imgui\imstb_textedit.h" />
+    <ClInclude Include="..\Dependency\Header\Imgui\imstb_truetype.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationKeyFrame.h" />
     <ClInclude Include="AnimationNode.h" />
@@ -283,6 +299,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="guid_utility.h" />
+    <ClInclude Include="ImguiManager.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="input_module.h" />
     <ClInclude Include="InstancingManager.h" />

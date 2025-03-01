@@ -41,7 +41,7 @@ public:
 	shared_ptr<GBuffer>& GetGBuffer() {return _gBuffer;}
 	shared_ptr<RootSignature>& GetRootSignature() { return _rootSignature; }
 	shared_ptr<BufferManager>& GetBufferManager() { return _bufferManager; }
-
+	ComPtr<ID3D12DescriptorHeap>& GetImguiHeap() { return _imguiHeap; }
 
 private:
 	void AdjustWinodwSize();
@@ -74,6 +74,8 @@ private:
 
 	ComPtr<ID3D12CommandAllocator> _resCmdMemory{};
 	ComPtr<ID3D12GraphicsCommandList> _resCmdList{};
+
+	ComPtr<ID3D12DescriptorHeap> _imguiHeap;
 
 	ComPtr<ID3D12Fence> _fence = nullptr;
 	HANDLE _fenceEvent = nullptr;

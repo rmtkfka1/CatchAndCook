@@ -7,6 +7,7 @@
 #include "Shader.h"
 
 unique_ptr<Game> game;
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 int main()
@@ -89,6 +90,10 @@ int main()
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+		return true;
+
 	    InputEvent eventDesc;
 	    std::memset(&eventDesc, 0, sizeof(InputEvent));
 	    eventDesc.type = InputType::Event;

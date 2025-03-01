@@ -21,6 +21,7 @@
 #include "InstancingManager.h"
 #include "Profiler.h"
 #include "ComputeManager.h"
+#include "ImguiManager.h"
 
 void Game::Init(HWND hwnd)
 {
@@ -49,9 +50,11 @@ void Game::Init(HWND hwnd)
 	TextManager::main = make_unique<TextManager>();
 	TextManager::main->Init();
 
-	//------------------
 	ComputeManager::main = make_unique<ComputeManager>();
 	ComputeManager::main->Init();
+
+	ImguiManager::main = make_unique<ImguiManager>();
+	ImguiManager::main->Init();
 
 	Gizmo::main = std::make_unique<Gizmo>();
 	Gizmo::main->Init();

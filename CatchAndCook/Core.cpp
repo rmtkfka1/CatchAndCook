@@ -13,6 +13,7 @@
 #include "Profiler.h"
 #include "SceneManager.h"
 #include "ComputeManager.h"
+#include "ImguiManager.h"
 unique_ptr<Core> Core::main=nullptr;
 
 Core::Core()
@@ -33,6 +34,14 @@ void Core::Init(HWND hwnd)
     AdjustWinodwSize();
 
     InitDirectX12();
+
+    {
+        D3D12_DESCRIPTOR_HEAP_DESC desc = {};
+        desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+        desc.NumDescriptors = 1;
+        desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+        _device->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&_imguiHeap));
+    }
 
     _bufferManager = make_shared<BufferManager>();
     _bufferManager->Init();
@@ -68,8 +77,17 @@ void Core::RenderBegin()
 
 void Core::RenderEnd()
 {
+
+
+    {
+
+        _cmdList->SetDescriptorHeaps(1, _imguiHeap.GetAddressOf());
+        ImguiManager::main->Render();
+    }
+
     _renderTarget->RenderEnd();
 
+    //IMGUIRENDER
     _cmdList->Close();
 
     ID3D12CommandList* ppCommandLists[] = { _cmdList.Get() };
