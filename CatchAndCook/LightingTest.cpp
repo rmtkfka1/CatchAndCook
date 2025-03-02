@@ -53,7 +53,7 @@ void LightingTest::Init()
 		info._zTest = true;
 		info._stencilTest = false;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"color", L"color.hlsl", ColorProp,
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"simple", L"simple.hlsl", ColorProp,
 			ShaderArg{}, info);
 
 		shared_ptr<Material> material = make_shared<Material>();

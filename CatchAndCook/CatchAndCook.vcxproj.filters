@@ -633,5 +633,8 @@
     <FxCompile Include="..\Resources\Shaders\yblur.hlsl">
       <Filter>998.HLSL\Compute</Filter>
     </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\simple.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
