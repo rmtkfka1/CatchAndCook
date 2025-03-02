@@ -3,9 +3,49 @@
 #include "Transform.h"
 #include "MeshRenderer.h"
 #include "random"
+#include "Mesh.h"
 void LightingTest::Init()
 {
 	Scene::Init();
+
+	{
+
+		{
+			ShaderInfo info;
+			info._zTest = true;
+			info._stencilTest = false;
+			info.cullingType = CullingType::BACK;
+			info.cullingType = CullingType::NONE;
+			info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+
+			shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest", L"seatest.hlsl", GeoMetryProp,
+				ShaderArg{ {{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}} }, info);
+
+			shared_ptr<Material> material = make_shared<Material>();
+
+			shared_ptr<GameObject> gameObject = CreateGameObject(L"grid_orgin");
+			auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+
+			//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal_Sea"));
+			gameObject->_transform->SetLocalPosition(vec3(0, 0.0f, 0));
+
+			material = make_shared<Material>();
+			material->SetShader(shader);
+			material->SetPass(RENDER_PASS::Forward);
+			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"Sea", L"Textures/sea/sea.jpg");
+			shared_ptr<Texture> texture1 = ResourceManager::main->Load<Texture>(L"Sea2", L"Textures/sea/sea2.jpg");
+			material->SetHandle("g_tex_0", texture->GetSRVCpuHandle());
+			material->SetHandle("g_tex_1", texture1->GetSRVCpuHandle());
+
+			meshRenderer->AddMaterials({ material });
+
+			auto& mesh = GeoMetryHelper::LoadGripMeshControlPoints(1000.0f, 1000.0f, 500, 500, false);
+			mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
+			meshRenderer->AddMesh(mesh);
+			meshRenderer->SetCulling(false);
+		}
+
+	};
 
 	{
 		ShaderInfo info;

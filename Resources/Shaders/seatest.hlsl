@@ -109,8 +109,7 @@ VS_OUT VS_Main(VS_IN input , uint id :SV_InstanceID)
     float4 worldPos = mul(float4(input.pos.xyz, 1.0f), l2wMatrix);
     output.worldPos = worldPos;
     output.uv = input.uv;
-
-    output.normal = mul(float4(input.normal, 0.0f), LocalToWorldMatrix);
+    output.normal = mul(float4(input.normal, 0.0f), l2wMatrix);
     
     return output;
 }
@@ -203,6 +202,7 @@ float4 PS_Main(DS_OUT input) : SV_Target
     float3 color;
     
     float4 worldPos = input.worldPos;
+    
     float3 WolrdNormal = normalize(input.normal);
     
     float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
