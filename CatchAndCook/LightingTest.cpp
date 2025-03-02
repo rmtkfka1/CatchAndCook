@@ -51,8 +51,8 @@ void LightingTest::Init()
 
 		shared_ptr<GameObject> root = CreateGameObject(L"Object");
 
-		root->_transform->SetLocalPosition(vec3(3+ i*3, 0, 0.0f));
-		root->_transform->SetLocalScale(vec3(1.0f, 1.0f, 1.0f));
+		root->_transform->SetLocalPosition(vec3(20+ i*50, 0, 0.0f));
+		root->_transform->SetLocalScale(vec3(10.0f, 10.0f, 10.0f));
 		auto meshRenderer = root->AddComponent<MeshRenderer>();
 
 		material = make_shared<Material>();

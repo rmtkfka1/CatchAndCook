@@ -9,8 +9,11 @@ enum class CameraType
 };
 
 
-struct alignas(16) CameraParams
+struct CameraParams
 {
+
+
+
     Matrix ViewMatrix = Matrix::Identity;
     Matrix ProjectionMatrix = Matrix::Identity;
     Matrix VPMatrix = Matrix::Identity;

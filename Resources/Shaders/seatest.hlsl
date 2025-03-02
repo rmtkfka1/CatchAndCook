@@ -26,21 +26,22 @@ struct VS_IN
 
 struct VS_OUT
 {
-    float4 pos : SV_Position;
+    float4 worldPos : POSITION;
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
 };
 
 struct DS_OUT
 {
-    float4 pos : SV_POSITION;
+    float4 clipPos : SV_POSITION;
+    float4 worldPos : POSITION;
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
 };
 
 struct HS_OUT
 {
-    float4 pos : SV_Position;
+    float4 worldPos : POSITION;
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
 };
@@ -60,7 +61,7 @@ DS_OUT WaveGeneration(DS_OUT input)
         normalize(float2(0.5f, 0.7f))
     };
 
-    float3 modifiedPos = input.pos.xyz;
+    float3 modifiedPos = input.worldPos.xyz;
     float dHdX = 0.0f;
     float dHdZ = 0.0f;
 
@@ -71,7 +72,7 @@ DS_OUT WaveGeneration(DS_OUT input)
         float2 direction = waveDirections[i];
         float steepness = steepnesses[i];
 
-        float dotProduct = dot(direction, input.pos.xz);
+        float dotProduct = dot(direction, input.worldPos.xz);
         float wave = sin(dotProduct * frequency + phase);
         float waveDerivative = cos(dotProduct * frequency + phase);
 
@@ -91,7 +92,7 @@ DS_OUT WaveGeneration(DS_OUT input)
     // 법선 벡터 계산
     float3 normal = normalize(float3(-dHdX, 1.0f, -dHdZ));
 
-    input.pos = float4(modifiedPos, 1.0f);
+    input.worldPos = float4(modifiedPos, 1.0f);
     input.normal = normal;
 
     return input;
@@ -106,7 +107,7 @@ VS_OUT VS_Main(VS_IN input , uint id :SV_InstanceID)
     row_major float4x4 w2lMatrix = data.worldToLocal;
     // 월드, 뷰, 프로젝션 변환
     float4 worldPos = mul(float4(input.pos.xyz, 1.0f), l2wMatrix);
-    output.pos = worldPos;
+    output.worldPos = worldPos;
     output.uv = input.uv;
 
     output.normal = mul(float4(input.normal, 0.0f), LocalToWorldMatrix);
@@ -134,11 +135,11 @@ PatchConstOutput ConstantHS(InputPatch<VS_OUT, 4> patch, uint patchID : SV_Primi
 {
     PatchConstOutput pt;
     
-    float3 e0 = 0.5f * (patch[0].pos.xyz + patch[2].pos.xyz);
-    float3 e1 = 0.5f * (patch[0].pos.xyz + patch[1].pos.xyz);
-    float3 e2 = 0.5f * (patch[1].pos.xyz + patch[3].pos.xyz);
-    float3 e3 = 0.5f * (patch[2].pos.xyz + patch[3].pos.xyz);
-    float3 c = 0.25f * (patch[0].pos.xyz + patch[1].pos.xyz + patch[2].pos.xyz + patch[3].pos.xyz);
+    float3 e0 = 0.5f * (patch[0].worldPos.xyz + patch[2].worldPos.xyz);
+    float3 e1 = 0.5f * (patch[0].worldPos.xyz + patch[1].worldPos.xyz);
+    float3 e2 = 0.5f * (patch[1].worldPos.xyz + patch[3].worldPos.xyz);
+    float3 e3 = 0.5f * (patch[2].worldPos.xyz + patch[3].worldPos.xyz);
+    float3 c = 0.25f * (patch[0].worldPos.xyz + patch[1].worldPos.xyz + patch[2].worldPos.xyz + patch[3].worldPos.xyz);
 
 
     pt.edges[0] = CalcTessFactor(e0);
@@ -161,7 +162,7 @@ HS_OUT HS_Main(InputPatch<VS_OUT, 4> patch, uint vertexID : SV_OutputControlPoin
 {
     //4번호출됨.
     HS_OUT hout;
-    hout.pos = patch[vertexID].pos;
+    hout.worldPos = patch[vertexID].worldPos;
     hout.uv = patch[vertexID].uv;
     hout.normal = patch[vertexID].normal;
     
@@ -174,9 +175,9 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 {
     DS_OUT dout;
     
-    dout.pos = lerp(
-		lerp(quad[0].pos, quad[1].pos, location.x),
-		lerp(quad[2].pos, quad[3].pos, location.x),
+    dout.worldPos = lerp(
+		lerp(quad[0].worldPos, quad[1].worldPos, location.x),
+		lerp(quad[2].worldPos, quad[3].worldPos, location.x),
 		location.y);
 
     dout.uv = lerp(
@@ -191,7 +192,7 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
     
     dout = WaveGeneration(dout);
 
-    dout.pos = mul(dout.pos, VPMatrix);
+    dout.clipPos = mul(dout.worldPos, VPMatrix);
 
     return dout;
 }
@@ -201,7 +202,7 @@ float4 PS_Main(DS_OUT input) : SV_Target
  
     float3 color;
     
-    float4 worldPos = mul(input.pos, InvertVPMatrix);
+    float4 worldPos = input.worldPos;
     float3 WolrdNormal = normalize(input.normal);
     
     float3 toEye = normalize(g_eyeWorld - worldPos.xyz);

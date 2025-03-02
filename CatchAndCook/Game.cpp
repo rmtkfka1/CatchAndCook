@@ -72,8 +72,8 @@ void Game::Init(HWND hwnd)
 	{
 		Light light;
 
-		//light.direction = vec3(0.5f, -0.34f, 0.79f);
-		light.direction = vec3(0, -1.0, 0.0f);
+		light.direction = vec3(0.5f, -0.34f, 0.79f);
+		//light.direction = vec3(0, -1.0f, -1.0f);
 		light.direction.Normalize();
 	
 		light.material.ambient = vec3(0.1f,0.1f,0.1f);
@@ -85,7 +85,7 @@ void Game::Init(HWND hwnd)
 		LightManager::main->PushLight(light);
 	}
 
-	auto scene = SceneManager::main->AddScene(SceneType::LightingTest);
+	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
 }
 
 void Game::PrevUpdate()
