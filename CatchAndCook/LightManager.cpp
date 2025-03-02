@@ -5,7 +5,7 @@
 #include "CameraManager.h"
 #include "Transform.h"
 #include "Camera.h"
-
+#include "ImguiManager.h"
 
 unique_ptr<LightManager> LightManager::main ;
 
@@ -27,17 +27,11 @@ void LightManager::Update()
 {
 	_lightParmas.eyeWorldPos = CameraManager::main->GetActiveCamera()->GetCameraPos();
 
-	//for(int i = 0; i < _lightParmas.lightCount; ++i)
-	//{
-
-	//	if(_lightParmas.light[i].material.lightType == static_cast<int32>(LIGHT_TYPE::SPOT_LIGHT))
-	//	{
-	//		_lightParmas.light[i].direction = _player->GetTransform()->GetLook();
-	//		_lightParmas.light[i].position = _player->GetTransform()->GetLocalPosition();
-
-	//	}
-
-	//}
+	for(int i = 0; i < _lightParmas.lightCount; ++i)
+	{
+		if(ImguiManager::main->_light)
+			_lightParmas.light[i].position = ImguiManager::main->_light->_transform->GetWorldPosition();
+	}
 
 
 }

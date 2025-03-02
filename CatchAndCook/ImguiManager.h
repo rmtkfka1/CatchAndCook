@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-
+class GameObject;
 class ImguiManager
 {
 public:
@@ -10,6 +10,9 @@ public:
 
 	void Init();
 	void Render();
+
+public:
+	GameObject* _light;
 
 private:
 	bool show_window = true;

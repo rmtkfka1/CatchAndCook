@@ -211,7 +211,7 @@ float4 PS_Main(DS_OUT input) : SV_Target
     {
         if (g_lights[i].mateiral.lightType == 0)
         {
-            color += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, WolrdNormal.xyz, toEye);
+            color += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral,worldPos.xyz,WolrdNormal.xyz, toEye);
         }
         else if (g_lights[i].mateiral.lightType == 1)
         {

@@ -71,9 +71,10 @@ float3 Phong(float3 lightStrength, float3 lightVec, float3 normal, float3 toEye,
     return mat.ambient + (mat.diffuse + specular) * lightStrength;
 }
 
-float3 ComputeDirectionalLight(Light L, LightMateiral mat, float3 normal, float3 toEye)
+float3 ComputeDirectionalLight(Light L, LightMateiral mat,float3 worldPos, float3 normal, float3 toEye)
 {
-    float3 lightVec = normalize(-L.direction); // 빛의 반대 방향
+    float3 lightVec = normalize(L.position - worldPos);
+    //float3 lightVec = normalize(-L.direction);
     float ndotl = max(dot(normal, lightVec), 0.0f);
     float3 LightStrength = L.strength * ndotl;
     return Phong(LightStrength, lightVec, normal, toEye, mat);

@@ -73,13 +73,13 @@ void Game::Init(HWND hwnd)
 		Light light;
 
 		light.direction = vec3(0.5f, -0.34f, 0.79f);
-		light.direction = vec3(0, -1.0f, 0);
+		light.position = vec3(0, 1000.0f, 0);
 		light.direction.Normalize();
 	
 		light.material.ambient = vec3(0.1f,0.1f,0.1f);
 		light.material.diffuse = vec3(1.0f, 1.0f, 1.0f);
-		light.material.specular = vec3(3.0f,0.0f,0.0f);
-		light.material.shininess = 64.0f;
+		light.material.specular = vec3(1.0f,1.0f,1.0f);
+		light.material.shininess = 16.0f;
 		light.material.lightType = static_cast<int32>(LIGHT_TYPE::DIRECTIONAL_LIGHT);
 		light.strength = vec3(1.0f, 1.0f, 1.0f);
 		LightManager::main->PushLight(light);
@@ -254,13 +254,13 @@ void Game::CameraUpdate()
 		camera->SetCameraPos(Vector3::Down * dt + prevPos);
 	}
 
-	if (Input::main->GetMouse(KeyCode::LeftMouse))
+	if (Input::main->GetMouse(KeyCode::RightMouse))
 	{
 		static vec2 lastMousePos;
 		vec2 currentMousePos = Input::main->GetMousePosition();
 
 		//Ƣ������ ���
-		if (Input::main->GetMouseDown(KeyCode::LeftMouse))
+		if (Input::main->GetMouseDown(KeyCode::RightMouse))
 		{
 			lastMousePos = currentMousePos;
 		}

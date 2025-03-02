@@ -4,6 +4,7 @@
 #include "MeshRenderer.h"
 #include "random"
 #include "Mesh.h"
+#include "ImguiManager.h"
 void LightingTest::Init()
 {
 	Scene::Init();
@@ -70,7 +71,7 @@ void LightingTest::Init()
 		meshRenderer->AddMaterials({ material });
 
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(1, 1, 1, 1)));
-
+		ImguiManager::main->_light = root.get();
 
 	}
 
@@ -78,7 +79,7 @@ void LightingTest::Init()
 	mt19937 gen(rd());
 	uniform_real_distribution<float> dis(0.3f, 1.0f);
 
-	for (int i = 0; i < 30; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
 		ShaderInfo info;
 		info._zTest = true;
@@ -91,7 +92,7 @@ void LightingTest::Init()
 
 		shared_ptr<GameObject> root = CreateGameObject(L"Object");
 
-		root->_transform->SetLocalPosition(vec3(20+ i*50, 0, 0.0f));
+		root->_transform->SetLocalPosition(vec3(dis(gen)*150.0f, dis(gen)*150.0f, dis(gen)*150.0f));
 		root->_transform->SetLocalScale(vec3(10.0f, 10.0f, 10.0f));
 		auto meshRenderer = root->AddComponent<MeshRenderer>();
 

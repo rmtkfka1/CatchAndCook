@@ -187,7 +187,7 @@ const vec3& Transform::SetLocalRotation(const vec3& euler)
     return euler;
 }
 
-vec3 Transform::GetLocalPosition() const
+vec3& Transform::GetLocalPosition() 
 {
     return _localPosition;
 }

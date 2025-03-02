@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "ImguiManager.h"
-
+#include "GameObject.h"
+#include "Transform.h"
+#include "LightManager.h"
 unique_ptr<ImguiManager> ImguiManager::main;
 
 ImguiManager::~ImguiManager()
@@ -40,7 +42,23 @@ void ImguiManager::Render()
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 
-		ImGui::End(); // 반드시 End()를 호출해야 UI 레이아웃이 정상적으로 유지됨
+		if (_light != nullptr)
+		{
+			vec3 tempPos = _light->_transform->GetLocalPosition();
+
+			if (ImGui::SliderFloat3("LightPos", &tempPos.x, -300.0f, 300.0f))
+			{
+				_light->_transform->SetLocalPosition(tempPos);
+			}
+
+			static vec3 direction = vec3(0,-1,0);
+			ImGui::SliderFloat3("LightDirection", &direction.x, -1.0f, 1.0f);
+			LightManager::main->_lightParmas.light[0].direction = direction;
+
+		}
+
+	
+		ImGui::End(); 
 	}
 
 	ImGui::Render();

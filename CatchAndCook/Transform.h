@@ -36,7 +36,7 @@ public:
 
     vec3 GetLocalEuler() const;
     const vec3& SetLocalRotation(const vec3& euler);
-    vec3 GetLocalPosition() const;
+    vec3& GetLocalPosition();
     const vec3& SetLocalPosition(const vec3& worldPos);
     vec3 GetLocalScale() const;
     const vec3& SetLocalScale(const vec3& worldScale);
