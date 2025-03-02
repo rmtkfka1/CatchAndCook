@@ -55,6 +55,9 @@ void ImguiManager::Render()
 			ImGui::SliderFloat3("LightDirection", &direction.x, -1.0f, 1.0f);
 			LightManager::main->_lightParmas.light[0].direction = direction;
 
+			ImGui::SliderFloat3("DiffuseColor", &LightManager::main->_lightParmas.light[0].material.diffuse.x, 0, 1.0f);
+			ImGui::SliderFloat3("AmbientColor", &LightManager::main->_lightParmas.light[0].material.ambient.x, 0, 1.0f);
+			ImGui::SliderFloat3("SpecularColor", &LightManager::main->_lightParmas.light[0].material.specular.x, 0, 1.0f);
 		}
 
 	
