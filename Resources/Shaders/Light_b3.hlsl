@@ -76,7 +76,7 @@ float3 ComputeDirectionalLight(Light L, LightMateiral mat, float3 normal, float3
     float3 lightVec = normalize(-L.direction); // 빛의 반대 방향
     float ndotl = max(dot(normal, lightVec), 0.0f);
     float3 LightStrength = L.strength * ndotl;
-    return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
+    return Phong(LightStrength, lightVec, normal, toEye, mat);
 }
 
 float3 ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye)

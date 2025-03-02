@@ -1,8 +1,7 @@
 #include "Global_b0.hlsl"
 #include "Transform_b1.hlsl"
 #include "Camera_b2.hlsl"
-
-
+#include "Light_b3.hlsl"
 
 
 struct VS_IN
@@ -27,8 +26,6 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     
     output.pos = mul(float4(input.pos, 1.0f), data.localToWorld);
     output.pos = mul(output.pos, VPMatrix);
-
-    
     output.normal = mul(float4(input.normal, 0.0f), data.localToWorld);
     
     output.color = input.color;
@@ -39,5 +36,28 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    return input.color;
+    float3 color;
+    
+    float4 worldPos = mul(input.pos, InvertVPMatrix);
+    float3 WolrdNormal = normalize(input.normal);
+    
+    float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
+
+    for (int i = 0; i < g_lightCount; ++i)
+    {
+        if (g_lights[i].mateiral.lightType == 0)
+        {
+            color += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, WolrdNormal.xyz, toEye);
+        }
+        else if (g_lights[i].mateiral.lightType == 1)
+        {
+            color += ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
+        }
+        else if (g_lights[i].mateiral.lightType == 2)
+        {
+            color += ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
+        }
+    }
+    
+    return float4(color, 1.0f) * input.color;
 }
