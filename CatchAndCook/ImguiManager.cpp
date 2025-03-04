@@ -60,9 +60,14 @@ void ImguiManager::Render()
 		ImGui::SliderFloat3("AmbientColor", &LightManager::main->_lightParmas.light[0].material.ambient.x, 0, 1.0f);
 		ImGui::SliderFloat3("SpecularColor", &LightManager::main->_lightParmas.light[0].material.specular.x, 0, 1.0f);
 
+		if (ImGui::Button("Blur ON/OFF"))
+		{
+			*_blurPtr = !(*_blurPtr);
+		}
 	
 		ImGui::End(); 
 	}
+
 
 	ImGui::Render();
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), Core::main->GetCmdList().Get());

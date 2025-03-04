@@ -53,6 +53,8 @@ void Blur::Init()
 		info._computeShader = true;
 		_YBlurshader->Init(L"yblur.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
 	}
+
+	ImguiManager::main->_blurPtr = &_on;
 };
 
 void Blur::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)

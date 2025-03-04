@@ -50,14 +50,13 @@ void Game::Init(HWND hwnd)
 	TextManager::main = make_unique<TextManager>();
 	TextManager::main->Init();
 
-	ComputeManager::main = make_unique<ComputeManager>();
-	ComputeManager::main->Init();
-
 #ifdef IMGUI_ON
 	ImguiManager::main = make_unique<ImguiManager>();
 	ImguiManager::main->Init();
 #endif // IMGUI_ON
 
+	ComputeManager::main = make_unique<ComputeManager>();
+	ComputeManager::main->Init();
 
 	Gizmo::main = std::make_unique<Gizmo>();
 	Gizmo::main->Init();

@@ -13,6 +13,7 @@ public:
 
 public:
 	GameObject* _light;
+	bool* _blurPtr;
 
 private:
 	bool show_window = true;
