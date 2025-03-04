@@ -73,8 +73,8 @@ void Material::SetData()
 
 void Material::PushHandle()
 {
-	array<bool, SRV_TABLE_REGISTER_COUNT> copyCheckList;
-	copyCheckList.fill(false);
+	//array<bool, SRV_TABLE_REGISTER_COUNT> copyCheckList;
+	//copyCheckList.fill(false);
 
 	auto& table =Core::main->GetBufferManager()->GetTable();
 
@@ -86,7 +86,7 @@ void Material::PushHandle()
 		{
 			if (index < SRV_TABLE_REGISTER_COUNT)
 			{
-				copyCheckList[index] = true;
+	/*			copyCheckList[index] = true;*/
 				table->CopyHandle(_tableContainer.CPUHandle, handle, index);
 			}
 			else if (index >= SRV_LONG_TABLE_REGISTER_OFFSET && (index < (SRV_LONG_TABLE_REGISTER_OFFSET + SRV_LONG_TABLE_REGISTER_COUNT))) {
@@ -95,10 +95,10 @@ void Material::PushHandle()
 		}
 	}
 
-	auto& tTable = _shader->GetTRegisterIndexs();
-	for (auto& tIndex : tTable)
-		if (tIndex < SRV_TABLE_REGISTER_COUNT && (!copyCheckList[tIndex]))
-			table->CopyHandle(_tableContainer.CPUHandle,
-				ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle(), tIndex);
+	//auto& tTable = _shader->GetTRegisterIndexs();
+	//for (auto& tIndex : tTable)
+	//	if (tIndex < SRV_TABLE_REGISTER_COUNT && (!copyCheckList[tIndex]))
+	//		table->CopyHandle(_tableContainer.CPUHandle,
+	//			ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle(), tIndex);
 
 }

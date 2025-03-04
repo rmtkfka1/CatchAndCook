@@ -24,8 +24,11 @@ StructuredBuffer<Instance_Transform> TransformDatas : register(t30);
 
 float3 NormalUnpack(float3 normalSample, float power)
 {
-	if (dot(normalSample, normalSample) > 2.98)
-		return float3(0, 0, 1);
+	//if (dot(normalSample, normalSample) > 2.98)
+	//	return float3(0, 0, 1);
+    
+    if (any(normalSample.rgb) == false)
+        return float3(0, 0, 1);
 	
 	float3 norm = normalSample * 2.0 - 1.0;
 	norm.xy *= power;
