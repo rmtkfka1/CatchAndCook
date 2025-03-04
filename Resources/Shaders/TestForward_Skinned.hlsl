@@ -91,6 +91,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 
     return output;
 }
+
 [earlydepthstencil]
 float4 PS_Main(VS_OUT input) : SV_Target
 {

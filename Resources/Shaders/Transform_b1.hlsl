@@ -4,6 +4,7 @@
 
 #include "Camera_b2.hlsl"
 #include "Skinned_b5.hlsl"
+#include "Global_b0.hlsl"
 
 cbuffer Transform : register(b1)
 {
@@ -175,6 +176,27 @@ float4 TransformWorldToLocal(float4 worldPos, float4 boneIds, float4 boneWs, flo
 	#endif
 	return TransformWorldToLocal(worldPos, w2l);
 }
+
+void ComputeNormalMapping(inout float3 normal, float3 tangent, float2 uv, Texture2D normalMap)
+{
+	// [0,255] 범위에서 [0,1]로 변환
+    float4 map = normalMap.Sample(sampler_lerp, uv);
+    
+    if (any(map.rgb) == false)
+        return;
+
+    float3 N = normalize(normal); // z
+    float3 T = normalize(tangent); // x
+    float3 B = normalize(cross(N, T)); // y
+    float3x3 TBN = float3x3(T, B, N); // TS -> WS
+
+	// [0,1] 범위에서 [-1,1] 범위로 변환
+    float3 tangentSpaceNormal = (map.rgb * 2.0f - 1.0f);
+    float3 worldNormal = mul(tangentSpaceNormal, TBN);
+
+    normal = worldNormal;
+}
+
 
 
 //--------------------------------------------------------------------------------------------
