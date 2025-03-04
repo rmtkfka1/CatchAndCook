@@ -97,7 +97,7 @@ DS_OUT WaveGeneration(DS_OUT input)
     float3 normal = normalize(float3(-dHdX, 1.0f, -dHdZ));
 
     input.worldPos = float4(modifiedPos, 1.0f);
-    input.normal = normal;
+
 
     return input;
 }
@@ -193,21 +193,21 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 		lerp(quad[2].normal, quad[3].normal, location.x),
 		location.y);
     
-    //dout = WaveGeneration(dout);
+    dout = WaveGeneration(dout);
     
     float3 tagent = float3(1, 0, 0);
     
-    float4 map = _bumpMap.SampleLevel(sampler_lerp, dout.uv,0);
+    float4 map = _bumpMap.SampleLevel(sampler_lerp, dout.uv, 0);
     
-    float3 N = normalize(dout.normal); 
-    float3 T = normalize(tagent); 
-    float3 B = normalize(cross(N, T)); 
-    float3x3 TBN = float3x3(T, B, N); 
+    float3 N = normalize(dout.normal);
+    float3 T = normalize(tagent);
+    float3 B = normalize(cross(N, T));
+    float3x3 TBN = float3x3(T, B, N);
 
     float3 tangentSpaceNormal = (map.rgb * 2.0f - 1.0f);
     float3 worldNormal = mul(tangentSpaceNormal, TBN);
 
-    dout.worldPos.y += worldNormal;
+    dout.worldPos.y += worldNormal * 3.0f;
     dout.clipPos = mul(dout.worldPos, VPMatrix);
 
     return dout;
@@ -216,7 +216,7 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 float4 PS_Main(DS_OUT input) : SV_Target
 {
     
-    ComputeNormalMapping(input.normal, float3(1, 0, 0), input.uv, _bumpMap);
+    ComputeNormalMapping(input.normal, float3(1, 0, 0), input.uv , _bumpMap);
  
     float3 color= ComputeLightColor(input.worldPos.xyz, input.normal);
     

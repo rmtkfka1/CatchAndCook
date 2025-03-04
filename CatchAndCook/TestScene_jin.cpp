@@ -9,6 +9,7 @@
 #include "testComponent.h"
 #include "Transform.h"
 #include "Mesh.h"
+#include "WaterController.h"
 
 
 void TestScene_jin::Init()
@@ -34,14 +35,15 @@ void TestScene_jin::Init()
 
 			//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal_Sea"));
 			gameObject->_transform->SetLocalPosition(vec3(0,8.5f,0));
+			gameObject->AddComponent<WaterController>();
 
 			material = make_shared<Material>();
 			material->SetShader(shader);
 			material->SetPass(RENDER_PASS::Forward);
-			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"Sea",L"Textures/sea/sea.jpg");
-			shared_ptr<Texture> texture1 = ResourceManager::main->Load<Texture>(L"Sea2",L"Textures/sea/sea2.jpg");
-			material->SetHandle("g_tex_0",texture->GetSRVCpuHandle());
-			material->SetHandle("g_tex_1",texture1->GetSRVCpuHandle());
+			//shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"Sea",L"Textures/sea/sea.jpg");
+			//shared_ptr<Texture> texture1 = ResourceManager::main->Load<Texture>(L"Sea2",L"Textures/sea/sea2.jpg");
+			//material->SetHandle("g_tex_0",texture->GetSRVCpuHandle());
+			//material->SetHandle("g_tex_1",texture1->GetSRVCpuHandle());
 
 			meshRenderer->AddMaterials({material});
 
