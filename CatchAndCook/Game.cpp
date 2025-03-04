@@ -72,11 +72,11 @@ void Game::Init(HWND hwnd)
 	{
 		Light light;
 
-		light.direction = vec3(0.5f, -0.34f, 0.79f);
+		light.direction = vec3(0, -1.0f, 0);
 		light.position = vec3(0, 1000.0f, 0);
 		light.direction.Normalize();
 	
-		light.material.ambient = vec3(0.1f,0.1f,0.1f);
+		light.material.ambient = vec3(0.25f,0.25f,0.25f);
 		light.material.diffuse = vec3(1.0f, 1.0f, 1.0f);
 		light.material.specular = vec3(1.0f,1.0f,1.0f);
 		light.material.shininess = 16.0f;

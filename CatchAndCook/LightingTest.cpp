@@ -71,7 +71,7 @@ void LightingTest::Init()
 		meshRenderer->AddMaterials({ material });
 
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(1, 1, 1, 1)));
-		ImguiManager::main->_light = root.get();
+	
 
 	}
 

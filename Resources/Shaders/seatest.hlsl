@@ -199,30 +199,10 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 float4 PS_Main(DS_OUT input) : SV_Target
 {
  
-    float3 color;
-    
-    float4 worldPos = input.worldPos;
-    
-    float3 WolrdNormal = normalize(input.normal);
-    
-    float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
 
-    for (int i = 0; i < g_lightCount; ++i)
-    {
-        if (g_lights[i].mateiral.lightType == 0)
-        {
-            color += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral,worldPos.xyz,WolrdNormal.xyz, toEye);
-        }
-        else if (g_lights[i].mateiral.lightType == 1)
-        {
-            color += ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
-        }
-        else if (g_lights[i].mateiral.lightType == 2)
-        {
-            color += ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WolrdNormal.xyz, toEye);
-        }
-    }
     
-    return float4(color, 1.0f) * sea_color;
+    float3 lightColor = ComputeLightColor(input.worldPos.xyz, input.normal);
+    
+    return float4(lightColor, 1.0f) * sea_color;
   
 }

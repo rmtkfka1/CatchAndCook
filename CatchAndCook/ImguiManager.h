@@ -12,7 +12,6 @@ public:
 	void Render();
 
 public:
-	GameObject* _light;
 
 private:
 	bool show_window = true;

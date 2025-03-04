@@ -97,11 +97,9 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 float4 PS_Main(VS_OUT input) : SV_Target
 {
     ComputeNormalMapping(input.normalWS, input.tangentWS, input.uv, _BumpMap);
-    //float3 totalNormalWS = TransformNormalTangentToSpace(float3(0, 0, 1), normalize(input.normalWS), normalize(input.tangentWS));
-    //return float4(normalize(input.normalWS), 1);
-    //return float4(_BumpMap.Sample(sampler_lerp, input.uv).xyz, 1);
-    //return float4(normalize(totalNormalWS), 1) * 0.5 + 0.5;
+    
+    float4 lightColor = ComputeLightColor(input.positionWS.xyz, input.normalWS);
 
-    return color * (saturate(dot(input.normalWS, normalize(float3(0, 1, -1)))) * 0.7 + 0.3);
+    return lightColor * color;
 
 }
