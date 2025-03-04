@@ -34,7 +34,7 @@ void LightingTest::Init()
 			material->SetShader(shader);
 			material->SetPass(RENDER_PASS::Forward);
 			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"Sea", L"Textures/sea/sea.jpg");
-			shared_ptr<Texture> texture1 = ResourceManager::main->Load<Texture>(L"Sea2", L"Textures/sea/sea2.jpg");
+			shared_ptr<Texture> texture1 = ResourceManager::main->Load<Texture>(L"Sea2", L"Textures/sea/0001.png");
 			material->SetHandle("g_tex_0", texture->GetSRVCpuHandle());
 			material->SetHandle("g_tex_1", texture1->GetSRVCpuHandle());
 
@@ -71,7 +71,7 @@ void LightingTest::Init()
 		meshRenderer->AddMaterials({ material });
 
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(1, 1, 1, 1)));
-	
+		ImguiManager::main->_light = root.get();
 
 	}
 

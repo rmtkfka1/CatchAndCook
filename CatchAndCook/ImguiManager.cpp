@@ -37,10 +37,20 @@ void ImguiManager::Render()
 	ImGui::NewFrame();
 
 	{
-		ImGui::Begin("Global_Lighting");
+		ImGui::Begin("LightingTest");
 
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+
+		if (_light != nullptr)
+		{
+			vec3 tempPos = _light->_transform->GetLocalPosition();
+
+			if (ImGui::SliderFloat3("LightPos", &tempPos.x, -300.0f, 300.0f))
+			{
+				_light->_transform->SetLocalPosition(tempPos);
+			}
+		}
 
 		static vec3 direction = vec3(0, -1, 0);
 		ImGui::SliderFloat3("LightDirection", &direction.x, -1.0f, 1.0f);
@@ -49,9 +59,10 @@ void ImguiManager::Render()
 		ImGui::SliderFloat3("DiffuseColor", &LightManager::main->_lightParmas.light[0].material.diffuse.x, 0, 1.0f);
 		ImGui::SliderFloat3("AmbientColor", &LightManager::main->_lightParmas.light[0].material.ambient.x, 0, 1.0f);
 		ImGui::SliderFloat3("SpecularColor", &LightManager::main->_lightParmas.light[0].material.specular.x, 0, 1.0f);
-		ImGui::SliderFloat("shininess", &LightManager::main->_lightParmas.light[0].material.shininess, 0, 256.0f);
-		ImGui::End();
-	};
+
+	
+		ImGui::End(); 
+	}
 
 	ImGui::Render();
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), Core::main->GetCmdList().Get());

@@ -46,20 +46,13 @@ struct HS_OUT
     float3 normal : NORMAL;
 };
 
+
 DS_OUT WaveGeneration(DS_OUT input)
 {
-    const int waveCount = 3;
-    float amplitudes[waveCount] = { 2.5f, 1.5f, 1.0f };
-    float wavelengths[waveCount] = { 150.0f, 200.0f, 150.0f };
-    float speeds[waveCount] = { 1.0f, 0.4f, 3.0f };
-    float steepnesses[waveCount] = { 0.5f, 0.4f, 0.3f };
-
-    float2 waveDirections[waveCount] =
-    {
-        normalize(float2(0.4f, 0.2f)),
-        normalize(float2(0.7f, -1.0f)),
-        normalize(float2(0.5f, 0.7f))
-    };
+    const int waveCount = 32; // 파도 개수 증가
+    float baseWavelength = 150.0f; // 초기 파장 증가 (더 큰 파도)
+    float maxAmplitude = 2.5f; // 전체적으로 낮은 진폭
+    float steepnessFactor = 0.2f; // 기본적인 파도의 기울기
 
     float3 modifiedPos = input.worldPos.xyz;
     float dHdX = 0.0f;
@@ -67,26 +60,37 @@ DS_OUT WaveGeneration(DS_OUT input)
 
     for (int i = 0; i < waveCount; i++)
     {
-        float frequency = 2 * PI / wavelengths[i];
-        float phase = speeds[i] * g_Time;
-        float2 direction = waveDirections[i];
-        float steepness = steepnesses[i];
+        // 랜덤한 방향 생성 (이전보다 더 무작위하게)
+        float randomAngle = frac(sin(i * 837.15f) * 43758.5453f) * 2.0f * PI;
+        float2 direction = normalize(float2(cos(randomAngle), sin(randomAngle)));
 
+        // 파장과 주파수 조절 (멀리 갈수록 파장이 길어지도록)
+        float wavelength = baseWavelength * pow(1.25, i / 8.0f); // 8개 단위로 천천히 증가
+        float frequency = 2 * PI / wavelength;
+
+        // 파도의 크기 조절 (낮은 주파수의 파도가 강하게)
+        float amplitude = maxAmplitude * pow(0.8f, i / 5.0f); // 큰 파도는 오래 유지됨
+        float speed = 0.2f + 0.015f * i; // 작은 파도가 더 빠르게 이동
+
+        // Steepness 조절 (큰 파도는 완만하게, 작은 파도는 날카롭게)
+        float steepness = steepnessFactor * (1.0f - pow(0.9f, i));
+
+        // 파동 계산
         float dotProduct = dot(direction, input.worldPos.xz);
-        float wave = sin(dotProduct * frequency + phase);
-        float waveDerivative = cos(dotProduct * frequency + phase);
+        float wave = sin(dotProduct * frequency + speed * g_Time);
+        float waveDerivative = cos(dotProduct * frequency + speed * g_Time);
 
-        // Gerstner Waves 적용
-        modifiedPos.x += steepness * amplitudes[i] * direction.x * waveDerivative;
-        modifiedPos.z += steepness * amplitudes[i] * direction.y * waveDerivative;
-        modifiedPos.y += amplitudes[i] * wave;
+        // Gerstner Waves 적용 (수면의 움직임)
+        modifiedPos.x += steepness * amplitude * direction.x * waveDerivative;
+        modifiedPos.z += steepness * amplitude * direction.y * waveDerivative;
+        modifiedPos.y += amplitude * wave;
 
-        // 편미분 계산
+        // 편미분 계산 (법선 벡터 업데이트)
         float dWavedX = frequency * waveDerivative * direction.x;
         float dWavedZ = frequency * waveDerivative * direction.y;
 
-        dHdX += amplitudes[i] * dWavedX;
-        dHdZ += amplitudes[i] * dWavedZ;
+        dHdX += amplitude * dWavedX;
+        dHdZ += amplitude * dWavedZ;
     }
 
     // 법선 벡터 계산
@@ -189,7 +193,9 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 		lerp(quad[2].normal, quad[3].normal, location.x),
 		location.y);
     
-    dout = WaveGeneration(dout);
+    //dout = WaveGeneration(dout);
+   
+    dout.worldPos.y += g_tex_1.SampleLevel(sampler_point, dout.uv,0).r * 100.0f;
 
     dout.clipPos = mul(dout.worldPos, VPMatrix);
 
@@ -199,10 +205,8 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 float4 PS_Main(DS_OUT input) : SV_Target
 {
  
-
+    float3 color= ComputeLightColor(input.worldPos.xyz, input.normal);
     
-    float3 lightColor = ComputeLightColor(input.worldPos.xyz, input.normal);
-    
-    return float4(lightColor, 1.0f) * sea_color;
+    return float4(color, 1.0f) * g_tex_0.Sample(sampler_lerp, input.uv);
   
 }

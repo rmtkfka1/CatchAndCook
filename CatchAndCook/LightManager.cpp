@@ -27,5 +27,10 @@ void LightManager::Update()
 {
 	_lightParmas.eyeWorldPos = CameraManager::main->GetActiveCamera()->GetCameraPos();
 
+	for (int i = 0; i < _lightParmas.lightCount; ++i)
+	{
+		if (ImguiManager::main->_light)
+			_lightParmas.light[i].position = ImguiManager::main->_light->_transform->GetWorldPosition();
+	}
 
 }
