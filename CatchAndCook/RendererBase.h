@@ -18,6 +18,7 @@ class RenderStructuredSetter
 public:
 	virtual void SetData(StructuredBuffer* buffer = nullptr) = 0;
 };
+
 class RenderCBufferSetter
 {
 public:

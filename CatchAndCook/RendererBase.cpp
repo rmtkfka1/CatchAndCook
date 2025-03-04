@@ -23,7 +23,6 @@ void RendererBase::RemoveStructuredSetter(const shared_ptr<RenderStructuredSette
 	}
 }
 
-
 void RendererBase::AddCbufferSetter(const std::shared_ptr<RenderCBufferSetter>& setter)
 {
 	auto it = ranges::find(_cbufferSetters, setter);

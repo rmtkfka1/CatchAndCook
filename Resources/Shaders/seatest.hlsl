@@ -4,8 +4,8 @@
 
 #include  "Light_b3.hlsl"
 
-Texture2D g_tex_0 : register(t0);
-Texture2D g_tex_1 : register(t1);
+Texture2D _baseMap : register(t0);
+Texture2D _bumpMap : register(t1);
 
 #define G_MaxTess 4
 #define G_MinTess 1
@@ -194,9 +194,20 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 		location.y);
     
     //dout = WaveGeneration(dout);
-   
-    dout.worldPos.y += g_tex_1.SampleLevel(sampler_point, dout.uv,0).r * 100.0f;
+    
+    float3 tagent = float3(1, 0, 0);
+    
+    float4 map = _bumpMap.SampleLevel(sampler_lerp, dout.uv,0);
+    
+    float3 N = normalize(dout.normal); 
+    float3 T = normalize(tagent); 
+    float3 B = normalize(cross(N, T)); 
+    float3x3 TBN = float3x3(T, B, N); 
 
+    float3 tangentSpaceNormal = (map.rgb * 2.0f - 1.0f);
+    float3 worldNormal = mul(tangentSpaceNormal, TBN);
+
+    dout.worldPos.y += worldNormal;
     dout.clipPos = mul(dout.worldPos, VPMatrix);
 
     return dout;
@@ -204,9 +215,11 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 
 float4 PS_Main(DS_OUT input) : SV_Target
 {
+    
+    ComputeNormalMapping(input.normal, float3(1, 0, 0), input.uv, _bumpMap);
  
     float3 color= ComputeLightColor(input.worldPos.xyz, input.normal);
     
-    return float4(color, 1.0f) * g_tex_0.Sample(sampler_lerp, input.uv);
+    return float4(color, 1.0f) *sea_color;
   
 }

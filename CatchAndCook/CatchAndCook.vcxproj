@@ -259,6 +259,7 @@
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vertex.cpp" />
+    <ClCompile Include="WaterController.cpp" />
     <ClCompile Include="WaterHeight.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -346,6 +347,7 @@
     <ClInclude Include="Time.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vertex.h" />
+    <ClInclude Include="WaterController.h" />
     <ClInclude Include="WaterHeight.h" />
     <ClInclude Include="wstrutil.h" />
   </ItemGroup>

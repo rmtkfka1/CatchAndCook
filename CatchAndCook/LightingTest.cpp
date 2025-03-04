@@ -5,6 +5,7 @@
 #include "random"
 #include "Mesh.h"
 #include "ImguiManager.h"
+#include "WaterController.h"
 void LightingTest::Init()
 {
 	Scene::Init();
@@ -26,6 +27,7 @@ void LightingTest::Init()
 
 			shared_ptr<GameObject> gameObject = CreateGameObject(L"grid_orgin");
 			auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+			gameObject->AddComponent<WaterController>();
 
 			//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal_Sea"));
 			gameObject->_transform->SetLocalPosition(vec3(0, 0.0f, 0));
@@ -34,9 +36,9 @@ void LightingTest::Init()
 			material->SetShader(shader);
 			material->SetPass(RENDER_PASS::Forward);
 			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"Sea", L"Textures/sea/sea.jpg");
-			shared_ptr<Texture> texture1 = ResourceManager::main->Load<Texture>(L"Sea2", L"Textures/sea/0001.png");
-			material->SetHandle("g_tex_0", texture->GetSRVCpuHandle());
-			material->SetHandle("g_tex_1", texture1->GetSRVCpuHandle());
+			//shared_ptr<Texture> texture1 = ResourceManager::main->Load<Texture>(L"Sea2", L"Textures/sea/0001.png");
+			material->SetHandle("_baseMap", texture->GetSRVCpuHandle());
+			//material->SetHandle("g_tex_1", texture1->GetSRVCpuHandle());
 
 			meshRenderer->AddMaterials({ material });
 
