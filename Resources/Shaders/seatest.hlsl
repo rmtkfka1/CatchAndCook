@@ -234,11 +234,11 @@ float4 PS_Main(DS_OUT input) : SV_Target0
 {
     float3 viewDir = normalize(g_eyeWorld - input.worldPos.xyz);
 
-    float frameIndex = fmod(g_Time * 4.0, 119); 
+    float frameIndex = fmod(g_Time * 4.0, 120); 
     float i0 = floor(frameIndex);
     float i1 = i0 + 1;
     
-    if (i1 >= 119)
+    if (i1 >= 120)
         i0 = 0;
 
     float alpha = frac(frameIndex); 
