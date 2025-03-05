@@ -1,12 +1,15 @@
 #include "Global_b0.hlsl"
 #include "Transform_b1.hlsl"
 #include "Camera_b2.hlsl"
+#include "Light_b3.hlsl"
 
-#include  "Light_b3.hlsl"
 
 Texture2D _baseMap : register(t0);
 Texture2D _bumpMap : register(t1);
+TextureCube _cubeMap : register(t2);
 
+
+// 테셀레이션 파라미터
 #define G_MaxTess 4
 #define G_MinTess 1
 
@@ -14,8 +17,12 @@ Texture2D _bumpMap : register(t1);
 #define DIST_MAX 900.0f
 #define DIST_MIN 10.0f
 
+// 바다 기본 색 (간단 참고용)
 static float4 sea_color = float4(0.3f, 0.3f, 1.0f, 1.0f);
 
+///////////////////////////////////////////////////////////////////////////
+// 1) 정점 셰이더 관련 구조체
+///////////////////////////////////////////////////////////////////////////
 
 struct VS_IN
 {
@@ -31,13 +38,9 @@ struct VS_OUT
     float3 normal : NORMAL;
 };
 
-struct DS_OUT
-{
-    float4 clipPos : SV_POSITION;
-    float4 worldPos : POSITION;
-    float2 uv : TEXCOORD;
-    float3 normal : NORMAL;
-};
+///////////////////////////////////////////////////////////////////////////
+// 2) Hull/Domain 셰이더에 전달될 구조체
+///////////////////////////////////////////////////////////////////////////
 
 struct HS_OUT
 {
@@ -46,78 +49,97 @@ struct HS_OUT
     float3 normal : NORMAL;
 };
 
-
-DS_OUT WaveGeneration(DS_OUT input)
+struct DS_OUT
 {
-    const int waveCount = 32; // 파도 개수 증가
-    float baseWavelength = 150.0f; // 초기 파장 증가 (더 큰 파도)
-    float maxAmplitude = 2.5f; // 전체적으로 낮은 진폭
-    float steepnessFactor = 0.2f; // 기본적인 파도의 기울기
+    float4 clipPos : SV_POSITION;
+    float4 worldPos : POSITION;
+    float2 uv : TEXCOORD;
+    float3 normal : NORMAL;
+};
 
-    float3 modifiedPos = input.worldPos.xyz;
+///////////////////////////////////////////////////////////////////////////
+// 3) Gerstner Wave 함수 (Domain Shader에서 실제로 지오메트리 변위)
+///////////////////////////////////////////////////////////////////////////
+void WaveGeneration(inout float3 worldPos, inout float3 worldNormal)
+{
+    const int waveCount = 3;
+
+    // 여러 파도 파라미터
+    float amplitudes[waveCount] = { 2.5f, 1.5f, 1.0f };
+    float wavelengths[waveCount] = { 150.f, 200.f, 150.f };
+    float speeds[waveCount] = { 1.0f, 0.4f, 3.0f };
+    float steepnesses[waveCount] = { 0.5f, 0.4f, 0.3f };
+
+    float2 waveDirections[waveCount] =
+    {
+        normalize(float2(0.4f, 0.2f)),
+        normalize(float2(0.7f, -1.0f)),
+        normalize(float2(0.5f, 0.7f))
+    };
+
+    float3 modifiedPos = worldPos;
     float dHdX = 0.0f;
     float dHdZ = 0.0f;
 
     for (int i = 0; i < waveCount; i++)
     {
-        // 랜덤한 방향 생성 (이전보다 더 무작위하게)
-        float randomAngle = frac(sin(i * 837.15f) * 43758.5453f) * 2.0f * PI;
-        float2 direction = normalize(float2(cos(randomAngle), sin(randomAngle)));
+        float frequency = 2.0f * PI / wavelengths[i];
+        float phase = speeds[i] * g_Time;
+        float2 dir = waveDirections[i];
+        float steep = steepnesses[i];
 
-        // 파장과 주파수 조절 (멀리 갈수록 파장이 길어지도록)
-        float wavelength = baseWavelength * pow(1.25, i / 8.0f); // 8개 단위로 천천히 증가
-        float frequency = 2 * PI / wavelength;
+        // 현재 정점(worldPos)과 파도 방향(dir)의 내적
+        float dotVal = dot(dir, worldPos.xz);
 
-        // 파도의 크기 조절 (낮은 주파수의 파도가 강하게)
-        float amplitude = maxAmplitude * pow(0.8f, i / 5.0f); // 큰 파도는 오래 유지됨
-        float speed = 0.2f + 0.015f * i; // 작은 파도가 더 빠르게 이동
+        // sin / cos 로 파도 변위 계산
+        float waveSin = sin(dotVal * frequency + phase);
+        float waveCos = cos(dotVal * frequency + phase);
 
-        // Steepness 조절 (큰 파도는 완만하게, 작은 파도는 날카롭게)
-        float steepness = steepnessFactor * (1.0f - pow(0.9f, i));
+        // Gerstner 공식에 의한 xz 변위
+        modifiedPos.x += steep * amplitudes[i] * dir.x * waveCos;
+        modifiedPos.z += steep * amplitudes[i] * dir.y * waveCos;
+        // y 변위
+        modifiedPos.y += amplitudes[i] * waveSin;
 
-        // 파동 계산
-        float dotProduct = dot(direction, input.worldPos.xz);
-        float wave = sin(dotProduct * frequency + speed * g_Time);
-        float waveDerivative = cos(dotProduct * frequency + speed * g_Time);
-
-        // Gerstner Waves 적용 (수면의 움직임)
-        modifiedPos.x += steepness * amplitude * direction.x * waveDerivative;
-        modifiedPos.z += steepness * amplitude * direction.y * waveDerivative;
-        modifiedPos.y += amplitude * wave;
-
-        // 편미분 계산 (법선 벡터 업데이트)
-        float dWavedX = frequency * waveDerivative * direction.x;
-        float dWavedZ = frequency * waveDerivative * direction.y;
-
-        dHdX += amplitude * dWavedX;
-        dHdZ += amplitude * dWavedZ;
+        // 편미분 계산 (법선 기울기)
+        float dWavedX = frequency * waveCos * dir.x;
+        float dWavedZ = frequency * waveCos * dir.y;
+        dHdX += amplitudes[i] * dWavedX;
+        dHdZ += amplitudes[i] * dWavedZ;
     }
 
-    // 법선 벡터 계산
-    float3 normal = normalize(float3(-dHdX, 1.0f, -dHdZ));
+    // 새롭게 계산된 법선
+    float3 computedNormal = normalize(float3(-dHdX, 1.0f, -dHdZ));
 
-    input.worldPos = float4(modifiedPos, 1.0f);
-
-
-    return input;
+    // 결과 반영
+    worldPos = modifiedPos;
+    worldNormal = computedNormal;
 }
 
-VS_OUT VS_Main(VS_IN input , uint id :SV_InstanceID)
+///////////////////////////////////////////////////////////////////////////
+// 4) Vertex Shader
+///////////////////////////////////////////////////////////////////////////
+VS_OUT VS_Main(VS_IN input, uint instanceID : SV_InstanceID)
 {
-    VS_OUT output = (VS_OUT) 0;
-    
-    Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
+    VS_OUT output;
+
+    // 인스턴스 변환 행렬 가져오기 (프로젝트 환경에 맞춰 사용)
+    Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + instanceID];
     row_major float4x4 l2wMatrix = data.localToWorld;
-    row_major float4x4 w2lMatrix = data.worldToLocal;
-    // 월드, 뷰, 프로젝션 변환
-    float4 worldPos = mul(float4(input.pos.xyz, 1.0f), l2wMatrix);
+
+    // 정점 -> 월드
+    float4 worldPos = mul(float4(input.pos, 1.0f), l2wMatrix);
+    float3 worldNormal = mul(float4(input.normal, 0.0f), l2wMatrix);
+
     output.worldPos = worldPos;
     output.uv = input.uv;
-    output.normal = mul(float4(input.normal, 0.0f), l2wMatrix);
-    
+    output.normal = worldNormal;
     return output;
 }
 
+///////////////////////////////////////////////////////////////////////////
+// 5) Hull Shader (테셀레이션 제어를 위한 상수 셰이더)
+///////////////////////////////////////////////////////////////////////////
 struct PatchConstOutput
 {
     float edges[4] : SV_TessFactor;
@@ -126,35 +148,36 @@ struct PatchConstOutput
 
 float CalcTessFactor(float3 p)
 {
+    // 거리 기반으로 테셀레이션 레벨 조절(예: 가까울수록 세분화 높게)
     float d = distance(p, cameraPos.xyz);
     float s = smoothstep(DIST_MIN, DIST_MAX, d);
-    float tess = exp2(lerp(G_MaxTess, G_MinTess, s));
-    
+    float tess = exp2(lerp(G_MaxTess, G_MinTess, s)); // 2^(lerp(...)) 예시
     return clamp(tess, 1.0f, 64.0f);
 }
 
-//패치단위로 호출
+// 패치 단위로 호출
 PatchConstOutput ConstantHS(InputPatch<VS_OUT, 4> patch, uint patchID : SV_PrimitiveID)
 {
-    PatchConstOutput pt;
+    PatchConstOutput pc;
     
+    // 패치 4개의 꼭짓점 기준, 테셀레이션 팩터 계산(모서리+내부)
     float3 e0 = 0.5f * (patch[0].worldPos.xyz + patch[2].worldPos.xyz);
     float3 e1 = 0.5f * (patch[0].worldPos.xyz + patch[1].worldPos.xyz);
     float3 e2 = 0.5f * (patch[1].worldPos.xyz + patch[3].worldPos.xyz);
     float3 e3 = 0.5f * (patch[2].worldPos.xyz + patch[3].worldPos.xyz);
     float3 c = 0.25f * (patch[0].worldPos.xyz + patch[1].worldPos.xyz + patch[2].worldPos.xyz + patch[3].worldPos.xyz);
 
+    pc.edges[0] = CalcTessFactor(e0);
+    pc.edges[1] = CalcTessFactor(e1);
+    pc.edges[2] = CalcTessFactor(e2);
+    pc.edges[3] = CalcTessFactor(e3);
 
-    pt.edges[0] = CalcTessFactor(e0);
-    pt.edges[1] = CalcTessFactor(e1);
-    pt.edges[2] = CalcTessFactor(e2);
-    pt.edges[3] = CalcTessFactor(e3);
-
-    pt.inside[0] = CalcTessFactor(c);
-    pt.inside[1] = pt.inside[0];
+    pc.inside[0] = CalcTessFactor(c);
+    pc.inside[1] = pc.inside[0];
     
-    return pt;
+    return pc;
 }
+
 [domain("quad")]
 [partitioning("fractional_even")]
 [outputtopology("triangle_cw")]
@@ -163,63 +186,72 @@ PatchConstOutput ConstantHS(InputPatch<VS_OUT, 4> patch, uint patchID : SV_Primi
 [maxtessfactor(64.0f)]
 HS_OUT HS_Main(InputPatch<VS_OUT, 4> patch, uint vertexID : SV_OutputControlPointID, uint patchId : SV_PrimitiveID)
 {
-    //4번호출됨.
+    // 단순 전달
     HS_OUT hout;
     hout.worldPos = patch[vertexID].worldPos;
     hout.uv = patch[vertexID].uv;
     hout.normal = patch[vertexID].normal;
-    
     return hout;
 }
 
-
+///////////////////////////////////////////////////////////////////////////
+// 6) Domain Shader: 보간 후 Gerstner 파도 적용
+///////////////////////////////////////////////////////////////////////////
 [domain("quad")]
-DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 location : SV_DomainLocation)
+DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 uvDomain : SV_DomainLocation)
 {
     DS_OUT dout;
     
-    dout.worldPos = lerp(
-		lerp(quad[0].worldPos, quad[1].worldPos, location.x),
-		lerp(quad[2].worldPos, quad[3].worldPos, location.x),
-		location.y);
+    // 4개 꼭짓점 보간
+    float4 p0 = lerp(quad[0].worldPos, quad[1].worldPos, uvDomain.x);
+    float4 p1 = lerp(quad[2].worldPos, quad[3].worldPos, uvDomain.x);
+    dout.worldPos = lerp(p0, p1, uvDomain.y);
 
-    dout.uv = lerp(
-		lerp(quad[0].uv, quad[1].uv, location.x),
-		lerp(quad[2].uv, quad[3].uv, location.x),
-		location.y);
+    float2 t0 = lerp(quad[0].uv, quad[1].uv, uvDomain.x);
+    float2 t1 = lerp(quad[2].uv, quad[3].uv, uvDomain.x);
+    dout.uv = lerp(t0, t1, uvDomain.y);
 
-    dout.normal = lerp(
-		lerp(quad[0].normal, quad[1].normal, location.x),
-		lerp(quad[2].normal, quad[3].normal, location.x),
-		location.y);
-    
-    dout = WaveGeneration(dout);
-    
-    float3 tagent = float3(1, 0, 0);
-    
-    float4 map = _bumpMap.SampleLevel(sampler_lerp, dout.uv, 0);
-    
-    float3 N = normalize(dout.normal);
-    float3 T = normalize(tagent);
-    float3 B = normalize(cross(N, T));
-    float3x3 TBN = float3x3(T, B, N);
+    float3 n0 = lerp(quad[0].normal, quad[1].normal, uvDomain.x);
+    float3 n1 = lerp(quad[2].normal, quad[3].normal, uvDomain.x);
+    dout.normal = lerp(n0, n1, uvDomain.y);
 
-    float3 tangentSpaceNormal = (map.rgb * 2.0f - 1.0f);
-    float3 worldNormal = mul(tangentSpaceNormal, TBN);
+    // ---- Gerstner Wave를 실제로 적용 ----
+    float3 pos = dout.worldPos.xyz;
+    float3 nor = dout.normal;
+    WaveGeneration(pos, nor);
 
-    dout.worldPos.y += worldNormal * 3.0f;
+    // 결과 반영
+    dout.worldPos.xyz = pos;
+    dout.normal = nor;
+
+    // 클립 공간 변환 (VPMatrix 사용)
     dout.clipPos = mul(dout.worldPos, VPMatrix);
-
     return dout;
 }
 
-float4 PS_Main(DS_OUT input) : SV_Target
+///////////////////////////////////////////////////////////////////////////
+// 7) Pixel Shader: 이미 도메인 쉐이더에서 변형된 파도를 받아서
+//    간단한 Fresnel, 환경 반사(또는 Cubemap) 등으로 색 계산
+///////////////////////////////////////////////////////////////////////////
+float4 PS_Main(DS_OUT input) : SV_Target0
 {
+
+    float3 viewDir = normalize(g_eyeWorld - input.worldPos.xyz);
+
+    float3 N = normalize(input.normal);
+
+    float3 baseSeaColor = float3(0.0, 0.3, 0.6);
+
+    // (4) 간단 Fresnel
+    float fresnelFactor = pow(1.0 - max(0.0, dot(N, viewDir)), 5.0);
+
+    float3 R = reflect(-viewDir, N);
     
-    ComputeNormalMapping(input.normal, float3(1, 0, 0), input.uv , _bumpMap);
- 
-    float3 color= ComputeLightColor(input.worldPos.xyz, input.normal);
+    float3 envReflection = _cubeMap.Sample(sampler_lerp, R).rgb;
     
-    return float4(color, 1.0f) *sea_color;
-  
+    float4 LightColor =ComputeLightColor(input.worldPos.xyz, input.normal);
+    
+    float3 finalColor = lerp(baseSeaColor, envReflection, fresnelFactor);
+
+    return float4(finalColor, 1.0f) * LightColor;
 }

@@ -10,6 +10,34 @@ void LightingTest::Init()
 {
 	Scene::Init();
 
+
+	{
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"cubemap", L"cubemap.hlsl", GeoMetryProp,
+			ShaderArg{}, info);
+
+		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"cubemap", L"Textures/cubemap/output.dds", TextureType::CubeMap);
+		shared_ptr<Material> material = make_shared<Material>();
+
+		shared_ptr<GameObject> gameObject = CreateGameObject(L"cubeMap");
+
+		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+
+
+		material = make_shared<Material>();
+		material->SetShader(shader);
+		material->SetPass(RENDER_PASS::Forward);
+		material->SetHandle("g_tex_0", texture->GetSRVCpuHandle());
+
+		meshRenderer->AddMaterials({ material });
+		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
+		meshRenderer->SetCulling(false);
+	}
+
 	{
 
 		{
@@ -38,11 +66,11 @@ void LightingTest::Init()
 			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"Sea", L"Textures/sea/sea.jpg");
 			//shared_ptr<Texture> texture1 = ResourceManager::main->Load<Texture>(L"Sea2", L"Textures/sea/0001.png");
 			material->SetHandle("_baseMap", texture->GetSRVCpuHandle());
-			//material->SetHandle("g_tex_1", texture1->GetSRVCpuHandle());
+			material->SetHandle("_cubeMap", ResourceManager::main->Get<Texture>(L"cubemap")->GetSRVCpuHandle());
 
 			meshRenderer->AddMaterials({ material });
 
-			auto& mesh = GeoMetryHelper::LoadGripMeshControlPoints(1000.0f, 1000.0f, 500, 500, false);
+			auto& mesh = GeoMetryHelper::LoadGripMeshControlPoints(1024.0f, 1024.0f, 500, 500, false);
 			mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 			meshRenderer->AddMesh(mesh);
 			meshRenderer->SetCulling(false);

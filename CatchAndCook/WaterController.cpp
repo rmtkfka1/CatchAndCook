@@ -22,6 +22,8 @@ void WaterController::Init()
         
     }
 
+    _textures[0] = ResourceManager::main->Load<Texture>(L"waterNormaltt", L"../Resources/Textures/sea/normalMap.png");
+
 }
 
 void WaterController::Start()
@@ -81,5 +83,5 @@ void WaterController::SetData(Material* material)
 	if (frameCount >= 120)
 		frameCount = 0;
 
-    material->SetHandle("_bumpMap", _textures[(int)frameCount]->GetSRVCpuHandle());
+    material->SetHandle("_bumpMap", _textures[0]->GetSRVCpuHandle());
 }
