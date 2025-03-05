@@ -252,7 +252,7 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     float4 normalLerp = lerp(normalA, normalB, alpha);
 
     // 노멀 매핑 적용
-    ComputeNormalMapping(input.normal, float3(1, 0, 0), input.uv, normalLerp);
+    ComputeNormalMapping(input.normal, float3(1, 0, 0), normalLerp);
 
     float3 N = normalize(input.normal);
 

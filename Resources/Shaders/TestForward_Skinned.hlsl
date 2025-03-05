@@ -96,7 +96,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 [earlydepthstencil]
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    ComputeNormalMapping(input.normalWS, input.tangentWS, input.uv, _BumpMap.Sample(sampler_lerp, input.uv));
+    ComputeNormalMapping(input.normalWS, input.tangentWS, _BumpMap.Sample(sampler_lerp, input.uv));
     
     float4 lightColor = ComputeLightColor(input.positionWS.xyz, input.normalWS);
 
