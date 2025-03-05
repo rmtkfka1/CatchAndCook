@@ -130,6 +130,7 @@ void ResourceManager::CreateDefaultShader()
 		shader->Init(L"Gizmo.hlsl", {},ShaderArg{{{"PS_Main","ps"},{"VS_Main","vs"},{"GS_Main","gs"}}},info);
 		Add<Shader>(L"Gizmo",shader);
 	}
+
 	{
 
 		ShaderInfo info;

@@ -27,7 +27,7 @@ public:
 
 private:
     float frameCount = 0;
-    vector<shared_ptr<Texture>> _textures;
+    shared_ptr<Texture> _textures;
 
 
 

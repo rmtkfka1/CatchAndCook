@@ -59,7 +59,7 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     PS_OUT output = (PS_OUT) 0;
     
     output.position = float4(input.worldPos, 1.0f);
-   ComputeNormalMapping(input.worldNormal, input.worldTangent, input.uv, _BumpMap);
+    ComputeNormalMapping(input.worldNormal, input.worldTangent, input.uv, _BumpMap.Sample(sampler_lerp, input.uv));
     output.color = _BaseMap.Sample(sampler_lerp, input.uv); 
     output.depth = input.pos.z;
     return output;

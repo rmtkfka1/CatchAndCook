@@ -5,7 +5,7 @@
 
 
 Texture2D _baseMap : register(t0);
-Texture2D _bumpMap : register(t1);
+Texture2DArray _bumpMap : register(t1);
 TextureCube _cubeMap : register(t2);
 
 
@@ -216,7 +216,7 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 
     float3 pos = dout.worldPos.xyz;
     float3 nor = dout.normal;
-    WaveGeneration(pos, nor);
+    //WaveGeneration(pos, nor);
 
 
     dout.worldPos.xyz = pos;
@@ -235,7 +235,11 @@ float4 PS_Main(DS_OUT input) : SV_Target0
 
     float3 viewDir = normalize(g_eyeWorld - input.worldPos.xyz);
 
-    ComputeNormalMapping(input.normal, float3(1, 0, 0), input.uv*32.0f, _bumpMap);
+    float3 uv = float3(input.uv, (g_Time) % 119);
+    
+    float4 noramlMap = _bumpMap.Sample(sampler_lerp, uv);
+    
+    ComputeNormalMapping(input.normal, float3(1, 0, 0), input.uv, noramlMap);
     
     float3 N = normalize(input.normal);
 
@@ -251,5 +255,5 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     
     float3 finalColor = lerp(baseSeaColor, envReflection, fresnelFactor);
 
-    return float4(finalColor, 1.0f) *LightColor ;
+    return float4(finalColor, 1.0f) * LightColor;
 }

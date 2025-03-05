@@ -23,6 +23,7 @@ inline bool HasFlag(TextureUsageFlags value, TextureUsageFlags flag) {
 	return (static_cast<uint32_t>(value) & static_cast<uint32_t>(flag)) != 0;
 }
 
+
 class Texture 
 {
 public:
@@ -30,6 +31,9 @@ public:
 	virtual ~Texture();
 
 	void Init(const wstring& path, TextureType type = TextureType::Texture2D, bool relativePath = true);
+	void Init(vector<wstring>& paths);
+
+
 	void ResourceBarrier(D3D12_RESOURCE_STATES after);
 	void CreateStaticTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalState ,uint32 width, uint32 height, 
 		TextureUsageFlags usageFlags , bool Jump,bool depthShared, vec4 clearValue=vec4(0,0,0,0));
@@ -54,7 +58,6 @@ public:
 
 private:
 	wstring _path = L"../Resources/";
-	ScratchImage			 		_image;
 
 	ComPtr<ID3D12Resource>			_resource;
 	ComPtr<ID3D12Resource>			_uploadResource;

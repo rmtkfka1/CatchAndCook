@@ -13,16 +13,16 @@ bool WaterController::IsExecuteAble()
 
 void WaterController::Init()
 {
-    _textures.resize(120);
+	vector<wstring> paths;
     
     for (int i = 0; i <= 119; ++i)
     {
-		_textures[i] = make_shared<Texture>();
-        _textures[i] =ResourceManager::main->Load<Texture>(L"waterNormal" + to_wstring(i), L"../Resources/Textures/sea/" + to_wstring(i) + L".png");
-        
+        paths.push_back(L"../Resources/Textures/sea/" + to_wstring(i) + L".png");
     }
 
-    //_textures[0] = ResourceManager::main->Load<Texture>(L"waterNormaltt", L"../Resources/Textures/sea/normalMap.png");
+    _textures = make_shared<Texture>();
+	_textures->Init(paths);
+
 
 }
 
@@ -77,11 +77,11 @@ void WaterController::Destroy()
 
 void WaterController::SetData(Material* material)
 {
-    frameCount += Time::main->GetDeltaTime() * 10;
+ //   frameCount += Time::main->GetDeltaTime() * 10;
 
 
-	if (frameCount >= 120)
-		frameCount = 0;
+	//if (frameCount >= 120)
+	//	frameCount = 0;
 
-    material->SetHandle("_bumpMap", _textures[frameCount]->GetSRVCpuHandle());
+    material->SetHandle("_bumpMap", _textures->GetSRVCpuHandle());
 }

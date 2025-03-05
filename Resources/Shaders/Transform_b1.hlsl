@@ -180,10 +180,10 @@ float4 TransformWorldToLocal(float4 worldPos, float4 boneIds, float4 boneWs, flo
 	return TransformWorldToLocal(worldPos, w2l);
 }
 
-void ComputeNormalMapping(inout float3 normal, float3 tangent, float2 uv, Texture2D normalMap)
+void ComputeNormalMapping(inout float3 normal, float3 tangent, float2 uv, float4 normalMap)
 {
 	// [0,255] 범위에서 [0,1]로 변환
-    float4 map = normalMap.Sample(sampler_lerp, uv);
+    float4 map = normalMap;
     
     if (any(map.rgb) == false)
         return;

@@ -21,6 +21,7 @@ void Texture::Init(const wstring& path, TextureType type, bool relativePath)
 {
 
     wstring finalPath = path;
+    ScratchImage  _image;
 
     if (relativePath)
         finalPath = _path + finalPath;
@@ -124,6 +125,171 @@ void Texture::Init(const wstring& path, TextureType type, bool relativePath)
 
     Core::main->GetDevice()->CreateShaderResourceView(_resource.Get(), &srvDesc, _srvHandle);
 }
+
+
+void Texture::Init(vector<wstring>& paths)
+{
+    HRESULT hr = S_OK;
+    auto device = Core::main->GetDevice(); // 엔진의 ID3D12Device 포인터 가져오기
+    auto cmdList = Core::main->GetResCmdList(); // 리소스(업로드용) 명령 리스트
+
+    // 1) 여러 이미지 로드
+    // ------------------------------------
+    const size_t numSlices = paths.size();
+    
+    // ScratchImage 여러 개 보관
+    vector<ScratchImage> scratchImages(numSlices);
+
+    // 임의로 첫 번째 텍스처의 메타데이터를 참조
+    TexMetadata firstMeta = {};
+
+    for (size_t i = 0; i < numSlices; ++i)
+    {
+        const wstring& path = paths[i];
+        DirectX::TexMetadata meta = {};
+        DirectX::ScratchImage tmpImage;
+
+        wstring ext = std::filesystem::path(path).extension().wstring();
+        if (ext == L".dds" || ext == L".DDS")
+            hr = DirectX::LoadFromDDSFile(path.c_str(), DDS_FLAGS_NONE, &meta, tmpImage);
+        else if (ext == L".tga" || ext == L".TGA")
+            hr = DirectX::LoadFromTGAFile(path.c_str(), &meta, tmpImage);
+        else if (ext == L".hdr" || ext == L".HDR")
+            hr = DirectX::LoadFromHDRFile(path.c_str(), &meta, tmpImage);
+        else
+            hr = DirectX::LoadFromWICFile(path.c_str(), WIC_FLAGS_NONE, &meta, tmpImage);
+
+        if (FAILED(hr))
+        {
+            wcout << L"Failed to load file: " << path << endl;
+            assert(false);
+        }
+
+        // 첫 번째 텍스처 메타데이터 저장
+        if (i == 0)
+        {
+            firstMeta = meta;
+        }
+        else
+        {
+            // 2) 모든 텍스처가 동일 스펙인지 검사 (해상도, 포맷, mipLevels 등)
+            if (meta.width != firstMeta.width ||
+                meta.height != firstMeta.height ||
+                meta.format != firstMeta.format ||
+                meta.mipLevels != firstMeta.mipLevels)
+            {
+                wcout << L"[Error] All textures must have the same size/format/mipLevels!" << endl;
+                assert(false);
+            }
+        }
+
+        // 결과 복사
+        scratchImages[i] = std::move(tmpImage);
+    }
+
+    // 이제 firstMeta에 공통 스펙이 들어있다고 가정
+    const UINT texWidth = (UINT)firstMeta.width;
+    const UINT texHeight = (UINT)firstMeta.height;
+    const UINT16 arraySize = (UINT16)numSlices;
+    const UINT16 mipLevels = (UINT16)firstMeta.mipLevels;
+    DXGI_FORMAT format = firstMeta.format;
+
+    // ------------------------------------
+    D3D12_RESOURCE_DESC texDesc = {};
+    texDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+    texDesc.Width = texWidth;
+    texDesc.Height = texHeight;
+    texDesc.DepthOrArraySize = arraySize;   // 배열 크기
+    texDesc.MipLevels = mipLevels;
+    texDesc.Format = format;
+    texDesc.SampleDesc.Count = 1;
+    texDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+    texDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+    // CommittedResource 생성 (Default Heap)
+    hr = device->CreateCommittedResource(
+        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+        D3D12_HEAP_FLAG_NONE,
+        &texDesc,
+        D3D12_RESOURCE_STATE_COPY_DEST,
+        nullptr,
+        IID_PPV_ARGS(&_resource)
+    );
+    if (FAILED(hr)) assert(false);
+
+
+    const UINT subresourceCount = arraySize * mipLevels;
+    vector<D3D12_SUBRESOURCE_DATA> subresources;
+    subresources.resize(subresourceCount);
+
+    // 각 이미지(mip)마다 pData, RowPitch, SlicePitch 세팅
+    UINT idx = 0;
+    for (UINT slice = 0; slice < arraySize; ++slice)
+    {
+        const DirectX::Image* imgs = scratchImages[slice].GetImages(); // mip별 Image 배열
+
+        for (UINT m = 0; m < mipLevels; ++m)
+        {
+            D3D12_SUBRESOURCE_DATA& sd = subresources[idx++];
+            sd.pData = imgs[m].pixels;
+            sd.RowPitch = imgs[m].rowPitch;
+            sd.SlicePitch = imgs[m].slicePitch;
+        }
+    }
+
+    // 업로드 버퍼 크기 계산
+    const UINT64 uploadBufferSize =
+        GetRequiredIntermediateSize(_resource.Get(), 0, subresourceCount);
+
+    ComPtr<ID3D12Resource> uploadHeap;
+    hr = device->CreateCommittedResource(
+        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+        D3D12_HEAP_FLAG_NONE,
+        &CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize),
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&uploadHeap)
+    );
+
+    if (FAILED(hr)) assert(false);
+
+       UpdateSubresources(cmdList.Get(),
+        _resource.Get(),
+        uploadHeap.Get(),
+        0, 0, subresourceCount,
+        subresources.data());
+
+    cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
+        _resource.Get(),
+        D3D12_RESOURCE_STATE_COPY_DEST,
+        D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE
+    ));
+
+    // 커맨드 제출 & 동기화
+    Core::main->FlushResCMDQueue();
+
+    // 5) SRV 생성 (Texture2DArray)
+    // ------------------------------------
+    Core::main->GetBufferManager()->GetTextureBufferPool()->AllocSRVDescriptorHandle(&_srvHandle);
+
+    D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+    srvDesc.Format = format;
+    srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2DARRAY;
+    srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+    srvDesc.Texture2DArray.MostDetailedMip = 0;
+    srvDesc.Texture2DArray.MipLevels = mipLevels;
+    srvDesc.Texture2DArray.FirstArraySlice = 0;
+    srvDesc.Texture2DArray.ArraySize = arraySize;
+    srvDesc.Texture2DArray.PlaneSlice = 0;
+    srvDesc.Texture2DArray.ResourceMinLODClamp = 0.f;
+
+    device->CreateShaderResourceView(_resource.Get(), &srvDesc, _srvHandle);
+
+
+    _state = D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE;
+    _format = format;    
+}
+
 
 
 void Texture::ResourceBarrier(D3D12_RESOURCE_STATES after)
