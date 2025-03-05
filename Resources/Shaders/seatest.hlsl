@@ -216,7 +216,7 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 
     float3 pos = dout.worldPos.xyz;
     float3 nor = dout.normal;
-    //WaveGeneration(pos, nor);
+    WaveGeneration(pos, nor);
 
 
     dout.worldPos.xyz = pos;
@@ -232,27 +232,44 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 ///////////////////////////////////////////////////////////////////////////
 float4 PS_Main(DS_OUT input) : SV_Target0
 {
-
     float3 viewDir = normalize(g_eyeWorld - input.worldPos.xyz);
 
-    float3 uv = float3(input.uv, (g_Time) % 119);
+    float frameIndex = fmod(g_Time * 4.0, 119); 
+    float i0 = floor(frameIndex);
+    float i1 = i0 + 1;
     
-    float4 noramlMap = _bumpMap.Sample(sampler_lerp, uv);
+    if (i1 >= 119)
+        i0 = 0;
+
+    float alpha = frac(frameIndex); 
+
+    float3 uv0 = float3(input.uv, i0);
+    float3 uv1 = float3(input.uv, i1);
     
-    ComputeNormalMapping(input.normal, float3(1, 0, 0), input.uv, noramlMap);
-    
+    float4 normalA = _bumpMap.Sample(sampler_lerp, uv0);
+    float4 normalB = _bumpMap.Sample(sampler_lerp, uv1);
+
+    float4 normalLerp = lerp(normalA, normalB, alpha);
+
+    // 노멀 매핑 적용
+    ComputeNormalMapping(input.normal, float3(1, 0, 0), input.uv, normalLerp);
+
     float3 N = normalize(input.normal);
 
+    // 기본 해양 색상
     float3 baseSeaColor = float3(0.0, 0.3, 0.6);
     
-    float fresnelFactor = pow(1.0 - max(0.0, dot(N, viewDir)),4.0);
+    // Fresnel 반사 계산
+    float fresnelFactor = pow(1.0 - max(0.0, dot(N, viewDir)), 4.0);
 
+    // 환경 반사 적용
     float3 R = reflect(-viewDir, N);
-    
     float3 envReflection = _cubeMap.Sample(sampler_lerp, R).rgb;
     
-    float4 LightColor =ComputeLightColor(input.worldPos.xyz, input.normal);
+    // 광원 계산
+    float4 LightColor = ComputeLightColor(input.worldPos.xyz, N);
     
+    // 최종 색상 조합
     float3 finalColor = lerp(baseSeaColor, envReflection, fresnelFactor);
 
     return float4(finalColor, 1.0f) * LightColor;
