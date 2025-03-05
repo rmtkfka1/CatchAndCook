@@ -243,8 +243,8 @@ float4 PS_Main(DS_OUT input) : SV_Target0
 
     float alpha = frac(frameIndex); 
 
-    float3 uv0 = float3(input.uv*32.0f, i0);
-    float3 uv1 = float3(input.uv*32.0f, i1);
+    float3 uv0 = float3(input.uv*42.0f, i0);
+    float3 uv1 = float3(input.uv*42.0f, i1);
     
     float4 normalA = _bumpMap.Sample(sampler_lerp, uv0);
     float4 normalB = _bumpMap.Sample(sampler_lerp, uv1);
