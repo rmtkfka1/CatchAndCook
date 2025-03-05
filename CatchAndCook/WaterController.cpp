@@ -22,6 +22,7 @@ void WaterController::Init()
         
     }
 
+    //_textures[0] = ResourceManager::main->Load<Texture>(L"waterNormaltt", L"../Resources/Textures/sea/normalMap.png");
 
 }
 

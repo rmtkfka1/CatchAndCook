@@ -235,7 +235,7 @@ float4 PS_Main(DS_OUT input) : SV_Target0
 
     float3 viewDir = normalize(g_eyeWorld - input.worldPos.xyz);
 
-    ComputeNormalMapping(input.normal, float3(1, 0, 0), input.uv, _bumpMap);
+    ComputeNormalMapping(input.normal, float3(1, 0, 0), input.uv*32.0f, _bumpMap);
     
     float3 N = normalize(input.normal);
 
@@ -251,5 +251,5 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     
     float3 finalColor = lerp(baseSeaColor, envReflection, fresnelFactor);
 
-    return float4(finalColor, 1.0f) ;
+    return float4(finalColor, 1.0f) *LightColor ;
 }

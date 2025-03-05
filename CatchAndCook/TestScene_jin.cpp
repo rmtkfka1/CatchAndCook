@@ -16,43 +16,6 @@ void TestScene_jin::Init()
 {
 	Scene::Init();
 
-	{
-		{
-			ShaderInfo info;
-			info._zTest = true;
-			info._stencilTest = false;
-			info.cullingType = CullingType::BACK;
-			info.cullingType = CullingType::NONE;
-			info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
-
-			shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest",L"seatest.hlsl",GeoMetryProp,
-				ShaderArg{{{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}}},info);
-
-			shared_ptr<Material> material = make_shared<Material>();
-
-			shared_ptr<GameObject> gameObject = CreateGameObject(L"grid_orgin");
-			auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
-
-			//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal_Sea"));
-			gameObject->_transform->SetLocalPosition(vec3(0,8.5f,0));
-			gameObject->AddComponent<WaterController>();
-
-			material = make_shared<Material>();
-			material->SetShader(shader);
-			material->SetPass(RENDER_PASS::Forward);
-			//shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"Sea",L"Textures/sea/sea.jpg");
-			//shared_ptr<Texture> texture1 = ResourceManager::main->Load<Texture>(L"Sea2",L"Textures/sea/sea2.jpg");
-			//material->SetHandle("g_tex_0",texture->GetSRVCpuHandle());
-			//material->SetHandle("g_tex_1",texture1->GetSRVCpuHandle());
-
-			meshRenderer->AddMaterials({material});
-
-			auto& mesh = GeoMetryHelper::LoadGripMeshControlPoints(20000.0f,20000.0f,500,500,false);
-			mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
-			meshRenderer->AddMesh(mesh);
-			meshRenderer->SetCulling(false);
-		}
-	}
 
 	{
 		ShaderInfo info;
@@ -61,10 +24,10 @@ void TestScene_jin::Init()
 		info._stencilTest = false;
 		info.cullingType = CullingType::NONE;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"cubemap",L"cubemap.hlsl",GeoMetryProp,
-			ShaderArg{},info);
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"cubemap", L"cubemap.hlsl", GeoMetryProp,
+			ShaderArg{}, info);
 
-		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"cubemap",L"Textures/cubemap/output.dds",TextureType::CubeMap);
+		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"cubemap", L"Textures/cubemap/output.dds", TextureType::CubeMap);
 		shared_ptr<Material> material = make_shared<Material>();
 
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"cubeMap");
@@ -75,11 +38,53 @@ void TestScene_jin::Init()
 		material = make_shared<Material>();
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
-		material->SetHandle("g_tex_0",texture->GetSRVCpuHandle());
+		material->SetHandle("g_tex_0", texture->GetSRVCpuHandle());
 
-		meshRenderer->AddMaterials({material});
+		meshRenderer->AddMaterials({ material });
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
 	}
+
+	{
+
+		{
+			ShaderInfo info;
+			info._zTest = true;
+			info._stencilTest = false;
+			info.cullingType = CullingType::BACK;
+			info.cullingType = CullingType::NONE;
+			info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+
+			shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest", L"seatest.hlsl", GeoMetryProp,
+				ShaderArg{ {{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}} }, info);
+
+			shared_ptr<Material> material = make_shared<Material>();
+
+			shared_ptr<GameObject> gameObject = CreateGameObject(L"grid_orgin");
+			auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+			gameObject->AddComponent<WaterController>();
+
+			//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal_Sea"));
+			gameObject->_transform->SetLocalPosition(vec3(0, 0.0f, 0));
+
+			material = make_shared<Material>();
+			material->SetShader(shader);
+			material->SetPass(RENDER_PASS::Forward);
+			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"Sea", L"Textures/sea/sea.jpg");
+			//shared_ptr<Texture> texture1 = ResourceManager::main->Load<Texture>(L"Sea2", L"Textures/sea/0001.png");
+			material->SetHandle("_baseMap", texture->GetSRVCpuHandle());
+			material->SetHandle("_cubeMap", ResourceManager::main->Get<Texture>(L"cubemap")->GetSRVCpuHandle());
+
+			meshRenderer->AddMaterials({ material });
+
+			auto& mesh = GeoMetryHelper::LoadGripMeshControlPoints(20000.0f, 20000.0f, 1000, 1000, false);
+			mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
+			meshRenderer->AddMesh(mesh);
+			meshRenderer->SetCulling(false);
+		}
+
+	};
+
+	
 
 
 	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/MainField.json");
