@@ -270,7 +270,7 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     float4 LightColor = ComputeLightColor(input.worldPos.xyz, N);
     
     // 최종 색상 조합
-    float3 finalColor = lerp(baseSeaColor, envReflection, fresnelFactor);
+    float3 finalColor = lerp(baseSeaColor, envReflection, fresnelFactor*0.5f);
 
     return float4(finalColor, 1.0f) * LightColor;
 }

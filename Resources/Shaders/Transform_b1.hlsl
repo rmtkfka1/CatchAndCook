@@ -185,7 +185,7 @@ void ComputeNormalMapping(inout float3 normal, float3 tangent, float4 normalMap)
 	// [0,255] 범위에서 [0,1]로 변환
     float4 map = normalMap;
     
-    if (any(map.rgb) == false)
+    if (dot(map, map)>2.98f)
         return;
 
     float3 N = normalize(normal); // z

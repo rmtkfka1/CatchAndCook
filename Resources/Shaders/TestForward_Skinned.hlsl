@@ -99,7 +99,9 @@ float4 PS_Main(VS_OUT input) : SV_Target
     ComputeNormalMapping(input.normalWS, input.tangentWS, _BumpMap.Sample(sampler_lerp, input.uv));
     
     float4 lightColor = ComputeLightColor(input.positionWS.xyz, input.normalWS);
+    
+    float4 BaseColor =_BaseMap.Sample(sampler_lerp, input.uv);
 
-    return lightColor * color;
+    return BaseColor * lightColor * color;
 
 }
