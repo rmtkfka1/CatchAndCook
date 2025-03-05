@@ -298,6 +298,9 @@
     <ClCompile Include="LightingTest.cpp">
       <Filter>06.Scene</Filter>
     </ClCompile>
+    <ClCompile Include="WaterController.cpp">
+      <Filter>03.Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -556,6 +559,9 @@
     <ClInclude Include="LightingTest.h">
       <Filter>06.Scene</Filter>
     </ClInclude>
+    <ClInclude Include="WaterController.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -619,9 +625,6 @@
       <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\TerrainQuad.hlsl">
-      <Filter>998.HLSL\Graphics</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\TestForward.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\TestForward_Skinned.hlsl">

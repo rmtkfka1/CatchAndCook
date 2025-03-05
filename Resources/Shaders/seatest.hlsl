@@ -9,7 +9,6 @@ Texture2D _bumpMap : register(t1);
 TextureCube _cubeMap : register(t2);
 
 
-// 테셀레이션 파라미터
 #define G_MaxTess 4
 #define G_MinTess 1
 
@@ -17,8 +16,7 @@ TextureCube _cubeMap : register(t2);
 #define DIST_MAX 900.0f
 #define DIST_MIN 10.0f
 
-// 바다 기본 색 (간단 참고용)
-static float4 sea_color = float4(0.3f, 0.3f, 1.0f, 1.0f);
+
 
 ///////////////////////////////////////////////////////////////////////////
 // 1) 정점 셰이더 관련 구조체
@@ -58,7 +56,7 @@ struct DS_OUT
 };
 
 ///////////////////////////////////////////////////////////////////////////
-// 3) Gerstner Wave 함수 (Domain Shader에서 실제로 지오메트리 변위)
+// 3) Gerstner Wave 함수 
 ///////////////////////////////////////////////////////////////////////////
 void WaveGeneration(inout float3 worldPos, inout float3 worldNormal)
 {
@@ -133,7 +131,7 @@ VS_OUT VS_Main(VS_IN input, uint instanceID : SV_InstanceID)
 
     output.worldPos = worldPos;
     output.uv = input.uv;
-    output.normal = worldNormal;
+    output.normal = input.normal;
     return output;
 }
 
@@ -148,19 +146,19 @@ struct PatchConstOutput
 
 float CalcTessFactor(float3 p)
 {
-    // 거리 기반으로 테셀레이션 레벨 조절(예: 가까울수록 세분화 높게)
+    
     float d = distance(p, cameraPos.xyz);
     float s = smoothstep(DIST_MIN, DIST_MAX, d);
-    float tess = exp2(lerp(G_MaxTess, G_MinTess, s)); // 2^(lerp(...)) 예시
+    float tess = exp2(lerp(G_MaxTess, G_MinTess, s));
     return clamp(tess, 1.0f, 64.0f);
 }
 
-// 패치 단위로 호출
+
 PatchConstOutput ConstantHS(InputPatch<VS_OUT, 4> patch, uint patchID : SV_PrimitiveID)
 {
     PatchConstOutput pc;
     
-    // 패치 4개의 꼭짓점 기준, 테셀레이션 팩터 계산(모서리+내부)
+  
     float3 e0 = 0.5f * (patch[0].worldPos.xyz + patch[2].worldPos.xyz);
     float3 e1 = 0.5f * (patch[0].worldPos.xyz + patch[1].worldPos.xyz);
     float3 e2 = 0.5f * (patch[1].worldPos.xyz + patch[3].worldPos.xyz);
@@ -195,14 +193,14 @@ HS_OUT HS_Main(InputPatch<VS_OUT, 4> patch, uint vertexID : SV_OutputControlPoin
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// 6) Domain Shader: 보간 후 Gerstner 파도 적용
+// 6) Domain Shader
 ///////////////////////////////////////////////////////////////////////////
 [domain("quad")]
 DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 uvDomain : SV_DomainLocation)
 {
     DS_OUT dout;
     
-    // 4개 꼭짓점 보간
+
     float4 p0 = lerp(quad[0].worldPos, quad[1].worldPos, uvDomain.x);
     float4 p1 = lerp(quad[2].worldPos, quad[3].worldPos, uvDomain.x);
     dout.worldPos = lerp(p0, p1, uvDomain.y);
@@ -215,35 +213,35 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
     float3 n1 = lerp(quad[2].normal, quad[3].normal, uvDomain.x);
     dout.normal = lerp(n0, n1, uvDomain.y);
 
-    // ---- Gerstner Wave를 실제로 적용 ----
+
     float3 pos = dout.worldPos.xyz;
     float3 nor = dout.normal;
     WaveGeneration(pos, nor);
 
-    // 결과 반영
+
     dout.worldPos.xyz = pos;
     dout.normal = nor;
 
-    // 클립 공간 변환 (VPMatrix 사용)
+    
     dout.clipPos = mul(dout.worldPos, VPMatrix);
     return dout;
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// 7) Pixel Shader: 이미 도메인 쉐이더에서 변형된 파도를 받아서
-//    간단한 Fresnel, 환경 반사(또는 Cubemap) 등으로 색 계산
+// 7) Pixel Shader
 ///////////////////////////////////////////////////////////////////////////
 float4 PS_Main(DS_OUT input) : SV_Target0
 {
 
     float3 viewDir = normalize(g_eyeWorld - input.worldPos.xyz);
 
+    ComputeNormalMapping(input.normal, float3(1, 0, 0), input.uv, _bumpMap);
+    
     float3 N = normalize(input.normal);
 
     float3 baseSeaColor = float3(0.0, 0.3, 0.6);
-
-    // (4) 간단 Fresnel
-    float fresnelFactor = pow(1.0 - max(0.0, dot(N, viewDir)), 5.0);
+    
+    float fresnelFactor = pow(1.0 - max(0.0, dot(N, viewDir)),4.0);
 
     float3 R = reflect(-viewDir, N);
     
@@ -253,5 +251,5 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     
     float3 finalColor = lerp(baseSeaColor, envReflection, fresnelFactor);
 
-    return float4(finalColor, 1.0f) * LightColor;
+    return float4(finalColor, 1.0f) ;
 }
