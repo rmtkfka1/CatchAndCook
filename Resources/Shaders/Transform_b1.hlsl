@@ -196,8 +196,8 @@ void ComputeNormalMapping(inout float3 normal, float3 tangent, float4 normalMap)
 	// [0,1] 범위에서 [-1,1] 범위로 변환
     float3 tangentSpaceNormal = (map.rgb * 2.0f - 1.0f);
     float3 worldNormal = mul(tangentSpaceNormal, TBN);
-
-    normal = worldNormal;
+    
+    normal = normalize(worldNormal);
 }
 
 

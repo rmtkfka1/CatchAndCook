@@ -58,9 +58,15 @@ float CalcAttenuation(float d, float falloffStart, float falloffEnd)
 float3 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 toEye, LightMateiral mat)
 {
     float3 halfway = normalize(toEye + lightVec);
-    float hdotn = dot(halfway, normal);
-    float3 specular = mat.specular * pow(max(hdotn, 0.0f), mat.shininess);
-    return mat.ambient + (mat.diffuse + specular) * lightStrength;
+    float hdotn = max(dot(halfway, normal), 0.0f);
+
+    // 스펙큘러 반사 (기본 흰색 유지)
+    float3 specular = mat.specular * pow(hdotn, mat.shininess);
+
+    // 빛 강도는 diffuse에만 곱하고, specular는 따로 추가
+    float3 diffuse = mat.diffuse * lightStrength;
+    
+    return (mat.ambient + diffuse) + specular;
 }
 
 float3 Phong(float3 lightStrength, float3 lightVec, float3 normal, float3 toEye, LightMateiral mat)
@@ -77,7 +83,7 @@ float3 ComputeDirectionalLight(Light L, LightMateiral mat,float3 worldPos, float
     float3 lightVec = normalize(-L.direction);
     float ndotl = max(dot(normal, lightVec), 0.0f);
     float3 LightStrength = L.strength * ndotl;
-    return Phong(LightStrength, lightVec, normal, toEye, mat);
+    return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
 }
 
 float3 ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye)

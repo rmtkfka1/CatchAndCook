@@ -232,45 +232,57 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 ///////////////////////////////////////////////////////////////////////////
 float4 PS_Main(DS_OUT input) : SV_Target0
 {
-    float3 viewDir = normalize(g_eyeWorld - input.worldPos.xyz);
-
-    float frameIndex = fmod(g_Time * 4.0, 120); 
+    // 시간 기반으로 두 프레임 인덱스 계산 (애니메이션)
+    float frameIndex = fmod(g_Time * 4.0, 120);
     float i0 = floor(frameIndex);
     float i1 = i0 + 1;
     
     if (i1 >= 120)
-        i0 = 0;
+        i1 = 0;
 
-    float alpha = frac(frameIndex); 
+    float alpha = frac(frameIndex);
 
-    float3 uv0 = float3(input.uv*42.0f, i0);
-    float3 uv1 = float3(input.uv*42.0f, i1);
+    // UV 좌표 조정 및 노멀 맵 샘플링
+    float3 uv0 = float3(input.uv * 42.0f, i0);
+    float3 uv1 = float3(input.uv * 42.0f, i1);
     
     float4 normalA = _bumpMap.Sample(sampler_lerp, uv0);
     float4 normalB = _bumpMap.Sample(sampler_lerp, uv1);
-
     float4 normalLerp = lerp(normalA, normalB, alpha);
 
-    // 노멀 매핑 적용
+    // 노멀 매핑 적용 (TBN 변환 고려 가능)
     ComputeNormalMapping(input.normal, float3(1, 0, 0), normalLerp);
+    
+    // 뷰 벡터 (카메라 방향)
+    float3 viewDir = normalize(g_eyeWorld - input.worldPos.xyz);
 
+    // Fresnel 반사 효과 계산
     float3 N = normalize(input.normal);
+    float fresnelFactor = pow(1.0 - saturate(dot(N, viewDir)), 5.0); // Fresnel 반사값
 
-    // 기본 해양 색상
+    // 기본 해양 색상 & 환경 반사 색상
     float3 baseSeaColor = float3(0.0, 0.3, 0.6);
-    
-    // Fresnel 반사 계산
-    float fresnelFactor = pow(1.0 - max(0.0, dot(N, viewDir)), 4.0);
+    float3 envReflection = float3(0, 0.2f, 0.8f);
 
-    // 환경 반사 적용
-    float3 R = reflect(-viewDir, N);
-    float3 envReflection = _cubeMap.Sample(sampler_lerp, R).rgb;
-    
-    // 광원 계산
-    float4 LightColor = ComputeLightColor(input.worldPos.xyz, N);
-    
-    // 최종 색상 조합
-    float3 finalColor = lerp(baseSeaColor, envReflection, fresnelFactor*0.5f);
+    // Fresnel을 적용하여 반사와 기본 색상 혼합
+    float3 finalColor = lerp(baseSeaColor, envReflection, fresnelFactor);
 
-    return float4(finalColor, 1.0f) * LightColor;
+    float3 LightColor;
+    float3 lightVec = normalize(-g_lights[0].direction);
+    float3 normal = normalize(input.normal); // 법선 정규화
+
+// 난반사 (Diffuse)
+    float ndotl = max(dot(normal, lightVec), 0.0f);
+    float3 diffuse = g_lights[0].mateiral.diffuse * ndotl;
+
+// 스펙큘러 (Specular)
+    float3 reflectVec = reflect(-lightVec, normal);
+    float3 viewDirection = normalize(viewDir);
+    float rdotv = max(dot(reflectVec, viewDirection), 0.0f);
+    float3 specular = g_lights[0].mateiral.specular * pow(rdotv, g_lights[0].mateiral.shininess);
+
+    float3 finalLighting = finalColor * g_lights[0].mateiral.ambient + diffuse * finalColor + specular;
+
+    return float4(finalLighting, 1.0f);
+
 }
