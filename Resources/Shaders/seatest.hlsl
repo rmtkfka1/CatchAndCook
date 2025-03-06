@@ -242,50 +242,41 @@ float4 PS_Main(DS_OUT input) : SV_Target0
 
     float alpha = frac(frameIndex);
 
-    // UV 좌표 조정 및 노멀 맵 샘플링
-    float3 uv0 = float3(input.uv * 42.0f, i0);
-    float3 uv1 = float3(input.uv * 42.0f, i1);
+    float3 uv0 = float3(input.uv * 32.0f, i0);
+    float3 uv1 = float3(input.uv * 32.0f, i1);
     
     float4 normalA = _bumpMap.Sample(sampler_lerp, uv0);
     float4 normalB = _bumpMap.Sample(sampler_lerp, uv1);
     float4 normalLerp = lerp(normalA, normalB, alpha);
 
-    // 노멀 매핑 적용 (TBN 변환 고려 가능)
     ComputeNormalMapping(input.normal, float3(1, 0, 0), normalLerp);
     
-    // 뷰 벡터 (카메라 방향)
     float3 viewDir = normalize(g_eyeWorld - input.worldPos.xyz);
 
-    // Fresnel 반사 효과 계산
+ 
     float3 N = normalize(input.normal);
-    float fresnelFactor = pow(1.0 - saturate(dot(N, viewDir)), 6.0); // Fresnel 반사값
+    float fresnelFactor = pow(1.0 - saturate(dot(N, viewDir)), 3.0);
 
-    // 기본 해양 색상 & 환경 반사 색상
+
     float3 baseSeaColor = float3(0.0, 0.3, 0.6);
     float3 envReflection = float3(0.2f, 0.3f, 0.9f); // 좀 더 밝은 반사 색상
 
-    // Fresnel을 적용하여 반사와 기본 색상 혼합
-    float3 finalColor = lerp(baseSeaColor, envReflection, fresnelFactor );
 
-    // 조명 계산
+    float3 finalColor = lerp(baseSeaColor, envReflection, fresnelFactor * 0.8f);
+
     float3 lightVec = normalize(-g_lights[0].direction);
     float3 normal = normalize(input.normal); // 법선 정규화
 
-    // 난반사 (Diffuse)
     float ndotl = max(dot(normal, lightVec), 0.0f);
     float3 diffuse = g_lights[0].mateiral.diffuse * ndotl;
 
-    // **전방위 반짝임 추가**
     float3 reflectVec = reflect(-lightVec, normal);
     float3 viewDirection = normalize(viewDir);
     float rdotv = max(dot(reflectVec, viewDirection), 0.0f);
-
-    // **전방위 스펙큘러 반사** (더 넓게 퍼지는 반짝임)
+    
     float specularFactor = pow(rdotv, g_lights[0].mateiral.shininess * 10.0f) + fresnelFactor;
     float3 specular = g_lights[0].mateiral.specular * specularFactor;
 
-
-    // 최종 조명 색상
     float3 finalLighting = finalColor * g_lights[0].mateiral.ambient + diffuse * finalColor + specular;
 
     return float4(finalLighting, 1.0f);
