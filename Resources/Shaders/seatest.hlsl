@@ -258,31 +258,35 @@ float4 PS_Main(DS_OUT input) : SV_Target0
 
     // Fresnel 반사 효과 계산
     float3 N = normalize(input.normal);
-    float fresnelFactor = pow(1.0 - saturate(dot(N, viewDir)), 5.0); // Fresnel 반사값
+    float fresnelFactor = pow(1.0 - saturate(dot(N, viewDir)), 6.0); // Fresnel 반사값
 
     // 기본 해양 색상 & 환경 반사 색상
     float3 baseSeaColor = float3(0.0, 0.3, 0.6);
-    float3 envReflection = float3(0, 0.2f, 0.8f);
+    float3 envReflection = float3(0.2f, 0.3f, 0.9f); // 좀 더 밝은 반사 색상
 
     // Fresnel을 적용하여 반사와 기본 색상 혼합
-    float3 finalColor = lerp(baseSeaColor, envReflection, fresnelFactor);
+    float3 finalColor = lerp(baseSeaColor, envReflection, fresnelFactor );
 
-    float3 LightColor;
+    // 조명 계산
     float3 lightVec = normalize(-g_lights[0].direction);
     float3 normal = normalize(input.normal); // 법선 정규화
 
-// 난반사 (Diffuse)
+    // 난반사 (Diffuse)
     float ndotl = max(dot(normal, lightVec), 0.0f);
     float3 diffuse = g_lights[0].mateiral.diffuse * ndotl;
 
-// 스펙큘러 (Specular)
+    // **전방위 반짝임 추가**
     float3 reflectVec = reflect(-lightVec, normal);
     float3 viewDirection = normalize(viewDir);
     float rdotv = max(dot(reflectVec, viewDirection), 0.0f);
-    float3 specular = g_lights[0].mateiral.specular * pow(rdotv, g_lights[0].mateiral.shininess);
 
+    // **전방위 스펙큘러 반사** (더 넓게 퍼지는 반짝임)
+    float specularFactor = pow(rdotv, g_lights[0].mateiral.shininess * 10.0f) + fresnelFactor;
+    float3 specular = g_lights[0].mateiral.specular * specularFactor;
+
+
+    // 최종 조명 색상
     float3 finalLighting = finalColor * g_lights[0].mateiral.ambient + diffuse * finalColor + specular;
 
     return float4(finalLighting, 1.0f);
-
 }
