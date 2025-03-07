@@ -15,13 +15,17 @@ struct VS_OUT
 
 TextureCube g_tex_0 : register(t0);
 
-VS_OUT VS_Main(VS_IN input)
+VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
 
     // 로컬 좌표를 그대로 전달
     output.localPos = input.localPos;
-    // Translation은 하지 않고 Rotation만 적용한다
+    Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
+    
+    row_major float4x4 l2wMatrix = data.localToWorld;
+    
+    output.localPos = mul(float4(output.localPos, 0.0f), l2wMatrix);
     float4 clipSpacePos = mul(float4(input.localPos, 0), VPMatrix);
     output.pos = clipSpacePos.xyww;
     

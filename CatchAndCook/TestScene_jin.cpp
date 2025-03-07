@@ -32,6 +32,8 @@ void TestScene_jin::Init()
 
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"cubeMap");
 
+		gameObject->_transform->SetLocalRotation(vec3(0, 90.0f, 0) * D2R);
+
 		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
 		meshRenderer->SetCulling(false);
 

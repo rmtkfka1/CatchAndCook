@@ -28,6 +28,9 @@ void WaterController::Init()
     _bump = make_shared<Texture>();
     _bump->Init(L"../Resources/Textures/sea/tt.jpg");
 
+	_dudv = make_shared<Texture>();
+	_dudv->Init(L"../Resources/Textures/sea/dudv2.png");
+
 	ImguiManager::main->_seaParam = &_seaParam;
 
 }
@@ -85,6 +88,7 @@ void WaterController::SetData(Material* material)
 {
     material->SetHandle("_bumpMap", _textures->GetSRVCpuHandle());
 	material->SetHandle("_bumpMap2", _bump->GetSRVCpuHandle());
+    material->SetHandle("_dudv", _dudv->GetSRVCpuHandle());
 
 	_cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SeaParam)->Alloc(1);
 

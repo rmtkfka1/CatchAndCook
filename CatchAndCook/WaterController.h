@@ -6,8 +6,8 @@ class Texture;
 
 struct SeaParam
 {
-    vec4 seaBaseColor= vec4((27/ 255.0f, 57/ 255.0f, 77/ 255.0f,1.0f));
-    vec4 seaShallowColor = vec4(75 / 255.0f, 89 / 255.0f, 35 / 255.0f, 1.0f);
+    vec4 seaBaseColor= vec4(0.25f,0.641f,0.892f,1.0f);
+    vec4 seaShallowColor = vec4(0, 0.719f, 0.585f,1.0f);
 };
 
 
@@ -35,6 +35,7 @@ public:
 private:
     shared_ptr<Texture> _textures;
     shared_ptr<Texture> _bump;
+    shared_ptr<Texture> _dudv;
 
 	CBufferContainer* _cbufferContainer;
 
