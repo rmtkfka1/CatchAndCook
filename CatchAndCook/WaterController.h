@@ -6,9 +6,8 @@ class Texture;
 
 struct SeaParam
 {
-    vec4 seaBaseColor;
-    vec4 seaShallowColor;
-	
+    vec4 seaBaseColor= vec4((27/ 255.0f, 57/ 255.0f, 77/ 255.0f,1.0f));
+    vec4 seaShallowColor = vec4(75 / 255.0f, 89 / 255.0f, 35 / 255.0f, 1.0f);
 };
 
 
