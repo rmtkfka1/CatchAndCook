@@ -76,8 +76,6 @@ void WaveGeneration(inout float3 worldPos, inout float3 worldNormal)
     };
 
     float3 modifiedPos = worldPos;
-    float dHdX = 0.0f;
-    float dHdZ = 0.0f;
 
     for (int i = 0; i < waveCount; i++)
     {
@@ -98,21 +96,12 @@ void WaveGeneration(inout float3 worldPos, inout float3 worldNormal)
         modifiedPos.z += steep * amplitudes[i] * dir.y * waveCos;
         // y 변위
         modifiedPos.y += amplitudes[i] * waveSin;
-
-        // 편미분 계산 (법선 기울기)
-        float dWavedX = frequency * waveCos * dir.x;
-        float dWavedZ = frequency * waveCos * dir.y;
-        dHdX += amplitudes[i] * dWavedX;
-        dHdZ += amplitudes[i] * dWavedZ;
     }
-
-    // 새롭게 계산된 법선
-    float3 computedNormal = normalize(float3(-dHdX, 1.0f, -dHdZ));
 
     // 결과 반영
     worldPos = modifiedPos;
-    worldNormal = computedNormal;
 }
+
 
 ///////////////////////////////////////////////////////////////////////////
 // 4) Vertex Shader
@@ -184,7 +173,6 @@ PatchConstOutput ConstantHS(InputPatch<VS_OUT, 4> patch, uint patchID : SV_Primi
 [maxtessfactor(64.0f)]
 HS_OUT HS_Main(InputPatch<VS_OUT, 4> patch, uint vertexID : SV_OutputControlPointID, uint patchId : SV_PrimitiveID)
 {
-    // 단순 전달
     HS_OUT hout;
     hout.worldPos = patch[vertexID].worldPos;
     hout.uv = patch[vertexID].uv;
@@ -200,7 +188,6 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 {
     DS_OUT dout;
     
-
     float4 p0 = lerp(quad[0].worldPos, quad[1].worldPos, uvDomain.x);
     float4 p1 = lerp(quad[2].worldPos, quad[3].worldPos, uvDomain.x);
     dout.worldPos = lerp(p0, p1, uvDomain.y);
@@ -213,71 +200,31 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
     float3 n1 = lerp(quad[2].normal, quad[3].normal, uvDomain.x);
     dout.normal = lerp(n0, n1, uvDomain.y);
 
+    WaveGeneration(dout.worldPos.xyz, dout.normal.xyz);
 
-    float3 pos = dout.worldPos.xyz;
-    float3 nor = dout.normal;
-    WaveGeneration(pos, nor);
-
-
-    dout.worldPos.xyz = pos;
-    dout.normal = nor;
-
-    
+   
     dout.clipPos = mul(dout.worldPos, VPMatrix);
     return dout;
 }
 
+float3 GetSkyColor(float3 dir, float3 c)
+{
+    dir.y = max(0.0, dir.y);
+    float et = 1.0 - dir.y;
+    return (1.0 - c) * et + c;
+}
 ///////////////////////////////////////////////////////////////////////////
 // 7) Pixel Shader
 ///////////////////////////////////////////////////////////////////////////
 float4 PS_Main(DS_OUT input) : SV_Target0
-{
-    // 시간 기반으로 두 프레임 인덱스 계산 (애니메이션)
-    float frameIndex = fmod(g_Time * 4.0, 120);
-    float i0 = floor(frameIndex);
-    float i1 = i0 + 1;
+{  
     
-    if (i1 >= 120)
-        i1 = 0;
-
-    float alpha = frac(frameIndex);
-
-    float3 uv0 = float3(input.uv * 32.0f, i0);
-    float3 uv1 = float3(input.uv * 32.0f, i1);
+    ComputeNormalMapping(input.normal, float3(1, 0, 0), _bumpMap.Sample(sampler_aniso16, float3(input.uv * 4, 0)));
     
-    float4 normalA = _bumpMap.Sample(sampler_lerp, uv0);
-    float4 normalB = _bumpMap.Sample(sampler_lerp, uv1);
-    float4 normalLerp = lerp(normalA, normalB, alpha);
 
-    ComputeNormalMapping(input.normal, float3(1, 0, 0), normalLerp);
-    
     float3 viewDir = normalize(g_eyeWorld - input.worldPos.xyz);
-
- 
-    float3 N = normalize(input.normal);
-    float fresnelFactor = pow(1.0 - saturate(dot(N, viewDir)), 3.0);
-
-
-    float3 baseSeaColor = float3(0.0, 0.3, 0.6);
-    float3 envReflection = float3(0.2f, 0.3f, 0.9f); // 좀 더 밝은 반사 색상
-
-
-    float3 finalColor = lerp(baseSeaColor, envReflection, fresnelFactor * 0.8f);
-
-    float3 lightVec = normalize(-g_lights[0].direction);
-    float3 normal = normalize(input.normal); // 법선 정규화
-
-    float ndotl = max(dot(normal, lightVec), 0.0f);
-    float3 diffuse = g_lights[0].mateiral.diffuse * ndotl;
-
-    float3 reflectVec = reflect(-lightVec, normal);
-    float3 viewDirection = normalize(viewDir);
-    float rdotv = max(dot(reflectVec, viewDirection), 0.0f);
+    float3 reflectDir = normalize(reflect(-viewDir, normalize(input.normal)));
+    float3 sea_reflect_color = GetSkyColor(reflectDir, normalize(float3(0, 104, 255)));
     
-    float specularFactor = pow(rdotv, g_lights[0].mateiral.shininess * 10.0f) + fresnelFactor;
-    float3 specular = g_lights[0].mateiral.specular * specularFactor;
-
-    float3 finalLighting = finalColor * g_lights[0].mateiral.ambient + diffuse * finalColor + specular;
-
-    return float4(finalLighting, 1.0f);
+    return float4(sea_reflect_color, 1.0f);
 }

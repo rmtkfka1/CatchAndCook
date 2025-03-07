@@ -190,7 +190,8 @@ void ComputeNormalMapping(inout float3 normal, float3 tangent, float4 normalMap)
 
     float3 N = normalize(normal); // z
     float3 T = normalize(tangent); // x
-    float3 B = normalize(cross(N, T)); // y
+    float3 B = normalize(cross(T, N)); // y
+    
     float3x3 TBN = float3x3(T, B, N); // TS -> WS
 
 	// [0,1] 범위에서 [-1,1] 범위로 변환

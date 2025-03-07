@@ -17,8 +17,11 @@ void WaterController::Init()
     
     for (int i = 0; i <= 119; ++i)
     {
-        paths.push_back(L"../Resources/Textures/sea/" + to_wstring(i) + L".png");
+        //paths.push_back(L"../Resources/Textures/sea/" + to_wstring(i) + L".png");
+        paths.push_back(L"../Resources/Textures/sea/tt.jpg");
     }
+
+	//paths[0] = L"../Resources/Textures/sea/normalMap.png";
 
     _textures = make_shared<Texture>();
 	_textures->Init(paths);
