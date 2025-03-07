@@ -9,6 +9,7 @@
 #include "Sprite.h"
 #include "testComponent.h"
 #include "LightManager.h"
+#include "WaterController.h"
 void BufferManager::Init()
 {
 
@@ -27,6 +28,8 @@ void BufferManager::Init()
 
 		CreateBufferPool(BufferType::BoneParam,sizeof(BoneParam),256);
 		CreateBufferPool(BufferType::InstanceOffsetParam,sizeof(InstanceOffsetParam),10000);
+		CreateBufferPool(BufferType::SeaParam, sizeof(TerrainDetailsParam), 1);
+
 	}
 
 	{
@@ -93,6 +96,7 @@ shared_ptr<CBufferPool>& BufferManager::CreateAndGetBufferPool(BufferType type, 
 {
 	if(_map.contains(type))
 		return _map[type];
+
 	shared_ptr<CBufferPool> transformBuffer = make_shared<CBufferPool>();
 	transformBuffer->Init(size,count);
 	_map[type] = transformBuffer;

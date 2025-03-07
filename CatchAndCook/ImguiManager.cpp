@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Transform.h"
 #include "LightManager.h"
+#include "WaterController.h"
 unique_ptr<ImguiManager> ImguiManager::main;
 
 ImguiManager::~ImguiManager()
@@ -72,7 +73,12 @@ void ImguiManager::Render()
 		ImGui::SliderFloat("float0", &lastArgument, 0, 100);
 		_seaMaterial->_params.Setfloat(0, lastArgument);
 
-		
+		if (_seaParam)
+		{
+			ImGui::SliderFloat3("SeaBaseColor", &_seaParam->seaBaseColor.x, 0, 1.0f);
+			ImGui::SliderFloat3("seaShallowColor", &_seaParam->seaShallowColor.x, 0, 1.0f);
+		}
+
 		ImGui::End();
 	}
 

@@ -17,6 +17,7 @@ enum class BufferType
 	DefaultMaterialParam,
 	LightParam,
 	TerrainDetailsParam,
+	SeaParam,
 
 
 	// Instance

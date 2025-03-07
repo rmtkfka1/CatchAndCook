@@ -14,13 +14,13 @@ bool WaterController::IsExecuteAble()
 void WaterController::Init()
 {
 	vector<wstring> paths;
+
+    paths.resize(120);
     
     for (int i = 0; i <= 119; ++i)
     {
-        paths.push_back(L"../Resources/Textures/sea/" + to_wstring(i) + L".png");
-
+        paths[i]= (L"../Resources/Textures/sea/" + to_wstring(i) + L".png");
     }
-
 
     _textures = make_shared<Texture>();
 	_textures->Init(paths);
@@ -28,6 +28,7 @@ void WaterController::Init()
     _bump = make_shared<Texture>();
     _bump->Init(L"../Resources/Textures/sea/tt.jpg");
 
+	ImguiManager::main->_seaParam = &_seaParam;
 
 }
 
@@ -82,12 +83,13 @@ void WaterController::Destroy()
 
 void WaterController::SetData(Material* material)
 {
- //   frameCount += Time::main->GetDeltaTime() * 10;
-
-
-	//if (frameCount >= 120)
-	//	frameCount = 0;
-
     material->SetHandle("_bumpMap", _textures->GetSRVCpuHandle());
 	material->SetHandle("_bumpMap2", _bump->GetSRVCpuHandle());
+
+	_cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SeaParam)->Alloc(1);
+
+	memcpy(_cbufferContainer->ptr, (void*)&_seaParam, sizeof(SeaParam));
+
+	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(material->GetShader()->GetRegisterIndex("SeaParam"), _cbufferContainer->GPUAdress);
+
 }

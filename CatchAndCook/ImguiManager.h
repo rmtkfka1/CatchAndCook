@@ -2,6 +2,7 @@
 
 class GameObject;
 class Material;
+struct SeaParam;
 class ImguiManager
 {
 public:
@@ -16,6 +17,7 @@ public:
 	GameObject* _light;
 	Material* _seaMaterial;
 	bool* _blurPtr;
+	SeaParam* _seaParam;
 
 private:
 	bool show_window = true;

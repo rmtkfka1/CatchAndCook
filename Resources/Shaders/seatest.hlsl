@@ -3,6 +3,13 @@
 #include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
 
+cbuffer SeaParam : register(b7)
+{
+    float4 g_seaBaseColor;
+    float4 g_seaShallowColor;
+}
+
+
 cbuffer MaterialParam : register(b6)
 {
     int intParams0;
@@ -98,6 +105,8 @@ void WaveGeneration(inout float3 worldPos, inout float3 worldNormal)
     };
 
     float3 modifiedPos = worldPos;
+    float dHdX = 0.0f;
+    float dHdZ = 0.0f;
 
     for (int i = 0; i < waveCount; i++)
     {
@@ -118,10 +127,20 @@ void WaveGeneration(inout float3 worldPos, inout float3 worldNormal)
         modifiedPos.z += steep * amplitudes[i] * dir.y * waveCos;
         // y 변위
         modifiedPos.y += amplitudes[i] * waveSin;
+
+        // 편미분 계산 (법선 기울기)
+        float dWavedX = frequency * waveCos * dir.x;
+        float dWavedZ = frequency * waveCos * dir.y;
+        dHdX += amplitudes[i] * dWavedX;
+        dHdZ += amplitudes[i] * dWavedZ;
     }
+
+    // 새롭게 계산된 법선
+    float3 computedNormal = normalize(float3(-dHdX, 1.0f, -dHdZ));
 
     // 결과 반영
     worldPos = modifiedPos;
+    worldNormal = computedNormal;
 }
 
 
@@ -240,14 +259,8 @@ float3 GetSkyColor(float3 dir, float3 c)
 ///////////////////////////////////////////////////////////////////////////
 
 
-static float3 seaBaseColor = float3(27, 57, 77) / 255.0f; // 정규화된 색상
-static float3 seaShallowColor = float3(75, 89, 35) / 255.0f; // 정규화된 색상
-static float baseColorStrength = 1.2f; // 기존 1.5 → 1.2로 감소 (과도한 밝기 보정)
-static float colorHightOffset = 0.01f; // 기존 0.15 → 0.3으로 증가 (밝기 조정)
-
 float4 PS_Main(DS_OUT input) : SV_Target0
 {
-    
     float frameIndex = fmod(g_Time * 4.0, 120);
     float i0 = floor(frameIndex);
     float i1 = i0 + 1;
@@ -256,8 +269,7 @@ float4 PS_Main(DS_OUT input) : SV_Target0
         i1 = 0;
 
     float alpha = frac(frameIndex);
-
-    // UV 좌표 조정 및 노멀 맵 샘플링
+    
     float3 uv0 = float3(input.uv * 128.0f - g_Time * 0.05f, i0);
     float3 uv1 = float3(input.uv * 128.0f - g_Time * 0.05f, i1);
     
@@ -288,7 +300,7 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     float4 lightColor = ComputeLightColor(input.worldPos.xyz, N3);
     
     float shallowFactor = (input.worldPos.y * floatParams0 * 0.001f); // 깊이에 따른 색상 변화
-    float3 sea_color = (seaBaseColor * (diffuse +ambient)) +(seaShallowColor * shallowFactor) + specular;
+    float3 sea_color = (g_seaBaseColor.xyz * (diffuse + ambient)) +(g_seaShallowColor.xyz * shallowFactor) + specular;
 
     return float4(sea_color, 1.0f);
     

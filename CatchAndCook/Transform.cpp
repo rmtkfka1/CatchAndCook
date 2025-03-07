@@ -110,7 +110,6 @@ bool Transform::IsExecuteAble()
 }
 
 
-
 void Transform::SetData(StructuredBuffer* buffer)
 {
     TransformParam transParam;

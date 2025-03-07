@@ -4,6 +4,14 @@
 
 class Texture;
 
+struct SeaParam
+{
+    vec4 seaBaseColor;
+    vec4 seaShallowColor;
+	
+};
+
+
 class WaterController :public Component , public RenderCBufferSetter
 {
 
@@ -26,11 +34,12 @@ public:
     virtual void SetData(Material* material = nullptr);
 
 private:
-    float frameCount = 0;
     shared_ptr<Texture> _textures;
     shared_ptr<Texture> _bump;
 
+	CBufferContainer* _cbufferContainer;
 
+    SeaParam _seaParam;
 
 };
 
