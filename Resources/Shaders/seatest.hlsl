@@ -216,10 +216,12 @@ float3 GetSkyColor(float3 dir, float3 c)
 ///////////////////////////////////////////////////////////////////////////
 // 7) Pixel Shader
 ///////////////////////////////////////////////////////////////////////////
+
+
 float4 PS_Main(DS_OUT input) : SV_Target0
 {  
     
-    ComputeNormalMapping(input.normal, float3(1, 0, 0), _bumpMap.Sample(sampler_aniso16, float3(input.uv * 4, 0)));
+    ComputeNormalMapping(input.normal, float3(1, 0, 0), _bumpMap.Sample(sampler_aniso16, float3(input.uv * 64, 0)));
     
     float3 viewDir = normalize(g_eyeWorld - input.worldPos.xyz);
     float3 reflectDir = normalize(reflect(-viewDir, normalize(input.normal)));

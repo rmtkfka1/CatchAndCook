@@ -71,20 +71,20 @@ void Game::Init(HWND hwnd)
 	{
 		Light light;
 
-		light.direction = vec3(0, -1.0f, 0);
+		light.direction = vec3(0.463f, -0.135f, 0.647f);
 		light.position = vec3(0, 1000.0f, 0);
 		light.direction.Normalize();
 	
-		light.material.ambient = vec3(0.25f,0.25f,0.25f);
-		light.material.diffuse = vec3(1.0f, 1.0f, 1.0f);
+		light.material.ambient = vec3(0.09f,0.313f,0.353f);
+		light.material.diffuse = vec3(0.582f, 0.269f, 0.162f);
 		light.material.specular = vec3(1.0f,1.0f,1.0f);
-		light.material.shininess = 16.0f;
+		light.material.shininess = 207.0f;
 		light.material.lightType = static_cast<int32>(LIGHT_TYPE::DIRECTIONAL_LIGHT);
 		light.strength = vec3(1.0f, 1.0f, 1.0f);
 		LightManager::main->PushLight(light);
 	}
 
-	auto scene = SceneManager::main->AddScene(SceneType::LightingTest);
+	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
 }
 
 void Game::PrevUpdate()
