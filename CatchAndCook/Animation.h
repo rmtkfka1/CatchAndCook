@@ -3,23 +3,37 @@
 
 class AnimationNode;
 
-class Animation
+class Animation : public enable_shared_from_this<Animation>
 {
 public:
 	Animation();
 	virtual ~Animation();
 
-	void Init(Model* model, aiAnimation* anim, aiNode* root);
+	void Init(std::shared_ptr<Model> model, aiAnimation* anim, aiNode* root);
 
 	double CalculateTime(double time) const;
 
 	void SetName(const wstring& name){
 		_name = name;
+		_nameStr = to_string(name);
 	}
 	wstring& GetName(){
 		return _name;
 	}
+	string& GetNameStr() {
+		return _nameStr;
+	}
 	wstring _name;
+	string _nameStr;
+
+	void SetModelName(const string& name) {
+		_modelName = name;
+	}
+	string& GetModelName() {
+		return _modelName;
+	}
+	string _modelName;
+	std::weak_ptr<Model> _model;
 
 	double _ticksPerSecond;
 	double _duration;
@@ -28,7 +42,7 @@ public:
 	bool _isLoop = false;
 	bool _isApplyTransform = false;
 
-	std::unordered_map<wstring, std::shared_ptr<AnimationNode>> _nodeTables;
+	std::unordered_map<string, std::shared_ptr<AnimationNode>> _nodeTables;
 	std::vector<std::shared_ptr<AnimationNode>> _nodeLists;
 	std::shared_ptr<AnimationNode> _rootBoneNode;
 };

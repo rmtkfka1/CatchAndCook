@@ -30,7 +30,7 @@ std::vector<std::shared_ptr<GameObject>> SceneLoader::Load(const std::shared_ptr
 {
     _scene = scene;
 
-    for (auto it = originalJson.begin(); it != originalJson.end(); ++it)
+    for (auto it = referenceJson.begin(); it != referenceJson.end(); ++it)
     {
         auto& key = it.key();
         auto& value = it.value();
@@ -52,6 +52,9 @@ std::vector<std::shared_ptr<GameObject>> SceneLoader::Load(const std::shared_ptr
         LinkComponent(*ref.second);
     for (auto& ref : refJson_GameObjectTable)
         LinkGameObject(*ref.second);
+
+    ProcessingAnimationMapping(animationBoneMappingJson);
+
     std::vector<std::shared_ptr<GameObject>> result = gameObjectCache;
 
     std::cout << std::format("Load - {0}", std::to_string(this->_path)) << "\n";
@@ -76,8 +79,9 @@ void SceneLoader::Init(const std::wstring& path)
         return;
     }
     this->_path = path;
-    reader >> originalJson;
-    originalJson = originalJson["references"];
+    reader >> referenceJson;
+    animationBoneMappingJson = referenceJson["AnimationBoneMapping"];
+    referenceJson = referenceJson["references"];
 }
 
 void SceneLoader::PrevProcessingGameObject(json& data)
@@ -334,8 +338,15 @@ void SceneLoader::LinkComponent(json& jsonData)
 
     if(type == L"Animator")
     {
-        auto collider = IGuid::FindObjectByGuid<SkinnedHierarchy>(guid);
+        auto skinnedHierarchy = IGuid::FindObjectByGuid<SkinnedHierarchy>(guid);
 
+        auto& boneMapping =  jsonData["boneMapping"];
+        std::unordered_map<std::string, std::string> boneMapTable;
+
+        for (auto it = boneMapping.begin(); it != boneMapping.end(); ++it) {
+            boneMapTable[it.key()] = it.value();
+            skinnedHierarchy->SetMappingTable(boneMapTable);
+        }
     }
 
     if(type == L"Terrain")
@@ -471,4 +482,13 @@ void SceneLoader::LinkMaterial(json& jsonData)
             data["data"][2].get<float>(),
             data["data"][3].get<float>()
         ));
+}
+
+
+
+void SceneLoader::ProcessingAnimationMapping(json& jsonData)
+{
+    for (auto it = jsonData.begin(); it != jsonData.end(); ++it) {
+        SkinnedHierarchy::_boneNameToHumanMappingTable[it.key()] = it.value();
+    }
 }

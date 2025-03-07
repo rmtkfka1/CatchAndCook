@@ -42,14 +42,70 @@ void ModelNode::SetParent(const std::shared_ptr<ModelNode>& object)
 	}
 }
 
-std::shared_ptr<ModelNode> ModelNode::GetParent()
+std::shared_ptr<ModelNode> ModelNode::GetParent() const
 {
 	return _parent.lock();
+}
+
+void ModelNode::SetOriginalParent(const std::shared_ptr<ModelNode>& object)
+{
+	_originParent = object;
+}
+
+std::shared_ptr<ModelNode> ModelNode::GetOriginalParent() const
+{
+	return _originParent.lock();
 }
 
 void ModelNode::AddChild(const std::shared_ptr<ModelNode>& object)
 {
 	_childs.push_back(object);
+}
+
+std::vector<std::weak_ptr<ModelNode>>& ModelNode::GetChilds()
+{
+	return _childs;
+}
+
+void ModelNode::CalculateTPoseNode(const std::shared_ptr<ModelNode>& parent)
+{
+	Quaternion rotation = GetLocalPreRotation()  * GetLocalRotation() * GetLocalPostRotation(); //
+	//Quaternion rotation = GetLocalPostRotation() * GetLocalRotation() * GetLocalPreRotation();
+	//GetLocalPostRotation() * 
+	_localTPose = Matrix::CreateScale(_localScale) * Matrix::CreateFromQuaternion(rotation) * Matrix::CreateTranslation(_localPosition);
+	_localInvertTPose = _localTPose.Invert();
+	//Matrix animLocal = Matrix::CreateFromQuaternion(_animModelNode->GetLocalRotation() * _animModelNode->GetLocalPreRotation());
+	//animLocal = animLocal * Matrix::CreateTranslation(_animModelNode->GetLocalPosition());
+
+	std::shared_ptr<ModelNode> originalParent;
+	
+	if (originalParent = GetOriginalParent())
+	{
+		std::cout << GetName() << "\n";
+		std::cout << originalParent->GetName() << "\n\n";
+
+		_globalTPose = _localTPose * originalParent->_globalTPose;
+		_parent_globalTPose = originalParent->_globalTPose;
+		_parent_globalInvertTPose = originalParent->_globalInvertTPose;
+
+		_globalTPoseQuat = originalParent->_globalTPoseQuat * rotation;
+		_parent_globalTPoseQuat = originalParent->_globalTPoseQuat;
+		_parent_globalInvertTPoseQuat = originalParent->_globalInvertTPoseQuat;
+
+		_globalTPose.Invert(_globalInvertTPose);
+		_globalTPoseQuat.Inverse(_globalInvertTPoseQuat);
+	}
+	else
+	{
+		_globalTPose = _localTPose;
+		_globalTPoseQuat = rotation;
+
+		_globalTPose.Invert(_globalInvertTPose);
+		_globalTPoseQuat.Inverse(_globalInvertTPoseQuat);
+	}
+
+	for (auto& child : _childs)
+		child.lock()->CalculateTPoseNode(shared_from_this());
 }
 
 std::shared_ptr<GameObject> ModelNode::CreateGameObject(const std::shared_ptr<Scene>& scene,
@@ -78,3 +134,4 @@ std::shared_ptr<GameObject> ModelNode::CreateGameObject(const std::shared_ptr<Sc
 
 	return currentGameObject;
 }
+

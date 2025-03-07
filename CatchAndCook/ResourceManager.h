@@ -41,9 +41,10 @@ public:
 
     std::shared_ptr<Texture> GetNoneTexture() { return _noneTexture; };
 
-private:
     template<typename T>
     unordered_map<wstring, shared_ptr<T>>& GetResourceMap();
+
+private:
 private:
     unordered_map<wstring, shared_ptr<SceneLoader>> _loaderMap;
     unordered_map<wstring, shared_ptr<Shader>> _shaderMap;

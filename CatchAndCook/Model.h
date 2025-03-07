@@ -42,15 +42,23 @@ public:
 
 
 	std::shared_ptr<ModelNode> FindNodeByName(const string& name) { return _nameToNodeTable[name]; };
+	std::shared_ptr<ModelNode> FindOriginalNodeByName(const string& name) { return _nameToOriginalNodeTable[name]; };
 	std::vector<std::shared_ptr<ModelMesh>> FindMeshsByName(const string& name) { return _nameToMeshsTable[name]; };
 	std::shared_ptr<ModelMesh> FindMeshByIndex(const int& index) { return _modelMeshList[index]; };
 	std::shared_ptr<Bone> FindBoneByName(const string& name) { return _nameToBoneTable[name]; };
 
 	std::shared_ptr<GameObject> CreateGameObject(const std::shared_ptr<Scene>& scene);
-	
+
+	string _modelName;
+
 	void Init(const wstring& path, VertexType vertexType);
 	void DebugLog();
 
+	void SetName(const string& name)
+	{
+		_modelName = name;
+	};
+	string& GetName() { return _modelName; };
 public:
 
 	template<class T>
@@ -76,6 +84,7 @@ private:
 	int AllocBoneID() { return _boneAllocator++; };
 	void AddBone(const std::shared_ptr<Bone>& bone);
 	std::shared_ptr<ModelNode> AddNode(aiNode* rootNode);
+	void SetOriginalParentWithChilds(const std::shared_ptr<ModelNode>& prent);
 
 private:
 	int _boneAllocator = 0;

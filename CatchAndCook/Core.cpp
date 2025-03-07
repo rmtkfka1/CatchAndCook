@@ -77,7 +77,7 @@ void Core::RenderEnd()
 
     Fence();
 
-    _swapChain->Present(0, 0);
+    _swapChain->Present(1, 0);
     _renderTarget->ChangeIndex();
     _bufferManager->Reset();
 }

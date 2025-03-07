@@ -8,6 +8,7 @@ void Time::Init()
 {
 	::QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&_frequency));
 	::QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&_prevCount)); // CPU 클럭
+	_deltaTime = 0.33f;
 
 	int i = 0;
 	for (auto& ele : _frameCount)
