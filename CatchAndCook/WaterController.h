@@ -13,6 +13,9 @@ struct SeaParam
 
     float specularPower = float(207.0f);
     vec3 sun_dir = vec3(-1.0f,-0.045f,0.647f);
+
+    float env_power = 0.3f;
+    vec3 padding;
 };
 
 

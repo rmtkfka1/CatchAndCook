@@ -82,6 +82,7 @@ void ImguiManager::Render()
 			ImGui::SliderFloat3("diffuseColor", &_seaParam->diffuseColor.x, 0, 1.0f);
 			ImGui::SliderFloat("specularPower", &_seaParam->specularPower, 0, 512.0f);
 			ImGui::SliderFloat3("sun_dir", &_seaParam->sun_dir.x, -1.0f, 1.0f);
+			ImGui::SliderFloat("env_power", &_seaParam->env_power, 0, 1.0f);
 		}
 
 		ImGui::End();

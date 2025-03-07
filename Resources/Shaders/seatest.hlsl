@@ -14,6 +14,9 @@ cbuffer SeaParam : register(b7)
 
     float g_specularPower;
     float3 g_sea_light_direction;
+    
+    float g_envPower;
+    float3 padding;
 }
 
 
@@ -300,7 +303,7 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     float4 lightColor = ComputeLightColor(input.worldPos.xyz, N3);
     
     float shallowFactor = (input.worldPos.y * g_blendingFact * 0.001f);
-    float3 sea_color = (g_seaBaseColor.rgb * (diffuse)) + (g_seaShallowColor.rgb * shallowFactor) + specular + envReflection.xyz * 0.2f;
+    float3 sea_color = (g_seaBaseColor.rgb * (diffuse)) + (g_seaShallowColor.rgb * shallowFactor) + specular + envReflection.xyz * g_envPower;
 
     return float4(sea_color.xyz, sea_color.x);
     
