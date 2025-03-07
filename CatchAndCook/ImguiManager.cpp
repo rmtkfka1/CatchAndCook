@@ -53,7 +53,7 @@ void ImguiManager::Render()
 			}
 		}
 
-	
+
 		ImGui::SliderFloat3("LightDirection", &LightManager::main->_lightParmas.light[0].direction.x, -1.0f, 1.0f);
 		ImGui::SliderFloat3("DiffuseColor", &LightManager::main->_lightParmas.light[0].material.diffuse.x, 0, 1.0f);
 		ImGui::SliderFloat3("AmbientColor", &LightManager::main->_lightParmas.light[0].material.ambient.x, 0, 1.0f);
@@ -63,15 +63,12 @@ void ImguiManager::Render()
 		{
 			*_blurPtr = !(*_blurPtr);
 		}
-	
-		ImGui::End(); 
+
+		ImGui::End();
 	}
 
 	{
-		ImGui::Begin("sea");
-		static float lastArgument = 1;
-		ImGui::SliderFloat("float0", &lastArgument, 0, 100);
-		_seaMaterial->_params.Setfloat(0, lastArgument);
+		ImGui::Begin("sea_color");
 
 		if (_seaParam)
 		{
@@ -83,12 +80,41 @@ void ImguiManager::Render()
 			ImGui::SliderFloat("specularPower", &_seaParam->specularPower, 0, 512.0f);
 			ImGui::SliderFloat3("sun_dir", &_seaParam->sun_dir.x, -1.0f, 1.0f);
 			ImGui::SliderFloat("env_power", &_seaParam->env_power, 0, 1.0f);
+
 		}
 
 		ImGui::End();
 	}
 
+	{
+		ImGui::Begin("sea_move");
 
+		if (_seaParam)
+		{
+
+			for (int i = 0; i < int(_seaParam->wave_count); i++)
+			{
+				char label[64];
+			
+				sprintf_s(label, "Wave %d Amplitude", i);
+				ImGui::SliderFloat(label, &_seaParam->waves[i].amplitude, 0.0f, 10.0f);
+
+				sprintf_s(label, "Wave %d Wavelength", i);
+				ImGui::SliderFloat(label, &_seaParam->waves[i].wavelength, 0.0f, 300.0f);
+
+				sprintf_s(label, "Wave %d Speed", i);
+				ImGui::SliderFloat(label, &_seaParam->waves[i].speed, 0.0f, 10.0f);
+
+				sprintf_s(label, "Wave %d Steepness", i);
+				ImGui::SliderFloat(label, &_seaParam->waves[i].steepness, 0.0f, 1.0f);
+
+				sprintf_s(label, "Wave %d Direction", i);
+				ImGui::SliderFloat2(label, &_seaParam->waves[i].direction.x, -1.0f, 1.0f);
+			}
+		}
+
+		ImGui::End();
+	}
 	ImGui::Render();
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), Core::main->GetCmdList().Get());
 };

@@ -4,6 +4,19 @@
 
 class Texture;
 
+
+struct Wave
+{
+    float amplitude;
+    float wavelength;
+    float speed;
+    float steepness;
+
+    vec2 direction;
+    vec2 padding;
+};
+
+
 struct SeaParam
 {
     vec4 seaBaseColor= vec4(0.566f,0.966f,1.000f,1.0f);
@@ -15,7 +28,10 @@ struct SeaParam
     vec3 sun_dir = vec3(-1.0f,-0.045f,0.647f);
 
     float env_power = 0.3f;
-    vec3 padding;
+    float wave_count = 3;
+    vec2 padding;
+
+	Wave waves[3];
 };
 
 

@@ -3,6 +3,17 @@
 #include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
 
+#define MAX_WAVE 10
+struct Wave
+{
+    float amplitude; 
+    float wavelength; 
+    float speed; 
+    float steepness; 
+    
+    float2 direction; 
+    float2 padding; 
+};
 
 cbuffer SeaParam : register(b7)
 {
@@ -16,7 +27,11 @@ cbuffer SeaParam : register(b7)
     float3 g_sea_light_direction;
     
     float g_envPower;
-    float3 padding;
+    float g_wave_count;
+    
+    float2 sea_padding;
+
+    Wave waves[MAX_WAVE]; 
 }
 
 
@@ -79,20 +94,8 @@ struct DS_OUT
 ///////////////////////////////////////////////////////////////////////////
 void WaveGeneration(inout float3 worldPos, inout float3 worldNormal)
 {
-    const int waveCount = 3;
-
-    // 여러 파도 파라미터
-    float amplitudes[waveCount] = { 2.5f, 1.5f, 1.0f };
-    float wavelengths[waveCount] = { 150.f, 200.f, 150.f };
-    float speeds[waveCount] = { 1.0f, 0.4f, 3.0f };
-    float steepnesses[waveCount] = { 0.5f, 0.4f, 0.3f };
-
-    float2 waveDirections[waveCount] =
-    {
-        normalize(float2(0.4f, 0.2f)),
-        normalize(float2(0.7f, -1.0f)),
-        normalize(float2(0.5f, 0.7f))
-    };
+    
+    int waveCount = int(g_wave_count);
 
     float3 modifiedPos = worldPos;
     float dHdX = 0.0f;
@@ -100,31 +103,34 @@ void WaveGeneration(inout float3 worldPos, inout float3 worldNormal)
 
     for (int i = 0; i < waveCount; i++)
     {
-        float frequency = 2.0f * PI / wavelengths[i];
-        float phase = speeds[i] * g_Time;
-        float2 dir = waveDirections[i];
-        float steep = steepnesses[i];
+        Wave wave = waves[i];
 
-        // 현재 정점(worldPos)과 파도 방향(dir)의 내적
+        // 주파수 및 위상 계산
+        float frequency = 2.0f * PI / wave.wavelength;
+        float phase = wave.speed * g_Time;
+        float2 dir = wave.direction;
+        float steep = wave.steepness;
+
+        // 현재 정점의 xz 좌표와 파도 방향의 내적
         float dotVal = dot(dir, worldPos.xz);
 
-        // sin / cos 로 파도 변위 계산
+        // sin과 cos를 사용하여 파도의 변위 계산
         float waveSin = sin(dotVal * frequency + phase);
         float waveCos = cos(dotVal * frequency + phase);
 
-        // Gerstner 공식에 의한 xz 변위
-        modifiedPos.x += steep * amplitudes[i] * dir.x * waveCos;
-        modifiedPos.z += steep * amplitudes[i] * dir.y * waveCos;
-        modifiedPos.y += amplitudes[i] * waveSin;
+        // Gerstner 공식에 따라 위치 수정
+        modifiedPos.x += steep * wave.amplitude * dir.x * waveCos;
+        modifiedPos.z += steep * wave.amplitude * dir.y * waveCos;
+        modifiedPos.y += wave.amplitude * waveSin;
 
-        // 편미분 계산 (법선 기울기)
+        // 법선 계산을 위한 편미분 누적
         float dWavedX = frequency * waveCos * dir.x;
         float dWavedZ = frequency * waveCos * dir.y;
-        dHdX += amplitudes[i] * dWavedX;
-        dHdZ += amplitudes[i] * dWavedZ;
+        dHdX += wave.amplitude * dWavedX;
+        dHdZ += wave.amplitude * dWavedZ;
     }
 
-    // 새롭게 계산된 법선
+    // 수정된 위치를 기반으로 새로운 법선 계산
     float3 computedNormal = normalize(float3(-dHdX, 1.0f, -dHdZ));
 
     // 결과 반영
