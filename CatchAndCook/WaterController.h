@@ -6,8 +6,13 @@ class Texture;
 
 struct SeaParam
 {
-    vec4 seaBaseColor= vec4(0.25f,0.641f,0.892f,1.0f);
-    vec4 seaShallowColor = vec4(0, 0.719f, 0.585f,1.0f);
+    vec4 seaBaseColor= vec4(0.566f,0.966f,1.000f,1.0f);
+    vec4 seaShallowColor = vec4(0.361f, 0.675f, 0.706f,1.0f);
+    float blendingFact = float(20.619);
+    vec3 diffuseColor = vec3(1.0f, 0.284f, 0.162f);
+
+    float specularPower = float(207.0f);
+    vec3 sun_dir = vec3(-1.0f,-0.045f,0.647f);
 };
 
 

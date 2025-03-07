@@ -4,33 +4,16 @@
 #include "Light_b3.hlsl"
 
 
-
-cbuffer MaterialParam : register(b6)
-{
-    int intParams0;
-    int intParams1;
-    int intParams2;
-    int intParams3;
-    
-    float4 vec4Params0;
-    float4 vec4Params1;
-    float4 vec4Params2;
-    float4 vec4Params3;
-    
- 
-    float floatParams0;
-    float floatParams1;
-    float floatParams2;
-    float floatParams3;
-    
-    Matrix MatrixParams0;
-    Matrix MatrixParams1;
-}
-
 cbuffer SeaParam : register(b7)
 {
     float4 g_seaBaseColor;
     float4 g_seaShallowColor;
+    
+    float g_blendingFact;
+    float3 g_sea_diffuse;
+
+    float g_specularPower;
+    float3 g_sea_light_direction;
 }
 
 
@@ -292,9 +275,9 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     
     float3 N3 = normalize(N1 + N2);
 
-    float3 lightVec = normalize(-g_lights[0].direction);
+    float3 lightVec = normalize(-g_sea_light_direction);
     float ndotl = max(dot(N3, lightVec), 0.0f);
-    float3 diffuse = g_lights[0].strength * ndotl * g_lights[0].mateiral.diffuse;
+    float3 diffuse =  ndotl * g_sea_diffuse;
     
     float3 R = reflect(-lightVec, N3);
     
@@ -306,17 +289,17 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     float distortionStrength = 0.03f;
     float3 perturbedNormal = normalize(float3(0, 0.8f, 0) + float3(distortion.x * distortionStrength, distortion.x * distortionStrength, distortion.y * distortionStrength));
 
-// 반사 벡터 계산 (흔들린 노멀 적용)
+// 반사 벡터 계산 
     float3 R2 = reflect(-viewDir, perturbedNormal);
     float3 rotatedR2 = float3(R2.z, R2.y, -R2.x); 
     float3 envReflection = _cubeMap.Sample(sampler_lerp, rotatedR2).rgb;
 
     float rdotv = max(dot(R, normalize(viewDir)), 0.0f);
-    float3 specular = g_lights[0].mateiral.specular * pow(rdotv, g_lights[0].mateiral.shininess);
+    float3 specular = pow(rdotv, g_specularPower);
     
     float4 lightColor = ComputeLightColor(input.worldPos.xyz, N3);
     
-    float shallowFactor = (input.worldPos.y * floatParams0 * 0.001f);
+    float shallowFactor = (input.worldPos.y * g_blendingFact * 0.001f);
     float3 sea_color = (g_seaBaseColor.rgb * (diffuse)) + (g_seaShallowColor.rgb * shallowFactor) + specular + envReflection.xyz * 0.2f;
 
     return float4(sea_color.xyz, sea_color.x);
