@@ -52,13 +52,12 @@ void WaterController::Init()
         cout << "파도색깔 bin 없음" << "\n";
     };
 	
-	std::ifstream in("../Resources/Textures/sea/sea_move2.bin", std::ios::binary);
+	std::ifstream in("../Resources/Textures/sea/sea_move.bin", std::ios::binary);
 	if (in.is_open())
 	{
-		// Wave Count 읽기
+
 		in.read(reinterpret_cast<char*>(&_seaParam.wave_count), sizeof(_seaParam.wave_count));
 
-		// Wave 데이터 읽기
 		for (int i = 0; i < _seaParam.wave_count; i++)
 		{
 			in.read(reinterpret_cast<char*>(&_seaParam.waves[i]), sizeof(Wave));

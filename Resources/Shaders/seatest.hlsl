@@ -251,7 +251,6 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     ///////////////////////////////////////////////////////////////////////////
     float frameIndex = fmod(g_Time * 4.0f, 120.0f);
     float i0 = floor(frameIndex);
-    // 다음 프레임 인덱스가 120 이상이면 0으로 순환
     float i1 = (i0 + 1.0f >= 120.0f) ? 0.0f : i0 + 1.0f;
     float alpha = frac(frameIndex);
 
@@ -322,7 +321,7 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     ///////////////////////////////////////////////////////////////////////////
     // 6. 깊이 기반 색상 블렌딩 및 Fresnel 효과
     ///////////////////////////////////////////////////////////////////////////
-    float shallowFactor = input.worldPos.y * g_blendingFact * 0.001f;
+    float shallowFactor = saturate(input.worldPos.y * g_blendingFact * 0.001f);
     
     const float F0 = 0.02f;
     float fresnel = F0 + (1.0f - F0) * pow(1.0f - saturate(dot(viewDir, N3)), 5.0f);

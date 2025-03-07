@@ -7,7 +7,6 @@ class Texture;
 
 struct Wave
 {
-
     float amplitude= 2.5f;
     float wavelength =150.0f;
     float speed  =1.0f;
