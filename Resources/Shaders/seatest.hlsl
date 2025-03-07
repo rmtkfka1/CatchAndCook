@@ -221,10 +221,11 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     
     ComputeNormalMapping(input.normal, float3(1, 0, 0), _bumpMap.Sample(sampler_aniso16, float3(input.uv * 4, 0)));
     
-
     float3 viewDir = normalize(g_eyeWorld - input.worldPos.xyz);
     float3 reflectDir = normalize(reflect(-viewDir, normalize(input.normal)));
     float3 sea_reflect_color = GetSkyColor(reflectDir, normalize(float3(0, 104, 255)));
     
-    return float4(sea_reflect_color, 1.0f);
+    float4 lightColor = ComputeLightColor(input.worldPos.xyz, normalize(input.normal));
+    
+    return float4(sea_reflect_color, 1.0f) * lightColor;
 }
