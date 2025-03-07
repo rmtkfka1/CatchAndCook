@@ -63,6 +63,21 @@ void WaterController::Init()
 		_seaParam.waves[2].direction = dir;
 	}
 	
+	std::ifstream in("../Resources/Textures/sea/sea_move.bin", std::ios::binary);
+	if (in.is_open())
+	{
+		// Wave Count 읽기
+		in.read(reinterpret_cast<char*>(&_seaParam.wave_count), sizeof(_seaParam.wave_count));
+
+		// Wave 데이터 읽기
+		for (int i = 0; i < _seaParam.wave_count; i++)
+		{
+			in.read(reinterpret_cast<char*>(&_seaParam.waves[i]), sizeof(Wave));
+		}
+
+		in.close();
+	}
+
 
 }
 

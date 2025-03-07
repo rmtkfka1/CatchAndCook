@@ -27,7 +27,7 @@ cbuffer SeaParam : register(b7)
     float3 g_sea_light_direction;
     
     float g_envPower;
-    float g_wave_count;
+    int g_wave_count;
     
     float2 sea_padding;
 
@@ -95,7 +95,7 @@ struct DS_OUT
 void WaveGeneration(inout float3 worldPos, inout float3 worldNormal)
 {
     
-    int waveCount = int(g_wave_count);
+    int waveCount = g_wave_count;
 
     float3 modifiedPos = worldPos;
     float dHdX = 0.0f;
@@ -108,7 +108,7 @@ void WaveGeneration(inout float3 worldPos, inout float3 worldNormal)
         // 주파수 및 위상 계산
         float frequency = 2.0f * PI / wave.wavelength;
         float phase = wave.speed * g_Time;
-        float2 dir = wave.direction;
+        float2 dir = normalize(wave.direction);
         float steep = wave.steepness;
 
         // 현재 정점의 xz 좌표와 파도 방향의 내적

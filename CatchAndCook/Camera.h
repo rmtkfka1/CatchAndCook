@@ -85,7 +85,7 @@ protected:
     float _roll=0;
 
     float _near = 0.1f;
-    float _far = 1000.f;
+    float _far = 5000.f;
     float _fov = XM_PI / 3.f;
 
     vec2 _orthoSize = { 100.0f,100.0f };

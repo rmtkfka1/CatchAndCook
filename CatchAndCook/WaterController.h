@@ -7,12 +7,12 @@ class Texture;
 
 struct Wave
 {
-    float amplitude;
-    float wavelength;
-    float speed;
-    float steepness;
 
-    vec2 direction;
+    float amplitude= 2.5f;
+    float wavelength =150.0f;
+    float speed  =1.0f;
+    float steepness =0.5f;
+    vec2 direction =vec2(0.4f,0.2f);
     vec2 padding;
 };
 
@@ -28,10 +28,10 @@ struct SeaParam
     vec3 sun_dir = vec3(-1.0f,-0.045f,0.647f);
 
     float env_power = 0.3f;
-    float wave_count = 3;
+    int wave_count = 3;
     vec2 padding;
 
-	Wave waves[3];
+	Wave waves[10];
 };
 
 

@@ -91,16 +91,17 @@ void ImguiManager::Render()
 
 		if (_seaParam)
 		{
+			ImGui::SliderInt("Wave Count", &_seaParam->wave_count, 0, 10);
 
-			for (int i = 0; i < int(_seaParam->wave_count); i++)
+			for (int i = 0; i < _seaParam->wave_count; i++)
 			{
 				char label[64];
-			
+
 				sprintf_s(label, "Wave %d Amplitude", i);
 				ImGui::SliderFloat(label, &_seaParam->waves[i].amplitude, 0.0f, 10.0f);
 
 				sprintf_s(label, "Wave %d Wavelength", i);
-				ImGui::SliderFloat(label, &_seaParam->waves[i].wavelength, 0.0f, 300.0f);
+				ImGui::SliderFloat(label, &_seaParam->waves[i].wavelength, 0.0f, 2000.0f);
 
 				sprintf_s(label, "Wave %d Speed", i);
 				ImGui::SliderFloat(label, &_seaParam->waves[i].speed, 0.0f, 10.0f);
@@ -110,9 +111,27 @@ void ImguiManager::Render()
 
 				sprintf_s(label, "Wave %d Direction", i);
 				ImGui::SliderFloat2(label, &_seaParam->waves[i].direction.x, -1.0f, 1.0f);
+
+				ImGui::Text("\n");
+			}
+
+			if (ImGui::Button("Save to Binary File"))
+			{
+				std::ofstream file("../Resources/Textures/sea/sea_move.bin", std::ios::binary);
+				if (file.is_open())
+				{
+		
+					file.write(reinterpret_cast<const char*>(&_seaParam->wave_count), sizeof(_seaParam->wave_count));
+
+					for (int i = 0; i < _seaParam->wave_count; i++)
+					{
+						file.write(reinterpret_cast<const char*>(&_seaParam->waves[i]), sizeof(Wave));
+					}
+
+					file.close();
+				}
 			}
 		}
-
 		ImGui::End();
 	}
 	ImGui::Render();
