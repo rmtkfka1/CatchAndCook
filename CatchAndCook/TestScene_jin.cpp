@@ -73,13 +73,15 @@ void TestScene_jin::Init()
 			//shared_ptr<Texture> texture1 = ResourceManager::main->Load<Texture>(L"Sea2", L"Textures/sea/0001.png");
 			material->SetHandle("_baseMap", texture->GetSRVCpuHandle());
 			material->SetHandle("_cubeMap", ResourceManager::main->Get<Texture>(L"cubemap")->GetSRVCpuHandle());
-
+			material->SetUseMaterialParams(true);
 			meshRenderer->AddMaterials({ material });
 
 			auto& mesh = GeoMetryHelper::LoadGripMeshControlPoints(20000.0f, 20000.0f, 1000, 1000, false);
 			mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 			meshRenderer->AddMesh(mesh);
 			meshRenderer->SetCulling(false);
+
+			ImguiManager::main->_seaMaterial = material.get();
 		}
 
 	};

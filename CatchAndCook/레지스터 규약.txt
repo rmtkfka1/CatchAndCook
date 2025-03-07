@@ -29,6 +29,7 @@ b2 = Camera
 b3 = MainLight
 b4 = Instance
 b5 = Bone
+b6 = material
 
 //dynamcic System
 b5 = 

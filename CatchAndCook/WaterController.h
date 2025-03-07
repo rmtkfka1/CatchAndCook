@@ -28,6 +28,7 @@ public:
 private:
     float frameCount = 0;
     shared_ptr<Texture> _textures;
+    shared_ptr<Texture> _bump;
 
 
 

@@ -51,6 +51,7 @@ public:
 	void PushData();
 	void SetData();
 	void PushHandle();
+	void SetUseMaterialParams(bool use) { _useMaterialParams = use; }
 
 	void SetInjector(const std::vector<std::shared_ptr<ICBufferInjector>>& injectors) { _customInjectors = injectors; }
 
@@ -69,8 +70,8 @@ public:
 		return _instanceID;
 	}
 
-private:
-
+public:
+	MaterialParams _params; // 추가 정보함수 넘겨서 데이터 넣는 셋 작업
 private:
 	shared_ptr<Shader> _shader;
 
@@ -81,7 +82,6 @@ private:
 	std::unordered_map<std::string, D3D12_CPU_DESCRIPTOR_HANDLE> _propertyHandle;
 
 	CBufferContainer* _cbufferContainer;
-	MaterialParams _params; // 추가 정보함수 넘겨서 데이터 넣는 셋 작업
 	bool _useMaterialParams = false;
 	RENDER_PASS::PASS _pass = RENDER_PASS::Forward;
 	int _stencilIndex = 0;

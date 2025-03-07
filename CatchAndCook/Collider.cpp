@@ -182,70 +182,70 @@ bool Collider::RayCast(const Ray& ray, const float& dis, RayHit& hit)
 	hit.collider = this;
 	hit.gameObject = GetOwner().get();
 
-	// _bound.box를 지역 변수로 캐싱하여 반복 접근을 줄입니다.
+	//// _bound.box를 지역 변수로 캐싱하여 반복 접근을 줄입니다.
 
-	if(_type == CollisionType::Box)
-	{
-		const auto& box = _bound.box;
-		// Ray와 박스 간의 충돌 여부를 테스트합니다.
-		if(ray.Intersects(box,hit.distance))
-		{
-			// 월드 좌표계에서 충돌 지점을 계산합니다.
-			hit.worldPos = ray.position + ray.direction * hit.distance;
-			// 박스의 로컬 좌표계로 충돌 지점을 변환합니다.
-			// 로컬 좌표계에서는 박스가 축 정렬되어 있으므로 면들은 x, y, z 축에 평행합니다.
-			const Quaternion orientation = box.Orientation;
-			Quaternion invOrientation;
-			orientation.Inverse(invOrientation);
-			const Vector3 localHitPoint = Vector3::Transform(hit.worldPos - box.Center,invOrientation);
+	//if(_type == CollisionType::Box)
+	//{
+	//	const auto& box = _bound.box;
+	//	// Ray와 박스 간의 충돌 여부를 테스트합니다.
+	//	if(ray.Intersects(box,hit.distance))
+	//	{
+	//		// 월드 좌표계에서 충돌 지점을 계산합니다.
+	//		hit.worldPos = ray.position + ray.direction * hit.distance;
+	//		// 박스의 로컬 좌표계로 충돌 지점을 변환합니다.
+	//		// 로컬 좌표계에서는 박스가 축 정렬되어 있으므로 면들은 x, y, z 축에 평행합니다.
+	//		const Quaternion orientation = box.Orientation;
+	//		Quaternion invOrientation;
+	//		orientation.Inverse(invOrientation);
+	//		const Vector3 localHitPoint = Vector3::Transform(hit.worldPos - box.Center,invOrientation);
 
 
-			// Determine on which face the hit occurred.
-			// Since the box is axis-aligned in local space, one coordinate will be nearly equal to the corresponding extent.
-			const float diffX = fabsf(fabs(localHitPoint.x) - box.Extents.x);
-			const float diffY = fabsf(fabs(localHitPoint.y) - box.Extents.y);
-			const float diffZ = fabsf(fabs(localHitPoint.z) - box.Extents.z);
+	//		// Determine on which face the hit occurred.
+	//		// Since the box is axis-aligned in local space, one coordinate will be nearly equal to the corresponding extent.
+	//		const float diffX = fabsf(fabs(localHitPoint.x) - box.Extents.x);
+	//		const float diffY = fabsf(fabs(localHitPoint.y) - box.Extents.y);
+	//		const float diffZ = fabsf(fabs(localHitPoint.z) - box.Extents.z);
 
-			// 세 축 중 차이가 가장 작은 축이 충돌 면임을 판단합니다.
-			if(diffX < diffY && diffX < diffZ)
-			{
-				// X면에서 충돌이 발생함 (로컬 X 좌표의 부호에 따라 결정)
-				hit.normal = Vector3((localHitPoint.x > 0.0f) ? 1.0f : -1.0f,0.0f,0.0f);
-			} else if(diffY < diffZ)
-			{
-				// Y면에서 충돌이 발생함
-				hit.normal = Vector3(0.0f,(localHitPoint.y > 0.0f) ? 1.0f : -1.0f,0.0f);
-			} else
-			{
-				// Z면에서 충돌이 발생함
-				hit.normal = Vector3(0.0f,0.0f,(localHitPoint.z > 0.0f) ? 1.0f : -1.0f);
-			}
+	//		// 세 축 중 차이가 가장 작은 축이 충돌 면임을 판단합니다.
+	//		if(diffX < diffY && diffX < diffZ)
+	//		{
+	//			// X면에서 충돌이 발생함 (로컬 X 좌표의 부호에 따라 결정)
+	//			hit.normal = Vector3((localHitPoint.x > 0.0f) ? 1.0f : -1.0f,0.0f,0.0f);
+	//		} else if(diffY < diffZ)
+	//		{
+	//			// Y면에서 충돌이 발생함
+	//			hit.normal = Vector3(0.0f,(localHitPoint.y > 0.0f) ? 1.0f : -1.0f,0.0f);
+	//		} else
+	//		{
+	//			// Z면에서 충돌이 발생함
+	//			hit.normal = Vector3(0.0f,0.0f,(localHitPoint.z > 0.0f) ? 1.0f : -1.0f);
+	//		}
 
-			// 로컬 좌표계의 법선을 월드 좌표계로 변환합니다.
-			hit.normal = Vector3::Transform(hit.normal,orientation);
-			hit.normal.Normalize();
-			hit.isHit = true;
-			return true;
-		}
-	}
-	if(_type == CollisionType::Sphere)
-	{
-		const auto& sphere = _bound.sphere;
-		// Ray와 구(BoundingSphere) 간의 충돌 여부를 테스트합니다.
-		if(ray.Intersects(sphere,hit.distance))
-		{
-			// 월드 좌표계에서 충돌 지점을 계산합니다.
-			hit.worldPos = ray.position + ray.direction * hit.distance;
-			// 구의 경우, 충돌한 표면의 법선은 (충돌 지점 - 구 중심)을 정규화한 값입니다.
-			hit.normal = hit.worldPos - sphere.Center;
-			hit.normal.Normalize();
-			hit.isHit = true;
-			return true;
-		}
-	}
+	//		// 로컬 좌표계의 법선을 월드 좌표계로 변환합니다.
+	//		hit.normal = Vector3::Transform(hit.normal,orientation);
+	//		hit.normal.Normalize();
+	//		hit.isHit = true;
+	//		return true;
+	//	}
+	//}
+	//if(_type == CollisionType::Sphere)
+	//{
+	//	const auto& sphere = _bound.sphere;
+	//	// Ray와 구(BoundingSphere) 간의 충돌 여부를 테스트합니다.
+	//	if(ray.Intersects(sphere,hit.distance))
+	//	{
+	//		// 월드 좌표계에서 충돌 지점을 계산합니다.
+	//		hit.worldPos = ray.position + ray.direction * hit.distance;
+	//		// 구의 경우, 충돌한 표면의 법선은 (충돌 지점 - 구 중심)을 정규화한 값입니다.
+	//		hit.normal = hit.worldPos - sphere.Center;
+	//		hit.normal.Normalize();
+	//		hit.isHit = true;
+	//		return true;
+	//	}
+	//}
 
-	hit.isHit = false;
-	// No intersection occurred.
+	//hit.isHit = false;
+	//// No intersection occurred.
 	return false;
 }
 

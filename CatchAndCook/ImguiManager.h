@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 class GameObject;
+class Material;
 class ImguiManager
 {
 public:
@@ -13,6 +14,7 @@ public:
 
 public:
 	GameObject* _light;
+	Material* _seaMaterial;
 	bool* _blurPtr;
 
 private:

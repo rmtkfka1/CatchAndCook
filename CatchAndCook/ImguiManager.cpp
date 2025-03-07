@@ -66,6 +66,16 @@ void ImguiManager::Render()
 		ImGui::End(); 
 	}
 
+	{
+		ImGui::Begin("sea");
+		static float lastArgument = 1;
+		ImGui::SliderFloat("float0", &lastArgument, 0, 100);
+		_seaMaterial->_params.Setfloat(0, lastArgument);
+
+		
+		ImGui::End();
+	}
+
 
 	ImGui::Render();
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), Core::main->GetCmdList().Get());

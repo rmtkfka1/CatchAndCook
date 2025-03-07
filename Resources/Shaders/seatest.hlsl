@@ -3,10 +3,32 @@
 #include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
 
+cbuffer MaterialParam : register(b6)
+{
+    int intParams0;
+    int intParams1;
+    int intParams2;
+    int intParams3;
+    
+    float4 vec4Params0;
+    float4 vec4Params1;
+    float4 vec4Params2;
+    float4 vec4Params3;
+    
+ 
+    float floatParams0;
+    float floatParams1;
+    float floatParams2;
+    float floatParams3;
+    
+    Matrix MatrixParams0;
+    Matrix MatrixParams1;
+}
 
 Texture2D _baseMap : register(t0);
 Texture2DArray _bumpMap : register(t1);
-TextureCube _cubeMap : register(t2);
+Texture2D      _bumpMap2 : register(t2);
+TextureCube _cubeMap : register(t3);
 
 
 #define G_MaxTess 4
@@ -218,16 +240,60 @@ float3 GetSkyColor(float3 dir, float3 c)
 ///////////////////////////////////////////////////////////////////////////
 
 
+static float3 seaBaseColor = float3(27, 57, 77) / 255.0f; // 정규화된 색상
+static float3 seaShallowColor = float3(75, 89, 35) / 255.0f; // 정규화된 색상
+static float baseColorStrength = 1.2f; // 기존 1.5 → 1.2로 감소 (과도한 밝기 보정)
+static float colorHightOffset = 0.01f; // 기존 0.15 → 0.3으로 증가 (밝기 조정)
+
 float4 PS_Main(DS_OUT input) : SV_Target0
-{  
+{
     
-    ComputeNormalMapping(input.normal, float3(1, 0, 0), _bumpMap.Sample(sampler_aniso16, float3(input.uv * 64, 0)));
+    float frameIndex = fmod(g_Time * 4.0, 120);
+    float i0 = floor(frameIndex);
+    float i1 = i0 + 1;
+    
+    if (i1 >= 120)
+        i1 = 0;
+
+    float alpha = frac(frameIndex);
+
+    // UV 좌표 조정 및 노멀 맵 샘플링
+    float3 uv0 = float3(input.uv * 128.0f - g_Time * 0.05f, i0);
+    float3 uv1 = float3(input.uv * 128.0f - g_Time * 0.05f, i1);
+    
+    float4 normalA = _bumpMap.Sample(sampler_lerp, uv0);
+    float4 normalB = _bumpMap.Sample(sampler_lerp, uv1);
+    float4 normalLerp = lerp(normalA, normalB, alpha);
+    
+    float3 N1 = normalize(input.normal);
+    float3 N2 = normalize(input.normal);
     
     float3 viewDir = normalize(g_eyeWorld - input.worldPos.xyz);
-    float3 reflectDir = normalize(reflect(-viewDir, normalize(input.normal)));
-    float3 sea_reflect_color = GetSkyColor(reflectDir, normalize(float3(0, 104, 255)));
     
-    float4 lightColor = ComputeLightColor(input.worldPos.xyz, normalize(input.normal));
+    ComputeNormalMapping(N1, float3(1, 0, 0), normalLerp);
+    ComputeNormalMapping(N2, float3(1, 0, 0), _bumpMap2.Sample(sampler_lerp, float2(input.uv * 64.0f + g_Time*0.05f)));
     
-    return float4(sea_reflect_color, 1.0f) * lightColor;
+    float3 N3 = normalize(N1+N2);
+
+    float3 lightVec = normalize(-g_lights[0].direction);
+    float ndotl = max(dot(N3, lightVec), 0.0f);
+    float3 diffuse = g_lights[0].strength * ndotl * g_lights[0].mateiral.diffuse;
+    
+    float3 ambient = g_lights[0].mateiral.ambient;
+    
+    float3 R = reflect(-lightVec, N3);
+    float rdotv = max(dot(R, normalize(viewDir)), 0.0f);
+    float3 specular = g_lights[0].mateiral.specular * pow(rdotv,g_lights[0].mateiral.shininess);
+    
+    float4 lightColor = ComputeLightColor(input.worldPos.xyz, N3);
+    
+    float shallowFactor = (input.worldPos.y * floatParams0 * 0.001f); // 깊이에 따른 색상 변화
+    float3 sea_color = (seaBaseColor * (diffuse +ambient)) +(seaShallowColor * shallowFactor) + specular;
+
+    return float4(sea_color, 1.0f);
+    
+    
+    //float3 reflectDir = normalize(reflect(-viewDir, normalize(input.normal)));
+    //float3 sea_reflect_color = GetSkyColor(reflectDir, normalize(float3(0, 104, 255)));
+    //return float4(sea_reflect_color, 1.0f) * lightColor;
 }

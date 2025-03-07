@@ -62,7 +62,7 @@ void Material::SetData()
 	}
 
 	if (_useMaterialParams)
-		Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(4, _cbufferContainer->GPUAdress);
+		Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(6, _cbufferContainer->GPUAdress);
 
 	for (auto& injector : _shaderInjectors)
 		injector->SetData(_shader);

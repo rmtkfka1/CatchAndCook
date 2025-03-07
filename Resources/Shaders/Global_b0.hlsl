@@ -18,6 +18,8 @@ cbuffer INSTANCE_OFFSET : register(b4)
     float4 offset[10];
 }
 
+
+
 Texture2D PositionTexture : register(t21);
 Texture2D NormalTexture : register(t22);
 Texture2D AlbedoTexture : register(t23);
