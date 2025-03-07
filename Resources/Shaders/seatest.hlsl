@@ -251,69 +251,91 @@ float3 GetSkyColor(float3 dir, float3 c)
 
 float4 PS_Main(DS_OUT input) : SV_Target0
 {
-    float frameIndex = fmod(g_Time * 4.0, 120);
+    ///////////////////////////////////////////////////////////////////////////
+    // 1. 프레임 인덱스 및 애니메이션 인자 계산
+    ///////////////////////////////////////////////////////////////////////////
+    float frameIndex = fmod(g_Time * 4.0f, 120.0f);
     float i0 = floor(frameIndex);
-    float i1 = i0 + 1;
-    
-    if (i1 >= 120)
-        i1 = 0;
-
+    // 다음 프레임 인덱스가 120 이상이면 0으로 순환
+    float i1 = (i0 + 1.0f >= 120.0f) ? 0.0f : i0 + 1.0f;
     float alpha = frac(frameIndex);
 
-    // UV 좌표 조정 및 노멀 맵 샘플링
-    float3 uv0 = float3(input.uv * 128.0f - g_Time * 0.05f, i0);
-    float3 uv1 = float3(input.uv * 128.0f - g_Time * 0.05f, i1);
-    
+    ///////////////////////////////////////////////////////////////////////////
+    // 2. UV 좌표 조정 및 노멀 맵 샘플링 (bump map 애니메이션)
+    ///////////////////////////////////////////////////////////////////////////
+    float3 uvOffset = float3(input.uv * 128.0f - g_Time * 0.05f, 0.0f);
+    uvOffset.z = i0;
+    float3 uv0 = uvOffset;
+    uvOffset.z = i1;
+    float3 uv1 = uvOffset;
+
     float4 normalA = _bumpMap.Sample(sampler_lerp, uv0);
     float4 normalB = _bumpMap.Sample(sampler_lerp, uv1);
     float4 normalLerp = lerp(normalA, normalB, alpha);
-    
-    float3 N1 = normalize(input.normal);
-    float3 N2 = normalize(input.normal);
-    
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 3. 노멀 맵 변형 적용
+    ///////////////////////////////////////////////////////////////////////////
+    float3 baseNormal = normalize(input.normal);
+    float3 N1 = baseNormal;
+    float3 N2 = baseNormal;
     float3 viewDir = normalize(g_eyeWorld - input.worldPos.xyz);
-    
+
+    // 첫 번째 bump map 적용
     ComputeNormalMapping(N1, float3(1, 0, 0), normalLerp);
-    ComputeNormalMapping(N2, float3(1, 0, 0), _bumpMap2.Sample(sampler_lerp, float2(input.uv * 64.0f + g_Time * 0.05f)));
-    
+    // 두 번째 bump map 샘플링 후 적용
+    float2 uvBump2 = input.uv * 64.0f + g_Time * 0.05f;
+    float4 bumpSample2 = _bumpMap2.Sample(sampler_lerp, uvBump2);
+    ComputeNormalMapping(N2, float3(1, 0, 0), bumpSample2);
+
+    // 두 결과 노멀을 결합하여 최종 노멀 계산
     float3 N3 = normalize(N1 + N2);
 
+    ///////////////////////////////////////////////////////////////////////////
+    // 4. 기본 라이팅 계산 (Diffuse & Specular)
+    ///////////////////////////////////////////////////////////////////////////
     float3 lightVec = normalize(-g_sea_light_direction);
     float ndotl = max(dot(N3, lightVec), 0.0f);
     float3 diffuse = ndotl * g_sea_diffuse;
-    
+
+    // 기본 반사 벡터 및 스페큘러 계산
     float3 R = reflect(-lightVec, N3);
-    
-    // DuDv 맵 기반 노멀 흔들림 적용
-    float2 distortion = _dudv.Sample(sampler_lerp, input.uv + g_Time * 0.005f).rg;
-    distortion = distortion * 2.0 - 1.0; // (-1,1) 범위로 변환
-
-    // 흔들림 강도 조절
-    float distortionStrength = 0.03f;
-    float3 perturbedNormal = normalize(float3(0, 0.8f, 0) +
-                                         float3(distortion.x * distortionStrength, distortion.x * distortionStrength, distortion.y * distortionStrength));
-
-    // 반사 벡터 계산 
-    float3 R2 = reflect(-viewDir, perturbedNormal);
-    float3 rotatedR2 = float3(R2.z, R2.y, -R2.x);
-    float3 envReflection = _cubeMap.Sample(sampler_lerp, rotatedR2).rgb;
-
     float rdotv = max(dot(R, normalize(viewDir)), 0.0f);
     float3 specular = pow(rdotv, g_specularPower);
 
-    float4 lightColor = ComputeLightColor(input.worldPos.xyz, N3);
+    ///////////////////////////////////////////////////////////////////////////
+    // 5. DuDv 맵을 이용한 노멀 흔들림 및 환경 반사 처리
+    ///////////////////////////////////////////////////////////////////////////
+    // DuDv 맵을 샘플링하여 왜곡 값 계산 (-1 ~ 1 범위)
+    float2 distortion = _dudv.Sample(sampler_lerp, input.uv + g_Time * 0.005f).rg;
+    distortion = distortion * 2.0f - 1.0f;
 
-    float shallowFactor = (input.worldPos.y * g_blendingFact * 0.001f);
+    const float distortionStrength = 0.03f;
+    // 기준 노멀에 왜곡을 가해 흔들림 효과 적용 (약간 위쪽으로 치우치도록 0.8 사용)
+    float3 perturbedNormal = normalize(
+        float3(0.0f, 0.8f, 0.0f) +
+        float3(distortion.x * distortionStrength,
+               distortion.x * distortionStrength,
+               distortion.y * distortionStrength)
+    );
 
-  
-    float F0 = 0.02f;
-    float fresnel = F0 + (1.0f - F0) * pow(1.0f - saturate(dot(viewDir, N3)), 5.0f);
+    // 시야에 대한 반사 벡터 재계산 및 큐브 맵 좌표 회전
+    float3 R2 = reflect(-viewDir, perturbedNormal);
+    float3 rotatedR2 = float3(R2.z, R2.y, -R2.x);
+    float3 envReflection = _cubeMap.Sample(sampler_lerp, rotatedR2).rgb ;
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 6. 깊이 기반 색상 블렌딩 및 Fresnel 효과
+    ///////////////////////////////////////////////////////////////////////////
+    float shallowFactor = input.worldPos.y * g_blendingFact * 0.001f;
     
-    // 최종 색상 계산 시 envReflection에 Fresnel 효과 적용
-    float3 sea_color = (g_seaBaseColor.rgb * diffuse) +
-                       (g_seaShallowColor.rgb * shallowFactor) +
-                       specular +
-                       envReflection * fresnel * g_envPower;
+    const float F0 = 0.02f;
+    float fresnel = F0 + (1.0f - F0) * pow(1.0f - saturate(dot(viewDir, N3)), 5.0f);
 
-    return float4(sea_color, sea_color.x);
+    ///////////////////////////////////////////////////////////////////////////
+    // 7. 최종 해양 색상 계산 및 출력
+    ///////////////////////////////////////////////////////////////////////////
+    float3 sea_color = (g_seaBaseColor.rgb * diffuse ) + (g_seaShallowColor.rgb * shallowFactor) + envReflection * fresnel * g_envPower + specular;
+    
+    return float4(sea_color, 1.0f);
 }
