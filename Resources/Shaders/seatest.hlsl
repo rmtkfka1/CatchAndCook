@@ -293,7 +293,6 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     float3 perturbedNormal = normalize(float3(0, 0.8f, 0) +
                                          float3(distortion.x * distortionStrength, distortion.x * distortionStrength, distortion.y * distortionStrength));
 
-    // 반사 벡터 계산 
     float3 R2 = reflect(-viewDir, perturbedNormal);
     float3 rotatedR2 = float3(R2.z, R2.y, -R2.x);
     float3 envReflection = _cubeMap.Sample(sampler_lerp, rotatedR2).rgb;
@@ -305,15 +304,15 @@ float4 PS_Main(DS_OUT input) : SV_Target0
 
     float shallowFactor = (input.worldPos.y * g_blendingFact * 0.001f);
 
-  
-    float F0 = 0.02f;
-    float fresnel = F0 + (1.0f - F0) * pow(1.0f - saturate(dot(viewDir, N3)), 5.0f);
+    float r = 0.02;
+    float facing = saturate(1.0 - dot(N3, viewDir));
+    float fresnel = r + (1.0 - r) * pow(facing, 5.0);
+    float3 reflectDir = reflect(-viewDir, N3);
     
-    // 최종 색상 계산 시 envReflection에 Fresnel 효과 적용
-    float3 sea_color = (g_seaBaseColor.rgb * diffuse) +
-                       (g_seaShallowColor.rgb * shallowFactor) +
-                       specular +
-                       envReflection * fresnel * g_envPower;
+    float3 sea_reflect_color = GetSkyColor(reflectDir, g_seaBaseColor.xyz);
+    float3 sea_base_color = g_seaBaseColor.xyz * diffuse + lerp(g_seaBaseColor.xyz, g_seaShallowColor.xyz * shallowFactor, 0.3f);
+    float3 water_color = lerp(sea_base_color, sea_reflect_color, fresnel);
+    float3 sea_color = water_color + g_seaShallowColor.xyz * shallowFactor +  specular;
 
     return float4(sea_color, sea_color.x);
 }
