@@ -35,7 +35,6 @@ cbuffer SeaParam : register(b7)
 }
 
 
-Texture2D       _baseMap : register(t0);
 Texture2DArray  _bumpMap : register(t1);
 Texture2D       _bumpMap2 : register(t2);
 Texture2D       _dudv : register(t3);
@@ -171,7 +170,6 @@ struct PatchConstOutput
 
 float CalcTessFactor(float3 p)
 {
-    
     float d = distance(p, cameraPos.xyz);
     float s = smoothstep(DIST_MIN, DIST_MAX, d);
     float tess = exp2(lerp(G_MaxTess, G_MinTess, s));
@@ -242,19 +240,10 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
     return dout;
 }
 
-float3 GetSkyColor(float3 dir, float3 c)
-{
-    dir.y = max(0.0, dir.y);
-    float et = 1.0 - dir.y;
-    return (1.0 - c) * et + c;
-}
+
 ///////////////////////////////////////////////////////////////////////////
 // 7) Pixel Shader
 ///////////////////////////////////////////////////////////////////////////
-
-
-
-
 float4 PS_Main(DS_OUT input) : SV_Target0
 {
     ///////////////////////////////////////////////////////////////////////////

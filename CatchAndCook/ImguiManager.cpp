@@ -4,6 +4,8 @@
 #include "Transform.h"
 #include "LightManager.h"
 #include "WaterController.h"
+#include <commdlg.h>
+
 unique_ptr<ImguiManager> ImguiManager::main;
 
 ImguiManager::~ImguiManager()
@@ -80,11 +82,53 @@ void ImguiManager::Render()
 			ImGui::SliderFloat("specularPower", &_seaParam->specularPower, 0, 512.0f);
 			ImGui::SliderFloat3("sun_dir", &_seaParam->sun_dir.x, -1.0f, 1.0f);
 			ImGui::SliderFloat("env_power", &_seaParam->env_power, 0, 1.0f);
-
 		}
+
+		if (ImGui::Button("Save to Binary File"))
+		{
+			if (_seaParam)
+			{
+
+				char szFileName[MAX_PATH] = "";
+				OPENFILENAMEA ofn;
+				ZeroMemory(&ofn, sizeof(ofn));
+				ofn.lStructSize = sizeof(ofn);
+				ofn.hwndOwner = nullptr;
+				ofn.lpstrFilter = "Binary Files (*.bin)\0*.bin\0All Files (*.*)\0*.*\0";
+				ofn.lpstrFile = szFileName;
+				ofn.nMaxFile = MAX_PATH;
+				ofn.lpstrTitle = "Save Sea Move Data";
+				ofn.Flags = OFN_OVERWRITEPROMPT;
+
+				if (GetSaveFileNameA(&ofn))
+				{
+					std::ofstream file(szFileName, std::ios::binary);
+					if (file)
+					{
+						file.write(reinterpret_cast<const char*>(&_seaParam->seaBaseColor), sizeof(_seaParam->seaBaseColor));
+						file.write(reinterpret_cast<const char*>(&_seaParam->seaShallowColor), sizeof(_seaParam->seaShallowColor));
+						file.write(reinterpret_cast<const char*>(&_seaParam->blendingFact), sizeof(_seaParam->blendingFact));
+						file.write(reinterpret_cast<const char*>(&_seaParam->diffuseColor), sizeof(_seaParam->diffuseColor));
+						file.write(reinterpret_cast<const char*>(&_seaParam->specularPower), sizeof(_seaParam->specularPower));
+						file.write(reinterpret_cast<const char*>(&_seaParam->sun_dir), sizeof(_seaParam->sun_dir));
+						file.write(reinterpret_cast<const char*>(&_seaParam->env_power), sizeof(_seaParam->env_power));
+						file.close();
+					}
+					else
+					{
+						MessageBoxA(nullptr, "파일 열기에 실패했습니다.", "Error", MB_OK | MB_ICONERROR);
+					}
+				}
+			}
+			
+		}
+
 
 		ImGui::End();
 	}
+
+	
+	
 
 	{
 		ImGui::Begin("sea_move");
@@ -107,7 +151,7 @@ void ImguiManager::Render()
 				ImGui::SliderFloat(label, &_seaParam->waves[i].speed, 0.0f, 10.0f);
 
 				sprintf_s(label, "Wave %d Steepness", i);
-				ImGui::SliderFloat(label, &_seaParam->waves[i].steepness, 0.0f, 1.0f);
+				ImGui::SliderFloat(label, &_seaParam->waves[i].steepness, 0.0f, 300.0f);
 
 				sprintf_s(label, "Wave %d Direction", i);
 				ImGui::SliderFloat2(label, &_seaParam->waves[i].direction.x, -1.0f, 1.0f);
@@ -117,21 +161,37 @@ void ImguiManager::Render()
 
 			if (ImGui::Button("Save to Binary File"))
 			{
-				std::ofstream file("../Resources/Textures/sea/sea_move.bin", std::ios::binary);
-				if (file.is_open())
+				char szFileName[MAX_PATH] = "";
+				OPENFILENAMEA ofn;
+				ZeroMemory(&ofn, sizeof(ofn));
+				ofn.lStructSize = sizeof(ofn);
+				ofn.hwndOwner = nullptr; 
+				ofn.lpstrFilter = "Binary Files (*.bin)\0*.bin\0All Files (*.*)\0*.*\0";
+				ofn.lpstrFile = szFileName;
+				ofn.nMaxFile = MAX_PATH;
+				ofn.lpstrTitle = "Save Sea Move Data";
+				ofn.Flags = OFN_OVERWRITEPROMPT;
+
+				if (GetSaveFileNameA(&ofn))
 				{
-		
-					file.write(reinterpret_cast<const char*>(&_seaParam->wave_count), sizeof(_seaParam->wave_count));
-
-					for (int i = 0; i < _seaParam->wave_count; i++)
+					std::ofstream file(szFileName, std::ios::binary);
+					if (file.is_open())
 					{
-						file.write(reinterpret_cast<const char*>(&_seaParam->waves[i]), sizeof(Wave));
+						file.write(reinterpret_cast<const char*>(&_seaParam->wave_count), sizeof(_seaParam->wave_count));
+						for (int i = 0; i < _seaParam->wave_count; i++)
+						{
+							file.write(reinterpret_cast<const char*>(&_seaParam->waves[i]), sizeof(Wave));
+						}
+						file.close();
 					}
-
-					file.close();
+					else
+					{
+						MessageBoxA(nullptr, "파일 열기에 실패했습니다.", "Error", MB_OK | MB_ICONERROR);
+					}
 				}
 			}
 		}
+
 		ImGui::End();
 	}
 	ImGui::Render();
