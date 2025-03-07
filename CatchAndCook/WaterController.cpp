@@ -34,7 +34,7 @@ void WaterController::Init()
 	ImguiManager::main->_seaParam = &_seaParam;
 
  
-    std::ifstream file("../Resources/Textures/sea/sea_color.bin", std::ios::binary);
+  /*  std::ifstream file("../Resources/Textures/sea/sea_color.bin", std::ios::binary);
     if (file)
     {
         file.read(reinterpret_cast<char*>(&_seaParam.seaBaseColor), sizeof(_seaParam.seaBaseColor));
@@ -50,7 +50,7 @@ void WaterController::Init()
     else
     {
         cout << "파도색깔 bin 없음" << "\n";
-    };
+    };*/
 	
 	std::ifstream in("../Resources/Textures/sea/sea_move.bin", std::ios::binary);
 	if (in.is_open())
