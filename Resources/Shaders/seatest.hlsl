@@ -307,7 +307,7 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     ///////////////////////////////////////////////////////////////////////////
     // 6. 깊이 기반 색상 블렌딩 및 Fresnel 효과
     ///////////////////////////////////////////////////////////////////////////
-    float shallowFactor = saturate(input.worldPos.y * g_blendingFact * 0.001f);
+    float shallowFactor = pow(saturate(input.worldPos.y * g_blendingFact * 0.001f), 0.5f);
     
     const float F0 = 0.02f;
     float fresnel = F0 + (1.0f - F0) * pow(1.0f - saturate(dot(viewDir, N3)), 5.0f);

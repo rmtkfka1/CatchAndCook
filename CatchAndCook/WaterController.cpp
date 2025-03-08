@@ -52,7 +52,7 @@ void WaterController::Init()
         cout << "파도색깔 bin 없음" << "\n";
     };*/
 	
-	std::ifstream in("../Resources/Textures/sea/sea_move6.bin", std::ios::binary);
+	std::ifstream in("../Resources/Textures/sea/sea_move.bin", std::ios::binary);
 	if (in.is_open())
 	{
 
