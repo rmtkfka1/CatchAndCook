@@ -66,6 +66,11 @@ void ImguiManager::Render()
 			*_blurPtr = !(*_blurPtr);
 		}
 
+		if (ImGui::Button("Bloom ON/OFF"))
+		{
+			*_bloomPtr = !(*_bloomPtr);
+		}
+
 		ImGui::End();
 	}
 

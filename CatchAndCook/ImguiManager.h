@@ -17,6 +17,7 @@ public:
 	GameObject* _light;
 	Material* _seaMaterial;
 	bool* _blurPtr;
+	bool* _bloomPtr;
 	SeaParam* _seaParam;
 
 private:

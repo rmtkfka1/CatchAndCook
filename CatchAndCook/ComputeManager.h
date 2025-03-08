@@ -80,11 +80,12 @@ private:
 	void Black(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 	void XBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 	void YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+	void Blooming(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 
 private:
 	int32 _blurCount = 50;
 	bool _on = false;
-
+	shared_ptr<Texture> _bloomTexture;
 	shared_ptr<Texture> _pingtexture;
 	shared_ptr<Texture> _pongtexture;
 
