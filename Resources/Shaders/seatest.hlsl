@@ -272,16 +272,11 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     // 3. 노멀 맵 변형 적용
     ///////////////////////////////////////////////////////////////////////////
     float3 baseNormal = normalize(input.normal);
-    float3 N1 = baseNormal;
-    float3 N2 = baseNormal;
     float3 viewDir = normalize(g_eyeWorld - input.worldPos.xyz);
 
-    // 첫 번째 bump map 적용
-    ComputeNormalMapping(N1, float3(1, 0, 0), normalLerp);
-    float4 bumpSample2 = _bumpMap2.Sample(sampler_lerp,input.uv * 64.0f + normalize(float2(0.2f, 1.0f)) * sin(g_Time * 0.05f) * 0.1f);
-    ComputeNormalMapping(N2, float3(1, 0, 0), bumpSample2);
+    float3 N1 =ComputeNormalMapping(baseNormal, float3(1, 0, 0), normalLerp);
+    float3 N2 = ComputeNormalMapping(baseNormal, float3(1, 0, 0), _bumpMap2.Sample(sampler_lerp, input.uv * 64.0f + normalize(float2(0.2f, 1.0f)) * sin(g_Time * 0.05f) * 0.1f));
 
-    // 두 결과 노멀을 결합하여 최종 노멀 계산
     float3 N3 = normalize(N1 + N2);
 
     ///////////////////////////////////////////////////////////////////////////
