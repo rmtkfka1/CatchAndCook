@@ -35,8 +35,10 @@ public:
 
 public:
 	virtual void Init();
-	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
 	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
 	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
 
 private:
@@ -57,6 +59,41 @@ private:
 	friend class ComputeManager;
 };
 
+class Bloom : public ComputeBase
+{
+
+public:
+	Bloom();
+	virtual ~Bloom();
+
+public:
+	virtual void Init();
+	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+
+private:
+	virtual void Resize();
+private:
+	void XBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+	void YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	int32 _blurCount = 50;
+	bool _on = false;
+
+	shared_ptr<Texture> _pingtexture;
+	shared_ptr<Texture> _pongtexture;
+
+	shared_ptr<Shader> _XBlurshader;
+	shared_ptr<Shader> _YBlurshader;
+	shared_ptr<Shader> _BlackShader;
+	shared_ptr<Shader> _Bloomshader;
+	friend class ComputeManager;
+};
+
 
 
 class ComputeManager 
@@ -71,6 +108,7 @@ public:
 	void Resize();
 private:
 	shared_ptr<Blur> _blur;
+	shared_ptr<Bloom> _bloom;
 
 };
 
