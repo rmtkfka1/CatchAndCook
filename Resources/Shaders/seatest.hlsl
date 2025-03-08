@@ -268,7 +268,7 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     float3 viewDir = normalize(g_eyeWorld - input.worldPos.xyz);
 
     float3 N1 =ComputeNormalMapping(baseNormal, float3(1, 0, 0), normalLerp);
-    float3 N2 = ComputeNormalMapping(baseNormal, float3(1, 0, 0), _bumpMap2.Sample(sampler_lerp, input.uv * 32.0f + float2(sin(g_Time * 0.1f), cos(g_Time * 0.15f)) * 0.1f));
+    float3 N2 = ComputeNormalMapping(baseNormal, float3(1, 0, 0), _bumpMap2.Sample(sampler_lerp, input.uv * 32.0f + g_Time *0.01f));
     float3 N3 = normalize(N1 + N2);
 
     ///////////////////////////////////////////////////////////////////////////
