@@ -134,7 +134,7 @@ void WaveGeneration(inout float3 worldPos, inout float3 worldNormal)
 
     // 결과 반영
     worldPos = modifiedPos;
-    worldNormal = computedNormal;
+    worldNormal = float3(0, 1, 0);
 }
 
 
@@ -251,14 +251,14 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     ///////////////////////////////////////////////////////////////////////////
     float frameIndex = fmod(g_Time * 4.0f, 120.0f);
     float i0 = floor(frameIndex);
-    float i1 = (i0 + 1.0f >= 120.0f) ? 0.0f : i0 + 1.0f;
+    float i1 = (i0 + 1 >= 120.0f) ? 0.0f : i0 + 1.0f;
     float alpha = frac(frameIndex);
 
     ///////////////////////////////////////////////////////////////////////////
     // 2. UV 좌표 조정 및 노멀 맵 샘플링 (bump map 애니메이션)
     ///////////////////////////////////////////////////////////////////////////
-    float4 normalA = _bumpMap.Sample(sampler_lerp, float3(input.uv * 128.0f, i0));
-    float4 normalB = _bumpMap.Sample(sampler_lerp, float3(input.uv * 128.0f, i1));
+    float4 normalA = _bumpMap.Sample(sampler_lerp, float3(input.uv * 32.0f, i0));
+    float4 normalB = _bumpMap.Sample(sampler_lerp, float3(input.uv * 32.0f, i1));
     float4 normalLerp = lerp(normalA, normalB, alpha);
 
     ///////////////////////////////////////////////////////////////////////////
@@ -268,7 +268,7 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     float3 viewDir = normalize(g_eyeWorld - input.worldPos.xyz);
 
     float3 N1 =ComputeNormalMapping(baseNormal, float3(1, 0, 0), normalLerp);
-    float3 N2 = ComputeNormalMapping(baseNormal, float3(1, 0, 0), _bumpMap2.Sample(sampler_lerp, input.uv * 64.0f + normalize(float2(0.2f, 1.0f)) * sin(g_Time * 0.05f) * 0.1f));
+    float3 N2 = ComputeNormalMapping(baseNormal, float3(1, 0, 0), _bumpMap2.Sample(sampler_lerp, input.uv * 32.0f + float2(sin(g_Time * 0.1f), cos(g_Time * 0.15f)) * 0.1f));
     float3 N3 = normalize(N1 + N2);
 
     ///////////////////////////////////////////////////////////////////////////
@@ -276,7 +276,7 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     ///////////////////////////////////////////////////////////////////////////
     float3 lightVec = normalize(-g_sea_light_direction);
     float ndotl = max(dot(N3, lightVec), 0.0f);
-    float3 diffuse = ndotl * g_sea_diffuse;
+    float3 diffuse = ndotl * g_sea_diffuse * 1.3f;
 
     // 기본 반사 벡터 및 스페큘러 계산
     float3 R = reflect(-lightVec, N3);
