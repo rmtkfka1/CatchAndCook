@@ -52,7 +52,7 @@ void WaterController::Init()
         cout << "파도색깔 bin 없음" << "\n";
     };*/
 	
-	std::ifstream in("../Resources/Textures/sea/sea_move.bin", std::ios::binary);
+	std::ifstream in("../Resources/Textures/sea/sea_move6.bin", std::ios::binary);
 	if (in.is_open())
 	{
 
@@ -68,6 +68,35 @@ void WaterController::Init()
     else
     {
         cout << "파도움직임 bin 없음" << "\n";
+
+		{
+			_seaParam.waves[0].amplitude = 2.5f;
+			_seaParam.waves[0].wavelength = 150.f;
+			_seaParam.waves[0].speed = 1.0f;
+			_seaParam.waves[0].steepness = 0.5f;
+			vec2 dir = vec2(0.4f, 0.2f);
+			dir.Normalize();
+			_seaParam.waves[0].direction = dir;
+		}
+
+		{
+			_seaParam.waves[1].amplitude = 1.5f;
+			_seaParam.waves[1].wavelength = 200.f;
+			_seaParam.waves[1].speed = 0.4f;
+			_seaParam.waves[1].steepness = 0.4f;
+			vec2 dir = vec2(0.7f, -1.0f);
+			dir.Normalize();
+			_seaParam.waves[1].direction = dir;
+		}
+		{
+			_seaParam.waves[2].amplitude = 1.0f;
+			_seaParam.waves[2].wavelength = 150.f;
+			_seaParam.waves[2].speed = 3.0f;
+			_seaParam.waves[2].steepness = 0.3f;
+			vec2 dir = vec2(0.5f, 0.7f);
+			dir.Normalize();
+			_seaParam.waves[2].direction = dir;
+		}
     }
 
 
