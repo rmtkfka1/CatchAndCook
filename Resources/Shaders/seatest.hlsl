@@ -257,15 +257,8 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     ///////////////////////////////////////////////////////////////////////////
     // 2. UV 좌표 조정 및 노멀 맵 샘플링 (bump map 애니메이션)
     ///////////////////////////////////////////////////////////////////////////
-
-    float3 uvOffset = float3(input.uv * 128.0f, 0.0f);
-    uvOffset.z = i0;
-    float3 uv0 = uvOffset;
-    uvOffset.z = i1;
-    float3 uv1 = uvOffset;
-
-    float4 normalA = _bumpMap.Sample(sampler_lerp, uv0);
-    float4 normalB = _bumpMap.Sample(sampler_lerp, uv1);
+    float4 normalA = _bumpMap.Sample(sampler_lerp, float3(input.uv * 128.0f, i0));
+    float4 normalB = _bumpMap.Sample(sampler_lerp, float3(input.uv * 128.0f, i1));
     float4 normalLerp = lerp(normalA, normalB, alpha);
 
     ///////////////////////////////////////////////////////////////////////////
@@ -276,7 +269,6 @@ float4 PS_Main(DS_OUT input) : SV_Target0
 
     float3 N1 =ComputeNormalMapping(baseNormal, float3(1, 0, 0), normalLerp);
     float3 N2 = ComputeNormalMapping(baseNormal, float3(1, 0, 0), _bumpMap2.Sample(sampler_lerp, input.uv * 64.0f + normalize(float2(0.2f, 1.0f)) * sin(g_Time * 0.05f) * 0.1f));
-
     float3 N3 = normalize(N1 + N2);
 
     ///////////////////////////////////////////////////////////////////////////
