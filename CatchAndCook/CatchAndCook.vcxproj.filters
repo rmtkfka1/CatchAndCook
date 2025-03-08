@@ -639,5 +639,11 @@
     <FxCompile Include="..\Resources\Shaders\simple.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\blackShader.hlsl">
+      <Filter>998.HLSL\Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\bloomShader.hlsl">
+      <Filter>998.HLSL\Compute</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

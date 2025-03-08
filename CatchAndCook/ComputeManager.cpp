@@ -181,7 +181,7 @@ void Bloom::Init()
 		_Bloomshader = make_shared<Shader>();
 		ShaderInfo info;
 		info._computeShader = true;
-		_BlackShader->Init(L"bloom.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
+		_BlackShader->Init(L"bloomShader.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
 		ResourceManager::main->Add<Shader>(L"bloom", _BlackShader);
 	}
 	
@@ -189,27 +189,15 @@ void Bloom::Init()
 
 void Bloom::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
-	auto& intermediateTexutre = Core::main->GetRenderTarget()->GetRenderTarget();
-	intermediateTexutre->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
-	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
-	cmdList->CopyResource(_pingtexture->GetResource().Get(), intermediateTexutre->GetResource().Get());
+
 }
 
 void Bloom::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
 {
-	if (_on == false)
-		return;
+	//if (_on == false)
+	//	return;
 
-	DispatchBegin(cmdList);
-
-	for (int i = 0; i < _blurCount; ++i)
-	{
-		XBlur(cmdList, x, y, z);
-		YBlur(cmdList, x, y, z);
-	}
-
-
-	DispatchEnd(cmdList);
+	Black(cmdList, x, y, z);
 }
 
 void Bloom::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
@@ -233,6 +221,26 @@ void Bloom::Resize()
 
 	_pongtexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
 		| TextureUsageFlags::SRV, false, false);
+}
+
+void Bloom::Black(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	cmdList->SetPipelineState(_BlackShader->_pipelineState.Get());
+	_tableContainer = table->Alloc(8);
+	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 0);
+	table->CopyHandle(_tableContainer.CPUHandle, _pingtexture->GetUAVCpuHandle(), 4);
+	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+	cmdList->Dispatch(x, y, z);
+
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
+	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
+
+	cmdList->CopyResource(renderTarget->GetResource().Get(), _pingtexture->GetResource().Get());
 }
 
 void Bloom::XBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
@@ -271,8 +279,8 @@ void ComputeManager::Init()
 	_blur = make_shared<Blur>();
 	_blur->Init();
 
-	//_bloom = make_shared<Bloom>();
-	//_bloom->Init();
+	_bloom = make_shared<Bloom>();
+	_bloom->Init();
 }
 
 void ComputeManager::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList)
@@ -287,7 +295,7 @@ void ComputeManager::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
 	_blur->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
-	/*_bloom->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);*/
+	_bloom->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
 }
 

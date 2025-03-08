@@ -29,7 +29,7 @@ void RenderTarget::Init(ComPtr<IDXGISwapChain3>& swapchain)
 
 	for (int32 i = 0; i < SWAP_CHAIN_FRAME_COUNT; i++)
 	{
-		_RenderTargets[i]->CreateStaticTexture(SWAP_CHAIN_FORMAT, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::RTV, true, true);
+		_RenderTargets[i]->CreateStaticTexture(SWAP_CHAIN_FORMAT, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::RTV| TextureUsageFlags::SRV , true, true);
 	}
 
 	//_intermediateTexture->CreateStaticTexture(SWAP_CHAIN_FORMAT,D3D12_RESOURCE_STATE_COMMON,WINDOW_WIDTH,WINDOW_HEIGHT,TextureUsageFlags::RTV
@@ -47,6 +47,7 @@ void RenderTarget::ResizeWindowSize(ComPtr<IDXGISwapChain3> swapchain, uint32 sw
 	for (uint32 i = 0; i < SWAP_CHAIN_FRAME_COUNT; i++)
 	{
 		Core::main->GetBufferManager()->GetTextureBufferPool()->FreeRTVHandle(_RenderTargets[i]->GetRTVCpuHandle());
+		Core::main->GetBufferManager()->GetTextureBufferPool()->FreeSRVHandle(_RenderTargets[i]->GetSRVCpuHandle());
 		_RenderTargets[i]->GetResource().Reset();
 	}
 
@@ -61,7 +62,7 @@ void RenderTarget::ResizeWindowSize(ComPtr<IDXGISwapChain3> swapchain, uint32 sw
 
 	for (int32 i = 0; i < SWAP_CHAIN_FRAME_COUNT; ++i)
 	{
-		_RenderTargets[i]->CreateStaticTexture(SWAP_CHAIN_FORMAT, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::RTV, true, true);
+		_RenderTargets[i]->CreateStaticTexture(SWAP_CHAIN_FORMAT, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::RTV | TextureUsageFlags::SRV, true, true);
 	}
 
 	_viewport = D3D12_VIEWPORT{ 0.0f,0.0f,static_cast<float>(WINDOW_WIDTH),static_cast<float>(WINDOW_HEIGHT), 0,1.0f };

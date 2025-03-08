@@ -77,6 +77,7 @@ private:
 private:
 	virtual void Resize();
 private:
+	void Black(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 	void XBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 	void YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 
