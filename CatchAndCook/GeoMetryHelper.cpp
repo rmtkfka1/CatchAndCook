@@ -366,10 +366,10 @@ shared_ptr<Mesh> GeoMetryHelper::LoadSprtieMesh()
     vector<Vertex_Color> vec(4);
 
     // 앞면
-    vec[0] = Vertex_Color(vec3(0.0f, 1.0f, 0), vec2(0.0f, 1.0f));
-    vec[1] = Vertex_Color(vec3(0.0f, 0.0f, 0), vec2(0.0f, 0.0f));
-    vec[2] = Vertex_Color(vec3(1.0f, 0.0f, 0), vec2(1.0f, 0.0f));
-    vec[3] = Vertex_Color(vec3(1.0f, 1.0f, 0), vec2(1.0f, 1.0f));
+    vec[0] = Vertex_Color(vec3(0.0f, 1.0f, 0),vec3(0,0,0), vec2(0.0f, 1.0f));
+    vec[1] = Vertex_Color(vec3(0.0f, 0.0f, 0), vec3(0, 0, 0), vec2(0.0f, 0.0f));
+    vec[2] = Vertex_Color(vec3(1.0f, 0.0f, 0), vec3(0, 0, 0), vec2(1.0f, 0.0f));
+    vec[3] = Vertex_Color(vec3(1.0f, 1.0f, 0), vec3(0, 0, 0), vec2(1.0f, 1.0f));
 
     vector<uint32> idx = { 0,1,2,0,2,3 };
 

@@ -26,6 +26,7 @@ cbuffer SPRITE_TEXTURE_PARAM : register(b6)
 struct VS_IN
 {
     float3 pos : POSITION;
+    float3 normal : NORMAL;
     float4 color : COLOR;
     float2 uv : TEXCOORD;
 };
