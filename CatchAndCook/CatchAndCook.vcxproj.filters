@@ -645,5 +645,8 @@
     <FxCompile Include="..\Resources\Shaders\bloomShader.hlsl">
       <Filter>998.HLSL\Compute</Filter>
     </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\depthRender.hlsl">
+      <Filter>998.HLSL\Compute</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
