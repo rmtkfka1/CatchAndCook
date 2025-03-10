@@ -51,13 +51,15 @@ void CS_Main(int3 threadIndex : SV_DispatchThreadID)
     posProj.w = 1.0f;
     
     float4 posView = mul(posProj, InvertProjectionMatrix);
-    float dist = posView.z / posView.w;
+    float3 actualPosView = posView.xyz / posView.w;
     
     if (g_depthRendering == 1)
     {
-        resultTexture[texCoord] = float4(dist * 0.001f, dist * 0.001f, dist * 0.001f, 1.0f);
+        resultTexture[texCoord] = float4(actualPosView.z * 0.001f, actualPosView.z * 0.001f, actualPosView.z * 0.001f, 1.0f);
         return;
     };
+    
+    float dist = length(cameraPos.xyz - actualPosView);
 
     float distFog = saturate((dist - g_fogMin) / (g_fogMax - g_fogMin));
     float fogFactor = exp(-distFog * power);
