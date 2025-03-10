@@ -59,11 +59,9 @@ void CS_Main(int3 threadIndex : SV_DispatchThreadID)
         return;
     };
     
-    float dist = length(cameraPos.xyz - actualPosView);
-
+    float dist = length(actualPosView);
     float distFog = saturate((dist - g_fogMin) / (g_fogMax - g_fogMin));
     float fogFactor = exp(-distFog * power);
-    dist = length(posView.xyz);
     
     float3 color = lerp(g_fogColor, RenderT[texCoord.xy].xyz, fogFactor);
     
