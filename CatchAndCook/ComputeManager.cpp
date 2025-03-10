@@ -336,7 +336,11 @@ void DepthRender::Init()
 	info._computeShader = true;
 	_shader->Init(L"depthRender.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
 
+#ifdef IMGUI_ON
 	ImguiManager::main->_depthRenderPtr = &_on;
+#endif // IMGUI_ON
+
+	
 }
 
 void DepthRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
