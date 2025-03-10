@@ -51,7 +51,7 @@ void CS_Main(int3 threadIndex : SV_DispatchThreadID)
     posProj.w = 1.0f;
     
     float4 posView = mul(posProj, InvertProjectionMatrix);
-    float dist = posView.z / posView.w;
+    float dist = length(posView.xyz);
     
     if (g_depthRendering == 1)
     {
