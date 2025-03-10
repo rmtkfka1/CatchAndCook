@@ -72,10 +72,7 @@ void RenderTarget::ResizeWindowSize(ComPtr<IDXGISwapChain3> swapchain, uint32 sw
 	//_intermediateTexture->CreateStaticTexture(SWAP_CHAIN_FORMAT,D3D12_RESOURCE_STATE_COMMON,WINDOW_WIDTH,WINDOW_HEIGHT,TextureUsageFlags::RTV
 	//	|TextureUsageFlags::SRV,false,true);
 	_RenderTargetIndex = swapchain->GetCurrentBackBufferIndex();
-
 }
-
-
 
 void RenderTarget::RenderBegin()
 {
@@ -127,7 +124,7 @@ GBuffer::GBuffer()
 
 GBuffer::~GBuffer()
 {
-
+	
 }
 
 void GBuffer::Init()

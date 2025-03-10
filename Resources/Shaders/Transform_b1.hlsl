@@ -19,6 +19,7 @@ struct Instance_Transform
     row_major Matrix worldToLocal;
     float4 worldPosition;
 };
+
 StructuredBuffer<Instance_Transform> TransformDatas : register(t30);
 
 

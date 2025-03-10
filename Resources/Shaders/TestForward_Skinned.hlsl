@@ -48,6 +48,8 @@ struct VS_OUT
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 
+//[]
+
 
 
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)

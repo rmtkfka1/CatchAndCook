@@ -105,8 +105,10 @@ struct FogParam
 	float g_fogMin = 0;
 	float g_fogMax = 1000.0f;
 	int depthRendering = 0;
-	float padding = 0;
+	float underWaterMin = 0;
 
+	vec3 underwaterColor =vec3(0,0.3f,0.7f);
+	float underwaterMax =500.0f;
 };
 
 class DepthRender : public ComputeBase
