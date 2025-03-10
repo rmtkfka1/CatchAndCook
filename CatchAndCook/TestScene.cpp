@@ -117,35 +117,32 @@ void TestScene::Init()
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(0, 0, 1, 0)));
 	}
 #pragma endregion
-
+	shared_ptr<Material> materialO = make_shared<Material>();
+	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
+	for (int i = 0; i < 50; ++i)
 	{
+		{
 
-		shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
+			shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
 
-		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
-		shared_ptr<Material> material = make_shared<Material>();
+			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
+			
 
-		shared_ptr<GameObject> root = CreateGameObject(L"root_test");
-
-		//root->GetComponent<Transform>()->_useTerrain=true;
-	
-		auto meshRenderer = root->AddComponent<MeshRenderer>();
-		//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal"));
-
-		root->_transform->SetLocalScale(vec3(1,1,1));
-	/*	root->AddComponent<WaterHeight>()->SetOffset(6.0f);*/
-		root->AddComponent<testComponent>();
-	
-		material = make_shared<Material>();
-		material->SetShader(shader);
-		material->SetPass(RENDER_PASS::Deffered);
-		material->SetHandle("_BaseMap", texture->GetSRVCpuHandle());
-
-		meshRenderer->AddMaterials({ material });
-		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(6.0f));
+			shared_ptr<GameObject> root = CreateGameObject(L"root_test");
 
 
-		
+
+			auto meshRenderer = root->AddComponent<MeshRenderer>();
+
+			root->_transform->SetLocalScale(vec3(1, 1, 1));
+			root->_transform->SetLocalPosition(vec3(0, -5.0f * i, 0));
+			materialO->SetShader(shader);
+			materialO->SetPass(RENDER_PASS::Deffered);
+			//materialO->SetHandle("_BaseMap", texture->GetSRVCpuHandle());
+
+			meshRenderer->AddMaterials({ materialO });
+			meshRenderer->AddMesh(mesh);
+		}
 	}
 
 	{

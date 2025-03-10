@@ -192,6 +192,8 @@ void Bloom::Init()
 		_Bloomshader->Init(L"bloomShader.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
 		ResourceManager::main->Add<Shader>(L"bloom", _Bloomshader);
 	}
+
+
 #ifdef IMGUI_ON
 	ImguiManager::main->_bloomPtr = &_on;
 #endif 
@@ -336,6 +338,9 @@ void DepthRender::Init()
 	info._computeShader = true;
 	_shader->Init(L"depthRender.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
 
+	_colorGrading = make_shared <Texture>();
+	_colorGrading->Init(L"../Resources/Textures/colorGrading.png");
+
 #ifdef IMGUI_ON
 	ImguiManager::main->_fogParam = &_fogParam;
 #endif // IMGUI_ON
@@ -359,9 +364,15 @@ void DepthRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, in
 	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
 	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
+	auto& PositionTexture =Core::main->GetGBuffer()->GetTexture(0);
+	PositionTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
 	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 0);
 	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
+	table->CopyHandle(_tableContainer.CPUHandle, PositionTexture->GetSRVCpuHandle(), 2);
+	table->CopyHandle(_tableContainer.CPUHandle, _colorGrading->GetSRVCpuHandle(), 3);
 	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 4);
+
 	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
 
 

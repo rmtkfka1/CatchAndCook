@@ -58,8 +58,8 @@ void ImguiManager::Render()
 		ImGui::SliderFloat("fog_Max", &_fogParam->g_fogMax, 0, 5000.0f);
 		ImGui::SliderFloat("fog_Min", &_fogParam->g_fogMin, 0, 5000.0f);
 		ImGui::SliderFloat3("fog_color", &_fogParam->g_fogColor.x, 0, 1.0f);
-		ImGui::SliderFloat("fog_power", &_fogParam->power, 0, 300.0f);
-		ImGui::SliderFloat("underWaterMax", &_fogParam->underwaterMax, 0, 5000.0f);
+		ImGui::SliderFloat("fog_power", &_fogParam->power, 0, 30.0f);
+		ImGui::SliderFloat("underWaterMax", &_fogParam->underwaterMax, 0, 10000.0f);
 		ImGui::SliderFloat("underWaterMin", &_fogParam->underWaterMin, 0, 5000.0f);
 		ImGui::SliderFloat3("underWaterColor", &_fogParam->underwaterColor.x, 0, 1.0f);
 		ImGui::End();

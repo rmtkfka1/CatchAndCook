@@ -193,13 +193,13 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
             for (auto& ele : vec)
             {
-                   if(ele.renderer->IsCulling() == true)
+             /*      if(ele.renderer->IsCulling() == true)
                    {
                        if(CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound())==false)
                        {
                            continue;
                        }
-                   }
+                   }*/
 
                 InstancingManager::main->AddObject(ele);
                 
@@ -255,7 +255,7 @@ void Scene::GlobalSetting()
     CameraManager::main->GetActiveCamera()->PushData();
     CameraManager::main->GetActiveCamera()->SetData();
 
-	/*cout << CameraManager::main->GetActiveCamera()->GetCameraLook().x << " " << CameraManager::main->GetActiveCamera()->GetCameraLook().y << " " << CameraManager::main->GetActiveCamera()->GetCameraLook().z << endl;*/
+    //cout << CameraManager::main->GetActiveCamera()->GetCameraPos().y << endl;
 
     _globalParam.window_size = vec2(WINDOW_WIDTH,WINDOW_HEIGHT);
     _globalParam.Time = Time::main->GetTime();

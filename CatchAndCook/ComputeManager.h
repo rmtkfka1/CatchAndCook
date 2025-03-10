@@ -99,6 +99,8 @@ private:
 
 struct FogParam
 {
+	
+
 	vec3 g_fogColor = vec3(1, 1, 1);
 	float power = 32.0f;
 
@@ -133,6 +135,7 @@ private:
 
 private:
 	shared_ptr<Texture> _pingTexture;
+	shared_ptr<Texture> _colorGrading;
 	shared_ptr<Shader> _shader;
 	FogParam _fogParam;
 	friend class ComputeManager;

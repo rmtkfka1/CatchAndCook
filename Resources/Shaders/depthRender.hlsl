@@ -39,14 +39,16 @@ cbuffer cameraParams : register(b2)
 
 RWTexture2D<float4> resultTexture : register(u0);
 Texture2D depthT : register(t0); 
-Texture2D RenderT : register(t1);
-
-
+Texture2D<float4> RenderT : register(t1);
+Texture2D<float4> PositionT : register(t2);
+Texture2D<float4> ColorGrading : register(t3);
 
 [numthreads(16, 16, 1)]
 void CS_Main(int3 threadIndex : SV_DispatchThreadID)
 {
+    
     int2 texCoord = threadIndex.xy;
+    float2 uv = (float2(texCoord) + 0.5f) / float2(cameraScreenData.x, cameraScreenData.y);
     
     float4 posProj = float4(0, 0, 0, 0);
     posProj.xy = (texCoord.xy + 0.5f) / float2(cameraScreenData.x, cameraScreenData.y) * 2.0f - 1.0f;
@@ -66,19 +68,17 @@ void CS_Main(int3 threadIndex : SV_DispatchThreadID)
  
     float dist = length(actualPosView);
     
-    //거리최대 distFog=> 1.0     //거리최소 distFog=> 0
     float distFog = saturate((dist - g_fogMin) / (g_fogMax - g_fogMin));
     float fogFactor = exp(-distFog * power);
     
     float3 color = lerp(g_fogColor, RenderT[texCoord.xy].xyz, fogFactor);
     
-    //resultTexture[texCoord] = float4(color, 1.0f);
-    //return;
+
+    float Height = PositionT.SampleLevel(sampler_lerp, uv, 0).y;
     
-    float underWaterFog = saturate((dist - g_underwaterMin) / (g_underwaterMax - g_underwaterMin));
-    float underWaterFact = exp(-underWaterFog * power);
+    float HeightUv = min(saturate(-Height /100),0.999f);
+   
+    float4 colorGradingColor = ColorGrading.SampleLevel(sampler_lerp, float2(HeightUv.x, 0), 0);
     
-    color = lerp(color, color * g_underwaterColor, underWaterFact);
-    
-    resultTexture[texCoord] = float4(color, 1.0f);
+    resultTexture[texCoord.xy] = float4(color * colorGradingColor.xyz, 1.0f);
 }
