@@ -145,20 +145,16 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
             for(auto& ele : vec)
             {
-             /*   if(ele.renderer->IsCulling() == true)
+            /*    if(ele.renderer->IsCulling() == true)
                 {
                     if(CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound())==false)
                     {
                         continue;
                     }
                 }*/
-                if(ele.renderer->IsInstancing() == false)
-                {
-                    //여기서 CBuffer 넣어줘야
-                    InstancingManager::main->AddObject(ele);
-                    InstancingManager::main->Render();
-                }
-				InstancingManager::main->AddObject(ele);
+
+                InstancingManager::main->AddObject(ele);
+
             }
 
             InstancingManager::main->Render();
@@ -189,16 +185,11 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                        }
                    }*/
 
-                if (ele.renderer->IsInstancing() == false)
-                {
-                    InstancingManager::main->AddObject(ele);
-                    InstancingManager::main->Render();
-                }
-
                 InstancingManager::main->AddObject(ele);
+                
             }
 
-            InstancingManager::main->Render();
+           InstancingManager::main->Render();
         }
     }
 

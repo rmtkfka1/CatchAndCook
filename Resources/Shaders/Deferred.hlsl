@@ -42,8 +42,8 @@ VS_OUT VS_Main(VS_IN input , uint id : SV_InstanceID)
     
     output.uv = input.uv;
     
-    output.worldNormal = TransformNormalLocalToWorld(input.normal);
-    output.worldTangent = TransformNormalLocalToWorld(input.tangent);
+    output.worldNormal = mul(float4(input.normal, 0.0f), l2wMatrix);
+    output.worldTangent = mul(float4(input.tangent, 0.0f), l2wMatrix);
     
     return output;
 }
@@ -53,7 +53,6 @@ struct PS_OUT
     float4 position : SV_Target0;
     float4 normal : SV_Target1;
     float4 color : SV_Target2;
-    float depth : SV_Target3; 
 };
 
 PS_OUT PS_Main(VS_OUT input) : SV_Target
@@ -63,7 +62,6 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     output.position = float4(input.worldPos, 1.0f);
     float3 N= ComputeNormalMapping(input.worldNormal, input.worldTangent, _BumpMap.Sample(sampler_lerp, input.uv));
     output.color = _BaseMap.Sample(sampler_lerp, input.uv);
-    output.depth = input.pos.z;
     output.normal = float4(N, 1.0f);
     return output;
 }

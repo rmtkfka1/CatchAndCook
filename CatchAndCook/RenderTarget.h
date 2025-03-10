@@ -81,7 +81,7 @@ class Texture;
 class GBuffer
 {
 public:
-	static const uint32 _count = 4;
+	static const uint32 _count = 3;
 
 	GBuffer();
 	~GBuffer();

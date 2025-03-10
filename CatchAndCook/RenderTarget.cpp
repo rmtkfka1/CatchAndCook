@@ -157,8 +157,7 @@ void GBuffer::Init()
 	_textures[1]->CreateStaticTexture(DXGI_FORMAT_R32G32B32A32_FLOAT,D3D12_RESOURCE_STATE_COMMON,WINDOW_WIDTH,WINDOW_HEIGHT,TextureUsageFlags::RTV | TextureUsageFlags::SRV | TextureUsageFlags::UAV,false,true);
 	//color 정보
 	_textures[2]->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM,D3D12_RESOURCE_STATE_COMMON,WINDOW_WIDTH,WINDOW_HEIGHT,TextureUsageFlags::RTV | TextureUsageFlags::SRV | TextureUsageFlags::UAV,false,true);
-	//depth 정보
-	_textures[3]->CreateStaticTexture(DXGI_FORMAT_R8_UNORM,D3D12_RESOURCE_STATE_COMMON,WINDOW_WIDTH,WINDOW_HEIGHT,TextureUsageFlags::RTV | TextureUsageFlags::SRV | TextureUsageFlags::UAV,false,true);
+	
 }
 
 void GBuffer::RenderBegin()

@@ -38,5 +38,5 @@ extern size_t GLOBAL_SRV_SHADOW_INDEX;
 extern size_t GLOBAL_SRV_POSITION_INDEX;
 extern size_t GLOBAL_SRV_NORAML_INDEX;
 extern size_t GLOBAL_SRV_COLOR_INDEX;
-extern size_t GLOBAL_SRV_DEPTH_INDEX;
+//extern size_t GLOBAL_SRV_DEPTH_INDEX;
 

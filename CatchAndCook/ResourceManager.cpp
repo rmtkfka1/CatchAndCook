@@ -41,12 +41,11 @@ void ResourceManager::CreateDefaultShader()
 {
 	{
 		ShaderInfo info;
-		info.renderTargetCount=4;
+		info.renderTargetCount=3;
 
 		info.RTVForamts[0]=DXGI_FORMAT_R32G32B32A32_FLOAT;
 		info.RTVForamts[1]=DXGI_FORMAT_R32G32B32A32_FLOAT;
 		info.RTVForamts[2]=DXGI_FORMAT_R8G8B8A8_UNORM;
-		info.RTVForamts[3]=DXGI_FORMAT_R8_UNORM;
 
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"Deffered",L"Deferred.hlsl",StaticProp,
 			ShaderArg{},info);

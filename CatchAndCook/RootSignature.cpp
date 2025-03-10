@@ -127,7 +127,7 @@ void RootSignature::InitGraphicsRootSignature()
 	auto UAV_Range = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_UAV,UAV_TABLE_REGISTER_COUNT,0);
 	auto SPRITE_RANGE = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV,1,18);
 
-	array<CD3DX12_ROOT_PARAMETER,31> param;
+	array<CD3DX12_ROOT_PARAMETER,30> param;
 
 	for(int cbv_index=0; cbv_index < CBV_ROOT_INDEX_COUNT; cbv_index++)
 		param[cbv_index].InitAsConstantBufferView(cbv_index);
@@ -141,7 +141,7 @@ void RootSignature::InitGraphicsRootSignature()
 	param[GLOBAL_SRV_POSITION_INDEX].InitAsDescriptorTable(1,&G_POSITION_SRV_RANGE);
 	param[GLOBAL_SRV_NORAML_INDEX].InitAsDescriptorTable(1,&G_NORAML_SRV_RANGE);
 	param[GLOBAL_SRV_COLOR_INDEX].InitAsDescriptorTable(1,&G_COLOR_SRV_RANGE);
-	param[GLOBAL_SRV_DEPTH_INDEX].InitAsDescriptorTable(1,&G_DEPTH_SRV_RANGE);
+	//param[GLOBAL_SRV_DEPTH_INDEX].InitAsDescriptorTable(1,&G_DEPTH_SRV_RANGE);
 
 
 	std::array<CD3DX12_DESCRIPTOR_RANGE,SRV_STRUCTURED_TABLE_REGISTER_COUNT> srv_str_ranges;
