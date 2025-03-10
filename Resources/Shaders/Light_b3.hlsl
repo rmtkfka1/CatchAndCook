@@ -173,3 +173,4 @@ float4 ComputeLightColor(float3 worldPos ,float3 WorldNomral)
 }
 
 #endif
+

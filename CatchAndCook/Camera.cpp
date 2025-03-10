@@ -107,6 +107,7 @@ void Camera::SetData()
 {
 	auto& cmdList =Core::main->GetCmdList();
 	cmdList->SetGraphicsRootConstantBufferView(2, _cbufferContainer->GPUAdress);
+    cmdList->SetComputeRootConstantBufferView(2, _cbufferContainer->GPUAdress);
 }
 
 void Camera::SetCameraLook(const vec3& look)

@@ -148,6 +148,6 @@ namespace fs = std::filesystem;
 
 inline void ThrowIfFailed(HRESULT hr) {
     if (FAILED(hr)) {
-        throw std::exception();
+         throw std::exception();
     }
 }
