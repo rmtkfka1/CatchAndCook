@@ -18,6 +18,7 @@ enum class BufferType
 	LightParam,
 	TerrainDetailsParam,
 	SeaParam,
+	FogParam,
 
 
 	// Instance

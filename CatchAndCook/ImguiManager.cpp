@@ -5,6 +5,7 @@
 #include "LightManager.h"
 #include "WaterController.h"
 #include <commdlg.h>
+#include "ComputeManager.h"
 
 unique_ptr<ImguiManager> ImguiManager::main;
 
@@ -40,6 +41,28 @@ void ImguiManager::Render()
 	ImGui::NewFrame();
 
 	{
+		ImGui::Begin("Compute");
+
+		if (ImGui::Button("Blur ON/OFF"))
+		{
+			*_blurPtr = !(*_blurPtr);
+		}
+
+		if (ImGui::Button("Bloom ON/OFF"))
+		{
+			*_bloomPtr = !(*_bloomPtr);
+		}
+
+
+		ImGui::SliderInt("renderType", &_fogParam->depthRendering,0,2);
+		ImGui::SliderFloat("fog_Max", &_fogParam->g_fogMax, 0, 5000.0f);
+		ImGui::SliderFloat("fog_Min", &_fogParam->g_fogMin, 0, 5000.0f);
+		ImGui::SliderFloat3("fog_color", &_fogParam->g_fogColor.x, 0, 1.0f);
+		ImGui::SliderFloat("fog_power", &_fogParam->power, 0, 300.0f);
+		ImGui::End();
+	}
+
+	{
 		ImGui::Begin("LightingTest");
 
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -61,20 +84,9 @@ void ImguiManager::Render()
 		ImGui::SliderFloat3("AmbientColor", &LightManager::main->_lightParmas.light[0].material.ambient.x, 0, 1.0f);
 		ImGui::SliderFloat3("SpecularColor", &LightManager::main->_lightParmas.light[0].material.specular.x, 0, 1.0f);
 		ImGui::SliderFloat("SpecularPower", &LightManager::main->_lightParmas.light[0].material.shininess, 0, 512.0f);
-		if (ImGui::Button("Blur ON/OFF"))
-		{
-			*_blurPtr = !(*_blurPtr);
-		}
+	
 
-		if (ImGui::Button("Bloom ON/OFF"))
-		{
-			*_bloomPtr = !(*_bloomPtr);
-		}
 
-		if (ImGui::Button("DepthRender ON/OFF"))
-		{
-			*_depthRenderPtr = !(*_depthRenderPtr);
-		}
 
 		ImGui::End();
 	}

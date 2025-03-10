@@ -97,8 +97,23 @@ private:
 	friend class ComputeManager;
 };
 
+struct FogParam
+{
+	vec3 g_fogColor = vec3(1, 1, 1);
+	float power = 32.0f;
+
+	float g_fogMin = 0;
+	float g_fogMax = 1000.0f;
+	int depthRendering = 0;
+	float padding = 0;
+
+};
+
 class DepthRender : public ComputeBase
 {
+	
+
+
 public:
 	DepthRender();
 	virtual ~DepthRender();
@@ -115,9 +130,9 @@ private:
 	virtual void Resize();
 
 private:
-	bool _on = false;
 	shared_ptr<Texture> _pingTexture;
 	shared_ptr<Shader> _shader;
+	FogParam _fogParam;
 	friend class ComputeManager;
 
 };

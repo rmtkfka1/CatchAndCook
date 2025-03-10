@@ -337,7 +337,7 @@ void DepthRender::Init()
 	_shader->Init(L"depthRender.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
 
 #ifdef IMGUI_ON
-	ImguiManager::main->_depthRenderPtr = &_on;
+	ImguiManager::main->_fogParam = &_fogParam;
 #endif // IMGUI_ON
 
 	
@@ -345,7 +345,7 @@ void DepthRender::Init()
 
 void DepthRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
 {
-	if (_on == false)
+	if (_fogParam.depthRendering == 0)
 		return;
 
 	auto& table = Core::main->GetBufferManager()->GetTable();
@@ -356,12 +356,23 @@ void DepthRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, in
 	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
 	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
+	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
 	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 0);
+	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
 	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 4);
 	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+
+
+	auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::FogParam)->Alloc(1);
+	memcpy(CbufferContainer->ptr, (void*)&_fogParam, sizeof(FogParam));
+	cmdList->SetComputeRootConstantBufferView(1, CbufferContainer->GPUAdress);
+	
+
 	cmdList->Dispatch(x, y, z);
 
-	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
+
 	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
 	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
 	cmdList->CopyResource(renderTarget->GetResource().Get(), _pingTexture->GetResource().Get());
