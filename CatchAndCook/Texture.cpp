@@ -333,7 +333,8 @@ void Texture::CreateStaticTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES init
 
         if (HasFlag(usageFlags, TextureUsageFlags::DSV))
         {
-            cvalue = CD3DX12_CLEAR_VALUE(format, 1.0f, 0);
+            DXGI_FORMAT clearFormat = (format == DXGI_FORMAT_R32_TYPELESS) ? DXGI_FORMAT_D32_FLOAT : format;
+            cvalue = CD3DX12_CLEAR_VALUE(clearFormat, 1.0f, 0);
             desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
         }
 
@@ -363,7 +364,7 @@ void Texture::CreateStaticTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES init
     {
         Core::main->GetBufferManager()->GetTextureBufferPool()->AllocSRVDescriptorHandle(&_srvHandle);
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-        srvDesc.Format = format;
+        srvDesc.Format = (format == DXGI_FORMAT_R32_TYPELESS) ? DXGI_FORMAT_R32_FLOAT : format;
         srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
         srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
         srvDesc.Texture2D.MipLevels = 1;
@@ -384,12 +385,20 @@ void Texture::CreateStaticTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES init
         if (detphShared)
         {
             Core::main->GetBufferManager()->GetTextureBufferPool()->AllocDSVDescriptorHandle(&_SharedDSVHandle);
-            Core::main->GetDevice()->CreateDepthStencilView(_resource.Get(), nullptr, _SharedDSVHandle);
+            D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+            dsvDesc.Format = (format == DXGI_FORMAT_R32_TYPELESS) ? DXGI_FORMAT_D32_FLOAT : format;
+            dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+            dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
+            Core::main->GetDevice()->CreateDepthStencilView(_resource.Get(), &dsvDesc, _SharedDSVHandle);
         }
         else
         {
             Core::main->GetBufferManager()->GetTextureBufferPool()->AllocDSVDescriptorHandle(&_dsvHandle);
-            Core::main->GetDevice()->CreateDepthStencilView(_resource.Get(), nullptr, _dsvHandle);
+            D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+            dsvDesc.Format = (format == DXGI_FORMAT_R32_TYPELESS) ? DXGI_FORMAT_D32_FLOAT : format;
+            dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+            dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
+            Core::main->GetDevice()->CreateDepthStencilView(_resource.Get(), &dsvDesc, _dsvHandle);
         }
     }
 
@@ -430,7 +439,7 @@ void Texture::CreateDynamicTexture(DXGI_FORMAT format, uint32 width, uint32 heig
         IID_PPV_ARGS(&_uploadResource)));
 
     D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-    srvDesc.Format = format;
+    srvDesc.Format = (format == DXGI_FORMAT_R32_TYPELESS) ? DXGI_FORMAT_R32_FLOAT : format;
     srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
     srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
     srvDesc.Texture2D.MipLevels = 1;

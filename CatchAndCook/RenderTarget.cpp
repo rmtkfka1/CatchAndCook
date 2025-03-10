@@ -35,7 +35,7 @@ void RenderTarget::Init(ComPtr<IDXGISwapChain3>& swapchain)
 	//_intermediateTexture->CreateStaticTexture(SWAP_CHAIN_FORMAT,D3D12_RESOURCE_STATE_COMMON,WINDOW_WIDTH,WINDOW_HEIGHT,TextureUsageFlags::RTV
 	//|TextureUsageFlags::SRV,false,true);
 
-	_DSTexture->CreateStaticTexture(DEPTH_STENCIL_FORMAT, D3D12_RESOURCE_STATE_DEPTH_WRITE, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::DSV, false, true);
+	_DSTexture->CreateStaticTexture(DXGI_FORMAT_R32_TYPELESS, D3D12_RESOURCE_STATE_DEPTH_WRITE, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::DSV|TextureUsageFlags::SRV , false, true);
 
 	_RenderTargetIndex = swapchain->GetCurrentBackBufferIndex();
 }
@@ -68,7 +68,7 @@ void RenderTarget::ResizeWindowSize(ComPtr<IDXGISwapChain3> swapchain, uint32 sw
 	_viewport = D3D12_VIEWPORT{ 0.0f,0.0f,static_cast<float>(WINDOW_WIDTH),static_cast<float>(WINDOW_HEIGHT), 0,1.0f };
 	_scissorRect = D3D12_RECT{ 0,0, static_cast<LONG>(WINDOW_WIDTH),static_cast<LONG>(WINDOW_HEIGHT) };
 
-	_DSTexture->CreateStaticTexture(DEPTH_STENCIL_FORMAT, D3D12_RESOURCE_STATE_DEPTH_WRITE, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::DSV, false, true);
+	_DSTexture->CreateStaticTexture(DXGI_FORMAT_R32_TYPELESS, D3D12_RESOURCE_STATE_DEPTH_WRITE, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::DSV | TextureUsageFlags::SRV, false, true);
 	//_intermediateTexture->CreateStaticTexture(SWAP_CHAIN_FORMAT,D3D12_RESOURCE_STATE_COMMON,WINDOW_WIDTH,WINDOW_HEIGHT,TextureUsageFlags::RTV
 	//	|TextureUsageFlags::SRV,false,true);
 	_RenderTargetIndex = swapchain->GetCurrentBackBufferIndex();
@@ -83,6 +83,7 @@ void RenderTarget::RenderBegin()
 
 	//_intermediateTexture->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
 	_RenderTargets[_RenderTargetIndex]->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
+	_DSTexture->ResourceBarrier(D3D12_RESOURCE_STATE_DEPTH_WRITE);
 
 	const float BackColor[] = {0.0f,0.0f,0.0f,0.0f};
 	cmdList->RSSetViewports(1,&_viewport);
