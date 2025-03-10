@@ -58,8 +58,12 @@ void Blur::Init()
 		_YBlurshader->Init(L"yblur.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
 		ResourceManager::main->Add<Shader>(L"yblur", _YBlurshader);
 	}
-
+	
+#ifdef IMGUI_ON
 	ImguiManager::main->_blurPtr = &_on;
+#endif 
+
+
 };
 
 void Blur::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
@@ -188,8 +192,10 @@ void Bloom::Init()
 		_Bloomshader->Init(L"bloomShader.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
 		ResourceManager::main->Add<Shader>(L"bloom", _Bloomshader);
 	}
-
+#ifdef IMGUI_ON
 	ImguiManager::main->_bloomPtr = &_on;
+#endif 
+
 	
 }
 
