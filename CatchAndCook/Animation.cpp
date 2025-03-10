@@ -14,35 +14,41 @@ Animation::~Animation()
 {
 }
 
-void Animation::Init(Model* model, aiAnimation* anim, aiNode* root)
+void Animation::Init(std::shared_ptr<Model> model, aiAnimation* anim, aiNode* root)
 {
+	_model = model;
+
 	//root
 	SetName(to_wstring(convert_assimp::Format(anim->mName)));
+	SetModelName(model->GetName());
+
 	_duration = anim->mDuration;
 	_ticksPerSecond = (anim->mTicksPerSecond != 0) ? anim->mTicksPerSecond : 25.0;
 	_totalTime = _duration / _ticksPerSecond;
 
-	for(int i=0;i<anim->mNumChannels;i++)
+	for (int i = 0; i < anim->mNumChannels; i++)
 	{
-		
-		auto name = to_wstring(convert_assimp::Format(anim->mChannels[i]->mNodeName));
-		wstring originalName = name;
 
-		if (name.find(L"$AssimpFbx$") != std::string::npos)
+		auto name = convert_assimp::Format(anim->mChannels[i]->mNodeName);
+		string originalName = name;
+
+		if (name.find("$AssimpFbx$") != std::string::npos)
 		{
-			vector<wstring> strList = wstr::split(name,L"_");
-			vector<wstring> originalList = wstr::split(name, L"_$AssimpFbx$");
+			vector<string> strList = str::split(name, "_");
+			vector<string> originalList = str::split(name, "_$AssimpFbx$");
 			originalName = originalList[0];
 		}
 		auto part = _nodeTables[originalName];
-		if(part == nullptr)
+		if (part == nullptr)
 		{
 			part = std::make_shared<AnimationNode>();
 			part->SetNodeName(originalName);
+			part->Init(shared_from_this());
+
 			_nodeTables[originalName] = part;
 			_nodeLists.push_back(part);
 		}
-		if (model && model->_rootBoneNode && model->_rootBoneNode->GetOriginalName() == to_string(originalName))
+		if (model && model->_rootBoneNode && model->_rootBoneNode->GetOriginalName() == originalName)
 		{
 			_rootBoneNode = part;
 			part->SetRoot(true);
@@ -51,42 +57,43 @@ void Animation::Init(Model* model, aiAnimation* anim, aiNode* root)
 	}
 
 
-	for(auto& part : _nodeTables)
+	for (auto& part : _nodeTables)
 	{
-		Vector3 pos,scale;
+		Vector3 pos, scale;
 		Quaternion rot;
 
-		auto findNode = root->FindNode(to_string(part.first+ L"_$AssimpFbx$_Translation").c_str());
-		if(findNode != nullptr)
+		auto findNode = root->FindNode((part.first + "_$AssimpFbx$_Translation").c_str());
+		if (findNode != nullptr)
 		{
 			auto trs = convert_assimp::Format(findNode->mTransformation);
-			trs.Decompose(scale,rot,pos);
+			trs.Decompose(scale, rot, pos);
 			part.second->SetOffsetPosition(pos);
 		}
-		findNode = root->FindNode(to_string(part.first+ L"_$AssimpFbx$_Scaling").c_str());
-		if(findNode != nullptr)
+		findNode = root->FindNode((part.first + "_$AssimpFbx$_Scaling").c_str());
+		if (findNode != nullptr)
 		{
 			auto trs = convert_assimp::Format(findNode->mTransformation);
-			trs.Decompose(scale,rot,pos);
+			trs.Decompose(scale, rot, pos);
 			part.second->SetOffsetScale(scale);
 		}
-		findNode = root->FindNode(to_string(part.first+ L"_$AssimpFbx$_PreRotation").c_str());
-		if(findNode != nullptr)
+		findNode = root->FindNode((part.first + "_$AssimpFbx$_PreRotation").c_str());
+		if (findNode != nullptr)
 		{
 			auto trs = convert_assimp::Format(findNode->mTransformation);
-			trs.Decompose(scale,rot,pos);
+			trs.Decompose(scale, rot, pos);
 			part.second->SetOffsetPreRotation(rot);
 		}
-		findNode = root->FindNode(to_string(part.first+ L"_$AssimpFbx$_PostRotation").c_str());
-		if(findNode != nullptr)
+		findNode = root->FindNode((part.first + "_$AssimpFbx$_PostRotation").c_str());
+		if (findNode != nullptr)
 		{
 			auto trs = convert_assimp::Format(findNode->mTransformation);
-			trs.Decompose(scale,rot,pos);
+			trs.Decompose(scale, rot, pos);
 			part.second->SetOffsetPostRotation(rot);
 		}
 
 	}
 }
+
 
 double Animation::CalculateTime(double time) const
 {

@@ -31,7 +31,7 @@ void Scene::Init()
 
 void Scene::Update()
 {
-    Profiler::main->Set("Logic_Start");
+    Profiler::Set("Logic_Start");
     while (!_changeTypeQueue.empty()) 
     {
         auto& current = _changeTypeQueue.front();
@@ -49,23 +49,23 @@ void Scene::Update()
         current->Start();
         _startQueue.pop();
     }
-    Profiler::main->Fin();
+    Profiler::Fin();
 
-    Profiler::main->Set("Logic_Update1");
+    Profiler::Set("Logic_Update1");
     for (auto& gameObject : _gameObjects)
 	    if(gameObject->GetType() == GameObjectType::Dynamic)
             gameObject->Update();
-    Profiler::main->Fin();
+    Profiler::Fin();
 
-    Profiler::main->Set("Logic_Update2");
+    Profiler::Set("Logic_Update2");
     for (auto& gameObject : _gameObjects)
         if(gameObject->GetType() == GameObjectType::Dynamic)
             gameObject->Update2();
-    Profiler::main->Fin();
+    Profiler::Fin();
 
-    Profiler::main->Set("Logic_ColliderManager");
+    Profiler::Set("Logic_ColliderManager");
     ColliderManager::main->Update();
-    Profiler::main->Fin();
+    Profiler::Fin();
 }
 
 void Scene::RenderBegin()
@@ -73,11 +73,11 @@ void Scene::RenderBegin()
     for (auto& ele : _passObjects)
         ele.clear();
 
-    Profiler::main->Set("Render_RenderBegin");
+    Profiler::Set("Render_RenderBegin");
     for (auto& gameObject : _gameObjects)
     	gameObject->RenderBegin();
-    Profiler::main->Fin();
- /*   Gizmo::main->RenderBegin();*/
+    Profiler::Fin();
+    Gizmo::main->RenderBegin();
 }
 
 void Scene::Rendering()
@@ -89,12 +89,28 @@ void Scene::Rendering()
     Core::main->GetRenderTarget()->ClearDepth();
 
     ShadowPass(cmdList);
+    Profiler::Set("PASS : Deffered", BlockTag::GPU);
     DefferedPass(cmdList);
     FinalRender(cmdList);
+    Profiler::Fin();
+
+	//
+    Profiler::Set("PASS : Forward", BlockTag::GPU);
     ForwardPass(cmdList);
-    TransparentPass(cmdList);
+    Profiler::Fin();
+
+    //
+    Profiler::Set("PASS : Transparent", BlockTag::GPU);
+    TransparentPass(cmdList); // Position,
+    Profiler::Fin();
+
+    Profiler::Set("PASS : Compute", BlockTag::GPU);
     ComputePass(cmdList);
+    Profiler::Fin();
+
+    Profiler::Set("PASS : UI", BlockTag::GPU);
     UiPass(cmdList);
+    Profiler::Fin();
 
 }
 

@@ -483,7 +483,7 @@ bool Transform::BottomUpLocalToWorldUpdate()
 
 void Transform::LookUp(const vec3& dir, const vec3& up)
 {
-    SetWorldRotation(LookToQuaternion(GetWorldPosition(), dir, up));
+    SetWorldRotation(LookToQuaternion(dir, up));
 }
 
 vec3 Transform::LocalToWorld_Position(const vec3& value)

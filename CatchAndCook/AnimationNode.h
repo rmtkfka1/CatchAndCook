@@ -9,6 +9,8 @@ public:
 	AnimationNode();
 	virtual ~AnimationNode();
 
+	void Init(std::shared_ptr<Animation> animation);
+
 	void SetKeyFrames(aiAnimation* anim, aiNodeAnim* animNode);
 	void SetPosition(aiAnimation* anim, aiNodeAnim* animNode);
 	void SetRotation(aiAnimation* anim, aiNodeAnim* animNode);
@@ -20,15 +22,15 @@ public:
 	void SetOffsetPostRotation(const Quaternion& scale);
 
 	static int FindKeyFrameIndex(const vector<AnimationKeyFrame>& vec, const double& time);
-	Matrix CalculateTransformMatrix(const double& time, bool xyLock = false) const;
+	Matrix CalculateTransformMatrix(const std::shared_ptr<ModelNode>& _originModelNode, const std::shared_ptr<ModelNode>& _animModelNode, const double& time, bool xyLock = false) const;
 	Vector3 CalculatePosition(const double& time) const;
 	Quaternion CalculateRotation(const double& time) const;
 	Vector3 CalculateScale(const double& time) const;
 
-	void SetNodeName(const wstring& name){
+	void SetNodeName(const string& name){
 		_nodeName = name;
 	}
-	wstring& GetNodeName(){
+	string& GetNodeName(){
 		return _nodeName;
 	}
 
@@ -38,8 +40,10 @@ public:
 	bool IsRoot() const {
 		return _isRoot;
 	}
-	wstring _nodeName;
+	string _nodeName;
 	bool _isRoot = false;
+
+	std::weak_ptr<Animation> _animation;
 
 	Vector3 offsetPosition = Vector3::Zero;
 	Quaternion offsetRotation = Quaternion::Identity;
@@ -47,6 +51,7 @@ public:
 	Quaternion offsetPostRotation = Quaternion::Identity;
 	Vector3 offsetScale = Vector3::One;
 
+	bool hasPosition = false;
 	bool hasScale = false;
 	bool hasPreRotation = false;
 	bool hasPostRotation = false;
@@ -55,8 +60,3 @@ public:
 	vector<AnimationKeyFrame> _keyFrame_rotations;
 	vector<AnimationKeyFrame> _keyFrame_scales;
 };
-
-inline void AnimationNode::SetPose(Matrix& matrix)
-{
-	matrix.Decompose(offsetScale,offsetRotation,offsetPosition);
-}

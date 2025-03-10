@@ -27,7 +27,6 @@ void AssimpPack::Init(std::wstring path, bool xFlip)
 	assert(std::filesystem::exists(p));
 
     importer = std::make_shared<Assimp::Importer>();
-
     unsigned int flag = //aiProcess_MakeLeftHanded | // �޼� ��ǥ��� ����
         //aiProcess_ConvertToLeftHanded |
         aiProcess_FlipWindingOrder | //CW, CCW �ٲٴ°���.
@@ -136,7 +135,11 @@ void Model::Init(const wstring& path, VertexType vertexType)
 				std::cout << string("Model Warring : Axis Error. Need Unity Fix Tools.\n") << std::to_string(path) <<"\n";
 	}
 	// �ӽ�
+
 	auto model = GetCast<Model>();
+	auto str = wstr::split(path, L"/");
+	SetName(to_string(wstr::split(str[str.size() - 1], L".")[0]));
+
 	// -------- �Ž� ���� --------
 	_modelMeshList.reserve(scene->mNumMeshes);
 	for (int i = 0; i < scene->mNumMeshes; i++)
@@ -173,8 +176,50 @@ void Model::Init(const wstring& path, VertexType vertexType)
 	LoadNode(scene->mRootNode);
 	SetNodeData();
     LoadRootBone(const_cast<aiScene*>(scene));
-	for(int i=0; i<scene->mNumAnimations; i++)
+
+	SetOriginalParentWithChilds(_rootNode);
+
+	for (auto& node : _nameToNodeTable | views::values)
+	{
+		//std::cout << node->GetName() << "\n";
+		if (node->GetName() != node->GetOriginalName())
+		{
+			Vector3 pos, scale;
+			Quaternion rot;
+			node->GetLocalSRT().Decompose(scale, rot, pos);
+			auto& data = node->GetOriginalName();
+			auto originalNode = FindNodeByName(data);
+
+			if (data + "_$AssimpFbx$_PreRotation" == node->GetName())
+				originalNode->SetLocalPreRotation(rot);
+			if (data + "_$AssimpFbx$_Rotation" == node->GetName())
+				originalNode->SetLocalRotation(rot);
+			if (data + "_$AssimpFbx$_PostRotation" == node->GetName())
+				originalNode->SetLocalPostRotation(rot);
+			if (data + "_$AssimpFbx$_Scaling" == node->GetName())
+				originalNode->SetLocalScale(scale);
+			if (data + "_$AssimpFbx$_Translation" == node->GetName())
+				originalNode->SetLocalPosition(pos);
+		}
+
+		if (auto parent = node->GetParent())
+		{
+			//node->SetOriginalParent(FindNodeByName(parent->GetOriginalName()));
+
+			std::cout << "current : " << node->GetName() << "\n";
+			std::cout << "  parent : " << parent->GetName() << "\n";
+			std::cout << "  origin parent : " << node->GetOriginalParent()->GetName() << "\n\n";
+			std::cout << "  origin : " << node->hasPosition << "\n";
+			std::cout << "  origin : " << node->hasScale << "\n";
+			std::cout << "  origin : " << node->hasPreRotation << "\n";
+			std::cout << "  origin : " << node->hasPostRotation << "\n";
+		}
+	}
+
+	_rootNode->CalculateTPoseNode(nullptr);
+	for (int i = 0; i < scene->mNumAnimations; i++) {
 		LoadAnimation(scene->mAnimations[i], scene->mRootNode);
+	}
 }
 
 void Model::DebugLog()
@@ -380,7 +425,7 @@ void Model::LoadNode(aiNode* root)
 void Model::LoadAnimation(aiAnimation* aiAnim, aiNode* root)
 {
 	auto anim = std::make_shared<Animation>();
-	anim->Init(this, aiAnim, root);
+	anim->Init(GetCast<Model>(), aiAnim, root);
 	_animationList.push_back(anim);
 	_nameToAnimationTable[to_string(anim->GetName())] = anim;
 	ResourceManager::main->Add(anim->GetName(), anim);
@@ -485,8 +530,24 @@ std::shared_ptr<ModelNode> Model::AddNode(aiNode* rootNode)
 	currentNode->Init(GetCast<Model>(), rootNode);
 	
 	for (int i = 0; i < rootNode->mNumChildren; i++) {
-		AddNode(rootNode->mChildren[i])->SetParent(currentNode);
+		auto child = AddNode(rootNode->mChildren[i]);
+		child->SetParent(currentNode);
 	}
 
 	return currentNode;
+}
+
+void Model::SetOriginalParentWithChilds(const std::shared_ptr<ModelNode>& currentNode)
+{
+	for (auto& child : currentNode->GetChilds())
+	{
+		auto childNode = child.lock();
+		if (currentNode->GetName() == "LeftLeg")
+			int a = 0;
+		if (currentNode->GetName() != currentNode->GetOriginalName())
+			childNode->SetOriginalParent(currentNode->GetOriginalParent());
+		else
+			childNode->SetOriginalParent(currentNode);
+		SetOriginalParentWithChilds(childNode);
+	}
 }

@@ -62,6 +62,7 @@ void Terrain::Start()
             assert(false);
 		dynamic_pointer_cast<MeshRenderer>(renderer)->AddMesh(_gridMesh);
         renderer->SetInstancing(false);
+        renderer->SetCulling(false);
 	}
 
  //   _instanceBuffers.resize(_instances.size());
@@ -320,3 +321,4 @@ float Terrain::Average(int32 i,int32 j)
 
     return avg / num;
 }
+

@@ -90,6 +90,8 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     
     output.uv = input.uv;
 
+    output.uv = input.uv;
+
     return output;
 }
 
@@ -103,5 +105,17 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float4 BaseColor =_BaseMap.Sample(sampler_lerp, input.uv);
 
     return BaseColor * lightColor * color;
+
+
+
+    //float3 totalNormalWS = TransformNormalTangentToSpace(NormalUnpack(_BumpMap.Sample(sampler_lerp, input.uv).xyz, 0.2), normalize(input.normalWS), normalize(input.tangentWS));
+    //float3 totalNormalWS = TransformNormalTangentToSpace(float3(0,0,1), normalize(input.normalWS), normalize(input.tangentWS));
+    //return float4(normalize(input.normalWS), 1);
+    //return float4(_BumpMap.Sample(sampler_lerp, input.uv).xyz, 1);
+	//return float4(normalize(totalNormalWS), 1)* 0.5 + 0.5;
+    //float4 finalColor = _BaseMap.Sample(sampler_lerp, input.uv);
+    //if (finalColor.a < 0.01)
+		//discard;
+    //return finalColor * color * (saturate(dot(totalNormalWS, normalize(float3(0, 1, -1)))) * 0.7 + 0.3);
 
 }
