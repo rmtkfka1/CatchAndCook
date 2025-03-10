@@ -175,22 +175,30 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
     { // Deffered
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deffered)];
 
-        for(auto& [shader,vec] : targets)
+        for (auto& [shader, vec] : targets)
         {
             cmdList->SetPipelineState(shader->_pipelineState.Get());
-            
-            for(auto& [material,mesh,target] : vec)
-            {
-				if(target->IsCulling() == true)
-				{
-                    if(CameraManager::main->GetActiveCamera()->IsInFrustum(target->GetBound())==false)
-                    {
-                        continue;
-                    }
-				}
 
-                target->Rendering(material,mesh);
+            for (auto& ele : vec)
+            {
+                /*   if(ele.renderer->IsCulling() == true)
+                   {
+                       if(CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound())==false)
+                       {
+                           continue;
+                       }
+                   }*/
+
+                if (ele.renderer->IsInstancing() == false)
+                {
+                    InstancingManager::main->AddObject(ele);
+                    InstancingManager::main->Render();
+                }
+
+                InstancingManager::main->AddObject(ele);
             }
+
+            InstancingManager::main->Render();
         }
     }
 

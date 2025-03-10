@@ -26,11 +26,15 @@ struct VS_OUT
     
 };
 
-VS_OUT VS_Main(VS_IN input)
+VS_OUT VS_Main(VS_IN input , uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
     
-    output.pos = mul(float4(input.pos, 1.0f), LocalToWorldMatrix);
+    Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
+    row_major float4x4 l2wMatrix = data.localToWorld;
+    row_major float4x4 w2lMatrix = data.worldToLocal;
+    
+    output.pos = mul(float4(input.pos, 1.0f), l2wMatrix);
     output.worldPos = output.pos.xyz;
     
     float4 clipPos = mul(output.pos, VPMatrix);
@@ -41,8 +45,6 @@ VS_OUT VS_Main(VS_IN input)
     output.worldNormal = TransformNormalLocalToWorld(input.normal);
     output.worldTangent = TransformNormalLocalToWorld(input.tangent);
     
-
-   
     return output;
 }
 
@@ -51,7 +53,7 @@ struct PS_OUT
     float4 position : SV_Target0;
     float4 normal : SV_Target1;
     float4 color : SV_Target2;
-    float depth : SV_Target3;
+    float depth : SV_Target3; 
 };
 
 PS_OUT PS_Main(VS_OUT input) : SV_Target
@@ -60,7 +62,8 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     
     output.position = float4(input.worldPos, 1.0f);
     float3 N= ComputeNormalMapping(input.worldNormal, input.worldTangent, _BumpMap.Sample(sampler_lerp, input.uv));
-    output.color = _BaseMap.Sample(sampler_lerp, input.uv); 
+    output.color = _BaseMap.Sample(sampler_lerp, input.uv);
     output.depth = input.pos.z;
+    output.normal = float4(N, 1.0f);
     return output;
 }

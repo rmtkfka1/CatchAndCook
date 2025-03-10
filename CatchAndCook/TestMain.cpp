@@ -16,7 +16,7 @@ int main()
     float maxDepth = 1.0f;
 
     // 1. 로컬 공간 좌표 (예: z=1000)
-    XMFLOAT3 localSpace = XMFLOAT3(600, 0, 1000);
+    XMFLOAT3 localSpace = XMFLOAT3(0, 0, 1000);
 
     // 2. 월드 행렬 (이 경우 이동 없음)
     XMMATRIX worldMat = XMMatrixTranslation(0, 0, 0);
