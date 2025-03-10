@@ -18,6 +18,7 @@ public:
 	Material* _seaMaterial;
 	bool* _blurPtr;
 	bool* _bloomPtr;
+	bool* _depthRenderPtr;
 	SeaParam* _seaParam;
 
 private:

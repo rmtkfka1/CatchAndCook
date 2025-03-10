@@ -97,6 +97,30 @@ private:
 	friend class ComputeManager;
 };
 
+class DepthRender : public ComputeBase
+{
+public:
+	DepthRender();
+	virtual ~DepthRender();
+
+public:
+	virtual void Init();
+	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+
+private:
+	virtual void Resize();
+
+private:
+	bool _on = false;
+	shared_ptr<Texture> _pingTexture;
+	shared_ptr<Shader> _shader;
+	friend class ComputeManager;
+
+};
 
 
 class ComputeManager 
@@ -112,6 +136,7 @@ public:
 private:
 	shared_ptr<Blur> _blur;
 	shared_ptr<Bloom> _bloom;
+	shared_ptr<DepthRender> _depthRender;
 
 };
 

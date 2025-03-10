@@ -71,6 +71,11 @@ void ImguiManager::Render()
 			*_bloomPtr = !(*_bloomPtr);
 		}
 
+		if (ImGui::Button("DepthRender ON/OFF"))
+		{
+			*_depthRenderPtr = !(*_depthRenderPtr);
+		}
+
 		ImGui::End();
 	}
 

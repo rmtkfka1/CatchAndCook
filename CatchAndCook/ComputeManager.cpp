@@ -314,6 +314,70 @@ void Bloom::Blooming(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, i
 
 }
 
+/*************************
+*	DepthRender          *
+**************************/
+
+DepthRender::DepthRender()
+{
+}
+
+DepthRender::~DepthRender()
+{
+}
+
+void DepthRender::Init()
+{
+	_pingTexture = make_shared<Texture>();
+	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+
+	_shader = make_shared<Shader>();
+	ShaderInfo info;
+	info._computeShader = true;
+	_shader->Init(L"depthRender.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
+
+	ImguiManager::main->_depthRenderPtr = &_on;
+}
+
+void DepthRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+	if (_on == false)
+		return;
+
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	cmdList->SetPipelineState(_shader->_pipelineState.Get());
+	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	_tableContainer = table->Alloc(8);
+
+	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
+	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 0);
+	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 4);
+	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+	cmdList->Dispatch(x, y, z);
+
+	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
+	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
+	cmdList->CopyResource(renderTarget->GetResource().Get(), _pingTexture->GetResource().Get());
+
+	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_DEPTH_WRITE);
+}
+
+void DepthRender::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+}
+
+void DepthRender::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+}
+
+void DepthRender::Resize()
+{
+}
+
+
 
 /*************************
 *	ComputeManager       *
@@ -326,6 +390,10 @@ void ComputeManager::Init()
 
 	_bloom = make_shared<Bloom>();
 	_bloom->Init();
+
+	_depthRender = make_shared<DepthRender>();
+	_depthRender->Init();
+
 }
 
 void ComputeManager::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList)
@@ -341,6 +409,8 @@ void ComputeManager::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 	_blur->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
 	_bloom->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+
+	_depthRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
 }
 

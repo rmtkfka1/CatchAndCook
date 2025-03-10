@@ -83,7 +83,6 @@ void RenderTarget::RenderBegin()
 
 	//_intermediateTexture->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
 	_RenderTargets[_RenderTargetIndex]->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
-	_DSTexture->ResourceBarrier(D3D12_RESOURCE_STATE_DEPTH_WRITE);
 
 	const float BackColor[] = {0.0f,0.0f,0.0f,0.0f};
 	cmdList->RSSetViewports(1,&_viewport);

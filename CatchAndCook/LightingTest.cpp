@@ -148,9 +148,9 @@ void LightingTest::Init()
 			material = make_shared<Material>();
 			material->SetShader(shader);
 			material->SetPass(RENDER_PASS::Forward);
-			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"Sea", L"Textures/sea/sea.jpg");
+			//shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"Sea", L"Textures/sea/sea.jpg");
 			//shared_ptr<Texture> texture1 = ResourceManager::main->Load<Texture>(L"Sea2", L"Textures/sea/0001.png");
-			material->SetHandle("_baseMap", texture->GetSRVCpuHandle());
+			//material->SetHandle("_baseMap", texture->GetSRVCpuHandle());
 			material->SetHandle("_cubeMap", ResourceManager::main->Get<Texture>(L"cubemap")->GetSRVCpuHandle());
 
 			meshRenderer->AddMaterials({ material });
