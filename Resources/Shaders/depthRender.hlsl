@@ -51,7 +51,7 @@ void CS_Main(int3 threadIndex : SV_DispatchThreadID)
     posProj.w = 1.0f;
     
     float4 posView = mul(posProj, InvertProjectionMatrix);
-    float dist = length(posView.xyz);
+    float dist = posView.z / posView.w;
     
     if (g_depthRendering == 1)
     {
@@ -61,6 +61,7 @@ void CS_Main(int3 threadIndex : SV_DispatchThreadID)
 
     float distFog = saturate((dist - g_fogMin) / (g_fogMax - g_fogMin));
     float fogFactor = exp(-distFog * power);
+    dist = length(posView.xyz);
     
     float3 color = lerp(g_fogColor, RenderT[texCoord.xy].xyz, fogFactor);
     
