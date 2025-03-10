@@ -161,13 +161,13 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
             for(auto& ele : vec)
             {
-            /*    if(ele.renderer->IsCulling() == true)
+                if(ele.renderer->IsCulling() == true)
                 {
                     if(CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound())==false)
                     {
                         continue;
                     }
-                }*/
+                }
 
                 InstancingManager::main->AddObject(ele);
 
@@ -193,13 +193,13 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
             for (auto& ele : vec)
             {
-                /*   if(ele.renderer->IsCulling() == true)
+                   if(ele.renderer->IsCulling() == true)
                    {
                        if(CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound())==false)
                        {
                            continue;
                        }
-                   }*/
+                   }
 
                 InstancingManager::main->AddObject(ele);
                 
@@ -272,29 +272,29 @@ void Scene::DebugRendering()
     auto& cmdList = Core::main->GetCmdList();
 
 
-    { // Deffered
-        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deffered)];
+    //{ // Deffered
+    //    auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deffered)];
 
-        for(auto& [shader,vec] : targets)
-        {
-            for(auto& [material,mesh,target] : vec)
-            {
-                target->DebugRendering();
-            }
-        }
-    }
+    //    for(auto& [shader,vec] : targets)
+    //    {
+    //        for(auto& [material,mesh,target] : vec)
+    //        {
+    //            target->DebugRendering();
+    //        }
+    //    }
+    //}
 
-    { // forward
-        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Forward)];
+    //{ // forward
+    //    auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Forward)];
 
-        for(auto& [shader,vec] : targets)
-        {
-            for(auto& [material,mesh,target] : vec)
-            {
-                target->DebugRendering();
-            }
-        }
-    }
+    //    for(auto& [shader,vec] : targets)
+    //    {
+    //        for(auto& [material,mesh,target] : vec)
+    //        {
+    //            target->DebugRendering();
+    //        }
+    //    }
+    //}
 
     { // forward
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Debug)];
