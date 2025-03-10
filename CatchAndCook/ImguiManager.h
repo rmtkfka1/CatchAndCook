@@ -1,8 +1,11 @@
 ﻿#pragma once
 
+
 class GameObject;
 class Material;
 struct SeaParam;
+struct FogParam;
+
 class ImguiManager
 {
 public:
@@ -18,7 +21,7 @@ public:
 	Material* _seaMaterial;
 	bool* _blurPtr;
 	bool* _bloomPtr;
-	bool* _depthRenderPtr;
+	FogParam* _fogParam;
 	SeaParam* _seaParam;
 
 private:

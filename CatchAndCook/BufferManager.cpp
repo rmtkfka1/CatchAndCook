@@ -10,6 +10,7 @@
 #include "testComponent.h"
 #include "LightManager.h"
 #include "WaterController.h"
+#include "ComputeManager.h"
 void BufferManager::Init()
 {
 
@@ -29,6 +30,7 @@ void BufferManager::Init()
 		CreateBufferPool(BufferType::BoneParam,sizeof(BoneParam),256);
 		CreateBufferPool(BufferType::InstanceOffsetParam,sizeof(InstanceOffsetParam),10000);
 		CreateBufferPool(BufferType::SeaParam, sizeof(TerrainDetailsParam), 1);
+		CreateBufferPool(BufferType::FogParam, sizeof(FogParam), 1);
 
 	}
 
