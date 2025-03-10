@@ -31,6 +31,7 @@ void WaterController::Init()
 	_dudv = make_shared<Texture>();
 	_dudv->Init(L"../Resources/Textures/sea/dudv2.png");
 
+	
 	ImguiManager::main->_seaParam = &_seaParam;
 
  
