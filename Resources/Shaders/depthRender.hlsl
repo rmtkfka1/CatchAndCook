@@ -64,11 +64,11 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     float4 posView = mul(posProj, InvertProjectionMatrix);
     float3 actualPosView = posView.xyz / posView.w;
     
-    //if (g_depthRendering == 1)
-    //{
-    //    resultTexture[texCoord] = float4(actualPosView.z * 0.001f, actualPosView.z * 0.001f, actualPosView.z * 0.001f, 1.0f);
-    //    return;
-    //}
+    if (g_depthRendering == 1)
+    {
+        resultTexture[texCoord] = float4(actualPosView.z * 0.001f, actualPosView.z * 0.001f, actualPosView.z * 0.001f, 1.0f);
+        return;
+    }
     
 
     float dist = length(actualPosView);    

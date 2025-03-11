@@ -6,7 +6,6 @@ SamplerState sampler_aniso16 : register(s4);
 SamplerState sampler_shadow : register(s5);
 SamplerState sampler_lerp_clamp : register(s6);
 
-
 cbuffer GLOBAL_DATA : register(b0)
 {
     float2 g_window_size;
@@ -20,13 +19,12 @@ cbuffer underWatgerParam : register(b1)
     float g_fog_power;
 
     float3 g_underWaterColor;
-    float g_fogMin = 0;
+    float g_fogMin; // 기본 0
 
     float2 padding;
-    int g_on = -1;
-    float g_fogMax = 1000.0f;
-    
-}
+    int g_on; // (예: -1: 비활성화, 1: 활성화)
+    float g_fogMax; // 기본 1000.0f 정도
+};
 
 cbuffer cameraParams : register(b2)
 {
@@ -45,24 +43,29 @@ cbuffer cameraParams : register(b2)
 };
 
 RWTexture2D<float4> resultTexture : register(u0);
-Texture2D depthT : register(t0); 
+Texture2D depthT : register(t0);
 Texture2D<float4> RenderT : register(t1);
 Texture2D<float4> PositionT : register(t2);
 Texture2D<float4> ColorGrading : register(t3);
 
+///////////////////////////////////////////////////////////////////////////////
+// Projection에서 View 공간으로의 변환 함수
 float3 ProjToView(float2 texCoord)
 {
-    float4 posProj = float4(0, 0, 0, 0);
-    posProj.xy = (texCoord.xy + 0.5f) / float2(cameraScreenData.x, cameraScreenData.y) * 2.0f - 1.0f;
-    posProj.y *= -1;
-    posProj.z = depthT[texCoord.xy];
+    float4 posProj;
+    // texCoord는 픽셀 좌표이므로 정규화 좌표로 변환
+    posProj.xy = (texCoord + 0.5f) / cameraScreenData.xy * 2.0f - 1.0f;
+    posProj.y *= -1; // DirectX의 화면 좌표와 맞추기 위함
+    // 깊이 값은 depthT 텍스처에서 불러옵니다.
+    posProj.z = depthT.Load(int3(texCoord, 0));
     posProj.w = 1.0f;
     
     float4 posView = mul(posProj, InvertProjectionMatrix);
     return posView.xyz / posView.w;
 }
 
-
+///////////////////////////////////////////////////////////////////////////////
+// View 공간 좌표를 이용한 fog 계산 함수
 float CalculateFogFactor(float3 posView)
 {
     float dist = length(posView);
@@ -71,24 +74,22 @@ float CalculateFogFactor(float3 posView)
     return fogFactor;
 }
 
-
+///////////////////////////////////////////////////////////////////////////////
+// Compute Shader 메인 함수
 [numthreads(16, 16, 1)]
 void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
 {
     int2 texCoord = dispatchThreadID.xy;
-    float2 uv = (float2(texCoord) + 0.5f) / float2(cameraScreenData.x, cameraScreenData.y);
+    float2 uv = (float2(texCoord) + 0.5f) / cameraScreenData.xy;
     
-    float3 BaseColor = RenderT[texCoord.xy].xyz;
+    float2 distortion = float2(sin(uv.y * 10.0f + g_Time), cos(uv.x * 10.0f + g_Time)) * 0.06f;
+    float2 uvDistorted = uv + distortion *0.05f;
     
-    float3 viewPos = ProjToView(texCoord);
-    
+    float3 BaseColor = RenderT.SampleLevel(sampler_lerp, uvDistorted, 0).xyz;
+    float3 viewPos = ProjToView(float2(texCoord));
     float fogFactor = CalculateFogFactor(viewPos);
     
-    float3 color = lerp(g_fogColor, BaseColor, fogFactor);
-    
-    resultTexture[texCoord.xy] = float4(color.xyz, 1.0f);
-    
-    
+    float3 colorFog = lerp(g_fogColor, BaseColor, fogFactor);
+   
+    resultTexture[texCoord] = float4(colorFog, 1.0f);
 }
-
-

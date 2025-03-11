@@ -401,9 +401,7 @@ void DepthRender::Resize()
 	auto& textureBufferPool = Core::main->GetBufferManager()->GetTextureBufferPool();
 	textureBufferPool->FreeSRVHandle(_pingTexture->GetUAVCpuHandle());
 
-
-	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
-		| TextureUsageFlags::SRV, false, false);
+	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
 
 
 }
@@ -488,6 +486,11 @@ void UnderWaterEffect::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
 void UnderWaterEffect::Resize()
 {
+	auto& textureBufferPool = Core::main->GetBufferManager()->GetTextureBufferPool();
+	textureBufferPool->FreeSRVHandle(_pingTexture->GetUAVCpuHandle());
+
+	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+
 
 }
 
@@ -540,6 +543,7 @@ void ComputeManager::Resize()
 	_blur->Resize();
 	_bloom->Resize();
 	_depthRender->Resize();
+	_underWaterEffect->Resize();
 }
 
 
