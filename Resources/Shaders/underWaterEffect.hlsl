@@ -65,7 +65,7 @@ float3 ProjToView(float2 texCoord)
 
 float CalculateFogFactor(float3 posView)
 {
-    float dist = length(posView);
+    float dist = posView.z;
     float distFog = saturate((dist - g_fogMin) / (g_fogMax - g_fogMin));
     float fogFactor = exp(-distFog * g_fog_power);
     return fogFactor;
@@ -87,7 +87,7 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     float3 viewPos = ProjToView(float2(texCoord));
     float fogFactor = CalculateFogFactor(viewPos);
     
-    float3 colorFog = lerp(g_fogColor, BaseColor, fogFactor);
+    float3 finalColor = lerp(g_fogColor, BaseColor, fogFactor);
    
-    resultTexture[texCoord] = float4(colorFog , 1.0f);
+    resultTexture[texCoord] = float4(finalColor, 1.0f);
 }

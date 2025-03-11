@@ -269,5 +269,5 @@ float4 PS_Main(DS_OUT input) : SV_Target
     //float2 tileUV0 = input.uvTile / tileST[0].xy + tileST[0].zw;
     //float4 mask0 = (textureActive[0].g == 0) ? 1 : (_maskMap0.Sample(sampler_lerp, tileUV0));
     //finalColor = _detailMap0.Sample(sampler_lerp, tileUV0) * mask0.g * _blendMap0.Sample(sampler_lerp, input.uv).x;
-    return finalColor;
+    return float4(1, 1, 1, 1);
 }
