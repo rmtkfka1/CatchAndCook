@@ -40,21 +40,189 @@ void ImguiManager::Render()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
+	Compute();
+	Lighting();
+	SeaMove();
+	SeaMove();
+
+	ImGui::Render();
+	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), Core::main->GetCmdList().Get());
+}
+void ImguiManager::SeaMove()
+{
+	ImGui::Begin("sea_move");
+
+	if (_seaParam)
 	{
-		ImGui::Begin("Compute");
+		ImGui::SliderInt("Wave Count", &_seaParam->wave_count, 0, 10);
 
-		if (ImGui::Button("Blur ON/OFF"))
+		for (int i = 0; i < _seaParam->wave_count; i++)
 		{
-			*_blurPtr = !(*_blurPtr);
+			char label[64];
+
+			sprintf_s(label, "Wave %d Amplitude", i);
+			ImGui::SliderFloat(label, &_seaParam->waves[i].amplitude, 0.0f, 10.0f);
+
+			sprintf_s(label, "Wave %d Wavelength", i);
+			ImGui::SliderFloat(label, &_seaParam->waves[i].wavelength, 0.0f, 2000.0f);
+
+			sprintf_s(label, "Wave %d Speed", i);
+			ImGui::SliderFloat(label, &_seaParam->waves[i].speed, 0.0f, 10.0f);
+
+			sprintf_s(label, "Wave %d Steepness", i);
+			ImGui::SliderFloat(label, &_seaParam->waves[i].steepness, 0.0f, 300.0f);
+
+			sprintf_s(label, "Wave %d Direction", i);
+			ImGui::SliderFloat2(label, &_seaParam->waves[i].direction.x, -1.0f, 1.0f);
+
+			ImGui::Text("\n");
 		}
 
-		if (ImGui::Button("Bloom ON/OFF"))
+		if (ImGui::Button("Save to Binary File"))
 		{
-			*_bloomPtr = !(*_bloomPtr);
+			char szFileName[MAX_PATH] = "";
+			OPENFILENAMEA ofn;
+			ZeroMemory(&ofn, sizeof(ofn));
+			ofn.lStructSize = sizeof(ofn);
+			ofn.hwndOwner = nullptr;
+			ofn.lpstrFilter = "Binary Files (*.bin)\0*.bin\0All Files (*.*)\0*.*\0";
+			ofn.lpstrFile = szFileName;
+			ofn.nMaxFile = MAX_PATH;
+			ofn.lpstrTitle = "Save Sea Move Data";
+			ofn.Flags = OFN_OVERWRITEPROMPT;
+
+			if (GetSaveFileNameA(&ofn))
+			{
+				std::ofstream file(szFileName, std::ios::binary);
+				if (file.is_open())
+				{
+					file.write(reinterpret_cast<const char*>(&_seaParam->wave_count), sizeof(_seaParam->wave_count));
+					for (int i = 0; i < _seaParam->wave_count; i++)
+					{
+						file.write(reinterpret_cast<const char*>(&_seaParam->waves[i]), sizeof(Wave));
+					}
+					file.close();
+				}
+				else
+				{
+					MessageBoxA(nullptr, "파일 열기에 실패했습니다.", "Error", MB_OK | MB_ICONERROR);
+				}
+			}
+		}
+	}
+
+	ImGui::End();
+}
+void ImguiManager::SeaColor()
+{
+	ImGui::Begin("sea_color");
+
+	if (_seaParam)
+	{
+		ImGui::SliderFloat3("SeaBaseColor", &_seaParam->seaBaseColor.x, 0, 1.0f);
+		ImGui::SliderFloat3("seaShallowColor", &_seaParam->seaShallowColor.x, 0, 1.0f);
+
+		ImGui::SliderFloat("blendingFact", &_seaParam->blendingFact, 0, 100);
+		ImGui::SliderFloat3("diffuseColor", &_seaParam->diffuseColor.x, 0, 1.0f);
+		ImGui::SliderFloat("specularPower", &_seaParam->specularPower, 0, 512.0f);
+		ImGui::SliderFloat3("sun_dir", &_seaParam->sun_dir.x, -1.0f, 1.0f);
+		ImGui::SliderFloat("env_power", &_seaParam->env_power, 0, 1.0f);
+	}
+
+	if (ImGui::Button("Save to Binary File"))
+	{
+		if (_seaParam)
+		{
+
+			char szFileName[MAX_PATH] = "";
+			OPENFILENAMEA ofn;
+			ZeroMemory(&ofn, sizeof(ofn));
+			ofn.lStructSize = sizeof(ofn);
+			ofn.hwndOwner = nullptr;
+			ofn.lpstrFilter = "Binary Files (*.bin)\0*.bin\0All Files (*.*)\0*.*\0";
+			ofn.lpstrFile = szFileName;
+			ofn.nMaxFile = MAX_PATH;
+			ofn.lpstrTitle = "Save Sea Move Data";
+			ofn.Flags = OFN_OVERWRITEPROMPT;
+
+			if (GetSaveFileNameA(&ofn))
+			{
+				std::ofstream file(szFileName, std::ios::binary);
+				if (file)
+				{
+					file.write(reinterpret_cast<const char*>(&_seaParam->seaBaseColor), sizeof(_seaParam->seaBaseColor));
+					file.write(reinterpret_cast<const char*>(&_seaParam->seaShallowColor), sizeof(_seaParam->seaShallowColor));
+					file.write(reinterpret_cast<const char*>(&_seaParam->blendingFact), sizeof(_seaParam->blendingFact));
+					file.write(reinterpret_cast<const char*>(&_seaParam->diffuseColor), sizeof(_seaParam->diffuseColor));
+					file.write(reinterpret_cast<const char*>(&_seaParam->specularPower), sizeof(_seaParam->specularPower));
+					file.write(reinterpret_cast<const char*>(&_seaParam->sun_dir), sizeof(_seaParam->sun_dir));
+					file.write(reinterpret_cast<const char*>(&_seaParam->env_power), sizeof(_seaParam->env_power));
+					file.close();
+				}
+				else
+				{
+					MessageBoxA(nullptr, "파일 열기에 실패했습니다.", "Error", MB_OK | MB_ICONERROR);
+				}
+			}
 		}
 
+	}
 
-		ImGui::SliderInt("renderType", &_fogParam->depthRendering,0,2);
+
+	ImGui::End();
+}
+void ImguiManager::Lighting()
+{
+	ImGui::Begin("LightingTest");
+
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+
+	if (_light != nullptr)
+	{
+		vec3 tempPos = _light->_transform->GetLocalPosition();
+
+		if (ImGui::SliderFloat3("LightPos", &tempPos.x, -300.0f, 300.0f))
+		{
+			_light->_transform->SetLocalPosition(tempPos);
+		}
+	}
+
+
+	ImGui::SliderFloat3("LightDirection", &LightManager::main->_lightParmas.light[0].direction.x, -1.0f, 1.0f);
+	ImGui::SliderFloat3("DiffuseColor", &LightManager::main->_lightParmas.light[0].material.diffuse.x, 0, 1.0f);
+	ImGui::SliderFloat3("AmbientColor", &LightManager::main->_lightParmas.light[0].material.ambient.x, 0, 1.0f);
+	ImGui::SliderFloat3("SpecularColor", &LightManager::main->_lightParmas.light[0].material.specular.x, 0, 1.0f);
+	ImGui::SliderFloat("SpecularPower", &LightManager::main->_lightParmas.light[0].material.shininess, 0, 512.0f);
+
+
+
+
+	ImGui::End();
+}
+void ImguiManager::Compute()
+{
+	ImGui::Begin("Compute");
+
+	if (ImGui::Button("Blur ON/OFF"))
+	{
+		*_blurPtr = !(*_blurPtr);
+	}
+
+	if (ImGui::Button("Bloom ON/OFF"))
+	{
+		*_bloomPtr = !(*_bloomPtr);
+	}
+
+	static bool showDepthRender = false;
+	if (ImGui::Button("DepthRender"))
+	{
+		showDepthRender = !showDepthRender;  // 토글 방식으로 표시 여부 변경
+	}
+
+	if (showDepthRender)
+	{
+		ImGui::SliderInt("renderType", &_fogParam->depthRendering, 0, 2);
 		ImGui::SliderFloat("fog_Max", &_fogParam->g_fogMax, 0, 5000.0f);
 		ImGui::SliderFloat("fog_Min", &_fogParam->g_fogMin, 0, 5000.0f);
 		ImGui::SliderFloat3("fog_color", &_fogParam->g_fogColor.x, 0, 1.0f);
@@ -62,163 +230,8 @@ void ImguiManager::Render()
 		ImGui::SliderFloat("underWaterMax", &_fogParam->underwaterMax, 0, 10000.0f);
 		ImGui::SliderFloat("underWaterMin", &_fogParam->underWaterMin, 0, 5000.0f);
 		ImGui::SliderFloat3("underWaterColor", &_fogParam->underwaterColor.x, 0, 1.0f);
-		ImGui::End();
 	}
 
-	{
-		ImGui::Begin("LightingTest");
-
-		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-
-		if (_light != nullptr)
-		{
-			vec3 tempPos = _light->_transform->GetLocalPosition();
-
-			if (ImGui::SliderFloat3("LightPos", &tempPos.x, -300.0f, 300.0f))
-			{
-				_light->_transform->SetLocalPosition(tempPos);
-			}
-		}
-
-
-		ImGui::SliderFloat3("LightDirection", &LightManager::main->_lightParmas.light[0].direction.x, -1.0f, 1.0f);
-		ImGui::SliderFloat3("DiffuseColor", &LightManager::main->_lightParmas.light[0].material.diffuse.x, 0, 1.0f);
-		ImGui::SliderFloat3("AmbientColor", &LightManager::main->_lightParmas.light[0].material.ambient.x, 0, 1.0f);
-		ImGui::SliderFloat3("SpecularColor", &LightManager::main->_lightParmas.light[0].material.specular.x, 0, 1.0f);
-		ImGui::SliderFloat("SpecularPower", &LightManager::main->_lightParmas.light[0].material.shininess, 0, 512.0f);
-	
-
-
-
-		ImGui::End();
-	}
-
-	{
-		ImGui::Begin("sea_color");
-
-		if (_seaParam)
-		{
-			ImGui::SliderFloat3("SeaBaseColor", &_seaParam->seaBaseColor.x, 0, 1.0f);
-			ImGui::SliderFloat3("seaShallowColor", &_seaParam->seaShallowColor.x, 0, 1.0f);
-
-			ImGui::SliderFloat("blendingFact", &_seaParam->blendingFact, 0, 100);
-			ImGui::SliderFloat3("diffuseColor", &_seaParam->diffuseColor.x, 0, 1.0f);
-			ImGui::SliderFloat("specularPower", &_seaParam->specularPower, 0, 512.0f);
-			ImGui::SliderFloat3("sun_dir", &_seaParam->sun_dir.x, -1.0f, 1.0f);
-			ImGui::SliderFloat("env_power", &_seaParam->env_power, 0, 1.0f);
-		}
-
-		if (ImGui::Button("Save to Binary File"))
-		{
-			if (_seaParam)
-			{
-
-				char szFileName[MAX_PATH] = "";
-				OPENFILENAMEA ofn;
-				ZeroMemory(&ofn, sizeof(ofn));
-				ofn.lStructSize = sizeof(ofn);
-				ofn.hwndOwner = nullptr;
-				ofn.lpstrFilter = "Binary Files (*.bin)\0*.bin\0All Files (*.*)\0*.*\0";
-				ofn.lpstrFile = szFileName;
-				ofn.nMaxFile = MAX_PATH;
-				ofn.lpstrTitle = "Save Sea Move Data";
-				ofn.Flags = OFN_OVERWRITEPROMPT;
-
-				if (GetSaveFileNameA(&ofn))
-				{
-					std::ofstream file(szFileName, std::ios::binary);
-					if (file)
-					{
-						file.write(reinterpret_cast<const char*>(&_seaParam->seaBaseColor), sizeof(_seaParam->seaBaseColor));
-						file.write(reinterpret_cast<const char*>(&_seaParam->seaShallowColor), sizeof(_seaParam->seaShallowColor));
-						file.write(reinterpret_cast<const char*>(&_seaParam->blendingFact), sizeof(_seaParam->blendingFact));
-						file.write(reinterpret_cast<const char*>(&_seaParam->diffuseColor), sizeof(_seaParam->diffuseColor));
-						file.write(reinterpret_cast<const char*>(&_seaParam->specularPower), sizeof(_seaParam->specularPower));
-						file.write(reinterpret_cast<const char*>(&_seaParam->sun_dir), sizeof(_seaParam->sun_dir));
-						file.write(reinterpret_cast<const char*>(&_seaParam->env_power), sizeof(_seaParam->env_power));
-						file.close();
-					}
-					else
-					{
-						MessageBoxA(nullptr, "파일 열기에 실패했습니다.", "Error", MB_OK | MB_ICONERROR);
-					}
-				}
-			}
-			
-		}
-
-
-		ImGui::End();
-	}
-
-	
-	
-
-	{
-		ImGui::Begin("sea_move");
-
-		if (_seaParam)
-		{
-			ImGui::SliderInt("Wave Count", &_seaParam->wave_count, 0, 10);
-
-			for (int i = 0; i < _seaParam->wave_count; i++)
-			{
-				char label[64];
-
-				sprintf_s(label, "Wave %d Amplitude", i);
-				ImGui::SliderFloat(label, &_seaParam->waves[i].amplitude, 0.0f, 10.0f);
-
-				sprintf_s(label, "Wave %d Wavelength", i);
-				ImGui::SliderFloat(label, &_seaParam->waves[i].wavelength, 0.0f, 2000.0f);
-
-				sprintf_s(label, "Wave %d Speed", i);
-				ImGui::SliderFloat(label, &_seaParam->waves[i].speed, 0.0f, 10.0f);
-
-				sprintf_s(label, "Wave %d Steepness", i);
-				ImGui::SliderFloat(label, &_seaParam->waves[i].steepness, 0.0f, 300.0f);
-
-				sprintf_s(label, "Wave %d Direction", i);
-				ImGui::SliderFloat2(label, &_seaParam->waves[i].direction.x, -1.0f, 1.0f);
-
-				ImGui::Text("\n");
-			}
-
-			if (ImGui::Button("Save to Binary File"))
-			{
-				char szFileName[MAX_PATH] = "";
-				OPENFILENAMEA ofn;
-				ZeroMemory(&ofn, sizeof(ofn));
-				ofn.lStructSize = sizeof(ofn);
-				ofn.hwndOwner = nullptr; 
-				ofn.lpstrFilter = "Binary Files (*.bin)\0*.bin\0All Files (*.*)\0*.*\0";
-				ofn.lpstrFile = szFileName;
-				ofn.nMaxFile = MAX_PATH;
-				ofn.lpstrTitle = "Save Sea Move Data";
-				ofn.Flags = OFN_OVERWRITEPROMPT;
-
-				if (GetSaveFileNameA(&ofn))
-				{
-					std::ofstream file(szFileName, std::ios::binary);
-					if (file.is_open())
-					{
-						file.write(reinterpret_cast<const char*>(&_seaParam->wave_count), sizeof(_seaParam->wave_count));
-						for (int i = 0; i < _seaParam->wave_count; i++)
-						{
-							file.write(reinterpret_cast<const char*>(&_seaParam->waves[i]), sizeof(Wave));
-						}
-						file.close();
-					}
-					else
-					{
-						MessageBoxA(nullptr, "파일 열기에 실패했습니다.", "Error", MB_OK | MB_ICONERROR);
-					}
-				}
-			}
-		}
-
-		ImGui::End();
-	}
-	ImGui::Render();
-	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), Core::main->GetCmdList().Get());
-};
+	ImGui::End();
+}
+;

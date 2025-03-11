@@ -16,6 +16,12 @@ public:
 	void Init();
 	void Render();
 
+private:
+	void SeaColor();
+	void SeaMove();
+	void Lighting();
+	void Compute();
+
 public:
 	GameObject* _light;
 	Material* _seaMaterial;

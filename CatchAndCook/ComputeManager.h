@@ -135,12 +135,39 @@ private:
 
 private:
 	shared_ptr<Texture> _pingTexture;
-	shared_ptr<Texture> _colorGrading;
 	shared_ptr<Shader> _shader;
 	FogParam _fogParam;
+
+	friend class ComputeManager;
+};
+
+class UnderWaterEffect : public ComputeBase
+{
+
+public:
+	UnderWaterEffect();
+	virtual ~UnderWaterEffect();
+
+public:
+	virtual void Init();
+	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+
+private:
+	virtual void Resize();
+
+private:
+	shared_ptr<Texture> _pingTexture;
+	shared_ptr<Shader> _shader;
+	FogParam _fogParam;
+
 	friend class ComputeManager;
 
 };
+
 
 
 class ComputeManager 

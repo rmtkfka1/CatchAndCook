@@ -338,8 +338,6 @@ void DepthRender::Init()
 	info._computeShader = true;
 	_shader->Init(L"depthRender.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
 
-	_colorGrading = make_shared <Texture>();
-	_colorGrading->Init(L"../Resources/Textures/colorGrading.png");
 
 #ifdef IMGUI_ON
 	ImguiManager::main->_fogParam = &_fogParam;
@@ -370,7 +368,6 @@ void DepthRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, in
 	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 0);
 	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
 	table->CopyHandle(_tableContainer.CPUHandle, PositionTexture->GetSRVCpuHandle(), 2);
-	table->CopyHandle(_tableContainer.CPUHandle, _colorGrading->GetSRVCpuHandle(), 3);
 	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 4);
 
 	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
@@ -411,6 +408,38 @@ void DepthRender::Resize()
 
 }
 
+/*********************************************
+*	         UnderWaterEffect				 *
+**********************************************/
+
+UnderWaterEffect::UnderWaterEffect()
+{
+}
+
+UnderWaterEffect::~UnderWaterEffect()
+{
+}
+
+void UnderWaterEffect::Init()
+{
+}
+
+void UnderWaterEffect::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+}
+
+void UnderWaterEffect::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+}
+
+void UnderWaterEffect::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+}
+
+void UnderWaterEffect::Resize()
+{
+
+}
 
 
 /*************************
@@ -456,4 +485,5 @@ void ComputeManager::Resize()
 	_bloom->Resize();
 	_depthRender->Resize();
 }
+
 
