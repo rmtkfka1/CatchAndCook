@@ -5,6 +5,7 @@ class GameObject;
 class Material;
 struct SeaParam;
 struct FogParam;
+struct UnderWaterParam;
 
 class ImguiManager
 {
@@ -21,12 +22,14 @@ private:
 	void SeaMove();
 	void Lighting();
 	void Compute();
+	
 
 public:
 	GameObject* _light;
 	bool* _blurPtr;
 	bool* _bloomPtr;
 	FogParam* _fogParam;
+	UnderWaterParam* _underWaterParam;
 	SeaParam* _seaParam;
 
 private:

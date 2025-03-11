@@ -107,10 +107,8 @@ struct FogParam
 	float g_fogMin = 0;
 	float g_fogMax = 1000.0f;
 	int depthRendering = 0;
-	float underWaterMin = 0;
+	float padding = 0;
 
-	vec3 underwaterColor =vec3(0,0.3f,0.7f);
-	float underwaterMax =500.0f;
 };
 
 class DepthRender : public ComputeBase
@@ -141,6 +139,19 @@ private:
 	friend class ComputeManager;
 };
 
+struct UnderWaterParam
+{
+	vec3 g_fogColor = vec3(1, 1, 1);
+	float g_fog_power = 32.0f;
+
+	vec3 g_underWaterColor = vec3(0.0f, 0.5f, 0.5f);
+	float g_fogMin = 0;
+
+	vec2 padding;
+	bool g_on = false;
+	float g_fogMax = 1000.0f;
+};
+
 class UnderWaterEffect : public ComputeBase
 {
 
@@ -162,7 +173,7 @@ private:
 private:
 	shared_ptr<Texture> _pingTexture;
 	shared_ptr<Shader> _shader;
-	FogParam _fogParam;
+	UnderWaterParam	_underWaterParam;
 
 	friend class ComputeManager;
 
@@ -184,6 +195,7 @@ private:
 	shared_ptr<Blur> _blur;
 	shared_ptr<Bloom> _bloom;
 	shared_ptr<DepthRender> _depthRender;
+	shared_ptr<UnderWaterEffect> _underWaterEffect;
 
 };
 

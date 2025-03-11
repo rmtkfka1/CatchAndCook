@@ -14,16 +14,18 @@ cbuffer GLOBAL_DATA : register(b0)
     float g_padding;
 };
 
-cbuffer FogParam : register(b1)
+cbuffer underWatgerParam : register(b1)
 {
    
     float3 g_fogColor;
-    float power;
+    float g_fog_power;
 
-    float g_fogMin;
-    float g_fogMax;
-    int g_depthRendering;
-    float padding;
+    float3 g_underWaterColor;
+    float g_fogMin = 0;
+
+    float2 padding;
+    bool g_on;
+    float g_fogMax = 1000.0f;
     
 }
 
@@ -64,29 +66,17 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     float4 posView = mul(posProj, InvertProjectionMatrix);
     float3 actualPosView = posView.xyz / posView.w;
     
-    if (g_depthRendering == 1)
-    {
-        resultTexture[texCoord] = float4(actualPosView.z * 0.001f, actualPosView.z * 0.001f, actualPosView.z * 0.001f, 1.0f);
-        return;
-    }
+    float dist = length(actualPosView);
     
-
-    float dist = length(actualPosView);    
     float distFog = smoothstep(g_fogMin, g_fogMax, dist);
-    float fogFactor = exp(-distFog * power);
+    float fogFactor = exp(-distFog * g_fog_power);
     
     float3 color = lerp(g_fogColor, RenderT[texCoord.xy].xyz, fogFactor);
     
     resultTexture[texCoord.xy] = float4(color.xyz, 1.0f);
     return;
 
-    //float Height = PositionT.SampleLevel(sampler_lerp, uv, 0).y;
-    
-    //float HeightUv = min(saturate(-Height / 3000), 0.999f);
-   
-    //float4 colorGradingColor = ColorGrading.SampleLevel(sampler_lerp, float2(HeightUv.x, 0), 0);
-    
-    //resultTexture[texCoord.xy] = float4(color * colorGradingColor.xyz, 1.0f);
+
 }
 
 

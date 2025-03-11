@@ -217,7 +217,7 @@ void ImguiManager::Compute()
 	static bool showDepthRender = false;
 	if (ImGui::Button("DepthRender"))
 	{
-		showDepthRender = !showDepthRender;  // 토글 방식으로 표시 여부 변경
+		showDepthRender = !showDepthRender;  
 	}
 
 	if (showDepthRender)
@@ -227,9 +227,24 @@ void ImguiManager::Compute()
 		ImGui::SliderFloat("fog_Min", &_fogParam->g_fogMin, 0, 5000.0f);
 		ImGui::SliderFloat3("fog_color", &_fogParam->g_fogColor.x, 0, 1.0f);
 		ImGui::SliderFloat("fog_power", &_fogParam->power, 0, 30.0f);
-		ImGui::SliderFloat("underWaterMax", &_fogParam->underwaterMax, 0, 10000.0f);
-		ImGui::SliderFloat("underWaterMin", &_fogParam->underWaterMin, 0, 5000.0f);
-		ImGui::SliderFloat3("underWaterColor", &_fogParam->underwaterColor.x, 0, 1.0f);
+	}
+
+	static bool underWaterEffect = false;
+
+	if (ImGui::Button("underWaterEffect"))
+	{
+		underWaterEffect = !underWaterEffect;  
+		_underWaterParam->g_on = !_underWaterParam->g_on;
+	}
+
+	if (underWaterEffect)
+	{
+		ImGui::SliderFloat3("fogColor", &_underWaterParam->g_fogColor.x, 0, 1.0f);
+		ImGui::SliderFloat("fogPower", &_underWaterParam->g_fog_power, 0, 30.0f);
+		ImGui::SliderFloat("fog_Max", &_underWaterParam->g_fogMax, 0, 5000.0f);
+		ImGui::SliderFloat("fog_Min", &_underWaterParam->g_fogMin, 0, 5000.0f);
+
+		ImGui::SliderFloat3("underWaterColor", &_underWaterParam->g_underWaterColor.x, 0, 1.0f);
 	}
 
 	ImGui::End();

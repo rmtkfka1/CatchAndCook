@@ -7,7 +7,6 @@ unique_ptr<InstancingManager> InstancingManager::main;
 
 void InstancingManager::Render()
 {
-	//탑하나만 그렸을때 다1개씩
 
 	for(auto& [id, objects] : _objectMap)
 	{
