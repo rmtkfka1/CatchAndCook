@@ -43,7 +43,7 @@ void ImguiManager::Render()
 	Compute();
 	Lighting();
 	SeaMove();
-	SeaMove();
+	SeaColor();
 
 	ImGui::Render();
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), Core::main->GetCmdList().Get());

@@ -24,7 +24,6 @@ private:
 
 public:
 	GameObject* _light;
-	Material* _seaMaterial;
 	bool* _blurPtr;
 	bool* _bloomPtr;
 	FogParam* _fogParam;

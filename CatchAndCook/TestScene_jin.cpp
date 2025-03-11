@@ -80,7 +80,6 @@ void TestScene_jin::Init()
 			meshRenderer->AddMesh(mesh);
 			meshRenderer->SetCulling(false);
 
-			ImguiManager::main->_seaMaterial = material.get();
 		}
 
 	};
