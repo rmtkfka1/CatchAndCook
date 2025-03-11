@@ -16,7 +16,6 @@ cbuffer GLOBAL_DATA : register(b0)
 
 cbuffer underWatgerParam : register(b1)
 {
-   
     float3 g_fogColor;
     float g_fog_power;
 
@@ -24,7 +23,7 @@ cbuffer underWatgerParam : register(b1)
     float g_fogMin = 0;
 
     float2 padding;
-    bool g_on;
+    int g_on = -1;
     float g_fogMax = 1000.0f;
     
 }
@@ -51,12 +50,8 @@ Texture2D<float4> RenderT : register(t1);
 Texture2D<float4> PositionT : register(t2);
 Texture2D<float4> ColorGrading : register(t3);
 
-[numthreads(16, 16, 1)]
-void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
+float3 ProjToView(float2 texCoord)
 {
-    int2 texCoord = dispatchThreadID.xy;
-    float2 uv = (float2(texCoord) + 0.5f) / float2(cameraScreenData.x, cameraScreenData.y);
-    
     float4 posProj = float4(0, 0, 0, 0);
     posProj.xy = (texCoord.xy + 0.5f) / float2(cameraScreenData.x, cameraScreenData.y) * 2.0f - 1.0f;
     posProj.y *= -1;
@@ -64,19 +59,36 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     posProj.w = 1.0f;
     
     float4 posView = mul(posProj, InvertProjectionMatrix);
-    float3 actualPosView = posView.xyz / posView.w;
-    
-    float dist = length(actualPosView);
-    
-    float distFog = smoothstep(g_fogMin, g_fogMax, dist);
+    return posView.xyz / posView.w;
+}
+
+
+float CalculateFogFactor(float3 posView)
+{
+    float dist = length(posView);
+    float distFog = saturate((dist - g_fogMin) / (g_fogMax - g_fogMin));
     float fogFactor = exp(-distFog * g_fog_power);
+    return fogFactor;
+}
+
+
+[numthreads(16, 16, 1)]
+void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
+{
+    int2 texCoord = dispatchThreadID.xy;
+    float2 uv = (float2(texCoord) + 0.5f) / float2(cameraScreenData.x, cameraScreenData.y);
     
-    float3 color = lerp(g_fogColor, RenderT[texCoord.xy].xyz, fogFactor);
+    float3 BaseColor = RenderT[texCoord.xy].xyz;
+    
+    float3 viewPos = ProjToView(texCoord);
+    
+    float fogFactor = CalculateFogFactor(viewPos);
+    
+    float3 color = lerp(g_fogColor, BaseColor, fogFactor);
     
     resultTexture[texCoord.xy] = float4(color.xyz, 1.0f);
-    return;
-
-
+    
+    
 }
 
 

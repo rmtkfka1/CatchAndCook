@@ -102,7 +102,7 @@ struct FogParam
 	
 
 	vec3 g_fogColor = vec3(1, 1, 1);
-	float power = 32.0f;
+	float power = 1.0f;
 
 	float g_fogMin = 0;
 	float g_fogMax = 1000.0f;
@@ -142,13 +142,13 @@ private:
 struct UnderWaterParam
 {
 	vec3 g_fogColor = vec3(1, 1, 1);
-	float g_fog_power = 32.0f;
+	float g_fog_power = 1.0f;
 
 	vec3 g_underWaterColor = vec3(0.0f, 0.5f, 0.5f);
 	float g_fogMin = 0;
 
 	vec2 padding;
-	bool g_on = false;
+	int g_on = -1;
 	float g_fogMax = 1000.0f;
 };
 

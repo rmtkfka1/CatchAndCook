@@ -439,7 +439,7 @@ void UnderWaterEffect::Init()
 void UnderWaterEffect::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
 {
 	
-	if (_underWaterParam.g_on == false)
+	if (_underWaterParam.g_on == -1)
 		return;
 
 	auto& table = Core::main->GetBufferManager()->GetTable();
@@ -470,7 +470,6 @@ void UnderWaterEffect::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int 
 
 
 	cmdList->Dispatch(x, y, z);
-
 
 	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
 	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);

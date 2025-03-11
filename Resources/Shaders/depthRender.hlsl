@@ -64,15 +64,17 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     float4 posView = mul(posProj, InvertProjectionMatrix);
     float3 actualPosView = posView.xyz / posView.w;
     
-    if (g_depthRendering == 1)
-    {
-        resultTexture[texCoord] = float4(actualPosView.z * 0.001f, actualPosView.z * 0.001f, actualPosView.z * 0.001f, 1.0f);
-        return;
-    }
+    //if (g_depthRendering == 1)
+    //{
+    //    resultTexture[texCoord] = float4(actualPosView.z * 0.001f, actualPosView.z * 0.001f, actualPosView.z * 0.001f, 1.0f);
+    //    return;
+    //}
     
 
     float dist = length(actualPosView);    
-    float distFog = smoothstep(g_fogMin, g_fogMax, dist);
+    float distFog = saturate((dist - g_fogMin) / (g_fogMax - g_fogMin));
+    //float distFog = smoothstep(g_fogMin, g_fogMax, dist);
+    
     float fogFactor = exp(-distFog * power);
     
     float3 color = lerp(g_fogColor, RenderT[texCoord.xy].xyz, fogFactor);

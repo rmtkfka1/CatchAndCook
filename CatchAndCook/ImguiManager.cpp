@@ -229,21 +229,18 @@ void ImguiManager::Compute()
 		ImGui::SliderFloat("fog_power", &_fogParam->power, 0, 30.0f);
 	}
 
-	static bool underWaterEffect = false;
 
 	if (ImGui::Button("underWaterEffect"))
 	{
-		underWaterEffect = !underWaterEffect;  
-		_underWaterParam->g_on = !_underWaterParam->g_on;
+	    _underWaterParam->g_on *= -1;
 	}
 
-	if (underWaterEffect)
+	if (_underWaterParam->g_on==1)
 	{
 		ImGui::SliderFloat3("fogColor", &_underWaterParam->g_fogColor.x, 0, 1.0f);
 		ImGui::SliderFloat("fogPower", &_underWaterParam->g_fog_power, 0, 30.0f);
 		ImGui::SliderFloat("fog_Max", &_underWaterParam->g_fogMax, 0, 5000.0f);
 		ImGui::SliderFloat("fog_Min", &_underWaterParam->g_fogMin, 0, 5000.0f);
-
 		ImGui::SliderFloat3("underWaterColor", &_underWaterParam->g_underWaterColor.x, 0, 1.0f);
 	}
 
