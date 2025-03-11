@@ -48,15 +48,13 @@ Texture2D<float4> RenderT : register(t1);
 Texture2D<float4> PositionT : register(t2);
 Texture2D<float4> ColorGrading : register(t3);
 
-///////////////////////////////////////////////////////////////////////////////
-// Projection에서 View 공간으로의 변환 함수
+
 float3 ProjToView(float2 texCoord)
 {
     float4 posProj;
     // texCoord는 픽셀 좌표이므로 정규화 좌표로 변환
     posProj.xy = (texCoord + 0.5f) / cameraScreenData.xy * 2.0f - 1.0f;
-    posProj.y *= -1; // DirectX의 화면 좌표와 맞추기 위함
-    // 깊이 값은 depthT 텍스처에서 불러옵니다.
+    posProj.y *= -1; 
     posProj.z = depthT.Load(int3(texCoord, 0));
     posProj.w = 1.0f;
     
@@ -64,8 +62,7 @@ float3 ProjToView(float2 texCoord)
     return posView.xyz / posView.w;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// View 공간 좌표를 이용한 fog 계산 함수
+
 float CalculateFogFactor(float3 posView)
 {
     float dist = length(posView);
@@ -75,7 +72,6 @@ float CalculateFogFactor(float3 posView)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Compute Shader 메인 함수
 [numthreads(16, 16, 1)]
 void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
 {
@@ -86,10 +82,12 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     float2 uvDistorted = uv + distortion *0.05f;
     
     float3 BaseColor = RenderT.SampleLevel(sampler_lerp, uvDistorted, 0).xyz;
+    BaseColor *= g_underWaterColor;
+
     float3 viewPos = ProjToView(float2(texCoord));
     float fogFactor = CalculateFogFactor(viewPos);
     
     float3 colorFog = lerp(g_fogColor, BaseColor, fogFactor);
    
-    resultTexture[texCoord] = float4(colorFog, 1.0f);
+    resultTexture[texCoord] = float4(colorFog , 1.0f);
 }
