@@ -73,12 +73,12 @@ void CS_Main(int3 threadIndex : SV_DispatchThreadID)
     
     float3 color = lerp(g_fogColor, RenderT[texCoord.xy].xyz, fogFactor);
     
-    resultTexture[texCoord.xy] = float4(color.xyz, 1.0f);
-    return;
+    //resultTexture[texCoord.xy] = float4(color.xyz, 1.0f);
+    //return;
 
     float Height = PositionT.SampleLevel(sampler_lerp, uv, 0).y;
     
-    float HeightUv = min(saturate(-Height /100),0.999f);
+    float HeightUv = min(saturate(-Height / 3000), 0.999f);
    
     float4 colorGradingColor = ColorGrading.SampleLevel(sampler_lerp, float2(HeightUv.x, 0), 0);
     

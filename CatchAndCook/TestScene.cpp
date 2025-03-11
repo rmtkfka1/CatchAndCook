@@ -36,7 +36,7 @@ void TestScene::Init()
 
 
 #pragma region DebugXYZ
-	{
+	/*{
 
 
 		ShaderInfo info;
@@ -115,11 +115,11 @@ void TestScene::Init()
 
 		meshRenderer->AddMaterials({ material });
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(0, 0, 1, 0)));
-	}
+	}*/
 #pragma endregion
 	shared_ptr<Material> materialO = make_shared<Material>();
 	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
-	for (int i = 0; i < 50; ++i)
+	for (int i = 0; i < 1; ++i)
 	{
 		{
 
@@ -134,8 +134,8 @@ void TestScene::Init()
 
 			auto meshRenderer = root->AddComponent<MeshRenderer>();
 
-			root->_transform->SetLocalScale(vec3(1, 1, 1));
-			root->_transform->SetLocalPosition(vec3(0, -5.0f * i, 0));
+			root->_transform->SetLocalScale(vec3(100, 3000, 100));
+			root->_transform->SetLocalPosition(vec3(0,-3000, 0));
 			materialO->SetShader(shader);
 			materialO->SetPass(RENDER_PASS::Deffered);
 			//materialO->SetHandle("_BaseMap", texture->GetSRVCpuHandle());
