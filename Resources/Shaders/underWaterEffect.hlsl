@@ -79,7 +79,7 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     float2 uv = (float2(texCoord) + 0.5f) / cameraScreenData.xy;
     
     float2 distortion = float2(sin(uv.y * 10.0f + g_Time), cos(uv.x * 10.0f + g_Time)) * 0.06f;
-    float2 uvDistorted = uv + distortion *0.05f;
+    float2 uvDistorted = uv + distortion *0.02f;
     
     float3 BaseColor = RenderT.SampleLevel(sampler_lerp, uvDistorted, 0).xyz;
     BaseColor *= g_underWaterColor;
