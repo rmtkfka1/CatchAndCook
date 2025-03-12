@@ -172,7 +172,9 @@ private:
 
 private:
 	shared_ptr<Texture> _pingTexture;
+	shared_ptr<Texture> _colorGrading;
 	shared_ptr<Shader> _shader;
+
 	UnderWaterParam	_underWaterParam;
 
 	friend class ComputeManager;

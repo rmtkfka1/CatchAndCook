@@ -216,6 +216,8 @@ void Game::CameraUpdate()
 	const float speed = 50.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;
 
+	//cout << camera->GetCameraPos().y << endl;
+
 	if (Input::main->GetKey(KeyCode::W))
 	{
 		auto prevPos = camera->GetCameraPos();

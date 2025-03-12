@@ -81,13 +81,17 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     float2 distortion = float2(sin(uv.y * 10.0f + g_Time), cos(uv.x * 10.0f + g_Time)) * 0.06f;
     float2 uvDistorted = uv + distortion *0.02f;
     
+    float Height = abs(PositionT.SampleLevel(sampler_lerp, uvDistorted, 0).y);
+    float HeightUV = smoothstep(0, 140.0f, Height);
+    float3 ColorGradingColor = ColorGrading.SampleLevel(sampler_lerp_clamp, float2(HeightUV, 0), 0);
+    
     float3 BaseColor = RenderT.SampleLevel(sampler_lerp, uvDistorted, 0).xyz;
     BaseColor *= g_underWaterColor;
 
     float3 viewPos = ProjToView(float2(texCoord));
     float fogFactor = CalculateFogFactor(viewPos);
     
-    float3 finalColor = lerp(g_fogColor, BaseColor, fogFactor);
+    float3 finalColor = lerp(ColorGradingColor, BaseColor, fogFactor);
    
     resultTexture[texCoord] = float4(finalColor, 1.0f);
 }
