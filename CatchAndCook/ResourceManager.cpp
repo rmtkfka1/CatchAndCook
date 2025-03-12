@@ -49,6 +49,7 @@ void ResourceManager::CreateDefaultShader()
 
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"Deffered",L"Deferred.hlsl",StaticProp,
 			ShaderArg{},info);
+		shader->SetInjector({ BufferType::DefaultMaterialParam });
 	}
 
 	{
