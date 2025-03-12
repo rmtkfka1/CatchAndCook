@@ -15,9 +15,7 @@ using Quaternion = DirectX::SimpleMath::Quaternion;
 
 int main()
 {
-    // 1. 로컬 좌표 (동차 좌표)
     vec4 localPos = vec4(0, 0, 0, 1);
-
 
     Matrix mat = Matrix::CreateTranslation(3.0f, 0, 0.001f);
     vec4 worldPos = vec4::Transform(localPos, mat);
@@ -60,7 +58,13 @@ int main()
 	Matrix inverseProjection = ProjectionMatrix.Invert();
 
 	vec4 clipPos2 = vec4(ndcPos.x , ndcPos.y , ndcPos.z , 1);
+
+	std::cout << "Clip Position2: " << clipPos2.x << ", " << clipPos2.y << ", " << clipPos2.z << ", " << clipPos2.w << std::endl;
+
 	vec4 viewPos2 = vec4::Transform(clipPos2, inverseProjection);
+
+    std::cout << "View Position2: " << viewPos2.x << ", " << viewPos2.y << ", " << viewPos2.z << ", " << viewPos2.w  << std::endl;
+
 	viewPos2 /= viewPos2.w;
 
 	std::cout << "View Position2: " << viewPos2.x << ", " << viewPos2.y << ", " << viewPos2.z << ", " << viewPos2.w << std::endl;
