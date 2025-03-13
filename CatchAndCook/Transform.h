@@ -25,7 +25,6 @@ public:
 	virtual void SetData(StructuredBuffer* buffer = nullptr) override;
 
 public:
-
     vec3 SetForward(const vec3& dir );
     vec3 SetUp(const vec3& dir );
     vec3 SetRight(const vec3& dir );
@@ -50,6 +49,10 @@ public:
     Quaternion GetWorldRotation();
     const Quaternion& SetWorldRotation(const Quaternion& quaternion);
 
+    void SetVelocity(const vec3& velocity) { _velocity = velocity; }
+    void SetVelocity(vec3&& velocity) { _velocity = std::move(velocity);}
+	vec3 GetVelocity() const { return _velocity; }
+     
     bool GetLocalToWorldMatrix(OUT Matrix& localToWorldMatrix);
     bool GetLocalToWorldMatrix_BottomUp(Matrix& localToWorld);
     bool GetLocalSRTMatrix(Matrix& localSRT);
@@ -74,6 +77,8 @@ public:
     bool _isLocalToWorldChanged = true; //부모가 local 업데이트 or 부모 world 변경시 이거 true.worldtrs변경.
 
 private:
+	vec3 _velocity = vec3::Zero;
+
     vec3 _localPosition = vec3::Zero;
     vec3 _localScale = vec3::One;
     Quaternion _localRotation = Quaternion::Identity;

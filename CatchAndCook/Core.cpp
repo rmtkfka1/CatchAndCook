@@ -75,7 +75,7 @@ void Core::RenderEnd()
     {
 #ifdef  IMGUI_ON
 		Core::main->GetRenderTarget()->GetRenderTarget()->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
-        _cmdList->SetDescriptorHeaps(1, _imguiHeap.GetAddressOf());
+		_cmdList->SetDescriptorHeaps(1, _imguiHeap.GetAddressOf());
         ImguiManager::main->Render();
 #endif //  IMGUI_ON
     }
