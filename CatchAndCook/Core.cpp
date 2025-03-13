@@ -90,7 +90,16 @@ void Core::RenderEnd()
 
     Fence();
 
-    _swapChain->Present(1, 0);
+    uint32 SyncInterval = 0;
+    uint32 uiSyncInterval = SyncInterval;
+    uint32 uiPresentFlags = 0;
+
+    if (!uiSyncInterval)
+    {
+        uiPresentFlags = DXGI_PRESENT_ALLOW_TEARING;
+    }
+
+     ThrowIfFailed(_swapChain->Present(uiSyncInterval, uiPresentFlags));
     _renderTarget->ChangeIndex();
     _bufferManager->Reset();
 }
