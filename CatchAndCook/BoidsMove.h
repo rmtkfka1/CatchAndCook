@@ -26,10 +26,10 @@ private:
 private:
 	static vector<GameObject*> _objects;
 
-	const float _neighborDist = 50.0f;		 // 이웃 판단 거리
+	const float _neighborDist = 100.0f;		 // 이웃 판단 거리
 	const float _desiredSeparation = 20.0f;   // 최소 거리 (분리 기준)
-	const float _maxSpeed = 10.0f;            // 최대 속도
-	const float _maxForce = 0.1f;             // 최대 가속도(힘)
+	const float _maxSpeed = 3.0f;            // 최대 속도
+	const float _maxForce = 0.1f;             // 최대 가속도
 
 
 };

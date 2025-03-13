@@ -121,7 +121,7 @@ void TestScene::Init()
 
 	random_device urd;
 	mt19937 gen(urd());
-	uniform_real_distribution<float> dis(-50.0f, 50.0f);
+	uniform_real_distribution<float> dis(-70.0f, 70.0f);
 
 	shared_ptr<Material> materialO = make_shared<Material>();
 	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
@@ -137,7 +137,7 @@ void TestScene::Init()
 			auto meshRenderer = root->AddComponent<MeshRenderer>();
 			root->AddComponent<BoidsMove>();
 
-			root->_transform->SetLocalScale(vec3(3, 3, 3));
+			root->_transform->SetLocalScale(vec3(1, 1, 1));
 			root->_transform->SetLocalPosition(vec3(dis(urd), dis(urd), dis(urd)));
 			materialO->SetShader(shader);
 			materialO->SetPass(RENDER_PASS::Deffered);

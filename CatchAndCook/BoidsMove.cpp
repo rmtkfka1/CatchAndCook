@@ -123,8 +123,7 @@ void BoidsMove::UpdateBoids()
             cohesion = cohesion - pos;
         }
 
-  
-        float separationWeight = 1.5f;
+        float separationWeight = 0.5f;
         float alignmentWeight = 1.0f;
         float cohesionWeight = 1.0f;
 
@@ -135,9 +134,8 @@ void BoidsMove::UpdateBoids()
 
         acceleration = LimitForce(acceleration, _maxForce);
 
-
         vel += acceleration * Time::main->GetDeltaTimeNow();
-        // 속도 제한
+
         float speed = vel.Length();
 
         if (speed > _maxSpeed)
@@ -146,7 +144,6 @@ void BoidsMove::UpdateBoids()
             vel = vel * _maxSpeed;
         }
 
-        // 위치 업데이트 (현재 위치에 속도를 더함)
         pos += vel * Time::main->GetDeltaTimeNow();
 
 		this->GetOwner()->_transform->SetLocalPosition(pos);
