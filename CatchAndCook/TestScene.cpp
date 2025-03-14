@@ -121,7 +121,7 @@ void TestScene::Init()
 
 	random_device urd;
 	mt19937 gen(urd());
-	uniform_real_distribution<float> dis(-70.0f, 70.0f);
+	uniform_real_distribution<float> dis(-20.0f, 20.0f);
 
 	shared_ptr<Material> materialO = make_shared<Material>();
 	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
