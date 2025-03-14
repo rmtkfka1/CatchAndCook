@@ -428,8 +428,8 @@ void UnderWaterEffect::Init()
 	info._computeShader = true;
 	_shader->Init(L"underWaterEffect.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
 
-	_colorGrading = make_shared<Texture>();
-	_colorGrading->Init(L"../Resources/Textures/ColorGrading.png");
+	//_colorGrading = make_shared<Texture>();
+	//_colorGrading->Init(L"../Resources/Textures/ColorGrading.png");
 
 #ifdef IMGUI_ON
 	ImguiManager::main->_underWaterParam = &_underWaterParam;
@@ -460,7 +460,7 @@ void UnderWaterEffect::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int 
 	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 0);
 	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
 	table->CopyHandle(_tableContainer.CPUHandle, PositionTexture->GetSRVCpuHandle(), 2);
-	table->CopyHandle(_tableContainer.CPUHandle, _colorGrading->GetSRVCpuHandle(), 3);
+	//table->CopyHandle(_tableContainer.CPUHandle, _colorGrading->GetSRVCpuHandle(), 3);
 	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 4);
 
 	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
