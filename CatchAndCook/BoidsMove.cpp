@@ -25,12 +25,14 @@ void BoidsMove::Init()
 {
     random_device urd;
     mt19937 gen(urd());
-    uniform_real_distribution<float> dis(-5.0f, 5.0f);
+    uniform_real_distribution<float> dis(20.0f, 30.0f);
     uniform_real_distribution<float> dis2(-1.0f, 1.0f);
     _objects.emplace_back(GetOwner().get());
 
-	float speed = dis(urd);
-    GetOwner()->_transform->SetVelocity({ speed, speed,speed});
+	_speed = dis(urd);
+
+
+    GetOwner()->_transform->SetVelocity({ _speed, _speed,_speed });
 	GetOwner()->_transform->SetForward({ dis2(urd), dis2(urd), dis2(urd) });
 }
 
@@ -39,43 +41,41 @@ void BoidsMove::Start()
 }
 void BoidsMove::Update()
 {
+    FindNeighbor();
 
-    UpdateBoids();
+    // 분리, 정렬, 응집력 계산
+    const vec3 separation = Separate();
+    const vec3 alignment = Align();
+    const vec3 cohesion = Cohesion();
 
-    //FindNeighbor();
+    static float separationWeight = 16.0f;
+    static float alignmentWeight = 21.0f;
+    static float cohesionWeight = 25.0f;
 
-    //// 개별 행동 벡터를 계산 및 정규화
-    //vec3 separation = Separate();
-    //vec3 alignment = Align();
-    //vec3 cohesion = Cohesion();
+    ImguiManager::main->alignmentWeight = &alignmentWeight;
+    ImguiManager::main->separationWeight = &separationWeight;
+    ImguiManager::main->cohesionWeight = &cohesionWeight;
 
-    //static float separationWeight = 0;  
-    //static float alignmentWeight = 0;
-    //static float cohesionWeight = 100.0f;
+    vec3 combinedForce = separation * separationWeight +
+        alignment * alignmentWeight +
+        cohesion * cohesionWeight;
 
-	//ImguiManager::main->alignmentWeight = &alignmentWeight;
-	//ImguiManager::main->separationWeight = &separationWeight;
-	//ImguiManager::main->cohesionWeight = &cohesionWeight;
+    if (combinedForce.LengthSquared() > 0.0f)
+        combinedForce.Normalize();
 
-    //vec3 combinedForce = separation * separationWeight +
-    //    alignment * alignmentWeight +
-    //    cohesion * cohesionWeight;
+    // 현재 오브젝트의 Transform 가져오기 (최적화)
+    auto& transform = GetOwner()->_transform;
+    vec3 currentForward = transform->GetForward();
 
+    // 방향 보간 및 정규화
+    const float dt = Time::main->GetDeltaTime();
+    vec3 newForward = vec3::Lerp(currentForward, combinedForce, 7.0f * dt);
 
-    //combinedForce.Normalize();
+    if (newForward.LengthSquared() > 0.0f)
+        newForward.Normalize();
 
-    //// 현재 방향과 Lerp로 보간하여 새 방향 계산
-    //vec3 currentForward = GetOwner()->_transform->GetForward();
-    //const float turnSpeed = 5.0f;
-    //float dt = Time::main->GetDeltaTime();
-    //vec3 newForward = vec3::Lerp(currentForward, combinedForce, turnSpeed * dt);
-    //newForward.Normalize();
-
-    //GetOwner()->_transform->SetForward(newForward);
-
-    //// 새 위치 계산
-    //vec3 currentPos = GetOwner()->_transform->GetLocalPosition();
-    //GetOwner()->_transform->SetLocalPosition(currentPos + newForward * GetOwner()->_transform->GetVelocity() * dt);
+    transform->SetForward(newForward);
+    transform->SetLocalPosition(transform->GetLocalPosition() + newForward * _speed * dt);
 }
 
 void BoidsMove::Update2()
@@ -228,22 +228,25 @@ vec3 BoidsMove::Separate()
     {
         for (int i = 0; i < _neighbors.size(); i++)
         {
-
-            // 이웃과의 벡터 차이
             vec3 diff = this->GetOwner()->_transform->GetLocalPosition() - _neighbors[i]->_transform->GetLocalPosition();
             float distance = diff.Length();
 
-            if (distance < _desiredSeparation)
+            // 너무 가까운 경우, 강한 회피 벡터 적용
+            if (distance > 0.0f && distance < _desiredSeparation)
             {
-                separationVec += diff / distance;
+                separationVec += diff / (distance * distance); // 거리의 제곱을 나눠서 가까울수록 강한 영향
                 count++;
             }
-
         }
-        separationVec /= count;
-        separationVec.Normalize();
+
+        if (count > 0)
+        {
+            separationVec /= static_cast<float>(count); // 평균 계산
+        }
     }
- 
+
+    separationVec.Normalize();
+
     return separationVec;
 }
 

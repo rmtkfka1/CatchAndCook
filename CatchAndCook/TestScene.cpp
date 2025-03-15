@@ -17,6 +17,8 @@
 #include "Terrain.h"
 #include "BoidsMove.h"
 #include <random>
+#include "Model.h"
+#include "ModelMesh.h"
 void TestScene::Init()
 {
 	Scene::Init();
@@ -24,7 +26,7 @@ void TestScene::Init()
 
 
 	//{
-	//	auto& a = ResourceManager::main->Load<Model>(L"kind",L"../Resources/Models/Flying bird.fbx",VertexType::Vertex_GeoMetry);
+	//	auto& a = ResourceManager::main->Load<Model>(L"kind",L"../Resources/Models/PaperPlane.obj",VertexType::Vertex_GeoMetry);
 	//	auto& object =a->CreateGameObject(GetCast<Scene>());
 	//	object->_transform->SetLocalPosition(vec3(0,500.0f,0));
 	//}
@@ -123,9 +125,10 @@ void TestScene::Init()
 	mt19937 gen(urd());
 	uniform_real_distribution<float> dis(-10.0f, 10.0f);
 
+	auto& a = ResourceManager::main->Load<Model>(L"kind",L"../Resources/Models/PaperPlane.obj",VertexType::Vertex_Skinned);
+	cout << a->_modelMeshList.size() << endl;
 	shared_ptr<Material> materialO = make_shared<Material>();
-	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
-
+	shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
 
 	for (int i = 0; i < 90; ++i)
 	{
