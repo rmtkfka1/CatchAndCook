@@ -21,15 +21,21 @@ public:
 
 private:
 	void UpdateBoids();
+
+	void FindNeighbor();
+	vec3 Separate();
+	vec3 Align();
+	vec3 Cohesion();
 	vec3 LimitForce(vec3& force, float maxForce);
 
 private:
 	static vector<GameObject*> _objects;
+	vector<GameObject*> _neighbors;
 
-	const float _neighborDist = 500.0f;		 // 이웃 판단 거리
-	const float _desiredSeparation = 100.0f;   // 최소 거리 (분리 기준)
+	const float _neighborDist = 1000.0f;		 // 이웃 판단 거리
+	const float _desiredSeparation = 300.0f;   // 최소 거리 (분리 기준)
 	const float _maxSpeed = 300.0f;            // 최대 속도
-	const float _maxForce = 0.1f;             // 최대 가속도
+	const float _maxForce = 50.0f;             // 최대 가속도
 
 
 };

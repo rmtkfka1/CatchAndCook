@@ -25,10 +25,13 @@ void BoidsMove::Init()
 {
     random_device urd;
     mt19937 gen(urd());
-    uniform_real_distribution<float> dis(-20.0f, 20.0f);
-
+    uniform_real_distribution<float> dis(-5.0f, 5.0f);
+    uniform_real_distribution<float> dis2(-1.0f, 1.0f);
     _objects.emplace_back(GetOwner().get());
-    GetOwner()->_transform->SetVelocity({ dis(urd), dis(urd), dis(urd) });
+
+	float speed = dis(urd);
+    GetOwner()->_transform->SetVelocity({ speed, speed,speed});
+	GetOwner()->_transform->SetForward({ dis2(urd), dis2(urd), dis2(urd) });
 }
 
 void BoidsMove::Start()
@@ -37,7 +40,18 @@ void BoidsMove::Start()
 
 void BoidsMove::Update()
 {
-    UpdateBoids();
+    FindNeighbor();
+
+    vec3 targetDir =/*Separate()*/  Cohesion();
+
+	targetDir = vec3::Lerp(GetOwner()->_transform->GetForward(), targetDir, Time::main->GetDeltaTime());
+
+    vec3 CurrnetPos = GetOwner()->_transform->GetLocalPosition();
+
+	GetOwner()->_transform->SetForward(targetDir);
+	GetOwner()->_transform->SetLocalPosition(CurrnetPos + targetDir  * Time::main->GetDeltaTime());
+
+    //UpdateBoids();
 }
 
 void BoidsMove::Update2()
@@ -144,8 +158,101 @@ void BoidsMove::UpdateBoids()
 
     pos += vel * deltaTime;
 
+	this->GetOwner()->_transform->SetForward(vel);
     this->GetOwner()->_transform->SetLocalPosition(pos);
     this->GetOwner()->_transform->SetVelocity(vel);
+}
+
+
+
+void BoidsMove::FindNeighbor()
+{
+    _neighbors.clear();
+
+    for (int i = 0; i < _objects.size(); ++i)
+    {
+
+		if (_objects[i] == GetOwner().get())
+		{
+			continue;
+		}
+		
+		float distance = (_objects[i]->_transform->GetLocalPosition() - GetOwner()->_transform->GetLocalPosition()).Length();
+
+		if (distance > 0.0f && distance < _neighborDist)
+		{
+			_neighbors.emplace_back(_objects[i]);
+		}
+    }
+
+}
+
+vec3 BoidsMove::Separate()
+{
+    vec3 dir = vec3::Zero;
+
+	size_t size = _neighbors.size();
+
+	if (size == 0)
+	{
+		return dir;
+	}
+
+    for (int i = 0; i < size; ++i)
+    {
+        vec3 diff = GetOwner()->_transform->GetLocalPosition() - _neighbors[i]->_transform->GetLocalPosition();
+        float distance = diff.Length();
+
+        if (distance > 0.0f && distance< _desiredSeparation)
+        {
+            dir += diff / distance;  // 거리가 가까울수록 더 강한 분리 효과
+        }
+    }
+
+    dir.Normalize();
+	return dir;
+
+}
+
+vec3 BoidsMove::Align()
+{
+
+	size_t size = _neighbors.size();
+
+	vec3 alignmentVec = GetOwner()->_transform->GetForward();
+
+    for (int i = 0; i < size; ++i)
+    {
+        alignmentVec += _neighbors[i]->_transform->GetForward();
+    }
+
+	alignmentVec /= static_cast<float>(size);
+
+	return alignmentVec;
+}
+
+vec3 BoidsMove::Cohesion()
+{
+ 
+    vec3 cohesionVec = vec3::Zero;
+
+    if (_neighbors.size() > 0)
+    {
+        for (int i = 0; i < _neighbors.size(); i++)
+        {
+            cohesionVec += _neighbors[i]->_transform->GetLocalPosition();
+        }
+    }
+    else
+    {
+
+        return cohesionVec;
+    }
+
+    cohesionVec /= _neighbors.size();
+    cohesionVec -= GetOwner()->_transform->GetLocalPosition();
+    cohesionVec.Normalize();
+    return cohesionVec;
 }
 
 

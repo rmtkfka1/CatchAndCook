@@ -24,7 +24,7 @@ void TestScene::Init()
 
 
 	//{
-	//	auto& a = ResourceManager::main->Load<Model>(L"kind",L"../Resources/Models/Kindred/kindred_unity.fbx",VertexType::Vertex_GeoMetry);
+	//	auto& a = ResourceManager::main->Load<Model>(L"kind",L"../Resources/Models/Flying bird.fbx",VertexType::Vertex_GeoMetry);
 	//	auto& object =a->CreateGameObject(GetCast<Scene>());
 	//	object->_transform->SetLocalPosition(vec3(0,500.0f,0));
 	//}
@@ -121,10 +121,12 @@ void TestScene::Init()
 
 	random_device urd;
 	mt19937 gen(urd());
-	uniform_real_distribution<float> dis(-20.0f, 20.0f);
+	uniform_real_distribution<float> dis(-10.0f, 10.0f);
 
 	shared_ptr<Material> materialO = make_shared<Material>();
 	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
+
+
 	for (int i = 0; i < 90; ++i)
 	{
 		{
@@ -137,7 +139,7 @@ void TestScene::Init()
 			auto meshRenderer = root->AddComponent<MeshRenderer>();
 			root->AddComponent<BoidsMove>();
 
-			root->_transform->SetLocalScale(vec3(1, 1, 1));
+			root->_transform->SetLocalScale(vec3(0.5f, 0.5f, 0.5f));
 			root->_transform->SetLocalPosition(vec3(dis(urd), dis(urd), dis(urd)));
 			materialO->SetShader(shader);
 			materialO->SetPass(RENDER_PASS::Deffered);
