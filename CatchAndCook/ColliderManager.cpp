@@ -144,7 +144,6 @@ void ColliderManager::CallBackEnd(const std::shared_ptr<Collider>& collider, con
 		component->CollisionEnd(collider,other);
 }
 
-
 RayHit ColliderManager::RayCast(const Ray& ray, const float& dis) const
 {
 	RayHit closestHit;
@@ -170,6 +169,7 @@ RayHit ColliderManager::RayCast(const Ray& ray, const float& dis) const
 	{
 		RayHit currentHit;
 		currentHit.distance = dis;
+
 		if(collider->RayCast(ray,dis,currentHit))
 		{
 			if(!hitFound || currentHit.distance < closestHit.distance)
@@ -182,4 +182,6 @@ RayHit ColliderManager::RayCast(const Ray& ray, const float& dis) const
 
 	return closestHit;
 }
+
+
 

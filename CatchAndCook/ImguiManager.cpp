@@ -45,9 +45,9 @@ void ImguiManager::Render()
 	SeaMove();
 	SeaColor();
 
-	ImGui::SliderFloat("separationWeight", separationWeight, 0, 100.0f);
-	ImGui::SliderFloat("alignmentWeight", alignmentWeight, 0, 100.0f);
-	ImGui::SliderFloat("cohesionWeight", cohesionWeight, 0, 100.0f);
+	//ImGui::SliderFloat("separationWeight", separationWeight, 0, 100.0f);
+	//ImGui::SliderFloat("alignmentWeight", alignmentWeight, 0, 100.0f);
+	//ImGui::SliderFloat("cohesionWeight", cohesionWeight, 0, 100.0f);
 
 	ImGui::Render();
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), Core::main->GetCmdList().Get());

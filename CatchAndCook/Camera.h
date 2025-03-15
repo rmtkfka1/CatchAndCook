@@ -74,8 +74,11 @@ public:
 private:
     void Calculate();
 
+public:
+	const CameraParams& GetCameraParams() { return _params; }
+
 protected:
-    vec3 _cameraPos = vec3(0, 0, 0);
+    vec3 _cameraPos = vec3(0, -300.0f, 0);
     vec3 _cameraLook = vec3(0, 0, 1.0f);
     vec3 _cameraUp = vec3(0, 1.0f, 0);
     vec3 _cameraRight = vec3(1.0f, 0, 0);
@@ -94,7 +97,6 @@ protected:
     CameraParams _params;
     CameraType _type =CameraType::ThirdPersonCamera;
     CBufferContainer* _cbufferContainer;
-
     BoundingFrustum _boundingFrsutum;
 };
 

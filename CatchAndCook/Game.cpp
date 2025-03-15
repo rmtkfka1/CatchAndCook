@@ -22,6 +22,7 @@
 #include "Profiler.h"
 #include "ComputeManager.h"
 #include "ImguiManager.h"
+#include "Collider.h"
 
 void Game::Init(HWND hwnd)
 {
@@ -62,11 +63,14 @@ void Game::Init(HWND hwnd)
 	Gizmo::main->Init();
 
 	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, static_pointer_cast<Camera>(make_shared<ThirdPersonCamera>()));
-	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0, 0, -5.0f));
+	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0, 0, -50.0f));
 	CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
 
 	LightManager::main = make_unique<LightManager>();
 	InstancingManager::main = make_unique<InstancingManager>();
+
+	box.Center = vec3(0, 0, 0);
+	box.Extents = vec3(5.0f,5.0f,5.0f);
 
 	{
 		Light light;
@@ -275,8 +279,37 @@ void Game::CameraUpdate()
 
 		camera->SetCameraRotation(delta.x, delta.y, 0);
 	}
-
 	
+	if (Input::main->GetMouseDown(KeyCode::LeftMouse))
+	{
+		Ray ray;
+		vec2 mouseXY = Input::main->GetNDCMouseDownPosition(KeyCode::LeftMouse);
+		vec3 cursorNdcNear = vec3(mouseXY.x, mouseXY.y, 0.0f);
+		vec3 cursorNdcFar = vec3(mouseXY.x, mouseXY.y, 1.0f);
+
+		Matrix inverseProjView = CameraManager::main->GetActiveCamera()->GetCameraParam().InvertVPMatrix;
+
+		vec3 cursorWorldNear =
+			vec3::Transform(cursorNdcNear, inverseProjView);
+
+		vec3 cursorWorldFar =
+			vec3::Transform(cursorNdcFar, inverseProjView);
+
+		vec3 dir = cursorWorldFar - cursorWorldNear;
+		dir.Normalize();
+
+		ray.position = cursorWorldNear;
+		ray.direction = dir;
+
+		float dist = 0;
+
+		RayHit rayhit=  ColliderManager::main->RayCast(ray, dist);
+
+		cout << rayhit.distance << endl;
+		cout << rayhit.normal.x << " " << rayhit.normal.y << " " << rayhit.normal.z << endl;
+		cout << rayhit.worldPos.x << " " << rayhit.worldPos.y << " " << rayhit.worldPos.z << endl;
+
+	}
 }
 
 void Game::SetHandle(HWND hwnd, HINSTANCE hInst)

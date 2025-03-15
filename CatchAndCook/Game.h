@@ -15,5 +15,8 @@ private:
 
 	bool _fullScreen = false;
 	bool _quit = false;
+
+
+	BoundingOrientedBox box;
 };
 

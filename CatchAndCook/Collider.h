@@ -57,9 +57,7 @@ public:
 
 public:
 	bool CheckCollision(const std::shared_ptr<Collider>& other);
-
 	bool RayCast(const Ray& ray, const float& dis, RayHit& hit);
-
 	void SetBoundingBox(vec3 center,vec3 extents);
 	void SetBoundingSphere(vec3 center,float radius);
 	void SetBoundingFrustum(BoundingFrustum& boundingFrustum);

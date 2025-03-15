@@ -18,7 +18,6 @@ void Gizmo::Init()
 	textureGizmo.material = std::make_shared<Material>();
     textureGizmo.material->SetShader(ResourceManager::main->Get<Shader>(L"GizmoTexture"));
     textureGizmo.material->SetPass(RENDER_PASS::Debug);
-    
     textureGizmo._mesh = GeoMetryHelper::LoadRectMesh();
 
     SetCulling(false);
@@ -72,7 +71,7 @@ void Gizmo::Ray(const Vector3& worldStart, const Vector3& dir, float dis, const 
 void Gizmo::Box(const BoundingOrientedBox& box, const Vector4& Color)
 {
     if(!main->_ON) return;
-    XMFLOAT3 corners[8];
+    vec3 corners[8];
     box.GetCorners(corners);
 
     // 앞면 4개 엣지
