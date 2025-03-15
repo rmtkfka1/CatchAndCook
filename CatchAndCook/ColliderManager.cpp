@@ -113,7 +113,8 @@ bool ColliderManager::IsCollision(const std::shared_ptr<Collider>& src,const std
 	auto it = _colliderLinkTable.find(src);
 	if(it != _colliderLinkTable.end())
 		return it->second.contains(dest);
-	return src->IsCollision(dest);
+
+	return IsCollision(dest);
 }
 
 std::unordered_set<std::shared_ptr<Collider>>& ColliderManager::GetCollisionList(const std::shared_ptr<Collider>& src)

@@ -111,16 +111,6 @@ void Collider::Destroy()
 	ColliderManager::main->RemoveCollider(GetCast<Collider>());
 }
 
-bool Collider::IsCollision()
-{
-	return ColliderManager::main->IsCollision(GetCast<Collider>());
-}
-
-bool Collider::IsCollision(const std::shared_ptr<Collider>& other)
-{
-	return ColliderManager::main->IsCollision(GetCast<Collider>(),other);
-}
-
 bool Collider::CheckCollision(const std::shared_ptr<Collider>& other)
 {
 	if(_type == CollisionType::Box)
@@ -178,11 +168,11 @@ bool Collider::CheckCollision(const std::shared_ptr<Collider>& other)
 
 bool Collider::RayCast(const Ray& ray, const float& dis, RayHit& hit)
 {
-	hit.distance = dis;
-	hit.collider = this;
-	hit.gameObject = GetOwner().get();
+	//hit.distance = dis;
+	//hit.collider = this;
+	//hit.gameObject = GetOwner().get();
 
-	//// _bound.box를 지역 변수로 캐싱하여 반복 접근을 줄입니다.
+	////// _bound.box를 지역 변수로 캐싱하여 반복 접근을 줄입니다.
 
 	//if(_type == CollisionType::Box)
 	//{
