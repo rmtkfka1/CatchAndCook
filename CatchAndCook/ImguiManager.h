@@ -32,6 +32,10 @@ public:
 	UnderWaterParam* _underWaterParam;
 	SeaParam* _seaParam;
 
+	float* separationWeight;
+	float* alignmentWeight;
+	float* cohesionWeight;
+
 private:
 	bool show_window = true;
 	bool show_another_window = false;
