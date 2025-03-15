@@ -8,8 +8,8 @@
 
 cbuffer DefaultMaterialParam : register(b7)
 {
-	float4 color;
-	float4 _baseMapST;
+    float4 color = float4(1, 1, 1, 1);
+    float4 _baseMapST = float4(1, 1, 1, 1);
 };
 
 struct VS_IN

@@ -102,3 +102,13 @@ void Material::PushHandle()
 				ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle(), tIndex);
 
 }
+
+vec4 Material::GetPropertyVector(const std::string& name)
+{
+	auto& color = _propertyVectors[name];
+
+	if (color.x == 0 && color.y == 0 && color.z == 0)
+		color.x = color.y = color.z = 1;
+
+	return color;
+}

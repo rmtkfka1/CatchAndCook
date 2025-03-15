@@ -21,7 +21,6 @@ enum class BufferType
 	FogParam,
 	UnderWaterParam,
 
-
 	// Instance
 	TransformInstanceParam,
 	GizmoInstanceParam,
