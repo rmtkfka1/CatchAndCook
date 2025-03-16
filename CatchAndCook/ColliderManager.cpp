@@ -41,6 +41,8 @@ void ColliderManager::RemoveCollider(const std::shared_ptr<Collider>& collider)
 
 void ColliderManager::Update()
 {
+
+
 	for(int i = 0;i<_dynamicColliders.size();++i)
 	{
 		auto& src = _dynamicColliders[i];

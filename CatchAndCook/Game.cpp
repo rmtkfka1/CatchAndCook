@@ -88,7 +88,7 @@ void Game::Init(HWND hwnd)
 		LightManager::main->PushLight(light);
 	}
 
-	auto scene = SceneManager::main->AddScene(SceneType::TestScene);
+	auto scene = SceneManager::main->AddScene(SceneType::LightingTest);
 }
 
 void Game::PrevUpdate()
@@ -282,7 +282,7 @@ void Game::CameraUpdate()
 	
 	if (Input::main->GetMouseDown(KeyCode::LeftMouse))
 	{
-		Ray ray;
+	/*	Ray ray;
 		vec2 mouseXY = Input::main->GetNDCMouseDownPosition(KeyCode::LeftMouse);
 		vec3 cursorNdcNear = vec3(mouseXY.x, mouseXY.y, 0.0f);
 		vec3 cursorNdcFar = vec3(mouseXY.x, mouseXY.y, 1.0f);
@@ -307,7 +307,7 @@ void Game::CameraUpdate()
 
 		cout << rayhit.distance << endl;
 		cout << rayhit.normal.x << " " << rayhit.normal.y << " " << rayhit.normal.z << endl;
-		cout << rayhit.worldPos.x << " " << rayhit.worldPos.y << " " << rayhit.worldPos.z << endl;
+		cout << rayhit.worldPos.x << " " << rayhit.worldPos.y << " " << rayhit.worldPos.z << endl;*/
 
 	}
 }

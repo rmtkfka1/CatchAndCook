@@ -132,7 +132,13 @@ void TestScene::Init()
 	//shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
 	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
 
-	for (int i = 0; i < 2; ++i)
+	shared_ptr<GameObject> object = CreateGameObject(L"collider");
+	auto& c= object->AddComponent<Collider>();
+	c->SetBoundingBox(vec3(0, 0, 0), vec3(1.0f, 1.0f, 1.0f));
+
+
+
+	for (int i = 0; i < 300; ++i)
 	{
 		{
 			shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");

@@ -91,7 +91,7 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     float3 viewPos = ProjToView(float2(texCoord));
     float fogFactor = CalculateFogFactor(viewPos);
     
-    float3 finalColor = lerp(ColorGradingColor, BaseColor, fogFactor);
+    float3 finalColor = lerp(g_fogColor, BaseColor, fogFactor);
    
     resultTexture[texCoord] = float4(finalColor, 1.0f);
 }
