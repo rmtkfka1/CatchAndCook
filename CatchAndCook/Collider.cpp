@@ -30,6 +30,7 @@ void Collider::Start()
 {
 	Component::Start();
 
+	CalculateBounding();
 	ColliderManager::main->AddColliderForRay(GetCast<Collider>());
 
 	groupId = GetInstanceID();
@@ -51,6 +52,7 @@ void Collider::Update()
 
 	if (GetOwner()->GetType() == GameObjectType::Static)
 	{
+
 		ColliderManager::main->AddCollider(GetCast<Collider>());
 	}
 }
