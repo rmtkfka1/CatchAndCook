@@ -150,8 +150,14 @@ std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialColli
 
 void ColliderManager::Update()
 {
+	for (auto& [cell, colliders] : _staticColliderGrids)
+	{
+		for (auto& collider : colliders)
+		{
+			VisualizeOccupiedCells(collider);
+		}
+	}
 
-	//Dynamic 객체와 Dynamic 객체의 충돌 체크
 	for (auto& [cell, colliders] : _dynamicColliderGrids)
 	{
 		if (colliders.size() <= 1  && _staticColliderGrids[cell].size() ==0 ) continue;
