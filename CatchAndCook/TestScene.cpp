@@ -148,7 +148,8 @@ void TestScene::Init()
 			root->_transform->SetLocalScale(vec3(5.0f, 5.0f, 5.0f));
 			root->_transform->SetLocalPosition(vec3(80*i+5.5f, 0, 0));
 			root->SetType(GameObjectType::Static);
-			if (i == 0 || i==1)
+
+			if (i == 0 )
 			{
 				if(i==0)
 				root->AddComponent<testComponent>();

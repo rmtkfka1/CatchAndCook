@@ -9,7 +9,7 @@ struct RayHit
 	GameObject* gameObject;
 	bool isHit = false;
 
-	explicit operator bool() const 
+	explicit operator bool() const
 	{
 		return isHit;
 	}
@@ -42,16 +42,16 @@ public:
 	std::unordered_set<std::shared_ptr<Collider>>& GetCollisionList(const std::shared_ptr<Collider>& src);
 
 private:
-	void CallBackBegin(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other);
-	void CallBackEnd(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other);
-	bool TotalCheckCollision(const std::shared_ptr<Collider>& a,const std::shared_ptr<Collider>& b);
+	void CallBackBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
+	void CallBackEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
+	bool TotalCheckCollision(const std::shared_ptr<Collider>& a, const std::shared_ptr<Collider>& b);
 	void VisualizeOccupiedCells(const shared_ptr<Collider>& collider);
 
 public:
-	RayHit RayCast(const Ray& ray,const float& dis) const;
-	
+	RayHit RayCast(const Ray& ray, const float& dis) const;
+
 public:
-	float _cellSize = 20.0f;
+	float _cellSize = 40.0f;
 
 	vec3 GetGridCell(const vec3& position) const;
 	vector<vec3> GetOccupiedCells(const shared_ptr<Collider>& collider) const;
@@ -59,13 +59,12 @@ public:
 
 	//std::unordered_map<vec3, std::vector<std::shared_ptr<Collider>>, PositionHash> _staticColliderGrids;
 	//std::unordered_map<vec3, std::vector<std::shared_ptr<Collider>>, PositionHash> _dynamicColliderGrids;
-
+	std::unordered_map<vec3, std::vector<std::shared_ptr<Collider>>, PositionHash> _colliders;
+	std::unordered_map<std::shared_ptr<Collider>, std::unordered_set<std::shared_ptr<Collider>>> _colliderLinkTable;
 
 
 private:
 	vector<std::shared_ptr<Collider>> _collidersForRay;
-	std::unordered_map<vec3, std::vector<std::shared_ptr<Collider>>, PositionHash> _colliders;
-	std::unordered_map<std::shared_ptr<Collider>, std::unordered_set<std::shared_ptr<Collider>>> _colliderLinkTable;
 
 };
 

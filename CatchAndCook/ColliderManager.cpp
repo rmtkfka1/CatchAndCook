@@ -157,7 +157,7 @@ void ColliderManager::Update()
 
 
 	_colliders.clear();
-} 
+}
 
 //무언가와 충돌하고 있는지 체크
 bool ColliderManager::IsCollision(const std::shared_ptr<Collider>& src)
@@ -183,9 +183,9 @@ std::unordered_set<std::shared_ptr<Collider>>& ColliderManager::GetCollisionList
 
 bool ColliderManager::TotalCheckCollision(const std::shared_ptr<Collider>& src, const std::shared_ptr<Collider>& dest)
 {
-	if (src->groupId == dest->groupId) return false; 
-	if (!src->GetOwner()->GetActive() || !dest->GetOwner()->GetActive()) return false; 
-	return src->CheckCollision(dest); 
+	if (src->groupId == dest->groupId) return false;
+	if (!src->GetOwner()->GetActive() || !dest->GetOwner()->GetActive()) return false;
+	return src->CheckCollision(dest);
 }
 
 void ColliderManager::VisualizeOccupiedCells(const shared_ptr<Collider>& collider)
@@ -213,30 +213,30 @@ void ColliderManager::VisualizeOccupiedCells(const shared_ptr<Collider>& collide
 void ColliderManager::CallBackBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 	auto& components = collider->GetOwner()->GetComponentAll();
-	for(auto& component : components)
-		component->CollisionBegin(collider,other);
+	for (auto& component : components)
+		component->CollisionBegin(collider, other);
 }
 
 void ColliderManager::CallBackEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 	auto& components = collider->GetOwner()->GetComponentAll();
-	for(auto& component : components)
-		component->CollisionEnd(collider,other);
+	for (auto& component : components)
+		component->CollisionEnd(collider, other);
 }
 
 RayHit ColliderManager::RayCast(const Ray& ray, const float& dis) const
 {
 	RayHit closestHit;
-	closestHit.distance = dis;  
+	closestHit.distance = dis;
 	bool hitFound = false;
 
-	for(const auto& collider : _collidersForRay)
+	for (const auto& collider : _collidersForRay)
 	{
 		RayHit currentHit;
 		currentHit.distance = dis;  // 최대 거리로 초기화
-		if(collider->RayCast(ray,dis,currentHit))
+		if (collider->RayCast(ray, dis, currentHit))
 		{
-			if(!hitFound || currentHit.distance < closestHit.distance)
+			if (!hitFound || currentHit.distance < closestHit.distance)
 			{
 				closestHit = currentHit;
 				hitFound = true;

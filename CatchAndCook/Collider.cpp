@@ -29,13 +29,12 @@ void Collider::Init()
 void Collider::Start()
 {
 	Component::Start();
-	CalculateBounding();
 
 	ColliderManager::main->AddColliderForRay(GetCast<Collider>());
 
 	groupId = GetInstanceID();
 
-	if(auto obj = GetOwner()->GetComponentWithParents<PhysicsComponent>())
+	if (auto obj = GetOwner()->GetComponentWithParents<PhysicsComponent>())
 		groupId = obj->GetInstanceID();
 
 }
@@ -105,13 +104,13 @@ void Collider::RenderBegin()
 
 void Collider::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
-	Component::CollisionBegin(collider,other);
+	Component::CollisionBegin(collider, other);
 
 }
 
 void Collider::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
-	Component::CollisionEnd(collider,other);
+	Component::CollisionEnd(collider, other);
 }
 
 void Collider::SetDestroy()
@@ -127,49 +126,49 @@ void Collider::Destroy()
 
 bool Collider::CheckCollision(const std::shared_ptr<Collider>& other)
 {
-	if(_type == CollisionType::Box)
+	if (_type == CollisionType::Box)
 	{
-		if(other->_type == CollisionType::Box)
+		if (other->_type == CollisionType::Box)
 		{
 			return _bound.box.Intersects(other->_bound.box);
 		}
-		else if(other->_type == CollisionType::Sphere)
+		else if (other->_type == CollisionType::Sphere)
 		{
 			return _bound.box.Intersects(other->_bound.sphere);
-		} 
-		else if(other->_type == CollisionType::Frustum)
+		}
+		else if (other->_type == CollisionType::Frustum)
 		{
 			return _bound.box.Intersects(other->_bound.frustum);
 		}
 
 	}
-	else if(_type == CollisionType::Sphere)
+	else if (_type == CollisionType::Sphere)
 	{
-		if(other->_type == CollisionType::Box)
+		if (other->_type == CollisionType::Box)
 		{
 			return _bound.sphere.Intersects(other->_bound.box);
 		}
-		else if(other->_type == CollisionType::Sphere)
+		else if (other->_type == CollisionType::Sphere)
 		{
 			return _bound.sphere.Intersects(other->_bound.sphere);
-		} 
-		else if(other->_type == CollisionType::Frustum)
+		}
+		else if (other->_type == CollisionType::Frustum)
 		{
 			return _bound.sphere.Intersects(other->_bound.frustum);
 		}
-	} 
+	}
 
-	else if(_type == CollisionType::Frustum)
+	else if (_type == CollisionType::Frustum)
 	{
-		if(other->_type == CollisionType::Box)
+		if (other->_type == CollisionType::Box)
 		{
 			return _bound.frustum.Intersects(other->_bound.box);
-		} 
-		else if(other->_type == CollisionType::Sphere)
+		}
+		else if (other->_type == CollisionType::Sphere)
 		{
 			return _bound.frustum.Intersects(other->_bound.sphere);
 		}
-		else if(other->_type == CollisionType::Frustum)
+		else if (other->_type == CollisionType::Frustum)
 		{
 			return _bound.frustum.Intersects(other->_bound.frustum);
 		}
@@ -188,11 +187,11 @@ bool Collider::RayCast(const Ray& ray, const float& dis, RayHit& hit)
 
 	////// _bound.box를 지역 변수로 캐싱하여 반복 접근을 줄입니다.
 
-	if(_type == CollisionType::Box)
+	if (_type == CollisionType::Box)
 	{
 		const auto& box = _bound.box;
 		// Ray와 박스 간의 충돌 여부를 테스트합니다.
-		if(ray.Intersects(box,hit.distance))
+		if (ray.Intersects(box, hit.distance))
 		{
 			// 월드 좌표계에서 충돌 지점을 계산합니다.
 			hit.worldPos = ray.position + ray.direction * hit.distance;
@@ -201,7 +200,7 @@ bool Collider::RayCast(const Ray& ray, const float& dis, RayHit& hit)
 			const Quaternion orientation = box.Orientation;
 			Quaternion invOrientation;
 			orientation.Inverse(invOrientation);
-			const Vector3 localHitPoint = Vector3::Transform(hit.worldPos - box.Center,invOrientation);
+			const Vector3 localHitPoint = Vector3::Transform(hit.worldPos - box.Center, invOrientation);
 
 			// Determine on which face the hit occurred.
 			// Since the box is axis-aligned in local space, one coordinate will be nearly equal to the corresponding extent.
@@ -210,32 +209,34 @@ bool Collider::RayCast(const Ray& ray, const float& dis, RayHit& hit)
 			const float diffZ = fabsf(fabs(localHitPoint.z) - box.Extents.z);
 
 			// 세 축 중 차이가 가장 작은 축이 충돌 면임을 판단합니다.
-			if(diffX < diffY && diffX < diffZ)
+			if (diffX < diffY && diffX < diffZ)
 			{
 				// X면에서 충돌이 발생함 (로컬 X 좌표의 부호에 따라 결정)
-				hit.normal = Vector3((localHitPoint.x > 0.0f) ? 1.0f : -1.0f,0.0f,0.0f);
-			} else if(diffY < diffZ)
+				hit.normal = Vector3((localHitPoint.x > 0.0f) ? 1.0f : -1.0f, 0.0f, 0.0f);
+			}
+			else if (diffY < diffZ)
 			{
 				// Y면에서 충돌이 발생함
-				hit.normal = Vector3(0.0f,(localHitPoint.y > 0.0f) ? 1.0f : -1.0f,0.0f);
-			} else
+				hit.normal = Vector3(0.0f, (localHitPoint.y > 0.0f) ? 1.0f : -1.0f, 0.0f);
+			}
+			else
 			{
 				// Z면에서 충돌이 발생함
-				hit.normal = Vector3(0.0f,0.0f,(localHitPoint.z > 0.0f) ? 1.0f : -1.0f);
+				hit.normal = Vector3(0.0f, 0.0f, (localHitPoint.z > 0.0f) ? 1.0f : -1.0f);
 			}
 
 			// 로컬 좌표계의 법선을 월드 좌표계로 변환합니다.
-			hit.normal = Vector3::Transform(hit.normal,orientation);
+			hit.normal = Vector3::Transform(hit.normal, orientation);
 			hit.normal.Normalize();
 			hit.isHit = true;
 			return true;
 		}
 	}
-	if(_type == CollisionType::Sphere)
+	if (_type == CollisionType::Sphere)
 	{
 		const auto& sphere = _bound.sphere;
 		// Ray와 구(BoundingSphere) 간의 충돌 여부를 테스트합니다.
-		if(ray.Intersects(sphere,hit.distance))
+		if (ray.Intersects(sphere, hit.distance))
 		{
 			// 월드 좌표계에서 충돌 지점을 계산합니다.
 			hit.worldPos = ray.position + ray.direction * hit.distance;
@@ -252,7 +253,7 @@ bool Collider::RayCast(const Ray& ray, const float& dis, RayHit& hit)
 	return false;
 }
 
-void Collider::SetBoundingBox(vec3 center,vec3 extents)
+void Collider::SetBoundingBox(vec3 center, vec3 extents)
 {
 	_type = CollisionType::Box;
 
@@ -260,14 +261,14 @@ void Collider::SetBoundingBox(vec3 center,vec3 extents)
 	_bound.box = BoundingOrientedBox(center, extents, Quaternion::Identity);
 }
 
-void Collider::SetBoundingSphere(vec3 center,float radius)
+void Collider::SetBoundingSphere(vec3 center, float radius)
 {
 	_type = CollisionType::Sphere;
 	_orgin.sphere = BoundingSphere(center, radius);
 	_bound.sphere = BoundingSphere(center, radius);
 }
 
-void Collider::SetBoundingFrustum(BoundingFrustum & boundingFrustum)
+void Collider::SetBoundingFrustum(BoundingFrustum& boundingFrustum)
 {
 	_type = CollisionType::Frustum;
 	_orgin.frustum = boundingFrustum;
@@ -276,28 +277,28 @@ void Collider::SetBoundingFrustum(BoundingFrustum & boundingFrustum)
 
 void Collider::CalculateBounding()
 {
-	if(_type == CollisionType::Box)
+	if (_type == CollisionType::Box)
 	{
 		auto onwerTransform = GetOwner()->_transform;
 		Matrix mat;
 		onwerTransform->GetLocalToWorldMatrix_BottomUp(mat);
-		_orgin.box.Transform(_bound.box,mat);
+		_orgin.box.Transform(_bound.box, mat);
 	}
 
-	else if(_type == CollisionType::Sphere)
+	else if (_type == CollisionType::Sphere)
 	{
 		auto onwerTransform = GetOwner()->_transform;
 		Matrix mat;
 		onwerTransform->GetLocalToWorldMatrix_BottomUp(mat);
-		_orgin.sphere.Transform(_bound.sphere,mat);
+		_orgin.sphere.Transform(_bound.sphere, mat);
 	}
 
-	else if(_type == CollisionType::Frustum)
+	else if (_type == CollisionType::Frustum)
 	{
 		auto onwerTransform = GetOwner()->_transform;
 		Matrix mat;
 		onwerTransform->GetLocalToWorldMatrix_BottomUp(mat);
-		_orgin.frustum.Transform(_bound.frustum,mat);
+		_orgin.frustum.Transform(_bound.frustum, mat);
 	}
 }
 
