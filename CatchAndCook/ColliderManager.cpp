@@ -169,8 +169,13 @@ void ColliderManager::Update()
 	//Static 객체와 Dynamic 객체의 충돌 체크
 	for (auto& [cell, colliders] : _staticColliderGrids)
 	{
+		//셀에 나혼자있는셈이니 걍 스킵
+		if (colliders.size() <= 1) continue;
+
 		for (auto& collider : colliders)
 		{
+			VisualizeOccupiedCells(collider);
+
 			auto potentialCollisions = GetPotentialCollisions(collider);
 
 			for (auto& other : potentialCollisions)
@@ -204,6 +209,9 @@ void ColliderManager::Update()
 	//Dynamic 객체와 Dynamic 객체의 충돌 체크
 	for (auto& [cell, colliders] : _dynamicColliderGrids)
 	{
+		//셀에 나혼자있는셈이니 걍 스킵
+		if (colliders.size() <= 1) continue;  
+
 		for (auto& collider : colliders)
 		{
 			VisualizeOccupiedCells(collider);
