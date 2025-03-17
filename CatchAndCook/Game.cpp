@@ -282,32 +282,32 @@ void Game::CameraUpdate()
 	
 	if (Input::main->GetMouseDown(KeyCode::LeftMouse))
 	{
-		Ray ray;
-		vec2 mouseXY = Input::main->GetNDCMouseDownPosition(KeyCode::LeftMouse);
-		vec3 cursorNdcNear = vec3(mouseXY.x, mouseXY.y, 0.0f);
-		vec3 cursorNdcFar = vec3(mouseXY.x, mouseXY.y, 1.0f);
+		//Ray ray;
+		//vec2 mouseXY = Input::main->GetNDCMouseDownPosition(KeyCode::LeftMouse);
+		//vec3 cursorNdcNear = vec3(mouseXY.x, mouseXY.y, 0.0f);
+		//vec3 cursorNdcFar = vec3(mouseXY.x, mouseXY.y, 1.0f);
 
-		Matrix inverseProjView = CameraManager::main->GetActiveCamera()->GetCameraParam().InvertVPMatrix;
+		//Matrix inverseProjView = CameraManager::main->GetActiveCamera()->GetCameraParam().InvertVPMatrix;
 
-		vec3 cursorWorldNear =
-			vec3::Transform(cursorNdcNear, inverseProjView);
+		//vec3 cursorWorldNear =
+		//	vec3::Transform(cursorNdcNear, inverseProjView);
 
-		vec3 cursorWorldFar =
-			vec3::Transform(cursorNdcFar, inverseProjView);
+		//vec3 cursorWorldFar =
+		//	vec3::Transform(cursorNdcFar, inverseProjView);
 
-		vec3 dir = cursorWorldFar - cursorWorldNear;
-		dir.Normalize();
+		//vec3 dir = cursorWorldFar - cursorWorldNear;
+		//dir.Normalize();
 
-		ray.position = cursorWorldNear;
-		ray.direction = dir;
+		//ray.position = cursorWorldNear;
+		//ray.direction = dir;
 
-		float dist = 0;
+		//float dist = 0;
 
-		RayHit rayhit=  ColliderManager::main->RayCast(ray, dist);
+		//RayHit rayhit=  ColliderManager::main->RayCast(ray, dist);
 
-		cout << rayhit.distance << endl;
-		cout << rayhit.normal.x << " " << rayhit.normal.y << " " << rayhit.normal.z << endl;
-		cout << rayhit.worldPos.x << " " << rayhit.worldPos.y << " " << rayhit.worldPos.z << endl;
+		//cout << rayhit.distance << endl;
+		//cout << rayhit.normal.x << " " << rayhit.normal.y << " " << rayhit.normal.z << endl;
+		//cout << rayhit.worldPos.x << " " << rayhit.worldPos.y << " " << rayhit.worldPos.z << endl;
 
 	}
 }

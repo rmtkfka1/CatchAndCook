@@ -150,10 +150,13 @@ void ImguiManager::Debug()
 			Gizmo::main->_flags = GizmoFlags::DivideSpace; 
 		}
 
+
 		if (ImGui::Button("Culling"))
 		{
 			Gizmo::main->_flags = GizmoFlags::Culling; 
 		}
+
+	
 
 	}
 

@@ -28,9 +28,9 @@ public:
 enum class GizmoFlags : uint32_t
 {
 	None = 0,
-	DivideSpace = 1 << 0,   
-	Culling = 1 << 1,   
-	Collision = 1 << 2,   
+	DivideSpace = 1 << 1,
+	Culling = 1 << 2,   
+	Collision = 1 << 3,   
 };
 
 inline GizmoFlags operator|(GizmoFlags a, GizmoFlags b) {
