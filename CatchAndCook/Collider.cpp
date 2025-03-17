@@ -77,25 +77,29 @@ void Collider::RenderBegin()
 
 	bool isCollision = ColliderManager::main->IsCollision(GetCast<Collider>());
 
-	if(_type == CollisionType::Box)
+	if (Gizmo::main->GetDebugOn() && HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::Collision))
 	{
-		Gizmo::Width(0.02f);
-		Gizmo::Box(_bound.box, !isCollision ? Vector4(0,1,0,1) : Vector4(1,0.5,0,1));
-		Gizmo::WidthRollBack();
-	}
 
-	else if(_type == CollisionType::Sphere)
-	{
-		Gizmo::Width(0.02f);
-		Gizmo::Sphere(_bound.sphere, !isCollision ? Vector4(0,1,0,1) : Vector4(1,0.5,0,1));
-		Gizmo::WidthRollBack();
-	}
+		if (_type == CollisionType::Box)
+		{
+			Gizmo::Width(0.02f);
+			Gizmo::Box(_bound.box, !isCollision ? Vector4(0, 1, 0, 1) : Vector4(1, 0.5, 0, 1));
+			Gizmo::WidthRollBack();
+		}
 
-	else if(_type == CollisionType::Frustum)
-	{
-		Gizmo::Width(0.02f);
-		Gizmo::Frustum(_bound.frustum, !isCollision ? Vector4(0,1,0,1) : Vector4(1,0.5,0,1));
-		Gizmo::WidthRollBack();
+		else if (_type == CollisionType::Sphere)
+		{
+			Gizmo::Width(0.02f);
+			Gizmo::Sphere(_bound.sphere, !isCollision ? Vector4(0, 1, 0, 1) : Vector4(1, 0.5, 0, 1));
+			Gizmo::WidthRollBack();
+		}
+
+		else if (_type == CollisionType::Frustum)
+		{
+			Gizmo::Width(0.02f);
+			Gizmo::Frustum(_bound.frustum, !isCollision ? Vector4(0, 1, 0, 1) : Vector4(1, 0.5, 0, 1));
+			Gizmo::WidthRollBack();
+		}
 	}
 }
 

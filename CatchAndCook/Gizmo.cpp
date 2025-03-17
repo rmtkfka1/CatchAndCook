@@ -142,6 +142,14 @@ void Gizmo::Box(const BoundingBox& box, const Vector4& Color)
          Vector3(corners[7].x,corners[7].y,corners[7].z),Color);
 }
 
+void Gizmo::Box(const vec3& min, const vec3& max, const Vector4& Color)
+{
+	if (!main->_ON) return;
+	BoundingBox box;
+	box.CreateFromPoints(box, min, max);
+	Box(box, Color);
+}
+
 void Gizmo::Frustum(const BoundingFrustum& frustum, const Vector4& Color)
 {
     if(!main->_ON) return;

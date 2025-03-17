@@ -1,8 +1,7 @@
 ﻿#include "pch.h"
 #include "ColliderManager.h"
-
 #include <algorithm>
-
+#include "Gizmo.h"
 #include "Collider.h"
 
 
@@ -38,13 +37,7 @@ vector<vec3> ColliderManager::GetOccupiedCells(const shared_ptr<Collider>& colli
 	return occupiedCells;
 }
 
-vector<vec3> ColliderManager::GetOccupiedCells(const Ray& ray) const
-{
-	
 
-
-	
-}
 
 void ColliderManager::AddCollider(const std::shared_ptr<Collider>& collider)
 {
@@ -172,6 +165,7 @@ std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialColli
 
 void ColliderManager::Update()
 {
+
 	//Static 객체와 Dynamic 객체의 충돌 체크
 	for (auto& [cell, colliders] : _staticColliderGrids)
 	{
@@ -212,6 +206,8 @@ void ColliderManager::Update()
 	{
 		for (auto& collider : colliders)
 		{
+			VisualizeOccupiedCells(collider);
+
 			auto& potentialCollisions = GetPotentialCollisions(collider);
 
 			for (auto& other : potentialCollisions)
@@ -274,6 +270,28 @@ bool ColliderManager::TotalCheckCollision(const std::shared_ptr<Collider>& src, 
 	return src->CheckCollision(dest); 
 }
 
+void ColliderManager::VisualizeOccupiedCells(const shared_ptr<Collider>& collider)
+{
+	if (Gizmo::main->GetDebugOn() && HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::DivideSpace))
+	{
+		auto occupiedCells = GetOccupiedCells(collider);
+
+		for (const auto& cell : occupiedCells)
+		{
+			vec3 min = cell * _cellSize;
+			vec3 max = min + vec3(_cellSize, _cellSize, _cellSize);
+
+			if (collider->groupId % 3 == 0)
+				Gizmo::main->Box(min, max, vec4(1, 0, 0, 1));
+			else if (collider->groupId % 3 == 1)
+				Gizmo::main->Box(min, max, vec4(0, 1, 0, 1));
+			else
+				Gizmo::main->Box(min, max, vec4(0, 0, 1, 1));
+		}
+	}
+
+}
+
 void ColliderManager::CallBackBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 	auto& components = collider->GetOwner()->GetComponentAll();
@@ -293,7 +311,7 @@ RayHit ColliderManager::RayCast(const Ray& ray, const float& dis) const
 	RayHit closestHit;
 	closestHit.distance = dis;  
 	bool hitFound = false;
-#pragma region 
+
 	for(const auto& collider : _collidersForRay)
 	{
 		RayHit currentHit;

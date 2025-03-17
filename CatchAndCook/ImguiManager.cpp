@@ -47,10 +47,13 @@ void ImguiManager::Render()
 	SeaMove();
 	SeaColor();
 
+	if (separationWeight)
+	{
 
-	ImGui::SliderFloat("separationWeight", separationWeight, 0, 100.0f);
-	ImGui::SliderFloat("alignmentWeight", alignmentWeight, 0, 100.0f);
-	ImGui::SliderFloat("cohesionWeight", cohesionWeight, 0, 100.0f);
+		ImGui::SliderFloat("separationWeight", separationWeight, 0, 100.0f);
+		ImGui::SliderFloat("alignmentWeight", alignmentWeight, 0, 100.0f);
+		ImGui::SliderFloat("cohesionWeight", cohesionWeight, 0, 100.0f);
+	}
 
 	ImGui::Render();
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), Core::main->GetCmdList().Get());
@@ -125,10 +128,37 @@ void ImguiManager::Debug()
 {
 	ImGui::Begin("Debug");
 
-	if (ImGui::Button("Debug_ON"))
+	if (ImGui::Button("Debug_ON/OFF"))
 	{
 		Gizmo::main->SetDebugOn(!Gizmo::main->GetDebugOn());
 	}
+
+	if (ImGui::CollapsingHeader("Gizmo Control"))
+	{
+		if (ImGui::Button("None"))
+		{
+			Gizmo::main->_flags = GizmoFlags::None;
+		}
+
+		if (ImGui::Button("Collision"))
+		{
+			Gizmo::main->_flags = GizmoFlags::Collision; 
+		}
+
+		if (ImGui::Button("DivideSpace"))
+		{
+			Gizmo::main->_flags = GizmoFlags::DivideSpace; 
+		}
+
+		if (ImGui::Button("Culling"))
+		{
+			Gizmo::main->_flags = GizmoFlags::Culling; 
+		}
+
+	}
+
+
+
 
 	ImGui::End();
 

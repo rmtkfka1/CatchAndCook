@@ -45,16 +45,16 @@ private:
 	void CallBackBegin(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other);
 	void CallBackEnd(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other);
 	bool TotalCheckCollision(const std::shared_ptr<Collider>& a,const std::shared_ptr<Collider>& b);
+	void VisualizeOccupiedCells(const shared_ptr<Collider>& collider);
 
 public:
 	RayHit RayCast(const Ray& ray,const float& dis) const;
 	
 public:
-	float _cellSize = 100.0f;
+	float _cellSize = 40.0f;
 
 	vec3 GetGridCell(const vec3& position) const;
 	vector<vec3> GetOccupiedCells(const shared_ptr<Collider>& collider) const;
-	vector<vec3> GetOccupiedCells(const Ray& ray) const;
 	std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialCollisions(const std::shared_ptr<Collider>& collider) const;
 
 	std::unordered_map<vec3, std::vector<std::shared_ptr<Collider>>, PositionHash> _staticColliderGrids;
