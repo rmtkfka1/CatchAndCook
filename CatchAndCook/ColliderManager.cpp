@@ -112,20 +112,46 @@ std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialColli
 
 	for (const auto& cell : occupiedCells)
 	{
-		// Static Colliders 검사
-		auto itStatic = _staticColliderGrids.find(cell);
-		if (itStatic != _staticColliderGrids.end())
+		//static Coliider 은 다이나믹 객체들만 후보군에 오름.
+		if (collider->GetOwner()->GetType() == GameObjectType::Static)
 		{
-			auto& colliders = itStatic->second;
-			potentialCollisions.insert(colliders.begin(), colliders.end());
-		}
+			auto it = _dynamicColliderGrids.find(cell);
 
-		// Dynamic Colliders 검사
-		auto itDynamic = _dynamicColliderGrids.find(cell);
-		if (itDynamic != _dynamicColliderGrids.end())
+			if (it != _dynamicColliderGrids.end())
+			{
+				for (auto& other : it->second)
+				{
+					potentialCollisions.insert(other);
+				}
+			}
+		}
+		else if (collider->GetOwner()->GetType() == GameObjectType::Dynamic)
 		{
-			auto& colliders = itDynamic->second;
-			potentialCollisions.insert(colliders.begin(), colliders.end());
+			//dynamic Coliider 은 스태틱,다이나믹 객체들이 후보군에 오름.
+			{
+				auto it = _dynamicColliderGrids.find(cell);
+
+				if (it != _dynamicColliderGrids.end())
+				{
+					for (auto& other : it->second)
+					{
+						potentialCollisions.insert(other);
+					}
+				}
+			}
+
+			{
+
+				auto it = _staticColliderGrids.find(cell);
+
+				if (it != _staticColliderGrids.end())
+				{
+					for (auto& other : it->second)
+					{
+						potentialCollisions.insert(other);
+					}
+				}
+			}
 		}
 	}
 
