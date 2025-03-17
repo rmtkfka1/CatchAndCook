@@ -45,7 +45,14 @@ void ColliderManager::AddCollider(const std::shared_ptr<Collider>& collider)
 
 	for (const auto& cell : occupiedCells)
 	{
-		_colliders[cell].push_back(collider);
+		if (collider->GetOwner()->GetType() == GameObjectType::Static)
+		{
+			_staticColliderGrids[cell].push_back(collider);
+		}
+		else if (collider->GetOwner()->GetType() == GameObjectType::Dynamic)
+		{
+			_dynamicColliderGrids[cell].push_back(collider);
+		}
 	}
 
 	if (_colliderLinkTable.find(collider) == _colliderLinkTable.end()) {
@@ -68,18 +75,32 @@ void ColliderManager::RemoveAColliderForRay(const std::shared_ptr<Collider>& col
 void ColliderManager::RemoveCollider(const std::shared_ptr<Collider>& collider)
 {
 	auto occupiedCells = GetOccupiedCells(collider);
-
 	for (const auto& cell : occupiedCells)
 	{
-		auto it = _colliders.find(cell);
-		if (it != _colliders.end())
+		if (collider->GetOwner()->GetType() == GameObjectType::Static)
 		{
-			auto& colliders = it->second;
-			auto colliderIt = std::ranges::find(colliders, collider);
-			if (colliderIt != colliders.end())
-				colliders.erase(colliderIt);
+			auto it = _staticColliderGrids.find(cell);
+			if (it != _staticColliderGrids.end())
+			{
+				auto& colliders = it->second;
+				auto colliderIt = std::ranges::find(colliders, collider);
+				if (colliderIt != colliders.end())
+					colliders.erase(colliderIt);
+			}
 		}
-	};
+
+		else if (collider->GetOwner()->GetType() == GameObjectType::Dynamic)
+		{
+			auto it = _dynamicColliderGrids.find(cell);
+			if (it != _dynamicColliderGrids.end())
+			{
+				auto& colliders = it->second;
+				auto colliderIt = std::ranges::find(colliders, collider);
+				if (colliderIt != colliders.end())
+					colliders.erase(colliderIt);
+			}
+		}
+	}
 
 	auto colliderIt = _colliderLinkTable.find(collider);
 
@@ -102,14 +123,42 @@ std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialColli
 
 	for (const auto& cell : occupiedCells)
 	{
-		auto it = _colliders.find(cell);
-
-		if (it != _colliders.end())
+		//static Coliider 은 다이나믹 객체들만 후보군에 오름.
+		if (collider->GetOwner()->GetType() == GameObjectType::Static)
 		{
-			auto& colliders = it->second;
-			potentialCollisions.insert(colliders.begin(), colliders.end());
+			auto it = _dynamicColliderGrids.find(cell);
+
+			if (it != _dynamicColliderGrids.end())
+			{
+				auto& colliders = it->second;
+				potentialCollisions.insert(colliders.begin(), colliders.end());
+			}
 		}
-	};
+
+		else if (collider->GetOwner()->GetType() == GameObjectType::Dynamic)
+		{
+			//dynamic Coliider 은 스태틱,다이나믹 객체들이 후보군에 오름.
+			{
+				auto it = _dynamicColliderGrids.find(cell);
+
+				if (it != _dynamicColliderGrids.end())
+				{
+					auto& colliders = it->second;
+					potentialCollisions.insert(colliders.begin(), colliders.end());
+				}
+			}
+
+			{
+				auto it = _staticColliderGrids.find(cell);
+
+				if (it != _staticColliderGrids.end())
+				{
+					auto& colliders = it->second;
+					potentialCollisions.insert(colliders.begin(), colliders.end());
+				}
+			}
+		}
+	}
 
 	return potentialCollisions;
 }
@@ -117,8 +166,10 @@ std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialColli
 void ColliderManager::Update()
 {
 
-	for (auto& [cell, colliders] : _colliders)
+	//Static 객체와 Dynamic 객체의 충돌 체크 
+	for (auto& [cell, colliders] : _staticColliderGrids)
 	{
+		//셀에 혼자있으니까 검사하지않음 -> 중간에 Dynamic 객체가와서 충돌할수있을수있음 ->  밑에서 검사됨.
 		if (colliders.size() <= 1) continue;
 
 		for (auto& collider : colliders)
@@ -155,8 +206,49 @@ void ColliderManager::Update()
 		}
 	}
 
+	//Dynamic 객체와 Dynamic 객체의 충돌 체크
+	for (auto& [cell, colliders] : _dynamicColliderGrids)
+	{
+		//셀에 혼자있으니까 검사하지않음 -> 안됨 -> 위에서 검사안하고 스킵했음 dynamic  객체는 static  과 dynamic 모두에 충돌체크를 검사하므로
+		// 위에서 static 혼자있다고 걸러진 거를 여기서 검사해야함 -> 다이나믹객체가 수가적으므로 여기서하는게  효율적일거같다.
+		// 근데 static  객체와 dynamic 객체를 분리하는게 효율적일까?
+	/*	if (colliders.size() <= 1) continue;*/
 
-	_colliders.clear();
+		for (auto& collider : colliders)
+		{
+			VisualizeOccupiedCells(collider);
+
+			auto& potentialCollisions = GetPotentialCollisions(collider);
+
+			for (auto& other : potentialCollisions)
+			{
+				if (other == collider) continue;
+
+				if (TotalCheckCollision(collider, other))
+				{
+					if (_colliderLinkTable[collider].contains(other) == false)
+					{
+						_colliderLinkTable[collider].insert(other);
+						_colliderLinkTable[other].insert(collider);
+						CallBackBegin(collider, other);
+						CallBackBegin(other, collider);
+					}
+				}
+				else
+				{
+					if (_colliderLinkTable[collider].contains(other))
+					{
+						_colliderLinkTable[collider].erase(other);
+						_colliderLinkTable[other].erase(collider);
+						CallBackEnd(collider, other);
+						CallBackEnd(other, collider);
+					}
+				}
+			}
+		}
+	}
+
+	_dynamicColliderGrids.clear();
 }
 
 //무언가와 충돌하고 있는지 체크
