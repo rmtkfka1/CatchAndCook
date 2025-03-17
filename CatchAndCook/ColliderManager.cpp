@@ -119,11 +119,10 @@ std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialColli
 
 			if (it != _dynamicColliderGrids.end())
 			{
-				for (auto& other : it->second)
-				{
-					potentialCollisions.insert(other);
-				}
+				auto& colliders = it->second;
+				potentialCollisions.insert(colliders.begin(), colliders.end());
 			}
+
 		}
 		else if (collider->GetOwner()->GetType() == GameObjectType::Dynamic)
 		{
@@ -133,10 +132,8 @@ std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialColli
 
 				if (it != _dynamicColliderGrids.end())
 				{
-					for (auto& other : it->second)
-					{
-						potentialCollisions.insert(other);
-					}
+					auto& colliders = it->second;
+					potentialCollisions.insert(colliders.begin(), colliders.end());
 				}
 			}
 
@@ -146,10 +143,8 @@ std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialColli
 
 				if (it != _staticColliderGrids.end())
 				{
-					for (auto& other : it->second)
-					{
-						potentialCollisions.insert(other);
-					}
+					auto& colliders = it->second;
+					potentialCollisions.insert(colliders.begin(), colliders.end());
 				}
 			}
 		}
