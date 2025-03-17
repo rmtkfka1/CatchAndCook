@@ -125,14 +125,13 @@ void TestScene::Init()
 	random_device urd;
 	mt19937 gen(urd());
 	uniform_real_distribution<float> dis(1.0f, 50.0f);
-	uniform_real_distribution<float> dis2(150.0f, 200.0f);
 	auto& a = ResourceManager::main->Load<Model>(L"kind",L"../Resources/Models/PaperPlane.obj",VertexType::Vertex_Skinned);
 	cout << a->_modelMeshList.size() << endl;
 	shared_ptr<Material> materialO = make_shared<Material>();
 	//shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
 	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
 
-	for (int i = 0; i < 2; ++i)
+	for (int i = 0; i < 300; ++i)
 	{
 		{
 			shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
@@ -146,13 +145,15 @@ void TestScene::Init()
 			auto& collider	=root->AddComponent<Collider>();
 			collider->SetBoundingBox(vec3(0,0,0),vec3(1.0f, 1.0f, 1.0f));
 
-			root->_transform->SetLocalScale(vec3(dis(urd), dis2(urd), dis(urd)));
+			root->_transform->SetLocalScale(vec3(5.0f, 5.0f, 5.0f));
 			root->_transform->SetLocalPosition(vec3(80*i+5.5f, 0, 0));
-
-			if (i == 0)
+			root->SetType(GameObjectType::Static);
+			if (i == 0 || i==1)
 			{
+				if(i==0)
 				root->AddComponent<testComponent>();
 				root->_transform->SetLocalScale(vec3(5.0f, 5.0f, 5.0f));
+				root->SetType(GameObjectType::Dynamic);
 			}
 
 

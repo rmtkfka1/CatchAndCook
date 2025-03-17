@@ -133,8 +133,8 @@ std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialColli
 				auto& colliders = it->second;
 				potentialCollisions.insert(colliders.begin(), colliders.end());
 			}
-
 		}
+
 		else if (collider->GetOwner()->GetType() == GameObjectType::Dynamic)
 		{
 			//dynamic Coliider 은 스태틱,다이나믹 객체들이 후보군에 오름.
@@ -166,10 +166,10 @@ std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialColli
 void ColliderManager::Update()
 {
 
-	//Static 객체와 Dynamic 객체의 충돌 체크
+	//Static 객체와 Dynamic 객체의 충돌 체크 
 	for (auto& [cell, colliders] : _staticColliderGrids)
 	{
-		//셀에 나혼자있는셈이니 걍 스킵
+		//셀에 혼자있으니까 검사하지않음 -> 중간에 Dynamic 객체가와서 충돌할수있을수있음 ->  밑에서 검사됨.
 		if (colliders.size() <= 1) continue;
 
 		for (auto& collider : colliders)
@@ -209,13 +209,10 @@ void ColliderManager::Update()
 	//Dynamic 객체와 Dynamic 객체의 충돌 체크
 	for (auto& [cell, colliders] : _dynamicColliderGrids)
 	{
-		//셀에 나혼자있는셈이니 걍 스킵
 
 		for (auto& collider : colliders)
 		{
 			VisualizeOccupiedCells(collider);
-
-			if (colliders.size() <= 1) continue;
 
 			auto& potentialCollisions = GetPotentialCollisions(collider);
 
