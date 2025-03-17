@@ -13,6 +13,7 @@ Collider::Collider() : _orgin(BoundingOrientedBox()), _bound(BoundingOrientedBox
 
 Collider::~Collider()
 {
+
 }
 
 bool Collider::IsExecuteAble()
@@ -29,13 +30,14 @@ void Collider::Start()
 {
 	Component::Start();
 
+	ColliderManager::main->AddColliderForRay(GetCast<Collider>());
+
 	if (GetOwner()->GetType() == GameObjectType::Static)
 	{
 		CalculateBounding();
 		ColliderManager::main->AddCollider(GetCast<Collider>());
 	}
 	
-
 	groupId = GetInstanceID();
 
 	if(auto obj = GetOwner()->GetComponentWithParents<PhysicsComponent>())
