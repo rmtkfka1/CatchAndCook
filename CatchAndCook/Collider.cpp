@@ -29,6 +29,7 @@ void Collider::Init()
 void Collider::Start()
 {
 	Component::Start();
+	CalculateBounding();
 
 	ColliderManager::main->AddColliderForRay(GetCast<Collider>());
 
