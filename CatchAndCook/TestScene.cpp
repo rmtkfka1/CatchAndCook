@@ -131,7 +131,7 @@ void TestScene::Init()
 	//shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
 	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
 
-	for (int i = 0; i < 300; ++i)
+	for (int i = 0; i < 1000; ++i)
 	{
 		{
 			shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
@@ -147,7 +147,7 @@ void TestScene::Init()
 
 			root->_transform->SetLocalScale(vec3(5.0f, 5.0f, 5.0f));
 			root->_transform->SetLocalPosition(vec3(80*i+5.5f, 0, 0));
-			root->SetType(GameObjectType::Static);
+			//root->SetType(GameObjectType::Static);
 			if (i == 0 || i==1)
 			{
 				if(i==0)

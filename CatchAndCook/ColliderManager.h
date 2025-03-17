@@ -57,9 +57,11 @@ public:
 	vector<vec3> GetOccupiedCells(const shared_ptr<Collider>& collider) const;
 	std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialCollisions(const std::shared_ptr<Collider>& collider) const;
 
-	std::unordered_map<vec3, std::vector<std::shared_ptr<Collider>>, PositionHash> _staticColliderGrids;
-	std::unordered_map<vec3, std::vector<std::shared_ptr<Collider>>, PositionHash> _dynamicColliderGrids;
+	//std::unordered_map<vec3, std::vector<std::shared_ptr<Collider>>, PositionHash> _staticColliderGrids;
+	//std::unordered_map<vec3, std::vector<std::shared_ptr<Collider>>, PositionHash> _dynamicColliderGrids;
+	std::unordered_map<vec3, std::vector<std::shared_ptr<Collider>>, PositionHash> _colliders;
 	std::unordered_map<std::shared_ptr<Collider>,std::unordered_set<std::shared_ptr<Collider>>> _colliderLinkTable;
+
 
 private:
 	vector<std::shared_ptr<Collider>> _collidersForRay;
