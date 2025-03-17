@@ -60,24 +60,7 @@ void testComponent::Update()
 	{
 		auto direction = transform->GetRight();
 		auto& pos = transform->GetLocalPosition();
-		RayHit hit = ColliderManager::main->RayCast(Ray(transform->GetWorldPosition() + transform->GetRight() * 5.01f, direction), 10000.0f);
-
-		cout << hit.distance << endl;
-
-		if (hit.distance>=0)
-		{
-			transform->SetLocalPosition(pos + direction * dt);
-		}
-		else
-		{
-			{
-				vec3 slideVec = direction - hit.normal * direction.Dot(hit.normal);
-				slideVec.Normalize();
-
-				transform->SetLocalPosition(pos + slideVec * dt);
-
-			}
-		}
+		transform->SetLocalPosition(pos + direction * dt);
 	}
 
 	if (Input::main->GetKey(KeyCode::LeftArrow))
@@ -123,6 +106,8 @@ void testComponent::CollisionBegin(const std::shared_ptr<Collider>& collider, co
 void testComponent::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 	Component::CollisionEnd(collider,other);
+
+	cout << "CollisionEnd\n";
 }
 
 bool testComponent::IsExecuteAble()

@@ -143,6 +143,13 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh,int instanceCount)
 void MeshRenderer::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 	Component::CollisionBegin(collider, other);
+
+	
+}
+
+void MeshRenderer::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+{
+
 }
 
 void MeshRenderer::DebugRendering()

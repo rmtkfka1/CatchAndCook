@@ -141,7 +141,11 @@ void TestScene::Init()
 	
 			shared_ptr<GameObject> root = CreateGameObject(L"root_test");
 
-	
+			if (i == 0)
+			{
+				root->AddComponent<testComponent>();
+			}
+
 			auto meshRenderer = root->AddComponent<MeshRenderer>();
 			auto& collider	=root->AddComponent<Collider>();
 			collider->SetBoundingBox(vec3(0,0,0),vec3(1.0f, 1.0f, 1.0f));
