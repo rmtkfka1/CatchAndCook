@@ -141,6 +141,11 @@ void TestScene::Init()
 	
 			shared_ptr<GameObject> root = CreateGameObject(L"root_test");
 
+			if (i % 2 == 1)
+			{
+				root->SetType(GameObjectType::Static);
+			}
+
 			if (i == 0)
 			{
 				root->AddComponent<testComponent>();

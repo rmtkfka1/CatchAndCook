@@ -49,8 +49,7 @@ public:
 	
 public:
 	float _cellSize = 100.0f;
-	//std::vector<std::shared_ptr<Collider>> _staticColliders;
-	//std::vector<std::shared_ptr<Collider>> _dynamicColliders;
+
 	vec3 GetGridCell(const vec3& position) const;
 	vector<vec3> GetOccupiedCells(const shared_ptr<Collider>& collider) const;
 	std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialCollisions(const std::shared_ptr<Collider>& collider) const;
