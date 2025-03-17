@@ -52,6 +52,7 @@ public:
 
 	vec3 GetGridCell(const vec3& position) const;
 	vector<vec3> GetOccupiedCells(const shared_ptr<Collider>& collider) const;
+	vector<vec3> GetOccupiedCells(const Ray& ray) const;
 	std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialCollisions(const std::shared_ptr<Collider>& collider) const;
 
 	std::unordered_map<vec3, std::vector<std::shared_ptr<Collider>>, PositionHash> _staticColliderGrids;

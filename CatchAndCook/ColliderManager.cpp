@@ -38,6 +38,28 @@ vector<vec3> ColliderManager::GetOccupiedCells(const shared_ptr<Collider>& colli
 	return occupiedCells;
 }
 
+vector<vec3> ColliderManager::GetOccupiedCells(const Ray& ray) const
+{
+	auto min = ray.position;
+	auto max = ray.position + ray.direction * 100'00;
+
+	vec3 minCell = GetGridCell(min);
+	vec3 maxCell = GetGridCell(max);
+	vector<vec3> occupiedCells;
+
+	for (float x = minCell.x; x <= maxCell.x; ++x)
+	{
+		for (float y = minCell.y; y <= maxCell.y; ++y)
+		{
+			for (float z = minCell.z; z <= maxCell.z; ++z)
+			{
+				occupiedCells.push_back(vec3(x, y, z));
+			}
+		}
+	}
+	return occupiedCells;
+}
+
 
 
 void ColliderManager::AddCollider(const std::shared_ptr<Collider>& collider)
@@ -224,8 +246,6 @@ void ColliderManager::Update()
 		}
 	}
 
-
-
 	_dynamicColliderGrids.clear();
 } 
 
@@ -268,7 +288,6 @@ void ColliderManager::CallBackBegin(const std::shared_ptr<Collider>& collider, c
 void ColliderManager::CallBackEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 	auto& components = collider->GetOwner()->GetComponentAll();
-
 	for(auto& component : components)
 		component->CollisionEnd(collider,other);
 }
@@ -276,8 +295,11 @@ void ColliderManager::CallBackEnd(const std::shared_ptr<Collider>& collider, con
 RayHit ColliderManager::RayCast(const Ray& ray, const float& dis) const
 {
 	RayHit closestHit;
-	//closestHit.distance = dis;  // 최대 충돌 거리(dis)로 초기화
-	//bool hitFound = false;
+	closestHit.distance = dis;  // 최대 충돌 거리(dis)로 초기화
+	bool hitFound = false;
+
+	auto occupiedCells = GetOccupiedCells(ray);
+
 
 	//// Static 콜라이더 목록 처리
 	//for(const auto& collider : _staticColliders)
@@ -309,7 +331,47 @@ RayHit ColliderManager::RayCast(const Ray& ray, const float& dis) const
 	//	}
 	//}
 
+	for (const vec3& cell : occupiedCells)
+	{
+		// Static Colliders 검사
+		auto itStatic = _staticColliderGrids.find(cell);
+		if (itStatic != _staticColliderGrids.end())
+		{
+			for (const auto& collider : itStatic->second)
+			{
+				if (!collider->GetOwner()->GetActive()) continue; 
+
+				RayHit currentHit;
+				currentHit.distance = dis; // 최대 거리로 초기화
+				if (collider->RayCast(ray, dis, currentHit) && currentHit.distance < closestHit.distance)
+				{
+					closestHit = currentHit;
+				}
+			}
+		}
+
+		// Dynamic Colliders 검사
+		auto itDynamic = _dynamicColliderGrids.find(cell);
+		if (itDynamic != _dynamicColliderGrids.end())
+		{
+			for (const auto& collider : itDynamic->second)
+			{
+				if (!collider->GetOwner()->GetActive()) continue; 
+
+				RayHit currentHit;
+				currentHit.distance = dis; // 최대 거리로 초기화
+				if (collider->RayCast(ray, dis, currentHit) && currentHit.distance < closestHit.distance)
+				{
+					closestHit = currentHit;
+				}
+			}
+		}
+	}
+
 	return closestHit;
+	
+
+
 }
 
 
