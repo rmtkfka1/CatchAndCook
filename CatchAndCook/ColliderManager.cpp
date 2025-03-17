@@ -140,10 +140,12 @@ void ColliderManager::Update()
 	{
 		for (auto& collider : colliders)
 		{
-			auto& potentialCollisions = GetPotentialCollisions(collider);
+			auto potentialCollisions = GetPotentialCollisions(collider);
 
 			for (auto& other : potentialCollisions)
 			{
+				if (other == collider) continue;
+
 				if (TotalCheckCollision(collider, other))
 				{
 					if (_colliderLinkTable[collider].contains(other) == false)
@@ -178,6 +180,8 @@ void ColliderManager::Update()
 
 			for (auto& other : potentialCollisions)
 			{
+				if (other == collider) continue;
+
 				if (TotalCheckCollision(collider, other))
 				{
 					if (_colliderLinkTable[collider].contains(other) == false)
@@ -201,6 +205,8 @@ void ColliderManager::Update()
 			}
 		}
 	}
+
+
 
 	_dynamicColliderGrids.clear();
 } 
