@@ -193,13 +193,13 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
             for (auto& ele : vec)
             {
-             /*      if(ele.renderer->IsCulling() == true)
+                   if(ele.renderer->IsCulling() == true)
                    {
                        if(CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound())==false)
                        {
                            continue;
                        }
-                   }*/
+                   }
 
                 InstancingManager::main->AddObject(ele);
                 

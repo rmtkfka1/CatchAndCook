@@ -18,6 +18,7 @@ public:
 	void Render();
 
 private:
+	void Debug();
 	void SeaColor();
 	void SeaMove();
 	void Lighting();

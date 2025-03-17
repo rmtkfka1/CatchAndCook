@@ -6,6 +6,7 @@
 #include "WaterController.h"
 #include <commdlg.h>
 #include "ComputeManager.h"
+#include "Gizmo.h"
 
 unique_ptr<ImguiManager> ImguiManager::main;
 
@@ -40,10 +41,12 @@ void ImguiManager::Render()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
+	Debug();
 	Compute();
 	Lighting();
 	SeaMove();
 	SeaColor();
+
 
 	ImGui::SliderFloat("separationWeight", separationWeight, 0, 100.0f);
 	ImGui::SliderFloat("alignmentWeight", alignmentWeight, 0, 100.0f);
@@ -52,6 +55,7 @@ void ImguiManager::Render()
 	ImGui::Render();
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), Core::main->GetCmdList().Get());
 }
+
 void ImguiManager::SeaMove()
 {
 	ImGui::Begin("sea_move");
@@ -116,6 +120,18 @@ void ImguiManager::SeaMove()
 	}
 
 	ImGui::End();
+}
+void ImguiManager::Debug()
+{
+	ImGui::Begin("Debug");
+
+	if (ImGui::Button("Debug_ON"))
+	{
+		Gizmo::main->SetDebugOn(!Gizmo::main->GetDebugOn());
+	}
+
+	ImGui::End();
+
 }
 void ImguiManager::SeaColor()
 {

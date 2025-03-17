@@ -30,6 +30,8 @@ class Gizmo : public RendererBase
 public:
 	void Init();
 	void Clear();
+	void SetDebugOn(bool ON) { _ON = ON; }
+	bool GetDebugOn() { return _ON; }
 
 	static void WidthRollBack(){ main->_width = main->_prevWidth; }
 	static void Width(float width = 0.05f) { main->_prevWidth = main->_width; main->_width = width; };

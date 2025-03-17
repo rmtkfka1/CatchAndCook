@@ -93,8 +93,15 @@ void MeshRenderer::RenderBegin()
 			if(i == 0) totalBox = bound;
 			else  BoundingBox::CreateMerged(totalBox,totalBox,bound);
 		}
+
 		SetBound(totalBox);
 	}
+
+	if (Gizmo::main->GetDebugOn())
+	{
+		Gizmo::Box(GetBound(),vec4(0.0f,1.0f,1.0f,1.0f));
+	}
+
 
 	for (int i = 0; i < _mesh.size(); i++)
 	{

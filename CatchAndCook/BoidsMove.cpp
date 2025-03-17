@@ -31,7 +31,6 @@ void BoidsMove::Init()
 
 	_speed = dis(urd);
 
-
     GetOwner()->_transform->SetVelocity({ _speed, _speed,_speed });
 	GetOwner()->_transform->SetForward({ dis2(urd), dis2(urd), dis2(urd) });
 }
