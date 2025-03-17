@@ -123,8 +123,6 @@ std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialColli
 
 	for (const auto& cell : occupiedCells)
 	{
-		//static Coliider 은 다이나믹 객체들만 후보군에 오름.
-		if (collider->GetOwner()->GetType() == GameObjectType::Static)
 		{
 			auto it = _dynamicColliderGrids.find(cell);
 
@@ -135,30 +133,17 @@ std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialColli
 			}
 		}
 
-		else if (collider->GetOwner()->GetType() == GameObjectType::Dynamic)
 		{
-			//dynamic Coliider 은 스태틱,다이나믹 객체들이 후보군에 오름.
+			auto it = _staticColliderGrids.find(cell);
+
+			if (it != _staticColliderGrids.end())
 			{
-				auto it = _dynamicColliderGrids.find(cell);
-
-				if (it != _dynamicColliderGrids.end())
-				{
-					auto& colliders = it->second;
-					potentialCollisions.insert(colliders.begin(), colliders.end());
-				}
-			}
-
-			{
-				auto it = _staticColliderGrids.find(cell);
-
-				if (it != _staticColliderGrids.end())
-				{
-					auto& colliders = it->second;
-					potentialCollisions.insert(colliders.begin(), colliders.end());
-				}
+				auto& colliders = it->second;
+				potentialCollisions.insert(colliders.begin(), colliders.end());
 			}
 		}
-	}
+
+	};
 
 	return potentialCollisions;
 }
@@ -166,50 +151,10 @@ std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialColli
 void ColliderManager::Update()
 {
 
-	//Static 객체와 Dynamic 객체의 충돌 체크 
-	for (auto& [cell, colliders] : _staticColliderGrids)
-	{
-		//셀에 혼자있으니까 검사하지않음 -> 중간에 Dynamic 객체가와서 충돌할수있을수있음 ->  밑에서 검사됨.
-		if (colliders.size() <= 1) continue;
-
-		for (auto& collider : colliders)
-		{
-			VisualizeOccupiedCells(collider);
-
-			auto potentialCollisions = GetPotentialCollisions(collider);
-
-			for (auto& other : potentialCollisions)
-			{
-				if (other == collider) continue;
-
-				if (TotalCheckCollision(collider, other))
-				{
-					if (_colliderLinkTable[collider].contains(other) == false)
-					{
-						_colliderLinkTable[collider].insert(other);
-						_colliderLinkTable[other].insert(collider);
-						CallBackBegin(collider, other);
-						CallBackBegin(other, collider);
-					}
-				}
-				else
-				{
-					if (_colliderLinkTable[collider].contains(other))
-					{
-						_colliderLinkTable[collider].erase(other);
-						_colliderLinkTable[other].erase(collider);
-						CallBackEnd(collider, other);
-						CallBackEnd(other, collider);
-					}
-				}
-			}
-		}
-	}
-
 	//Dynamic 객체와 Dynamic 객체의 충돌 체크
 	for (auto& [cell, colliders] : _dynamicColliderGrids)
 	{
-		//if (colliders.size() <= 1) continue;
+		if (colliders.size() <= 1  && _staticColliderGrids[cell].size() ==0 ) continue;
 
 		for (auto& collider : colliders)
 		{
