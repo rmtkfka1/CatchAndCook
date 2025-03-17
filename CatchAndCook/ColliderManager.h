@@ -15,6 +15,16 @@ struct RayHit
 	}
 };
 
+struct PositionHash 
+{
+	size_t operator()(const vec3& v) const 
+	{
+		return std::hash<int>()(static_cast<int>(v.x)) ^
+			std::hash<int>()(static_cast<int>(v.y)) ^
+			std::hash<int>()(static_cast<int>(v.z));
+	}
+};
+
 class ColliderManager
 {
 public:
@@ -40,6 +50,10 @@ public:
 	std::vector<std::shared_ptr<Collider>> _staticColliders;
 	std::vector<std::shared_ptr<Collider>> _dynamicColliders;
 	std::unordered_map<std::shared_ptr<Collider>,std::unordered_set<std::shared_ptr<Collider>>> _colliderLinkTable;
+
+
+private:
+	float cellSize = 300.0f;
 };
 
 

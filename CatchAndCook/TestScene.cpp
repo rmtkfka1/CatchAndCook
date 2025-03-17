@@ -129,10 +129,10 @@ void TestScene::Init()
 	auto& a = ResourceManager::main->Load<Model>(L"kind",L"../Resources/Models/PaperPlane.obj",VertexType::Vertex_Skinned);
 	cout << a->_modelMeshList.size() << endl;
 	shared_ptr<Material> materialO = make_shared<Material>();
-	shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
-	//shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
+	//shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
+	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
 
-	for (int i = 0; i < 50; ++i)
+	for (int i = 0; i < 300; ++i)
 	{
 		{
 			shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
@@ -141,11 +141,7 @@ void TestScene::Init()
 	
 			shared_ptr<GameObject> root = CreateGameObject(L"root_test");
 
-			if (i == 0)
-			{
-				root->AddComponent<testComponent>();
-			}
-
+	
 			auto meshRenderer = root->AddComponent<MeshRenderer>();
 			auto& collider	=root->AddComponent<Collider>();
 			collider->SetBoundingBox(vec3(0,0,0),vec3(1.0f, 1.0f, 1.0f));
@@ -153,8 +149,6 @@ void TestScene::Init()
 			root->_transform->SetLocalScale(vec3(5.0f, 5.0f, 5.0f));
 			root->_transform->SetLocalPosition(vec3(30*i, 0, 0));
 
-			if(i==1)
-			root->_transform->SetLocalRotation(vec3(0, 45.0f, 0)* R2D);
 
 			materialO->SetShader(shader);
 			materialO->SetPass(RENDER_PASS::Deffered);
