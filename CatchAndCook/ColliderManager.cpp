@@ -210,11 +210,12 @@ void ColliderManager::Update()
 	for (auto& [cell, colliders] : _dynamicColliderGrids)
 	{
 		//셀에 나혼자있는셈이니 걍 스킵
-		if (colliders.size() <= 1) continue;  
 
 		for (auto& collider : colliders)
 		{
 			VisualizeOccupiedCells(collider);
+
+			if (colliders.size() <= 1) continue;
 
 			auto& potentialCollisions = GetPotentialCollisions(collider);
 
