@@ -209,10 +209,7 @@ void ColliderManager::Update()
 	//Dynamic 객체와 Dynamic 객체의 충돌 체크
 	for (auto& [cell, colliders] : _dynamicColliderGrids)
 	{
-		//셀에 혼자있으니까 검사하지않음 -> 안됨 -> 위에서 검사안하고 스킵했음 dynamic  객체는 static  과 dynamic 모두에 충돌체크를 검사하므로
-		// 위에서 static 혼자있다고 걸러진 거를 여기서 검사해야함 -> 다이나믹객체가 수가적으므로 여기서하는게  효율적일거같다.
-		// 근데 static  객체와 dynamic 객체를 분리하는게 효율적일까?
-	/*	if (colliders.size() <= 1) continue;*/
+		//if (colliders.size() <= 1) continue;
 
 		for (auto& collider : colliders)
 		{
