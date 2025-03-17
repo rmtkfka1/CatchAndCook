@@ -62,6 +62,7 @@ public:
 	void SetBoundingSphere(vec3 center,float radius);
 	void SetBoundingFrustum(BoundingFrustum& boundingFrustum);
 	void CalculateBounding();
+	pair<vec3, vec3> GetMinMax();
 
 	BoundingUnion& GetBoundUnion() {return _bound;}
 

@@ -286,3 +286,23 @@ void Collider::CalculateBounding()
 		_orgin.frustum.Transform(_bound.frustum,mat);
 	}
 }
+
+pair<vec3, vec3> Collider::GetMinMax()
+{
+	if (_type == CollisionType::Box)
+	{
+		return std::make_pair(_bound.box.Center - _bound.box.Extents, _bound.box.Center + _bound.box.Extents);
+	}
+
+	else if (_type == CollisionType::Sphere)
+	{
+		return std::make_pair(_bound.sphere.Center - vec3(_bound.sphere.Radius), _bound.sphere.Center + vec3(_bound.sphere.Radius));
+	}
+
+	else if (_type == CollisionType::Frustum)
+	{
+		return std::make_pair(vec3(0, 0, 0), vec3(0, 0, 0));
+	}
+
+	return std::make_pair(vec3(0, 0, 0), vec3(0, 0, 0));
+}
