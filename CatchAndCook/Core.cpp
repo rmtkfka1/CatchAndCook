@@ -102,6 +102,10 @@ void Core::RenderEnd()
      ThrowIfFailed(_swapChain->Present(uiSyncInterval, uiPresentFlags));
     _renderTarget->ChangeIndex();
     _bufferManager->Reset();
+    g_debug_deferred_count = 0;
+	g_debug_forward_count = 0;
+	g_debug_draw_call = 0;
+
 }
 
 

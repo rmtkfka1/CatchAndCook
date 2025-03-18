@@ -29,6 +29,9 @@ size_t SRV_STRUCTURED_TABLE_INDEX = CBV_ROOT_INDEX_COUNT + 8;
 //size_t SRV_TABLE_REGISTER_COUNT = 8;
 size_t UAV_TABLE_REGISTER_COUNT = 4;
 
+ size_t g_debug_forward_count=0;
+ size_t g_debug_deferred_count=0;
+ size_t g_debug_draw_call=0;
 
 std::vector<VertexProp> SkinProp
 {

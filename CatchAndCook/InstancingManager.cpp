@@ -7,7 +7,6 @@ unique_ptr<InstancingManager> InstancingManager::main;
 
 void InstancingManager::Render()
 {
-
 	for(auto& [id, objects] : _objectMap)
 	{
 		auto& cmdList = Core::main->GetCmdList();
@@ -42,7 +41,7 @@ void InstancingManager::Render()
 		memcpy(cbufferContainer->ptr, &param, sizeof(InstanceOffsetParam));
 		cmdList->SetGraphicsRootConstantBufferView(4, cbufferContainer->GPUAdress);
 
-
+		g_debug_draw_call++;
 		objects[0].renderer->Rendering(objects[0].material, objects[0].mesh, objects.size());
 	}
 

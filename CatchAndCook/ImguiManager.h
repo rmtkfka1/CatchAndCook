@@ -19,10 +19,18 @@ public:
 
 private:
 	void Debug();
-	void SeaColor();
-	void SeaMove();
-	void Lighting();
-	void Compute();
+
+	void BoidMove();
+
+	void GizmoController();
+
+	void ComputeController();
+
+	void LightController();
+
+	void SeaController();
+
+
 	
 
 public:

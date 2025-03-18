@@ -82,21 +82,21 @@ void Collider::RenderBegin()
 
 		if (_type == CollisionType::Box)
 		{
-			Gizmo::Width(1.0f);
+			Gizmo::Width(0.3f);
 			Gizmo::Box(_bound.box, !isCollision ? Vector4(0, 1, 0, 1) : Vector4(1, 0.5, 0, 1));
 			Gizmo::WidthRollBack();
 		}
 
 		else if (_type == CollisionType::Sphere)
 		{
-			Gizmo::Width(1.0f);
+			Gizmo::Width(0.3f);
 			Gizmo::Sphere(_bound.sphere, !isCollision ? Vector4(0, 1, 0, 1) : Vector4(1, 0.5, 0, 1));
 			Gizmo::WidthRollBack();
 		}
 
 		else if (_type == CollisionType::Frustum)
 		{
-			Gizmo::Width(1.0f);
+			Gizmo::Width(0.3f);
 			Gizmo::Frustum(_bound.frustum, !isCollision ? Vector4(0, 1, 0, 1) : Vector4(1, 0.5, 0, 1));
 			Gizmo::WidthRollBack();
 		}

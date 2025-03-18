@@ -99,7 +99,7 @@ void MeshRenderer::RenderBegin()
 
 	if(HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::Culling))
 	{
-		Gizmo::Box(GetBound(),vec4(1.0f,1.0f,1.0f,1.0f));
+		Gizmo::Box(GetBound(),vec4(0,0,1.0f,1.0f));
 	}
 
 	for (int i = 0; i < _mesh.size(); i++)

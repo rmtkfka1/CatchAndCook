@@ -76,6 +76,7 @@ void Scene::RenderBegin()
     Profiler::Set("Render_RenderBegin");
     for (auto& gameObject : _gameObjects)
     	gameObject->RenderBegin();
+
     Profiler::Fin();
     Gizmo::main->RenderBegin();
 }
@@ -161,6 +162,8 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
             for(auto& ele : vec)
             {
+                g_debug_forward_count++;
+
                 if(ele.renderer->IsCulling() == true)
                 {
                     if(CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound())==false)
@@ -193,6 +196,8 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
             for (auto& ele : vec)
             {
+                g_debug_deferred_count++;
+
                    if(ele.renderer->IsCulling() == true)
                    {
                        if(CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound())==false)
