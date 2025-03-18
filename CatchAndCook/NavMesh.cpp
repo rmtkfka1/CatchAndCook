@@ -1,0 +1,94 @@
+﻿#include "pch.h"
+#include "NavMesh.h"
+
+#include "Gizmo.h"
+
+NavMesh::~NavMesh()
+{
+}
+
+bool NavMesh::IsExecuteAble()
+{
+	return Component::IsExecuteAble();
+}
+
+void NavMesh::Init()
+{
+	Component::Init();
+}
+
+void NavMesh::Start()
+{
+	Component::Start();
+	NavMeshManager::main->SetNavMeshData(_datas);
+
+	startPos = Vector3(250, 0, 220);
+}
+
+void NavMesh::Update()
+{
+	Component::Update();
+	startPos += Vector3((Input::main->GetKey(KeyCode::RightArrow)?1:0) - (Input::main->GetKey(KeyCode::LeftArrow) ? 1 : 0),
+		0,
+		(Input::main->GetKey(KeyCode::UpArrow) ? 1 : 0) - (Input::main->GetKey(KeyCode::DownArrow) ? 1 : 0)
+		)
+	* Time::main->GetDeltaTime() * 40;
+	NavMeshManager::main->CalculatePath(Vector3(350, 0, 150), startPos,
+		NavMeshManager::main->GetNavMeshData());
+	Gizmo::Box(BoundingBox(startPos, Vector3(1, 100, 1)));
+}
+
+void NavMesh::Update2()
+{
+	Component::Update2();
+}
+
+void NavMesh::Enable()
+{
+	Component::Enable();
+}
+
+void NavMesh::Disable()
+{
+	Component::Disable();
+}
+
+void NavMesh::RenderBegin()
+{
+	Component::RenderBegin();
+}
+
+void NavMesh::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+{
+	Component::CollisionBegin(collider, other);
+}
+
+void NavMesh::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+{
+	Component::CollisionEnd(collider, other);
+}
+
+void NavMesh::ChangeParent(const std::shared_ptr<GameObject>& prev, const std::shared_ptr<GameObject>& current)
+{
+	Component::ChangeParent(prev, current);
+}
+
+void NavMesh::SetDestroy()
+{
+	Component::SetDestroy();
+}
+
+void NavMesh::Destroy()
+{
+	Component::Destroy();
+}
+
+std::vector<NavMeshData>& NavMesh::GetNavMeshData()
+{
+	return _datas;
+}
+
+void NavMesh::SetNavMeshData(const std::vector<NavMeshData>& data)
+{
+	_datas = data;
+}

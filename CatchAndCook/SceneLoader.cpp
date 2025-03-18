@@ -11,6 +11,7 @@
 #include "Transform.h"
 #include "MeshRenderer.h"
 #include "ModelMesh.h"
+#include "NavMesh.h"
 #include "PhysicsComponent.h"
 #include "SkinnedMeshRenderer.h"
 #include "Terrain.h"
@@ -157,6 +158,11 @@ void SceneLoader::PrevProcessingComponent(json& data)
     if(type == L"Animator")
     {
         auto terr = CreateObject<SkinnedHierarchy>(guid);
+        component = terr;
+    }
+    if (type == L"NavMeshSurface")
+    {
+        auto terr = CreateObject<NavMesh>(guid);
         component = terr;
     }
 
@@ -450,6 +456,39 @@ void SceneLoader::LinkComponent(json& jsonData)
         terrain->SetInstances(instances);
 		terrain->SetInstanceDatas(instancesDatas);
 		terrain->SetHeightMap(rawPath,pngPath, Vector2(rawSize,rawSize), fieldSize);
+    }
+
+
+    if (type == L"NavMeshSurface")
+    {
+        auto navMesh = IGuid::FindObjectByGuid<NavMesh>(guid);
+
+        std::vector<NavMeshData> datas;
+
+        auto& vertexs = jsonData["vertexs"];
+        auto& indexs = jsonData["indexs"];
+        auto& adjacency = jsonData["adjacency"];
+
+        int vertexCount = vertexs.size();
+        for (int i = 0; i < vertexCount; i++)
+        {
+            NavMeshData data;
+			data.index = i;
+            data.position = Vector3(
+                vertexs[i][0].get<float>(),
+                vertexs[i][1].get<float>(),
+                vertexs[i][2].get<float>()
+            );
+            for (int j = 0; j < adjacency[i].size(); j++)
+            {
+				int adjIndex = adjacency[i][j].get<int>();
+				data.adjectIndexs.push_back(adjIndex);
+            }
+            datas.push_back(data);
+        }
+
+		navMesh->SetNavMeshData(datas);
+        
     }
 }
 
