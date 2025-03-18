@@ -97,7 +97,7 @@ void MeshRenderer::RenderBegin()
 		SetBound(totalBox);
 	}
 
-	if (Gizmo::main->GetDebugOn() && HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::Culling))
+	if(HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::Culling))
 	{
 		Gizmo::Box(GetBound(),vec4(1.0f,1.0f,1.0f,1.0f));
 	}

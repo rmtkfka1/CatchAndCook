@@ -23,6 +23,7 @@ public:
 	~GizmoTexture() override;
 	void Rendering(Material* material,Mesh* mesh,int instanceCount) override;
 	void DebugRendering() override;
+
 };
 
 enum class GizmoFlags : uint32_t
@@ -46,8 +47,6 @@ class Gizmo : public RendererBase
 public:
 	void Init();
 	void Clear();
-	void SetDebugOn(bool ON) { _ON = ON; }
-	bool GetDebugOn() { return _ON; }
 
 	static void WidthRollBack(){ main->_width = main->_prevWidth; }
 	static void Width(float width = 0.05f) { main->_prevWidth = main->_width; main->_width = width; };
@@ -75,10 +74,9 @@ private:
 	std::shared_ptr<Material> material;
 	InstanceBufferContainer* container;
 
-	float _width = 0.1f;
+	float _width = 0.5f;
 	float _prevWidth = 0.05f;
 
 	GizmoTexture textureGizmo;
-	bool _ON = true;
 };
 

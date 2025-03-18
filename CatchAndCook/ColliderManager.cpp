@@ -230,7 +230,7 @@ bool ColliderManager::TotalCheckCollision(const std::shared_ptr<Collider>& src, 
 
 void ColliderManager::VisualizeOccupiedCells(const shared_ptr<Collider>& collider)
 {
-	if (Gizmo::main->GetDebugOn() && HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::DivideSpace))
+	if (HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::DivideSpace))
 	{
 		auto occupiedCells = GetOccupiedCells(collider);
 

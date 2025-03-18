@@ -128,10 +128,6 @@ void ImguiManager::Debug()
 {
 	ImGui::Begin("Debug");
 
-	if (ImGui::Button("Debug_ON/OFF"))
-	{
-		Gizmo::main->SetDebugOn(!Gizmo::main->GetDebugOn());
-	}
 
 	if (ImGui::CollapsingHeader("Gizmo Control"))
 	{
@@ -142,18 +138,18 @@ void ImguiManager::Debug()
 
 		if (ImGui::Button("Collision"))
 		{
-			Gizmo::main->_flags = GizmoFlags::Collision; 
+			Gizmo::main->_flags = Gizmo::main->_flags|GizmoFlags::Collision;
 		}
 
 		if (ImGui::Button("DivideSpace"))
 		{
-			Gizmo::main->_flags = GizmoFlags::DivideSpace; 
+			Gizmo::main->_flags = Gizmo::main->_flags |  GizmoFlags::DivideSpace;
 		}
 
 
 		if (ImGui::Button("Culling"))
 		{
-			Gizmo::main->_flags = GizmoFlags::Culling; 
+			Gizmo::main->_flags =  Gizmo::main->_flags| GizmoFlags::Culling; 
 		}
 
 	
