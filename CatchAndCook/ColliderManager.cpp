@@ -242,8 +242,20 @@ void ColliderManager::Update()
 		}
 	}
 
-	_dynamicColliderGrids.clear();
-} 
+	std::unordered_map<vec3, std::vector<std::shared_ptr<Collider>>, PositionHash> _newDynamicColliderGrids;
+	_newDynamicColliderGrids.reserve(_dynamicColliderGrids.size());
+
+	for (auto& collider : _colliderDynamic)
+	{
+		auto occupiedCells = GetOccupiedCells(collider);
+		for (const auto& cell : occupiedCells)
+		{
+			_newDynamicColliderGrids[cell].push_back(collider);
+		}
+	}
+
+	_dynamicColliderGrids =  std::move(_newDynamicColliderGrids);
+}
 
 //무언가와 충돌하고 있는지 체크
 bool ColliderManager::IsCollision(const std::shared_ptr<Collider>& src)

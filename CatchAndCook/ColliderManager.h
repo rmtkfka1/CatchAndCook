@@ -33,6 +33,7 @@ public:
 
 	void AddCollider(const std::shared_ptr<Collider>& collider);
 	void AddColliderForRay(const std::shared_ptr<Collider>& collider);
+	void AddColliderForDynamic(const std::shared_ptr<Collider>& collider) { _colliderDynamic.push_back(collider); }
 	void RemoveAColliderForRay(const std::shared_ptr<Collider>& collider);
 	void RemoveCollider(const std::shared_ptr<Collider>& collider);
 	void Update();
@@ -63,6 +64,7 @@ public:
 
 private:
 	vector<std::shared_ptr<Collider>> _collidersForRay;
+	vector<std::shared_ptr<Collider>> _colliderDynamic;
 
 };
 

@@ -37,7 +37,14 @@ void Collider::Start()
 		CalculateBounding();
 		ColliderManager::main->AddCollider(GetCast<Collider>());
 	}
-	
+
+	if (GetOwner()->GetType() == GameObjectType::Dynamic)
+	{
+		CalculateBounding();
+		ColliderManager::main->AddColliderForDynamic(GetCast<Collider>());
+		ColliderManager::main->AddCollider(GetCast<Collider>());
+	}
+
 	groupId = GetInstanceID();
 
 	if(auto obj = GetOwner()->GetComponentWithParents<PhysicsComponent>())
@@ -52,7 +59,6 @@ void Collider::Update()
 	if (GetOwner()->GetType() == GameObjectType::Dynamic)
 	{
 		CalculateBounding();
-		ColliderManager::main->AddCollider(GetCast<Collider>());
 	}
 }
 

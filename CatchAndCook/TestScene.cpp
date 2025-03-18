@@ -132,7 +132,7 @@ void TestScene::Init()
 	//shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
 	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
 
-	for (int i = 0; i < 300; ++i)
+	for (int i = 0; i < 1000; ++i)
 	{
 		{
 			shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
@@ -155,8 +155,16 @@ void TestScene::Init()
 			auto& collider	=root->AddComponent<Collider>();
 			collider->SetBoundingBox(vec3(0,0,0),vec3(1.0f, 1.0f, 1.0f));
 
-			root->_transform->SetLocalScale(vec3(5.0f, 5.0f, 5.0f));
-			root->_transform->SetLocalPosition(vec3(30*i, 0, 0));
+			root->_transform->SetLocalScale(vec3(dis(urd), dis(urd), dis(urd)));
+			root->_transform->SetLocalPosition(vec3(ddis(urd), ddis(urd), ddis(urd)));
+			root->SetType(GameObjectType::Dynamic);
+			if (i == 0 )
+			{
+				root->AddComponent<testComponent>();
+				root->_transform->SetLocalPosition(vec3(0, 0, 0));
+				root->_transform->SetLocalScale(vec3(5.0f, 5.0f, 5.0f));
+				root->SetType(GameObjectType::Dynamic);
+			}
 
 
 			materialO->SetShader(shader);
