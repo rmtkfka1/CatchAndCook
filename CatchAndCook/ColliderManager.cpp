@@ -239,12 +239,11 @@ void ColliderManager::VisualizeOccupiedCells(const shared_ptr<Collider>& collide
 			vec3 min = cell * _cellSize;
 			vec3 max = min + vec3(_cellSize, _cellSize, _cellSize);
 
-			if (collider->groupId % 3 == 0)
-				Gizmo::main->Box(min, max, vec4(1, 0, 0, 1));
-			else if (collider->groupId % 3 == 1)
-				Gizmo::main->Box(min, max, vec4(0, 1, 0, 1));
+			if (collider->GetOwner()->GetType() == GameObjectType::Static)
+				Gizmo::main->Box(min, max, vec4(0.0f, 1.0f, 1.0f, 1));
 			else
-				Gizmo::main->Box(min, max, vec4(0, 0, 1, 1));
+				Gizmo::main->Box(min, max, vec4(0.5f, 0.1f, 0.1f, 1));
+			
 		}
 	}
 

@@ -30,7 +30,7 @@ void testComponent::Start()
 
 void testComponent::Update()
 {
-	const float speed = 10.0f;
+	const float speed = 50.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;
 
 	std::shared_ptr<Transform> transform =GetOwner()->_transform;
@@ -69,6 +69,21 @@ void testComponent::Update()
 		auto& pos = transform->GetLocalPosition();
 		transform->SetLocalPosition(pos - direction * dt);
 	}
+
+	if (Input::main->GetKey(KeyCode::O))
+	{
+		auto direction = transform->GetUp();
+		auto& pos = transform->GetLocalPosition();
+		transform->SetLocalPosition(pos + direction * dt);
+	}
+
+	if (Input::main->GetKey(KeyCode::P))
+	{
+		auto direction = transform->GetUp();
+		auto& pos = transform->GetLocalPosition();
+		transform->SetLocalPosition(pos - direction * dt);
+	}
+
 
 
 }

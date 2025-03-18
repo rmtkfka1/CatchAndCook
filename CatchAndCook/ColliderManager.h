@@ -51,7 +51,7 @@ public:
 	RayHit RayCast(const Ray& ray, const float& dis) const;
 
 public:
-	float _cellSize = 40.0f;
+	float _cellSize = 46.0f;
 
 	vec3 GetGridCell(const vec3& position) const;
 	vector<vec3> GetOccupiedCells(const shared_ptr<Collider>& collider) const;
