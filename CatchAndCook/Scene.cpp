@@ -168,6 +168,7 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                 {
                     if(CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound())==false)
                     {
+                        g_debug_forward_culling_count++;
                         continue;
                     }
                 }
@@ -202,6 +203,7 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                    {
                        if(CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound())==false)
                        {
+                           g_debug_deferred_culling_count++;
                            continue;
                        }
                    }

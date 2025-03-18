@@ -105,6 +105,8 @@ void Core::RenderEnd()
     g_debug_deferred_count = 0;
 	g_debug_forward_count = 0;
 	g_debug_draw_call = 0;
+    g_debug_deferred_culling_count = 0;
+    g_debug_forward_culling_count = 0;
 
 }
 

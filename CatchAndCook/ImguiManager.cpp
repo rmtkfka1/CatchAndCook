@@ -57,6 +57,8 @@ void ImguiManager::Debug()
         ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 		ImGui::Text("ForwardCount: %d", g_debug_forward_count);
         ImGui::Text("DeferredCount: %d", g_debug_deferred_count);
+		ImGui::Text("ForwardCullingCount: %d", g_debug_forward_culling_count);
+		ImGui::Text("DeferredCullingCount: %d", g_debug_deferred_culling_count);
         ImGui::Text("DrawCall: %d", g_debug_draw_call);
     }
 
