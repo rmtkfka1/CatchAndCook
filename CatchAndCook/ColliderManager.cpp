@@ -165,7 +165,7 @@ void ColliderManager::Update()
 
 		for (auto& collider : colliders)
 		{
-			/*VisualizeOccupiedCells(collider);*/
+			VisualizeOccupiedCells(collider);
 
 			auto potentialCollisions = GetPotentialCollisions(collider);
 
@@ -233,6 +233,8 @@ void ColliderManager::VisualizeOccupiedCells(const shared_ptr<Collider>& collide
 {
 	if (HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::DivideSpace))
 	{
+		Gizmo::Width(0.5f);
+
 		auto occupiedCells = GetOccupiedCells(collider);
 
 		for (const auto& cell : occupiedCells)

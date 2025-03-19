@@ -121,6 +121,11 @@ void ImguiManager::GizmoController()
     {
         Gizmo::main->_flags = Gizmo::main->_flags | GizmoFlags::Culling;
     }
+
+	if (ImGui::Button("WorldPivot"))
+	{
+		Gizmo::main->_flags = Gizmo::main->_flags | GizmoFlags::WorldPivot;
+	}
 }
 
 void ImguiManager::ComputeController()

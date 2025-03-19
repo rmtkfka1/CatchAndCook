@@ -82,14 +82,20 @@ void Transform::Destroy()
 void Transform::RenderBegin()
 {
 	Component::RenderBegin();
-    auto o = GetWorldPosition();
-    auto f = GetForward();
-    auto u = GetUp();
-    auto r = GetRight();
-    Gizmo::Line(o, o + f, Vector4(0,0,1,1));
-    Gizmo::Line(o,o + u,Vector4(0,1,0,1));
-    Gizmo::Line(o,o + r,Vector4(1,0,0,1));
 
+	if (HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::WorldPivot))
+	{
+        Gizmo::Width(0.02f);
+        auto o = GetWorldPosition();
+        auto f = GetForward();
+        auto u = GetUp();
+        auto r = GetRight();
+        Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
+        Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
+        Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));
+	}
+
+  
     Matrix matrix;
     GetLocalToWorldMatrix(matrix);
 

@@ -41,7 +41,7 @@ void BufferManager::Init()
 
 	{
 		CreateInstanceBufferPool(BufferType::TransformInstanceParam,sizeof(Instance_Transform),10000,128);
-		CreateInstanceBufferPool(BufferType::GizmoInstanceParam,sizeof(Instance_Gizmo),500000,1);
+		CreateInstanceBufferPool(BufferType::GizmoInstanceParam,sizeof(Instance_Gizmo),1000000,1);
 	}
 	
 	{

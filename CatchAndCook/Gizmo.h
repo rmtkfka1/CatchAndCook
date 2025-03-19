@@ -32,6 +32,7 @@ enum class GizmoFlags : uint32_t
 	DivideSpace = 1 << 1,
 	Culling = 1 << 2,   
 	Collision = 1 << 3,   
+	WorldPivot = 1 << 4,
 };
 
 inline GizmoFlags operator|(GizmoFlags a, GizmoFlags b) {
@@ -74,8 +75,8 @@ private:
 	std::shared_ptr<Material> material;
 	InstanceBufferContainer* container;
 
-	float _width = 2.0f;
-	float _prevWidth = 1.0f;
+	float _width = 0.5f;
+	float _prevWidth = 0.5f;
 
 	GizmoTexture textureGizmo;
 };
