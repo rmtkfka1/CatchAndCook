@@ -288,7 +288,6 @@ void Collider::CalculateBounding()
 
 		if (onwerTransform->IsLocalToWorldChanged())
 		{
-			cout << "안녕" << endl;
 			_orgin.box.Transform(_bound.box, mat);
 			XMStoreFloat4(&_bound.box.Orientation, XMQuaternionNormalize(XMLoadFloat4(&_bound.box.Orientation)));
 		}
@@ -319,7 +318,6 @@ pair<vec3, vec3> Collider::GetMinMax()
 		vec3 center = _bound.box.Center;
 		vec3 extents = _bound.box.Extents;
 
-		// 박스의 8개 꼭짓점을 로컬 좌표계에서 생성
 		vec3 localVertices[8] = {
 			vec3(-extents.x, -extents.y, -extents.z),
 			vec3(-extents.x, -extents.y,  extents.z),
