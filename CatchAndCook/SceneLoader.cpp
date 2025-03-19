@@ -464,12 +464,15 @@ void SceneLoader::LinkComponent(json& jsonData)
         auto navMesh = IGuid::FindObjectByGuid<NavMesh>(guid);
 
         std::vector<NavMeshData> datas;
+        std::vector< std::array<Vector3, 2>> edgeDatas;
 
         auto& vertexs = jsonData["vertexs"];
         auto& indexs = jsonData["indexs"];
         auto& adjacency = jsonData["adjacency"];
+        auto& edges = jsonData["edge"];
 
         int vertexCount = vertexs.size();
+        int edgeCount = edges.size();
         for (int i = 0; i < vertexCount; i++)
         {
             NavMeshData data;
@@ -486,9 +489,24 @@ void SceneLoader::LinkComponent(json& jsonData)
             }
             datas.push_back(data);
         }
+        for (int i = 0; i < edgeCount; i++)
+        {
+            std::array<Vector3, 2> edgePos;
+			edgePos[0] = Vector3(
+				edges[i][0][0].get<float>(),
+				edges[i][0][1].get<float>(),
+				edges[i][0][2].get<float>()
+			);
+            edgePos[1] = Vector3(
+                edges[i][1][0].get<float>(),
+                edges[i][1][1].get<float>(),
+                edges[i][1][2].get<float>()
+            );
+			edgeDatas.push_back(edgePos);
+        }
 
 		navMesh->SetNavMeshData(datas);
-        
+        navMesh->SetNavMeshEdgeData(edgeDatas);
     }
 }
 

@@ -57,7 +57,7 @@ void NavMeshManager::SetNavMeshData(const std::vector<NavMeshData>& data)
 	_datas = data;
 }
 
-void NavMeshManager::CalculatePath(const Vector3& startPosition, const Vector3& endPosition, const std::vector<NavMeshData>& datas)
+void NavMeshManager::CalculatePath(const Vector3& startPosition, const Vector3& endPosition, const std::vector<NavMeshData>& datas, const std::vector<std::array<Vector3, 2>>& edges)
 {
 	std::vector<NavMeshPathData> pathDataList;
 	pathDataList.reserve(datas.size());
@@ -105,12 +105,16 @@ void NavMeshManager::CalculatePath(const Vector3& startPosition, const Vector3& 
 	std::priority_queue<NavMeshPathData> openQueue;
 	openQueue.push(startNode);
 	bool foundPath = false;
-	std::vector<NavMeshPathData> resultPath;
+	std::deque<NavMeshPathData> resultPath;
 
 	const Vector3& targetPos = endNode.data->position;
-
 	while (!openQueue.empty())
 	{
+		if (pathDataList[openQueue.top().id].IsClose())
+		{
+			openQueue.pop();
+			continue;
+		}
 		const auto currentNode = openQueue.top();
 		openQueue.pop();
 
@@ -122,11 +126,6 @@ void NavMeshManager::CalculatePath(const Vector3& startPosition, const Vector3& 
 			resultPath.push_back(startNode);
 			break;
 		}
-
-		auto a = pathDataList[currentNode.id];
-		//pathDataList[currentNode.id] = currentNode;
-		if (pathDataList[currentNode.id].IsClose())
-			continue;
 		pathDataList[currentNode.id].SetClose();
 		
 		
@@ -140,12 +139,12 @@ void NavMeshManager::CalculatePath(const Vector3& startPosition, const Vector3& 
 
 			if (adjNode.IsOpen())
 			{
-				if (adjNode.GetF() >= nextF)
+				if ((nextF + 0.1f) < adjNode.GetF())
 				{
 					adjNode.g = nextG;
 					adjNode.h = nextH;
 					adjNode.parentId = currentNode.id;
-					//openQueue.push(pathDataList[adjId]);
+					openQueue.push(pathDataList[adjId]);
 				}
 			}
 			else
@@ -160,13 +159,47 @@ void NavMeshManager::CalculatePath(const Vector3& startPosition, const Vector3& 
 	}
 	if (foundPath)
 	{
+		std::ranges::reverse(resultPath);
+		NavMeshData startPoint, endPoint;
+		startPoint.position = Vector3(startPosition.x, resultPath[0].data->position.y, startPosition.z);
+		endPoint.position = Vector3(endPosition.x, resultPath[resultPath.size() - 1].data->position.y, endPosition.z);
+		resultPath.push_front({ startPoint });
+		resultPath.push_back({ endPoint });
+
+		std::deque<NavMeshPathData> resultPath2;
+
+		resultPath2.push_back(resultPath.front());
+		size_t currentIndex = 0;
+		const size_t n = resultPath.size();
+
+		while (currentIndex < n - 1)
+		{
+			size_t nextIndex = currentIndex;
+			// 현재 노드 다음부터 가까운 노드부터 검사
+			for (size_t i = currentIndex + 1; i < n; ++i)
+			{
+				// 현재 노드와 resultPath[i] 사이에 line-of-sight가 있다면 갱신
+				if (HasLineOfSight(resultPath[currentIndex].data->position, resultPath[i].data->position, edges))
+					nextIndex = i;
+				else
+					// 가까운 순서대로 검사하므로, 처음으로 line-of-sight가 깨지는 지점에서 중단
+					break;
+			}
+			// 진전이 없는 경우 강제적으로 다음 노드를 선택
+			if (nextIndex == currentIndex)
+				nextIndex = currentIndex + 1;
+
+			resultPath2.push_back(resultPath[nextIndex]);
+			currentIndex = nextIndex;
+		}
+
 		Gizmo::Width(0.2f);
 		// 결과 경로 그리기
-		for (std::size_t i = 1; i < resultPath.size(); ++i)
+		for (std::size_t i = 1; i < resultPath2.size(); ++i)
 		{
-			const auto& currNode = resultPath[i];
-			const auto& prevNode = resultPath[i - 1];
-			Gizmo::Line(currNode.data->position, prevNode.data->position, Vector4(1, 0, 0, 1));
+			const auto& currNode = resultPath2[i];
+			const auto& prevNode = resultPath2[i - 1];
+			Gizmo::Line(currNode.data->position + Vector3::Up * 10, prevNode.data->position + Vector3::Up * 10, Vector4(1, 0, 0, 1));
 		}
 		Gizmo::WidthRollBack();
 	}

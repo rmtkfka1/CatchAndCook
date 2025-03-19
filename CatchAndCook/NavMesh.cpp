@@ -34,8 +34,13 @@ void NavMesh::Update()
 		)
 	* Time::main->GetDeltaTime() * 40;
 	NavMeshManager::main->CalculatePath(Vector3(350, 0, 150), startPos,
-		NavMeshManager::main->GetNavMeshData());
+	                                    NavMeshManager::main->GetNavMeshData(), _edges);
+	Gizmo::Width(0.4f);
 	Gizmo::Box(BoundingBox(startPos, Vector3(1, 100, 1)));
+
+	for (auto edge : _edges)
+		Gizmo::Line(edge[0], edge[1], Vector4(0, 0, 1, 1));
+	Gizmo::WidthRollBack();
 }
 
 void NavMesh::Update2()
@@ -92,3 +97,14 @@ void NavMesh::SetNavMeshData(const std::vector<NavMeshData>& data)
 {
 	_datas = data;
 }
+
+std::vector< std::array<Vector3, 2>>& NavMesh::GetNavMeshEdgeData()
+{
+	return _edges;
+}
+
+void NavMesh::SetNavMeshEdgeData(const std::vector< std::array<Vector3, 2>>& data)
+{
+	_edges = data;
+}
+
