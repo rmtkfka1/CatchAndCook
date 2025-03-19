@@ -73,6 +73,8 @@ public:
     vec3 WorldToLocal_Direction(const vec3& value);
     Quaternion WorldToLocal_Quaternion(const Quaternion& value);
 
+	bool IsLocalSRTChanged() const { return _isLocalSRTChanged; }
+	bool IsLocalToWorldChanged() const { return _isLocalToWorldChanged; }
 
 
 private:
@@ -89,8 +91,8 @@ private:
     Matrix _localSRTMatrix = Matrix::Identity; // prev랑 비교후 갱신/ 갱신시 islocal머시기 true 아니면 false
     Matrix _localToWorldMatrix = Matrix::Identity;
 
-    //bool _isLocalSRTChanged = true; //이거 활성화시 시 월드매트릭스 갱신.isLocalToWorldChanged 이거 활성화
-    //bool _isLocalToWorldChanged = true; //부모가 local 업데이트 or 부모 world 변경시 이거 true.worldtrs변경.
+    bool _isLocalSRTChanged = true; // 이전 프레임과 SRT가 달라졌을때
+    bool _isLocalToWorldChanged = true; // 이전 프레임과 L2W가 달라졌을때
 
     bool _needLocalSRTUpdated = true; // 나 자신이 SRT 갱신 해야해.
     bool _needLocalMatrixUpdated = true;

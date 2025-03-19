@@ -92,6 +92,9 @@ void Transform::RenderBegin()
 
     Matrix matrix;
     GetLocalToWorldMatrix(matrix);
+
+    _isLocalSRTChanged = false;
+    _isLocalToWorldChanged = false;
 }
 
 void Transform::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
@@ -335,8 +338,9 @@ bool Transform::GetLocalToWorldMatrix(OUT Matrix& localToWorldMatrix)
     Matrix dummyLocalSRT;
     GetLocalSRTMatrix(dummyLocalSRT);
     if(CheckNeedLocalSRTUpdate()) {
-        _needLocalMatrixUpdated = false;
         this->_localToWorldMatrix = this->_localSRTMatrix;
+        _needLocalMatrixUpdated = false;
+        _isLocalToWorldChanged = true;
         localToWorldMatrix = this->_localToWorldMatrix;
         return true;
     }
@@ -365,6 +369,7 @@ bool Transform::GetLocalSRTMatrix(Matrix& localSRT)
         _needLocalSRTUpdated = false;
         _needLocalMatrixUpdated = true;
         localSRT = _localSRTMatrix;
+        _isLocalSRTChanged = true;
 		return true;
     }
 
@@ -424,6 +429,7 @@ bool Transform::TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool
     {
         _localToWorldMatrix = _localSRTMatrix * parentLocalToWorld;
         _needLocalToWorldUpdated = false;
+        _isLocalToWorldChanged = true;
     }
 
 	bool childUpdate = false;
@@ -432,7 +438,7 @@ bool Transform::TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool
             if(auto child = childWeak.lock())
                 childUpdate |= child->_transform->TopDownLocalToWorldUpdate(_localToWorldMatrix, finalUpdate);
 
-    return finalUpdate | childUpdate;
+    return finalUpdate || childUpdate;
 }
 
 bool Transform::BottomUpLocalToWorldUpdate()
@@ -455,6 +461,7 @@ bool Transform::BottomUpLocalToWorldUpdate()
         {
             _localToWorldMatrix = _localSRTMatrix * parent->_transform->_localToWorldMatrix;
             _needLocalToWorldUpdated = false;
+            _isLocalToWorldChanged = true;
 
             if(owner)
 	            for(auto& childWeak : owner->_childs)
@@ -468,6 +475,7 @@ bool Transform::BottomUpLocalToWorldUpdate()
     {
         _localToWorldMatrix = _localSRTMatrix;
         _needLocalToWorldUpdated = false;
+        _isLocalToWorldChanged = true;
 
         if(owner)
 	        for(auto& childWeak : owner->_childs)
