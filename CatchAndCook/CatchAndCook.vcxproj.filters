@@ -302,6 +302,9 @@
       <Filter>03.Component</Filter>
     </ClCompile>
     <ClCompile Include="BoidsMove.cpp" />
+    <ClCompile Include="Scene_Sea01.cpp">
+      <Filter>06.Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -564,6 +567,9 @@
       <Filter>03.Component</Filter>
     </ClInclude>
     <ClInclude Include="BoidsMove.h" />
+    <ClInclude Include="Scene_Sea01.h">
+      <Filter>06.Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">

@@ -1,0 +1,39 @@
+﻿#include "pch.h"
+#include "Scene_Sea01.h"
+
+void Scene_Sea01::Init()
+{
+	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/Sea_Resources.json");
+	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
+	sceneLoader->Load(GetCast<Scene>());
+}
+
+void Scene_Sea01::Update()
+{
+	Scene::Update();
+}
+
+void Scene_Sea01::RenderBegin()
+{
+	Scene::RenderBegin();
+}
+
+void Scene_Sea01::Rendering()
+{
+	Scene::Rendering();
+}
+
+void Scene_Sea01::DebugRendering()
+{
+	Scene::DebugRendering();
+}
+
+void Scene_Sea01::RenderEnd()
+{
+	Scene::RenderEnd();
+}
+
+void Scene_Sea01::Finish()
+{
+	Scene::Finish();
+}
