@@ -126,13 +126,10 @@ void TestScene::Init()
 	mt19937 gen(urd());
 	uniform_real_distribution<float> dis(-10.0f, 10.0f);
 
-	auto& a = ResourceManager::main->Load<Model>(L"kind",L"../Resources/Models/PaperPlane.obj",VertexType::Vertex_Skinned);
-	cout << a->_modelMeshList.size() << endl;
 	shared_ptr<Material> materialO = make_shared<Material>();
-	shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
-	//shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
+	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
 
-	for (int i = 0; i < 50; ++i)
+	for (int i = 0; i < 1000; ++i)
 	{
 		{
 			shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
@@ -140,10 +137,13 @@ void TestScene::Init()
 			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
 	
 			shared_ptr<GameObject> root = CreateGameObject(L"root_test");
+			root->SetType(GameObjectType::Static);
 
-			if (i == 0)
+			if (i <20)
 			{
-				root->AddComponent<testComponent>();
+				if(i==0)
+					root->AddComponent<testComponent>();
+				root->SetType(GameObjectType::Dynamic);
 			}
 
 			auto meshRenderer = root->AddComponent<MeshRenderer>();
