@@ -88,7 +88,7 @@ void Game::Init(HWND hwnd)
 		LightManager::main->PushLight(light);
 	}
 
-	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
+	auto scene = SceneManager::main->AddScene(SceneType::TestScene);
 }
 
 void Game::PrevUpdate()
@@ -175,9 +175,6 @@ void Game::Run()
 	Profiler::Fin();
 
 	Profiler::Fin();
-
-
-
 	Profiler::Set("Logic_Total");
 		currentScene->Update();
 		currentScene->RenderBegin();
@@ -215,7 +212,7 @@ void Game::Release()
 
 void Game::CameraUpdate()
 {
-	shared_ptr<Camera> camera = CameraManager::main->GetActiveCamera();
+	shared_ptr<Camera> camera = CameraManager::main->GetCamera(CameraType::ThirdPersonCamera);
 
 	const float speed = 50.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;

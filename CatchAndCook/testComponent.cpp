@@ -35,13 +35,15 @@ void testComponent::Update()
 
 	std::shared_ptr<Transform> transform =GetOwner()->_transform;
 
+	auto& camera= CameraManager::main->GetCamera(CameraType::ThirdPersonCamera);
+
 	if(transform==nullptr)
 		return;
 
 	if(Input::main->GetKey(KeyCode::UpArrow))
 	{
 
-		auto direction = CameraManager::main->GetActiveCamera()->GetCameraLook();
+		auto direction = camera->GetCameraLook();
 		auto& pos =transform->GetLocalPosition();
 		transform->SetLocalPosition(pos + direction * dt);
 	
@@ -50,7 +52,7 @@ void testComponent::Update()
 	if(Input::main->GetKey(KeyCode::DownArrow))
 	{
 
-		auto direction = CameraManager::main->GetActiveCamera()->GetCameraLook();
+		auto direction = camera->GetCameraLook();
 		auto& pos =transform->GetLocalPosition();
 		transform->SetLocalPosition(pos - direction * dt);
 
@@ -58,28 +60,28 @@ void testComponent::Update()
 
 	if (Input::main->GetKey(KeyCode::RightArrow))
 	{
-		auto direction = CameraManager::main->GetActiveCamera()->GetCameraRight();
+		auto direction = camera->GetCameraRight();
 		auto& pos = transform->GetLocalPosition();
 		transform->SetLocalPosition(pos + direction * dt);
 	}
 
 	if (Input::main->GetKey(KeyCode::LeftArrow))
 	{
-		auto direction = CameraManager::main->GetActiveCamera()->GetCameraRight();
+		auto direction = camera->GetCameraRight();
 		auto& pos = transform->GetLocalPosition();
 		transform->SetLocalPosition(pos - direction * dt);
 	}
 
 	if (Input::main->GetKey(KeyCode::O))
 	{
-		auto direction = CameraManager::main->GetActiveCamera()->GetCameraUp();
+		auto direction = camera->GetCameraUp();
 		auto& pos = transform->GetLocalPosition();
 		transform->SetLocalPosition(pos + direction * dt);
 	}
 
 	if (Input::main->GetKey(KeyCode::P))
 	{
-		auto direction = CameraManager::main->GetActiveCamera()->GetCameraUp();
+		auto direction = camera->GetCameraUp();
 		auto& pos = transform->GetLocalPosition();
 		transform->SetLocalPosition(pos - direction * dt);
 	}

@@ -6,6 +6,7 @@ class Collider;
 enum class CameraType
 {
     ThirdPersonCamera,
+    AxisCamera,
 };
 
 
@@ -43,6 +44,9 @@ enum class CameraProjectionMode
 
 class Camera
 {
+
+public:
+	Camera(CameraType type);
 
 public:
 
@@ -109,7 +113,6 @@ protected:
 
 class ThirdPersonCamera : public Camera
 {
-
 public:
     ThirdPersonCamera();
     virtual ~ThirdPersonCamera();
@@ -117,6 +120,14 @@ public:
     virtual void Update();
 
 private:
+};
+
+class AxisCamera : public Camera
+{
+public:
+    AxisCamera();
+    virtual ~AxisCamera();
+    virtual void Update();
 };
 
 

@@ -88,6 +88,7 @@ void Scene::Rendering()
     auto& cmdList = Core::main->GetCmdList();
 
     Core::main->GetRenderTarget()->ClearDepth();
+    CameraManager::main->Setting(CameraType::ThirdPersonCamera);
 
     ShadowPass(cmdList);
     Profiler::Set("PASS : Deffered", BlockTag::GPU);
@@ -110,6 +111,7 @@ void Scene::Rendering()
     Profiler::Fin();
 
     Profiler::Set("PASS : UI", BlockTag::GPU);
+    
     UiPass(cmdList);
     Profiler::Fin();
 
@@ -257,10 +259,6 @@ void Scene::GlobalSetting()
 {
     auto& cmdList = Core::main->GetCmdList();
 
-    CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
-    CameraManager::main->GetActiveCamera()->Update();
-    CameraManager::main->GetActiveCamera()->PushData();
-    CameraManager::main->GetActiveCamera()->SetData();
 
     //cout << CameraManager::main->GetActiveCamera()->GetCameraPos().y << endl;
 
