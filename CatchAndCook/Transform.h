@@ -73,8 +73,7 @@ public:
     vec3 WorldToLocal_Direction(const vec3& value);
     Quaternion WorldToLocal_Quaternion(const Quaternion& value);
 
-	bool _isLocalSRTChanged = true; //이거 활성화시 시 월드매트릭스 갱신.isLocalToWorldChanged 이거 활성화
-    bool _isLocalToWorldChanged = true; //부모가 local 업데이트 or 부모 world 변경시 이거 true.worldtrs변경.
+
 
 private:
 	vec3 _velocity = vec3::Zero;
@@ -90,6 +89,8 @@ private:
     Matrix _localSRTMatrix = Matrix::Identity; // prev랑 비교후 갱신/ 갱신시 islocal머시기 true 아니면 false
     Matrix _localToWorldMatrix = Matrix::Identity;
 
+    bool _isLocalSRTChanged = true; //이거 활성화시 시 월드매트릭스 갱신.isLocalToWorldChanged 이거 활성화
+    bool _isLocalToWorldChanged = true; //부모가 local 업데이트 or 부모 world 변경시 이거 true.worldtrs변경.
     bool _needLocalSRTUpdated = true; // 나 자신이 SRT 갱신 해야해.
     bool _needLocalMatrixUpdated = true;
     bool _needLocalToWorldUpdated = true; // 부모가 업데이트 됬을때 내가 변경되어야함을 표기, 위에꺼랑은 역할이 조금 다른게. 위에껀 자기 기준이라, 전 프레임이랑 같으면 바뀌는데, 이건 내가 바뀌기 전까지 안꺼짐

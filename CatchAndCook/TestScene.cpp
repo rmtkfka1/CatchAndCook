@@ -26,12 +26,6 @@ void TestScene::Init()
 
 
 
-	{
-		auto& a = ResourceManager::main->Load<Model>(L"kind",L"../Resources/Models/Units/Kindred/testB.fbx",VertexType::Vertex_Static);
-		auto& object =a->CreateGameObject(GetCast<Scene>());
-		object->_transform->SetLocalPosition(vec3(0,500.0f,0));
-	}
-
 	/*{
 		auto& a = ResourceManager::main->Load<SceneLoader>(L"TestScene1",L"../Resources/Datas/Scenes/TestScene1.json");
 		auto& object= a->Load(GetCast<Scene>());
@@ -132,7 +126,7 @@ void TestScene::Init()
 	//shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
 	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
 
-	for (int i = 0; i < 300; ++i)
+	for (int i = 0; i < 1000; ++i)
 	{
 		{
 			shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
@@ -141,14 +135,14 @@ void TestScene::Init()
 
 			shared_ptr<GameObject> root = CreateGameObject(L"root_test");
 
-
 			auto meshRenderer = root->AddComponent<MeshRenderer>();
 			auto& collider = root->AddComponent<Collider>();
 			collider->SetBoundingBox(vec3(0, 0, 0), vec3(1.0f, 1.0f, 1.0f));
 
 			root->_transform->SetLocalScale(vec3(dis(urd), dis(urd), dis(urd)));
 			root->_transform->SetLocalPosition(vec3(ddis(urd), ddis(urd), ddis(urd)));
-			root->SetType(GameObjectType::Static);
+			root->SetType(GameObjectType::Dynamic);
+
 			if (i == 0 )
 			{
 				root->AddComponent<testComponent>();

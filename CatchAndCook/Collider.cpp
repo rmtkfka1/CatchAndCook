@@ -282,7 +282,13 @@ void Collider::CalculateBounding()
 	{
 		auto onwerTransform = GetOwner()->_transform;
 		Matrix mat;
-		onwerTransform->GetLocalToWorldMatrix_BottomUp(mat);
+		if (onwerTransform->GetLocalToWorldMatrix(mat))
+		{
+			cout << "  갱신되어야해" << "\n";
+		};
+
+
+
 		_orgin.box.Transform(_bound.box, mat);
 	}
 

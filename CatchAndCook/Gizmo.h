@@ -74,8 +74,8 @@ private:
 	std::shared_ptr<Material> material;
 	InstanceBufferContainer* container;
 
-	float _width = 0.02f;
-	float _prevWidth = 0.05f;
+	float _width = 2.0f;
+	float _prevWidth = 1.0f;
 
 	GizmoTexture textureGizmo;
 };
