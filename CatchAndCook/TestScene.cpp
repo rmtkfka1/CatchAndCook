@@ -26,11 +26,11 @@ void TestScene::Init()
 
 
 
-	//{
-	//	auto& a = ResourceManager::main->Load<Model>(L"kind",L"../Resources/Models/PaperPlane.obj",VertexType::Vertex_GeoMetry);
-	//	auto& object =a->CreateGameObject(GetCast<Scene>());
-	//	object->_transform->SetLocalPosition(vec3(0,500.0f,0));
-	//}
+	{
+		auto& a = ResourceManager::main->Load<Model>(L"kind",L"../Resources/Models/Units/Kindred/testB.fbx",VertexType::Vertex_Static);
+		auto& object =a->CreateGameObject(GetCast<Scene>());
+		object->_transform->SetLocalPosition(vec3(0,500.0f,0));
+	}
 
 	/*{
 		auto& a = ResourceManager::main->Load<SceneLoader>(L"TestScene1",L"../Resources/Datas/Scenes/TestScene1.json");
