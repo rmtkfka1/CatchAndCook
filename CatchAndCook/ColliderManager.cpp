@@ -23,11 +23,12 @@ vector<vec3> ColliderManager::GetOccupiedCells(const shared_ptr<Collider>& colli
 	vec3 maxCell = GetGridCell(max);
 
 	vector<vec3> occupiedCells;
-	for (float x = minCell.x; x <= maxCell.x; ++x)
+
+	for (int x = static_cast<int>(minCell.x); x <= static_cast<int>(maxCell.x); ++x)
 	{
-		for (float y = minCell.y; y <= maxCell.y; ++y)
+		for (int y = static_cast<int>(minCell.y); y <= static_cast<int>(maxCell.y); ++y)
 		{
-			for (float z = minCell.z; z <= maxCell.z; ++z)
+			for (int z = static_cast<int>(minCell.z); z <= static_cast<int>(maxCell.z); ++z)
 			{
 				occupiedCells.push_back(vec3(x, y, z));
 			}

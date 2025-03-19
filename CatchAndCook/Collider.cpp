@@ -49,16 +49,18 @@ void Collider::Update()
 {
 	Component::Update();
 
-	if (GetOwner()->GetType() == GameObjectType::Dynamic)
-	{
-		CalculateBounding();
-		ColliderManager::main->AddCollider(GetCast<Collider>());
-	}
+	
 }
 
 void Collider::Update2()
 {
 	Component::Update2();
+
+	if (GetOwner()->GetType() == GameObjectType::Dynamic)
+	{
+		CalculateBounding();
+		ColliderManager::main->AddCollider(GetCast<Collider>());
+	}
 }
 
 void Collider::Enable()
@@ -283,8 +285,13 @@ void Collider::CalculateBounding()
 		auto onwerTransform = GetOwner()->_transform;
 		Matrix mat;
 		onwerTransform->GetLocalToWorldMatrix_BottomUp(mat);
-		_orgin.box.Transform(_bound.box, mat);
-		XMStoreFloat4(&_bound.box.Orientation, XMQuaternionNormalize(XMLoadFloat4(&_bound.box.Orientation)));
+
+		if (onwerTransform->IsLocalToWorldChanged())
+		{
+			cout << "안녕" << endl;
+			_orgin.box.Transform(_bound.box, mat);
+			XMStoreFloat4(&_bound.box.Orientation, XMQuaternionNormalize(XMLoadFloat4(&_bound.box.Orientation)));
+		}
 	}
 
 	else if (_type == CollisionType::Sphere)
