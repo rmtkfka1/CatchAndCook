@@ -284,6 +284,7 @@ void Collider::CalculateBounding()
 		Matrix mat;
 		onwerTransform->GetLocalToWorldMatrix_BottomUp(mat);
 		_orgin.box.Transform(_bound.box, mat);
+		XMStoreFloat4(&_bound.box.Orientation, XMQuaternionNormalize(XMLoadFloat4(&_bound.box.Orientation)));
 	}
 
 	else if (_type == CollisionType::Sphere)
@@ -307,7 +308,27 @@ pair<vec3, vec3> Collider::GetMinMax()
 {
 	if (_type == CollisionType::Box)
 	{
-		return std::make_pair(_bound.box.Center - _bound.box.Extents, _bound.box.Center + _bound.box.Extents);
+		Matrix rotMatrix = Matrix::CreateFromQuaternion(_bound.box.Orientation);
+
+		// 2. 회전 행렬을 사용하여 새로운 Extents를 구함
+		vec3 worldExtents;
+		worldExtents.x = std::abs(rotMatrix.m[0][0]) * _bound.box.Extents.x +
+			std::abs(rotMatrix.m[0][1]) * _bound.box.Extents.y +
+			std::abs(rotMatrix.m[0][2]) * _bound.box.Extents.z;
+
+		worldExtents.y = std::abs(rotMatrix.m[1][0]) * _bound.box.Extents.x +
+			std::abs(rotMatrix.m[1][1]) * _bound.box.Extents.y +
+			std::abs(rotMatrix.m[1][2]) * _bound.box.Extents.z;
+
+		worldExtents.z = std::abs(rotMatrix.m[2][0]) * _bound.box.Extents.x +
+			std::abs(rotMatrix.m[2][1]) * _bound.box.Extents.y +
+			std::abs(rotMatrix.m[2][2]) * _bound.box.Extents.z;
+
+		// 3. 새로운 AABB의 min/max 좌표를 계산
+		vec3 min = _bound.box.Center - worldExtents;
+		vec3 max = _bound.box.Center + worldExtents;
+
+		return std::make_pair(min, max);
 	}
 
 	else if (_type == CollisionType::Sphere)

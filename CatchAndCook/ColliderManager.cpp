@@ -164,7 +164,7 @@ void ColliderManager::Update()
 
 		for (auto& collider : colliders)
 		{
-			VisualizeOccupiedCells(collider);
+			/*VisualizeOccupiedCells(collider);*/
 
 			auto potentialCollisions = GetPotentialCollisions(collider);
 

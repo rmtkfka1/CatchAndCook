@@ -41,7 +41,7 @@ void testComponent::Update()
 	if(Input::main->GetKey(KeyCode::UpArrow))
 	{
 
-		auto direction = transform->GetForward();
+		auto direction = CameraManager::main->GetActiveCamera()->GetCameraLook();
 		auto& pos =transform->GetLocalPosition();
 		transform->SetLocalPosition(pos + direction * dt);
 	
@@ -50,7 +50,7 @@ void testComponent::Update()
 	if(Input::main->GetKey(KeyCode::DownArrow))
 	{
 
-		auto direction = transform->GetForward();
+		auto direction = CameraManager::main->GetActiveCamera()->GetCameraLook();
 		auto& pos =transform->GetLocalPosition();
 		transform->SetLocalPosition(pos - direction * dt);
 
@@ -58,28 +58,28 @@ void testComponent::Update()
 
 	if (Input::main->GetKey(KeyCode::RightArrow))
 	{
-		auto direction = transform->GetRight();
+		auto direction = CameraManager::main->GetActiveCamera()->GetCameraRight();
 		auto& pos = transform->GetLocalPosition();
 		transform->SetLocalPosition(pos + direction * dt);
 	}
 
 	if (Input::main->GetKey(KeyCode::LeftArrow))
 	{
-		auto direction = transform->GetRight();
+		auto direction = CameraManager::main->GetActiveCamera()->GetCameraRight();
 		auto& pos = transform->GetLocalPosition();
 		transform->SetLocalPosition(pos - direction * dt);
 	}
 
 	if (Input::main->GetKey(KeyCode::O))
 	{
-		auto direction = transform->GetUp();
+		auto direction = CameraManager::main->GetActiveCamera()->GetCameraUp();
 		auto& pos = transform->GetLocalPosition();
 		transform->SetLocalPosition(pos + direction * dt);
 	}
 
 	if (Input::main->GetKey(KeyCode::P))
 	{
-		auto direction = transform->GetUp();
+		auto direction = CameraManager::main->GetActiveCamera()->GetCameraUp();
 		auto& pos = transform->GetLocalPosition();
 		transform->SetLocalPosition(pos - direction * dt);
 	}

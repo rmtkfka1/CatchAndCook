@@ -15,27 +15,20 @@ using Quaternion = DirectX::SimpleMath::Quaternion;
 
 int main()
 {
+	BoundingOrientedBox orgin;
+	orgin.Center = vec3(0, 0, 0);
+	orgin.Extents = vec3(0.5f, 0.5f, 0.5f);
+	orgin.Orientation = Quaternion::Identity;
 
-    BoundingBox box;
+    BoundingOrientedBox box;
 	box.Center = vec3(0, 0, 0);
     box.Extents = vec3(0.5f, 0.5f, 0.5f);
-	//box.Orientation = Quaternion::CreateFromYawPitchRoll(vec3(30.0f,0,0)*D2R);
+	box.Orientation = Quaternion::Identity;
 
-	cout << box.Center.x << " " << box.Center.y << " " << box.Center.z << endl;
-	cout << box.Extents.x << " " << box.Extents.y << " " << box.Extents.z << endl;
+	Matrix mat = Matrix::CreateRotationY(XM_PIDIV2);
 
-	BoundingBox box2;
-	box2.Center = vec3(0, 1.01f, 0);
-	box2.Extents = vec3(0.5f, 0.5f, 0.5f);
-
-	bool result =  box.Intersects(box2);
-
-	cout << result << endl;
-
-
-
-
-
+	orgin.Transform(box, mat);
+	cout << box.Orientation.x << " " << box.Orientation.y << " " << box.Orientation.z << " " << box.Orientation.w << endl;
 
     return 0;
 }
