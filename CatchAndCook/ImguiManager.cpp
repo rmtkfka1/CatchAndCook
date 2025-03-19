@@ -72,7 +72,6 @@ void ImguiManager::Debug()
         SeaController();
         LightController();
         BoidMove();
-        ImGui::TreePop();
     };
 
 	if (ImGui::CollapsingHeader("Compute Controller"))
@@ -86,14 +85,18 @@ void ImguiManager::Debug()
 
 void ImguiManager::BoidMove()
 {
-    ImGui::TreeNode("BoidMove");
+
     if (separationWeight)
     {
-
-        ImGui::SliderFloat("separationWeight", separationWeight, 0, 100.0f);
-        ImGui::SliderFloat("alignmentWeight", alignmentWeight, 0, 100.0f);
-        ImGui::SliderFloat("cohesionWeight", cohesionWeight, 0, 100.0f);
+        if(ImGui::TreeNode("BoidMove"));
+        {
+            ImGui::SliderFloat("separationWeight", separationWeight, 0, 100.0f);
+            ImGui::SliderFloat("alignmentWeight", alignmentWeight, 0, 100.0f);
+            ImGui::SliderFloat("cohesionWeight", cohesionWeight, 0, 100.0f);
+            ImGui::TreePop();
+        }
     }
+
 }
 
 void ImguiManager::GizmoController()
