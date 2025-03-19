@@ -44,7 +44,7 @@ void Gizmo::Clear()
 
 void Gizmo::Line(const Vector3& worldStart, const Vector3& worldEnd, const Vector4& Color)
 {
-    if (main->_flags == GizmoFlags::None) return;
+    //if (main->_flags == GizmoFlags::None) return;
 	Instance_Gizmo giz;
 	giz.color = Color;
 	giz.position = worldStart;
@@ -56,7 +56,7 @@ void Gizmo::Line(const Vector3& worldStart, const Vector3& worldEnd, const Vecto
 
 void Gizmo::Ray(const Vector3& worldStart, const Vector3& dir, float dis, const Vector4& Color)
 {
-    if (main->_flags == GizmoFlags::None) return;
+    //if (main->_flags == GizmoFlags::None) return;
 	Vector3 normalDir;
 	dir.Normalize(normalDir);
 	Instance_Gizmo giz;
@@ -70,7 +70,7 @@ void Gizmo::Ray(const Vector3& worldStart, const Vector3& dir, float dis, const 
 
 void Gizmo::Box(const BoundingOrientedBox& box, const Vector4& Color)
 {
-    if (main->_flags == GizmoFlags::None) return;
+    //if (main->_flags == GizmoFlags::None) return;
     vec3 corners[8];
     box.GetCorners(corners);
 
@@ -107,7 +107,7 @@ void Gizmo::Box(const BoundingOrientedBox& box, const Vector4& Color)
 
 void Gizmo::Box(const BoundingBox& box, const Vector4& Color)
 {
-    if (main->_flags == GizmoFlags::None) return;
+    //if (main->_flags == GizmoFlags::None) return;
 
     XMFLOAT3 corners[8];
     box.GetCorners(corners);
@@ -145,7 +145,7 @@ void Gizmo::Box(const BoundingBox& box, const Vector4& Color)
 
 void Gizmo::Box(const vec3& min, const vec3& max, const Vector4& Color)
 {
-    if (main->_flags == GizmoFlags::None) return;
+    //if (main->_flags == GizmoFlags::None) return;
 
 	BoundingBox box;
 	box.CreateFromPoints(box, min, max);
@@ -154,7 +154,7 @@ void Gizmo::Box(const vec3& min, const vec3& max, const Vector4& Color)
 
 void Gizmo::Frustum(const BoundingFrustum& frustum, const Vector4& Color)
 {
-    if (main->_flags == GizmoFlags::None) return;
+    //if (main->_flags == GizmoFlags::None) return;
 
     XMFLOAT3 corners[8];
     frustum.GetCorners(corners);
@@ -192,7 +192,7 @@ void Gizmo::Frustum(const BoundingFrustum& frustum, const Vector4& Color)
 
 void Gizmo::Sphere(const BoundingSphere& sphere, const Vector4& Color)
 {
-    if (main->_flags == GizmoFlags::None) return;
+    //if (main->_flags == GizmoFlags::None) return;
 
     Vector3 center(sphere.Center.x,sphere.Center.y,sphere.Center.z);
     float radius = sphere.Radius;
@@ -240,7 +240,7 @@ void Gizmo::Sphere(const BoundingSphere& sphere, const Vector4& Color)
 
 void Gizmo::Text(const wstring& text, int fontSize, const Vector3& worldPos, const Vector3& worldDir, const Vector3& Up, const Vector4& Color)
 {
-    if (main->_flags == GizmoFlags::None) return;
+    //if (main->_flags == GizmoFlags::None) return;
 
     Vector3 right = Up.Cross(worldDir);
     Vector3 up = worldDir.Cross(right);
@@ -267,7 +267,7 @@ void Gizmo::Text(const wstring& text, int fontSize, const Vector3& worldPos, con
 void Gizmo::Image(const std::shared_ptr<::Texture>& texture, const Vector3& worldPos,
 	const Vector3& worldDir, const Vector3& Up, const Vector4& Color)
 {
-	if (main->_flags == GizmoFlags::None) return;
+	/*if (main->_flags == GizmoFlags::None) return;*/
 
     Vector3 right = Up.Cross(worldDir);
     Vector3 up = worldDir.Cross(right);
@@ -285,7 +285,7 @@ void Gizmo::Image(const std::shared_ptr<::Texture>& texture, const Vector3& worl
 
 void Gizmo::RenderBegin()
 {
-    if (main->_flags == GizmoFlags::None) return;
+    //if (main->_flags == GizmoFlags::None) return;
 
 	SceneManager::main->GetCurrentScene()->AddRenderer(material.get(),nullptr,this);
     SceneManager::main->GetCurrentScene()->AddRenderer(textureGizmo.material.get(), textureGizmo._mesh.get(), &textureGizmo);
@@ -293,7 +293,7 @@ void Gizmo::RenderBegin()
 
 void Gizmo::Rendering(Material* material, Mesh* mesh, int instanceCount)
 {
-    if (main->_flags == GizmoFlags::None) return;
+    //if (main->_flags == GizmoFlags::None) return;
 
 	auto& cmdList = Core::main->GetCmdList();
 

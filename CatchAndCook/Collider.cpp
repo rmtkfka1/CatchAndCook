@@ -316,26 +316,47 @@ pair<vec3, vec3> Collider::GetMinMax()
 	if (_type == CollisionType::Box)
 	{
 		Matrix rotMatrix = Matrix::CreateFromQuaternion(_bound.box.Orientation);
+		vec3 center = _bound.box.Center;
+		vec3 extents = _bound.box.Extents;
 
-		// 2. 회전 행렬을 사용하여 새로운 Extents를 구함
-		vec3 worldExtents;
-		worldExtents.x = std::abs(rotMatrix.m[0][0]) * _bound.box.Extents.x +
-			std::abs(rotMatrix.m[0][1]) * _bound.box.Extents.y +
-			std::abs(rotMatrix.m[0][2]) * _bound.box.Extents.z;
+		// 박스의 8개 꼭짓점을 로컬 좌표계에서 생성
+		vec3 localVertices[8] = {
+			vec3(-extents.x, -extents.y, -extents.z),
+			vec3(-extents.x, -extents.y,  extents.z),
+			vec3(-extents.x,  extents.y, -extents.z),
+			vec3(-extents.x,  extents.y,  extents.z),
+			vec3(extents.x, -extents.y, -extents.z),
+			vec3(extents.x, -extents.y,  extents.z),
+			vec3(extents.x,  extents.y, -extents.z),
+			vec3(extents.x,  extents.y,  extents.z)
+		};
 
-		worldExtents.y = std::abs(rotMatrix.m[1][0]) * _bound.box.Extents.x +
-			std::abs(rotMatrix.m[1][1]) * _bound.box.Extents.y +
-			std::abs(rotMatrix.m[1][2]) * _bound.box.Extents.z;
+		vec3 worldMin = vec3(FLT_MAX, FLT_MAX, FLT_MAX);
+		vec3 worldMax = vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 
-		worldExtents.z = std::abs(rotMatrix.m[2][0]) * _bound.box.Extents.x +
-			std::abs(rotMatrix.m[2][1]) * _bound.box.Extents.y +
-			std::abs(rotMatrix.m[2][2]) * _bound.box.Extents.z;
+		for (int i = 0; i < 8; i++)
+		{
+			vec3 worldVertex = center + vec3(
+				localVertices[i].x * rotMatrix.m[0][0] + localVertices[i].y * rotMatrix.m[1][0] + localVertices[i].z * rotMatrix.m[2][0],
+				localVertices[i].x * rotMatrix.m[0][1] + localVertices[i].y * rotMatrix.m[1][1] + localVertices[i].z * rotMatrix.m[2][1],
+				localVertices[i].x * rotMatrix.m[0][2] + localVertices[i].y * rotMatrix.m[1][2] + localVertices[i].z * rotMatrix.m[2][2]
+			);
 
-		// 3. 새로운 AABB의 min/max 좌표를 계산
-		vec3 min = _bound.box.Center - worldExtents;
-		vec3 max = _bound.box.Center + worldExtents;
+			worldMin = vec3(
+				std::min(worldMin.x, worldVertex.x),
+				std::min(worldMin.y, worldVertex.y),
+				std::min(worldMin.z, worldVertex.z)
+			);
 
-		return std::make_pair(min, max);
+			worldMax = vec3(
+				std::max(worldMax.x, worldVertex.x),
+				std::max(worldMax.y, worldVertex.y),
+				std::max(worldMax.z, worldVertex.z)
+			);
+		}
+
+
+		return std::make_pair(worldMin, worldMax);
 	}
 
 	else if (_type == CollisionType::Sphere)
