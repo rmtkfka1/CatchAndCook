@@ -15,59 +15,25 @@ using Quaternion = DirectX::SimpleMath::Quaternion;
 
 int main()
 {
-    vec4 localPos = vec4(0, 0, 0, 1);
 
-    Matrix mat = Matrix::CreateTranslation(3.0f, 0, 0.001f);
-    vec4 worldPos = vec4::Transform(localPos, mat);
-    std::cout << "World Position: "
-        << worldPos.x << ", " << worldPos.y << ", "
-        << worldPos.z << ", " << worldPos.w << std::endl;
+    BoundingBox box;
+	box.Center = vec3(0, 0, 0);
+    box.Extents = vec3(0.5f, 0.5f, 0.5f);
+	//box.Orientation = Quaternion::CreateFromYawPitchRoll(vec3(30.0f,0,0)*D2R);
 
-   
-    vec3 cameraPos = vec3(0, 0, -5);
-    vec3 cameraLook = vec3(0, 0, 1.0f);
-    vec3 cameraUp = vec3(0, 1.0f, 0);
+	cout << box.Center.x << " " << box.Center.y << " " << box.Center.z << endl;
+	cout << box.Extents.x << " " << box.Extents.y << " " << box.Extents.z << endl;
 
-    Matrix ViewMatrix = XMMatrixLookToLH(cameraPos, cameraLook, cameraUp);
-    vec4 viewPos = vec4::Transform(worldPos, ViewMatrix);
-    std::cout << "View Position: "
-        << viewPos.x << ", " << viewPos.y << ", "
-        << viewPos.z << ", " << viewPos.w << std::endl;
+	BoundingBox box2;
+	box2.Center = vec3(0, 1.01f, 0);
+	box2.Extents = vec3(0.5f, 0.5f, 0.5f);
+
+	bool result =  box.Intersects(box2);
+
+	cout << result << endl;
 
 
-    Matrix ProjectionMatrix = Matrix::CreatePerspectiveFieldOfView(
-        XMConvertToRadians(60.0f),
-        800.0f / 600.0f,
-        0.1f,
-        300.0f);
 
-    vec4 clipPos = vec4::Transform(viewPos, ProjectionMatrix);
-    std::cout << "Clip Position: "
-        << clipPos.x << ", " << clipPos.y << ", "
-        << clipPos.z << ", " << clipPos.w << std::endl;
-
-
-    vec3 ndcPos = vec3(clipPos.x / clipPos.w, clipPos.y / clipPos.w, clipPos.z / clipPos.w);
-    std::cout << "NDC Position: " << ndcPos.x << ", " << ndcPos.y << ", " << ndcPos.z << std::endl;
-
-    
-    float depth = clipPos.z / clipPos.w;
-    std::cout << "Depth: " << depth << std::endl;
-
-
-	Matrix inverseProjection = ProjectionMatrix.Invert();
-
-	vec4 clipPos2 = vec4(ndcPos.x , ndcPos.y , ndcPos.z , 1);
-
-	std::cout << "Clip Position2: " << clipPos2.x << ", " << clipPos2.y << ", " << clipPos2.z << ", " << clipPos2.w << std::endl;
-
-	vec4 viewPos2 = vec4::Transform(clipPos2, inverseProjection);
-
-    std::cout << "View Position2: " << viewPos2.x << ", " << viewPos2.y << ", " << viewPos2.z << ", " << viewPos2.w  << std::endl;
-
-	viewPos2 /= viewPos2.w;
-
-	std::cout << "View Position2: " << viewPos2.x << ", " << viewPos2.y << ", " << viewPos2.z << ", " << viewPos2.w << std::endl;
 
 
 

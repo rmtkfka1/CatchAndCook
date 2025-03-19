@@ -120,13 +120,14 @@ void TestScene::Init()
 	mt19937 gen(urd());
 	uniform_real_distribution<float> ddis(-1000.0f, 1000.0f);
 	uniform_real_distribution<float> dis(1, 30.0f);
+	uniform_real_distribution<float> rotate(-360.0f, 360.0f);
 	//auto& a = ResourceManager::main->Load<Model>(L"kind", L"../Resources/Models/PaperPlane.obj", VertexType::Vertex_Skinned);
 
 	shared_ptr<Material> materialO = make_shared<Material>();
 	//shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
 	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
 
-	for (int i = 0; i < 1000; ++i)
+	for (int i = 0; i < 300; ++i)
 	{
 		{
 			shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
@@ -141,13 +142,15 @@ void TestScene::Init()
 
 			root->_transform->SetLocalScale(vec3(dis(urd), dis(urd), dis(urd)));
 			root->_transform->SetLocalPosition(vec3(ddis(urd), ddis(urd), ddis(urd)));
-			root->SetType(GameObjectType::Dynamic);
+			root->_transform->SetLocalRotation(vec3(rotate(urd), rotate(urd), rotate(urd)));
+			root->SetType(GameObjectType::Static);
 
 			if (i == 0 )
 			{
 				root->AddComponent<testComponent>();
 				root->_transform->SetLocalPosition(vec3(0, 0, 0));
 				root->_transform->SetLocalScale(vec3(5.0f, 5.0f, 5.0f));
+				root->_transform->SetLocalRotation(vec3(0, 0,0));
 				root->SetType(GameObjectType::Dynamic);
 			}
 
