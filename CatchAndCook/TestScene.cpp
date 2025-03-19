@@ -120,7 +120,7 @@ void TestScene::Init()
 	mt19937 gen(urd());
 	uniform_real_distribution<float> ddis(-1000.0f, 1000.0f);
 	uniform_real_distribution<float> dis(1, 30.0f);
-	auto& a = ResourceManager::main->Load<Model>(L"kind", L"../Resources/Models/PaperPlane.obj", VertexType::Vertex_Skinned);
+	//auto& a = ResourceManager::main->Load<Model>(L"kind", L"../Resources/Models/PaperPlane.obj", VertexType::Vertex_Skinned);
 
 	shared_ptr<Material> materialO = make_shared<Material>();
 	//shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();

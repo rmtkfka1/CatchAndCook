@@ -323,54 +323,53 @@ bool Transform::GetLocalToWorldMatrix(OUT Matrix& localToWorldMatrix)
         if (CheckLocalToWorldMatrixUpdate())
         {
             auto root = owner->rootParent.lock();
-            root->_transform->TopDownLocalToWorldUpdate(Matrix::Identity);
+            bool result = root->_transform->TopDownLocalToWorldUpdate(Matrix::Identity);
             localToWorldMatrix = this->_localToWorldMatrix;
-            return _isLocalToWorldChanged;
+            return result;
         }
+
         localToWorldMatrix = this->_localToWorldMatrix;
-        return _isLocalToWorldChanged;
+        return false;
     }
 
     Matrix dummyLocalSRT;
-    if(GetLocalSRTMatrix(dummyLocalSRT)) {
+    GetLocalSRTMatrix(dummyLocalSRT);
+    if(CheckNeedLocalSRTUpdate()) {
         _needLocalMatrixUpdated = false;
-        _isLocalToWorldChanged = true;
         this->_localToWorldMatrix = this->_localSRTMatrix;
+        localToWorldMatrix = this->_localToWorldMatrix;
+        return true;
     }
     localToWorldMatrix = this->_localToWorldMatrix;
-    return _isLocalToWorldChanged;
+    return false;
 }
 
 bool Transform::GetLocalToWorldMatrix_BottomUp(Matrix& localToWorld)
 {
     if (CheckLocalToWorldMatrixUpdate())
     {
-        BottomUpLocalToWorldUpdate();
+        bool result = BottomUpLocalToWorldUpdate();
         localToWorld = _localToWorldMatrix;
-        return _isLocalToWorldChanged;
+		return result;
     }
 
     localToWorld = _localToWorldMatrix;
-    return _isLocalToWorldChanged;
+    return false;
 }
 
 bool Transform::GetLocalSRTMatrix(Matrix& localSRT)
 {
-    _isLocalSRTChanged = CheckNeedLocalSRTUpdate();
-
-    if (_isLocalSRTChanged)
+    if (CheckNeedLocalSRTUpdate())
     {
+        _localSRTMatrix = Matrix::CreateScale(_localScale) * Matrix::CreateFromQuaternion(_localRotation) * Matrix::CreateTranslation(_localPosition);
         _needLocalSRTUpdated = false;
-        _localSRTMatrix = Matrix::CreateScale(_localScale) * Matrix::CreateFromQuaternion(_localRotation) *
-            Matrix::CreateTranslation(_localPosition);
         _needLocalMatrixUpdated = true;
-        _isLocalSRTChanged = true;
+        localSRT = _localSRTMatrix;
+		return true;
     }
 
-    //_isLocalSRTChanged |= _prevLocalSRTMatrix != _localSRTMatrix;
-    _isLocalSRTChanged |= _needLocalMatrixUpdated;
     localSRT = _localSRTMatrix;
-    return _isLocalSRTChanged;
+    return false;
 }
 
 bool Transform::SetLocalSRTMatrix(Matrix& localSRT)
@@ -414,26 +413,26 @@ bool Transform::CheckLocalToWorldMatrixUpdate()
     return false;
 }
 
-void Transform::TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool isParentUpdate)
+bool Transform::TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool isParentUpdate)
 {
     Matrix dummy;
     bool localUpdated = GetLocalSRTMatrix(dummy);
-    bool finalUpdate = localUpdated || isParentUpdate || _needLocalToWorldUpdated;
-
+    bool finalUpdate = CheckNeedLocalMatrixUpdate() || _needLocalToWorldUpdated || isParentUpdate;
     _needLocalMatrixUpdated = false;
-    //?
+
     if (finalUpdate)
     {
         _localToWorldMatrix = _localSRTMatrix * parentLocalToWorld;
         _needLocalToWorldUpdated = false;
-        _isLocalToWorldChanged = true;
     }
 
+	bool childUpdate = false;
     if(auto owner = GetOwner(); owner)
         for(auto& childWeak : owner->_childs)
             if(auto child = childWeak.lock())
-                child->_transform->TopDownLocalToWorldUpdate(_localToWorldMatrix, finalUpdate);
+                childUpdate |= child->_transform->TopDownLocalToWorldUpdate(_localToWorldMatrix, finalUpdate);
 
+    return finalUpdate | childUpdate;
 }
 
 bool Transform::BottomUpLocalToWorldUpdate()
@@ -444,18 +443,18 @@ bool Transform::BottomUpLocalToWorldUpdate()
         parent = owner->parent.lock();
 
     Matrix dummyLocalSRT;
-    bool localUpdated = GetLocalSRTMatrix(dummyLocalSRT);
+    GetLocalSRTMatrix(dummyLocalSRT);
+    bool localUpdated = CheckNeedLocalMatrixUpdate();
     _needLocalMatrixUpdated = false;
 
     if (parent)
     {
         bool parentUpdate = parent->_transform->BottomUpLocalToWorldUpdate();
 
-        if (parentUpdate || localUpdated || _needLocalToWorldUpdated)
+        if (localUpdated || _needLocalToWorldUpdated || parentUpdate)
         {
             _localToWorldMatrix = _localSRTMatrix * parent->_transform->_localToWorldMatrix;
             _needLocalToWorldUpdated = false;
-            _isLocalToWorldChanged = true;
 
             if(owner)
 	            for(auto& childWeak : owner->_childs)
@@ -469,7 +468,6 @@ bool Transform::BottomUpLocalToWorldUpdate()
     {
         _localToWorldMatrix = _localSRTMatrix;
         _needLocalToWorldUpdated = false;
-        _isLocalToWorldChanged = true;
 
         if(owner)
 	        for(auto& childWeak : owner->_childs)
@@ -478,7 +476,7 @@ bool Transform::BottomUpLocalToWorldUpdate()
 
         return true;
     }
-    return _isLocalToWorldChanged = false;
+    return false;
 }
 
 void Transform::LookUp(const vec3& dir, const vec3& up)

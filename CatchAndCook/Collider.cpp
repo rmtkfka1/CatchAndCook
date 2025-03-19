@@ -282,7 +282,7 @@ void Collider::CalculateBounding()
 	{
 		auto onwerTransform = GetOwner()->_transform;
 		Matrix mat;
-		if (onwerTransform->GetLocalToWorldMatrix(mat))
+		if (onwerTransform->GetLocalToWorldMatrix_BottomUp(mat))
 		{
 			cout << "  갱신되어야해" << "\n";
 		};
