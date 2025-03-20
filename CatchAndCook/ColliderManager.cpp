@@ -53,6 +53,7 @@ void ColliderManager::AddCollider(const std::shared_ptr<Collider>& collider)
 		else if (collider->GetOwner()->GetType() == GameObjectType::Dynamic)
 		{
 			_dynamicColliderGrids[cell].push_back(collider);
+			_dynamicColliderCashing[collider].push_back(cell);
 		}
 	}
 
@@ -118,10 +119,21 @@ void ColliderManager::RemoveCollider(const std::shared_ptr<Collider>& collider)
 	}
 }
 
-std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialCollisions(const std::shared_ptr<Collider>& collider) const
+std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialCollisions(std::shared_ptr<Collider>& collider) 
 {
 	std::unordered_set<std::shared_ptr<Collider>> potentialCollisions;
-	auto occupiedCells = GetOccupiedCells(collider);
+
+	vector<vec3> occupiedCells;
+
+	if (_dynamicColliderCashing.find(collider) != _dynamicColliderCashing.end())
+	{
+		occupiedCells = std::move(_dynamicColliderCashing[collider]);
+	}
+	else
+	{
+		assert(false);
+		occupiedCells = GetOccupiedCells(collider);
+	}
 
 	for (const auto& cell : occupiedCells)
 	{
@@ -199,6 +211,7 @@ void ColliderManager::Update()
 	}
 
 	_dynamicColliderGrids.clear();
+	_dynamicColliderCashing.clear();
 }
 
 //무언가와 충돌하고 있는지 체크

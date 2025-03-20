@@ -127,7 +127,7 @@ void TestScene::Init()
 	//shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
 	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
 
-	for (int i = 0; i < 1; ++i)
+	for (int i = 0; i < 1000; ++i)
 	{
 		{
 			shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
@@ -145,13 +145,14 @@ void TestScene::Init()
 			root->_transform->SetLocalRotation(vec3(rotate(urd), rotate(urd), rotate(urd)));
 			root->SetType(GameObjectType::Static);
 
-			if (i == 0 )
+			if (i==0)
 			{
+				
 				root->AddComponent<testComponent>();
 				root->_transform->SetLocalPosition(vec3(0, 0, 0));
 				root->_transform->SetLocalScale(vec3(5.0f, 5.0f, 5.0f));
 				root->_transform->SetLocalRotation(vec3(0, 0,0));
-				root->SetType(GameObjectType::Static);
+				root->SetType(GameObjectType::Dynamic);
 			}
 
 
@@ -259,20 +260,20 @@ void TestScene::Init()
 		//	}
 		//};
 	
-	for (int i = 0; i < 20; ++i)
-	{
-		{
-			shared_ptr<GameObject> gameObject = CreateGameObject(L"TextTest");
-			auto spriteRender = gameObject->AddComponent<SpriteRenderer>();
-			shared_ptr<TextSprite> sprite = make_shared<TextSprite>();
+	//for (int i = 0; i < 1; ++i)
+	//{
+	//	{
+	//		shared_ptr<GameObject> gameObject = CreateGameObject(L"TextTest");
+	//		auto spriteRender = gameObject->AddComponent<SpriteRenderer>();
+	//		shared_ptr<TextSprite> sprite = make_shared<TextSprite>();
 
-			spriteRender->SetSprite(sprite);
-			sprite->SetPos(vec3(0+i*200.0f, 0.0f, 0.000001));
-			sprite->SetSize(vec2(300, 300));
-			sprite->SetText(to_wstring(Time::main->GetDeltaTime()));
-			sprite->CreateObject(512, 256, L"Arial", FontColor::WHITE, 60);
-		}
-	}
+	//		spriteRender->SetSprite(sprite);
+	//		sprite->SetPos(vec3(0+i*200.0f, 0.0f, 0.000001));
+	//		sprite->SetSize(vec2(300, 300));
+	//		sprite->SetText(to_wstring(Time::main->GetDeltaTime()));
+	//		sprite->CreateObject(512, 256, L"Arial", FontColor::WHITE, 60);
+	//	}
+	//}
 	#pragma endregion
 
 };
