@@ -45,7 +45,7 @@ private:
 	void CallBackBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
 	void CallBackEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
 	bool TotalCheckCollision(const std::shared_ptr<Collider>& a, const std::shared_ptr<Collider>& b);
-	void VisualizeOccupiedCells(const shared_ptr<Collider>& collider);
+	void VisualizeOccupiedCells(const vec3& cell , const shared_ptr<Collider>& collider);
 
 public:
 	RayHit RayCast(const Ray& ray, const float& dis) const;

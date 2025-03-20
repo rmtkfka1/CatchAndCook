@@ -52,6 +52,8 @@ void Gizmo::Line(const Vector3& worldStart, const Vector3& worldEnd, const Vecto
 	giz.strock = main->_width;
 	main->container->AddData(giz);
 	main->lineDatas.push_back(giz);
+
+    main->a++;
 }
 
 void Gizmo::Ray(const Vector3& worldStart, const Vector3& dir, float dis, const Vector4& Color)
@@ -295,6 +297,8 @@ void Gizmo::Rendering(Material* material, Mesh* mesh, int instanceCount)
 {
     //if (main->_flags == GizmoFlags::None) return;
 
+	cout << main->a << endl;
+
 	auto& cmdList = Core::main->GetCmdList();
 
 	cmdList->SetPipelineState(material->GetShader()->_pipelineState.Get());
@@ -303,6 +307,9 @@ void Gizmo::Rendering(Material* material, Mesh* mesh, int instanceCount)
 
 	cmdList->IASetVertexBuffers(1,1,&container->_bufferView);
 	cmdList->DrawInstanced(2, lineDatas.size(),0,0);
+
+    main->a = 0;
+
 }
 
 

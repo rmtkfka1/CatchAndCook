@@ -81,6 +81,7 @@ void ColliderManager::RemoveCollider(const std::shared_ptr<Collider>& collider)
 		if (collider->GetOwner()->GetType() == GameObjectType::Static)
 		{
 			auto it = _staticColliderGrids.find(cell);
+
 			if (it != _staticColliderGrids.end())
 			{
 				auto& colliders = it->second;
@@ -155,7 +156,7 @@ void ColliderManager::Update()
 	{
 		for (auto& collider : colliders)
 		{
-			VisualizeOccupiedCells(collider);
+			VisualizeOccupiedCells(cell,collider);
 		}
 	}
 
@@ -165,7 +166,7 @@ void ColliderManager::Update()
 
 		for (auto& collider : colliders)
 		{
-			VisualizeOccupiedCells(collider);
+			VisualizeOccupiedCells(cell,collider);
 
 			auto potentialCollisions = GetPotentialCollisions(collider);
 
@@ -229,28 +230,24 @@ bool ColliderManager::TotalCheckCollision(const std::shared_ptr<Collider>& src, 
 	return src->CheckCollision(dest);
 }
 
-void ColliderManager::VisualizeOccupiedCells(const shared_ptr<Collider>& collider)
+void ColliderManager::VisualizeOccupiedCells(const vec3& cell, const shared_ptr<Collider>& collider)
 {
 	if (HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::DivideSpace))
 	{
 		Gizmo::Width(0.5f);
 
-		auto occupiedCells = GetOccupiedCells(collider);
+		vec3 min = cell * _cellSize;
+		vec3 max = min + vec3(_cellSize, _cellSize, _cellSize);
 
-		for (const auto& cell : occupiedCells)
-		{
-			vec3 min = cell * _cellSize;
-			vec3 max = min + vec3(_cellSize, _cellSize, _cellSize);
+		if (collider->GetOwner()->GetType() == GameObjectType::Static)
+			Gizmo::main->Box(min, max, vec4(0.0f, 1.0f, 1.0f, 1));
+		else
+			Gizmo::main->Box(min, max, vec4(0.5f, 0.1f, 0.1f, 1));
 
-			if (collider->GetOwner()->GetType() == GameObjectType::Static)
-				Gizmo::main->Box(min, max, vec4(0.0f, 1.0f, 1.0f, 1));
-			else
-				Gizmo::main->Box(min, max, vec4(0.5f, 0.1f, 0.1f, 1));
-			
-		}
 	}
-
 }
+
+
 
 void ColliderManager::CallBackBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
