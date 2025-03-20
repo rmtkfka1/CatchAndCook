@@ -43,10 +43,14 @@ void WallSlideController::RenderBegin()
 
 void WallSlideController::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
-	if (other->GetOwner()->GetTag() == GameObjectTag::Wall)
-	{
-	
 
+	if (HasTag(GetOwner()->GetTag(), GameObjectTag::Wall))
+	{
+		if (other->GetType() == CollisionType::Box)
+		{
+			cout << "안녕" << endl;
+		}
+	
 	}
 }
 

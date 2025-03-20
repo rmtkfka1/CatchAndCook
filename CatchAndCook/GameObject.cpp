@@ -6,6 +6,7 @@
 #include "testComponent.h"
 #include "MeshRenderer.h"
 #include "Scene.h"
+#include "GameObjectSetting.h"
 
 std::queue<std::shared_ptr<Component>> GameObject::_componentDestroyQueue;
 
@@ -147,6 +148,15 @@ void GameObject::ExecuteDestroyComponents()
 
         _componentDestroyQueue.pop();
 	}
+}
+
+void GameObject::AddTag(GameObjectTag tag)
+{
+    _tag |= tag;
+}
+
+void GameObject::RemoveTag(GameObjectTag tag)
+{
 }
 
 void GameObject::Enable()

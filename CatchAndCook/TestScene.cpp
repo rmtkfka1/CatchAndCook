@@ -20,6 +20,7 @@
 #include "Model.h"
 #include "ModelMesh.h"
 #include "Collider.h"
+#include "WallSlideController.h"
 void TestScene::Init()
 {
 	Scene::Init();
@@ -144,15 +145,18 @@ void TestScene::Init()
 			root->_transform->SetLocalPosition(vec3(ddis(urd), ddis(urd), ddis(urd)));
 			root->_transform->SetLocalRotation(vec3(rotate(urd), rotate(urd), rotate(urd)));
 			root->SetType(GameObjectType::Static);
+			root->AddTag(GameObjectTag::Wall);
 
 			if (i==0)
 			{
 				
 				root->AddComponent<testComponent>();
+				root->AddComponent<WallSlideController>();
 				root->_transform->SetLocalPosition(vec3(0, 0, 0));
 				root->_transform->SetLocalScale(vec3(5.0f, 5.0f, 5.0f));
 				root->_transform->SetLocalRotation(vec3(0, 0,0));
 				root->SetType(GameObjectType::Dynamic);
+				root->AddTag(GameObjectTag::Player);
 			}
 
 

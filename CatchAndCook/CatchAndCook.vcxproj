@@ -261,6 +261,7 @@
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="BoidsMove.cpp" />
+    <ClCompile Include="WallSlideController.cpp" />
     <ClCompile Include="WaterController.cpp" />
     <ClCompile Include="WaterHeight.cpp" />
   </ItemGroup>
@@ -351,6 +352,7 @@
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="BoidsMove.h" />
+    <ClInclude Include="WallSlideController.h" />
     <ClInclude Include="WaterController.h" />
     <ClInclude Include="WaterHeight.h" />
     <ClInclude Include="wstrutil.h" />
