@@ -143,7 +143,7 @@ void TestScene::Init()
 
 			root->_transform->SetLocalScale(vec3(dis(urd), dis(urd), dis(urd)));
 			root->_transform->SetLocalPosition(vec3(ddis(urd), ddis(urd), ddis(urd)));
-			root->_transform->SetLocalRotation(vec3(rotate(urd), rotate(urd), rotate(urd)));
+	/*		root->_transform->SetLocalRotation(vec3(rotate(urd), rotate(urd), rotate(urd)));*/
 			root->SetType(GameObjectType::Static);
 			root->AddTag(GameObjectTag::Wall);
 

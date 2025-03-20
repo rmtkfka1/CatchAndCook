@@ -303,6 +303,8 @@ public:
 	static void AddDestroyComponent(const std::shared_ptr<Component>& component);
 	static void ExecuteDestroyComponents();
 
+
+
 	std::shared_ptr<RendererBase> GetRenderer() { return _renderer; }
 	std::shared_ptr<GameObject> GetParent() const {return parent.lock();};
 	std::shared_ptr<GameObject> GetRoot() const { return rootParent.lock(); };
@@ -314,6 +316,7 @@ public:
 
 	void SetType(const GameObjectType& type) { _type = type; };
 	GameObjectType GetType() const { return  _type; };
+	bool HasTag(GameObjectTag tag) const { return (static_cast<uint32>(_tag) & static_cast<uint32>(tag)) != 0; };
 
 	GameObjectTag _tag = GameObjectTag::Defualt;
 	GameObjectType _type = GameObjectType::Dynamic;

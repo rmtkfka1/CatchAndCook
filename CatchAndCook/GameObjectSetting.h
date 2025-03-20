@@ -20,11 +20,6 @@ inline GameObjectTag operator&(GameObjectTag& a, GameObjectTag b) {
 		static_cast<uint32>(a) & static_cast<uint32>(b));
 }
 
-inline bool HasTag(GameObjectTag tag, GameObjectTag flag) {
-	return (static_cast<uint32>(tag) & static_cast<uint32>(flag)) != 0;
-}
-
-
 enum class GameObjectType
 {
 	Dynamic = 0, // ����(�������� ����)
