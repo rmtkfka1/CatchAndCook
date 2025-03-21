@@ -76,10 +76,12 @@ public:
 	bool IsLocalSRTChanged() const { return _isLocalSRTChanged; }
 	bool IsLocalToWorldChanged() const { return _isLocalToWorldChanged; }
 
+    vec3 GetMoveDirection() const;
 
 private:
 	vec3 _velocity = vec3::Zero;
 
+    vec3 _prevLocalPosition = vec3::Zero;
     vec3 _localPosition = vec3::Zero;
     vec3 _localScale = vec3::One;
     Quaternion _localRotation = Quaternion::Identity;

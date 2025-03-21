@@ -173,6 +173,7 @@ vec3 Transform::GetUp()
 {
     Quaternion quat = GetWorldRotation();
     _up = vec3::Transform(vec3(0, 1, 0), quat);
+    _up.Normalize();
     return _up;
 }
 
@@ -203,6 +204,7 @@ vec3& Transform::GetLocalPosition()
 const vec3& Transform::SetLocalPosition(const vec3& worldPos)
 {
     _needLocalSRTUpdated = true;
+	_prevLocalPosition = _localPosition;
     return _localPosition = worldPos;
 }
 
@@ -542,4 +544,11 @@ Quaternion Transform::WorldToLocal_Quaternion(const Quaternion& value)
     result = value * result;
     result.Normalize();
     return result;
+}
+
+vec3 Transform::GetMoveDirection() const
+{
+	vec3 direction  = _localPosition - _prevLocalPosition;
+    direction.Normalize();
+	return direction;
 }

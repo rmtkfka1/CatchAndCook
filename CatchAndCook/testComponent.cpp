@@ -87,7 +87,6 @@ void testComponent::Update()
 	}
 
 
-
 }
 
 void testComponent::Update2()

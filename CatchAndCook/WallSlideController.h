@@ -18,8 +18,6 @@ public:
 	void CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
 
 private:
-	vec3 ComputeContactPoint(const BoundingOrientedBox& box, const vec3& direction);
-	vec3 ComputeOBBContactNormal(const BoundingOrientedBox& box, const vec3& contactPoint);
 	
 
 };
