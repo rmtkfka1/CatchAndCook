@@ -83,7 +83,7 @@ void TestScene_jin::Init()
 		meshRenderer->AddMaterials({ material });
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
 	}
-
+	if (false)
 	{
 
 		{

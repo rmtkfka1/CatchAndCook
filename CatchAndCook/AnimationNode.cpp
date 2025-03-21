@@ -274,11 +274,28 @@ Matrix AnimationNode::CalculateTransformMatrix(const std::shared_ptr<ModelNode>&
         auto d = LookToQuaternion(Vector3::Transform(Vector3::Forward, _originModelNode->GetLocalPreRotation()),
             Vector3::Transform(Vector3::Up, _originModelNode->GetLocalPreRotation())
             );
-        d = _animModelNode->GetLocalPreRotation();
+        d = _originModelNode->GetLocalPreRotation();
         Quaternion h;
         _animModelNode->GetLocalPreRotation().Inverse(h);
-        
-        auto e = interpolatedRotation * d;
+        auto worldInter = _animModelNode->_globalTPoseQuat * interpolatedRotation;
+        auto localInter = _originModelNode->_globalInvertTPoseQuat * worldInter;
+
+        auto worldInter2 = _originModelNode->_globalTPoseQuat * interpolatedRotation;
+
+        interpolatedRotation = Quaternion::Slerp(d, worldInter2 * d, 0.2f);
+        auto e = interpolatedRotation;
+
+
+
+        a = Vector3::Transform(Vector3::Zero, Matrix::CreateFromQuaternion(worldInter2) * _originModelNode->_globalTPose);
+
+        Gizmo::Width(0.001);
+        Gizmo::Ray(a + Vector3::Forward * ((_animModelNode != _originModelNode) ? 1 : 0) + Vector3::Right * 3,
+            Vector3::Transform(Vector3::Forward, worldInter2), 0.1, Vector4(0, 0, 1, 1));
+        Gizmo::Ray(a + Vector3::Forward * ((_animModelNode != _originModelNode) ? 1 : 0) + Vector3::Right * 3,
+            Vector3::Transform(Vector3::Right, worldInter2), 0.1, Vector4(1, 0, 0, 1));
+        Gizmo::Ray(a + Vector3::Forward * ((_animModelNode != _originModelNode) ? 1 : 0) + Vector3::Right * 3,
+            Vector3::Transform(Vector3::Up, worldInter2), 0.1, Vector4(0, 1, 0, 1));
         
         return Matrix::CreateScale(_originModelNode->GetLocalScale()) *
             Matrix::CreateFromQuaternion(e) * //

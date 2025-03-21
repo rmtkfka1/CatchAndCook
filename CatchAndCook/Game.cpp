@@ -23,6 +23,7 @@
 #include "ComputeManager.h"
 #include "ImguiManager.h"
 #include "Collider.h"
+#include "NavMeshManager.h"
 
 void Game::Init(HWND hwnd)
 {
@@ -38,6 +39,9 @@ void Game::Init(HWND hwnd)
 
 	ResourceManager::main = make_unique<ResourceManager>();
 	ResourceManager::main->Init();
+
+	NavMeshManager::main = make_unique<NavMeshManager>();
+	NavMeshManager::main->Init();
 
 	TerrainManager::main = make_unique<TerrainManager>();
 
@@ -214,7 +218,7 @@ void Game::CameraUpdate()
 {
 	shared_ptr<Camera> camera = CameraManager::main->GetCamera(CameraType::ThirdPersonCamera);
 
-	const float speed = 50.0f;
+	const float speed = 30.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;
 
 	//cout << camera->GetCameraPos().y << endl;

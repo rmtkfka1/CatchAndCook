@@ -11,6 +11,7 @@
 #include "Transform.h"
 #include "MeshRenderer.h"
 #include "ModelMesh.h"
+#include "NavMesh.h"
 #include "PhysicsComponent.h"
 #include "SkinnedMeshRenderer.h"
 #include "Terrain.h"
@@ -157,6 +158,11 @@ void SceneLoader::PrevProcessingComponent(json& data)
     if(type == L"Animator")
     {
         auto terr = CreateObject<SkinnedHierarchy>(guid);
+        component = terr;
+    }
+    if (type == L"NavMeshSurface")
+    {
+        auto terr = CreateObject<NavMesh>(guid);
         component = terr;
     }
 
@@ -451,6 +457,57 @@ void SceneLoader::LinkComponent(json& jsonData)
         terrain->SetInstances(instances);
 		terrain->SetInstanceDatas(instancesDatas);
 		terrain->SetHeightMap(rawPath,pngPath, Vector2(rawSize,rawSize), fieldSize);
+    }
+
+
+    if (type == L"NavMeshSurface")
+    {
+        auto navMesh = IGuid::FindObjectByGuid<NavMesh>(guid);
+
+        std::vector<NavMeshData> datas;
+        std::vector< std::array<Vector3, 2>> edgeDatas;
+
+        auto& vertexs = jsonData["vertexs"];
+        auto& indexs = jsonData["indexs"];
+        auto& adjacency = jsonData["adjacency"];
+        auto& edges = jsonData["edge"];
+
+        int vertexCount = vertexs.size();
+        int edgeCount = edges.size();
+        for (int i = 0; i < vertexCount; i++)
+        {
+            NavMeshData data;
+			data.index = i;
+            data.position = Vector3(
+                vertexs[i][0].get<float>(),
+                vertexs[i][1].get<float>(),
+                vertexs[i][2].get<float>()
+            );
+            for (int j = 0; j < adjacency[i].size(); j++)
+            {
+				int adjIndex = adjacency[i][j].get<int>();
+				data.adjectIndexs.push_back(adjIndex);
+            }
+            datas.push_back(data);
+        }
+        for (int i = 0; i < edgeCount; i++)
+        {
+            std::array<Vector3, 2> edgePos;
+			edgePos[0] = Vector3(
+				edges[i][0][0].get<float>(),
+				edges[i][0][1].get<float>(),
+				edges[i][0][2].get<float>()
+			);
+            edgePos[1] = Vector3(
+                edges[i][1][0].get<float>(),
+                edges[i][1][1].get<float>(),
+                edges[i][1][2].get<float>()
+            );
+			edgeDatas.push_back(edgePos);
+        }
+
+		navMesh->SetNavMeshData(datas);
+        navMesh->SetNavMeshEdgeData(edgeDatas);
     }
 }
 
