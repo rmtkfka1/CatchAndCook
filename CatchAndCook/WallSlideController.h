@@ -18,7 +18,9 @@ public:
 	void CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
 
 private:
-	
+	bool _onCollision = false;
+	shared_ptr<Collider> _collider;
+	shared_ptr<Collider> _other;
 
 };
 
