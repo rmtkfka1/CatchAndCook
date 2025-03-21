@@ -68,7 +68,7 @@ public:
 
 	BoundingBox _bound;
 	bool _isCulling = true;
-	bool _isStaticInstancing = true;
+	bool _isStaticInstancing = false;
 	InstanceBufferContainer* _staticInstanceBuffer = nullptr;
 
 	void SetInstanceBuffer(InstanceBufferContainer* instanceBuffer) { _staticInstanceBuffer = instanceBuffer; }

@@ -81,7 +81,7 @@ void Terrain::Start()
 		for(auto& renderer : renderers)
 		{
             renderer->SetCulling(false);
-            renderer->SetStaticInstancing(false);
+            renderer->SetStaticInstancing(true);
 			renderer->SetInstanceBuffer(instanceBuffer);
             for (auto& material : renderer->GetMaterials())
             {

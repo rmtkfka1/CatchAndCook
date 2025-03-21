@@ -55,7 +55,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     //Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
     row_major float4x4 l2wMatrix = 0;
     row_major float4x4 w2lMatrix = 0;
-    float4 boneIds = float4(-1, -1, -1, -1);
+    float4 boneIds = 0;
     float4 boneWs = 0;
     
    
