@@ -3,8 +3,8 @@
 #include "Core.h"
 #include "Vertex.h"
 
-int WINDOW_WIDTH = 1920;
-int WINDOW_HEIGHT = 1080;
+int WINDOW_WIDTH = 1280;
+int WINDOW_HEIGHT = 720;
 
 bool Initalize = false;
 
@@ -29,6 +29,11 @@ size_t SRV_STRUCTURED_TABLE_INDEX = CBV_ROOT_INDEX_COUNT + 8;
 //size_t SRV_TABLE_REGISTER_COUNT = 8;
 size_t UAV_TABLE_REGISTER_COUNT = 4;
 
+ size_t g_debug_forward_count=0;
+ size_t g_debug_deferred_count=0;
+ size_t g_debug_draw_call=0;
+ size_t g_debug_forward_culling_count=0;
+ size_t g_debug_deferred_culling_count=0;
 
 std::vector<VertexProp> SkinProp
 {

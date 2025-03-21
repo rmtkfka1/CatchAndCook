@@ -75,7 +75,7 @@ void Core::RenderEnd()
     {
 #ifdef  IMGUI_ON
 		Core::main->GetRenderTarget()->GetRenderTarget()->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
-        _cmdList->SetDescriptorHeaps(1, _imguiHeap.GetAddressOf());
+		_cmdList->SetDescriptorHeaps(1, _imguiHeap.GetAddressOf());
         ImguiManager::main->Render();
 #endif //  IMGUI_ON
     }
@@ -90,9 +90,24 @@ void Core::RenderEnd()
 
     Fence();
 
-    _swapChain->Present(0, 0);
+    uint32 SyncInterval = 0;
+    uint32 uiSyncInterval = SyncInterval;
+    uint32 uiPresentFlags = 0;
+
+    if (!uiSyncInterval)
+    {
+        uiPresentFlags = DXGI_PRESENT_ALLOW_TEARING;
+    }
+
+     ThrowIfFailed(_swapChain->Present(uiSyncInterval, uiPresentFlags));
     _renderTarget->ChangeIndex();
     _bufferManager->Reset();
+    g_debug_deferred_count = 0;
+	g_debug_forward_count = 0;
+	g_debug_draw_call = 0;
+    g_debug_deferred_culling_count = 0;
+    g_debug_forward_culling_count = 0;
+
 }
 
 

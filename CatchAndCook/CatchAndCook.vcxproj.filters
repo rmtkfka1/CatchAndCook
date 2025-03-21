@@ -301,6 +301,10 @@
     <ClCompile Include="WaterController.cpp">
       <Filter>03.Component</Filter>
     </ClCompile>
+    <ClCompile Include="BoidsMove.cpp" />
+    <ClCompile Include="Scene_Sea01.cpp">
+      <Filter>06.Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -562,6 +566,10 @@
     <ClInclude Include="WaterController.h">
       <Filter>03.Component</Filter>
     </ClInclude>
+    <ClInclude Include="BoidsMove.h" />
+    <ClInclude Include="Scene_Sea01.h">
+      <Filter>06.Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -643,6 +651,12 @@
       <Filter>998.HLSL\Compute</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\bloomShader.hlsl">
+      <Filter>998.HLSL\Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\depthRender.hlsl">
+      <Filter>998.HLSL\Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\underWaterEffect.hlsl">
       <Filter>998.HLSL\Compute</Filter>
     </FxCompile>
   </ItemGroup>

@@ -152,6 +152,8 @@ void WaterController::Destroy()
     }
 }
 
+//[]
+//[][][][][] => 1개
 void WaterController::SetData(Material* material)
 {
     material->SetHandle("_bumpMap", _textures->GetSRVCpuHandle());

@@ -4,5 +4,6 @@ enum class SceneType
 	TestScene,
 	TestScene2,
 	TestSceneMapEditor,
-	LightingTest
+	LightingTest,
+	Sea01
 };

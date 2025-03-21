@@ -2,6 +2,130 @@
 #include "GeoMetryHelper.h"
 #include "Mesh.h"
 
+shared_ptr<Mesh> GeoMetryHelper::LoadPyramidMesh()
+{
+    // 리소스 키 생성
+    std::wstring key = L"pyramid";
+
+    // 이미 로드된 Mesh가 있다면 반환
+    shared_ptr<Mesh> mesh = ResourceManager::main->Get<Mesh>(key);
+    if (mesh)
+    {
+        return mesh;
+    }
+
+    // 피라미드의 크기 설정 (scale은 정점 크기의 절반)
+    float s = 1.0f;
+
+    // 정점 데이터: 베이스 4개 + 측면 4면 x 3개 = 총 16개
+    vector<Vertex_Static> vertices;
+    vertices.reserve(16);
+
+    // -------------------------------
+    // 베이스 (밑면) 정점 (y = -s)
+    // -------------------------------
+    vec3 baseNormal = vec3(0, -1, 0);
+    vec3 baseTangent = vec3(1, 0, 0);
+    // UV 좌표: 왼쪽 아래 (0,1), 오른쪽 아래 (1,1), 오른쪽 위 (1,0), 왼쪽 위 (0,0)
+    Vertex_Static base0(vec3(-s, -s, -s), baseNormal, baseTangent, vec2(0, 1));
+    Vertex_Static base1(vec3(s, -s, -s), baseNormal, baseTangent, vec2(1, 1));
+    Vertex_Static base2(vec3(s, -s, s), baseNormal, baseTangent, vec2(1, 0));
+    Vertex_Static base3(vec3(-s, -s, s), baseNormal, baseTangent, vec2(0, 0));
+
+    vertices.push_back(base0); // 인덱스 0
+    vertices.push_back(base1); // 1
+    vertices.push_back(base2); // 2
+    vertices.push_back(base3); // 3
+
+    // 피라미드의 꼭짓점 (엡섹스)
+    vec3 apex = vec3(0, s, 0);
+
+    // -------------------------------
+    // 측면: 4개의 삼각형 면
+    // 각 면은 별도의 정점 세트를 사용하여 올바른 법선과 UV를 지정
+    // (아래 법선 값은 미리 계산된 대략적인 값입니다.)
+    // -------------------------------
+
+    // Front Face (앞면): 베이스 에지: base0 -> base1, 그리고 apex
+    vec3 frontNormal = vec3(0, -0.4472136f, 0.894427f); // (0, -1/√5, 2/√5)
+    Vertex_Static front_v0(vec3(-s, -s, -s), frontNormal, baseTangent, vec2(0, 1));
+    Vertex_Static front_v1(vec3(s, -s, -s), frontNormal, baseTangent, vec2(1, 1));
+    Vertex_Static front_v2(apex, frontNormal, baseTangent, vec2(0.5f, 0));
+    vertices.push_back(front_v0); // 인덱스 4
+    vertices.push_back(front_v1); // 5
+    vertices.push_back(front_v2); // 6
+
+    // Right Face (오른쪽 면): 베이스 에지: base1 -> base2, 그리고 apex  
+    vec3 rightNormal = vec3(0.894427f, -0.4472136f, 0); // (2/√5, -1/√5, 0)
+    Vertex_Static right_v0(vec3(s, -s, -s), rightNormal, baseTangent, vec2(0, 1));
+    Vertex_Static right_v1(vec3(s, -s, s), rightNormal, baseTangent, vec2(1, 1));
+    Vertex_Static right_v2(apex, rightNormal, baseTangent, vec2(0.5f, 0));
+    vertices.push_back(right_v0); // 인덱스 7
+    vertices.push_back(right_v1); // 8
+    vertices.push_back(right_v2); // 9
+
+    // Back Face (뒷면): 베이스 에지: base2 -> base3, 그리고 apex  
+    vec3 backNormal = vec3(0, -0.4472136f, -0.894427f); // (0, -1/√5, -2/√5)
+    Vertex_Static back_v0(vec3(s, -s, s), backNormal, baseTangent, vec2(0, 1));
+    Vertex_Static back_v1(vec3(-s, -s, s), backNormal, baseTangent, vec2(1, 1));
+    Vertex_Static back_v2(apex, backNormal, baseTangent, vec2(0.5f, 0));
+    vertices.push_back(back_v0); // 인덱스 10
+    vertices.push_back(back_v1); // 11
+    vertices.push_back(back_v2); // 12
+
+    // Left Face (왼쪽 면): 베이스 에지: base3 -> base0, 그리고 apex  
+    vec3 leftNormal = vec3(-0.894427f, -0.4472136f, 0); // (-2/√5, -1/√5, 0)
+    Vertex_Static left_v0(vec3(-s, -s, s), leftNormal, baseTangent, vec2(0, 1));
+    Vertex_Static left_v1(vec3(-s, -s, -s), leftNormal, baseTangent, vec2(1, 1));
+    Vertex_Static left_v2(apex, leftNormal, baseTangent, vec2(0.5f, 0));
+    vertices.push_back(left_v0); // 인덱스 13
+    vertices.push_back(left_v1); // 14
+    vertices.push_back(left_v2); // 15
+
+    // -------------------------------
+    // 인덱스 데이터 생성
+    // 베이스: 2개의 삼각형, 측면: 각 1개의 삼각형 (총 4면)
+    // -------------------------------
+    vector<uint32> indices;
+    indices.reserve(18);
+
+    // 베이스 (아래 면): 정점 인덱스 0,1,2,3
+    indices.push_back(0);
+    indices.push_back(1);
+    indices.push_back(2);
+    indices.push_back(0);
+    indices.push_back(2);
+    indices.push_back(3);
+
+    // 측면 삼각형들:
+    // Front Face: 정점 4, 5, 6
+    indices.push_back(4);
+    indices.push_back(5);
+    indices.push_back(6);
+
+    // Right Face: 정점 7, 8, 9
+    indices.push_back(7);
+    indices.push_back(8);
+    indices.push_back(9);
+
+    // Back Face: 정점 10, 11, 12
+    indices.push_back(10);
+    indices.push_back(11);
+    indices.push_back(12);
+
+    // Left Face: 정점 13, 14, 15
+    indices.push_back(13);
+    indices.push_back(14);
+    indices.push_back(15);
+
+    // Mesh 초기화 및 리소스 등록
+    mesh = make_shared<Mesh>();
+    mesh->Init(vertices, indices);
+    ResourceManager::main->Add(key, mesh);
+
+    return mesh;
+}
+
 shared_ptr<Mesh> GeoMetryHelper::LoadRectangleBox(const float scale)
 {
 

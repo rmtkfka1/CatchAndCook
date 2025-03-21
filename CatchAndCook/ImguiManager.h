@@ -5,6 +5,7 @@ class GameObject;
 class Material;
 struct SeaParam;
 struct FogParam;
+struct UnderWaterParam;
 
 class ImguiManager
 {
@@ -16,13 +17,33 @@ public:
 	void Init();
 	void Render();
 
+private:
+	void Debug();
+
+	void BoidMove();
+
+	void GizmoController();
+
+	void ComputeController();
+
+	void LightController();
+
+	void SeaController();
+
+
+	
+
 public:
 	GameObject* _light;
-	Material* _seaMaterial;
 	bool* _blurPtr;
 	bool* _bloomPtr;
 	FogParam* _fogParam;
+	UnderWaterParam* _underWaterParam;
 	SeaParam* _seaParam;
+
+	float* separationWeight;
+	float* alignmentWeight;
+	float* cohesionWeight;
 
 private:
 	bool show_window = true;

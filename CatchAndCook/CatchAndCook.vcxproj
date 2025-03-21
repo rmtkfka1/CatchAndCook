@@ -235,6 +235,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneLoader.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="Scene_Sea01.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="simple_mesh_ext.cpp" />
     <ClCompile Include="simple_mesh_LH.cpp" />
@@ -261,6 +262,7 @@
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vertex.cpp" />
+    <ClCompile Include="BoidsMove.cpp" />
     <ClCompile Include="WaterController.cpp" />
     <ClCompile Include="WaterHeight.cpp" />
   </ItemGroup>
@@ -330,6 +332,7 @@
     <ClInclude Include="SceneLoader.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SceneType.h" />
+    <ClInclude Include="Scene_Sea01.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="simple_mesh_ext.h" />
     <ClInclude Include="simple_mesh_LH.h" />
@@ -351,6 +354,7 @@
     <ClInclude Include="Time.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vertex.h" />
+    <ClInclude Include="BoidsMove.h" />
     <ClInclude Include="WaterController.h" />
     <ClInclude Include="WaterHeight.h" />
     <ClInclude Include="wstrutil.h" />
@@ -494,6 +498,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Transform_b1.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\underWaterEffect.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

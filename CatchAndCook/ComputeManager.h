@@ -99,8 +99,10 @@ private:
 
 struct FogParam
 {
+	
+
 	vec3 g_fogColor = vec3(1, 1, 1);
-	float power = 32.0f;
+	float power = 1.0f;
 
 	float g_fogMin = 0;
 	float g_fogMax = 1000.0f;
@@ -133,9 +135,52 @@ private:
 	shared_ptr<Texture> _pingTexture;
 	shared_ptr<Shader> _shader;
 	FogParam _fogParam;
+
+	friend class ComputeManager;
+};
+
+struct UnderWaterParam
+{
+	vec3 g_fogColor = vec3(1, 1, 1);
+	float g_fog_power = 1.0f;
+
+	vec3 g_underWaterColor = vec3(0.0f, 0.5f, 0.5f);
+	float g_fogMin = 0;
+
+	vec2 padding;
+	int g_on = -1;
+	float g_fogMax = 1000.0f;
+};
+
+class UnderWaterEffect : public ComputeBase
+{
+
+public:
+	UnderWaterEffect();
+	virtual ~UnderWaterEffect();
+
+public:
+	virtual void Init();
+	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+
+private:
+	virtual void Resize();
+
+private:
+	shared_ptr<Texture> _pingTexture;
+	shared_ptr<Texture> _colorGrading;
+	shared_ptr<Shader> _shader;
+
+	UnderWaterParam	_underWaterParam;
+
 	friend class ComputeManager;
 
 };
+
 
 
 class ComputeManager 
@@ -152,6 +197,7 @@ private:
 	shared_ptr<Blur> _blur;
 	shared_ptr<Bloom> _bloom;
 	shared_ptr<DepthRender> _depthRender;
+	shared_ptr<UnderWaterEffect> _underWaterEffect;
 
 };
 

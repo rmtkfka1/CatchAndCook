@@ -23,6 +23,7 @@ public:
 	void Destroy() override;
 	void RenderBegin() override;
 	void CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
+	void CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
 	void SetDestroy() override;
 
 	//RendererBase

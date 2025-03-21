@@ -76,6 +76,7 @@ void Scene::RenderBegin()
     Profiler::Set("Render_RenderBegin");
     for (auto& gameObject : _gameObjects)
     	gameObject->RenderBegin();
+
     Profiler::Fin();
     Gizmo::main->RenderBegin();
 }
@@ -87,6 +88,7 @@ void Scene::Rendering()
     auto& cmdList = Core::main->GetCmdList();
 
     Core::main->GetRenderTarget()->ClearDepth();
+    CameraManager::main->Setting(CameraType::ThirdPersonCamera);
 
     ShadowPass(cmdList);
     Profiler::Set("PASS : Deffered", BlockTag::GPU);
@@ -109,6 +111,7 @@ void Scene::Rendering()
     Profiler::Fin();
 
     Profiler::Set("PASS : UI", BlockTag::GPU);
+    
     UiPass(cmdList);
     Profiler::Fin();
 
@@ -161,13 +164,16 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
             for(auto& ele : vec)
             {
-            /*    if(ele.renderer->IsCulling() == true)
+                g_debug_forward_count++;
+
+                if(ele.renderer->IsCulling() == true)
                 {
                     if(CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound())==false)
                     {
+                        g_debug_forward_culling_count++;
                         continue;
                     }
-                }*/
+                }
 
                 InstancingManager::main->AddObject(ele);
 
@@ -193,13 +199,16 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
             for (auto& ele : vec)
             {
-                /*   if(ele.renderer->IsCulling() == true)
+                g_debug_deferred_count++;
+
+                   if(ele.renderer->IsCulling() == true)
                    {
                        if(CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound())==false)
                        {
+                           g_debug_deferred_culling_count++;
                            continue;
                        }
-                   }*/
+                   }
 
                 InstancingManager::main->AddObject(ele);
                 
@@ -250,12 +259,8 @@ void Scene::GlobalSetting()
 {
     auto& cmdList = Core::main->GetCmdList();
 
-    CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
-    CameraManager::main->GetActiveCamera()->Update();
-    CameraManager::main->GetActiveCamera()->PushData();
-    CameraManager::main->GetActiveCamera()->SetData();
 
-	/*cout << CameraManager::main->GetActiveCamera()->GetCameraLook().x << " " << CameraManager::main->GetActiveCamera()->GetCameraLook().y << " " << CameraManager::main->GetActiveCamera()->GetCameraLook().z << endl;*/
+    //cout << CameraManager::main->GetActiveCamera()->GetCameraPos().y << endl;
 
     _globalParam.window_size = vec2(WINDOW_WIDTH,WINDOW_HEIGHT);
     _globalParam.Time = Time::main->GetTime();
@@ -272,29 +277,29 @@ void Scene::DebugRendering()
     auto& cmdList = Core::main->GetCmdList();
 
 
-    { // Deffered
-        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deffered)];
+    //{ // Deffered
+    //    auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deffered)];
 
-        for(auto& [shader,vec] : targets)
-        {
-            for(auto& [material,mesh,target] : vec)
-            {
-                target->DebugRendering();
-            }
-        }
-    }
+    //    for(auto& [shader,vec] : targets)
+    //    {
+    //        for(auto& [material,mesh,target] : vec)
+    //        {
+    //            target->DebugRendering();
+    //        }
+    //    }
+    //}
 
-    { // forward
-        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Forward)];
+    //{ // forward
+    //    auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Forward)];
 
-        for(auto& [shader,vec] : targets)
-        {
-            for(auto& [material,mesh,target] : vec)
-            {
-                target->DebugRendering();
-            }
-        }
-    }
+    //    for(auto& [shader,vec] : targets)
+    //    {
+    //        for(auto& [material,mesh,target] : vec)
+    //        {
+    //            target->DebugRendering();
+    //        }
+    //    }
+    //}
 
     { // forward
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Debug)];

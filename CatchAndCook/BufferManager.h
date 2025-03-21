@@ -19,7 +19,7 @@ enum class BufferType
 	TerrainDetailsParam,
 	SeaParam,
 	FogParam,
-
+	UnderWaterParam,
 
 	// Instance
 	TransformInstanceParam,

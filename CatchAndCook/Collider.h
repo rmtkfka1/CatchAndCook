@@ -54,19 +54,15 @@ public:
 	void SetDestroy() override;
 	void Destroy() override;
 
-public:
-	bool IsCollision();
-	bool IsCollision(const std::shared_ptr<Collider>& dest);
 
 public:
 	bool CheckCollision(const std::shared_ptr<Collider>& other);
-
 	bool RayCast(const Ray& ray, const float& dis, RayHit& hit);
-
 	void SetBoundingBox(vec3 center,vec3 extents);
 	void SetBoundingSphere(vec3 center,float radius);
 	void SetBoundingFrustum(BoundingFrustum& boundingFrustum);
 	void CalculateBounding();
+	pair<vec3, vec3> GetMinMax();
 
 	BoundingUnion& GetBoundUnion() {return _bound;}
 

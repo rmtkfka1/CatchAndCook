@@ -27,12 +27,10 @@ VS_OUT VS_Main(VS_IN input)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-   
     float4 worldPos = PositionTexture.Sample(sampler_point, input.uv);
     float3 WolrdNormal = normalize(NormalTexture.Sample(sampler_point, input.uv).xyz);
     float4 AlbedoColor = AlbedoTexture.Sample(sampler_lerp, input.uv);
-    float Depth = depthTexture.Sample(sampler_point, input.uv).r;
-    
+
     float3 lightColor = ComputeLightColor(worldPos.xyz, WolrdNormal.xyz);
     
     return float4(lightColor, 1.0f) * AlbedoColor;

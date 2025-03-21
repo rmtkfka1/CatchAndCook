@@ -3,6 +3,11 @@
 #include "Collider.h"
 #include "simple_mesh_ext.h"
 
+Camera::Camera(CameraType type)
+{
+	_type = type;
+}
+
 void Camera::Update()
 {
     Calculate();
@@ -156,7 +161,7 @@ bool Camera::IsInFrustum(BoundingBox& box)
 *                        *
 **************************/
 
-ThirdPersonCamera::ThirdPersonCamera()
+ThirdPersonCamera::ThirdPersonCamera() : Camera(CameraType::ThirdPersonCamera)
 {
     _type = CameraType::ThirdPersonCamera;
 }
@@ -168,4 +173,18 @@ ThirdPersonCamera::~ThirdPersonCamera()
 void ThirdPersonCamera::Update()
 {
 	Camera::Update();
+}
+
+AxisCamera::AxisCamera() : Camera(CameraType::AxisCamera)
+{
+
+}
+
+AxisCamera::~AxisCamera()
+{
+}
+
+void AxisCamera::Update()
+{
+    Camera::Update();
 }

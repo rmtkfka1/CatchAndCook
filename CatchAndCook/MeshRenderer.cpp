@@ -93,7 +93,14 @@ void MeshRenderer::RenderBegin()
 			if(i == 0) totalBox = bound;
 			else  BoundingBox::CreateMerged(totalBox,totalBox,bound);
 		}
+
 		SetBound(totalBox);
+	}
+
+	if(HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::Culling))
+	{
+		Gizmo::Width(0.2f);
+		Gizmo::Box(GetBound(),vec4(0,0,1.0f,1.0f));
 	}
 
 	for (int i = 0; i < _mesh.size(); i++)
@@ -136,6 +143,13 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh,int instanceCount)
 void MeshRenderer::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 	Component::CollisionBegin(collider, other);
+
+	
+}
+
+void MeshRenderer::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+{
+
 }
 
 void MeshRenderer::DebugRendering()

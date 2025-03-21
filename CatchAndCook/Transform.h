@@ -25,7 +25,6 @@ public:
 	virtual void SetData(StructuredBuffer* buffer = nullptr) override;
 
 public:
-
     vec3 SetForward(const vec3& dir );
     vec3 SetUp(const vec3& dir );
     vec3 SetRight(const vec3& dir );
@@ -50,6 +49,10 @@ public:
     Quaternion GetWorldRotation();
     const Quaternion& SetWorldRotation(const Quaternion& quaternion);
 
+    void SetVelocity(const vec3& velocity) { _velocity = velocity; }
+    void SetVelocity(vec3&& velocity) { _velocity = std::move(velocity);}
+	vec3 GetVelocity() const { return _velocity; }
+     
     bool GetLocalToWorldMatrix(OUT Matrix& localToWorldMatrix);
     bool GetLocalToWorldMatrix_BottomUp(Matrix& localToWorld);
     bool GetLocalSRTMatrix(Matrix& localSRT);
@@ -57,7 +60,7 @@ public:
     bool CheckNeedLocalSRTUpdate() const;
     bool CheckNeedLocalMatrixUpdate() const;
     bool CheckLocalToWorldMatrixUpdate();
-    void TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool isParentUpdate = false);
+    bool TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool isParentUpdate = false);
     bool BottomUpLocalToWorldUpdate();
 
     void LookUp(const vec3& dir, const vec3& up);
@@ -70,10 +73,13 @@ public:
     vec3 WorldToLocal_Direction(const vec3& value);
     Quaternion WorldToLocal_Quaternion(const Quaternion& value);
 
-	bool _isLocalSRTChanged = true; //이거 활성화시 시 월드매트릭스 갱신.isLocalToWorldChanged 이거 활성화
-    bool _isLocalToWorldChanged = true; //부모가 local 업데이트 or 부모 world 변경시 이거 true.worldtrs변경.
+	bool IsLocalSRTChanged() const { return _isLocalSRTChanged; }
+	bool IsLocalToWorldChanged() const { return _isLocalToWorldChanged; }
+
 
 private:
+	vec3 _velocity = vec3::Zero;
+
     vec3 _localPosition = vec3::Zero;
     vec3 _localScale = vec3::One;
     Quaternion _localRotation = Quaternion::Identity;
@@ -84,6 +90,9 @@ private:
 
     Matrix _localSRTMatrix = Matrix::Identity; // prev랑 비교후 갱신/ 갱신시 islocal머시기 true 아니면 false
     Matrix _localToWorldMatrix = Matrix::Identity;
+
+    bool _isLocalSRTChanged = true; // 이전 프레임과 SRT가 달라졌을때
+    bool _isLocalToWorldChanged = true; // 이전 프레임과 L2W가 달라졌을때
 
     bool _needLocalSRTUpdated = true; // 나 자신이 SRT 갱신 해야해.
     bool _needLocalMatrixUpdated = true;

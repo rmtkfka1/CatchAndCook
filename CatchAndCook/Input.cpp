@@ -149,9 +149,21 @@ Vector2 Input::GetMousePosition()
     return mousePos;
 }
 
+
+
 Vector2 Input::GetMouseDownPosition(int keycode)
 {
     return _inputMouseField[keycode].downPos;
+}
+
+vec2 Input::GetNDCMouseDownPosition(int keycode)
+{
+    vec2 screenPos = _inputMouseField[keycode].downPos;
+
+    float cursorNdcX = screenPos.x * 2.0f / WINDOW_WIDTH - 1.0f;
+    float cursorNdcY = -screenPos.y * 2.0f / WINDOW_HEIGHT + 1.0f;
+
+	return vec2(cursorNdcX, cursorNdcY);
 }
 
 Vector2 Input::GetMouseUpPosition(int keycode)

@@ -93,12 +93,9 @@ struct DS_OUT
 ///////////////////////////////////////////////////////////////////////////
 void WaveGeneration(inout float3 worldPos, inout float3 worldNormal)
 {
-    
     int waveCount = g_wave_count;
 
     float3 modifiedPos = worldPos;
-    float dHdX = 0.0f;
-    float dHdZ = 0.0f;
 
     for (int i = 0; i < waveCount; i++)
     {
@@ -121,18 +118,9 @@ void WaveGeneration(inout float3 worldPos, inout float3 worldNormal)
         modifiedPos.x += steep * wave.amplitude * dir.x * waveCos;
         modifiedPos.z += steep * wave.amplitude * dir.y * waveCos;
         modifiedPos.y += wave.amplitude * waveSin;
-
-        // 법선 계산을 위한 편미분 누적
-        float dWavedX = frequency * waveCos * dir.x;
-        float dWavedZ = frequency * waveCos * dir.y;
-        dHdX += wave.amplitude * dWavedX;
-        dHdZ += wave.amplitude * dWavedZ;
     }
 
-    // 수정된 위치를 기반으로 새로운 법선 계산
-    float3 computedNormal = normalize(float3(-dHdX, 1.0f, -dHdZ));
-
-    // 결과 반영
+    // 수정된 위치 반영 및 기본 법선 할당
     worldPos = modifiedPos;
     worldNormal = float3(0, 1, 0);
 }

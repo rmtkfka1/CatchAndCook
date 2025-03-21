@@ -31,6 +31,7 @@ void BufferManager::Init()
 		CreateBufferPool(BufferType::InstanceOffsetParam,sizeof(InstanceOffsetParam),10000);
 		CreateBufferPool(BufferType::SeaParam, sizeof(TerrainDetailsParam), 1);
 		CreateBufferPool(BufferType::FogParam, sizeof(FogParam), 1);
+		CreateBufferPool(BufferType::UnderWaterParam, sizeof(UnderWaterParam), 1);
 
 	}
 
@@ -40,7 +41,7 @@ void BufferManager::Init()
 
 	{
 		CreateInstanceBufferPool(BufferType::TransformInstanceParam,sizeof(Instance_Transform),10000,128);
-		CreateInstanceBufferPool(BufferType::GizmoInstanceParam,sizeof(Instance_Gizmo),100000,1);
+		CreateInstanceBufferPool(BufferType::GizmoInstanceParam,sizeof(Instance_Gizmo),1000000,1);
 	}
 	
 	{

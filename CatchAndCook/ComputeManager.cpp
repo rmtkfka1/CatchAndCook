@@ -192,6 +192,8 @@ void Bloom::Init()
 		_Bloomshader->Init(L"bloomShader.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
 		ResourceManager::main->Add<Shader>(L"bloom", _Bloomshader);
 	}
+
+
 #ifdef IMGUI_ON
 	ImguiManager::main->_bloomPtr = &_on;
 #endif 
@@ -336,6 +338,7 @@ void DepthRender::Init()
 	info._computeShader = true;
 	_shader->Init(L"depthRender.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
 
+
 #ifdef IMGUI_ON
 	ImguiManager::main->_fogParam = &_fogParam;
 #endif // IMGUI_ON
@@ -359,9 +362,14 @@ void DepthRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, in
 	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
 	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
+	auto& PositionTexture =Core::main->GetGBuffer()->GetTexture(0);
+	PositionTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
 	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 0);
 	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
+	table->CopyHandle(_tableContainer.CPUHandle, PositionTexture->GetSRVCpuHandle(), 2);
 	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 4);
+
 	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
 
 
@@ -393,13 +401,102 @@ void DepthRender::Resize()
 	auto& textureBufferPool = Core::main->GetBufferManager()->GetTextureBufferPool();
 	textureBufferPool->FreeSRVHandle(_pingTexture->GetUAVCpuHandle());
 
-
-	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
-		| TextureUsageFlags::SRV, false, false);
+	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
 
 
 }
 
+/*********************************************
+*	         UnderWaterEffect				 *
+**********************************************/
+
+UnderWaterEffect::UnderWaterEffect()
+{
+}
+
+UnderWaterEffect::~UnderWaterEffect()
+{
+}
+
+void UnderWaterEffect::Init()
+{
+	_pingTexture = make_shared<Texture>();
+	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+
+	_shader = make_shared<Shader>();
+	ShaderInfo info;
+	info._computeShader = true;
+	_shader->Init(L"underWaterEffect.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
+
+	//_colorGrading = make_shared<Texture>();
+	//_colorGrading->Init(L"../Resources/Textures/ColorGrading.png");
+
+#ifdef IMGUI_ON
+	ImguiManager::main->_underWaterParam = &_underWaterParam;
+#endif // IMGUI_ON
+
+}
+
+void UnderWaterEffect::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+	
+	if (_underWaterParam.g_on == -1)
+		return;
+
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	cmdList->SetPipelineState(_shader->_pipelineState.Get());
+	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	_tableContainer = table->Alloc(8);
+
+	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
+	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	auto& PositionTexture = Core::main->GetGBuffer()->GetTexture(0);
+	PositionTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 0);
+	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
+	table->CopyHandle(_tableContainer.CPUHandle, PositionTexture->GetSRVCpuHandle(), 2);
+	//table->CopyHandle(_tableContainer.CPUHandle, _colorGrading->GetSRVCpuHandle(), 3);
+	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 4);
+
+	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+
+
+	auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::UnderWaterParam)->Alloc(1);
+	memcpy(CbufferContainer->ptr, (void*)&_underWaterParam, sizeof(_underWaterParam));
+	cmdList->SetComputeRootConstantBufferView(1, CbufferContainer->GPUAdress);
+
+
+	cmdList->Dispatch(x, y, z);
+
+	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
+	cmdList->CopyResource(renderTarget->GetResource().Get(), _pingTexture->GetResource().Get());
+
+	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_DEPTH_WRITE);
+}
+
+void UnderWaterEffect::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+}
+
+void UnderWaterEffect::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+}
+
+void UnderWaterEffect::Resize()
+{
+	auto& textureBufferPool = Core::main->GetBufferManager()->GetTextureBufferPool();
+	textureBufferPool->FreeSRVHandle(_pingTexture->GetUAVCpuHandle());
+
+	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+
+
+}
 
 
 /*************************
@@ -416,6 +513,10 @@ void ComputeManager::Init()
 
 	_depthRender = make_shared<DepthRender>();
 	_depthRender->Init();
+
+	_underWaterEffect = make_shared<UnderWaterEffect>();
+	_underWaterEffect->Init();
+
 
 }
 
@@ -435,6 +536,10 @@ void ComputeManager::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
 	_depthRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
+	_underWaterEffect->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+
+	Core::main->GetRenderTarget()->GetRenderTarget()->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
+
 }
 
 void ComputeManager::Resize()
@@ -442,5 +547,7 @@ void ComputeManager::Resize()
 	_blur->Resize();
 	_bloom->Resize();
 	_depthRender->Resize();
+	_underWaterEffect->Resize();
 }
+
 

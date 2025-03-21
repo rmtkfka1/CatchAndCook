@@ -372,6 +372,8 @@ void TextSprite::Render()
 
 	cmdList->IASetPrimitiveTopology(_mesh->GetTopology());
 
+	//SetText(to_wstring(Time::main->GetDeltaTime()));
+
 	if (_mesh->GetVertexCount() != 0)
 	{
 		if (_mesh->GetIndexCount() != 0)

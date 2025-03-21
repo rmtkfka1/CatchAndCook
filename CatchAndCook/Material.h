@@ -33,6 +33,7 @@ public:
 	{
 		_shader = shader;
 		_shaderInjectors.clear();
+
 		for (auto& type : shader->_cbufferInjectorTypes)
 			_shaderInjectors.push_back(InjectorManager::main->Get(type));
 	}
@@ -59,13 +60,14 @@ public:
 	void SetPropertyInt(const std::string& name, int data) { _propertyInts[name] = data; };
 	float GetPropertyFloat(const std::string& name) { return _propertyFloats[name]; };
 	void SetPropertyFloat(const std::string& name, float data) { _propertyFloats[name] = data; };
-	vec4 GetPropertyVector(const std::string& name) { return _propertyVectors[name]; };
+	vec4 GetPropertyVector(const std::string& name);
 	void SetPropertyVector(const std::string& name, const vec4& data) { _propertyVectors[name] = data; };
 	Matrix GetPropertyMatrix(const std::string& name) { return _propertyMatrixs[name]; };
 	void SetPropertyMatrix(const std::string& name, const Matrix& data) { _propertyMatrixs[name] = data; };
 
 	tableContainer _tableContainer;
 	tableContainer _tableLongContainer;
+
 	uint32 GetID() {
 		return _instanceID;
 	}

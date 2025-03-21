@@ -48,9 +48,10 @@ public:
     bool GetMouse(int keycode);
     bool GetMouseUp(int keycode);
 
-    Vector2 GetMousePosition();
-    Vector2 GetMouseDownPosition(int keycode);
-    Vector2 GetMouseUpPosition(int keycode);
+    vec2 GetMousePosition();
+    vec2 GetMouseDownPosition(int keycode);
+	vec2 GetNDCMouseDownPosition(int keycode);
+    vec2 GetMouseUpPosition(int keycode);
 
 private:
 
