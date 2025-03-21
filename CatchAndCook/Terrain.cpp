@@ -63,7 +63,6 @@ void Terrain::Start()
 		if(_gridMesh == nullptr)
             assert(false);
 		dynamic_pointer_cast<MeshRenderer>(renderer)->AddMesh(_gridMesh);
-        renderer->SetInstancing(false);
         renderer->SetCulling(false);
 	}
 

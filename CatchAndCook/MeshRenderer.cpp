@@ -201,8 +201,5 @@ void MeshRenderer::AddSharedMaterials(const std::vector<std::shared_ptr<Material
 		this->_sharedMaterials.push_back(ele);
 }
 
-void MeshRenderer::SetInstanceBuffer(InstanceBufferContainer* instanceBuffer)
-{
-	_instanceBuffer = instanceBuffer;
-}
+
 

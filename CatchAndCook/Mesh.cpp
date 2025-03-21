@@ -18,6 +18,7 @@ void Mesh::Redner(int instanceCount)
 {
 	if(instanceCount == 0)
 		return;
+
 	auto& cmdList = Core::main->GetCmdList();
 	cmdList->IASetPrimitiveTopology(_topology);
 
