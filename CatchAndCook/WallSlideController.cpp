@@ -22,7 +22,23 @@ void WallSlideController::Start()
 
 void WallSlideController::Update()
 {
+	if (_onCollision)
+	{
 
+		auto& transform =  GetOwner()->_transform;
+
+		auto& mybox = _collider->GetBoundUnion().box;
+		auto& otherbox = _other->GetBoundUnion().box;
+
+		auto direction = mybox.Center - otherbox.Center;
+		direction.Normalize();
+
+		auto pos = transform->GetLocalPosition();
+		pos += direction * 50.0f * Time::main->GetDeltaTime();
+		transform->SetLocalPosition(pos);
+
+
+	}
 }
 
 void WallSlideController::Update2()
@@ -46,14 +62,18 @@ void WallSlideController::CollisionBegin(const std::shared_ptr<Collider>& collid
 
 	if (HasTag(GetOwner()->GetTag(), GameObjectTag::Wall))
 	{
-		if (other->GetType() == CollisionType::Box)
-		{
-			cout << "안녕" << endl;
-		}
 	
+			_collider = collider;
+			_other = other;
+			_onCollision = true;
+		
 	}
 }
 
 void WallSlideController::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
+	if (HasTag(GetOwner()->GetTag(), GameObjectTag::Wall))
+	{
+			_onCollision = false;
+	}
 }
