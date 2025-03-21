@@ -120,7 +120,7 @@ void TestScene::Init()
 	random_device urd;
 	mt19937 gen(urd());
 	uniform_real_distribution<float> ddis(-1000.0f, 1000.0f);
-	uniform_real_distribution<float> dis(1, 100.0f);
+	uniform_real_distribution<float> dis(1, 30.0f);
 	uniform_real_distribution<float> rotate(-360.0f, 360.0f);
 	//auto& a = ResourceManager::main->Load<Model>(L"kind", L"../Resources/Models/PaperPlane.obj", VertexType::Vertex_Skinned);
 
