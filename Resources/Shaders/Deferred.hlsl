@@ -20,7 +20,6 @@ struct VS_IN
     float3 normal : NORMAL;
     float2 uv : TEXCOORD;
     float3 tangent : TANGENT;
- 
 };
 
 struct VS_OUT
@@ -36,6 +35,8 @@ struct VS_OUT
 VS_OUT VS_Main(VS_IN input , uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
+
+
     
     Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
     row_major float4x4 l2wMatrix = data.localToWorld;

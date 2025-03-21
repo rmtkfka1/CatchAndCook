@@ -67,25 +67,30 @@ void Terrain::Start()
         renderer->SetCulling(false);
 	}
 
- //   _instanceBuffers.resize(_instances.size());
-	//for(int i = 0; i<_instances.size();i++)
-	//{
- //       auto instanceBuffer = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::TransformInstanceParam)->Alloc();
- //       memcpy(instanceBuffer->ptr,_instanceDatas[i].data(), _instanceDatas[i].size() * sizeof(Instance_Transform));
- //       instanceBuffer->SetIndex(_instanceDatas[i].size(),sizeof(Instance_Transform));
-	//	//instanceBuffer->writeOffset = _instanceDatas[i].size() * sizeof(Instance_Transform);
- //       _instanceBuffers[i] = instanceBuffer;
+    _instanceBuffers.resize(_instances.size());
+	for(int i = 0; i<_instances.size();i++)
+	{
+		auto instanceBuffer = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::TransformInstanceParam)->Alloc();
+		memcpy(instanceBuffer->ptr,_instanceDatas[i].data(), _instanceDatas[i].size() * sizeof(Instance_Transform));
+		instanceBuffer->SetIndex(_instanceDatas[i].size(),sizeof(Instance_Transform));
+	    instanceBuffer->writeOffset = _instanceDatas[i].size() * sizeof(Instance_Transform);
+		_instanceBuffers[i] = instanceBuffer;
 
- //       std::vector<std::shared_ptr<MeshRenderer>> renderers;
- //       _instances[i].lock()->GetComponentsWithChilds<MeshRenderer>(renderers);
+        std::vector<std::shared_ptr<MeshRenderer>> renderers;
+        _instances[i].lock()->GetComponentsWithChilds<MeshRenderer>(renderers);
 
-	//	for(auto& renderer : renderers)
-	//	{
-	//		renderer->SetInstance(instanceBuffer);
- //           for(auto& material : renderer->GetMaterials())
- //               material->SetShader(ResourceManager::main->Get<Shader>(L"DefaultForward_Instanced"));
-	//	}
-	//}
+		for(auto& renderer : renderers)
+		{
+            renderer->SetCulling(false);
+            renderer->SetInstancing(false);
+			renderer->SetInstanceBuffer(instanceBuffer);
+            for (auto& material : renderer->GetMaterials())
+            {
+                material->SetShader(ResourceManager::main->Get<Shader>(L"DefaultForward_Instanced"));
+                material->SetPass(RENDER_PASS::Forward);
+            }
+		}
+	}
 
 
 
@@ -105,7 +110,7 @@ void Terrain::Update()
             //if(Vector3::Distance(Vector3(_instanceDatas[i][j].worldPosition.x, 0,_instanceDatas[i][j].worldPosition.z), cameraPos) < 10)
             //{
             //    //Todo : 작업해야함.
-            //    _instanceBuffers[i]->AddData(_instanceDatas[i][j]);
+                _instanceBuffers[i]->AddData(_instanceDatas[i][j]);
             //}
         }
     }

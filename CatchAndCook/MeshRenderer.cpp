@@ -135,6 +135,12 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh,int instanceCount)
 	if (material != nullptr)
 		material->SetData();
 
+	if (instanceCount <= 1 && HasInstanceBuffer())
+	{
+		cmdList->IASetVertexBuffers(1, 1, &_instanceBuffer->_bufferView);
+		instanceCount = _instanceBuffer->writeIndex;
+	}
+
 	mesh->Redner(instanceCount);
 
 }
@@ -193,5 +199,10 @@ void MeshRenderer::AddSharedMaterials(const std::vector<std::shared_ptr<Material
 {
 	for (auto& ele : _materials)
 		this->_sharedMaterials.push_back(ele);
+}
+
+void MeshRenderer::SetInstanceBuffer(InstanceBufferContainer* instanceBuffer)
+{
+	_instanceBuffer = instanceBuffer;
 }
 
