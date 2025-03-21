@@ -71,7 +71,7 @@ public:
 	bool _isStaticInstancing = false;
 	InstanceBufferContainer* _staticInstanceBuffer = nullptr;
 
-	void SetInstanceBuffer(InstanceBufferContainer* instanceBuffer) { _staticInstanceBuffer = instanceBuffer; }
+	void SetInstanceBuffer(InstanceBufferContainer* instanceBuffer);
 	bool HasInstanceBuffer();
 
 private:

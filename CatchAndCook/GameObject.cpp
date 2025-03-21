@@ -124,7 +124,7 @@ void GameObject::SetDestroy()
 
 void GameObject::Debug()
 {
-    std::cout << "GameObject\n";
+    //std::cout << "GameObject\n";
 }
 
 

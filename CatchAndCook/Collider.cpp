@@ -84,7 +84,7 @@ void Collider::RenderBegin()
 
 		if (_type == CollisionType::Box)
 		{
-			Gizmo::Width(0.1f);
+			Gizmo::Width(0.5f);
 			Gizmo::Box(_bound.box, !isCollision ? Vector4(0, 1, 0, 1) : Vector4(1, 0.5, 0, 1));
 			Gizmo::WidthRollBack();
 		}
@@ -125,6 +125,16 @@ void Collider::Destroy()
 {
 	Component::Destroy();
 	ColliderManager::main->RemoveCollider(GetCast<Collider>());
+}
+
+vec3 Collider::GetCenter()
+{
+	if (_type == CollisionType::Box)
+		return _bound.box.Center;
+	else if (_type == CollisionType::Sphere)
+		return _bound.sphere.Center;
+	else if (_type == CollisionType::Frustum)
+		return _bound.frustum.Origin;
 }
 
 bool Collider::CheckCollision(const std::shared_ptr<Collider>& other)
@@ -262,6 +272,7 @@ void Collider::SetBoundingBox(vec3 center, vec3 extents)
 
 	_orgin.box = BoundingOrientedBox(center, extents, Quaternion::Identity);
 	_bound.box = BoundingOrientedBox(center, extents, Quaternion::Identity);
+
 }
 
 void Collider::SetBoundingSphere(vec3 center, float radius)
@@ -269,6 +280,10 @@ void Collider::SetBoundingSphere(vec3 center, float radius)
 	_type = CollisionType::Sphere;
 	_orgin.sphere = BoundingSphere(center, radius);
 	_bound.sphere = BoundingSphere(center, radius);
+
+
+
+
 }
 
 void Collider::SetBoundingFrustum(BoundingFrustum& boundingFrustum)
