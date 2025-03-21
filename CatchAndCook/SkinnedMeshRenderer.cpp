@@ -54,7 +54,7 @@ void SkinnedMeshRenderer::Start()
 		SetBound(totalBox);
 	}
 
-	SetInstancing(false);
+	SetStaticInstancing(false);
 }
 
 void SkinnedMeshRenderer::Update()

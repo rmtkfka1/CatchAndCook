@@ -44,5 +44,5 @@ std::shared_ptr<RenderStructuredSetter>& RendererBase::FindStructuredSetter(cons
 
 bool RendererBase::HasInstanceBuffer()
 {
-	return _instanceBuffer != nullptr;
+	return _staticInstanceBuffer != nullptr;
 }

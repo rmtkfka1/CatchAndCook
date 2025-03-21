@@ -137,8 +137,8 @@ void MeshRenderer::Rendering(Material* material, Mesh* mesh,int instanceCount)
 
 	if (instanceCount <= 1 && HasInstanceBuffer())
 	{
-		cmdList->IASetVertexBuffers(1, 1, &_instanceBuffer->_bufferView);
-		instanceCount = _instanceBuffer->writeIndex;
+		cmdList->IASetVertexBuffers(1, 1, &_staticInstanceBuffer->_bufferView);
+		instanceCount = _staticInstanceBuffer->writeIndex;
 	}
 
 	mesh->Redner(instanceCount);

@@ -175,7 +175,7 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                     }
                 }
 
-                if (ele.renderer->IsInstancing() == true)
+                if (ele.renderer->IsStaticInstancing() == true)
                 {
                     InstancingManager::main->AddObject(ele);
                 }
@@ -216,8 +216,8 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                        }
                    }
 
-                   if (ele.renderer->IsInstancing() == true)
-                   {
+                   if (ele.renderer->IsStaticInstancing() == true)
+                   {//동적인스턴싱이면 1개짜리 객체라도 스터럭쳐버퍼로 transform 데이터넣어줌.
                        InstancingManager::main->AddObject(ele);
                    }
                    else
@@ -225,7 +225,7 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                        ele.renderer->Rendering(ele.material, ele.mesh, 1);
                    }           
             }
-
+            
            InstancingManager::main->Render();
         }
     }

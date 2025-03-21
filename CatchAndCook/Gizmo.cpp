@@ -21,7 +21,7 @@ void Gizmo::Init()
     textureGizmo._mesh = GeoMetryHelper::LoadRectMesh();
 
     SetCulling(false);
-    SetInstancing(false);
+    SetStaticInstancing(false);
 
     for(int i=0;i<256;i++)
     {
