@@ -10,7 +10,7 @@
 #include "Camera.h"
 #include "CameraManager.h"
 
-#define RECT_TERRAIN
+//#define RECT_TERRAIN
 
 Terrain::Terrain()
 {
@@ -34,11 +34,6 @@ void Terrain::Start()
 	Component::Start();
                                  
     ShaderInfo info;
-    info.renderTargetCount = 3;
-
-    info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
-    info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
-    info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
     info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
  
     #ifdef RECT_TERRAIN
@@ -52,7 +47,7 @@ void Terrain::Start()
     
     _material->SetPropertyVector("fieldSize",Vector4(_fieldSize));
     _material->SetShader(shader);
-    _material->SetPass(RENDER_PASS::Deffered);
+    _material->SetPass(RENDER_PASS::Forward);
     auto meshRenderer = GetOwner()->GetComponent<MeshRenderer>();
     meshRenderer->AddMaterials({_material});
 
