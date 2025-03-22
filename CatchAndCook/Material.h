@@ -65,6 +65,11 @@ public:
 	Matrix GetPropertyMatrix(const std::string& name) { return _propertyMatrixs[name]; };
 	void SetPropertyMatrix(const std::string& name, const Matrix& data) { _propertyMatrixs[name] = data; };
 
+	bool HasPropertyInt(const std::string& name);
+	bool HasPropertyFloat(const std::string& name);
+	bool HasPropertyVector(const std::string& name);
+	bool HasPropertyMatrix(const std::string& name);
+
 	tableContainer _tableContainer;
 	tableContainer _tableLongContainer;
 

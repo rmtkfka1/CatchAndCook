@@ -55,6 +55,7 @@ void Material::SetData()
 	//텍스쳐바인딩
 	AllocTextureTable();
 	PushData();
+
 	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, _tableContainer.GPUHandle);
 
 	if (_shader->_profileInfo.maxTRegister >= SRV_LONG_TABLE_REGISTER_OFFSET) {
@@ -105,10 +106,28 @@ void Material::PushHandle()
 
 vec4 Material::GetPropertyVector(const std::string& name)
 {
+	if (!_propertyVectors.contains(name))
+		return Vector4::One;
 	auto& color = _propertyVectors[name];
-
-	if (color.x == 0 && color.y == 0 && color.z == 0)
-		color.x = color.y = color.z = 1;
-
 	return color;
+}
+
+bool Material::HasPropertyInt(const std::string& name)
+{
+	return _propertyInts.contains(name);
+}
+
+bool Material::HasPropertyFloat(const std::string& name)
+{
+	return _propertyFloats.contains(name);
+}
+
+bool Material::HasPropertyVector(const std::string& name)
+{
+	return _propertyVectors.contains(name);
+}
+
+bool Material::HasPropertyMatrix(const std::string& name)
+{
+	return _propertyMatrixs.contains(name);
 }
