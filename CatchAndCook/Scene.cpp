@@ -175,9 +175,8 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                     }
                 }
 
-                if (ele.renderer->IsStaticInstancing() == true)
+                if (ele.renderer->isInstancing() == true)
                 {
-                    //ele.renderer->Rendering(ele.material, ele.mesh, 1);
                     InstancingManager::main->AddObject(ele);
                     InstancingManager::main->Render();
                 }
@@ -218,7 +217,7 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                        }
                    }
 
-                   if (ele.renderer->IsStaticInstancing() == true)
+                   if (ele.renderer->isInstancing() == true)
                    {
                        //ele.renderer->Rendering(ele.material, ele.mesh, 1);
                        InstancingManager::main->AddObject(ele);

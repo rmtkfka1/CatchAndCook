@@ -57,18 +57,19 @@ public:
 		return _isCulling;
 	};
 
-	void SetStaticInstancing(bool instancing) {
-		_isStaticInstancing = instancing;
+	void SetInstancing(bool instancing) 
+	{
+		_isInstancing = instancing;
 	};
 
-	bool IsStaticInstancing() const
+	bool isInstancing() const
 	{
-		return _isStaticInstancing;
+		return _isInstancing;
 	};
 
 	BoundingBox _bound;
 	bool _isCulling = true;
-	bool _isStaticInstancing = false;
+	bool _isInstancing = false;
 	InstanceBufferContainer* _staticInstanceBuffer = nullptr;
 
 	void SetInstanceBuffer(InstanceBufferContainer* instanceBuffer);

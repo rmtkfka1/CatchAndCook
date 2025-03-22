@@ -44,7 +44,6 @@ std::shared_ptr<RenderStructuredSetter>& RendererBase::FindStructuredSetter(cons
 
 void RendererBase::SetInstanceBuffer(InstanceBufferContainer* instanceBuffer)
 {
-	SetStaticInstancing(true);
 	_staticInstanceBuffer = instanceBuffer;
 }
 

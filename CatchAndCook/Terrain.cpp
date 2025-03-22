@@ -59,7 +59,6 @@ void Terrain::Start()
             assert(false);
 		dynamic_pointer_cast<MeshRenderer>(renderer)->AddMesh(_gridMesh);
         renderer->SetCulling(false);
-        renderer->SetStaticInstancing(true);
 	}
 
     _instanceBuffers.resize(_instances.size());
@@ -78,7 +77,7 @@ void Terrain::Start()
 		{
             renderer->SetCulling(false);
 			renderer->SetInstanceBuffer(instanceBuffer);
-            renderer->SetStaticInstancing(true);
+            renderer->SetInstancing(false);
             for (auto& material : renderer->GetMaterials())
             {
                 material->SetShader(ResourceManager::main->Get<Shader>(L"DefaultForward_Instanced"));
