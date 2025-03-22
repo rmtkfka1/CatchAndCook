@@ -125,6 +125,7 @@ void Collider::Destroy()
 {
 	Component::Destroy();
 	ColliderManager::main->RemoveCollider(GetCast<Collider>());
+	ColliderManager::main->RemoveAColliderForRay(GetCast<Collider>());
 }
 
 bool Collider::CheckCollision(const std::shared_ptr<Collider>& other)

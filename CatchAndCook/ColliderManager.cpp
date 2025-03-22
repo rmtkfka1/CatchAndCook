@@ -64,7 +64,9 @@ void ColliderManager::AddCollider(const std::shared_ptr<Collider>& collider)
 
 void ColliderManager::AddColliderForRay(const std::shared_ptr<Collider>& collider)
 {
-	_collidersForRay.push_back(collider);
+	auto it = std::ranges::find(_collidersForRay, collider);
+	if (it == _collidersForRay.end())
+		_collidersForRay.push_back(collider);
 }
 
 void ColliderManager::RemoveAColliderForRay(const std::shared_ptr<Collider>& collider)
@@ -288,13 +290,15 @@ RayHit ColliderManager::RayCast(const Ray& ray, const float& dis) const
 		currentHit.distance = dis;  // 최대 거리로 초기화
 		if (collider->RayCast(ray, dis, currentHit))
 		{
-			if (!hitFound || currentHit.distance < closestHit.distance)
+			if (currentHit.distance < closestHit.distance)
 			{
 				closestHit = currentHit;
 				hitFound = true;
 			}
 		}
 	}
+
+
 	return closestHit;
 }
 

@@ -249,6 +249,11 @@ float Terrain::GetWorldHeight(const Vector3& worldPosition)
     return matrix.Translation().y + finalH;
 }
 
+bool Terrain::RayCast(const Ray& ray, const float& dis, RayHit& hit)
+{
+
+}
+
 
 void Terrain::LoadTerrain(const std::wstring &rawData)
 {

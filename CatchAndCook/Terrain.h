@@ -3,6 +3,8 @@
 #include "Component.h"
 #include "RendererBase.h"
 
+struct RayHit;
+
 class Terrain : public Component, public RenderCBufferSetter
 {
 
@@ -41,6 +43,8 @@ public:
 	float GetHeight(const Vector2& heightMapPosition) const;
 	float GetLocalHeight(const Vector3& localPosition);
 	float GetWorldHeight(const Vector3& worldPosition);
+
+	bool RayCast(const Ray& ray, const float& dis, RayHit& hit);
 
 private:
 	void LoadTerrain(const std::wstring& rawData);
