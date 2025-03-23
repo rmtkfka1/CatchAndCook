@@ -158,6 +158,8 @@ PatchConstOutput ConstantHS(InputPatch<VS_OUT, 3> patch, uint patchID : SV_Primi
     float edge0TessLevel = CalculateTessLevel(cameraPos.xyz, edge0Pos, DIST_MIN, DIST_MAX, TessFactor);
     float edge1TessLevel = CalculateTessLevel(cameraPos.xyz, edge1Pos, DIST_MIN, DIST_MAX, TessFactor);
     float edge2TessLevel = CalculateTessLevel(cameraPos.xyz, edge2Pos, DIST_MIN, DIST_MAX, TessFactor);
+    
+
 
     pt.edges[0] = edge0TessLevel;
     pt.edges[1] = edge1TessLevel;
@@ -217,6 +219,7 @@ float4 PS_Main(DS_OUT input) : SV_Target
     if (blendCount >= 1)
     {
         blend = _blendMap0.Sample(sampler_lerp, input.uv);
+        
         float2 tileUV0 = input.uvTile / tileST[0].xy + tileST[0].zw;
         float2 tileUV1 = input.uvTile / tileST[1].xy + tileST[1].zw;
         float2 tileUV2 = input.uvTile / tileST[2].xy + tileST[2].zw;
@@ -234,10 +237,12 @@ float4 PS_Main(DS_OUT input) : SV_Target
     if (blendCount >= 2)
     {
         blend = _blendMap1.Sample(sampler_lerp, input.uv);
+        
         float2 tileUV0 = input.uvTile / tileST[4].xy + tileST[4].zw;
         float2 tileUV1 = input.uvTile / tileST[5].xy + tileST[5].zw;
         float2 tileUV2 = input.uvTile / tileST[6].xy + tileST[6].zw;
         float2 tileUV3 = input.uvTile / tileST[7].xy + tileST[7].zw;
+        
         float4 mask0 = (textureActive[4].g == 0) ? 1 : (_maskMap4.Sample(sampler_lerp, tileUV0));
         float4 mask1 = (textureActive[5].g == 0) ? 1 : (_maskMap5.Sample(sampler_lerp, tileUV1));
         float4 mask2 = (textureActive[6].g == 0) ? 1 : (_maskMap6.Sample(sampler_lerp, tileUV2));
@@ -251,10 +256,12 @@ float4 PS_Main(DS_OUT input) : SV_Target
     if (blendCount >= 3)
     {
         blend = _blendMap2.Sample(sampler_lerp, input.uv);
+        
         float2 tileUV0 = input.uvTile / tileST[8].xy + tileST[8].zw;
         float2 tileUV1 = input.uvTile / tileST[9].xy + tileST[9].zw;
         float2 tileUV2 = input.uvTile / tileST[10].xy + tileST[10].zw;
         float2 tileUV3 = input.uvTile / tileST[11].xy + tileST[11].zw;
+        
         float4 mask0 = (textureActive[8].g == 0) ? 1 : _maskMap8.Sample(sampler_lerp, tileUV0);
         float4 mask1 = (textureActive[9].g == 0) ? 1 : _maskMap9.Sample(sampler_lerp, tileUV1);
         float4 mask2 = (textureActive[10].g == 0) ? 1 : _maskMap10.Sample(sampler_lerp, tileUV2);

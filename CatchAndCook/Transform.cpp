@@ -96,8 +96,6 @@ void Transform::RenderBegin()
 	}
 
   
-    Matrix matrix;
-    GetLocalToWorldMatrix(matrix);
 
     _isLocalSRTChanged = false;
     _isLocalToWorldChanged = false;

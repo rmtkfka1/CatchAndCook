@@ -167,8 +167,9 @@ void Terrain::SetHeightMap(const std::wstring &rawPath,const std::wstring &pngPa
 {
     _heightTexture = ResourceManager::main->Load<Texture>(pngPath, pngPath, TextureType::Texture2D, false);
 
-    _heightTextureSize = Vector2(static_cast<int>(_heightTexture->GetResource()->GetDesc().Width),
+    _heightTextureSize = vec2(static_cast<int>(_heightTexture->GetResource()->GetDesc().Width),
 								static_cast<int>(_heightTexture->GetResource()->GetDesc().Height));
+
     _heightRawSize = rawSize;
     _fieldSize = fieldSize;
 
@@ -176,12 +177,12 @@ void Terrain::SetHeightMap(const std::wstring &rawPath,const std::wstring &pngPa
     _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(_fieldSize.x,_fieldSize.z,CellsPerPatch,CellsPerPatch);
     _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 	#else
+
 	_gridMesh = GeoMetryHelper::LoadGripMesh(_fieldSize.x,_fieldSize.z,CellsPerPatch,CellsPerPatch);
     _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
     #endif // RECT_TERRAIN
 
     
-
 	LoadTerrain(rawPath);
 }
 
@@ -250,7 +251,6 @@ float Terrain::GetWorldHeight(const Vector3& worldPosition)
 void Terrain::LoadTerrain(const std::wstring &rawData)
 {
     _heightRawMapData.resize(_heightRawSize.y,vector(_heightRawSize.x, 0.0f)); 
-
 
     std::ifstream file(rawData,std::ios::binary);
     if(!file) {
