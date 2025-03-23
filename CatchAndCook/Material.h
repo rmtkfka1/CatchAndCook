@@ -45,7 +45,7 @@ public:
 	int GetStencilIndex() const { return _stencilIndex; };
 
 	void SetHandle(std::string name, D3D12_CPU_DESCRIPTOR_HANDLE& handle);
-	shared_ptr<Shader> GetShader() { return _shader; }
+	shared_ptr<Shader>& GetShader() { return _shader; }
 
 public:
 	void AllocTextureTable();

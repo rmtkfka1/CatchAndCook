@@ -15,17 +15,17 @@ void InstancingManager::Render()
 	{
 		if (objects.empty()) continue;
 
-		auto* material = objects[0].material;
-		auto* renderer = objects[0].renderer;
-		auto* mesh = objects[0].mesh;
-		auto shader = material->GetShader();
+		auto& material = objects[0].material;
+		auto& renderer = objects[0].renderer;
+		auto& mesh = objects[0].mesh;
+		auto& shader = material->GetShader();
 		auto& structuredInfo = shader->GetTRegisterStructured();
 		InstanceOffsetParam param = {};
 
 		for (const auto& infos : structuredInfo)
 		{
 			const std::string& name = infos.name;
-			auto bufferType = bufferManager->GetStructuredNameToBufferType(name);
+			auto& bufferType = bufferManager->GetStructuredNameToBufferType(name);
 			auto& pool = bufferManager->GetStructuredBufferPool(bufferType);
 			int offset = pool->GetOffset();
 
