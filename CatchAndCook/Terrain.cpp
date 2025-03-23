@@ -86,8 +86,6 @@ void Terrain::Start()
 		}
 	}
 
-
-
 	TerrainManager::main->PushTerrain(static_pointer_cast<Terrain>(shared_from_this()));
 
 }
