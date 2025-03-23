@@ -203,7 +203,7 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
         for (auto& [shader, vec] : targets)
         {
             cmdList->SetPipelineState(shader->_pipelineState.Get());
-
+         
             for (auto& ele : vec)
             {
                 g_debug_deferred_count++;
@@ -228,8 +228,10 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                        InstancingManager::main->AddObject(ele);
                    }           
             }
-            
+
+        
            InstancingManager::main->Render();
+
         }
     }
 

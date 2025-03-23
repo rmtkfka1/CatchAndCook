@@ -11,14 +11,14 @@ void InstancingManager::Render()
 	{
 		auto& cmdList = Core::main->GetCmdList();
 		auto shader = objects[0].material->GetShader();
-		auto structuredInfo = shader->GetTRegisterStructured();
+		auto& structuredInfo = shader->GetTRegisterStructured();
 		InstanceOffsetParam param = {};
 
 		for(auto& infos : structuredInfo)
 		{
 			auto& name = infos.name;
 			auto bufferType = Core::main->GetBufferManager()->GetStructuredNameToBufferType(name);
-			auto pool = Core::main->GetBufferManager()->GetStructuredBufferPool(bufferType);
+			auto& pool = Core::main->GetBufferManager()->GetStructuredBufferPool(bufferType);
 			int offset = pool->GetOffset();
 
 			auto table = Core::main->GetBufferManager()->GetTable()->Alloc(1);
@@ -37,6 +37,7 @@ void InstancingManager::Render()
 			cmdList->SetGraphicsRootDescriptorTable(SRV_STRUCTURED_TABLE_INDEX + ROOT_OFFSET, table.GPUHandle);
 			param.offset[ROOT_OFFSET].x = offset;
 		}
+
 		auto cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::InstanceOffsetParam)->Alloc(1);
 		memcpy(cbufferContainer->ptr, &param, sizeof(InstanceOffsetParam));
 		cmdList->SetGraphicsRootConstantBufferView(4, cbufferContainer->GPUAdress);
