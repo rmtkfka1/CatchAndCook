@@ -169,9 +169,11 @@ void Terrain::SetHeightMap(const std::wstring &rawPath,const std::wstring &pngPa
 
     _heightTextureSize = vec2(static_cast<int>(_heightTexture->GetResource()->GetDesc().Width),
 								static_cast<int>(_heightTexture->GetResource()->GetDesc().Height));
-
+   
     _heightRawSize = rawSize;
     _fieldSize = fieldSize;
+
+	cout << _fieldSize.x << " " << _fieldSize.y << " " << _fieldSize.z << endl;
 
     #ifdef RECT_TERRAIN
     _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(_fieldSize.x,_fieldSize.z,CellsPerPatch,CellsPerPatch);

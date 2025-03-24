@@ -116,7 +116,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     row_major float4x4 l2wMatrix = data.localToWorld;
     row_major float4x4 w2lMatrix = data.worldToLocal;
 
-    output.pos = TransformLocalToWorld(float4(input.pos, 1.0f), l2wMatrix);;
+    output.pos = TransformLocalToWorld(float4(input.pos, 1.0f), l2wMatrix);
     output.normal = TransformNormalLocalToWorld(input.normal, w2lMatrix);
 
     output.uv = input.uv;
@@ -158,8 +158,6 @@ PatchConstOutput ConstantHS(InputPatch<VS_OUT, 3> patch, uint patchID : SV_Primi
     float edge0TessLevel = CalculateTessLevel(cameraPos.xyz, edge0Pos, DIST_MIN, DIST_MAX, TessFactor);
     float edge1TessLevel = CalculateTessLevel(cameraPos.xyz, edge1Pos, DIST_MIN, DIST_MAX, TessFactor);
     float edge2TessLevel = CalculateTessLevel(cameraPos.xyz, edge2Pos, DIST_MIN, DIST_MAX, TessFactor);
-    
-
 
     pt.edges[0] = edge0TessLevel;
     pt.edges[1] = edge1TessLevel;
