@@ -111,8 +111,6 @@ float4 PS_Main(VS_OUT input) : SV_Target
 
     return BaseColor * lightColor * color;
 
-
-
     //float3 totalNormalWS = TransformNormalTangentToSpace(NormalUnpack(_BumpMap.Sample(sampler_lerp, input.uv).xyz, 0.2), normalize(input.normalWS), normalize(input.tangentWS));
     //float3 totalNormalWS = TransformNormalTangentToSpace(float3(0,0,1), normalize(input.normalWS), normalize(input.tangentWS));
     //return float4(normalize(input.normalWS), 1);
