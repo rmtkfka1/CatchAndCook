@@ -34,6 +34,11 @@ void PlayerController::Start()
 
 void PlayerController::Update()
 {
+	if (CameraManager::main->GetCameraType() == CameraType::ThirdPersonCamera)
+	{
+		return;
+	}
+
 	Component::Update();
 
 	auto cameraTransform = camera.lock()->GetOwner()->_transform;

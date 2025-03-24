@@ -68,7 +68,7 @@ void Game::Init(HWND hwnd)
 
 	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, static_pointer_cast<Camera>(make_shared<ThirdPersonCamera>()));
 	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0, 0, -50.0f));
-	//CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
+	CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
 
 	LightManager::main = make_unique<LightManager>();
 	InstancingManager::main = make_unique<InstancingManager>();
@@ -215,7 +215,7 @@ void Game::Release()
 
 void Game::CameraUpdate()
 {
-	shared_ptr<Camera> camera = CameraManager::main->GetCamera(CameraType::ThirdPersonCamera);
+	shared_ptr<Camera> camera = CameraManager::main->GetActiveCamera();
 
 	const float speed = 30.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;

@@ -35,12 +35,21 @@ void CameraComponent::Start()
 }
 void CameraComponent::Update()
 {
+	if (CameraManager::main->GetCameraType() == CameraType::ThirdPersonCamera)
+	{
+		return;
+	}
+
+	
 	Component::Update();
 	Calculate();
 }
 
 void CameraComponent::Update2()
 {
+	if (CameraManager::main->GetCameraType() == CameraType::ThirdPersonCamera)
+		return;
+
 	Component::Update2();
 	auto trans = GetOwner()->_transform;
 	SetCameraPos(trans->GetWorldPosition());

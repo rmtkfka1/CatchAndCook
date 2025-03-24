@@ -85,44 +85,42 @@ void TestScene_jin::Init()
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
 	}
 
-	if (false)
+
 	{
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::BACK;
+		info.cullingType = CullingType::NONE;
+		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
-		{
-			ShaderInfo info;
-			info._zTest = true;
-			info._stencilTest = false;
-			info.cullingType = CullingType::BACK;
-			info.cullingType = CullingType::NONE;
-			info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest", L"seatest.hlsl", GeoMetryProp,
+			ShaderArg{ {{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}} }, info);
 
-			shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest", L"seatest.hlsl", GeoMetryProp,
-				ShaderArg{ {{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}} }, info);
+		shared_ptr<Material> material = make_shared<Material>();
 
-			shared_ptr<Material> material = make_shared<Material>();
+		shared_ptr<GameObject> gameObject = CreateGameObject(L"grid_orgin");
+		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+		gameObject->AddComponent<WaterController>();
 
-			shared_ptr<GameObject> gameObject = CreateGameObject(L"grid_orgin");
-			auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
-			gameObject->AddComponent<WaterController>();
+		//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal_Sea"));
+		gameObject->_transform->SetLocalPosition(vec3(0, 9.5f, 0));
 
-			//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal_Sea"));
-			gameObject->_transform->SetLocalPosition(vec3(0, 9.5f, 0));
+		material = make_shared<Material>();
+		material->SetShader(shader);
+		material->SetPass(RENDER_PASS::Forward);
+		material->SetHandle("_cubeMap", ResourceManager::main->Get<Texture>(L"cubemap")->GetSRVCpuHandle());
+		material->SetUseMaterialParams(true);
+		meshRenderer->AddMaterials({ material });
 
-			material = make_shared<Material>();
-			material->SetShader(shader);
-			material->SetPass(RENDER_PASS::Forward);
-			material->SetHandle("_cubeMap", ResourceManager::main->Get<Texture>(L"cubemap")->GetSRVCpuHandle());
-			material->SetUseMaterialParams(true);
-			meshRenderer->AddMaterials({ material });
-
-			auto mesh = GeoMetryHelper::LoadGripMeshControlPoints(20000.0f, 20000.0f, 1000, 1000, false);
-			mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
-			meshRenderer->AddMesh(mesh);
-			meshRenderer->SetCulling(false);
-
-		}
+		auto mesh = GeoMetryHelper::LoadGripMeshControlPoints(20000.0f, 20000.0f, 1000, 1000, false);
+		mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
+		meshRenderer->AddMesh(mesh);
+		meshRenderer->SetCulling(false);
 
 	};
+
+	
 
 	
 
@@ -132,8 +130,11 @@ void TestScene_jin::Init()
 	sceneLoader->Load(GetCast<Scene>());
 
 
+	if (auto player = Find(L"player"))
+	{
+		player->AddComponent<PlayerController>();
+	}
 
-	auto player = Find(L"player")->AddComponent<PlayerController>();
 }
 
 void TestScene_jin::Update()

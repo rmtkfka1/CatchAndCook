@@ -22,6 +22,8 @@ private:
 	void AddGameObject(const std::shared_ptr<GameObject>& gameObject);
 	bool RemoveGameObject(const std::shared_ptr<GameObject>& gameObject);
 	bool RemoveAtGameObject(int index);
+	void CameraControll();
+
 
 	void ExecuteDestroyGameObjects();
 	void GlobalSetting();

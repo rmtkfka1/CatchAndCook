@@ -31,6 +31,9 @@ void Scene::Init()
 
 void Scene::Update()
 {
+    
+
+
     Profiler::Set("Logic_Start");
     while (!_changeTypeQueue.empty()) 
     {
@@ -276,7 +279,7 @@ void Scene::GlobalSetting()
 {
     auto& cmdList = Core::main->GetCmdList();
 
-
+    CameraControll();
     //cout << CameraManager::main->GetActiveCamera()->GetCameraPos().y << endl;
 
     _globalParam.window_size = vec2(WINDOW_WIDTH,WINDOW_HEIGHT);
@@ -294,29 +297,6 @@ void Scene::DebugRendering()
     auto& cmdList = Core::main->GetCmdList();
 
 
-    //{ // Deffered
-    //    auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deffered)];
-
-    //    for(auto& [shader,vec] : targets)
-    //    {
-    //        for(auto& [material,mesh,target] : vec)
-    //        {
-    //            target->DebugRendering();
-    //        }
-    //    }
-    //}
-
-    //{ // forward
-    //    auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Forward)];
-
-    //    for(auto& [shader,vec] : targets)
-    //    {
-    //        for(auto& [material,mesh,target] : vec)
-    //        {
-    //            target->DebugRendering();
-    //        }
-    //    }
-    //}
 
     { // forward
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Debug)];
@@ -398,6 +378,19 @@ bool Scene::RemoveAtGameObject(int index)
         return true;
     }
     return false;
+}
+
+void Scene::CameraControll()
+{
+	if (Input::main->GetKeyDown(KeyCode::F1))
+	{
+		CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
+	}
+
+    if (Input::main->GetKeyDown(KeyCode::F2))
+    {
+        CameraManager::main->SetActiveCamera(CameraType::ComponentCamera);
+    }
 }
 
 void Scene::AddDestroyQueue(const std::shared_ptr<GameObject>& gameObject)
