@@ -68,7 +68,7 @@ void Game::Init(HWND hwnd)
 
 	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, static_pointer_cast<Camera>(make_shared<ThirdPersonCamera>()));
 	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0, 0, -50.0f));
-	CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
+	//CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
 
 	LightManager::main = make_unique<LightManager>();
 	InstancingManager::main = make_unique<InstancingManager>();
@@ -92,7 +92,7 @@ void Game::Init(HWND hwnd)
 		LightManager::main->PushLight(light);
 	}
 
-	auto scene = SceneManager::main->AddScene(SceneType::TestScene);
+	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
 }
 
 void Game::PrevUpdate()
@@ -174,14 +174,13 @@ void Game::Run()
 	Core::main->RenderBegin();
 	Profiler::Fin();
 
-	Profiler::Set("Other_Light");
-	LightManager::main->SetData();
-	Profiler::Fin();
-
 	Profiler::Fin();
 	Profiler::Set("Logic_Total");
 		currentScene->Update();
 		currentScene->RenderBegin();
+		Profiler::Set("Logic_Light");
+		LightManager::main->SetData();
+		Profiler::Fin();
 	Profiler::Fin();
 
 	Profiler::Set("Rendering_Total", BlockTag::GPU);

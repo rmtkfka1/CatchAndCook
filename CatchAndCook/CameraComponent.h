@@ -1,18 +1,17 @@
 ﻿#pragma once
+#include "Camera.h"
 #include "Component.h"
 
-
-class CameraComponent;
-
-class PlayerController : public Component
+class CameraComponent : public Component, public Camera
 {
 public:
-	std::weak_ptr<CameraComponent> camera;
-	~PlayerController() override;
+	CameraComponent();
+
+	void Update() override;
+	~CameraComponent() override;
 	bool IsExecuteAble() override;
 	void Init() override;
 	void Start() override;
-	void Update() override;
 	void Update2() override;
 	void Enable() override;
 	void Disable() override;
@@ -22,9 +21,5 @@ public:
 	void ChangeParent(const std::shared_ptr<GameObject>& prev, const std::shared_ptr<GameObject>& current) override;
 	void SetDestroy() override;
 	void Destroy() override;
-
-
-private: // Camera Control
-	Vector2 _prevMousePosition;
 };
 

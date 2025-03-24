@@ -46,6 +46,7 @@ public:
     const vec3& SetWorldPosition(const vec3& worldPos);
     vec3 GetWorldScale();
     const vec3& SetWorldScale(const vec3& worldScale);
+    vec3 GetWorldEuler();
     Quaternion GetWorldRotation();
     const Quaternion& SetWorldRotation(const Quaternion& quaternion);
 

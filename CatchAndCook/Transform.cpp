@@ -289,6 +289,11 @@ const vec3& Transform::SetWorldScale(const vec3& scale)
     return scale;
 }
 
+vec3 Transform::GetWorldEuler()
+{
+    return GetWorldRotation().ToEuler();
+}
+
 Quaternion Transform::GetWorldRotation()
 {
     Quaternion totalQuat = _localRotation;

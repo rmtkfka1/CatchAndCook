@@ -5,6 +5,7 @@
 #include <nlohmann/json_fwd.hpp>
 
 #include "BufferPool.h"
+#include "CameraComponent.h"
 #include "Collider.h"
 #include "Scene.h"
 #include "Component.h"
@@ -163,6 +164,11 @@ void SceneLoader::PrevProcessingComponent(json& data)
     if (type == L"NavMeshSurface")
     {
         auto terr = CreateObject<NavMesh>(guid);
+        component = terr;
+    }
+    if (type == L"Camera")
+    {
+        auto terr = CreateObject<CameraComponent>(guid);
         component = terr;
     }
 

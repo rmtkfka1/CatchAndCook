@@ -8,9 +8,8 @@ shared_ptr<Camera>& CameraManager::GetCamera(CameraType type)
 	return _cameras[type];
 }
 
-void CameraManager::Setting(CameraType type)
+void CameraManager::Setting()
 {
-	SetActiveCamera(type);
 	_activeCamera->Update();
 	_activeCamera->PushData();
 	_activeCamera->SetData();

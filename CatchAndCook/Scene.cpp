@@ -88,7 +88,7 @@ void Scene::Rendering()
     auto& cmdList = Core::main->GetCmdList();
 
     Core::main->GetRenderTarget()->ClearDepth();
-    CameraManager::main->Setting(CameraType::ThirdPersonCamera);
+    CameraManager::main->Setting();
 
     ShadowPass(cmdList);
     Profiler::Set("PASS : Deffered", BlockTag::GPU);
@@ -242,8 +242,8 @@ void Scene::FinalRender(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
     Core::main->GetRenderTarget()->RenderBegin();
 
-    auto& mesh = ResourceManager::main->Get<Mesh>(L"finalMesh");
-    auto& shader = ResourceManager::main->Get<Shader>(L"finalShader");
+    auto mesh = ResourceManager::main->Get<Mesh>(L"finalMesh");
+    auto shader = ResourceManager::main->Get<Shader>(L"finalShader");
 
     cmdList->SetPipelineState(shader->_pipelineState.Get());
     mesh->Redner();

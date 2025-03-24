@@ -9,6 +9,8 @@
 
 #include "Camera.h"
 #include "CameraManager.h"
+#include "ColliderManager.h"
+#include "Gizmo.h"
 
 #define RECT_TERRAIN
 
@@ -158,6 +160,7 @@ void Terrain::Destroy()
 	{
         renderer->RemoveCbufferSetter(static_pointer_cast<Terrain>(shared_from_this()));
 	}
+    TerrainManager::main->RemoveTerrain(GetCast<Terrain>());
 }
 
 void Terrain::SetData(Material* material)
@@ -251,7 +254,82 @@ float Terrain::GetWorldHeight(const Vector3& worldPosition)
 
 bool Terrain::RayCast(const Ray& ray, const float& dis, RayHit& hit)
 {
+    vec3 offsetPos = ray.position - GetOwner()->_transform->GetWorldPosition();
+    vec3 dir = ray.direction;
+    dir.Normalize();
 
+	float prevH = offsetPos.y;
+    float between = 1.0f;
+    float reusltDis = 0;
+    float reusltHeight = 0;
+
+    bool isHit = false;
+    for (; reusltDis < dis; reusltDis += between)
+    {
+        Vector3 currentPos = offsetPos + dir * reusltDis;
+        float HeightMap = GetLocalHeight(currentPos);
+        float currentH = currentPos.y - HeightMap;
+        if ((prevH > 0 && currentH <= 0) || (prevH < 0 && currentH >= 0))
+        {
+            float left = reusltDis - between;
+            float right = reusltDis;
+
+        	float leftH = prevH;
+        	float rightH = currentH;
+            isHit = true;
+
+            float middle = 0;
+            float middleH = 0;
+
+            for (int j = 0; j < 12; j++)
+            {
+                middle = (left + right) / 2;
+                currentPos = offsetPos + dir * middle;
+                middleH = currentPos.y - GetLocalHeight(currentPos);
+                if(middleH * leftH < 0)
+                {
+                    rightH = middleH;
+                    right = middle;
+                }
+                if (middleH * rightH < 0)
+                {
+                    leftH = middleH;
+                    left = middle;
+                }
+            }
+            reusltDis = middle;
+            reusltHeight = middleH + currentPos.y;
+            break;
+        }
+
+        prevH = currentH;
+    }
+    if(isHit)
+    {
+        Vector3 localPos = offsetPos + dir * reusltDis;
+        localPos.y = reusltHeight;
+
+        hit.distance = reusltDis;
+        hit.worldPos = localPos + GetOwner()->_transform->GetWorldPosition();
+        hit.gameObject = GetOwner().get();
+        hit.collider = nullptr;
+        hit.isHit = true;
+
+        Vector3 forward = localPos + Vector3::Forward * 0.2f;
+        forward.y = GetLocalHeight(forward);
+        Vector3 right = localPos + Vector3::Right * 0.2f;
+        right.y = GetLocalHeight(right);
+        forward = forward - localPos;
+        forward.Normalize();
+        right = right - localPos;
+        right.Normalize();
+
+        hit.normal = (forward).Cross(right);
+        hit.normal.Normalize();
+        //hit.
+        return true;
+    }
+    return false;
 }
 
 

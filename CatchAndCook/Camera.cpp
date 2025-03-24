@@ -34,6 +34,25 @@ Vector2 Camera::GetWorldToScreenPosition(Vector3 worldPosition)
 }
 
 
+void Camera::SetCameraRotation(const Quaternion& quat)
+{
+    vec3 orginLook = vec3(0, 0, 1.0f);
+    vec3 orginUp = vec3(0, 1.0f, 0);
+    vec3 orginRight = vec3(1.0f, 0, 0);
+    Vector3 eu = quat.ToEuler();
+    _yaw += eu.y;
+    _pitch += eu.x;
+    _roll += eu.z;
+
+    _cameraLook = vec3::Transform(orginLook, quat);
+    _cameraRight = vec3::Transform(orginRight, quat);
+    _cameraUp = vec3::Transform(orginUp, quat);
+
+    _cameraLook.Normalize();
+    _cameraRight.Normalize();
+    _cameraUp.Normalize();
+}
+
 void Camera::SetCameraRotation(float yaw, float pitch, float roll)
 {
     vec3 orginLook = vec3(0, 0, 1.0f);

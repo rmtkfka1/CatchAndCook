@@ -11,6 +11,7 @@
 #include "Mesh.h"
 #include "WaterController.h"
 #include "Collider.h"
+#include "PlayerController.h"
 
 
 void TestScene_jin::Init()
@@ -21,7 +22,7 @@ void TestScene_jin::Init()
 	//shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
 	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
 
-	for (int i = 0; i < 1; ++i)
+	for (int i = 0; i < 0; ++i)
 	{
 		{
 			shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
@@ -31,7 +32,7 @@ void TestScene_jin::Init()
 			shared_ptr<GameObject> root = CreateGameObject(L"root_test");
 
 			auto meshRenderer = root->AddComponent<MeshRenderer>();
-			auto& collider = root->AddComponent<Collider>();
+			auto collider = root->AddComponent<Collider>();
 			collider->SetBoundingBox(vec3(0, 0, 0), vec3(1.0f, 1.0f, 1.0f));
 
 
@@ -83,6 +84,7 @@ void TestScene_jin::Init()
 		meshRenderer->AddMaterials({ material });
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
 	}
+
 	if (false)
 	{
 
@@ -113,7 +115,7 @@ void TestScene_jin::Init()
 			material->SetUseMaterialParams(true);
 			meshRenderer->AddMaterials({ material });
 
-			auto& mesh = GeoMetryHelper::LoadGripMeshControlPoints(20000.0f, 20000.0f, 1000, 1000, false);
+			auto mesh = GeoMetryHelper::LoadGripMeshControlPoints(20000.0f, 20000.0f, 1000, 1000, false);
 			mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 			meshRenderer->AddMesh(mesh);
 			meshRenderer->SetCulling(false);
@@ -125,9 +127,13 @@ void TestScene_jin::Init()
 	
 
 
-	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/MainField2.json");
+	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/MainField4.json");
 	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
 	sceneLoader->Load(GetCast<Scene>());
+
+
+
+	auto player = Find(L"player")->AddComponent<PlayerController>();
 }
 
 void TestScene_jin::Update()

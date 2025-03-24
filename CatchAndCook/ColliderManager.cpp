@@ -3,6 +3,8 @@
 #include <algorithm>
 #include "Gizmo.h"
 #include "Collider.h"
+#include "Terrain.h"
+#include "TerrainManager.h"
 
 
 unique_ptr<ColliderManager> ColliderManager::main = nullptr;
@@ -289,6 +291,18 @@ RayHit ColliderManager::RayCast(const Ray& ray, const float& dis) const
 		RayHit currentHit;
 		currentHit.distance = dis;  // 최대 거리로 초기화
 		if (collider->RayCast(ray, dis, currentHit))
+		{
+			if (currentHit.distance < closestHit.distance)
+			{
+				closestHit = currentHit;
+				hitFound = true;
+			}
+		}
+	}
+	for (auto& terrain : TerrainManager::main->_terrains)
+	{
+		RayHit currentHit;
+		if (terrain->RayCast(ray, dis, currentHit))
 		{
 			if (currentHit.distance < closestHit.distance)
 			{

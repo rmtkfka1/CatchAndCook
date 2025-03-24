@@ -137,7 +137,7 @@ void TestScene::Init()
 			shared_ptr<GameObject> root = CreateGameObject(L"root_test");
 
 			auto meshRenderer = root->AddComponent<MeshRenderer>();
-			auto& collider = root->AddComponent<Collider>();
+			auto collider = root->AddComponent<Collider>();
 			collider->SetBoundingBox(vec3(0, 0, 0), vec3(1.0f, 1.0f, 1.0f));
 
 			root->_transform->SetLocalScale(vec3(dis(urd), dis(urd), dis(urd)));

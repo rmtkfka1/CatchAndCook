@@ -7,6 +7,7 @@ enum class CameraType
 {
     ThirdPersonCamera,
     AxisCamera,
+    ComponentCamera
 };
 
 
@@ -46,6 +47,7 @@ class Camera
 {
 
 public:
+    Camera() = default;
 	Camera(CameraType type);
 
 public:
@@ -68,6 +70,7 @@ public:
 
     Vector3 GetScreenToWorldPosition(Vector2 mousePosition);
     Vector2 GetWorldToScreenPosition(Vector3 worldPosition);
+    void SetCameraRotation(const Quaternion& quat);
 
     void SetCameraRotation(float yaw, float pitch, float roll);
     CameraParams& GetCameraParam() { return _params; }
@@ -75,8 +78,9 @@ public:
 
     bool IsInFrustum(BoundingBox& box);
 
-private:
     void Calculate();
+
+private:
 
 public:
 	const CameraParams& GetCameraParams() { return _params; }
@@ -129,6 +133,5 @@ public:
     virtual ~AxisCamera();
     virtual void Update();
 };
-
 
 
