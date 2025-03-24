@@ -12,7 +12,6 @@ class Collider;
 class RendererBase;
 
 
-
 class GameObject : public IGuid, public IDelayDestroy
 {
 public:
@@ -309,7 +308,8 @@ public:
 	std::shared_ptr<GameObject> GetRoot() const { return rootParent.lock(); };
 	bool IsRoot() const { return rootParent.lock().get() == this; };
 
-	void SetTag(const GameObjectTag& tag) { _tag = tag; };
+	void AddTag(GameObjectTag tag);
+	void RemoveTag(GameObjectTag tag);
 	GameObjectTag GetTag() const { return  _tag; };
 
 	void SetType(const GameObjectType& type) { _type = type; };

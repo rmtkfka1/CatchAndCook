@@ -48,29 +48,33 @@ struct VS_OUT
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 
-
-
-
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
-    row_major float4x4 l2wMatrix = data.localToWorld;
-    row_major float4x4 w2lMatrix = data.worldToLocal;
-    float4 boneIds = float4(-1, -1, -1, -1);
+    //Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
+    row_major float4x4 l2wMatrix = 0;
+    row_major float4x4 w2lMatrix = 0;
+    float4 boneIds = 0;
     float4 boneWs = 0;
-
+    
+   
 #ifdef INSTANCED
 		l2wMatrix = MATRIX(input.instance_trs);
 		w2lMatrix = MATRIX(input.instance_invert_trs);
 #endif
-
+    
+#ifdef DEFAULT
+    Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
+    l2wMatrix = data.LocalToWorldMatrix;
+    w2lMatrix = data.WorldToLocalMatrix;
+#endif
+    
 #ifdef SKINNED
 	    boneIds = input.boneIds;
 	    boneWs = input.boneWs;
 #endif
-
+    
     output.normalOS = input.normal;
     output.tangentOS = input.tangent;
 

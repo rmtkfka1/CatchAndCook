@@ -117,14 +117,12 @@ void testComponent::RenderBegin()
 
 void testComponent::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
-	cout << "CollisionBegin\n"; 
+	
 }
 
 void testComponent::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
-	Component::CollisionEnd(collider,other);
 
-	cout << "CollisionEnd\n";
 }
 
 bool testComponent::IsExecuteAble()

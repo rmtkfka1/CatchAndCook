@@ -39,11 +39,11 @@ public:
 	void AddSharedMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
 	void SetDebugShader(shared_ptr<Shader>& shader) { _normalDebugShader = shader; }
 
+
 private:
 	std::vector<std::shared_ptr<Mesh>> _mesh;
 	std::vector<std::shared_ptr<Material>> _uniqueMaterials;
 	std::vector<std::shared_ptr<Material>> _sharedMaterials;
-	
 	shared_ptr<Shader> _normalDebugShader;
 
 

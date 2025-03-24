@@ -54,7 +54,7 @@ public:
 	shared_ptr<StructuredBuffer>& GetStructuredBufferPool(BufferType type) {
 		return _structuredMap[type];
 	}
-	BufferType GetStructuredNameToBufferType(const string& name){
+	BufferType& GetStructuredNameToBufferType(const string& name){
 		return _structuredNameMappingTable[name];
 	}
 

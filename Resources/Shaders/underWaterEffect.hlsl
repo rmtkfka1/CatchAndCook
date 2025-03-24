@@ -78,14 +78,14 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     int2 texCoord = dispatchThreadID.xy;
     float2 uv = (float2(texCoord) + 0.5f) / cameraScreenData.xy;
     
-    float2 distortion = float2(sin(uv.y * 10.0f + g_Time), cos(uv.x * 10.0f + g_Time)) * 0.06f;
-    float2 uvDistorted = uv + distortion *0.02f;
+    //float2 distortion = float2(sin(uv.y * 10.0f + g_Time), cos(uv.x * 10.0f + g_Time)) * 0.06f;
+    //float2 uvDistorted = uv + distortion *0.02f;
     
-    float Height = abs(PositionT.SampleLevel(sampler_lerp, uvDistorted, 0).y);
-    float HeightUV = smoothstep(0, 140.0f, Height);
-    float3 ColorGradingColor = ColorGrading.SampleLevel(sampler_lerp_clamp, float2(HeightUV, 0), 0);
+    //float Height = abs(PositionT.SampleLevel(sampler_lerp, uvDistorted, 0).y);
+    //float HeightUV = smoothstep(0, 140.0f, Height);
+    //float3 ColorGradingColor = ColorGrading.SampleLevel(sampler_lerp_clamp, float2(HeightUV, 0), 0);
     
-    float3 BaseColor = RenderT.SampleLevel(sampler_lerp, uvDistorted, 0).xyz;
+    float3 BaseColor = RenderT.SampleLevel(sampler_lerp, uv, 0).xyz;
     BaseColor *= g_underWaterColor;
 
     float3 viewPos = ProjToView(float2(texCoord));

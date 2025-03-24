@@ -175,8 +175,15 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                     }
                 }
 
-                InstancingManager::main->AddObject(ele);
-
+                if (ele.renderer->isInstancing() == true)
+                {
+                    InstancingManager::main->AddObject(ele);
+                    InstancingManager::main->Render();
+                }
+                else
+                {
+                    InstancingManager::main->AddObject(ele);
+                }
             }
 
             InstancingManager::main->Render();
@@ -196,7 +203,7 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
         for (auto& [shader, vec] : targets)
         {
             cmdList->SetPipelineState(shader->_pipelineState.Get());
-
+         
             for (auto& ele : vec)
             {
                 g_debug_deferred_count++;
@@ -210,11 +217,21 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                        }
                    }
 
-                InstancingManager::main->AddObject(ele);
-                
+                   if (ele.renderer->isInstancing() == true)
+                   {
+                       //ele.renderer->Rendering(ele.material, ele.mesh, 1);
+                       InstancingManager::main->AddObject(ele);
+                       InstancingManager::main->Render();
+                   }
+                   else
+                   {    //동적인스턴싱이면 1개짜리 객체라도 스터럭쳐버퍼로 transform 데이터넣어줌.
+                       InstancingManager::main->AddObject(ele);
+                   }           
             }
 
+        
            InstancingManager::main->Render();
+
         }
     }
 

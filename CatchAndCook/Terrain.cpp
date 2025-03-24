@@ -12,7 +12,7 @@
 #include "ColliderManager.h"
 #include "Gizmo.h"
 
-#define RECT_TERRAIN
+//#define RECT_TERRAIN
 
 Terrain::Terrain()
 {
@@ -36,11 +36,6 @@ void Terrain::Start()
 	Component::Start();
                                  
     ShaderInfo info;
-    info.renderTargetCount = 3;
-
-    info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
-    info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
-    info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
     info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
  
     #ifdef RECT_TERRAIN
@@ -54,9 +49,9 @@ void Terrain::Start()
     
     _material->SetPropertyVector("fieldSize",Vector4(_fieldSize));
     _material->SetShader(shader);
-    _material->SetPass(RENDER_PASS::Deffered);
+    _material->SetPass(RENDER_PASS::Forward);
     auto meshRenderer = GetOwner()->GetComponent<MeshRenderer>();
-    meshRenderer->AddMaterials({_material});
+	meshRenderer->AddMaterials({_material});
 
 	if(auto renderer = GetOwner()->GetRenderer())
 	{
@@ -65,31 +60,33 @@ void Terrain::Start()
 		if(_gridMesh == nullptr)
             assert(false);
 		dynamic_pointer_cast<MeshRenderer>(renderer)->AddMesh(_gridMesh);
-        renderer->SetInstancing(false);
         renderer->SetCulling(false);
 	}
 
- //   _instanceBuffers.resize(_instances.size());
-	//for(int i = 0; i<_instances.size();i++)
-	//{
- //       auto instanceBuffer = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::TransformInstanceParam)->Alloc();
- //       memcpy(instanceBuffer->ptr,_instanceDatas[i].data(), _instanceDatas[i].size() * sizeof(Instance_Transform));
- //       instanceBuffer->SetIndex(_instanceDatas[i].size(),sizeof(Instance_Transform));
-	//	//instanceBuffer->writeOffset = _instanceDatas[i].size() * sizeof(Instance_Transform);
- //       _instanceBuffers[i] = instanceBuffer;
+    _instanceBuffers.resize(_instances.size());
+	for(int i = 0; i<_instances.size();i++)
+	{
+		auto instanceBuffer = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::TransformInstanceParam)->Alloc();
+		memcpy(instanceBuffer->ptr,_instanceDatas[i].data(), _instanceDatas[i].size() * sizeof(Instance_Transform));
+		instanceBuffer->SetIndex(_instanceDatas[i].size(),sizeof(Instance_Transform));
+	    instanceBuffer->writeOffset = _instanceDatas[i].size() * sizeof(Instance_Transform);
+		_instanceBuffers[i] = instanceBuffer;
 
- //       std::vector<std::shared_ptr<MeshRenderer>> renderers;
- //       _instances[i].lock()->GetComponentsWithChilds<MeshRenderer>(renderers);
+        std::vector<std::shared_ptr<MeshRenderer>> renderers;
+        _instances[i].lock()->GetComponentsWithChilds<MeshRenderer>(renderers);
 
-	//	for(auto& renderer : renderers)
-	//	{
-	//		renderer->SetInstance(instanceBuffer);
- //           for(auto& material : renderer->GetMaterials())
- //               material->SetShader(ResourceManager::main->Get<Shader>(L"DefaultForward_Instanced"));
-	//	}
-	//}
-
-
+		for(auto& renderer : renderers)
+		{
+            renderer->SetCulling(false);
+			renderer->SetInstanceBuffer(instanceBuffer);
+            renderer->SetInstancing(false);
+            for (auto& material : renderer->GetMaterials())
+            {
+                material->SetShader(ResourceManager::main->Get<Shader>(L"DefaultForward_Instanced"));
+                material->SetPass(RENDER_PASS::Forward);
+            }
+		}
+	}
 
 	TerrainManager::main->PushTerrain(static_pointer_cast<Terrain>(shared_from_this()));
 
@@ -107,7 +104,7 @@ void Terrain::Update()
             //if(Vector3::Distance(Vector3(_instanceDatas[i][j].worldPosition.x, 0,_instanceDatas[i][j].worldPosition.z), cameraPos) < 10)
             //{
             //    //Todo : 작업해야함.
-            //    _instanceBuffers[i]->AddData(_instanceDatas[i][j]);
+                _instanceBuffers[i]->AddData(_instanceDatas[i][j]);
             //}
         }
     }
@@ -173,21 +170,24 @@ void Terrain::SetHeightMap(const std::wstring &rawPath,const std::wstring &pngPa
 {
     _heightTexture = ResourceManager::main->Load<Texture>(pngPath, pngPath, TextureType::Texture2D, false);
 
-    _heightTextureSize = Vector2(static_cast<int>(_heightTexture->GetResource()->GetDesc().Width),
+    _heightTextureSize = vec2(static_cast<int>(_heightTexture->GetResource()->GetDesc().Width),
 								static_cast<int>(_heightTexture->GetResource()->GetDesc().Height));
+   
     _heightRawSize = rawSize;
     _fieldSize = fieldSize;
+
+	cout << _fieldSize.x << " " << _fieldSize.y << " " << _fieldSize.z << endl;
 
     #ifdef RECT_TERRAIN
     _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(_fieldSize.x,_fieldSize.z,CellsPerPatch,CellsPerPatch);
     _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 	#else
+
 	_gridMesh = GeoMetryHelper::LoadGripMesh(_fieldSize.x,_fieldSize.z,CellsPerPatch,CellsPerPatch);
     _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
     #endif // RECT_TERRAIN
 
     
-
 	LoadTerrain(rawPath);
 }
 
@@ -336,7 +336,6 @@ bool Terrain::RayCast(const Ray& ray, const float& dis, RayHit& hit)
 void Terrain::LoadTerrain(const std::wstring &rawData)
 {
     _heightRawMapData.resize(_heightRawSize.y,vector(_heightRawSize.x, 0.0f)); 
-
 
     std::ifstream file(rawData,std::ios::binary);
     if(!file) {

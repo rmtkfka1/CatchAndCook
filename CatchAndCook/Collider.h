@@ -16,25 +16,7 @@ union BoundingUnion
 	BoundingFrustum frustum;
 };
 
-struct WeakPtrHash
-{
-	template <typename T>
-	size_t operator()(const std::weak_ptr<T>& wp) const
-	{
-		if(auto sp = wp.lock())
-			return std::hash<std::shared_ptr<T>>{}(sp);
-		return 0;
-	}
-};
 
-struct WeakPtrEqual
-{
-	template <typename T>
-	bool operator()(const std::weak_ptr<T>& lhs,const std::weak_ptr<T>& rhs) const
-	{
-		return lhs.lock() == rhs.lock();
-	}
-};
 
 class Collider : public Component
 {
@@ -56,6 +38,8 @@ public:
 
 
 public:
+	CollisionType GetType() { return _type; }
+	vec3 GetCenter();
 	bool CheckCollision(const std::shared_ptr<Collider>& other);
 	bool RayCast(const Ray& ray, const float& dis, RayHit& hit);
 	void SetBoundingBox(vec3 center,vec3 extents);
@@ -73,6 +57,5 @@ private:
 	CollisionType _type;
 	BoundingUnion _orgin;
 	BoundingUnion _bound;
-
 	int groupId = 0;
 };

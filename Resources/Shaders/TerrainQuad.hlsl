@@ -229,18 +229,9 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
     return dout;
 }
 
-
-struct PS_OUT
+float4 PS_Main(DS_OUT input) :SV_Target
 {
-    float4 position : SV_Target0;
-    float4 normal : SV_Target1;
-    float4 color : SV_Target2;
-};
 
-
-PS_OUT PS_Main(DS_OUT input) 
-{
-    PS_OUT output = (PS_OUT) 0;
     
     float4 finalColor = float4(0,0,0,0);
 	float4 blend;
@@ -296,15 +287,12 @@ PS_OUT PS_Main(DS_OUT input)
         finalColor += _detailMap10.Sample   (sampler_lerp, tileUV2) * mask2.g * blend.z;
         finalColor += _detailMap11.Sample   (sampler_lerp, tileUV3) * mask3.g * blend.w;
     }
-    //blend = _blendMap0.Sample(sample_lerp, input.uv);
-    //finalColor = _detailMap0.Sample(sample_lerp, input.uvTile / tileST[0].xy + tileST[0].zw) * blend.x;//  / tileST[0].xy + tileST[0].zw
+    //blend = _blendMap0.Sample(sampler_lerp, input.uv);
+    //finalColor = _detailMap0.Sample(sampler_lerp, input.uvTile / tileST[0].xy + tileST[0].zw) * blend.x; //  / tileST[0].xy + tileST[0].zw
 
     //float2 tileUV0 = input.uvTile / tileST[0].xy + tileST[0].zw;
     //float4 mask0 = (textureActive[0].g == 0) ? 1 : (_maskMap0.Sample(sampler_lerp, tileUV0));
     //finalColor = _detailMap0.Sample(sampler_lerp, tileUV0) * mask0.g * _blendMap0.Sample(sampler_lerp, input.uv).x;
-    output.color = float4(0.5f, 0.5f, 0.5f, 1.0f);
-    output.normal = float4(input.normal, 1.0f);
-    output.position = input.worldPos;
     
-    return output;
+    return finalColor;
 }

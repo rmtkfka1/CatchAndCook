@@ -7,42 +7,52 @@ unique_ptr<InstancingManager> InstancingManager::main;
 
 void InstancingManager::Render()
 {
-	for(auto& [id, objects] : _objectMap)
+	auto& cmdList = Core::main->GetCmdList();
+	auto& bufferManager = Core::main->GetBufferManager();
+	auto& tableManager = bufferManager->GetTable();
+
+	for (auto& [id, objects] : _objectMap)
 	{
-		auto& cmdList = Core::main->GetCmdList();
-		auto shader = objects[0].material->GetShader();
-		auto structuredInfo = shader->GetTRegisterStructured();
+		if (objects.empty()) continue;
+
+		auto& material = objects[0].material;
+		auto& renderer = objects[0].renderer;
+		auto& mesh = objects[0].mesh;
+		auto& shader = material->GetShader();
+		auto& structuredInfo = shader->GetTRegisterStructured();
 		InstanceOffsetParam param = {};
 
-		for(auto& infos : structuredInfo)
+		for (const auto& infos : structuredInfo)
 		{
-			auto& name = infos.name;
-			auto bufferType = Core::main->GetBufferManager()->GetStructuredNameToBufferType(name);
-			auto pool = Core::main->GetBufferManager()->GetStructuredBufferPool(bufferType);
+			const std::string& name = infos.name;
+			auto& bufferType = bufferManager->GetStructuredNameToBufferType(name);
+			auto& pool = bufferManager->GetStructuredBufferPool(bufferType);
 			int offset = pool->GetOffset();
 
-			auto table = Core::main->GetBufferManager()->GetTable()->Alloc(1);
+			auto table = tableManager->Alloc(1);
 
-			for(auto& object : objects)
+			for (auto& object : objects)
 			{
-				auto setter = object.renderer->FindStructuredSetter(bufferType);
+				auto& setter = object.renderer->FindStructuredSetter(bufferType);
 				assert(setter != nullptr);
 				setter->SetData(pool.get());
 			}
 
-			Core::main->GetBufferManager()->GetTable()->CopyHandle(table.CPUHandle,pool->GetSRVHandle(),0);
+			tableManager->CopyHandle(table.CPUHandle, pool->GetSRVHandle(), 0);
 
-			int ROOT_OFFSET = (infos.registerIndex - SRV_STRUCTURED_TABLE_REGISTER_OFFSET); // 30~40 -> 0~10 으로 이동. 이게 레지스터 위치를 0으로 옮김.
+			int ROOT_OFFSET = infos.registerIndex - SRV_STRUCTURED_TABLE_REGISTER_OFFSET;
 			assert(ROOT_OFFSET >= 0);
 			cmdList->SetGraphicsRootDescriptorTable(SRV_STRUCTURED_TABLE_INDEX + ROOT_OFFSET, table.GPUHandle);
+
 			param.offset[ROOT_OFFSET].x = offset;
 		}
-		auto cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::InstanceOffsetParam)->Alloc(1);
+
+		auto cbufferContainer = bufferManager->GetBufferPool(BufferType::InstanceOffsetParam)->Alloc(1);
 		memcpy(cbufferContainer->ptr, &param, sizeof(InstanceOffsetParam));
 		cmdList->SetGraphicsRootConstantBufferView(4, cbufferContainer->GPUAdress);
 
 		g_debug_draw_call++;
-		objects[0].renderer->Rendering(objects[0].material, objects[0].mesh, objects.size());
+		renderer->Rendering(material, mesh, objects.size());
 	}
 
 	_objectMap.clear();

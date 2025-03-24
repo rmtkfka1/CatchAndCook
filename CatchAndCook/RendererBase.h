@@ -5,6 +5,7 @@
 class RendererBase;
 class Material;
 class Transform;
+class  InstanceBufferContainer;
 
 struct RenderObjectStrucutre
 {
@@ -55,17 +56,24 @@ public:
 	{
 		return _isCulling;
 	};
-	void SetInstancing(bool instancing) {
+
+	void SetInstancing(bool instancing) 
+	{
 		_isInstancing = instancing;
 	};
-	bool IsInstancing() const
+
+	bool isInstancing() const
 	{
 		return _isInstancing;
 	};
 
 	BoundingBox _bound;
 	bool _isCulling = true;
-	bool _isInstancing = true;
+	bool _isInstancing = false;
+	InstanceBufferContainer* _staticInstanceBuffer = nullptr;
+
+	void SetInstanceBuffer(InstanceBufferContainer* instanceBuffer);
+	bool HasInstanceBuffer();
 
 private:
 	std::unordered_map<BufferType,std::shared_ptr<RenderStructuredSetter>> _structuredSetters;

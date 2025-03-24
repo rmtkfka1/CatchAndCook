@@ -4,10 +4,10 @@
 #include "Light_b3.hlsl"
 
 
-#define TessFactor 4
+#define TessFactor 8
 #define PI 3.14159f
-#define DIST_MAX 100.0f
-#define DIST_MIN 15.0f
+#define DIST_MAX 1000.0f
+#define DIST_MIN 0.1f
 
 
 cbuffer TerrainDetailsParam : register(b10)
@@ -116,7 +116,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     row_major float4x4 l2wMatrix = data.localToWorld;
     row_major float4x4 w2lMatrix = data.worldToLocal;
 
-    output.pos = TransformLocalToWorld(float4(input.pos, 1.0f), l2wMatrix);;
+    output.pos = TransformLocalToWorld(float4(input.pos, 1.0f), l2wMatrix);
     output.normal = TransformNormalLocalToWorld(input.normal, w2lMatrix);
 
     output.uv = input.uv;
@@ -135,15 +135,15 @@ struct PatchConstOutput
 
 float CalculateTessLevel(float3 cameraWorldPos, float3 patchPos, float min, float max, float maxLv)
 {
+   
     float distance = length(patchPos - float3(cameraWorldPos.x, 0, cameraWorldPos.z));
+    
     float ratio = smoothstep(min, max, distance);
 
-    ratio = pow(clamp(ratio,0,1), 0.4);
+    float tessLevel = lerp(maxLv, 1.0f, ratio);
 
-    float level = lerp(maxLv, 1.0f, ratio);
-    return round(clamp(level, 1.0f, maxLv) * 10) / 10;
+    return tessLevel;
 }
-
 
 //패치단위로 호출
 PatchConstOutput ConstantHS(InputPatch<VS_OUT, 3> patch, uint patchID : SV_PrimitiveID)
@@ -209,22 +209,25 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 3> quad, PatchConstOutput patchConst, float3 
 
 float4 PS_Main(DS_OUT input) : SV_Target
 {
-    float4 finalColor = float4(0,0,0,0);
-	float4 blend;
+
+    
+    float4 finalColor = float4(0, 0, 0, 0);
+    float4 blend;
 
     if (blendCount >= 1)
     {
-		blend = _blendMap0.Sample(sampler_lerp, input.uv);
+        blend = _blendMap0.Sample(sampler_lerp, input.uv);
+        
         float2 tileUV0 = input.uvTile / tileST[0].xy + tileST[0].zw;
         float2 tileUV1 = input.uvTile / tileST[1].xy + tileST[1].zw;
-    	float2 tileUV2 = input.uvTile / tileST[2].xy + tileST[2].zw;
-    	float2 tileUV3 = input.uvTile / tileST[3].xy + tileST[3].zw;
+        float2 tileUV2 = input.uvTile / tileST[2].xy + tileST[2].zw;
+        float2 tileUV3 = input.uvTile / tileST[3].xy + tileST[3].zw;
         float4 mask0 = (textureActive[0].g == 0) ? 1 : (_maskMap0.Sample(sampler_lerp, tileUV0));
-    	float4 mask1 = (textureActive[1].g == 0) ? 1 : (_maskMap1.Sample(sampler_lerp, tileUV1));
-    	float4 mask2 = (textureActive[2].g == 0) ? 1 : (_maskMap2.Sample(sampler_lerp, tileUV2));
-    	float4 mask3 = (textureActive[3].g == 0) ? 1 : (_maskMap3.Sample(sampler_lerp, tileUV3));
+        float4 mask1 = (textureActive[1].g == 0) ? 1 : (_maskMap1.Sample(sampler_lerp, tileUV1));
+        float4 mask2 = (textureActive[2].g == 0) ? 1 : (_maskMap2.Sample(sampler_lerp, tileUV2));
+        float4 mask3 = (textureActive[3].g == 0) ? 1 : (_maskMap3.Sample(sampler_lerp, tileUV3));
 
-    	finalColor = _detailMap0.Sample(sampler_lerp, tileUV0) * mask0.g * blend.x;
+        finalColor = _detailMap0.Sample(sampler_lerp, tileUV0) * mask0.g * blend.x;
         finalColor += _detailMap1.Sample(sampler_lerp, tileUV1) * mask1.g * blend.y;
         finalColor += _detailMap2.Sample(sampler_lerp, tileUV2) * mask2.g * blend.z;
         finalColor += _detailMap3.Sample(sampler_lerp, tileUV3) * mask3.g * blend.w;
@@ -232,16 +235,18 @@ float4 PS_Main(DS_OUT input) : SV_Target
     if (blendCount >= 2)
     {
         blend = _blendMap1.Sample(sampler_lerp, input.uv);
+        
         float2 tileUV0 = input.uvTile / tileST[4].xy + tileST[4].zw;
         float2 tileUV1 = input.uvTile / tileST[5].xy + tileST[5].zw;
-    	float2 tileUV2 = input.uvTile / tileST[6].xy + tileST[6].zw;
-    	float2 tileUV3 = input.uvTile / tileST[7].xy + tileST[7].zw;
-        float4 mask0 =(textureActive[4].g == 0) ? 1 :  (_maskMap4.Sample(sampler_lerp, tileUV0));
-    	float4 mask1 =(textureActive[5].g == 0) ? 1 :  (_maskMap5.Sample(sampler_lerp, tileUV1));
-    	float4 mask2 =(textureActive[6].g == 0) ? 1 : (_maskMap6.Sample(sampler_lerp, tileUV2) );
-    	float4 mask3 =(textureActive[7].g == 0) ? 1 : (_maskMap7.Sample(sampler_lerp, tileUV3) );
+        float2 tileUV2 = input.uvTile / tileST[6].xy + tileST[6].zw;
+        float2 tileUV3 = input.uvTile / tileST[7].xy + tileST[7].zw;
+        
+        float4 mask0 = (textureActive[4].g == 0) ? 1 : (_maskMap4.Sample(sampler_lerp, tileUV0));
+        float4 mask1 = (textureActive[5].g == 0) ? 1 : (_maskMap5.Sample(sampler_lerp, tileUV1));
+        float4 mask2 = (textureActive[6].g == 0) ? 1 : (_maskMap6.Sample(sampler_lerp, tileUV2));
+        float4 mask3 = (textureActive[7].g == 0) ? 1 : (_maskMap7.Sample(sampler_lerp, tileUV3));
 
-    	finalColor += _detailMap4.Sample(sampler_lerp, tileUV0) * mask0.g * blend.x;
+        finalColor += _detailMap4.Sample(sampler_lerp, tileUV0) * mask0.g * blend.x;
         finalColor += _detailMap5.Sample(sampler_lerp, tileUV1) * mask1.g * blend.y;
         finalColor += _detailMap6.Sample(sampler_lerp, tileUV2) * mask2.g * blend.z;
         finalColor += _detailMap7.Sample(sampler_lerp, tileUV3) * mask3.g * blend.w;
@@ -249,25 +254,28 @@ float4 PS_Main(DS_OUT input) : SV_Target
     if (blendCount >= 3)
     {
         blend = _blendMap2.Sample(sampler_lerp, input.uv);
+        
         float2 tileUV0 = input.uvTile / tileST[8].xy + tileST[8].zw;
         float2 tileUV1 = input.uvTile / tileST[9].xy + tileST[9].zw;
-    	float2 tileUV2 = input.uvTile / tileST[10].xy + tileST[10].zw;
-    	float2 tileUV3 = input.uvTile / tileST[11].xy + tileST[11].zw;
-        float4 mask0 = (textureActive[8 ].g == 0) ? 1 : _maskMap8.Sample (sampler_lerp, tileUV0);
-    	float4 mask1 = (textureActive[9 ].g == 0) ? 1 : _maskMap9.Sample (sampler_lerp, tileUV1);
-    	float4 mask2 = (textureActive[10].g == 0) ? 1 :_maskMap10.Sample (sampler_lerp, tileUV2);
-    	float4 mask3 = (textureActive[11].g == 0) ? 1 :_maskMap11.Sample (sampler_lerp, tileUV3);
+        float2 tileUV2 = input.uvTile / tileST[10].xy + tileST[10].zw;
+        float2 tileUV3 = input.uvTile / tileST[11].xy + tileST[11].zw;
+        
+        float4 mask0 = (textureActive[8].g == 0) ? 1 : _maskMap8.Sample(sampler_lerp, tileUV0);
+        float4 mask1 = (textureActive[9].g == 0) ? 1 : _maskMap9.Sample(sampler_lerp, tileUV1);
+        float4 mask2 = (textureActive[10].g == 0) ? 1 : _maskMap10.Sample(sampler_lerp, tileUV2);
+        float4 mask3 = (textureActive[11].g == 0) ? 1 : _maskMap11.Sample(sampler_lerp, tileUV3);
 
-    	finalColor += _detailMap8.Sample    (sampler_lerp, tileUV0) * mask0.g * blend.x;
-        finalColor += _detailMap9.Sample    (sampler_lerp, tileUV1) * mask1.g * blend.y;
-        finalColor += _detailMap10.Sample   (sampler_lerp, tileUV2) * mask2.g * blend.z;
-        finalColor += _detailMap11.Sample   (sampler_lerp, tileUV3) * mask3.g * blend.w;
+        finalColor += _detailMap8.Sample(sampler_lerp, tileUV0) * mask0.g * blend.x;
+        finalColor += _detailMap9.Sample(sampler_lerp, tileUV1) * mask1.g * blend.y;
+        finalColor += _detailMap10.Sample(sampler_lerp, tileUV2) * mask2.g * blend.z;
+        finalColor += _detailMap11.Sample(sampler_lerp, tileUV3) * mask3.g * blend.w;
     }
-    //blend = _blendMap0.Sample(sample_lerp, input.uv);
-    //finalColor = _detailMap0.Sample(sample_lerp, input.uvTile / tileST[0].xy + tileST[0].zw) * blend.x;//  / tileST[0].xy + tileST[0].zw
+    //blend = _blendMap0.Sample(sampler_lerp, input.uv);
+    //finalColor = _detailMap0.Sample(sampler_lerp, input.uvTile / tileST[0].xy + tileST[0].zw) * blend.x; //  / tileST[0].xy + tileST[0].zw
 
     //float2 tileUV0 = input.uvTile / tileST[0].xy + tileST[0].zw;
     //float4 mask0 = (textureActive[0].g == 0) ? 1 : (_maskMap0.Sample(sampler_lerp, tileUV0));
     //finalColor = _detailMap0.Sample(sampler_lerp, tileUV0) * mask0.g * _blendMap0.Sample(sampler_lerp, input.uv).x;
-    return float4(1, 1, 1, 1);
+    
+    return finalColor;
 }

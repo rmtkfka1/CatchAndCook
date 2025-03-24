@@ -301,9 +301,14 @@
     <ClCompile Include="WaterController.cpp">
       <Filter>03.Component</Filter>
     </ClCompile>
-    <ClCompile Include="BoidsMove.cpp" />
     <ClCompile Include="Scene_Sea01.cpp">
       <Filter>06.Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="BoidsMove.cpp">
+      <Filter>03.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="WallSlideController.cpp">
+      <Filter>03.Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -569,6 +574,9 @@
     <ClInclude Include="BoidsMove.h" />
     <ClInclude Include="Scene_Sea01.h">
       <Filter>06.Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="WallSlideController.h">
+      <Filter>03.Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -41,3 +41,13 @@ std::shared_ptr<RenderStructuredSetter>& RendererBase::FindStructuredSetter(cons
 {
 	return _structuredSetters[type];
 }
+
+void RendererBase::SetInstanceBuffer(InstanceBufferContainer* instanceBuffer)
+{
+	_staticInstanceBuffer = instanceBuffer;
+}
+
+bool RendererBase::HasInstanceBuffer()
+{
+	return _staticInstanceBuffer != nullptr;
+}
