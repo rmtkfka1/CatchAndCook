@@ -264,7 +264,7 @@ bool Terrain::RayCast(const Ray& ray, const float& dis, RayHit& hit)
     float reusltHeight = 0;
 
     bool isHit = false;
-    for (; reusltDis < dis; reusltDis += between)
+    for (; reusltDis <= dis; reusltDis += between)
     {
         Vector3 currentPos = offsetPos + dir * reusltDis;
         float HeightMap = GetLocalHeight(currentPos);
