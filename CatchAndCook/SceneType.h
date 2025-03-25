@@ -5,5 +5,6 @@ enum class SceneType
 	TestScene2,
 	TestSceneMapEditor,
 	LightingTest,
-	Sea01
+	Sea01,
+	UITest,
 };

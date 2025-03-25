@@ -6,6 +6,7 @@
 #include "TestScene_MapEditor.h"
 #include "LightingTest.h"
 #include "Scene_Sea01.h"
+#include "UITestScene.h"
 
 std::unique_ptr<SceneManager> SceneManager::main = nullptr;
 
@@ -30,6 +31,9 @@ shared_ptr<Scene> SceneManager::AddScene(SceneType type, bool initExecute)
 		break;
 	case::SceneType::Sea01:
 		scene = make_shared<Scene_Sea01>();
+		break;
+	case ::SceneType::UITest:
+		scene = make_shared<UITestScene>();
 		break;
 	default:
 		break;
