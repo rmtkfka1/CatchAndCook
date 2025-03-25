@@ -6,7 +6,7 @@ class Collider;
 enum class CameraType
 {
     ThirdPersonCamera,
-    AxisCamera,
+    UiCamera,
     ComponentCamera
 };
 
@@ -77,7 +77,6 @@ public:
     CameraType& GetCameraType() { return _type; }
 
     bool IsInFrustum(BoundingBox& box);
-
     void Calculate();
 
 private:
@@ -126,12 +125,14 @@ public:
 private:
 };
 
-class AxisCamera : public Camera
+class UiCamera : public Camera
 {
+
 public:
-    AxisCamera();
-    virtual ~AxisCamera();
+    UiCamera();
+    virtual ~UiCamera();
     virtual void Update();
+
 };
 
 

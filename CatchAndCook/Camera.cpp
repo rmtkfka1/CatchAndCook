@@ -193,17 +193,23 @@ void ThirdPersonCamera::Update()
 {
 	Camera::Update();
 }
+/*************************
+*                        *
+*     UiCamera           *
+*                        *
+**************************/
+UiCamera::UiCamera()
+{
+	_type = CameraType::UiCamera;
+	_projmode = CameraProjectionMode::Orthographic;
+}
 
-AxisCamera::AxisCamera() : Camera(CameraType::AxisCamera)
+UiCamera::~UiCamera()
 {
 
 }
 
-AxisCamera::~AxisCamera()
-{
-}
-
-void AxisCamera::Update()
+void UiCamera::Update()
 {
     Camera::Update();
 }

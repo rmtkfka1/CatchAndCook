@@ -67,7 +67,9 @@ void Game::Init(HWND hwnd)
 	Gizmo::main->Init();
 
 	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, static_pointer_cast<Camera>(make_shared<ThirdPersonCamera>()));
+	CameraManager::main->AddCamera(CameraType::UiCamera, make_shared<UiCamera>());
 	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0, 0, -50.0f));
+
 	CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
 
 	LightManager::main = make_unique<LightManager>();

@@ -89,9 +89,7 @@ void Scene::Rendering()
     GlobalSetting();
 
     auto& cmdList = Core::main->GetCmdList();
-
     Core::main->GetRenderTarget()->ClearDepth();
-    CameraManager::main->Setting();
 
     ShadowPass(cmdList);
     Profiler::Set("PASS : Deffered", BlockTag::GPU);
@@ -114,7 +112,7 @@ void Scene::Rendering()
     Profiler::Fin();
 
     Profiler::Set("PASS : UI", BlockTag::GPU);
-    
+    //CameraManager::main->Setting(CameraType::UiCamera);
     UiPass(cmdList);
     Profiler::Fin();
 
@@ -380,15 +378,19 @@ bool Scene::RemoveAtGameObject(int index)
 
 void Scene::CameraControll()
 {
+	static CameraType type = CameraType::ThirdPersonCamera;
+
 	if (Input::main->GetKeyDown(KeyCode::F1))
 	{
-		CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
+		type = CameraType::ThirdPersonCamera;
 	}
 
     if (Input::main->GetKeyDown(KeyCode::F2))
     {
-        CameraManager::main->SetActiveCamera(CameraType::ComponentCamera);
+		type = CameraType::ComponentCamera;
     }
+
+	CameraManager::main->Setting(type);
 }
 
 void Scene::AddDestroyQueue(const std::shared_ptr<GameObject>& gameObject)

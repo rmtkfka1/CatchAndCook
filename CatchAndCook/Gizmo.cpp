@@ -23,7 +23,7 @@ void Gizmo::Init()
     SetCulling(false);
     SetInstancing(false);
 
-    for(int i=0;i<256;i++)
+  /*  for(int i=0;i<256;i++)
     {
         auto _textHandle =  TextManager::main->AllocTextStrcture(256,256,L"Arial", FontColor::CUSTOM, 30, vec4(1,1,1,1));
         auto _sysMemory = new BYTE[(256 * 256 * 4)]();
@@ -32,7 +32,7 @@ void Gizmo::Init()
         textureGizmo.textTextures.push_back(_texture);
         textureGizmo.sysMemorys.push_back(_sysMemory);
         textureGizmo.handles.push_back(_textHandle);
-    }
+    }*/
 }
 
 void Gizmo::Clear()

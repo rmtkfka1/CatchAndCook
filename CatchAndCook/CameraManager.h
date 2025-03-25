@@ -11,8 +11,8 @@ public:
 
 	shared_ptr<Camera>& GetCamera(CameraType type);
 
-	void AddCamera(CameraType type, const shared_ptr<Camera>& camera) { _cameras[type] = camera; }
-	void Setting();
+	void AddCamera(CameraType type, shared_ptr<Camera> camera) { _cameras[type] = camera; }
+	void Setting(CameraType type);
 	void SetActiveCamera(CameraType type);
 
 	shared_ptr<Camera> GetActiveCamera() { return _activeCamera; }
