@@ -40,7 +40,6 @@ void CameraComponent::Update()
 		return;
 	}
 
-	
 	Component::Update();
 	Calculate();
 }

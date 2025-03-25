@@ -28,10 +28,11 @@ public:
 	static unique_ptr<InstancingManager> main;
 	
 public:
+	void RenderNoInstancing(RenderObjectStrucutre& RoS);
 	void Render();
 	void Clear();
 	void AddObject(RenderObjectStrucutre& obj);
-	void AddParam(uint64 instanceID , Instance_Transform& data);
+	
 
 private:
 	map<uint64,vector<RenderObjectStrucutre>> _objectMap;
