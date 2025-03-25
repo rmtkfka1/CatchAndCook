@@ -94,7 +94,7 @@ void Game::Init(HWND hwnd)
 		LightManager::main->PushLight(light);
 	}
 
-	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
+	auto scene = SceneManager::main->AddScene(SceneType::TestScene);
 }
 
 void Game::PrevUpdate()
@@ -217,7 +217,7 @@ void Game::Release()
 
 void Game::CameraUpdate()
 {
-	shared_ptr<Camera> camera = CameraManager::main->GetActiveCamera();
+	shared_ptr<Camera> camera = CameraManager::main->GetCamera(CameraType::ThirdPersonCamera);
 
 	const float speed = 30.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;

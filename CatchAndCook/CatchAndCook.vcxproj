@@ -264,6 +264,7 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="UITestScene.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="BoidsMove.cpp" />
     <ClCompile Include="WallSlideController.cpp" />
@@ -360,6 +361,7 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="UITestScene.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="BoidsMove.h" />
     <ClInclude Include="WallSlideController.h" />

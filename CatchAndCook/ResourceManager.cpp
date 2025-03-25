@@ -89,6 +89,7 @@ void ResourceManager::CreateDefaultShader()
 		shader->Init(L"TestForward_Skinned.hlsl", StaticProp, ShaderArg{}, info);
 		Add<Shader>(L"DefaultForward", shader);
 	}
+
 	{
 
 		ShaderInfo info;

@@ -52,9 +52,9 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    //Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
-    row_major float4x4 l2wMatrix = 0;
-    row_major float4x4 w2lMatrix = 0;
+    Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
+    row_major float4x4 l2wMatrix = data.localToWorld;
+    row_major float4x4 w2lMatrix = data.worldToLocal;
     float4 boneIds = 0;
     float4 boneWs = 0;
     
@@ -64,11 +64,6 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 		w2lMatrix = MATRIX(input.instance_invert_trs);
 #endif
     
-#ifdef DEFAULT
-    Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
-    l2wMatrix = data.LocalToWorldMatrix;
-    w2lMatrix = data.WorldToLocalMatrix;
-#endif
     
 #ifdef SKINNED
 	    boneIds = input.boneIds;

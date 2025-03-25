@@ -13,7 +13,9 @@
 #include "InstancingManager.h"
 #include "Profiler.h"
 #include "ComputeManager.h"
-
+#include "Transform.h"
+#include "GameObject.h"
+#include "MeshRenderer.h"
 void Scene::AddGameObject(const std::shared_ptr<GameObject>& gameObject)
 {
 	gameObject->SetScene(GetCast<Scene>());
@@ -26,7 +28,88 @@ void Scene::AddGameObject(const std::shared_ptr<GameObject>& gameObject)
 
 void Scene::Init()
 {
+#pragma region DebugXYZ
+    {
 
+
+        ShaderInfo info;
+        info._zTest = true;
+        info._stencilTest = false;
+
+        shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"color", L"color.hlsl", ColorProp,
+            ShaderArg{}, info);
+
+        shared_ptr<Material> material = make_shared<Material>();
+
+        shared_ptr<GameObject> root = CreateGameObject(L"X");
+
+        root->_transform->SetLocalPosition(vec3(3000.0f, 0, 0.0f));
+        root->_transform->SetLocalScale(vec3(3000.0f, 1.0f, 1.0f));
+        auto meshRenderer = root->AddComponent<MeshRenderer>();
+
+        material = make_shared<Material>();
+        material->SetShader(shader);
+        material->SetPass(RENDER_PASS::Forward);
+
+        meshRenderer->AddMaterials({ material });
+
+        meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(1, 0, 0, 0)));
+
+
+    }
+
+    {
+
+
+        ShaderInfo info;
+        info._zTest = true;
+        info._stencilTest = false;
+
+        shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"color", L"color.hlsl", ColorProp,
+            ShaderArg{}, info);
+
+        shared_ptr<Material> material = make_shared<Material>();
+
+        shared_ptr<GameObject> root = CreateGameObject(L"Y");
+
+        root->_transform->SetLocalPosition(vec3(0, 0, 3000.0f));
+        root->_transform->SetLocalScale(vec3(1.0f, 1.0f, 3000.0f));
+        auto meshRenderer = root->AddComponent<MeshRenderer>();
+
+        material = make_shared<Material>();
+        material->SetShader(shader);
+        material->SetPass(RENDER_PASS::Forward);
+
+        meshRenderer->AddMaterials({ material });
+        meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(0, 1, 0, 0)));
+    }
+
+    {
+
+
+        ShaderInfo info;
+        info._zTest = true;
+        info._stencilTest = false;
+
+        shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"color", L"color.hlsl", ColorProp,
+            ShaderArg{}, info);
+
+        shared_ptr<Material> material = make_shared<Material>();
+
+        shared_ptr<GameObject> root = CreateGameObject(L"Z");
+
+        root->_transform->SetLocalPosition(vec3(0, 3000.0f, 0.0f));
+        root->_transform->SetLocalScale(vec3(1.0f, 3000.0f, 1.0f));
+        auto meshRenderer = root->AddComponent<MeshRenderer>();
+
+        material = make_shared<Material>();
+        material->SetShader(shader);
+        material->SetPass(RENDER_PASS::Forward);
+
+        meshRenderer->AddMaterials({ material });
+        meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(0, 0, 1, 0)));
+    }
+#pragma endregion
 }
 
 void Scene::Update()
@@ -112,29 +195,29 @@ void Scene::Rendering()
     Profiler::Fin();
 
     Profiler::Set("PASS : UI", BlockTag::GPU);
-    //CameraManager::main->Setting(CameraType::UiCamera);
+    CameraManager::main->Setting(CameraType::UiCamera);
     UiPass(cmdList);
     Profiler::Fin();
 
 }
 
-void Scene::UiPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
+void Scene::UiPass(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
-    {  //UI
+    {
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::UI)];
 
-        for(auto& [shader,vec] : targets)
+        for (auto& [shader, vec] : targets)
         {
-            if(shader)
-                cmdList->SetPipelineState(shader->_pipelineState.Get());
+            cmdList->SetPipelineState(shader->_pipelineState.Get());
 
-            for(auto& [material,mesh,target] : vec)
+            for (auto& ele : vec)
             {
-                target->Rendering(material,mesh);
+                InstancingManager::main->AddObject(ele);
             }
+            InstancingManager::main->Render();
         }
     }
-}
+};
 
 void Scene::TransparentPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 {
