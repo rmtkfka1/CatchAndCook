@@ -14,7 +14,6 @@ Sprite::~Sprite()
 void Sprite::Init()
 {
 	_firstWindowSize = vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
-
 }
 
 void Sprite::Start()
@@ -77,17 +76,7 @@ void Sprite::SetData(Material* material)
 {
 	auto cmdList = Core::main->GetCmdList();
 
-	auto& texture = material->GetPropertyTexture("_BaseMap");
-
-	if (texture == nullptr)
-		assert(false);
-
-	_sprtieTextureParam.origintexSize = vec2(texture->GetResource()->GetDesc().Width, texture->GetResource()->GetDesc().Height);
-
-	if (_sprtieTextureParam.texSampleSize == vec2::Zero)
-	{
-		_sprtieTextureParam.texSampleSize = _sprtieTextureParam.origintexSize;
-	}
+	material->SetTexture("_BaseMap", _spriteImage);
 
 	// SpriteWorldParam 
 	{
@@ -121,6 +110,13 @@ void Sprite::CalculateWorldPos()
 	_ndcWorldPos = _spriteWorldParam.ndcPos;
 }
 
+void Sprite::SetTexture(shared_ptr<Texture> texture)
+{
+	_spriteImage = texture;
+	_sprtieTextureParam.origintexSize = vec2(texture->GetResource()->GetDesc().Width, texture->GetResource()->GetDesc().Height);
+	_sprtieTextureParam.texSampleSize = _sprtieTextureParam.origintexSize;
+}
+
 void Sprite::SetSize(const vec2& size)
 {
 	_spriteWorldParam.ndcScale.x = size.x / _firstWindowSize.x;
@@ -137,7 +133,8 @@ void Sprite::SetLocalPos(const vec3& screenPos)
 
 void Sprite::SetWorldPos(const vec3& worldScreenPos)
 {
-	vector<shared_ptr<Sprite>> sprites = GetOwner()->GetComponentsWithParents<Sprite>();
+	vector<shared_ptr<Sprite>> sprites;
+	GetOwner()->GetComponentsWithParents(sprites);
 
 	vec3 parentSum = vec3::Zero;
 
@@ -193,8 +190,8 @@ void TextSprite::Update()
 	if (_textChanged)
 	{
 		TextManager::main->UpdateToSysMemory(_text, _textHandle, _sysMemory, 4);
-		_texture->UpdateDynamicTexture(_sysMemory, 4);
-		_texture->CopyCpuToGpu();
+		_spriteImage->UpdateDynamicTexture(_sysMemory, 4);
+		_spriteImage->CopyCpuToGpu();
 		_textChanged = false;
 	}
 
@@ -242,6 +239,7 @@ void TextSprite::Destroy()
 
 void TextSprite::SetData(Material* material)
 {
+	material->SetTexture("_BaseMap", _spriteImage);
 
 	auto& cmdList = Core::main->GetCmdList();
 	// SpriteWorldParam 
@@ -259,7 +257,6 @@ void TextSprite::SetData(Material* material)
 		cmdList->SetGraphicsRootConstantBufferView(material->GetShader()->GetRegisterIndex("SPRITE_TEXTURE_PARAM"), CbufferContainer->GPUAdress);
 	}
 
-	material->SetTexture("_BaseMap", _texture);
 
 }
 
@@ -267,8 +264,8 @@ void TextSprite::CreateObject(int width, int height, const WCHAR* font, FontColo
 {
 	_textHandle = TextManager::main->AllocTextStrcture(width, height, font, color, fontsize);
 	_sysMemory = new BYTE[(width * height * 4)];
-	_texture = make_shared<Texture>();
-	_texture->CreateDynamicTexture(DXGI_FORMAT_R8G8B8A8_UNORM, width, height);
+	_spriteImage = make_shared<Texture>();
+	_spriteImage->CreateDynamicTexture(DXGI_FORMAT_R8G8B8A8_UNORM, width, height);
 	_sprtieTextureParam.origintexSize = vec2(width, height);
 
 	if (color == FontColor::BLACK)
@@ -398,15 +395,7 @@ void AnimationSprite::SetData(Material* material)
 {
 	auto cmdList = Core::main->GetCmdList();
 
-	auto& texture = material->GetPropertyTexture("_BaseMap");
-
-	if (texture == nullptr)
-		assert(false);
-
-	for (auto& _sprtieTextureParam : _sprtieTextureParam)
-	{
-		_sprtieTextureParam.origintexSize = vec2(texture->GetResource()->GetDesc().Width, texture->GetResource()->GetDesc().Height);
-	}
+	material->SetTexture("_BaseMap", _spriteImage);
 
 	// SpriteWorldParam 
 	{
@@ -427,6 +416,8 @@ void AnimationSprite::SetData(Material* material)
 void AnimationSprite::PushUVCoord(SpriteRect& rect)
 {
 	SprtieTextureParam sprtieTextureParam;
+
+	sprtieTextureParam.origintexSize = vec2(_spriteImage->GetResource()->GetDesc().Width, _spriteImage->GetResource()->GetDesc().Height);
 
 	sprtieTextureParam.texSamplePos.x = rect.left;
 	sprtieTextureParam.texSamplePos.y = rect.top;

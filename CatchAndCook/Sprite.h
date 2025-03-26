@@ -53,6 +53,7 @@ public:
 	void SetData(Material* material = nullptr) override;
 	void CalculateWorldPos();
 public:
+	void SetTexture(shared_ptr<Texture> texture);
 	void SetSize(const vec2& size);
 
 	void SetLocalPos(const vec3& screenPos);
@@ -73,6 +74,8 @@ protected:
 	vec2 _ndcSize;
 
 	vec2 _firstWindowSize;
+
+	shared_ptr<Texture> _spriteImage;
 
 	friend class ActionFunc;
 	vector<shared_ptr<ActionCommand>> _actions;
@@ -108,6 +111,7 @@ public:
 	void Destroy() override;
 	void SetData(Material* material = nullptr) override;
 
+	void SetTexture(shared_ptr<Texture> texture) = delete;
 public:
 	void SetText(const wstring& text) { _text = text; _textChanged = true; }
 	void CreateObject(int width, int height, const WCHAR* font, FontColor color, float fontsize);
@@ -116,7 +120,6 @@ private:
 	bool _textChanged = true;
 	wstring _text = L"NULL";
 	shared_ptr<TextHandle> _textHandle;
-	shared_ptr<Texture> _texture;
 	SprtieTextureParam _sprtieTextureParam;
 	BYTE* _sysMemory = nullptr;
 };
