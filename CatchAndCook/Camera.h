@@ -63,10 +63,10 @@ public:
     void SetCameraRight(const vec3& right);
 
 
-    vec3 GetCameraPos() { return _cameraPos; }
-    vec3 GetCameraLook() { return _cameraLook; }
-    vec3 GetCameraUp() { return _cameraUp; }
-    vec3 GetCameraRight() { return _cameraRight; }
+    vec3& GetCameraPos() { return _cameraPos; }
+    vec3& GetCameraLook() { return _cameraLook; }
+    vec3& GetCameraUp() { return _cameraUp; }
+    vec3& GetCameraRight() { return _cameraRight; }
 
     Vector3 GetScreenToWorldPosition(Vector2 mousePosition);
     Vector2 GetWorldToScreenPosition(Vector3 worldPosition);

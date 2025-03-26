@@ -7,7 +7,8 @@
 #include <commdlg.h>
 #include "ComputeManager.h"
 #include "Gizmo.h"
-
+#include "CameraManager.h"
+#include "Camera.h"
 unique_ptr<ImguiManager> ImguiManager::main;
 
 ImguiManager::~ImguiManager()
@@ -78,6 +79,9 @@ void ImguiManager::Debug()
 	{
 		ComputeController();
 	}
+
+    auto& camera =CameraManager::main->GetCamera(CameraType::UiCamera);
+	ImGui::SliderFloat3("Camera Position", &camera->GetCameraPos().x, -1000.0f, 1000.0f);
 
 	ImGui::End();
 

@@ -91,6 +91,12 @@ void ResourceManager::CreateDefaultShader()
 	}
 
 	{
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->Init(L"UiForward.hlsl", StaticProp, ShaderArg{});
+		Add<Shader>(L"UiForward", shader);
+	}
+
+	{
 
 		ShaderInfo info;
 		info._zTest = true;

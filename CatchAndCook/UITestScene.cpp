@@ -6,6 +6,7 @@
 #include "Transform.h"
 #include "GameObject.h"
 #include "MeshRenderer.h"
+#include <random>
 
 void UITestScene::Init()
 {
@@ -36,6 +37,42 @@ void UITestScene::Init()
 		meshRenderer->AddMaterials({ material });
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
 		meshRenderer->SetCulling(false);
+	}
+
+	random_device urd;
+	mt19937 gen(urd());
+	uniform_real_distribution<float> ddis(-1000.0f, 1000.0f);
+	uniform_real_distribution<float> dis(1, 30.0f);
+	uniform_real_distribution<float> rotate(-360.0f, 360.0f);
+	//auto& a = ResourceManager::main->Load<Model>(L"kind", L"../Resources/Models/PaperPlane.obj", VertexType::Vertex_Skinned);
+
+	shared_ptr<Material> materialO = make_shared<Material>();
+	materialO->SetPass(RENDER_PASS::UI);
+	//shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
+	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(30.0f);
+
+	for (int i = 0; i < 1; ++i)
+	{
+		{
+			shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"UiForward");
+
+			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
+
+			shared_ptr<GameObject> root = CreateGameObject(L"root_test");
+
+			auto meshRenderer = root->AddComponent<MeshRenderer>();
+			root->_transform->SetLocalPosition(vec3(WINDOW_WIDTH/2-30, 0,100.0f));
+
+			root->SetType(GameObjectType::Static);
+			root->AddTag(GameObjectTag::Wall);
+
+
+			materialO->SetShader(shader);
+			materialO->SetHandle("_BaseMap", texture->GetSRVCpuHandle());
+
+			meshRenderer->AddMaterials({ materialO });
+			meshRenderer->AddMesh(mesh);
+		}
 	}
 }
 

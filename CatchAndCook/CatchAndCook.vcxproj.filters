@@ -701,5 +701,8 @@
     <FxCompile Include="..\Resources\Shaders\underWaterEffect.hlsl">
       <Filter>998.HLSL\Compute</Filter>
     </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\UiForward.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

@@ -202,6 +202,8 @@ UiCamera::UiCamera()
 {
 	_type = CameraType::UiCamera;
 	_projmode = CameraProjectionMode::Orthographic;
+    _orthoSize = vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
+	_cameraPos = vec3(0, 0, -1.0f);
 }
 
 UiCamera::~UiCamera()
