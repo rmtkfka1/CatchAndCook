@@ -42,12 +42,11 @@ void UITestScene::Init()
 	}
 
 	{
-		shared_ptr<GameObject> root = CreateGameObject(L"SpriteTest");
-		root->SetType(GameObjectType::Dynamic);
+		shared_ptr<GameObject> root = CreateGameObject(L"Sprite1");
 		auto& renderer =root->AddComponent<MeshRenderer>();
 		auto& sprite = root->AddComponent<Sprite>();
-		sprite->AddAction(make_shared<DragAction>(KeyCode::RightMouse));
-		sprite->SetPos(vec3(0, 0, 0));
+		sprite->AddAction(make_shared<DragAction>(KeyCode::LeftMouse));
+		sprite->SetLocalPos(vec3(300, 0, 0));
 		sprite->SetSize(vec2(100, 100));
 
 		shared_ptr<Material> material = make_shared<Material>();
@@ -59,13 +58,13 @@ void UITestScene::Init()
 
 
 		{
-			shared_ptr<GameObject> child = CreateGameObject(L"spriteChild");
+			shared_ptr<GameObject> child = CreateGameObject(L"Sprite2");
 			auto& renderer = child->AddComponent<MeshRenderer>();
 			auto& sprite = child->AddComponent<Sprite>();
-			sprite->SetPos(vec3(0, 0, 0));
-			sprite->SetSize(vec2(50, 50));
 			child->SetParent(root);
-
+			sprite->SetLocalPos(vec3(0, 0, 0));
+			sprite->SetSize(vec2(50, 50));
+	
 			shared_ptr<Material> material = make_shared<Material>();
 			material->SetShader(ResourceManager::main->Get<Shader>(L"SpriteShader"));
 			material->SetPass(RENDER_PASS::UI);
@@ -73,28 +72,25 @@ void UITestScene::Init()
 			material->SetTexture("_BaseMap", texture);
 			renderer->AddMaterials({ material });
 
-
 			{
-				{
-					shared_ptr<GameObject> child2 = CreateGameObject(L"spriteChild2");
-					auto& renderer = child2->AddComponent<MeshRenderer>();
-					auto& sprite = child2->AddComponent<Sprite>();
-					sprite->SetPos(vec3(50, 0, 0));
-					sprite->SetSize(vec2(50, 50));
+				shared_ptr<GameObject> child2 = CreateGameObject(L"Sprite3");
+				auto& renderer = child2->AddComponent<MeshRenderer>();
+				auto& sprite = child2->AddComponent<Sprite>();
+				child2->SetParent(child);
+				sprite->SetSize(vec2(50, 50));
+				sprite->SetLocalPos(vec3(100, 0, 0));
+	
+	
+				shared_ptr<Material> material = make_shared<Material>();
+				material->SetShader(ResourceManager::main->Get<Shader>(L"SpriteShader"));
+				material->SetPass(RENDER_PASS::UI);
+				shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"disable", L"Textures/disable.png");
+				material->SetTexture("_BaseMap", texture);
+				renderer->AddMaterials({ material });
 
-					child2->SetParent(child);
-
-					shared_ptr<Material> material = make_shared<Material>();
-					material->SetShader(ResourceManager::main->Get<Shader>(L"SpriteShader"));
-					material->SetPass(RENDER_PASS::UI);
-					shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"disable", L"Textures/disable.png");
-					material->SetTexture("_BaseMap", texture);
-					renderer->AddMaterials({ material });
-
-				}
 			}
 
-		}
+		};
 	}
 
 	//{

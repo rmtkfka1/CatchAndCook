@@ -191,6 +191,7 @@ public:
 	int GetComponentsWithParents(std::vector<std::shared_ptr<T>>& vec)
 	{
 		int count = vec.size();
+
 		for(auto& component : _components)
 		{
 			std::shared_ptr<T> downCast = std::dynamic_pointer_cast<T>(component);

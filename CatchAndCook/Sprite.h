@@ -51,10 +51,13 @@ public:
 	void SetDestroy() override;
 	void Destroy() override;
 	void SetData(Material* material = nullptr) override;
-
+	void CalculateWorldPos();
 public:
 	void SetSize(const vec2& size);
-	void SetPos(const vec3& screenPos);
+
+	void SetLocalPos(const vec3& screenPos);
+	void SetWorldPos(const vec3& worldScreenPos);
+
 	void SetUVCoord(const SpriteRect& rect);
 	void SetClipingColor(const vec4& color);  // https://imagecolorpicker.com/
 	void AddAction(shared_ptr<ActionCommand> action) { _actions.emplace_back(action); };
@@ -63,8 +66,8 @@ protected:
 	SpriteWorldParam _spriteWorldParam;
 	SprtieTextureParam _sprtieTextureParam;
 
-	vec3 _screenPos;
-	vec3 _ndcPos;
+	vec3 _screenLocalPos;
+	vec3 _ndcWorldPos;
 
 	vec2 _screenSize;
 	vec2 _ndcSize;

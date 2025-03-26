@@ -13,10 +13,10 @@ void ActionFunc::OnClickAction(KeyCode key, Sprite* sprite)
         float normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
         float normalizedY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
 
-        if (normalizedX >= (sprite->_ndcPos.x) &&
-            normalizedX <= (sprite->_ndcPos.x + sprite->_ndcSize.x) &&
-            normalizedY >= (sprite->_ndcPos.y) &&
-            normalizedY <= (sprite->_ndcPos.y + sprite->_ndcSize.y))
+        if (normalizedX >= (sprite->_ndcWorldPos.x) &&
+            normalizedX <= (sprite->_ndcWorldPos.x + sprite->_ndcSize.x) &&
+            normalizedY >= (sprite->_ndcWorldPos.y) &&
+            normalizedY <= (sprite->_ndcWorldPos.y + sprite->_ndcSize.y))
         {
 
         }
@@ -38,10 +38,10 @@ void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
 
         _lastMousePos = pos;
 
-        if (normalizedX >= (sprite->_ndcPos.x) &&
-            normalizedX <= (sprite->_ndcPos.x + sprite->_ndcSize.x) &&
-            normalizedY >= (sprite->_ndcPos.y) &&
-            normalizedY <= (sprite->_ndcPos.y + sprite->_ndcSize.y))
+        if (normalizedX >= (sprite->_ndcWorldPos.x) &&
+            normalizedX <= (sprite->_ndcWorldPos.x + sprite->_ndcSize.x) &&
+            normalizedY >= (sprite->_ndcWorldPos.y) &&
+            normalizedY <= (sprite->_ndcWorldPos.y + sprite->_ndcSize.y))
         {
             _dragSprite = sprite;
 
@@ -59,12 +59,9 @@ void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
 
         auto& childSprite = _dragSprite->GetOwner()->GetComponentsWithChilds<Sprite>();
 
-		for (auto& child : childSprite)
-		{
-			child->SetPos(vec3(child->_screenPos.x + delta.x,
-				child->_screenPos.y + delta.y,
-				child->_spriteWorldParam.ndcPos.z));
-		}
+		_dragSprite->SetLocalPos(vec3(_dragSprite->_screenLocalPos.x + delta.x,
+			_dragSprite->_screenLocalPos.y + delta.y,
+			_dragSprite->_spriteWorldParam.ndcPos.z));
 
         _lastMousePos = pos; 
     }
@@ -85,10 +82,10 @@ void ActionFunc::DisableMouseAction(KeyCode key, Sprite* sprite)
         float normalizedX = static_cast<float>(pos.x) / WINDOW_WIDTH;
         float normalizedY = static_cast<float>(pos.y) / WINDOW_HEIGHT;
 
-        if (normalizedX >= (sprite->_ndcPos.x) &&
-            normalizedX <= (sprite->_ndcPos.x + sprite->_ndcSize.x) &&
-            normalizedY >= (sprite->_ndcPos.y) &&
-            normalizedY <= (sprite->_ndcPos.y + sprite->_ndcSize.y))
+        if (normalizedX >= (sprite->_ndcWorldPos.x) &&
+            normalizedX <= (sprite->_ndcWorldPos.x + sprite->_ndcSize.x) &&
+            normalizedY >= (sprite->_ndcWorldPos.y) &&
+            normalizedY <= (sprite->_ndcWorldPos.y + sprite->_ndcSize.y))
         {
             sprite->GetOwner()->SetActiveSelf(!sprite->GetOwner()->GetActive());
         }

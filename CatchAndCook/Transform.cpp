@@ -231,6 +231,7 @@ vec3 Transform::GetWorldPosition()
     auto parent = GetOwner();
     if (parent)
         parent = parent->parent.lock();
+
     if (parent)
     {
         Matrix mat;
@@ -246,6 +247,7 @@ const vec3& Transform::SetWorldPosition(const vec3& worldPos)
     auto parent = GetOwner();
     if (parent)
         parent = parent->parent.lock();
+
     if(parent)
     {
         Matrix mat;

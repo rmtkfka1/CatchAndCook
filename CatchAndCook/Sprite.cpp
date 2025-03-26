@@ -91,6 +91,7 @@ void Sprite::SetData(Material* material)
 
 	// SpriteWorldParam 
 	{
+		CalculateWorldPos();
 		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteWorldParam)->Alloc(1);
 		memcpy(CbufferContainer->ptr, (void*)&_spriteWorldParam, sizeof(SpriteWorldParam));
 		cmdList->SetGraphicsRootConstantBufferView(material->GetShader()->GetRegisterIndex("SPRITE_WORLD_PARAM"), CbufferContainer->GPUAdress);
@@ -104,6 +105,22 @@ void Sprite::SetData(Material* material)
 	}
 }
 
+void Sprite::CalculateWorldPos()
+{
+	vector<shared_ptr<Sprite>> sprites;
+	GetOwner()->GetComponentsWithParents(sprites);
+
+	vec3 worldPos = vec3::Zero;
+
+	for (auto& sprite : sprites)
+	{
+		worldPos += sprite->_screenLocalPos;
+	}
+
+	_spriteWorldParam.ndcPos = vec3(worldPos.x / _firstWindowSize.x, worldPos.y / _firstWindowSize.y, worldPos.z);
+	_ndcWorldPos = _spriteWorldParam.ndcPos;
+}
+
 void Sprite::SetSize(const vec2& size)
 {
 	_spriteWorldParam.ndcScale.x = size.x / _firstWindowSize.x;
@@ -113,14 +130,23 @@ void Sprite::SetSize(const vec2& size)
 	_screenSize = size;
 }
 
-void Sprite::SetPos(const vec3& screenPos)
+void Sprite::SetLocalPos(const vec3& screenPos)
 {
-	_spriteWorldParam.ndcPos.x = screenPos.x / _firstWindowSize.x;
-	_spriteWorldParam.ndcPos.y = screenPos.y / _firstWindowSize.y;
-	_spriteWorldParam.ndcPos.z = screenPos.z;
+	_screenLocalPos = screenPos;
+}
 
-	_ndcPos = _spriteWorldParam.ndcPos;
-	_screenPos = screenPos;
+void Sprite::SetWorldPos(const vec3& worldScreenPos)
+{
+	vector<shared_ptr<Sprite>> sprites = GetOwner()->GetComponentsWithParents<Sprite>();
+
+	vec3 parentSum = vec3::Zero;
+
+	for (size_t i = 0; i < sprites.size(); ++i)
+	{
+		parentSum += sprites[i]->_screenLocalPos;
+	}
+
+	_screenLocalPos = _screenLocalPos+ worldScreenPos - parentSum;
 }
 
 void Sprite::SetUVCoord(const SpriteRect& rect)
