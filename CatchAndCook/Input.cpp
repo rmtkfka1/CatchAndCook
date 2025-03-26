@@ -17,6 +17,7 @@ Input::~Input()
 
 void Input::Update()
 {
+    prevMousePos = mousePos;
 
     Input::main->DataBeginUpdate();
 
@@ -25,7 +26,52 @@ void Input::Update()
         Input::main->DataUpdate(_eventQueue.front());
         Input::main->_eventQueue.pop();
     }
+
+    if (GetKeyDown(KeyCode::BackQoute))
+    {
+        SetMouseLock(!IsMouseLock());
+    }
+
+    if (IsMouseLock())
+    {
+        Vector2 windowCenter = Vector2(WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f);
+        float limitDistance = std::min(windowCenter.x, windowCenter.y) / 4;
+        Vector2 centerToPosDirection = GetMousePosition() - windowCenter;
+        float centerToPosDistance = centerToPosDirection.Length();
+        centerToPosDirection.Normalize();
+        if (centerToPosDistance >= limitDistance)
+        {
+            prevMousePos = windowCenter;
+            mousePos = windowCenter + centerToPosDirection * (centerToPosDistance - limitDistance);
+
+            SetCursor(mousePos);
+        }
+        std::cout << centerToPosDistance << "\n";
+    }
 }
+
+void Input::SetCursor(const Vector2& pos)
+{
+    POINT pt;
+    pt.x = (int)pos.x; // 창 내부 상대 좌표
+    pt.y = (int)pos.y; // 창 내부 상대 좌표
+    ClientToScreen(Core::main->GetHandle(), &pt);
+    SetCursorPos(pt.x, pt.y);
+}
+
+void Input::SetMouseLock(bool isMouseLock)
+{
+
+    _isMouseLock = isMouseLock;
+    if (_isMouseLock)
+    {
+        mousePos = prevMousePos = Vector2(WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f);
+        SetCursor(mousePos);
+    }
+
+}
+
+
 
 bool Input::GetKeyDown(int keycode)
 {
@@ -87,7 +133,7 @@ bool Input::DataUpdate(const InputEvent& e)
 
     case InputType::Mouse:
         if ((!e.mouse.isUp) && (!e.mouse.isDown))
-        {  
+        {
             mousePos = Vector2(e.mouse.posX, e.mouse.posY);
         }
         else
@@ -148,7 +194,10 @@ Vector2 Input::GetMousePosition()
 {
     return mousePos;
 }
-
+Vector2 Input::GetMousePrevPosition()
+{
+    return prevMousePos;
+}
 
 
 Vector2 Input::GetMouseDownPosition(int keycode)

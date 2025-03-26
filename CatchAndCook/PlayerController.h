@@ -25,6 +25,9 @@ public:
 
 
 private: // Camera Control
+	vec3 _currentOffset;
 	Vector2 _prevMousePosition;
+	Vector3 _targetEuler;
+	Vector3 _currentEuler;
 };
 

@@ -171,6 +171,11 @@ void SceneLoader::PrevProcessingComponent(json& data)
         auto terr = CreateObject<CameraComponent>(guid);
         component = terr;
     }
+    if (type == L"Tags")
+    {
+        auto terr = CreateObject<CameraComponent>(guid);
+        component = terr;
+    }
 
     componentCache.emplace_back(component);
 }

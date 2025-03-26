@@ -200,6 +200,19 @@ namespace std
         return std::move(str2);
     }
 
+    inline std::string to_string(const Vector4& vec) noexcept
+    {
+        return std::format("{0},{1},{2},{3}", vec.x, vec.y, vec.z, vec.w);
+    }
+    inline std::string to_string(const Vector3& vec) noexcept
+    {
+        return std::format("{0},{1},{2}", vec.x, vec.y, vec.z);
+    }
+    inline std::string to_string(const Vector2& vec) noexcept
+    {
+        return std::format("{0},{1}", vec.x, vec.y);
+    }
+
     template <class T, class Y>
     inline int split(const T& target, const T& c, Y& split)
     {
