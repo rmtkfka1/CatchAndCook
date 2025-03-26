@@ -2,13 +2,9 @@
 #include "SpriteAction.h"
 #include "Sprite.h"
 
-bool ActionCommand::_UpdateEnable=true;
 
 void ActionFunc::OnClickAction(KeyCode key, Sprite* sprite)
 {
-
-    if (ActionCommand::_UpdateEnable == false)
-        return;
 
     if (Input::main->GetMouseDown(key))
     {
@@ -34,8 +30,6 @@ void ActionFunc::OnClickAction(KeyCode key, Sprite* sprite)
 
 void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
 {
-    if (ActionCommand::_UpdateEnable == false)
-        return;
 
     static Sprite* _dragSprite = nullptr;
     static vec2 _lastMousePos; // 이전 마우스 위치 추적 변수
@@ -69,16 +63,14 @@ void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
         delta.x = delta.x * (_dragSprite->_firstWindowSize.x / WINDOW_WIDTH);
         delta.y = delta.y * (_dragSprite->_firstWindowSize.y / WINDOW_HEIGHT);
 
-        _dragSprite->SetPos(vec3(_dragSprite->_screenPos.x + delta.x,
-            _dragSprite->_screenPos.y + delta.y,
-            _dragSprite->_spriteWorldParam.ndcPos.z));
+        auto& childSprite = _dragSprite->GetOwner()->GetComponentsWithChilds<Sprite>();
 
-        //for (auto& child : _dragSprite->_children)
-        //{
-        //    child->SetPos(vec3(child->_screenPos.x + delta.x,
-        //        child->_screenPos.y + delta.y,
-        //        child->_spriteWorldParam.ndcPos.z));
-        //}
+		for (auto& child : childSprite)
+		{
+			child->SetPos(vec3(child->_screenPos.x + delta.x,
+				child->_screenPos.y + delta.y,
+				child->_spriteWorldParam.ndcPos.z));
+		}
 
         _lastMousePos = pos; 
     }
@@ -92,8 +84,7 @@ void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
 
 void ActionFunc::DisableMouseAction(KeyCode key, Sprite* sprite)
 {
-    if (ActionCommand::_UpdateEnable == false)
-        return;
+   
 
     if (Input::main->GetMouseDown(key))
     {
@@ -107,7 +98,7 @@ void ActionFunc::DisableMouseAction(KeyCode key, Sprite* sprite)
             normalizedY >= (sprite->_ndcPos.y) &&
             normalizedY <= (sprite->_ndcPos.y + sprite->_ndcSize.y))
         {
-            ActionCommand::_UpdateEnable = false;
+     
         /*    sprite->_parent.lock()->_renderEnable = false;
             sprite->_renderEnable = false;*/
         }
@@ -118,7 +109,7 @@ void ActionFunc::EnableDisableKeyAction(KeyCode key, Sprite* sprite)
 {
     if (Input::main->GetKeyDown(key))
     {
-        ActionCommand::_UpdateEnable = !ActionCommand::_UpdateEnable;
+    
 
   /*      sprite->_renderEnable = !sprite->_renderEnable;
 

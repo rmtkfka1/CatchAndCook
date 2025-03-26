@@ -41,13 +41,14 @@ void UITestScene::Init()
 		meshRenderer->SetCulling(false);
 	}
 
-	/*{
+	{
 		shared_ptr<GameObject> root = CreateGameObject(L"SpriteTest");
 		auto& renderer =root->AddComponent<MeshRenderer>();
 		auto& sprite = root->AddComponent<Sprite>();
 		sprite->SetPos(vec3(0, 0, 0));
 		sprite->SetSize(vec2(100, 100));
-		sprite->AddAction(make_shared<DragAction>(KeyCode::RightMouse));
+
+		sprite->AddAction(make_shared<DragAction>(KeyCode::LeftMouse));
 
 		shared_ptr<Material> material = make_shared<Material>();
 		material->SetShader(ResourceManager::main->Get<Shader>(L"SpriteShader"));
@@ -55,68 +56,109 @@ void UITestScene::Init()
 		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
 		material->SetTexture("_BaseMap", texture);
 		renderer->AddMaterials({ material });
-	}*/
 
-	{
-		shared_ptr<GameObject> root = CreateGameObject(L"SpriteTest");
-		auto& renderer = root->AddComponent<MeshRenderer>();
 
-		auto& sprite = root->AddComponent<TextSprite>();
-		sprite->SetPos(vec3(0 + 200.0f, 0.0f, 0.000001f));
-		sprite->SetSize(vec2(300, 300));
-		sprite->SetText(L"HelloWorld");
-		sprite->CreateObject(512, 256, L"Arial", FontColor::WHITE, 60);
-
-		shared_ptr<Material> material = make_shared<Material>();
-		material->SetShader(ResourceManager::main->Get<Shader>(L"SpriteShader"));
-		material->SetPass(RENDER_PASS::UI);
-
-		renderer->AddMaterials({ material });
-
-	}
-
-	{
 		{
+			shared_ptr<GameObject> child = CreateGameObject(L"spriteChild");
+			auto& renderer = child->AddComponent<MeshRenderer>();
+			auto& sprite = child->AddComponent<Sprite>();
+			sprite->SetPos(vec3(0, 0, 0));
+			sprite->SetSize(vec2(50, 50));
 
-			shared_ptr<GameObject> gameObject = CreateGameObject(L"AnimationSprite");
-			auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
-			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"fire", L"Textures/fire.png");
-			auto& sprite = gameObject->AddComponent<AnimationSprite>();
-			sprite->SetPos(vec3(0, 0, 0.3f));
-			sprite->SetSize(vec2(500, 500));
-			sprite->SetFrameRate(0.001f);
-			sprite->SetClipingColor(vec4(0, 0, 0, 1.0f));		https://imagecolorpicker.com/
-
-			const float TextureSize = 512.0f;
-
-			for (int i = 0; i < 5; ++i)
-			{
-				float add = i * TextureSize / 5;
-				for (int j = 0; j < 5; ++j)
-				{
-
-					SpriteRect rect;
-					rect.left = 0 + j * TextureSize / 5;
-					rect.top = add;
-					rect.right = rect.left + TextureSize / 5;
-					rect.bottom = rect.top + TextureSize / 5;
-
-					sprite->PushUVCoord(rect);
-				}
-			}
+			child->SetParent(root);
 
 			shared_ptr<Material> material = make_shared<Material>();
 			material->SetShader(ResourceManager::main->Get<Shader>(L"SpriteShader"));
 			material->SetPass(RENDER_PASS::UI);
+			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"disable", L"Textures/disable.png");
 			material->SetTexture("_BaseMap", texture);
-
-			meshRenderer->AddMaterials({ material });
-
-		};
+			renderer->AddMaterials({ material });
 
 
+			{
+				{
+					shared_ptr<GameObject> child2 = CreateGameObject(L"spriteChild2");
+					auto& renderer = child2->AddComponent<MeshRenderer>();
+					auto& sprite = child2->AddComponent<Sprite>();
+					sprite->SetPos(vec3(50, 0, 0));
+					sprite->SetSize(vec2(50, 50));
+
+					child2->SetParent(child);
+
+					shared_ptr<Material> material = make_shared<Material>();
+					material->SetShader(ResourceManager::main->Get<Shader>(L"SpriteShader"));
+					material->SetPass(RENDER_PASS::UI);
+					shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"disable", L"Textures/disable.png");
+					material->SetTexture("_BaseMap", texture);
+					renderer->AddMaterials({ material });
+
+				}
+			}
+
+		}
+
+	
 
 	}
+
+	//{
+	//	shared_ptr<GameObject> root = CreateGameObject(L"SpriteTest");
+	//	auto& renderer = root->AddComponent<MeshRenderer>();
+
+	//	auto& sprite = root->AddComponent<TextSprite>();
+	//	sprite->SetPos(vec3(0 + 200.0f, 0.0f, 0.000001f));
+	//	sprite->SetSize(vec2(300, 300));
+	//	sprite->SetText(L"HelloWorld");
+	//	sprite->CreateObject(512, 256, L"Arial", FontColor::WHITE, 60);
+
+	//	shared_ptr<Material> material = make_shared<Material>();
+	//	material->SetShader(ResourceManager::main->Get<Shader>(L"SpriteShader"));
+	//	material->SetPass(RENDER_PASS::UI);
+
+	//	renderer->AddMaterials({ material });
+
+	//}
+
+	//{
+	//	{
+
+	//		shared_ptr<GameObject> gameObject = CreateGameObject(L"AnimationSprite");
+	//		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+	//		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"fire", L"Textures/fire.png");
+	//		auto& sprite = gameObject->AddComponent<AnimationSprite>();
+	//		sprite->SetPos(vec3(0, 0, 0.3f));
+	//		sprite->SetSize(vec2(500, 500));
+	//		sprite->SetFrameRate(0.001f);
+	//		sprite->SetClipingColor(vec4(0, 0, 0, 1.0f));		https://imagecolorpicker.com/
+
+	//		const float TextureSize = 512.0f;
+
+	//		for (int i = 0; i < 5; ++i)
+	//		{
+	//			float add = i * TextureSize / 5;
+	//			for (int j = 0; j < 5; ++j)
+	//			{
+
+	//				SpriteRect rect;
+	//				rect.left = 0 + j * TextureSize / 5;
+	//				rect.top = add;
+	//				rect.right = rect.left + TextureSize / 5;
+	//				rect.bottom = rect.top + TextureSize / 5;
+
+	//				sprite->PushUVCoord(rect);
+	//			}
+	//		}
+
+	//		shared_ptr<Material> material = make_shared<Material>();
+	//		material->SetShader(ResourceManager::main->Get<Shader>(L"SpriteShader"));
+	//		material->SetPass(RENDER_PASS::UI);
+	//		material->SetTexture("_BaseMap", texture);
+
+	//		meshRenderer->AddMaterials({ material });
+
+	//	};
+
+	//}
 }
 
 void UITestScene::Update()

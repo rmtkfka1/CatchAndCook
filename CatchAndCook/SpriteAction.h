@@ -11,7 +11,7 @@ public:
     static void EnableDisableKeyAction(KeyCode key, Sprite* sprite);
 };
 
-//
+
 
 class ActionCommand 
 {
@@ -19,7 +19,7 @@ public:
     virtual ~ActionCommand() {}
     virtual void Execute(Sprite* sprite) = 0;
 
-    static bool _UpdateEnable;
+
 
 };
 
