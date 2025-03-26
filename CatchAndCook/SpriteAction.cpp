@@ -18,7 +18,7 @@ void ActionFunc::OnClickAction(KeyCode key, Sprite* sprite)
             normalizedY >= (sprite->_ndcPos.y) &&
             normalizedY <= (sprite->_ndcPos.y + sprite->_ndcSize.y))
         {
-            sprite->GetOwner()->SetActiveSelf(false);
+
         }
     } 
 }
@@ -79,8 +79,6 @@ void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
 
 void ActionFunc::DisableMouseAction(KeyCode key, Sprite* sprite)
 {
-   
-
     if (Input::main->GetMouseDown(key))
     {
         auto pos = Input::main->GetMouseDownPosition(key);
@@ -93,9 +91,7 @@ void ActionFunc::DisableMouseAction(KeyCode key, Sprite* sprite)
             normalizedY >= (sprite->_ndcPos.y) &&
             normalizedY <= (sprite->_ndcPos.y + sprite->_ndcSize.y))
         {
-     
-        /*    sprite->_parent.lock()->_renderEnable = false;
-            sprite->_renderEnable = false;*/
+            sprite->GetOwner()->SetActiveSelf(!sprite->GetOwner()->GetActive());
         }
     }
 }
@@ -104,14 +100,8 @@ void ActionFunc::EnableDisableKeyAction(KeyCode key, Sprite* sprite)
 {
     if (Input::main->GetKeyDown(key))
     {
-    
 
-  /*      sprite->_renderEnable = !sprite->_renderEnable;
-
-        for (auto& child : sprite->_children)
-        {
-            child->_renderEnable = !child->_renderEnable;
-        }*/
+        sprite->GetOwner()->SetActiveSelf(!sprite->GetOwner()->GetActive());
     }
 }
 
