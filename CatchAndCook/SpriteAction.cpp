@@ -18,12 +18,7 @@ void ActionFunc::OnClickAction(KeyCode key, Sprite* sprite)
             normalizedY >= (sprite->_ndcPos.y) &&
             normalizedY <= (sprite->_ndcPos.y + sprite->_ndcSize.y))
         {
-            sprite->_spriteWorldParam.alpha -= 0.1f;
-
-          /*  for (auto& child : sprite->_children)
-            {
-                child->_spriteWorldParam.alpha -= 0.1f;
-            }*/
+            sprite->GetOwner()->SetActiveSelf(false);
         }
     } 
 }

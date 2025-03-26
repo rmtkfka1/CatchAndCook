@@ -48,8 +48,6 @@ void UITestScene::Init()
 		sprite->SetPos(vec3(0, 0, 0));
 		sprite->SetSize(vec2(100, 100));
 
-		sprite->AddAction(make_shared<DragAction>(KeyCode::LeftMouse));
-
 		shared_ptr<Material> material = make_shared<Material>();
 		material->SetShader(ResourceManager::main->Get<Shader>(L"SpriteShader"));
 		material->SetPass(RENDER_PASS::UI);
@@ -62,6 +60,7 @@ void UITestScene::Init()
 			shared_ptr<GameObject> child = CreateGameObject(L"spriteChild");
 			auto& renderer = child->AddComponent<MeshRenderer>();
 			auto& sprite = child->AddComponent<Sprite>();
+			sprite->AddAction(make_shared<ClickAction>(KeyCode::LeftMouse));
 			sprite->SetPos(vec3(0, 0, 0));
 			sprite->SetSize(vec2(50, 50));
 
@@ -97,7 +96,6 @@ void UITestScene::Init()
 
 		}
 
-	
 
 	}
 
