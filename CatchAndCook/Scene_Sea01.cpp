@@ -36,7 +36,7 @@ void Scene_Sea01::Init()
 
 			materialO->SetShader(shader);
 			materialO->SetPass(RENDER_PASS::Deffered);
-			materialO->SetHandle("_BaseMap", texture->GetSRVCpuHandle());
+			materialO->SetTexture("_BaseMap", texture);
 
 			meshRenderer->AddMaterials({ materialO });
 			meshRenderer->AddMesh(mesh);

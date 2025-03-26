@@ -351,7 +351,8 @@ void GizmoTexture::Rendering(Material* material, Mesh* mesh,int instanceCount)
         memcpy(_cbufferContainer->ptr,(void*)&transform,sizeof(TransformParam));
         Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(1,_cbufferContainer->GPUAdress);
 
-        material->SetHandle("_BaseMap", texture->GetSRVCpuHandle());
+
+		material->SetTexture("_BaseMap", texture);
         material->AllocTextureTable();
         material->PushData();
         material->SetData();

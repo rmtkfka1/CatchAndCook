@@ -385,19 +385,19 @@ void SceneLoader::LinkComponent(json& jsonData)
             auto active = Vector4(0,0,0,0);
 
             auto diffuse = ResourceManager::main->Load<Texture>(diffusePath, diffusePath, TextureType::Texture2D, false);
-            material->SetHandle(std::format("_detailMap{0}",i), diffuse->GetSRVCpuHandle());
+            material->SetTexture(std::format("_detailMap{0}",i), diffuse);
             if(layer.contains("normal"))
             {
                 auto normalPath = to_wstring(layer["normal"]["path"].get<string>());
                 auto normal = ResourceManager::main->Load<Texture>(normalPath, normalPath, TextureType::Texture2D,false);
-                material->SetHandle(std::format("_normalMap{0}",i), normal->GetSRVCpuHandle());
+                material->SetTexture(std::format("_normalMap{0}",i), normal);
                 active.x = 1;
             }
             if(layer.contains("mask"))
             {
                 auto maskPath = to_wstring(layer["mask"]["path"].get<string>());
                 auto mask = ResourceManager::main->Load<Texture>(maskPath,maskPath,TextureType::Texture2D,false);
-                material->SetHandle(std::format("_maskMap{0}",i),mask->GetSRVCpuHandle());
+                material->SetTexture(std::format("_maskMap{0}",i),mask);
                 active.y = 1;
             }
             auto tile = Vector4(
@@ -414,7 +414,7 @@ void SceneLoader::LinkComponent(json& jsonData)
             auto& layer = jsonData["layerBlendTextures"][i];
             auto blendPath = to_wstring(layer.get<string>());
             auto blend = ResourceManager::main->Load<Texture>(blendPath,blendPath,TextureType::Texture2D,false);
-            material->SetHandle(std::format("_blendMap{0}",i),blend->GetSRVCpuHandle());
+            material->SetTexture(std::format("_blendMap{0}",i),blend);
         }
 
         vector<shared_ptr<GameObject>> instances;
@@ -531,9 +531,9 @@ void SceneLoader::LinkMaterial(json& jsonData)
     for(auto& texture : textures)
     {
         auto a = std::to_wstring(texture["originalName"].get<std::string>());
-        material->SetHandle(
+        material->SetTexture(
             texture["name"].get<std::string>(),
-            ResourceManager::main->Get<Texture>(std::to_wstring(texture["path"].get<std::string>()))->GetSRVCpuHandle());
+            ResourceManager::main->Get<Texture>(std::to_wstring(texture["path"].get<std::string>())));
     }
     for (auto& data : floats)
         material->SetPropertyFloat(data["name"].get<std::string>(), data["data"].get<float>());

@@ -126,7 +126,7 @@ std::shared_ptr<GameObject> ModelNode::CreateGameObject(const std::shared_ptr<Sc
 		std::shared_ptr<Material> material = std::make_shared<Material>();
 		material->SetShader(ResourceManager::main->Get<Shader>(L"DefaultForward"));
 		material->SetPass(RENDER_PASS::Forward);
-		material->SetHandle("g_tex_0", ResourceManager::main->Get<Texture>(L"None_Debug")->GetSRVCpuHandle());
+		material->SetTexture("g_tex_0", ResourceManager::main->Get<Texture>(L"None_Debug"));
 		meshRenderer->AddMaterials({ material });
 	}
 	for (auto& child : _childs)

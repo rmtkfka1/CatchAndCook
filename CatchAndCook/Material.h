@@ -44,11 +44,12 @@ public:
 	void SetStencilIndex(int index) { _stencilIndex = index; };
 	int GetStencilIndex() const { return _stencilIndex; };
 
-	void SetHandle(std::string name, D3D12_CPU_DESCRIPTOR_HANDLE& handle);
+	/*void SetHandle(std::string name, D3D12_CPU_DESCRIPTOR_HANDLE& handle);*/
 	void SetTexture(std::string name, std::shared_ptr<Texture> texture);
 	shared_ptr<Shader>& GetShader() { return _shader; }
 
 public:
+	void AllocTextureTable();
 	void PushData();
 	void SetData();
 	void PushHandle();

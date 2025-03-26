@@ -162,7 +162,7 @@ void Terrain::Destroy()
 
 void Terrain::SetData(Material* material)
 {
-    material->SetHandle("heightMap",_heightTexture->GetSRVCpuHandle());
+    material->SetTexture("heightMap",_heightTexture);
 }
 
 

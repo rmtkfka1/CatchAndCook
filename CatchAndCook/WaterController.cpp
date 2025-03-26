@@ -156,9 +156,10 @@ void WaterController::Destroy()
 //[][][][][] => 1개
 void WaterController::SetData(Material* material)
 {
-    material->SetHandle("_bumpMap", _textures->GetSRVCpuHandle());
-	material->SetHandle("_bumpMap2", _bump->GetSRVCpuHandle());
-    material->SetHandle("_dudv", _dudv->GetSRVCpuHandle());
+
+	material->SetTexture("_bumpMap", _textures);
+	material->SetTexture("_bumpMap2", _bump);
+	material->SetTexture("_dudv", _dudv);
 
 	_cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SeaParam)->Alloc(1);
 

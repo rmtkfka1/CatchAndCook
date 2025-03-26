@@ -32,7 +32,7 @@ void UITestScene::Init()
 		material = make_shared<Material>();
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
-		material->SetHandle("g_tex_0", texture->GetSRVCpuHandle());
+		material->SetTexture("g_tex_0", texture);
 
 		meshRenderer->AddMaterials({ material });
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
@@ -68,7 +68,7 @@ void UITestScene::Init()
 
 
 			materialO->SetShader(shader);
-			materialO->SetHandle("_BaseMap", texture->GetSRVCpuHandle());
+			materialO->SetTexture("_BaseMap", texture);
 
 			meshRenderer->AddMaterials({ materialO });
 			meshRenderer->AddMesh(mesh);

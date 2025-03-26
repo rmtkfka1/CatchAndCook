@@ -30,7 +30,7 @@ void TestScene_MapEditor::Init()
 		material = make_shared<Material>();
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
-		material->SetHandle("g_tex_0",texture->GetSRVCpuHandle());
+		material->SetTexture("g_tex_0", texture);
 
 		meshRenderer->SetCulling(false);
 		meshRenderer->AddMaterials({material});
