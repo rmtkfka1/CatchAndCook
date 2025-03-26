@@ -29,5 +29,8 @@ private: // Camera Control
 	Vector2 _prevMousePosition;
 	Vector3 _targetEuler;
 	Vector3 _currentEuler;
+
+	Vector3 targetLookWorldDirection;
+	Quaternion currentLookWorldRotation;
 };
 

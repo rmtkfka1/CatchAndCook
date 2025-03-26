@@ -40,7 +40,7 @@ void PlayerController::Update()
 	auto currentMousePosition = Input::main->GetMousePosition();
 
 	auto _targetOffset = GetOwner()->_transform->GetWorldPosition() + Vector3::Up * 1.1f;
-	_currentOffset = Vector3::Lerp(_currentOffset, _targetOffset, Time::main->GetDeltaTime() * 60);
+	_currentOffset = Vector3::Lerp(_currentOffset, _targetOffset, Time::main->GetDeltaTime() * 30);
 	Vector2 between = currentMousePosition - Input::main->GetMousePrevPosition();
 
 	//_targetRotation = cameraTransform->GetWorldRotation();
@@ -56,7 +56,7 @@ void PlayerController::Update()
 	if (calculateEuler.x * R2D >= 85) calculateEuler.x = 85 * D2R;
 
 	_targetEuler = calculateEuler;
-	_currentEuler = Vector3::Lerp(_currentEuler, _targetEuler, Time::main->GetDeltaTime() * 30);
+	_currentEuler = Vector3::Lerp(_currentEuler, _targetEuler, Time::main->GetDeltaTime() * 40);
 
 	Quaternion finalRotation = Quaternion::CreateFromYawPitchRoll(_currentEuler);
 
@@ -64,7 +64,7 @@ void PlayerController::Update()
 	auto _currentDirection = Vector3::Transform(Vector3::Forward, finalRotation);
 	_currentDirection.Normalize();
 
-	float distance = 3.4;
+	float distance = 3.6;
 	if (auto hit = ColliderManager::main->RayCast({ _currentOffset, -_currentDirection }, distance * 2))
 		distance = std::min(hit.distance, distance) - 0.05f;
 
@@ -84,17 +84,21 @@ void PlayerController::Update()
 		(Input::main->GetKey(KeyCode::D) ? 1 : 0) - (Input::main->GetKey(KeyCode::A) ? 1 : 0), 0,
 		(Input::main->GetKey(KeyCode::W) ? 1 : 0) - (Input::main->GetKey(KeyCode::S) ? 1 : 0));
 	moveDirection.Normalize();
-	Vector3 moveWorldDirection = Vector3::Transform(moveDirection, fieldRotation);
+	targetLookWorldDirection = Vector3::Transform(moveDirection, fieldRotation);
+	currentLookWorldRotation = Quaternion::Slerp(currentLookWorldRotation, Quaternion::LookRotation(targetLookWorldDirection, Vector3::Up), 
+		Time::main->GetDeltaTime() * 30);
 
-	if (moveWorldDirection != Vector3::Zero)
+	if (targetLookWorldDirection != Vector3::Zero)
 	{
+		float speed = 8;
+
 		Vector3 currentPos = GetOwner()->_transform->GetWorldPosition();
-		Vector3 nextPos = currentPos + moveWorldDirection * 10.0f * Time::main->GetDeltaTime();
+		Vector3 nextPos = currentPos + targetLookWorldDirection * speed * Time::main->GetDeltaTime();
 		Vector3 upRayOffset = nextPos + Vector3::Up * 1.0f;
 		if (auto hit = ColliderManager::main->RayCast({ upRayOffset, Vector3::Down }, 30))
 			nextPos.y = upRayOffset.y - hit.distance;
 
-		GetOwner()->_transform->LookUp(moveWorldDirection, Vector3::Up);
+		GetOwner()->_transform->SetWorldRotation(currentLookWorldRotation);
 		GetOwner()->_transform->SetWorldPosition(nextPos);
 	}
 
