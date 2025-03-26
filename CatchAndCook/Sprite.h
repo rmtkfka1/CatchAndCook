@@ -59,7 +59,7 @@ public:
 	void SetClipingColor(const vec4& color);  // https://imagecolorpicker.com/
 	void AddAction(shared_ptr<ActionCommand> action) { _actions.emplace_back(action); };
 
-private:
+protected:
 	SpriteWorldParam _spriteWorldParam;
 	SprtieTextureParam _sprtieTextureParam;
 
@@ -76,3 +76,44 @@ private:
 
 };
 
+
+/*****************************************************************
+*                                                                *
+*                         TextSprite                             *
+*                                                                *
+******************************************************************/
+enum class FontColor;
+class TextHandle;
+
+class TextSprite : public Sprite
+{
+
+public:
+	TextSprite();
+	virtual ~TextSprite();
+
+	void Init() override;
+	void Start() override;
+	void Update()override;
+	void Update2()override;
+	void Enable()override;
+	void Disable()override;
+	void RenderBegin() override;
+	void CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
+	void CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
+	void SetDestroy() override;
+	void Destroy() override;
+	void SetData(Material* material = nullptr) override;
+
+public:
+	void SetText(const wstring& text) { _text = text; _textChanged = true; }
+	void CreateObject(int width, int height, const WCHAR* font, FontColor color, float fontsize);
+
+private:
+	bool _textChanged = true;
+	wstring _text = L"NULL";
+	shared_ptr<TextHandle> _textHandle;
+	shared_ptr<Texture> _texture;
+	SprtieTextureParam _sprtieTextureParam;
+	BYTE* _sysMemory = nullptr;
+};

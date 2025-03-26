@@ -9,6 +9,7 @@
 #include <random>
 #include "Sprite.h"
 #include "SpriteAction.h"
+#include "TextManager.h"
 
 void UITestScene::Init()
 {
@@ -45,7 +46,7 @@ void UITestScene::Init()
 		auto& renderer =root->AddComponent<MeshRenderer>();
 		auto& sprite = root->AddComponent<Sprite>();
 		sprite->SetPos(vec3(0, 0, 0));
-		sprite->SetSize(vec2(500, 500));
+		sprite->SetSize(vec2(100, 100));
 		sprite->AddAction(make_shared<DragAction>(KeyCode::RightMouse));
 
 		shared_ptr<Material> material = make_shared<Material>();
@@ -53,6 +54,33 @@ void UITestScene::Init()
 		material->SetPass(RENDER_PASS::UI);
 		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
 		material->SetTexture("_BaseMap", texture);
+		renderer->AddMaterials({ material });
+
+	}
+
+	//		shared_ptr<GameObject> gameObject = CreateGameObject(L"TextTest");
+	//		auto spriteRender = gameObject->AddComponent<SpriteRenderer>();
+	//		shared_ptr<TextSprite> sprite = make_shared<TextSprite>();
+
+	//		spriteRender->SetSprite(sprite);
+	//		sprite->SetPos(vec3(0+i*200.0f, 0.0f, 0.000001));
+	//		sprite->SetSize(vec2(300, 300));
+	//		sprite->SetText(to_wstring(Time::main->GetDeltaTime()));
+	//		sprite->CreateObject(512, 256, L"Arial", FontColor::WHITE, 60);
+
+	{
+		shared_ptr<GameObject> root = CreateGameObject(L"SpriteTest");
+		auto& renderer = root->AddComponent<MeshRenderer>();
+
+		auto& sprite = root->AddComponent<TextSprite>();
+		sprite->SetPos(vec3(300, 0, 0));
+		sprite->SetSize(vec2(300, 300));
+		sprite->SetText(L"HelloWorld");
+		sprite->CreateObject(512, 256, L"Arial", FontColor::WHITE, 60);
+
+		shared_ptr<Material> material = make_shared<Material>();
+		material->SetShader(ResourceManager::main->Get<Shader>(L"SpriteShader"));
+		material->SetPass(RENDER_PASS::UI);
 		renderer->AddMaterials({ material });
 
 	}

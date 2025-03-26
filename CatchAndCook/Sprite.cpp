@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Sprite.h"
 #include "MeshRenderer.h"
+#include "TextManager.h"
 
 Sprite::Sprite()
 {
@@ -135,4 +136,164 @@ void Sprite::SetClipingColor(const vec4& color)
 	_spriteWorldParam.clipingColor = color;
 }
 
+/*****************************************************************
+*                                                                *
+*                         TextSprite                             *
+*                                                                *
+******************************************************************/
 
+TextSprite::TextSprite()
+{
+}
+
+TextSprite::~TextSprite()
+{
+	if (_sysMemory != nullptr)
+		delete[] _sysMemory;
+}
+
+void TextSprite::Init()
+{
+	Sprite::Init();
+}
+
+void TextSprite::Start()
+{
+	Sprite::Start();
+}
+
+void TextSprite::Update()
+{
+	if (_textChanged)
+	{
+		_texture->UpdateDynamicTexture(_sysMemory, 4);
+		_texture->CopyCpuToGpu();
+		_textChanged = false;
+	}
+
+	Sprite::Update();
+}
+
+void TextSprite::Update2()
+{
+	Sprite::Update2();
+}
+
+void TextSprite::Enable()
+{
+	Sprite::Enable();
+}
+
+void TextSprite::Disable()
+{
+	Sprite::Disable();
+}
+
+void TextSprite::RenderBegin()
+{
+	Sprite::RenderBegin();
+
+}
+
+void TextSprite::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+{
+}
+
+void TextSprite::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+{
+}
+
+void TextSprite::SetDestroy()
+{
+	Sprite::SetDestroy();
+}
+
+void TextSprite::Destroy()
+{
+	Sprite::Destroy();
+}
+
+void TextSprite::SetData(Material* material)
+{
+
+	auto& cmdList = Core::main->GetCmdList();
+	// SpriteWorldParam 
+	{
+		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteWorldParam)->Alloc(1);
+		memcpy(CbufferContainer->ptr, (void*)&_spriteWorldParam, sizeof(SpriteWorldParam));
+		cmdList->SetGraphicsRootConstantBufferView(material->GetShader()->GetRegisterIndex("SPRITE_WORLD_PARAM"), CbufferContainer->GPUAdress);
+	}
+
+	// SpriteTextureParam 
+	{
+		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteTextureParam)->Alloc(1);
+		memcpy(CbufferContainer->ptr, (void*)&_sprtieTextureParam, sizeof(SprtieTextureParam));
+		cmdList->SetGraphicsRootConstantBufferView(material->GetShader()->GetRegisterIndex("SPRITE_TEXTURE_PARAM"), CbufferContainer->GPUAdress);
+	}
+
+	material->SetTexture("_BaseMap", _texture);
+
+}
+
+void TextSprite::CreateObject(int width, int height, const WCHAR* font, FontColor color, float fontsize)
+{
+	_textHandle = TextManager::main->AllocTextStrcture(width, height, font, color, fontsize);
+	_sysMemory = new BYTE[(width * height * 4)];
+	_texture = make_shared<Texture>();
+	_texture->CreateDynamicTexture(DXGI_FORMAT_R8G8B8A8_UNORM, width, height);
+	_sprtieTextureParam.origintexSize = vec2(width, height);
+
+	if (color == FontColor::BLACK)
+	{
+		SetClipingColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+		DWORD* pDest = (DWORD*)_sysMemory;
+
+		for (DWORD y = 0; y < height; y++)
+		{
+			for (DWORD x = 0; x < width; x++)
+			{
+				pDest[x + width * y] = 0xff'ff'ff'ff;
+			}
+		}
+	}
+
+	else if (color == FontColor::WHITE)
+	{
+		SetClipingColor(vec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		DWORD* pDest = (DWORD*)_sysMemory;
+
+		for (DWORD y = 0; y < height; y++)
+		{
+			for (DWORD x = 0; x < width; x++)
+			{
+				pDest[x + width * y] = 0x00'00'00'00;
+			}
+		}
+	}
+	else if (color == FontColor::CUSTOM)
+	{
+		SetClipingColor(vec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		DWORD* pDest = (DWORD*)_sysMemory;
+		uint32_t colorData = 0;
+		colorData |= static_cast<int>(round(std::clamp(_textHandle->_customFontColor.x * 255.0, 0.0, 1.0)));
+		colorData |= static_cast<int>(round(std::clamp(_textHandle->_customFontColor.y * 255.0, 0.0, 1.0))) << 8;
+		colorData |= static_cast<int>(round(std::clamp(_textHandle->_customFontColor.z * 255.0, 0.0, 1.0))) << 16;
+		colorData |= static_cast<int>(round(std::clamp(_textHandle->_customFontColor.w * 255.0, 0.0, 1.0))) << 24;
+
+		for (DWORD y = 0; y < height; y++)
+		{
+			for (DWORD x = 0; x < width; x++)
+			{
+				pDest[x + width * y] = 0x00'00'00'00;
+			}
+		}
+	}
+
+	_sprtieTextureParam.texSamplePos.x = 0;
+	_sprtieTextureParam.texSamplePos.y = 0;
+	_sprtieTextureParam.texSampleSize.x = width;
+	_sprtieTextureParam.texSampleSize.y = height;
+}
