@@ -145,9 +145,6 @@
     <ClCompile Include="TestScene.cpp">
       <Filter>06.Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Sprite.cpp">
-      <Filter>04.Resource\Sprite</Filter>
-    </ClCompile>
     <ClCompile Include="SpriteAction.cpp">
       <Filter>04.Resource\Sprite</Filter>
     </ClCompile>
@@ -179,9 +176,6 @@
       <Filter>03.Component\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="RendererBase.cpp">
-      <Filter>03.Component\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="SpriteRenderer.cpp">
       <Filter>03.Component\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="SkinnedMeshRenderer.cpp">
@@ -326,7 +320,7 @@
     <ClCompile Include="UITestScene.cpp">
       <Filter>06.Scene</Filter>
     </ClCompile>
-    <ClCompile Include="SpriteNew.cpp">
+    <ClCompile Include="Sprite.cpp">
       <Filter>04.Resource\Sprite</Filter>
     </ClCompile>
   </ItemGroup>
@@ -425,9 +419,6 @@
     <ClInclude Include="TestScene.h">
       <Filter>06.Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Sprite.h">
-      <Filter>04.Resource\Sprite</Filter>
-    </ClInclude>
     <ClInclude Include="SpriteAction.h">
       <Filter>04.Resource\Sprite</Filter>
     </ClInclude>
@@ -456,9 +447,6 @@
       <Filter>03.Component\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="RendererBase.h">
-      <Filter>03.Component\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="SpriteRenderer.h">
       <Filter>03.Component\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="SkinnedMeshRenderer.h">
@@ -615,7 +603,7 @@
     <ClInclude Include="UITestScene.h">
       <Filter>06.Scene</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteNew.h">
+    <ClInclude Include="Sprite.h">
       <Filter>04.Resource\Sprite</Filter>
     </ClInclude>
   </ItemGroup>

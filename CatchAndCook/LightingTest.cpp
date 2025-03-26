@@ -12,7 +12,6 @@
 #include "Transform.h"
 #include "GameObject.h"
 #include "MeshRenderer.h"
-#include "SpriteRenderer.h"
 #include "Sprite.h"
 #include "TextManager.h"
 #include "SpriteAction.h"

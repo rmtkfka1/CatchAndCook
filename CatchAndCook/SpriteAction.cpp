@@ -24,10 +24,10 @@ void ActionFunc::OnClickAction(KeyCode key, Sprite* sprite)
         {
             sprite->_spriteWorldParam.alpha -= 0.1f;
 
-            for (auto& child : sprite->_children)
+          /*  for (auto& child : sprite->_children)
             {
                 child->_spriteWorldParam.alpha -= 0.1f;
-            }
+            }*/
         }
     } 
 }
@@ -73,12 +73,12 @@ void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
             _dragSprite->_screenPos.y + delta.y,
             _dragSprite->_spriteWorldParam.ndcPos.z));
 
-        for (auto& child : _dragSprite->_children)
-        {
-            child->SetPos(vec3(child->_screenPos.x + delta.x,
-                child->_screenPos.y + delta.y,
-                child->_spriteWorldParam.ndcPos.z));
-        }
+        //for (auto& child : _dragSprite->_children)
+        //{
+        //    child->SetPos(vec3(child->_screenPos.x + delta.x,
+        //        child->_screenPos.y + delta.y,
+        //        child->_spriteWorldParam.ndcPos.z));
+        //}
 
         _lastMousePos = pos; 
     }
@@ -108,8 +108,8 @@ void ActionFunc::DisableMouseAction(KeyCode key, Sprite* sprite)
             normalizedY <= (sprite->_ndcPos.y + sprite->_ndcSize.y))
         {
             ActionCommand::_UpdateEnable = false;
-            sprite->_parent.lock()->_renderEnable = false;
-            sprite->_renderEnable = false;
+        /*    sprite->_parent.lock()->_renderEnable = false;
+            sprite->_renderEnable = false;*/
         }
     }
 }
@@ -120,12 +120,12 @@ void ActionFunc::EnableDisableKeyAction(KeyCode key, Sprite* sprite)
     {
         ActionCommand::_UpdateEnable = !ActionCommand::_UpdateEnable;
 
-        sprite->_renderEnable = !sprite->_renderEnable;
+  /*      sprite->_renderEnable = !sprite->_renderEnable;
 
         for (auto& child : sprite->_children)
         {
             child->_renderEnable = !child->_renderEnable;
-        }
+        }*/
     }
 }
 

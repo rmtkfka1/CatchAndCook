@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-class Sprite;
+#include "Sprite.h"
 
 class ActionFunc
 {

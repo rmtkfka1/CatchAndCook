@@ -1,14 +1,14 @@
 ﻿#pragma once
+#include "Component.h"
+#include "RendererBase.h"
+#include "SpriteAction.h"
 
-class Mesh;
-class Texture;
-class Shader;
 class ActionCommand;
 
 struct SpriteWorldParam
 {
 	vec3 ndcPos = { 0.0f,0.0f,0.1f };
-	float alpha =1.0f;
+	float alpha = 1.0f;
 
 	vec2 ndcScale = { 1.0f,1.0f };
 	vec2 padding = {};
@@ -32,33 +32,36 @@ struct SpriteRect
 	float bottom;
 };
 
-/*****************************************************************
-*                                                                *
-*                         Sprite                                 *
-*                                                                *
-******************************************************************/
-
-class Sprite  : public enable_shared_from_this<Sprite>
+class Sprite :public Component, public RenderCBufferSetter
 {
 public:
 	Sprite();
 	virtual ~Sprite();
 
 public:
-	virtual void Init() =0 ;
-	virtual void Update() =0;
-	virtual void Render() =0;
+	void Init() override;
+	void Start() override;
+	void Update()override;
+	void Update2()override;
+	void Enable()override;
+	void Disable()override;
+	void RenderBegin() override;
+	void CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
+	void CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override ;
+	void SetDestroy() override;
+	void Destroy() override;
+	void SetData(Material* material = nullptr) override;
 
 public:
-	void SetSize(vec2 size);
-	void SetPos(vec3 screenPos);
-	void SetClipingColor(vec4 color);  // https://imagecolorpicker.com/
+	void SetSize(const vec2& size);
+	void SetPos(const vec3& screenPos);
+	void SetUVCoord(const SpriteRect& rect);
+	void SetClipingColor(const vec4& color);  // https://imagecolorpicker.com/
+	void AddAction(shared_ptr<ActionCommand> action) { _actions.emplace_back(action); };
 
-	void AddAction(shared_ptr<ActionCommand> action);
-	void AddChildern(shared_ptr<Sprite> child);
-
-protected:
+private:
 	SpriteWorldParam _spriteWorldParam;
+	SprtieTextureParam _sprtieTextureParam;
 
 	vec3 _screenPos;
 	vec3 _ndcPos;
@@ -68,122 +71,8 @@ protected:
 
 	vec2 _firstWindowSize;
 
-protected:
-	vector<shared_ptr<Sprite>> _children;
-	weak_ptr<Sprite> _parent;
-
-public:
 	friend class ActionFunc;
-	bool _renderEnable = true;
 	vector<shared_ptr<ActionCommand>> _actions;
+
 };
-
-/*****************************************************************
-*                                                                *
-*                         BasicSprite                            *
-*                                                                *
-******************************************************************/
-
-class BasicSprite : public Sprite
-{
-
-public:
-	BasicSprite();
-	virtual ~BasicSprite();
-
-public:
-	virtual void Init();
-	virtual void Update();
-	virtual void Render();
-
-	void SetUVCoord(SpriteRect& rect);
-	void SetTexture(shared_ptr<Texture> texture);
-
-private:
-	shared_ptr<Mesh> _mesh;
-	shared_ptr<Shader> _shader;
-	shared_ptr<Texture> _texture;
-	SprtieTextureParam _sprtieTextureParam;
-};
-
-
-/*****************************************************************
-*                                                                *
-*                         TextSprite                             *
-*                                                                *
-******************************************************************/
-enum class FontColor;
-class TextHandle;
-
-class TextSprite : public Sprite
-{
-
-public:
-	TextSprite();
-	virtual ~TextSprite();
-
-public:
-	virtual void Init();
-	virtual void Update();
-	virtual void Render();
-
-	void SetText(const wstring& text) { _text = text; _textChanged = true; }
-	void CreateObject(int width, int height, const WCHAR* font, FontColor color, float fontsize);
-
-	
-private:
-	bool _textChanged = true;
-	wstring _text =L"NULL";
-	shared_ptr<TextHandle> _textHandle;
-	shared_ptr<Mesh> _mesh;
-	shared_ptr<Shader> _shader;
-	shared_ptr<Texture> _texture;
-	SprtieTextureParam _sprtieTextureParam;
-	BYTE* _sysMemory = nullptr;
-};
-
-/*****************************************************************
-*                                                                *
-*                         AnimationSprite                        *
-*                                                                *
-******************************************************************/
-
-class AnimationSprite : public Sprite
-{
-public:
-
-	AnimationSprite();
-	virtual ~AnimationSprite();
-
-public:
-	virtual void Init();
-	virtual void Update();
-	virtual void Render();
-
-	void PushUVCoord(SpriteRect& rect);
-	void SetTexture(shared_ptr<Texture> texture);
-	void SetFrameRate(float frameRate) { _frameRate = frameRate; }
-
-private:
-	void AnimationUpdate();
-
-private:
-	shared_ptr<Mesh> _mesh;
-	shared_ptr<Shader> _shader;
-	shared_ptr<Texture> _texture;
-	vector<SprtieTextureParam> _sprtieTextureParam;
-
-private:
-	float _frameRate{1.0f}; //  애니메이션 진행 속도
-	float _currentTime{}; //현재 애니메이션 진행 시간
-	int32 _currentFrameIndex{}; // 현재 애니메이션 인덱스
-	int32 _maxFrameIndex =0 ; // 최대 애니메이션 프레임
-};
-
-
-/*****************************************************************
-*                                                                *
-*                         Invetory                               *
-*                                                                *
-******************************************************************/
 

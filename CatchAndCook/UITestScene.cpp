@@ -7,7 +7,8 @@
 #include "GameObject.h"
 #include "MeshRenderer.h"
 #include <random>
-#include "SpriteNew.h"
+#include "Sprite.h"
+#include "SpriteAction.h"
 
 void UITestScene::Init()
 {
@@ -42,9 +43,10 @@ void UITestScene::Init()
 	{
 		shared_ptr<GameObject> root = CreateGameObject(L"SpriteTest");
 		auto& renderer =root->AddComponent<MeshRenderer>();
-		auto& sprite = root->AddComponent<SpriteNew>();
+		auto& sprite = root->AddComponent<Sprite>();
 		sprite->SetPos(vec3(0, 0, 0));
 		sprite->SetSize(vec2(500, 500));
+		sprite->AddAction(make_shared<DragAction>(KeyCode::RightMouse));
 
 		shared_ptr<Material> material = make_shared<Material>();
 		material->SetShader(ResourceManager::main->Get<Shader>(L"SpriteShader"));
