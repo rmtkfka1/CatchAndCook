@@ -22,10 +22,13 @@ void Material::SetHandle(std::string name, D3D12_CPU_DESCRIPTOR_HANDLE& field)
 	_propertyHandle[name] = field;
 }
 
-void Material::AllocTextureTable()
+void Material::SetTexture(std::string name, std::shared_ptr<Texture> texture)
 {
-	_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
+	_propertyHandle[name] = texture->GetSRVCpuHandle();
+	_propertyTexture[name] = texture;
+
 }
+
 
 void Material::PushData()
 {
@@ -53,7 +56,8 @@ void Material::PushData()
 void Material::SetData()
 {
 	//텍스쳐바인딩
-	AllocTextureTable();
+	_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
+
 	PushData();
 
 	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, _tableContainer.GPUHandle);

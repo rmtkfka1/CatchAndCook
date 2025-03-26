@@ -49,9 +49,9 @@ void UITestScene::Init()
 	shared_ptr<Material> materialO = make_shared<Material>();
 	materialO->SetPass(RENDER_PASS::UI);
 	//shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
-	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(30.0f);
+	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
 
-	for (int i = 0; i < 1; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
 		{
 			shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"UiForward");
@@ -61,8 +61,8 @@ void UITestScene::Init()
 			shared_ptr<GameObject> root = CreateGameObject(L"root_test");
 
 			auto meshRenderer = root->AddComponent<MeshRenderer>();
-			root->_transform->SetLocalPosition(vec3(WINDOW_WIDTH/2-30, 0,100.0f));
-
+			root->_transform->SetLocalPosition(vec3(WINDOW_WIDTH/2-30, 0+60*i,100.0f));
+			root->_transform->SetLocalScale(vec3(60.0f, 60.0f, 60.0f));
 			root->SetType(GameObjectType::Static);
 			root->AddTag(GameObjectTag::Wall);
 

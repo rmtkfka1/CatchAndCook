@@ -326,6 +326,9 @@
     <ClCompile Include="UITestScene.cpp">
       <Filter>06.Scene</Filter>
     </ClCompile>
+    <ClCompile Include="SpriteNew.cpp">
+      <Filter>04.Resource\Sprite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -611,6 +614,9 @@
     </ClInclude>
     <ClInclude Include="UITestScene.h">
       <Filter>06.Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteNew.h">
+      <Filter>04.Resource\Sprite</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

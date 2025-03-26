@@ -45,10 +45,10 @@ public:
 	int GetStencilIndex() const { return _stencilIndex; };
 
 	void SetHandle(std::string name, D3D12_CPU_DESCRIPTOR_HANDLE& handle);
+	void SetTexture(std::string name, std::shared_ptr<Texture> texture);
 	shared_ptr<Shader>& GetShader() { return _shader; }
 
 public:
-	void AllocTextureTable();
 	void PushData();
 	void SetData();
 	void PushHandle();
@@ -87,6 +87,7 @@ private:
 	std::unordered_map<std::string, vec4> _propertyVectors; // Color 
 	std::unordered_map<std::string, Matrix> _propertyMatrixs; // 
 	std::unordered_map<std::string, D3D12_CPU_DESCRIPTOR_HANDLE> _propertyHandle;
+	std::unordered_map<std::string, std::shared_ptr<Texture>> _propertyTexture;
 
 	CBufferContainer* _cbufferContainer;
 	bool _useMaterialParams = false;

@@ -246,6 +246,7 @@
     <ClCompile Include="SkinnedMeshRenderer.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteAction.cpp" />
+    <ClCompile Include="SpriteNew.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="StructuredBuffer.cpp" />
     <ClCompile Include="Terrain.cpp" />
@@ -348,6 +349,7 @@
     <ClInclude Include="SkinnedMeshRenderer.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteAction.h" />
+    <ClInclude Include="SpriteNew.h" />
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="strutil.h" />

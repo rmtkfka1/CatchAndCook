@@ -36,8 +36,8 @@ public:
 	void AddStructuredSetter(const std::shared_ptr<RenderStructuredSetter>& setter, BufferType type);
 	void RemoveStructuredSetter(const shared_ptr<RenderStructuredSetter>& object);
 
-	void AddCbufferSetter(const std::shared_ptr<RenderCBufferSetter>& setter);
-	void RemoveCbufferSetter(const shared_ptr<RenderCBufferSetter>& object);
+	void AddCbufferSetter(const std::shared_ptr<RenderCBufferSetter> setter);
+	void RemoveCbufferSetter(const shared_ptr<RenderCBufferSetter> object);
 
 	std::shared_ptr<RenderStructuredSetter>& FindStructuredSetter(const BufferType& type);
 
