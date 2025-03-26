@@ -246,6 +246,7 @@ void TextSprite::SetData(Material* material)
 	auto& cmdList = Core::main->GetCmdList();
 	// SpriteWorldParam 
 	{
+		CalculateWorldPos();
 		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteWorldParam)->Alloc(1);
 		memcpy(CbufferContainer->ptr, (void*)&_spriteWorldParam, sizeof(SpriteWorldParam));
 		cmdList->SetGraphicsRootConstantBufferView(material->GetShader()->GetRegisterIndex("SPRITE_WORLD_PARAM"), CbufferContainer->GPUAdress);
@@ -409,6 +410,7 @@ void AnimationSprite::SetData(Material* material)
 
 	// SpriteWorldParam 
 	{
+		CalculateWorldPos();
 		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteWorldParam)->Alloc(1);
 		memcpy(CbufferContainer->ptr, (void*)&_spriteWorldParam, sizeof(SpriteWorldParam));
 		cmdList->SetGraphicsRootConstantBufferView(material->GetShader()->GetRegisterIndex("SPRITE_WORLD_PARAM"), CbufferContainer->GPUAdress);

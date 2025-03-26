@@ -62,7 +62,7 @@ void UITestScene::Init()
 			auto& renderer = child->AddComponent<MeshRenderer>();
 			auto& sprite = child->AddComponent<Sprite>();
 			child->SetParent(root);
-			sprite->SetLocalPos(vec3(0, 0, 0));
+			sprite->SetLocalPos(vec3(-100, 0, 0));
 			sprite->SetSize(vec2(50, 50));
 	
 			shared_ptr<Material> material = make_shared<Material>();
