@@ -164,8 +164,10 @@ void TextSprite::Start()
 
 void TextSprite::Update()
 {
+
 	if (_textChanged)
 	{
+		TextManager::main->UpdateToSysMemory(_text, _textHandle, _sysMemory, 4);
 		_texture->UpdateDynamicTexture(_sysMemory, 4);
 		_texture->CopyCpuToGpu();
 		_textChanged = false;

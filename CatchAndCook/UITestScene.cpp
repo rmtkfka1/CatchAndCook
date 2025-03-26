@@ -41,7 +41,7 @@ void UITestScene::Init()
 		meshRenderer->SetCulling(false);
 	}
 
-	{
+	/*{
 		shared_ptr<GameObject> root = CreateGameObject(L"SpriteTest");
 		auto& renderer =root->AddComponent<MeshRenderer>();
 		auto& sprite = root->AddComponent<Sprite>();
@@ -55,25 +55,14 @@ void UITestScene::Init()
 		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
 		material->SetTexture("_BaseMap", texture);
 		renderer->AddMaterials({ material });
-
-	}
-
-	//		shared_ptr<GameObject> gameObject = CreateGameObject(L"TextTest");
-	//		auto spriteRender = gameObject->AddComponent<SpriteRenderer>();
-	//		shared_ptr<TextSprite> sprite = make_shared<TextSprite>();
-
-	//		spriteRender->SetSprite(sprite);
-	//		sprite->SetPos(vec3(0+i*200.0f, 0.0f, 0.000001));
-	//		sprite->SetSize(vec2(300, 300));
-	//		sprite->SetText(to_wstring(Time::main->GetDeltaTime()));
-	//		sprite->CreateObject(512, 256, L"Arial", FontColor::WHITE, 60);
+	}*/
 
 	{
 		shared_ptr<GameObject> root = CreateGameObject(L"SpriteTest");
 		auto& renderer = root->AddComponent<MeshRenderer>();
 
 		auto& sprite = root->AddComponent<TextSprite>();
-		sprite->SetPos(vec3(300, 0, 0));
+		sprite->SetPos(vec3(0 + 200.0f, 0.0f, 0.000001f));
 		sprite->SetSize(vec2(300, 300));
 		sprite->SetText(L"HelloWorld");
 		sprite->CreateObject(512, 256, L"Arial", FontColor::WHITE, 60);
@@ -81,6 +70,7 @@ void UITestScene::Init()
 		shared_ptr<Material> material = make_shared<Material>();
 		material->SetShader(ResourceManager::main->Get<Shader>(L"SpriteShader"));
 		material->SetPass(RENDER_PASS::UI);
+
 		renderer->AddMaterials({ material });
 
 	}
