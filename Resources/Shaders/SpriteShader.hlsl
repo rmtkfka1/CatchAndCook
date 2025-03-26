@@ -1,6 +1,5 @@
 #include "Global_b0.hlsl"
 
-
 cbuffer SPRITE_WORLD_PARAM : register(b5)
 {
     float3 g_pos;
@@ -38,7 +37,7 @@ struct VS_OUT
     float2 uv : TEXCOORD;
 };
 
-Texture2D texDiffuse : register(t18);
+Texture2D _BaseMap: register(t0);
 
 VS_OUT VS_Main(VS_IN input)
 {
@@ -61,12 +60,7 @@ VS_OUT VS_Main(VS_IN input)
 float4 PS_Main(VS_OUT input) : SV_TARGET
 {
   
-    float4 texColor = texDiffuse.Sample(sampler_lerp, input.uv);
-    
-    if (length(texColor.rgb - clipingColor.rgb) < 0.001)
-    {
-        discard;
-    }
+    float4 texColor = _BaseMap.Sample(sampler_lerp, input.uv);
     
     return texColor * input.color * g_alpha;
 }

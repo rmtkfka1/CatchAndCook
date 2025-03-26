@@ -66,6 +66,8 @@ public:
 	Matrix GetPropertyMatrix(const std::string& name) { return _propertyMatrixs[name]; };
 	void SetPropertyMatrix(const std::string& name, const Matrix& data) { _propertyMatrixs[name] = data; };
 
+	shared_ptr<Texture>& GetPropertyTexture(const std::string& name) { return _propertyTexture[name]; };
+
 	bool HasPropertyInt(const std::string& name);
 	bool HasPropertyFloat(const std::string& name);
 	bool HasPropertyVector(const std::string& name);

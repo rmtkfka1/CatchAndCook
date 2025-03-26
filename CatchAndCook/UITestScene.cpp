@@ -7,6 +7,7 @@
 #include "GameObject.h"
 #include "MeshRenderer.h"
 #include <random>
+#include "SpriteNew.h"
 
 void UITestScene::Init()
 {
@@ -28,7 +29,6 @@ void UITestScene::Init()
 
 		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
 
-
 		material = make_shared<Material>();
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
@@ -39,41 +39,22 @@ void UITestScene::Init()
 		meshRenderer->SetCulling(false);
 	}
 
-	random_device urd;
-	mt19937 gen(urd());
-	uniform_real_distribution<float> ddis(-1000.0f, 1000.0f);
-	uniform_real_distribution<float> dis(1, 30.0f);
-	uniform_real_distribution<float> rotate(-360.0f, 360.0f);
-	//auto& a = ResourceManager::main->Load<Model>(L"kind", L"../Resources/Models/PaperPlane.obj", VertexType::Vertex_Skinned);
-
-	shared_ptr<Material> materialO = make_shared<Material>();
-	materialO->SetPass(RENDER_PASS::UI);
-	//shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
-	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
-
-	for (int i = 0; i < 10; ++i)
 	{
-		{
-			shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"UiForward");
+		shared_ptr<GameObject> root = CreateGameObject(L"SpriteTest");
+		auto& renderer =root->AddComponent<MeshRenderer>();
+		auto& sprite = root->AddComponent<SpriteNew>();
+		sprite->SetPos(vec3(0, 0, 0));
+		sprite->SetSize(vec2(500, 500));
 
-			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
+		shared_ptr<Material> material = make_shared<Material>();
+		material->SetShader(ResourceManager::main->Get<Shader>(L"SpriteShader"));
+		material->SetPass(RENDER_PASS::UI);
+		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
+		material->SetTexture("_BaseMap", texture);
+		renderer->AddMaterials({ material });
 
-			shared_ptr<GameObject> root = CreateGameObject(L"root_test");
-
-			auto meshRenderer = root->AddComponent<MeshRenderer>();
-			root->_transform->SetLocalPosition(vec3(WINDOW_WIDTH/2-30, 0+60*i,100.0f));
-			root->_transform->SetLocalScale(vec3(60.0f, 60.0f, 60.0f));
-			root->SetType(GameObjectType::Static);
-			root->AddTag(GameObjectTag::Wall);
-
-
-			materialO->SetShader(shader);
-			materialO->SetTexture("_BaseMap", texture);
-
-			meshRenderer->AddMaterials({ materialO });
-			meshRenderer->AddMesh(mesh);
-		}
 	}
+
 }
 
 void UITestScene::Update()

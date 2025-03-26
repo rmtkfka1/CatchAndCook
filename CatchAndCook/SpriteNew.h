@@ -47,12 +47,13 @@ public:
 	void CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override ;
 	void SetDestroy() override;
 	void Destroy() override;
-
 	void SetData(Material* material = nullptr) override;
+
 public:
-	void SetSize(vec2 size);
-	void SetPos(vec3 screenPos);
-	void SetClipingColor(vec4 color);
+	void SetSize(const vec2& size);
+	void SetPos(const vec3& screenPos);
+	void SetUVCoord(const SpriteRect& rect);
+	void SetClipingColor(const vec4& color);  // https://imagecolorpicker.com/
 
 public:
 	SpriteWorldParam _spriteWorldParam;

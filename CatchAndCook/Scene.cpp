@@ -197,7 +197,6 @@ void Scene::Rendering()
     Profiler::Fin();
 
     Profiler::Set("PASS : UI", BlockTag::GPU);
-    CameraManager::main->Setting(CameraType::UiCamera);
     UiPass(cmdList);
     Profiler::Fin();
 
@@ -212,11 +211,10 @@ void Scene::UiPass(ComPtr<ID3D12GraphicsCommandList>& cmdList)
         {
             cmdList->SetPipelineState(shader->_pipelineState.Get());
 
-            for (auto& ele : vec)
-            {
-                InstancingManager::main->AddObject(ele);
-            }
-            InstancingManager::main->Render();
+			for (auto& [material, mesh, target] : vec)
+			{
+				target->Rendering(material, mesh);
+			}
         }
     }
 };

@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #include "SpriteNew.h"
-
+#include "MeshRenderer.h"
 SpriteNew::SpriteNew()
 {
 }
@@ -12,13 +12,16 @@ SpriteNew::~SpriteNew()
 void SpriteNew::Init()
 {
 	_firstWindowSize = vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
+
 }
 
 void SpriteNew::Start()
 {
-	if (GetOwner()->GetRenderer())
+	if (auto& renderer =GetOwner()->GetRenderer())
 	{
-		GetOwner()->GetRenderer()->AddCbufferSetter(static_pointer_cast<SpriteNew>(shared_from_this()));
+		renderer->AddCbufferSetter(static_pointer_cast<SpriteNew>(shared_from_this()));
+		shared_ptr<Mesh> mesh = GeoMetryHelper::LoadSprtieMesh();
+		static_pointer_cast<MeshRenderer>(renderer)->AddMesh(mesh);
 	}
 }
 
@@ -68,15 +71,26 @@ void SpriteNew::SetData(Material* material)
 {
 	auto cmdList = Core::main->GetCmdList();
 
+	auto& texture = material->GetPropertyTexture("_BaseMap");
 
-	// SpriteWorldParam ���� ����
+	if (texture == nullptr)
+		assert(false);
+
+	_sprtieTextureParam.origintexSize = vec2(texture->GetResource()->GetDesc().Width, texture->GetResource()->GetDesc().Height);
+
+	if (_sprtieTextureParam.texSampleSize == vec2::Zero)
+	{
+		_sprtieTextureParam.texSampleSize = _sprtieTextureParam.origintexSize;
+	}
+
+	// SpriteWorldParam 
 	{
 		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteWorldParam)->Alloc(1);
 		memcpy(CbufferContainer->ptr, (void*)&_spriteWorldParam, sizeof(SpriteWorldParam));
 		cmdList->SetGraphicsRootConstantBufferView(material->GetShader()->GetRegisterIndex("SPRITE_WORLD_PARAM"), CbufferContainer->GPUAdress);
 	}
 
-	// SpriteTextureParam ���� ����
+	// SpriteTextureParam 
 	{
 		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteTextureParam)->Alloc(1);
 		memcpy(CbufferContainer->ptr, (void*)&_sprtieTextureParam, sizeof(SprtieTextureParam));
@@ -84,7 +98,7 @@ void SpriteNew::SetData(Material* material)
 	}
 }
 
-void SpriteNew::SetSize(vec2 size)
+void SpriteNew::SetSize(const vec2& size)
 {
 	_spriteWorldParam.ndcScale.x = size.x / _firstWindowSize.x;
 	_spriteWorldParam.ndcScale.y = size.y / _firstWindowSize.y;
@@ -93,7 +107,7 @@ void SpriteNew::SetSize(vec2 size)
 	_screenSize = size;
 }
 
-void SpriteNew::SetPos(vec3 screenPos)
+void SpriteNew::SetPos(const vec3& screenPos)
 {
 	_spriteWorldParam.ndcPos.x = screenPos.x / _firstWindowSize.x;
 	_spriteWorldParam.ndcPos.y = screenPos.y / _firstWindowSize.y;
@@ -103,7 +117,15 @@ void SpriteNew::SetPos(vec3 screenPos)
 	_screenPos = screenPos;
 }
 
-void SpriteNew::SetClipingColor(vec4 color)
+void SpriteNew::SetUVCoord(const SpriteRect& rect)
+{
+	_sprtieTextureParam.texSamplePos.x = rect.left;
+	_sprtieTextureParam.texSamplePos.y = rect.top;
+	_sprtieTextureParam.texSampleSize.x = (rect.right - rect.left);
+	_sprtieTextureParam.texSampleSize.y = (rect.bottom - rect.top);
+};
+
+void SpriteNew::SetClipingColor(const vec4& color)
 {
 	_spriteWorldParam.clipingColor = color;
 }
