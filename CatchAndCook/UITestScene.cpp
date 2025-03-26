@@ -10,7 +10,6 @@
 #include "Sprite.h"
 #include "SpriteAction.h"
 #include "TextManager.h"
-#include "Inventory.h"
 
 void UITestScene::Init()
 {
@@ -42,28 +41,19 @@ void UITestScene::Init()
 		meshRenderer->SetCulling(false);
 	}
 
-	//shared_ptr<GameObject> root = CreateGameObject(L"Inventory");
-	//auto& renderer = root->AddComponent<MeshRenderer>();
-	//auto& inventory = root->AddComponent<Inventory>();
-
-	//shared_ptr<Sprite> sprite = make_shared<Sprite>();
-	//
-	//inventory->SetPos(vec3(0, 0, 0.3f));
-	//inventory->SetSize(vec2(500, 500));
-
-
 	{
 		shared_ptr<GameObject> root = CreateGameObject(L"Sprite1");
-		auto& renderer =root->AddComponent<MeshRenderer>();
+		auto& renderer = root->AddComponent<MeshRenderer>();
 		auto& sprite = root->AddComponent<Sprite>();
 		sprite->AddAction(make_shared<DragAction>(KeyCode::LeftMouse));
 		sprite->SetLocalPos(vec3(300, 0, 0));
 		sprite->SetSize(vec2(100, 100));
-		sprite->SetTexture(ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg"));
 
 		shared_ptr<Material> material = make_shared<Material>();
 		material->SetShader(ResourceManager::main->Get<Shader>(L"SpriteShader"));
 		material->SetPass(RENDER_PASS::UI);
+		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
+		material->SetTexture("_BaseMap", texture);
 		renderer->AddMaterials({ material });
 
 
@@ -74,11 +64,12 @@ void UITestScene::Init()
 			child->SetParent(root);
 			sprite->SetLocalPos(vec3(-100, 0, 0));
 			sprite->SetSize(vec2(50, 50));
-			sprite->SetTexture(ResourceManager::main->Load<Texture>(L"disable", L"Textures/disable.png"));
-	
+
 			shared_ptr<Material> material = make_shared<Material>();
 			material->SetShader(ResourceManager::main->Get<Shader>(L"SpriteShader"));
 			material->SetPass(RENDER_PASS::UI);
+			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"disable", L"Textures/disable.png");
+			material->SetTexture("_BaseMap", texture);
 			renderer->AddMaterials({ material });
 
 			{
@@ -88,15 +79,17 @@ void UITestScene::Init()
 				child2->SetParent(child);
 				sprite->SetSize(vec2(50, 50));
 				sprite->SetLocalPos(vec3(100, 0, 0));
-				sprite->SetTexture(ResourceManager::main->Load<Texture>(L"disable", L"Textures/disable.png"));
-	
-	
+
+
 				shared_ptr<Material> material = make_shared<Material>();
 				material->SetShader(ResourceManager::main->Get<Shader>(L"SpriteShader"));
 				material->SetPass(RENDER_PASS::UI);
+				shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"disable", L"Textures/disable.png");
+				material->SetTexture("_BaseMap", texture);
 				renderer->AddMaterials({ material });
 
 			}
+
 		};
 	}
 
@@ -129,7 +122,6 @@ void UITestScene::Init()
 			sprite->SetSize(vec2(500, 500));
 			sprite->SetFrameRate(0.001f);
 			sprite->SetClipingColor(vec4(0, 0, 0, 1.0f));		https://imagecolorpicker.com/
-			sprite->SetTexture(texture);
 
 			const float TextureSize = 512.0f;
 
@@ -152,6 +144,8 @@ void UITestScene::Init()
 			shared_ptr<Material> material = make_shared<Material>();
 			material->SetShader(ResourceManager::main->Get<Shader>(L"SpriteShader"));
 			material->SetPass(RENDER_PASS::UI);
+			material->SetTexture("_BaseMap", texture);
+
 			meshRenderer->AddMaterials({ material });
 
 		};
