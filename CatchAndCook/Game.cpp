@@ -94,7 +94,7 @@ void Game::Init(HWND hwnd)
 		LightManager::main->PushLight(light);
 	}
 
-	auto scene = SceneManager::main->AddScene(SceneType::UITest);
+	auto scene = SceneManager::main->AddScene(SceneType::TestScene);
 }
 
 void Game::PrevUpdate()

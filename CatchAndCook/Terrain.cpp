@@ -37,6 +37,7 @@ void Terrain::Start()
                                  
     ShaderInfo info;
     info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+
  
     #ifdef RECT_TERRAIN
     shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest",L"TerrainQuad.hlsl", GeoMetryProp,
@@ -101,11 +102,11 @@ void Terrain::Update()
         _instanceBuffers[i]->Clear();
         for(int j=0;j<_instanceDatas[i].size();j++)
         {
-            //if(Vector3::Distance(Vector3(_instanceDatas[i][j].worldPosition.x, 0,_instanceDatas[i][j].worldPosition.z), cameraPos) < 10)
-            //{
-            //    //Todo : 작업해야함.
+            if(Vector3::Distance(Vector3(_instanceDatas[i][j].worldPosition.x, 0,_instanceDatas[i][j].worldPosition.z), cameraPos) < 10)
+            {
+                //Todo : 작업해야함.
                 _instanceBuffers[i]->AddData(_instanceDatas[i][j]);
-            //}
+            }
         }
     }
 }

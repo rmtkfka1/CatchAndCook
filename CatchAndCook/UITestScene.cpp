@@ -46,9 +46,7 @@ void UITestScene::Init()
 		root->SetType(GameObjectType::Dynamic);
 		auto& renderer =root->AddComponent<MeshRenderer>();
 		auto& sprite = root->AddComponent<Sprite>();
-		sprite->AddAction(make_shared<DragAction>(KeyCode::LeftMouse));
-		sprite->AddAction(make_shared<DisableMouseAction>(KeyCode::RightMouse));
-		sprite->AddAction(make_shared<EnableDisableKeyAction>(KeyCode::I));
+		sprite->AddAction(make_shared<DragAction>(KeyCode::RightMouse));
 		sprite->SetPos(vec3(0, 0, 0));
 		sprite->SetSize(vec2(100, 100));
 
@@ -60,7 +58,7 @@ void UITestScene::Init()
 		renderer->AddMaterials({ material });
 
 
-		/*{
+		{
 			shared_ptr<GameObject> child = CreateGameObject(L"spriteChild");
 			auto& renderer = child->AddComponent<MeshRenderer>();
 			auto& sprite = child->AddComponent<Sprite>();
@@ -96,9 +94,7 @@ void UITestScene::Init()
 				}
 			}
 
-		}*/
-
-
+		}
 	}
 
 	//{

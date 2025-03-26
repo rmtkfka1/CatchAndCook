@@ -25,7 +25,6 @@ void ActionFunc::OnClickAction(KeyCode key, Sprite* sprite)
 
 void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
 {
-
     static Sprite* _dragSprite = nullptr;
     static vec2 _lastMousePos; // 이전 마우스 위치 추적 변수
 
@@ -100,7 +99,6 @@ void ActionFunc::EnableDisableKeyAction(KeyCode key, Sprite* sprite)
 {
     if (Input::main->GetKeyDown(key))
     {
-
         sprite->GetOwner()->SetActiveSelf(!sprite->GetOwner()->GetActive());
     }
 }

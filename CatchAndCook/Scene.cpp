@@ -272,7 +272,6 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
             InstancingManager::main->Render();
         }
 
-        
     }
 }
 
