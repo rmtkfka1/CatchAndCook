@@ -417,6 +417,8 @@ void AnimationSprite::PushUVCoord(SpriteRect& rect)
 {
 	SprtieTextureParam sprtieTextureParam;
 
+	sprtieTextureParam.origintexSize = vec2(_spriteImage->GetResource()->GetDesc().Width,_spriteImage->GetResource()->GetDesc().Height);
+
 	sprtieTextureParam.texSamplePos.x = rect.left;
 	sprtieTextureParam.texSamplePos.y = rect.top;
 	sprtieTextureParam.texSampleSize.x = (rect.right - rect.left);

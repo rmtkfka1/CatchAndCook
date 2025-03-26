@@ -125,7 +125,7 @@ void UITestScene::Init()
 			auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
 			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"fire", L"Textures/fire.png");
 			auto& sprite = gameObject->AddComponent<AnimationSprite>();
-			sprite->SetLocalPos(vec3(300, 300, 0.3f));
+			sprite->SetLocalPos(vec3(0, 0, 0.3f));
 			sprite->SetSize(vec2(500, 500));
 			sprite->SetFrameRate(0.001f);
 			sprite->SetClipingColor(vec4(0, 0, 0, 1.0f));		https://imagecolorpicker.com/
