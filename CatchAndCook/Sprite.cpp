@@ -164,7 +164,6 @@ void TextSprite::Start()
 
 void TextSprite::Update()
 {
-
 	if (_textChanged)
 	{
 		TextManager::main->UpdateToSysMemory(_text, _textHandle, _sysMemory, 4);
@@ -298,4 +297,133 @@ void TextSprite::CreateObject(int width, int height, const WCHAR* font, FontColo
 	_sprtieTextureParam.texSamplePos.y = 0;
 	_sprtieTextureParam.texSampleSize.x = width;
 	_sprtieTextureParam.texSampleSize.y = height;
+}
+
+/*****************************************************************
+*                                                                *
+*                         AnimationSprite                        *
+*                                                                *
+******************************************************************/
+
+AnimationSprite::AnimationSprite()
+{
+}
+
+AnimationSprite::~AnimationSprite()
+{
+}
+
+void AnimationSprite::Init()
+{
+	Sprite::Init();
+}
+
+void AnimationSprite::Start()
+{
+	Sprite::Start();
+}
+
+void AnimationSprite::Update()
+{
+	Sprite::Update();
+
+	AnimationUpdate();
+}
+
+void AnimationSprite::Update2()
+{
+	Sprite::Update2();
+}
+
+void AnimationSprite::Enable()
+{
+	Sprite::Enable();
+}
+
+void AnimationSprite::Disable()
+{
+	Sprite::Disable();
+}
+
+void AnimationSprite::RenderBegin()
+{
+	Sprite::RenderBegin();
+}
+
+void AnimationSprite::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+{
+}
+
+void AnimationSprite::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
+{
+}
+
+void AnimationSprite::SetDestroy()
+{
+}
+
+void AnimationSprite::Destroy()
+{
+	Sprite::Destroy();
+}
+
+void AnimationSprite::SetData(Material* material)
+{
+	auto cmdList = Core::main->GetCmdList();
+
+	auto& texture = material->GetPropertyTexture("_BaseMap");
+
+	if (texture == nullptr)
+		assert(false);
+
+	for (auto& _sprtieTextureParam : _sprtieTextureParam)
+	{
+		_sprtieTextureParam.origintexSize = vec2(texture->GetResource()->GetDesc().Width, texture->GetResource()->GetDesc().Height);
+	}
+
+	// SpriteWorldParam 
+	{
+		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteWorldParam)->Alloc(1);
+		memcpy(CbufferContainer->ptr, (void*)&_spriteWorldParam, sizeof(SpriteWorldParam));
+		cmdList->SetGraphicsRootConstantBufferView(material->GetShader()->GetRegisterIndex("SPRITE_WORLD_PARAM"), CbufferContainer->GPUAdress);
+	}
+
+	// SpriteTextureParam 
+	{
+		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SpriteTextureParam)->Alloc(1);
+		memcpy(CbufferContainer->ptr, (void*)&_sprtieTextureParam[_currentFrameIndex], sizeof(SprtieTextureParam));
+		cmdList->SetGraphicsRootConstantBufferView(material->GetShader()->GetRegisterIndex("SPRITE_TEXTURE_PARAM"), CbufferContainer->GPUAdress);
+	}
+}
+
+void AnimationSprite::PushUVCoord(SpriteRect& rect)
+{
+	SprtieTextureParam sprtieTextureParam;
+
+	sprtieTextureParam.texSamplePos.x = rect.left;
+	sprtieTextureParam.texSamplePos.y = rect.top;
+	sprtieTextureParam.texSampleSize.x = (rect.right - rect.left);
+	sprtieTextureParam.texSampleSize.y = (rect.bottom - rect.top);
+
+	_sprtieTextureParam.push_back(sprtieTextureParam);
+
+	_maxFrameIndex += 1;
+}
+
+void AnimationSprite::AnimationUpdate()
+{
+	float dt = Time::main->GetDeltaTimeNow();
+	_currentTime += dt;
+
+	if (_currentTime >= _frameRate)
+	{
+		_currentTime -= _frameRate;
+
+		_currentFrameIndex++;
+
+		if (_currentFrameIndex >= _maxFrameIndex)
+		{
+			_currentFrameIndex = 0;
+		}
+	}
 }

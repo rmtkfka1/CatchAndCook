@@ -75,6 +75,48 @@ void UITestScene::Init()
 
 	}
 
+	{
+		{
+
+			shared_ptr<GameObject> gameObject = CreateGameObject(L"AnimationSprite");
+			auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"fire", L"Textures/fire.png");
+			auto& sprite = gameObject->AddComponent<AnimationSprite>();
+			sprite->SetPos(vec3(0, 0, 0.3f));
+			sprite->SetSize(vec2(500, 500));
+			sprite->SetFrameRate(0.001f);
+			sprite->SetClipingColor(vec4(0, 0, 0, 1.0f));		https://imagecolorpicker.com/
+
+			const float TextureSize = 512.0f;
+
+			for (int i = 0; i < 5; ++i)
+			{
+				float add = i * TextureSize / 5;
+				for (int j = 0; j < 5; ++j)
+				{
+
+					SpriteRect rect;
+					rect.left = 0 + j * TextureSize / 5;
+					rect.top = add;
+					rect.right = rect.left + TextureSize / 5;
+					rect.bottom = rect.top + TextureSize / 5;
+
+					sprite->PushUVCoord(rect);
+				}
+			}
+
+			shared_ptr<Material> material = make_shared<Material>();
+			material->SetShader(ResourceManager::main->Get<Shader>(L"SpriteShader"));
+			material->SetPass(RENDER_PASS::UI);
+			material->SetTexture("_BaseMap", texture);
+
+			meshRenderer->AddMaterials({ material });
+
+		};
+
+
+
+	}
 }
 
 void UITestScene::Update()

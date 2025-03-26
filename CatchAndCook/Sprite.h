@@ -117,3 +117,50 @@ private:
 	SprtieTextureParam _sprtieTextureParam;
 	BYTE* _sysMemory = nullptr;
 };
+
+
+/*****************************************************************
+*                                                                *
+*                         AnimationSprite                        *
+*                                                                *
+******************************************************************/
+
+class AnimationSprite : public Sprite
+{
+public:
+	AnimationSprite();
+	virtual ~AnimationSprite();
+
+private:
+	void SetUVCoord(const SpriteRect& rect) = delete;
+
+public:
+	void Init() override;
+	void Start() override;
+	void Update()override;
+	void Update2()override;
+	void Enable()override;
+	void Disable()override;
+	void RenderBegin() override;
+	void CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
+	void CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
+	void SetDestroy() override;
+	void Destroy() override;
+	void SetData(Material* material = nullptr) override;
+
+public:
+	void PushUVCoord(SpriteRect& rect);
+	void SetFrameRate(float frameRate) { _frameRate = frameRate; }
+
+private:
+	void AnimationUpdate();
+
+private:
+	vector<SprtieTextureParam> _sprtieTextureParam;
+
+private:
+	float _frameRate{ 1.0f }; //  애니메이션 진행 속도
+	float _currentTime{}; //현재 애니메이션 진행 시간
+	int32 _currentFrameIndex{}; // 현재 애니메이션 인덱스
+	int32 _maxFrameIndex = 0; // 최대 애니메이션 프레임
+};
