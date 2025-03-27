@@ -33,7 +33,6 @@ void SeaPlayerComponent::Update()
 
 	
 
-
 }
 
 void SeaPlayerComponent::Update2()

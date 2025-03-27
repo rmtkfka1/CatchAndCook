@@ -36,9 +36,13 @@ void Terrain::Start()
 	Component::Start();
                                  
     ShaderInfo info;
+    info.renderTargetCount = 3;
+
+    info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+    info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+    info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
     info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
- 
     #ifdef RECT_TERRAIN
     shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest",L"TerrainQuad.hlsl", GeoMetryProp,
     ShaderArg{{{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}}},info);
@@ -50,7 +54,7 @@ void Terrain::Start()
     
     _material->SetPropertyVector("fieldSize",Vector4(_fieldSize));
     _material->SetShader(shader);
-    _material->SetPass(RENDER_PASS::Forward);
+    _material->SetPass(RENDER_PASS::Deffered);
     auto meshRenderer = GetOwner()->GetComponent<MeshRenderer>();
 	meshRenderer->AddMaterials({_material});
 

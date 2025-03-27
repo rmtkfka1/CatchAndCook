@@ -206,13 +206,13 @@ void Model::Init(const wstring& path, VertexType vertexType)
 		{
 			//node->SetOriginalParent(FindNodeByName(parent->GetOriginalName()));
 
-			std::cout << "current : " << node->GetName() << "\n";
+		/*	std::cout << "current : " << node->GetName() << "\n";
 			std::cout << "  parent : " << parent->GetName() << "\n";
 			std::cout << "  origin parent : " << node->GetOriginalParent()->GetName() << "\n\n";
 			std::cout << "  origin : " << node->hasPosition << "\n";
 			std::cout << "  origin : " << node->hasScale << "\n";
 			std::cout << "  origin : " << node->hasPreRotation << "\n";
-			std::cout << "  origin : " << node->hasPostRotation << "\n";
+			std::cout << "  origin : " << node->hasPostRotation << "\n";*/
 		}
 	}
 
