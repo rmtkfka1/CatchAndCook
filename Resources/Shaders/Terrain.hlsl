@@ -6,7 +6,7 @@
 
 #define TessFactor 8
 #define PI 3.14159f
-#define DIST_MAX 1000.0f
+#define DIST_MAX 5000.0f
 #define DIST_MIN 0.1f
 
 
@@ -136,7 +136,7 @@ struct PatchConstOutput
 float CalculateTessLevel(float3 cameraWorldPos, float3 patchPos, float min, float max, float maxLv)
 {
    
-    float distance = length(patchPos - float3(cameraWorldPos.x, 0, cameraWorldPos.z));
+    float distance = length(patchPos - cameraWorldPos.xyz);
     
     float ratio = smoothstep(min, max, distance);
 
@@ -190,26 +190,43 @@ HS_OUT HS_Main(InputPatch<VS_OUT, 3> patch, uint vertexID : SV_OutputControlPoin
 DS_OUT DS_Main(OutputPatch<HS_OUT, 3> quad, PatchConstOutput patchConst, float3 location : SV_DomainLocation)
 {
     DS_OUT dout;
-    
+
     float3 pos = quad[0].pos * location.x + quad[1].pos * location.y + quad[2].pos * location.z;
     float2 uv = quad[0].uv * location.x + quad[1].uv * location.y + quad[2].uv * location.z;
     float2 uvTile = quad[0].uvTile * location.x + quad[1].uvTile * location.y + quad[2].uvTile * location.z;
-    float3 normal = quad[0].normal * location.x + quad[1].normal * location.y + quad[2].normal * location.z;
-    
-    pos.y += heightMap.SampleLevel(sampler_point, uv, 0).r * fieldSize.y;
+
+    float height = heightMap.SampleLevel(sampler_point, uv, 0).r;
+    pos.y += height * fieldSize.y;
+
+    float texelSize = 1.0f / 4096.0f; 
+    float heightL = heightMap.SampleLevel(sampler_point, uv + float2(-texelSize, 0), 0).r * fieldSize.y;
+    float heightR = heightMap.SampleLevel(sampler_point, uv + float2(texelSize, 0), 0).r * fieldSize.y;
+    float heightD = heightMap.SampleLevel(sampler_point, uv + float2(0, -texelSize), 0).r * fieldSize.y;
+    float heightU = heightMap.SampleLevel(sampler_point, uv + float2(0, texelSize), 0).r * fieldSize.y;
+
+    float3 dx = float3(2.0f * texelSize * fieldSize.x, heightR - heightL, 0.0f);
+    float3 dz = float3(0.0f, heightU - heightD, 2.0f * texelSize * fieldSize.z);
+    float3 normal = normalize(cross(dz, dx));
     
     dout.uv = uv;
-    dout.pos = mul(float4(pos, 1.0f), VPMatrix);
-    dout.normal = normal;
     dout.uvTile = uvTile;
-    
+    dout.normal = normal;
+    dout.pos = mul(float4(pos, 1.0f), VPMatrix);
+
     return dout;
 }
 
-
-float4 PS_Main(DS_OUT input) : SV_Target
+struct PS_OUT
 {
+    float4 position : SV_Target0;
+    float4 normal : SV_Target1;
+    float4 color : SV_Target2;
+};
 
+
+PS_OUT PS_Main(DS_OUT input) 
+{
+    PS_OUT output = (PS_OUT) 0;
     
     float4 finalColor = float4(0, 0, 0, 0);
     float4 blend;
@@ -270,12 +287,11 @@ float4 PS_Main(DS_OUT input) : SV_Target
         finalColor += _detailMap10.Sample(sampler_lerp, tileUV2) * mask2.g * blend.z;
         finalColor += _detailMap11.Sample(sampler_lerp, tileUV3) * mask3.g * blend.w;
     }
-    //blend = _blendMap0.Sample(sampler_lerp, input.uv);
-    //finalColor = _detailMap0.Sample(sampler_lerp, input.uvTile / tileST[0].xy + tileST[0].zw) * blend.x; //  / tileST[0].xy + tileST[0].zw
-
-    //float2 tileUV0 = input.uvTile / tileST[0].xy + tileST[0].zw;
-    //float4 mask0 = (textureActive[0].g == 0) ? 1 : (_maskMap0.Sample(sampler_lerp, tileUV0));
-    //finalColor = _detailMap0.Sample(sampler_lerp, tileUV0) * mask0.g * _blendMap0.Sample(sampler_lerp, input.uv).x;
+  
+    output.color = finalColor;
+    output.normal = float4(input.normal, 1.0f);
+    output.position = input.pos;
     
-    return finalColor;
+    return output;
+
 }
