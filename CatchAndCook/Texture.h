@@ -30,7 +30,7 @@ public:
 	Texture();
 	virtual ~Texture();
 
-	void Init(const wstring& path, TextureType type = TextureType::Texture2D, bool relativePath = true);
+	void Init(const wstring& path, TextureType type = TextureType::Texture2D, bool relativePath = true, bool createMip = false);
 	void Init(vector<wstring>& paths);
 
 

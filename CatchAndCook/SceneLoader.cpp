@@ -384,7 +384,7 @@ void SceneLoader::LinkComponent(json& jsonData)
 
             auto active = Vector4(0,0,0,0);
 
-            auto diffuse = ResourceManager::main->Load<Texture>(diffusePath, diffusePath, TextureType::Texture2D, false);
+            auto diffuse = ResourceManager::main->Load<Texture>(diffusePath, diffusePath, TextureType::Texture2D, false, true);
             material->SetTexture(std::format("_detailMap{0}",i), diffuse);
             if(layer.contains("normal"))
             {

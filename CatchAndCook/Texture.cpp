@@ -17,7 +17,7 @@ Texture::~Texture()
 
 }
 
-void Texture::Init(const wstring& path, TextureType type, bool relativePath)
+void Texture::Init(const wstring& path, TextureType type, bool relativePath, bool createMip)
 {
 
     wstring finalPath = path;
@@ -37,6 +37,22 @@ void Texture::Init(const wstring& path, TextureType type, bool relativePath)
     else // png, jpg, jpeg, bmp
         ::LoadFromWICFile(finalPath.c_str(), WIC_FLAGS_NONE, nullptr, _image);
 
+    if (!(ext == L".dds" || ext == L".DDS") && createMip)
+    {
+        ScratchImage mipmapImage;
+        //TEX_FILTER_LINEAR 보간
+        //TEX_FILTER_CUBIC 3차보간
+        //TEX_FILTER_FANT 가우시안 비등방성 보간
+        //TEX_FILTER_POINT
+        GenerateMipMaps(
+            _image.GetImages(), // 소스 이미지 배열
+            _image.GetImageCount(), // 소스 이미지 개수
+            _image.GetMetadata(), // 소스 이미지 메타데이터
+            TEX_FILTER_CUBIC, // 필터 옵션 (기본값 사용) // CUBIC
+            0, mipmapImage);
+        _image.Release();
+        _image = std::move(mipmapImage);
+    }
 
     HRESULT hr = ::CreateTexture(Core::main->GetDevice().Get(), _image.GetMetadata(), &_resource);
 
