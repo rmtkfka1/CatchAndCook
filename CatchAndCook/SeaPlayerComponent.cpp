@@ -31,13 +31,7 @@ void SeaPlayerComponent::Update()
 
 	Component::Update();
 
-	vec2 currentMousePos = Input::main->GetMousePosition();
-	vec2 delta = (currentMousePos - _prevMousePosition) * _speed;
-	_prevMousePosition = currentMousePos;
-
-	_camera->SetCameraRotation(delta.x, delta.y, 0);
-	_camera->SetCameraPos(vec3(GetOwner()->_transform->GetWorldPosition().x , GetOwner()->_transform->GetWorldPosition().y,
-		GetOwner()->_transform->GetWorldPosition().z-10.0f));
+	
 
 
 }
