@@ -9,6 +9,24 @@ enum class MoveType
 	Field, Water
 };
 
+struct ControlInfo
+{
+	float moveForce = 0.32f; // speed * drug 수치만큼은 나와야 MAX를 찍음.
+	float maxSpeed = 8.0f;
+	float drag = 0.04f;
+};
+
+const ControlInfo fieldInfo = {
+	1,
+	8,
+	0.1,
+};
+const ControlInfo waterInfo = {
+0.32,
+6,
+0.04,
+};
+
 class PlayerController : public Component
 {
 public:
@@ -40,11 +58,9 @@ private: // Camera Control
 	Quaternion currentLookWorldRotation;
 
 private:
-	float moveForce = 0.32f; // speed * drug 수치만큼은 나와야 MAX를 찍음.
-	float maxSpeed = 8.0f;
-	float drag = 0.04f;
 	Vector3 velocity = Vector3::Zero;
 
 	MoveType moveType = MoveType::Water;
+	ControlInfo moveInfo = waterInfo;
 };
 

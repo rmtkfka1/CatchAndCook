@@ -133,14 +133,11 @@ void PlayerController::Update()
 
 		if (targetLookWorldDirection != Vector3::Zero)
 		{
-			velocity += targetLookWorldDirection * moveForce;
-			if (velocity.Length() > maxSpeed) {
+			velocity += targetLookWorldDirection * moveInfo.moveForce * Time::main->GetDeltaTime() * 60;
+			if (velocity.Length() > moveInfo.maxSpeed) {
 				velocity.Normalize();
-				velocity *= maxSpeed;
+				velocity *= moveInfo.maxSpeed;
 			}
-
-
-			Vector3 currentPos = GetOwner()->_transform->GetWorldPosition();
 			GetOwner()->_transform->SetWorldRotation(currentLookWorldRotation);
 		}
 	}
@@ -160,10 +157,10 @@ void PlayerController::Update()
 		if (targetLookWorldDirection != Vector3::Zero)
 		{
 			//velocity += targetLookWorldDirection * std::max(velocity.Length() * moveForce, 0.1f) * Time::main->GetDeltaTime() * 60;
-			velocity += targetLookWorldDirection * moveForce * Time::main->GetDeltaTime() * 60;
-			if (velocity.Length() > maxSpeed) {
+			velocity += targetLookWorldDirection * moveInfo.moveForce * Time::main->GetDeltaTime() * 60;
+			if (velocity.Length() > moveInfo.maxSpeed) {
 				velocity.Normalize();
-				velocity *= maxSpeed;
+				velocity *= moveInfo.maxSpeed;
 			}
 
 			GetOwner()->_transform->SetWorldRotation(lookRotation);
@@ -188,7 +185,7 @@ void PlayerController::Update()
 
 	{
 		GetOwner()->_transform->SetWorldPosition(nextPos);
-		velocity = velocity * (1 - (drag * Time::main->GetDeltaTime() * 60));
+		velocity = velocity * (1 - (moveInfo.drag * Time::main->GetDeltaTime() * 60));
 	}
 	//between.x = 
 	 
