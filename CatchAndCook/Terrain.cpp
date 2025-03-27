@@ -16,12 +16,12 @@
 
 Terrain::Terrain()
 {
-	
+
 }
 
 Terrain::~Terrain()
 {
-   
+
 }
 
 void Terrain::Init()
@@ -33,80 +33,75 @@ void Terrain::Init()
 
 void Terrain::Start()
 {
-	Component::Start();
-                                 
-    ShaderInfo info;
-    info.renderTargetCount = 3;
+    Component::Start();
 
-    info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
-    info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
-    info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+    ShaderInfo info;
     info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
-    #ifdef RECT_TERRAIN
-    shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest",L"TerrainQuad.hlsl", GeoMetryProp,
-    ShaderArg{{{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}}},info);
-	#else
-    shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest",L"Terrain.hlsl",GeoMetryProp,
-    ShaderArg{{{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}}},info);
-    #endif
-    shader->SetInjector({BufferType::TerrainDetailsParam});
-    
-    _material->SetPropertyVector("fieldSize",Vector4(_fieldSize));
+#ifdef RECT_TERRAIN
+    shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest", L"TerrainQuad.hlsl", GeoMetryProp,
+        ShaderArg{ {{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}} }, info);
+#else
+    shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest", L"Terrain.hlsl", GeoMetryProp,
+        ShaderArg{ {{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}} }, info);
+#endif
+    shader->SetInjector({ BufferType::TerrainDetailsParam });
+
+    _material->SetPropertyVector("fieldSize", Vector4(_fieldSize));
     _material->SetShader(shader);
-    _material->SetPass(RENDER_PASS::Deffered);
+    _material->SetPass(RENDER_PASS::Forward);
     auto meshRenderer = GetOwner()->GetComponent<MeshRenderer>();
-	meshRenderer->AddMaterials({_material});
+    meshRenderer->AddMaterials({ _material });
 
-	if(auto renderer = GetOwner()->GetRenderer())
-	{
-		renderer->AddCbufferSetter(static_pointer_cast<Terrain>(shared_from_this()));
+    if (auto renderer = GetOwner()->GetRenderer())
+    {
+        renderer->AddCbufferSetter(static_pointer_cast<Terrain>(shared_from_this()));
 
-		if(_gridMesh == nullptr)
+        if (_gridMesh == nullptr)
             assert(false);
-		dynamic_pointer_cast<MeshRenderer>(renderer)->AddMesh(_gridMesh);
+        dynamic_pointer_cast<MeshRenderer>(renderer)->AddMesh(_gridMesh);
         renderer->SetCulling(false);
-	}
+    }
 
     _instanceBuffers.resize(_instances.size());
-	for(int i = 0; i<_instances.size();i++)
-	{
-		auto instanceBuffer = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::TransformInstanceParam)->Alloc();
-		memcpy(instanceBuffer->ptr,_instanceDatas[i].data(), _instanceDatas[i].size() * sizeof(Instance_Transform));
-		instanceBuffer->SetIndex(_instanceDatas[i].size(),sizeof(Instance_Transform));
-	    instanceBuffer->writeOffset = _instanceDatas[i].size() * sizeof(Instance_Transform);
-		_instanceBuffers[i] = instanceBuffer;
+    for (int i = 0; i < _instances.size(); i++)
+    {
+        auto instanceBuffer = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::TransformInstanceParam)->Alloc();
+        memcpy(instanceBuffer->ptr, _instanceDatas[i].data(), _instanceDatas[i].size() * sizeof(Instance_Transform));
+        instanceBuffer->SetIndex(_instanceDatas[i].size(), sizeof(Instance_Transform));
+        instanceBuffer->writeOffset = _instanceDatas[i].size() * sizeof(Instance_Transform);
+        _instanceBuffers[i] = instanceBuffer;
 
         std::vector<std::shared_ptr<MeshRenderer>> renderers;
         _instances[i].lock()->GetComponentsWithChilds<MeshRenderer>(renderers);
 
-		for(auto& renderer : renderers)
-		{
+        for (auto& renderer : renderers)
+        {
             renderer->SetCulling(false);
-			renderer->SetInstanceBuffer(instanceBuffer);
+            renderer->SetInstanceBuffer(instanceBuffer);
             renderer->SetInstancing(false);
             for (auto& material : renderer->GetMaterials())
             {
                 material->SetShader(ResourceManager::main->Get<Shader>(L"DefaultForward_Instanced"));
                 material->SetPass(RENDER_PASS::Forward);
             }
-		}
-	}
+        }
+    }
 
-	TerrainManager::main->PushTerrain(static_pointer_cast<Terrain>(shared_from_this()));
+    TerrainManager::main->PushTerrain(static_pointer_cast<Terrain>(shared_from_this()));
 
 }
 
 void Terrain::Update()
 {
-    Vector3 cameraPos = Vector3(CameraManager::main->GetActiveCamera()->GetCameraPos().x,0,CameraManager::main->GetActiveCamera()->GetCameraPos().z);
-    
-    for(int i=0;i<_instanceDatas.size();++i)
+    Vector3 cameraPos = Vector3(CameraManager::main->GetActiveCamera()->GetCameraPos().x, 0, CameraManager::main->GetActiveCamera()->GetCameraPos().z);
+
+    for (int i = 0; i < _instanceDatas.size(); ++i)
     {
         _instanceBuffers[i]->Clear();
-        for(int j=0;j<_instanceDatas[i].size();j++)
+        for (int j = 0; j < _instanceDatas[i].size(); j++)
         {
-            if(Vector3::Distance(Vector3(_instanceDatas[i][j].worldPosition.x, 0,_instanceDatas[i][j].worldPosition.z), cameraPos) < 10)
+            if (Vector3::Distance(Vector3(_instanceDatas[i][j].worldPosition.x, 0, _instanceDatas[i][j].worldPosition.z), cameraPos) < 10)
             {
                 //Todo : 작업해야함.
                 _instanceBuffers[i]->AddData(_instanceDatas[i][j]);
@@ -135,20 +130,20 @@ void Terrain::RenderBegin()
 
 }
 
-void Terrain::CollisionBegin(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other)
+void Terrain::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 
 }
 
 void Terrain::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
-	Component::CollisionEnd(collider,other);
+    Component::CollisionEnd(collider, other);
 
 }
 
 bool Terrain::IsExecuteAble()
 {
-	return Component::IsExecuteAble();
+    return Component::IsExecuteAble();
 }
 
 void Terrain::SetDestroy()
@@ -158,57 +153,57 @@ void Terrain::SetDestroy()
 
 void Terrain::Destroy()
 {
-	if(auto renderer =GetOwner()->GetRenderer())
-	{
+    if (auto renderer = GetOwner()->GetRenderer())
+    {
         renderer->RemoveCbufferSetter(static_pointer_cast<Terrain>(shared_from_this()));
-	}
+    }
     TerrainManager::main->RemoveTerrain(GetCast<Terrain>());
 }
 
 void Terrain::SetData(Material* material)
 {
-    material->SetTexture("heightMap",_heightTexture);
+    material->SetTexture("heightMap", _heightTexture);
 }
 
 
-void Terrain::SetHeightMap(const std::wstring &rawPath,const std::wstring &pngPath, const vec2& rawSize, const vec3& fieldSize)
+void Terrain::SetHeightMap(const std::wstring& rawPath, const std::wstring& pngPath, const vec2& rawSize, const vec3& fieldSize)
 {
     _heightTexture = ResourceManager::main->Load<Texture>(pngPath, pngPath, TextureType::Texture2D, false);
 
     _heightTextureSize = vec2(static_cast<int>(_heightTexture->GetResource()->GetDesc().Width),
-								static_cast<int>(_heightTexture->GetResource()->GetDesc().Height));
-   
+        static_cast<int>(_heightTexture->GetResource()->GetDesc().Height));
+
     _heightRawSize = rawSize;
     _fieldSize = fieldSize;
 
-	cout << _fieldSize.x << " " << _fieldSize.y << " " << _fieldSize.z << endl;
+    cout << _fieldSize.x << " " << _fieldSize.y << " " << _fieldSize.z << endl;
 
-    #ifdef RECT_TERRAIN
-    _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(_fieldSize.x,_fieldSize.z,CellsPerPatch,CellsPerPatch);
+#ifdef RECT_TERRAIN
+    _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(_fieldSize.x, _fieldSize.z, CellsPerPatch, CellsPerPatch);
     _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
-	#else
+#else
 
-	_gridMesh = GeoMetryHelper::LoadGripMesh(_fieldSize.x,_fieldSize.z,CellsPerPatch,CellsPerPatch);
+    _gridMesh = GeoMetryHelper::LoadGripMesh(_fieldSize.x, _fieldSize.z, CellsPerPatch, CellsPerPatch);
     _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
-    #endif // RECT_TERRAIN
+#endif // RECT_TERRAIN
 
-    
-	LoadTerrain(rawPath);
+
+    LoadTerrain(rawPath);
 }
 
 float Terrain::GetHeight(const Vector2& heightMapPosition) const
 {
     const float fx = heightMapPosition.x;
     const float fz = heightMapPosition.y;
-    if(fx < 0 || fx > _heightRawSize.x || fz < 0 || fz > _heightRawSize.y)
+    if (fx < 0 || fx > _heightRawSize.x || fz < 0 || fz > _heightRawSize.y)
         return 0;
 
     const int ix = static_cast<int>(fx);
     const int iz = static_cast<int>(fz);
 
     // 경계를 넘어가는 경우 방지
-    int ix1 = std::min(ix + 1,static_cast<int>(_heightRawSize.x - 1));
-    int iz1 = std::min(iz + 1,static_cast<int>(_heightRawSize.y - 1));
+    int ix1 = std::min(ix + 1, static_cast<int>(_heightRawSize.x - 1));
+    int iz1 = std::min(iz + 1, static_cast<int>(_heightRawSize.y - 1));
 
     float hx0z0 = _heightRawMapData[iz][ix];
     float hx1z0 = _heightRawMapData[iz][ix1];
@@ -243,11 +238,11 @@ float Terrain::GetWorldHeight(const Vector3& worldPosition)
     GetOwner()->_transform->GetLocalToWorldMatrix_BottomUp(matrix);
     matrix.Invert(invMatrix);
     Vector3 localPosition;
-    Vector3::Transform(worldPosition, invMatrix,localPosition);
+    Vector3::Transform(worldPosition, invMatrix, localPosition);
     float tempX = localPosition.x;
     float tempZ = localPosition.z;
-    float finalH = GetHeight(Vector2((tempX / _fieldSize.x) * _heightRawSize.x,(tempZ / _fieldSize.z) * _heightRawSize.y));
-    
+    float finalH = GetHeight(Vector2((tempX / _fieldSize.x) * _heightRawSize.x, (tempZ / _fieldSize.z) * _heightRawSize.y));
+
     return matrix.Translation().y + finalH;
 }
 
@@ -257,7 +252,7 @@ bool Terrain::RayCast(const Ray& ray, const float& dis, RayHit& hit)
     vec3 dir = ray.direction;
     dir.Normalize();
 
-	float prevH = offsetPos.y;
+    float prevH = offsetPos.y;
     float between = 1.0f;
     float reusltDis = 0;
     float reusltHeight = 0;
@@ -273,8 +268,8 @@ bool Terrain::RayCast(const Ray& ray, const float& dis, RayHit& hit)
             float left = reusltDis - between;
             float right = reusltDis;
 
-        	float leftH = prevH;
-        	float rightH = currentH;
+            float leftH = prevH;
+            float rightH = currentH;
             isHit = true;
 
             float middle = 0;
@@ -285,7 +280,7 @@ bool Terrain::RayCast(const Ray& ray, const float& dis, RayHit& hit)
                 middle = (left + right) / 2;
                 currentPos = offsetPos + dir * middle;
                 middleH = currentPos.y - GetLocalHeight(currentPos);
-                if(middleH * leftH < 0)
+                if (middleH * leftH < 0)
                 {
                     rightH = middleH;
                     right = middle;
@@ -303,7 +298,7 @@ bool Terrain::RayCast(const Ray& ray, const float& dis, RayHit& hit)
 
         prevH = currentH;
     }
-    if(isHit)
+    if (isHit)
     {
         Vector3 localPos = offsetPos + dir * reusltDis;
         localPos.y = reusltHeight;
@@ -332,27 +327,27 @@ bool Terrain::RayCast(const Ray& ray, const float& dis, RayHit& hit)
 }
 
 
-void Terrain::LoadTerrain(const std::wstring &rawData)
+void Terrain::LoadTerrain(const std::wstring& rawData)
 {
-    _heightRawMapData.resize(_heightRawSize.y,vector(_heightRawSize.x, 0.0f)); 
+    _heightRawMapData.resize(_heightRawSize.y, vector(_heightRawSize.x, 0.0f));
 
-    std::ifstream file(rawData,std::ios::binary);
-    if(!file) {
+    std::ifstream file(rawData, std::ios::binary);
+    if (!file) {
         std::wcerr << L"Failed to open raw file: " << rawData << std::endl;
         return;
     }
 
     std::vector<uint16_t> tempRow(static_cast<int>(_heightRawSize.x));
 
-    for(int z = 0; z < _heightRawSize.y; ++z)
+    for (int z = 0; z < _heightRawSize.y; ++z)
     {
-        if(!file.read(reinterpret_cast<char*>(tempRow.data()),_heightRawSize.x * sizeof(uint16_t)))
+        if (!file.read(reinterpret_cast<char*>(tempRow.data()), _heightRawSize.x * sizeof(uint16_t)))
         {
             std::wcerr << L"Failed to read raw data from file: " << rawData << std::endl;
             return;
         }
 
-        for(int x = 0; x < _heightRawSize.x; ++x) {
+        for (int x = 0; x < _heightRawSize.x; ++x) {
             _heightRawMapData[z][x] = static_cast<float>(tempRow[x]) / 65535.0f * _fieldSize.y;
         }
     }
@@ -371,13 +366,13 @@ void Terrain::Smooth()
 {
     vector<vector<float>> temp;
 
-	temp = _heightRawMapData;
+    temp = _heightRawMapData;
 
-    for(uint32 i = 0; i < _heightRawSize.y; ++i)
+    for (uint32 i = 0; i < _heightRawSize.y; ++i)
     {
-        for(uint32 j = 0; j <_heightRawSize.x; ++j)
+        for (uint32 j = 0; j < _heightRawSize.x; ++j)
         {
-            temp[i][j] = Average(i,j);
+            temp[i][j] = Average(i, j);
         }
     }
 
@@ -385,16 +380,16 @@ void Terrain::Smooth()
 }
 
 
-float Terrain::Average(int32 i,int32 j)
+float Terrain::Average(int32 i, int32 j)
 {
     float avg = 0.0f;
     float num = 0.0f;
 
-    for(int32 z = i - 1; z <= i + 1; ++z)
+    for (int32 z = i - 1; z <= i + 1; ++z)
     {
-        for(int32 x = j - 1; x <= j + 1; ++x)
+        for (int32 x = j - 1; x <= j + 1; ++x)
         {
-            if(InBounds(z,x))
+            if (InBounds(z, x))
             {
                 avg += _heightRawMapData[z][x];
                 num += 1.0f;
