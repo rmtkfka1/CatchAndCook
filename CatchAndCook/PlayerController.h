@@ -4,6 +4,11 @@
 
 class CameraComponent;
 
+enum class MoveType
+{
+	Field, Water
+};
+
 class PlayerController : public Component
 {
 public:
@@ -25,12 +30,21 @@ public:
 
 
 private: // Camera Control
+	Vector3 _targetOffset;
 	Vector3 _currentOffset;
-	Vector2 _prevMousePosition;
+
 	Vector3 _targetEuler;
 	Vector3 _currentEuler;
 
 	Vector3 targetLookWorldDirection;
 	Quaternion currentLookWorldRotation;
+
+private:
+	float moveForce = 0.32f; // speed * drug 수치만큼은 나와야 MAX를 찍음.
+	float maxSpeed = 8.0f;
+	float drag = 0.04f;
+	Vector3 velocity = Vector3::Zero;
+
+	MoveType moveType = MoveType::Water;
 };
 
