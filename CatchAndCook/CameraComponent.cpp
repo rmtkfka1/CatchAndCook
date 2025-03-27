@@ -32,6 +32,7 @@ void CameraComponent::Init()
 void CameraComponent::Start()
 {
 	Component::Start();
+	Calculate();
 }
 void CameraComponent::Update()
 {

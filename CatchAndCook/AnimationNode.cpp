@@ -280,12 +280,23 @@ Matrix AnimationNode::CalculateTransformMatrix(const std::shared_ptr<ModelNode>&
         auto worldInter = _animModelNode->_globalTPoseQuat * interpolatedRotation;
         auto localInter = _originModelNode->_globalInvertTPoseQuat * worldInter;
 
-        auto worldInter2 = _originModelNode->_globalTPoseQuat * interpolatedRotation;
+        //auto worldInter2 = _originModelNode->_globalTPoseQuat * interpolatedRotation;
+        auto worldInter2 = interpolatedRotation;
 
-        interpolatedRotation = Quaternion::Slerp(d, worldInter2 * d, 0.2f);
-        auto e = interpolatedRotation;
+        //interpolatedRotation = Quaternion::Slerp(d, worldInter2 * d, 0.2f);
+        auto newQ = Quaternion::CreateFromYawPitchRoll(interpolatedRotation.ToEuler() + _originModelNode->GetLocalPreRotation().ToEuler());
+        auto e = interpolatedRotation * _originModelNode->GetLocalPreRotation();
+        if (_originModelNode->GetOriginalName() == "LeftLeg" && false)
+        {
+            std::cout << to_string(_originModelNode->GetLocalPreRotation()) << "\n";
+            std::cout << to_string(_animModelNode->GetLocalPreRotation()) << "\n";
+            std::cout << to_string(interpolatedRotation * _originModelNode->GetLocalPreRotation()) << "\n";
+            std::cout << to_string(interpolatedRotation * _animModelNode->GetLocalPreRotation()) << "\n\n";
 
-
+            std::cout << to_string(interpolatedRotation.ToEuler() * R2D) << "\n";
+            std::cout << to_string(_originModelNode->GetLocalPreRotation().ToEuler() * R2D) << "\n";
+            std::cout << to_string(_animModelNode->GetLocalPreRotation().ToEuler() * R2D) << "\n";
+        }
 
         a = Vector3::Transform(Vector3::Zero, Matrix::CreateFromQuaternion(worldInter2) * _originModelNode->_globalTPose);
 
@@ -298,7 +309,7 @@ Matrix AnimationNode::CalculateTransformMatrix(const std::shared_ptr<ModelNode>&
             Vector3::Transform(Vector3::Up, worldInter2), 0.1, Vector4(0, 1, 0, 1));
         
         return Matrix::CreateScale(_originModelNode->GetLocalScale()) *
-            Matrix::CreateFromQuaternion(e) * //
+            Matrix::CreateFromQuaternion(interpolatedRotation * _originModelNode->GetLocalPreRotation()) * //
             Matrix::CreateTranslation(_originModelNode->GetLocalPosition());
         //interpolatedRotation
     }

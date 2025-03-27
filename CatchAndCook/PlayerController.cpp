@@ -30,6 +30,7 @@ void PlayerController::Start()
 	Component::Start();
 	camera = FindObjectByType<CameraComponent>();
 
+	_currentOffset = GetOwner()->_transform->GetWorldPosition() + Vector3::Up * 1.1f;
 }
 
 void PlayerController::Update()
@@ -40,7 +41,9 @@ void PlayerController::Update()
 	auto currentMousePosition = Input::main->GetMousePosition();
 
 	auto _targetOffset = GetOwner()->_transform->GetWorldPosition() + Vector3::Up * 1.1f;
-	_currentOffset = Vector3::Lerp(_currentOffset, _targetOffset, Time::main->GetDeltaTime() * 30);
+	_currentOffset = Vector3::Lerp(_currentOffset, _targetOffset, 
+		Time::main->GetDeltaTime() * 60
+	* std::min(Vector3::Distance(_currentOffset, _targetOffset), 1.0f));
 	Vector2 between = currentMousePosition - Input::main->GetMousePrevPosition();
 
 	//_targetRotation = cameraTransform->GetWorldRotation();
@@ -52,7 +55,7 @@ void PlayerController::Update()
 	Vector3 calculateEuler = betweenEuler + _targetEuler;
 
 	calculateEuler.z = 0;
-	if (calculateEuler.x * R2D <= -70) calculateEuler.x = -70 * D2R;
+	if (calculateEuler.x * R2D <= -80) calculateEuler.x = -80 * D2R;
 	if (calculateEuler.x * R2D >= 85) calculateEuler.x = 85 * D2R;
 
 	_targetEuler = calculateEuler;
@@ -66,7 +69,8 @@ void PlayerController::Update()
 
 	float distance = 3.6;
 	if (auto hit = ColliderManager::main->RayCast({ _currentOffset, -_currentDirection }, distance * 2))
-		distance = std::min(hit.distance, distance) - 0.05f;
+		if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
+			distance = std::min(hit.distance, distance) - 0.05f;
 
 
 	Vector3 cameraNextPosition = _currentOffset - _currentDirection * distance;
@@ -102,6 +106,12 @@ void PlayerController::Update()
 		GetOwner()->_transform->SetWorldPosition(nextPos);
 	}
 
+
+	{
+
+
+
+	}
 	//between.x = 
 	 
 	//GetOwner()->_transform->

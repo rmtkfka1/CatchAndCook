@@ -46,7 +46,6 @@ void Input::Update()
 
             SetCursor(mousePos);
         }
-        std::cout << centerToPosDistance << "\n";
     }
 }
 
