@@ -192,6 +192,7 @@ DebugCamera::~DebugCamera()
 
 void DebugCamera::Update()
 {
+	Camera::Update();
 }
 
 /*************************
