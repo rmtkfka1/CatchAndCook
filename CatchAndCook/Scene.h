@@ -18,7 +18,7 @@ struct GlobalParam
 class Scene : public IGuid
 {
 
-private:
+public:
 	void AddGameObject(const std::shared_ptr<GameObject>& gameObject);
 	bool RemoveGameObject(const std::shared_ptr<GameObject>& gameObject);
 	bool RemoveAtGameObject(int index);

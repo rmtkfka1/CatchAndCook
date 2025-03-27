@@ -44,7 +44,6 @@ void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
             normalizedY <= (sprite->_ndcWorldPos.y + sprite->_ndcSize.y))
         {
             _dragSprite = sprite;
-
         }
     }
 
@@ -57,11 +56,9 @@ void ActionFunc::OnDragAction(KeyCode key, Sprite* sprite)
         delta.x = delta.x * (_dragSprite->_firstWindowSize.x / WINDOW_WIDTH);
         delta.y = delta.y * (_dragSprite->_firstWindowSize.y / WINDOW_HEIGHT);
 
-        auto& childSprite = _dragSprite->GetOwner()->GetComponentsWithChilds<Sprite>();
-
-		_dragSprite->SetLocalPos(vec3(_dragSprite->_screenLocalPos.x + delta.x,
+        _dragSprite->SetLocalPos(vec3(_dragSprite->_screenLocalPos.x + delta.x,
 			_dragSprite->_screenLocalPos.y + delta.y,
-			_dragSprite->_spriteWorldParam.ndcPos.z));
+			0.1f));
 
         _lastMousePos = pos; 
     }

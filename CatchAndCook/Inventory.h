@@ -5,13 +5,13 @@
 
 class Sprite;
 
-class Inventory : public Component, public RenderCBufferSetter
+class Inventory : public Sprite
 {
 public:
 	Inventory();
 	virtual ~Inventory();
 
-private:
+public:
 	void Init() override;
 	void Start() override;
 	void Update()override;
@@ -26,12 +26,15 @@ private:
 	void SetData(Material* material = nullptr) override;
 
 public:
-	void SetSprite(const std::shared_ptr<Sprite>& sprite) { _InventorySprite = sprite; }
-	void SetPos(const vec3& pos);
-	void SetSize(const vec2& size);
+	void AddItem(const std::shared_ptr<Texture>& itemTexture);
 
 private:
-	shared_ptr<Sprite> _InventorySprite;
+	vec2 _startPos = { 35,60 };
+	vec2 _cellsize = { 35,35 };
+	int32 _itemCount = 0;
+
+private:
+	vector<shared_ptr<GameObject>> _itemList;
 
 };
 
