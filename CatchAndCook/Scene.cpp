@@ -377,16 +377,21 @@ bool Scene::RemoveAtGameObject(int index)
 
 void Scene::CameraControll()
 {
-	static CameraType type = CameraType::ThirdPersonCamera;
+	static CameraType type = CameraType::DebugCamera;
 
 	if (Input::main->GetKeyDown(KeyCode::F1))
 	{
-		type = CameraType::ThirdPersonCamera;
+		type = CameraType::DebugCamera;
 	}
 
     if (Input::main->GetKeyDown(KeyCode::F2))
     {
 		type = CameraType::ComponentCamera;
+    }
+
+    if (Input::main->GetKeyDown(KeyCode::F3))
+    {
+        type = CameraType::ThirdPersonCamera;
     }
 
 	CameraManager::main->Setting(type);

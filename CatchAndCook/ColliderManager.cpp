@@ -299,6 +299,7 @@ RayHit ColliderManager::RayCast(const Ray& ray, const float& dis) const
 			}
 		}
 	}
+
 	for (auto& terrain : TerrainManager::main->_terrains)
 	{
 		RayHit currentHit;

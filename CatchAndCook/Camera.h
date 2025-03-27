@@ -5,7 +5,8 @@ class Collider;
 
 enum class CameraType
 {
-    ThirdPersonCamera,
+    DebugCamera,
+	ThirdPersonCamera,
     UiCamera,
     ComponentCamera
 };
@@ -71,7 +72,6 @@ public:
     Vector3 GetScreenToWorldPosition(Vector2 mousePosition);
     Vector2 GetWorldToScreenPosition(Vector3 worldPosition);
     void SetCameraRotation(const Quaternion& quat);
-
     void SetCameraRotation(float yaw, float pitch, float roll);
     CameraParams& GetCameraParam() { return _params; }
     CameraType& GetCameraType() { return _type; }
@@ -102,7 +102,7 @@ protected:
 
     CameraProjectionMode _projmode = CameraProjectionMode::Perspective;
     CameraParams _params;
-    CameraType _type =CameraType::ThirdPersonCamera;
+    CameraType _type =CameraType::DebugCamera;
     CBufferContainer* _cbufferContainer;
     BoundingFrustum _boundingFrsutum;
 };
@@ -113,6 +113,17 @@ protected:
 *     ThirdPersonCamera  *
 *                        *
 **************************/
+
+class DebugCamera : public Camera
+{
+public:
+    DebugCamera();
+    virtual ~DebugCamera();
+
+    virtual void Update();
+
+private:
+};
 
 class ThirdPersonCamera : public Camera
 {

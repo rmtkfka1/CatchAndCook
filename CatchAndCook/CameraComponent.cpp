@@ -23,7 +23,6 @@ bool CameraComponent::IsExecuteAble()
 void CameraComponent::Init()
 {
 	Component::Init();
-
 	auto camera = std::static_pointer_cast<Camera>(GetCast<CameraComponent>());
 	CameraManager::main->AddCamera(_type, camera);
 	CameraManager::main->SetActiveCamera(_type);
@@ -35,7 +34,7 @@ void CameraComponent::Start()
 }
 void CameraComponent::Update()
 {
-	if (CameraManager::main->GetCameraType() == CameraType::ThirdPersonCamera)
+	if (CameraManager::main->GetCameraType() == CameraType::DebugCamera)
 	{
 		return;
 	}
@@ -46,7 +45,7 @@ void CameraComponent::Update()
 
 void CameraComponent::Update2()
 {
-	if (CameraManager::main->GetCameraType() == CameraType::ThirdPersonCamera)
+	if (CameraManager::main->GetCameraType() == CameraType::DebugCamera)
 		return;
 
 	Component::Update2();

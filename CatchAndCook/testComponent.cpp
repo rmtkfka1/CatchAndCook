@@ -35,7 +35,7 @@ void testComponent::Update()
 
 	std::shared_ptr<Transform> transform =GetOwner()->_transform;
 
-	auto& camera= CameraManager::main->GetCamera(CameraType::ThirdPersonCamera);
+	auto& camera= CameraManager::main->GetCamera(CameraType::DebugCamera);
 
 	if(transform==nullptr)
 		return;

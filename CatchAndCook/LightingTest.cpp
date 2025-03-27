@@ -25,42 +25,60 @@
 #include "Model.h"
 #include "ModelMesh.h"
 #include "Collider.h"
-
+#include "SeaPlayerComponent.h"
 void LightingTest::Init()
 {
 	Scene::Init();
 
 
-	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/Sea_Resources.json");
-	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
-	sceneLoader->Load(GetCast<Scene>());
-
-	auto& a = ResourceManager::main->Load<Model>(L"kind", L"../Resources/Models/PaperPlane.obj", VertexType::Vertex_Skinned);
-	cout << a->_modelMeshList.size() << endl;
 	shared_ptr<Material> materialO = make_shared<Material>();
-	shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
-	//shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
+	//shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
+	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
 
-	for (int i = 0; i < 50; ++i)
 	{
-		{
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"cubemap", L"cubemap.hlsl", GeoMetryProp,
+			ShaderArg{}, info);
+
+		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"cubemap", L"Textures/cubemap/output.dds", TextureType::CubeMap);
+		shared_ptr<Material> material = make_shared<Material>();
+
+		shared_ptr<GameObject> gameObject = CreateGameObject(L"cubeMap");
+
+		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+
+
+		material = make_shared<Material>();
+		material->SetShader(shader);
+		material->SetPass(RENDER_PASS::Forward);
+		material->SetTexture("g_tex_0", texture);
+
+		meshRenderer->AddMaterials({ material });
+		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
+		meshRenderer->SetCulling(false);
+	}
+
+	for (int i = 0; i < 1; ++i)
+	{
+		
 			shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
 
 			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
 
 			shared_ptr<GameObject> root = CreateGameObject(L"root_test");
-			root->AddComponent<BoidsMove>();
-			
 
 			auto meshRenderer = root->AddComponent<MeshRenderer>();
 			auto& collider = root->AddComponent<Collider>();
+			root->AddComponent<SeaPlayerComponent>();
+
 			collider->SetBoundingBox(vec3(0, 0, 0), vec3(1.0f, 1.0f, 1.0f));
 
-			root->_transform->SetLocalScale(vec3(5.0f, 5.0f, 5.0f));
-			root->_transform->SetLocalPosition(vec3(30 * i, 0, 0));
-
-			if (i == 1)
-				root->_transform->SetLocalRotation(vec3(0, 45.0f, 0) * R2D);
+			root->SetType(GameObjectType::Dynamic);
+			root->AddTag(GameObjectTag::Player);
 
 			materialO->SetShader(shader);
 			materialO->SetPass(RENDER_PASS::Deffered);
@@ -68,8 +86,10 @@ void LightingTest::Init()
 
 			meshRenderer->AddMaterials({ materialO });
 			meshRenderer->AddMesh(mesh);
-		}
-	}
+		
+	};
+
+
 
 
 }

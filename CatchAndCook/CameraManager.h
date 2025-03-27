@@ -9,7 +9,7 @@ public:
 
 	static unique_ptr<CameraManager> main;
 
-	shared_ptr<Camera>& GetCamera(CameraType type);
+	shared_ptr<Camera> GetCamera(CameraType type);
 
 	void AddCamera(CameraType type, shared_ptr<Camera> camera) { _cameras[type] = camera; }
 	void Setting(CameraType type);

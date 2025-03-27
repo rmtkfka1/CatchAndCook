@@ -1,16 +1,14 @@
 ﻿#pragma once
+
 #include "Component.h"
 
+class Camera;
 
-class CameraComponent;
-
-class PlayerController : public Component
+class SeaPlayerComponent : public Component
 {
 public:
-	std::weak_ptr<CameraComponent> camera;
-
-	~PlayerController() override;
-	bool IsExecuteAble() override;
+	SeaPlayerComponent();
+	virtual ~SeaPlayerComponent() override;
 	void Init() override;
 	void Start() override;
 	void Update() override;
@@ -18,14 +16,15 @@ public:
 	void Enable() override;
 	void Disable() override;
 	void RenderBegin() override;
+
 	void CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
 	void CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
-	void ChangeParent(const std::shared_ptr<GameObject>& prev, const std::shared_ptr<GameObject>& current) override;
-	void SetDestroy() override;
-	void Destroy() override;
 
+private:
+	float _speed = 10.0f;
+private:
+	shared_ptr<Camera> _camera;
 
-private: // Camera Control
-	Vector2 _prevMousePosition;
+	vec2 _prevMousePosition;
 };
 

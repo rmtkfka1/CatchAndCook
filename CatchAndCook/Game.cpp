@@ -66,11 +66,12 @@ void Game::Init(HWND hwnd)
 	Gizmo::main = std::make_unique<Gizmo>();
 	Gizmo::main->Init();
 
-	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, static_pointer_cast<Camera>(make_shared<ThirdPersonCamera>()));
+	CameraManager::main->AddCamera(CameraType::DebugCamera, static_pointer_cast<Camera>(make_shared<ThirdPersonCamera>()));
 	CameraManager::main->AddCamera(CameraType::UiCamera, make_shared<UiCamera>());
-	CameraManager::main->GetCamera(CameraType::ThirdPersonCamera)->SetCameraPos(vec3(0, 0, -50.0f));
+	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, make_shared<ThirdPersonCamera>());
+	CameraManager::main->GetCamera(CameraType::DebugCamera)->SetCameraPos(vec3(0, 0, -50.0f));
 
-	CameraManager::main->SetActiveCamera(CameraType::ThirdPersonCamera);
+	CameraManager::main->SetActiveCamera(CameraType::DebugCamera);
 
 	LightManager::main = make_unique<LightManager>();
 	InstancingManager::main = make_unique<InstancingManager>();
@@ -94,7 +95,7 @@ void Game::Init(HWND hwnd)
 		LightManager::main->PushLight(light);
 	}
 
-	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
+	auto scene = SceneManager::main->AddScene(SceneType::LightingTest);
 }
 
 void Game::PrevUpdate()
@@ -217,12 +218,10 @@ void Game::Release()
 
 void Game::CameraUpdate()
 {
-	shared_ptr<Camera> camera = CameraManager::main->GetCamera(CameraType::ThirdPersonCamera);
+	shared_ptr<Camera> camera = CameraManager::main->GetCamera(CameraType::DebugCamera);
 
 	const float speed = 30.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;
-
-	//cout << camera->GetCameraPos().y << endl;
 
 	if (Input::main->GetKey(KeyCode::W))
 	{

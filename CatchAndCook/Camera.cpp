@@ -40,6 +40,7 @@ void Camera::SetCameraRotation(const Quaternion& quat)
     vec3 orginUp = vec3(0, 1.0f, 0);
     vec3 orginRight = vec3(1.0f, 0, 0);
     Vector3 eu = quat.ToEuler();
+
     _yaw += eu.y;
     _pitch += eu.x;
     _roll += eu.z;
@@ -176,6 +177,25 @@ bool Camera::IsInFrustum(BoundingBox& box)
 
 /*************************
 *                        *
+*     DebugCamera        *
+*                        *
+**************************/
+
+DebugCamera::DebugCamera()
+{
+    _type = CameraType::DebugCamera;
+}
+
+DebugCamera::~DebugCamera()
+{
+}
+
+void DebugCamera::Update()
+{
+}
+
+/*************************
+*                        *
 *     ThirdPersonCamera  *
 *                        *
 **************************/
@@ -215,3 +235,5 @@ void UiCamera::Update()
 {
     Camera::Update();
 }
+
+

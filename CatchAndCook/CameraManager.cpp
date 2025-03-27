@@ -3,12 +3,10 @@
 #include "Camera.h"
 unique_ptr<CameraManager> CameraManager::main = nullptr;
 
-shared_ptr<Camera>& CameraManager::GetCamera(CameraType type)
+shared_ptr<Camera> CameraManager::GetCamera(CameraType type)
 {
 	return _cameras[type];
 }
-
-
 
 void CameraManager::Setting(CameraType type)
 {

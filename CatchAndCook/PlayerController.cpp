@@ -34,7 +34,7 @@ void PlayerController::Start()
 
 void PlayerController::Update()
 {
-	if (CameraManager::main->GetCameraType() == CameraType::ThirdPersonCamera)
+	if (CameraManager::main->GetCameraType() == CameraType::DebugCamera)
 	{
 		return;
 	}
@@ -56,7 +56,6 @@ void PlayerController::Update()
 	if (finalEuler.x * R2D <= -70) finalEuler.x = -70 * D2R;
 	if (finalEuler.x * R2D >= 85) finalEuler.x = 85 * D2R;
 
-
 	Quaternion finalRotation = Quaternion::CreateFromYawPitchRoll(finalEuler);
 
 	Vector3 lookDirection = Vector3::Transform(Vector3::Forward, finalRotation);
@@ -66,12 +65,8 @@ void PlayerController::Update()
 	if (auto hit = ColliderManager::main->RayCast({ offset, -lookDirection }, distance))
 		distance = hit.distance * 0.9f;
 
-
-	
-
 	cameraTransform->SetWorldPosition(offset - lookDirection * distance);
 	cameraTransform->LookUp(lookDirection, Vector3::Up);
-
 
 	Quaternion fieldRotation = Quaternion::CreateFromYawPitchRoll(Vector3(0, finalEuler.y, 0));
 
