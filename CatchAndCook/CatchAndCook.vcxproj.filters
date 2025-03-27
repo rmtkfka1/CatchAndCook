@@ -323,6 +323,10 @@
     <ClCompile Include="Sprite.cpp">
       <Filter>04.Resource\Sprite</Filter>
     </ClCompile>
+    <ClCompile Include="Inventory.cpp" />
+    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="SeaPlayerComponent.cpp" />
+    <ClCompile Include="WInMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -606,6 +610,10 @@
     <ClInclude Include="Sprite.h">
       <Filter>04.Resource\Sprite</Filter>
     </ClInclude>
+    <ClInclude Include="Inventory.h" />
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="SeaPlayerComponent.h" />
+    <ClInclude Include="WInMain.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
