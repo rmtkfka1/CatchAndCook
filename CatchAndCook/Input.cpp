@@ -35,14 +35,19 @@ void Input::Update()
     if (IsMouseLock())
     {
         Vector2 windowCenter = Vector2(WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f);
-        float limitDistance = std::min(windowCenter.x, windowCenter.y) / 4;
+        float limitDistance = std::min(windowCenter.x, windowCenter.y) / 2;
         Vector2 centerToPosDirection = GetMousePosition() - windowCenter;
+        Vector2 prevToCurrentDirection = GetMousePosition() - GetMousePrevPosition();
         float centerToPosDistance = centerToPosDirection.Length();
+        float prevToCurrentDistance = prevToCurrentDirection.Length();
         centerToPosDirection.Normalize();
+        prevToCurrentDirection.Normalize();
+
         if (centerToPosDistance >= limitDistance)
         {
-            prevMousePos = windowCenter;
             mousePos = windowCenter + centerToPosDirection * (centerToPosDistance - limitDistance);
+
+            prevMousePos = mousePos + (-prevToCurrentDirection * prevToCurrentDistance);
 
             SetCursor(mousePos);
         }
