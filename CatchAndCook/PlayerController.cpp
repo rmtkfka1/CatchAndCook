@@ -54,25 +54,6 @@ void PlayerController::Update()
 	CameraControl();
 	MoveControl();
 
-
-	if (Input::main->GetMouse(KeyCode::LeftMouse))
-	{
-		auto mousePos = Input::main->GetMousePosition();
-		auto camera = CameraManager::main->GetActiveCamera();
-		auto cameraPos = camera->GetCameraPos();
-		vec3 cameraDir = camera->GetScreenToWorldPosition(mousePos) - camera->GetCameraPos();
-		cameraDir.Normalize();
-		
-		auto hit = ColliderManager::main->RayCast({ cameraPos, cameraDir }, 500);
-		if (hit)
-		{
-			//Gizmo::Box({ hit.worldPos, Vector3::One });
-			//std::cout << hit.worldPos.x <<", "<< hit.worldPos.y <<","<< hit.worldPos.z << "\n";
-			Gizmo::Width(0.5f);
-			Gizmo::Ray(hit.worldPos, hit.normal, 2);
-			Gizmo::WidthRollBack();
-		}
-	}
 	//GetOwner()->_transform->SetWorldPosition(GetOwner()->_transform->GetWorldPosition() + Vector3::Forward * 10.0f * Time::main->GetDeltaTime());
 }
 
@@ -100,7 +81,19 @@ void PlayerController::CameraControl()
 {
 	auto cameraTransform = camera.lock()->GetOwner()->_transform;
 	auto currentMousePosition = Input::main->GetMousePosition();
-	_targetOffset = GetOwner()->_transform->GetWorldPosition() + Vector3::Up * 1.1f;
+	switch (moveType)
+	{
+	case MoveType::Field:
+	{
+		_targetOffset = GetOwner()->_transform->GetWorldPosition() + Vector3::Up * 1.1f;
+		break;
+	}
+	case MoveType::Water:
+	{
+		_targetOffset = GetOwner()->_transform->GetWorldPosition();
+		break;
+	}
+	}
 	_currentOffset = Vector3::Lerp(_currentOffset, _targetOffset,
 		(float)Time::main->GetDeltaTime() * controlInfo.cameraMoveSmooth
 		* std::min(Vector3::Distance(_currentOffset, _targetOffset), 1.0f));
@@ -189,7 +182,21 @@ void PlayerController::MoveControl()
 			velocity.Normalize();
 			velocity *= controlInfo.maxSpeed;
 		}
+	}
+
+
+	switch (moveType)
+	{
+	case MoveType::Field:
+	{
 		GetOwner()->_transform->SetWorldRotation(currentLookWorldRotation);
+		break;
+	}
+	case MoveType::Water:
+	{
+		GetOwner()->_transform->SetWorldRotation(lookRotation);
+		break;
+	}
 	}
 
 
@@ -203,7 +210,8 @@ void PlayerController::MoveControl()
 			Vector3 upRayOffset = nextPos + Vector3::Up * 1.0f;
 
 			if (auto hit = ColliderManager::main->RayCast({ upRayOffset, Vector3::Down }, 30))
-				nextPos.y = upRayOffset.y - hit.distance;
+				if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
+					nextPos.y = upRayOffset.y - hit.distance;
 			break;
 		}
 		case MoveType::Water:
