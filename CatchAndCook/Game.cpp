@@ -71,7 +71,7 @@ void Game::Init(HWND hwnd)
 	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, make_shared<ThirdPersonCamera>());
 	CameraManager::main->GetCamera(CameraType::DebugCamera)->SetCameraPos(vec3(0, 0, -50.0f));
 
-	CameraManager::main->SetActiveCamera(CameraType::DebugCamera);
+	//CameraManager::main->SetActiveCamera(CameraType::DebugCamera);
 
 	LightManager::main = make_unique<LightManager>();
 	InstancingManager::main = make_unique<InstancingManager>();

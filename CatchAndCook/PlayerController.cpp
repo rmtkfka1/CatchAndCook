@@ -36,10 +36,6 @@ void PlayerController::Start()
 
 void PlayerController::Update()
 {
-	if (CameraManager::main->GetCameraType() == CameraType::DebugCamera)
-	{
-		return;
-	}
 
 	Component::Update();
 
