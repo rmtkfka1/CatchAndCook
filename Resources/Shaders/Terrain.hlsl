@@ -4,7 +4,7 @@
 #include "Light_b3.hlsl"
 
 
-#define TessFactor 8
+#define TessFactor 4
 #define PI 3.14159f
 #define DIST_MAX 1000.0f
 #define DIST_MIN 0.1f
@@ -113,14 +113,10 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     VS_OUT output = (VS_OUT) 0;
     
     Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
-    
     row_major float4x4 l2wMatrix = data.localToWorld;
     row_major float4x4 w2lMatrix = data.worldToLocal;
 
     output.pos = TransformLocalToWorld(float4(input.pos, 1.0f), l2wMatrix);
-    output.pos.y += heightMap.SampleLevel(sampler_point, input.uv, 0).r * fieldSize.y;
-    output.pos = mul(output.pos, VPMatrix);
-    
     output.normal = TransformNormalLocalToWorld(input.normal, w2lMatrix);
 
     output.uv = input.uv;
@@ -200,9 +196,10 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 3> quad, PatchConstOutput patchConst, float3 
     float2 uvTile = quad[0].uvTile * location.x + quad[1].uvTile * location.y + quad[2].uvTile * location.z;
     float3 normal = quad[0].normal * location.x + quad[1].normal * location.y + quad[2].normal * location.z;
     
-
+    pos.y += heightMap.SampleLevel(sampler_point, uv, 0).r * fieldSize.y;
+    
     dout.uv = uv;
-    dout.pos = pos;
+    dout.pos = mul(pos, VPMatrix);
     dout.normal = normal;
     dout.uvTile = uvTile;
     
