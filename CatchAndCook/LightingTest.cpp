@@ -25,7 +25,7 @@
 #include "Model.h"
 #include "ModelMesh.h"
 #include "Collider.h"
-#include "SeaPlayerComponent.h"
+
 void LightingTest::Init()
 {
 	Scene::Init();
@@ -73,7 +73,7 @@ void LightingTest::Init()
 
 			auto meshRenderer = root->AddComponent<MeshRenderer>();
 			auto& collider = root->AddComponent<Collider>();
-			root->AddComponent<SeaPlayerComponent>();
+
 
 			collider->SetBoundingBox(vec3(0, 0, 0), vec3(1.0f, 1.0f, 1.0f));
 

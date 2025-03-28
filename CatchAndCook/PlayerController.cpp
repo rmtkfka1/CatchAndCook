@@ -41,7 +41,7 @@ void PlayerController::Update()
 
 	if (moveType == MoveType::Water)
 		for (auto& renderer : GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>())
-			renderer->GetOwner()->SetActiveSelf(false);
+			renderer->GetOwner()->SetActiveSelf(true);
 	if (moveType == MoveType::Field)
 		for (auto& renderer : GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>())
 			renderer->GetOwner()->SetActiveSelf(true);
@@ -94,6 +94,7 @@ void PlayerController::CameraControl()
 		break;
 	}
 	}
+
 	_currentOffset = Vector3::Lerp(_currentOffset, _targetOffset,
 		(float)Time::main->GetDeltaTime() * controlInfo.cameraMoveSmooth
 		* std::min(Vector3::Distance(_currentOffset, _targetOffset), 1.0f));
@@ -109,7 +110,6 @@ void PlayerController::CameraControl()
 
 	_targetEuler = calculateEuler;
 	_currentEuler = Vector3::Lerp(_currentEuler, _targetEuler, Time::main->GetDeltaTime() * controlInfo.cameraRotationSmooth);
-
 
 	Vector3 cameraNextPosition = _currentOffset;
 	Quaternion finalRotation = Quaternion::CreateFromYawPitchRoll(_currentEuler);

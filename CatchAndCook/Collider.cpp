@@ -84,7 +84,7 @@ void Collider::RenderBegin()
 
 		if (_type == CollisionType::Box)
 		{
-			Gizmo::Width(0.5f);
+			Gizmo::Width(0.05f);
 			Gizmo::Box(_bound.box, !isCollision ? Vector4(0, 1, 0, 1) : Vector4(1, 0.5, 0, 1));
 			Gizmo::WidthRollBack();
 		}
