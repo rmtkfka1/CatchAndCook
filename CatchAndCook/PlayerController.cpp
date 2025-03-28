@@ -46,6 +46,11 @@ void PlayerController::Update()
 		for (auto& renderer : GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>())
 			renderer->GetOwner()->SetActiveSelf(true);
 
+	if (Input::main->GetKeyDown(KeyCode::Num1))
+		SetMoveType(MoveType::Water);
+	if (Input::main->GetKeyDown(KeyCode::Num2))
+		SetMoveType(MoveType::Field);
+
 	CameraControl();
 	MoveControl();
 
@@ -99,9 +104,9 @@ void PlayerController::CameraControl()
 	_currentOffset = Vector3::Lerp(_currentOffset, _targetOffset,
 		(float)Time::main->GetDeltaTime() * controlInfo.cameraMoveSmooth
 		* std::min(Vector3::Distance(_currentOffset, _targetOffset), 1.0f));
-	Vector2 mouseDelta = currentMousePosition - Input::main->GetMousePrevPosition();
-	// 카메라 방향 계산식
 
+	// 카메라 방향 계산식
+	Vector2 mouseDelta = currentMousePosition - Input::main->GetMousePrevPosition();
 	Vector3 deltaEuler = Vector3(mouseDelta.y, mouseDelta.x, 0) * 0.01f * 0.5f;
 	Vector3 calculateEuler = deltaEuler + _targetEuler;
 
@@ -115,7 +120,7 @@ void PlayerController::CameraControl()
 
 	Vector3 cameraNextPosition = _currentOffset;
 	Quaternion finalRotation = Quaternion::CreateFromYawPitchRoll(_currentEuler);
-	Vector3 _currentDirection = Vector3::Transform(Vector3::Forward, finalRotation);
+	Vector3 _currentNextDirection = Vector3::Transform(Vector3::Forward, finalRotation);
 
 
 	switch (moveType)
@@ -123,29 +128,29 @@ void PlayerController::CameraControl()
 		case MoveType::Field:
 		{
 			finalRotation = Quaternion::CreateFromYawPitchRoll(_currentEuler);
-			_currentDirection = Vector3::Transform(Vector3::Forward, finalRotation);
+			_currentNextDirection = Vector3::Transform(Vector3::Forward, finalRotation);
 
 			float distance = 3.6;
-			if (auto hit = ColliderManager::main->RayCast({ _currentOffset, -_currentDirection }, distance * 2))
+			if (auto hit = ColliderManager::main->RayCast({ _currentOffset, -_currentNextDirection }, distance * 2))
 				if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
 					distance = std::min(hit.distance, distance) - 0.05f;
 
 
-			cameraNextPosition = _currentOffset - _currentDirection * distance;
+			cameraNextPosition = _currentOffset - _currentNextDirection * distance;
 			break;
 		}
 
 		case MoveType::Water:
 		{
 			finalRotation = Quaternion::CreateFromYawPitchRoll(_targetEuler);
-			_currentDirection = Vector3::Transform(Vector3::Forward, finalRotation);
+			_currentNextDirection = Vector3::Transform(Vector3::Forward, finalRotation);
 			cameraNextPosition = _targetOffset;
 			break;
 		}
 	}
 
 	cameraTransform->SetWorldPosition(cameraNextPosition);
-	cameraTransform->LookUp(_currentDirection, Vector3::Up);
+	cameraTransform->LookUp(_currentNextDirection, Vector3::Up);
 }
 
 void PlayerController::MoveControl()
