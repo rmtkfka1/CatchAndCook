@@ -203,7 +203,8 @@ void PlayerController::MoveControl()
 			Vector3 upRayOffset = nextPos + Vector3::Up * 1.0f;
 
 			if (auto hit = ColliderManager::main->RayCast({ upRayOffset, Vector3::Down }, 30))
-				nextPos.y = upRayOffset.y - hit.distance;
+				if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
+					nextPos.y = upRayOffset.y - hit.distance;
 			break;
 		}
 		case MoveType::Water:
