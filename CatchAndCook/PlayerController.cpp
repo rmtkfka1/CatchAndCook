@@ -6,6 +6,7 @@
 #include "CameraManager.h"
 #include "ColliderManager.h"
 #include "Gizmo.h"
+#include "SkinnedMeshRenderer.h"
 #include "Terrain.h"
 #include "TerrainManager.h"
 #include "Transform.h"
@@ -30,6 +31,7 @@ void PlayerController::Start()
 	Component::Start();
 	camera = FindObjectByType<CameraComponent>();
 
+	SetMoveType(MoveType::Water);
 }
 
 void PlayerController::Update()
@@ -41,56 +43,16 @@ void PlayerController::Update()
 
 	Component::Update();
 
-	auto cameraTransform = camera.lock()->GetOwner()->_transform;
-	auto currentMousePosition = Input::main->GetMousePosition();
-	Vector3 offset = GetOwner()->_transform->GetWorldPosition() + Vector3::Up * 1.1f;
-	Vector2 between = currentMousePosition - _prevMousePosition;
+	if (moveType == MoveType::Water)
+		for (auto& renderer : GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>())
+			renderer->GetOwner()->SetActiveSelf(false);
+	if (moveType == MoveType::Field)
+		for (auto& renderer : GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>())
+			renderer->GetOwner()->SetActiveSelf(true);
 
-	Quaternion cameraRotation = cameraTransform->GetWorldRotation();
-	Vector3 cameraEuler = cameraRotation.ToEuler();
+	CameraControl();
+	MoveControl();
 
-	Vector3 betweenEuler = Vector3(between.y, between.x, 0) * 0.01f * 0.5f;
-	Vector3 finalEuler = betweenEuler + cameraEuler;
-
-	finalEuler.z = 0;
-	if (finalEuler.x * R2D <= -70) finalEuler.x = -70 * D2R;
-	if (finalEuler.x * R2D >= 85) finalEuler.x = 85 * D2R;
-
-	Quaternion finalRotation = Quaternion::CreateFromYawPitchRoll(finalEuler);
-
-	Vector3 lookDirection = Vector3::Transform(Vector3::Forward, finalRotation);
-	lookDirection.Normalize();
-
-	float distance = 3.4;
-	if (auto hit = ColliderManager::main->RayCast({ offset, -lookDirection }, distance))
-		distance = hit.distance * 0.9f;
-
-	cameraTransform->SetWorldPosition(offset - lookDirection * distance);
-	cameraTransform->LookUp(lookDirection, Vector3::Up);
-
-	Quaternion fieldRotation = Quaternion::CreateFromYawPitchRoll(Vector3(0, finalEuler.y, 0));
-
-	Vector3 moveDirection = Vector3(
-		(Input::main->GetKey(KeyCode::D) ? 1 : 0) - (Input::main->GetKey(KeyCode::A) ? 1 : 0), 0,
-		(Input::main->GetKey(KeyCode::W) ? 1 : 0) - (Input::main->GetKey(KeyCode::S) ? 1 : 0));
-	moveDirection.Normalize();
-	Vector3 moveWorldDirection = Vector3::Transform(moveDirection, fieldRotation);
-
-	if (moveWorldDirection != Vector3::Zero)
-	{
-		Vector3 currentPos = GetOwner()->_transform->GetWorldPosition();
-		Vector3 nextPos = currentPos + moveWorldDirection * 10.0f * Time::main->GetDeltaTime();
-		Vector3 upRayOffset = nextPos + Vector3::Up * 1.0f;
-		if (auto hit = ColliderManager::main->RayCast({ upRayOffset, Vector3::Down }, 30))
-			nextPos.y = upRayOffset.y - hit.distance;
-
-		GetOwner()->_transform->LookUp(moveWorldDirection, Vector3::Up);
-		GetOwner()->_transform->SetWorldPosition(nextPos);
-	}
-
-	//between.x = 
-	_prevMousePosition = currentMousePosition;
-	//GetOwner()->_transform->
 
 	if (Input::main->GetMouse(KeyCode::LeftMouse))
 	{
@@ -112,6 +74,149 @@ void PlayerController::Update()
 	}
 	//GetOwner()->_transform->SetWorldPosition(GetOwner()->_transform->GetWorldPosition() + Vector3::Forward * 10.0f * Time::main->GetDeltaTime());
 }
+
+void PlayerController::SetMoveType(MoveType moveType)
+{
+	this->moveType = moveType;
+
+	switch (moveType)
+	{
+		case MoveType::Field:
+		{
+			controlInfo = fieldInfo;
+			break;
+		}
+		case MoveType::Water:
+		{
+			controlInfo = waterInfo;
+			break;
+		}
+	}
+}
+
+
+void PlayerController::CameraControl()
+{
+	auto cameraTransform = camera.lock()->GetOwner()->_transform;
+	auto currentMousePosition = Input::main->GetMousePosition();
+	_targetOffset = GetOwner()->_transform->GetWorldPosition() + Vector3::Up * 1.1f;
+	_currentOffset = Vector3::Lerp(_currentOffset, _targetOffset,
+		(float)Time::main->GetDeltaTime() * controlInfo.cameraMoveSmooth
+		* std::min(Vector3::Distance(_currentOffset, _targetOffset), 1.0f));
+	Vector2 mouseDelta = currentMousePosition - Input::main->GetMousePrevPosition();
+	// 카메라 방향 계산식
+
+	Vector3 deltaEuler = Vector3(mouseDelta.y, mouseDelta.x, 0) * 0.01f * 0.5f;
+	Vector3 calculateEuler = deltaEuler + _targetEuler;
+
+	calculateEuler.z = 0.0f;
+	if (calculateEuler.x * R2D <= -80) calculateEuler.x = -80 * D2R;
+	if (calculateEuler.x * R2D >= 85) calculateEuler.x = 85 * D2R;
+
+	_targetEuler = calculateEuler;
+	_currentEuler = Vector3::Lerp(_currentEuler, _targetEuler, Time::main->GetDeltaTime() * controlInfo.cameraRotationSmooth);
+
+
+	Vector3 cameraNextPosition = _currentOffset;
+	Quaternion finalRotation = Quaternion::CreateFromYawPitchRoll(_currentEuler);
+	Vector3 _currentDirection = Vector3::Transform(Vector3::Forward, finalRotation);
+
+
+	switch (moveType)
+	{
+		case MoveType::Field:
+		{
+			finalRotation = Quaternion::CreateFromYawPitchRoll(_currentEuler);
+			_currentDirection = Vector3::Transform(Vector3::Forward, finalRotation);
+
+			float distance = 3.6;
+			if (auto hit = ColliderManager::main->RayCast({ _currentOffset, -_currentDirection }, distance * 2))
+				if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
+					distance = std::min(hit.distance, distance) - 0.05f;
+
+
+			cameraNextPosition = _currentOffset - _currentDirection * distance;
+			break;
+		}
+
+		case MoveType::Water:
+		{
+			finalRotation = Quaternion::CreateFromYawPitchRoll(_targetEuler);
+			_currentDirection = Vector3::Transform(Vector3::Forward, finalRotation);
+			cameraNextPosition = _targetOffset;
+			break;
+		}
+	}
+
+	cameraTransform->SetWorldPosition(cameraNextPosition);
+	cameraTransform->LookUp(_currentDirection, Vector3::Up);
+}
+
+void PlayerController::MoveControl()
+{
+	Quaternion lookRotation = Quaternion::Identity;
+	switch (moveType)
+	{
+		case MoveType::Field:
+		{
+			lookRotation = Quaternion::CreateFromYawPitchRoll(Vector3(0, _targetEuler.y, 0));
+			break;
+		}
+
+		case MoveType::Water:
+		{
+			lookRotation = Quaternion::CreateFromYawPitchRoll(Vector3(_targetEuler.x, _targetEuler.y, 0));
+			break;
+		}
+	}
+
+	// ------------- 공통 로직 ------------- 
+	Vector3 moveDirection = Vector3(
+		(Input::main->GetKey(KeyCode::D) ? 1 : 0) - (Input::main->GetKey(KeyCode::A) ? 1 : 0), 0,
+		(Input::main->GetKey(KeyCode::W) ? 1 : 0) - (Input::main->GetKey(KeyCode::S) ? 1 : 0));
+	moveDirection.Normalize();
+	targetLookWorldDirection = Vector3::Transform(moveDirection, lookRotation);
+
+	if (targetLookWorldDirection != Vector3::Zero)
+	{
+		currentLookWorldRotation = Quaternion::Slerp(currentLookWorldRotation, Quaternion::LookRotation(targetLookWorldDirection, Vector3::Transform(Vector3::Up, lookRotation)),
+			Time::main->GetDeltaTime() * 30);
+
+
+		velocity += targetLookWorldDirection * controlInfo.moveForce * Time::main->GetDeltaTime() * 60;
+		if (velocity.Length() > controlInfo.maxSpeed) {
+			velocity.Normalize();
+			velocity *= controlInfo.maxSpeed;
+		}
+		GetOwner()->_transform->SetWorldRotation(currentLookWorldRotation);
+	}
+
+
+	Vector3 currentPos = GetOwner()->_transform->GetWorldPosition();
+	Vector3 nextPos = currentPos + velocity * Time::main->GetDeltaTime();
+
+	switch (moveType)
+	{
+		case MoveType::Field:
+		{
+			Vector3 upRayOffset = nextPos + Vector3::Up * 1.0f;
+
+			if (auto hit = ColliderManager::main->RayCast({ upRayOffset, Vector3::Down }, 30))
+				nextPos.y = upRayOffset.y - hit.distance;
+			break;
+		}
+		case MoveType::Water:
+		{
+			break;
+		}
+	}
+
+	// ------------- 공통 로직 ------------- 
+
+	GetOwner()->_transform->SetWorldPosition(nextPos);
+	velocity = velocity * (1 - (controlInfo.drag * Time::main->GetDeltaTime() * 60));
+}
+
 
 void PlayerController::Update2()
 {

@@ -49,9 +49,16 @@ public:
     bool GetMouseUp(int keycode);
 
     vec2 GetMousePosition();
+    Vector2 GetMousePrevPosition();
     vec2 GetMouseDownPosition(int keycode);
 	vec2 GetNDCMouseDownPosition(int keycode);
     vec2 GetMouseUpPosition(int keycode);
+
+    bool IsMouseLock() { return _isMouseLock; }
+    void SetMouseLock(bool isMouseLock);
+    bool _isMouseLock = false;
+
+    void SetCursor(const Vector2& pos);
 
 private:
 
@@ -63,7 +70,7 @@ private:
     InputKeyData _inputKeyboardField[Input::_maxInputKeyField];
     InputMouseData _inputMouseField[Input::_maxInputMouseField];
     Vector2 mousePos{ 0, 0 };
-
+    Vector2 prevMousePos{ 0, 0 };
 
 
 };

@@ -377,8 +377,10 @@ bool GameObject::GetActiveSelf()
 
 bool GameObject::SetActiveSelf(bool _active)
 {
+    bool prev_active_self = _active_self;
     _active_self = _active;
-    ActiveUpdateChain(parent.lock() ? parent.lock()->GetActive() : true);
+    if (prev_active_self != _active_self)
+		ActiveUpdateChain(parent.lock() ? parent.lock()->GetActive() : true);
     return _active;
 }
 

@@ -128,12 +128,7 @@ void TestScene_jin::Init()
 	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
 	sceneLoader->Load(GetCast<Scene>());
 
-
-	if (auto player = Find(L"player"))
-	{
-		player->AddComponent<PlayerController>();
-	}
-
+	auto player = Find(L"player")->AddComponent<PlayerController>();
 }
 
 void TestScene_jin::Update()
