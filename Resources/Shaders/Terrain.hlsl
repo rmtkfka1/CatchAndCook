@@ -190,26 +190,48 @@ HS_OUT HS_Main(InputPatch<VS_OUT, 3> patch, uint vertexID : SV_OutputControlPoin
 DS_OUT DS_Main(OutputPatch<HS_OUT, 3> quad, PatchConstOutput patchConst, float3 location : SV_DomainLocation)
 {
     DS_OUT dout;
-    
-    float4 pos = quad[0].pos * location.x + quad[1].pos * location.y + quad[2].pos * location.z;
+
     float2 uv = quad[0].uv * location.x + quad[1].uv * location.y + quad[2].uv * location.z;
     float2 uvTile = quad[0].uvTile * location.x + quad[1].uvTile * location.y + quad[2].uvTile * location.z;
-    float3 normal = quad[0].normal * location.x + quad[1].normal * location.y + quad[2].normal * location.z;
-    
-    pos.y += heightMap.SampleLevel(sampler_point, uv, 0).r * fieldSize.y;
-    
+
+    // --- 위치 계산 ---
+    float3 pos = quad[0].pos * location.x + quad[1].pos * location.y + quad[2].pos * location.z;
+
+    // --- 높이 보정 ---
+    float height = heightMap.SampleLevel(sampler_point, uv, 0).r;
+    pos.y += height * fieldSize.y;
+
+    float texelSize = 1.0f / 4096.0f; 
+
+    float heightL = heightMap.SampleLevel(sampler_point, uv + float2(-texelSize, 0), 0).r;
+    float heightR = heightMap.SampleLevel(sampler_point, uv + float2(texelSize, 0), 0).r;
+    float heightD = heightMap.SampleLevel(sampler_point, uv + float2(0, -texelSize), 0).r;
+    float heightU = heightMap.SampleLevel(sampler_point, uv + float2(0, texelSize), 0).r;
+
+    float3 dx = float3(2 * texelSize * fieldSize.x, (heightR - heightL) * fieldSize.y, 0);
+    float3 dz = float3(0, (heightU - heightD) * fieldSize.y, 2 * texelSize * fieldSize.z);
+
+    float3 normal = normalize(cross(dz, dx));
+
+    dout.pos = mul(float4(pos, 1.0f), VPMatrix);
     dout.uv = uv;
-    dout.pos = mul(pos, VPMatrix);
-    dout.normal = normal;
     dout.uvTile = uvTile;
-    
+    dout.normal = normal;
+
     return dout;
 }
 
+struct PS_OUT
+{
+    float4 position : SV_Target0;
+    float4 normal : SV_Target1;
+    float4 color : SV_Target2;
+};
 
-float4 PS_Main(DS_OUT input) : SV_Target
+PS_OUT PS_Main(DS_OUT input)
 {
 
+    PS_OUT output = (PS_OUT) 0;
     
     float4 finalColor = float4(0, 0, 0, 0);
     float4 blend;
@@ -305,5 +327,10 @@ float4 PS_Main(DS_OUT input) : SV_Target
     }
 
     
-    return finalColor;
+
+    output.color = finalColor;
+    output.normal = float4(input.normal, 1.0f);
+    output.position = input.pos;
+    
+    return output;
 }
