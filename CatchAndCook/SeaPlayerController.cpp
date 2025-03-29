@@ -30,9 +30,10 @@ void SeaPlayerController::Start()
 		_terrian = terrian->GetComponent<Terrain>();
 	}
 
-	_camera->SetCameraPos(_transform->GetWorldPosition() + _transform->GetForward() * 0.3f +vec3(0, _cameraHeightOffset,0));
-	_camera->SetCameraLook(_transform->GetForward());
-	_camera->SetCameraUp(_transform->GetUp());
+
+	GetOwner()->_transform->SetForward(vec3(0, 0, 1));
+	GetOwner()->_transform->SetRight(vec3(1, 0, 0));
+	GetOwner()->_transform->SetUp(vec3(0, 1, 0));
 
 }
 
@@ -42,11 +43,12 @@ void SeaPlayerController::Update()
 		return;
 
 	float dt = Time::main->GetDeltaTime();
+
 	CalCulateYawPitchRoll();
 
 	Quaternion rotation = Quaternion::CreateFromYawPitchRoll(_yaw * D2R, _pitch * D2R, 0);
 	_transform->SetLocalRotation(rotation);
-	_camera->SetCameraRotation(_yaw, _pitch, 0);
+	_camera->SetCameraRotation(rotation);
 
 	vec3 inputDir = vec3::Zero;
 
@@ -103,7 +105,8 @@ void SeaPlayerController::Update()
 		}
 
 		_transform->SetWorldPosition(nextPos);
-		_camera->SetCameraPos(_transform->GetWorldPosition()  +vec3(0, _cameraHeightOffset,0));
+		vec3 rotatedOffset = vec3::Transform(vec3(0, _cameraHeightOffset, 0), rotation);
+		_camera->SetCameraPos(_transform->GetWorldPosition() + rotatedOffset);
 	}
 
 	_velocity *= (1 - (_resistance * dt));
@@ -164,7 +167,7 @@ void SeaPlayerController::CalCulateYawPitchRoll()
 
 		_yaw += delta.x;
 		_pitch += delta.y;
-	/*	_pitch = std::clamp(_pitch, -89.0f, 89.0f);*/
+		_pitch = std::clamp(_pitch, -89.0f, 89.0f);
 		_roll = 0;
 
 		lastMousePos = currentMousePos;
@@ -178,7 +181,7 @@ void SeaPlayerController::CalCulateYawPitchRoll()
 
 		_yaw += delta.x;
 		_pitch += delta.y;
-	/*	_pitch = std::clamp(_pitch, -89.0f, 89.0f);*/
+		_pitch = std::clamp(_pitch, -89.0f, 89.0f);
 		_roll = 0;
 
 		POINT center;
