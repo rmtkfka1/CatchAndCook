@@ -34,39 +34,66 @@ void SeaPlayerController::Start()
 
 void SeaPlayerController::Update()
 {
+	if (CameraManager::main->GetCameraType() == CameraType::DebugCamera)
+		return;
+
 	float dt = Time::main->GetDeltaTime();
 	CalCulateYawPitchRoll();
 	Quaternion rotation = Quaternion::CreateFromYawPitchRoll(_yaw * D2R, _pitch * D2R, 0);
 	_transform->SetLocalRotation(rotation);
+	_camera->SetCameraRotation(_yaw, _pitch, 0);
 
-	vec3 inputDir = vec3(
-		(Input::main->GetKey(KeyCode::RightArrow) ? 1.0f : 0.0f) - (Input::main->GetKey(KeyCode::LeftArrow) ? 1.0f : 0.0f),
-		0,
-		(Input::main->GetKey(KeyCode::UpArrow) ? 1.0f : 0.0f) - (Input::main->GetKey(KeyCode::DownArrow) ? 1.0f : 0.0f)
-	);
+	vec3 inputDir = vec3::Zero;
 
-
-	if (inputDir.LengthSquared() > 0.001f)
-		inputDir.Normalize();
-
-	vec3 moveDir = vec3::Transform(inputDir, rotation);
-
-	_velocity += moveDir * _moveForce * dt ;
-
-	if (_velocity.Length() > _maxSpeed)
+	if (Input::main->GetKey(KeyCode::W))
 	{
-		_velocity.Normalize();
-		_velocity *= _maxSpeed;
+		inputDir += vec3::Forward;
 	}
 
-	vec3 currentPos = _transform->GetLocalPosition();
-	vec3 nextPos = currentPos + _velocity * dt;
-	_transform->SetLocalPosition(nextPos);
+	if (Input::main->GetKey(KeyCode::S))
+	{
+		inputDir += vec3::Backward;
+	}
+
+	if (Input::main->GetKey(KeyCode::A))
+	{
+		inputDir += vec3::Left;
+	}
+
+	if (Input::main->GetKey(KeyCode::D))
+	{
+		inputDir += vec3::Right;
+	}
+
+	if (Input::main->GetKey(KeyCode::Space))
+	{
+		inputDir += 2*vec3::Up;
+	}
+
+
+	if (inputDir != vec3::Zero)
+	{
+		vec3 moveDir = vec3::Transform(inputDir, rotation);
+
+		_velocity += moveDir * _moveForce * dt;
+
+		if (_velocity.Length() > _maxSpeed)
+		{
+			_velocity.Normalize();
+			_velocity *= _maxSpeed;
+		}
+	}
+
+	if (_velocity.Length() > 0.001f)
+	{
+		vec3 currentPos = _transform->GetWorldPosition();
+		vec3 nextPos = currentPos + _velocity * dt;
+		_transform->SetWorldPosition(nextPos);
+		_camera->SetCameraPos(_transform->GetWorldPosition() + _transform->GetForward() * 0.3f);
+	}
 
 	_velocity *= (1 - (_resistance * dt));
 
-	_camera->SetCameraRotation(_yaw, _pitch, 0);
-	_camera->SetCameraPos(_transform->GetWorldPosition() + _transform->GetForward() * 0.3f);
 
 }
 
