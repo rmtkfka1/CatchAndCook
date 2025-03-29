@@ -39,7 +39,5 @@ public:
 	const float _maxSpeed = 30.0f;
 	const float _resistance = 2.5f;
 
-
-
 };
 

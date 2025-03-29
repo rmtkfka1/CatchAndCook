@@ -21,6 +21,8 @@ void SeaPlayerController::Init()
 	ClientToScreen(Core::main->GetHandle(), &center);
 	SetCursorPos(center.x, center.y);
 
+
+
 }
 
 void SeaPlayerController::Start()
@@ -29,7 +31,9 @@ void SeaPlayerController::Start()
 	_transform = GetOwner()->_transform;
 	_collider = GetOwner()->GetComponent<Collider>();
 
-
+	_camera->SetCameraPos(_transform->GetWorldPosition() + _transform->GetForward() * 0.3f);
+	_camera->SetCameraLook(_transform->GetForward());
+	_camera->SetCameraUp(_transform->GetUp());
 }
 
 void SeaPlayerController::Update()
@@ -69,7 +73,7 @@ void SeaPlayerController::Update()
 
 	if (Input::main->GetKey(KeyCode::Space))
 	{
-		inputDir += 2*vec3::Up;
+		inputDir += vec3(0, 2, 0);
 	}
 
 
