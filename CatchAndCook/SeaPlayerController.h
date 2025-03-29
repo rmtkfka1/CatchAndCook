@@ -29,11 +29,15 @@ private:
 
 
 public:
+	vec3 _velocity = vec3::Zero;
 	vec2 _centerMousePos;
 	float  _yaw = 0;
 	float _pitch = 0;
 	float _roll = 0;
 
+	const float _moveForce = 30.0f;
+	const float _maxSpeed = 30.0f;
+	const float _resistance = 1.5f;
 
 
 

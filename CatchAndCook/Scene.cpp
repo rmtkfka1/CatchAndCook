@@ -382,6 +382,7 @@ void Scene::CameraControll()
 	if (Input::main->GetKeyDown(KeyCode::F1))
 	{
 		type = CameraType::DebugCamera;
+        Input::main->SetMouseLock(false);
 	}
 
     if (Input::main->GetKeyDown(KeyCode::F2))

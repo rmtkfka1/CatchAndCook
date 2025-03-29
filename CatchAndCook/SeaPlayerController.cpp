@@ -34,39 +34,39 @@ void SeaPlayerController::Start()
 
 void SeaPlayerController::Update()
 {
-	//if (CameraManager::main->GetCameraType() == CameraType::DebugCamera)
-	//	return;
+	float dt = Time::main->GetDeltaTime();
+	CalCulateYawPitchRoll();
+	Quaternion rotation = Quaternion::CreateFromYawPitchRoll(_yaw * D2R, _pitch * D2R, 0);
+	_transform->SetLocalRotation(rotation);
 
-	 CalCulateYawPitchRoll();
+	vec3 inputDir = vec3(
+		(Input::main->GetKey(KeyCode::RightArrow) ? 1.0f : 0.0f) - (Input::main->GetKey(KeyCode::LeftArrow) ? 1.0f : 0.0f),
+		0,
+		(Input::main->GetKey(KeyCode::UpArrow) ? 1.0f : 0.0f) - (Input::main->GetKey(KeyCode::DownArrow) ? 1.0f : 0.0f)
+	);
 
-	 Quaternion yaw = Quaternion::CreateFromYawPitchRoll(_yaw * D2R, _pitch*D2R, 0);
-	_transform->SetLocalRotation(yaw);
 
-	vec3 movedir = vec3::Zero;
+	if (inputDir.LengthSquared() > 0.001f)
+		inputDir.Normalize();
 
-	if (Input::main->GetKey(KeyCode::UpArrow))
+	vec3 moveDir = vec3::Transform(inputDir, rotation);
+
+	_velocity += moveDir * _moveForce * dt ;
+
+	if (_velocity.Length() > _maxSpeed)
 	{
-		movedir += _transform->GetForward();
+		_velocity.Normalize();
+		_velocity *= _maxSpeed;
 	}
 
-	if (Input::main->GetKey(KeyCode::DownArrow))
-	{
-		movedir -= _transform->GetForward();
-	}
+	vec3 currentPos = _transform->GetLocalPosition();
+	vec3 nextPos = currentPos + _velocity * dt;
+	_transform->SetLocalPosition(nextPos);
 
-	if (Input::main->GetKey(KeyCode::RightArrow))
-	{
-		movedir += _transform->GetRight();
-	}
+	_velocity *= (1 - (_resistance * dt));
 
-	if (Input::main->GetKey(KeyCode::LeftArrow))
-	{
-		movedir -= _transform->GetRight();
-	}
-
-	_transform->SetLocalPosition(_transform->GetLocalPosition() + movedir * 0.1f);
 	_camera->SetCameraRotation(_yaw, _pitch, 0);
-	_camera->SetCameraPos(_transform->GetWorldPosition() +_transform->GetForward()*0.3f);
+	_camera->SetCameraPos(_transform->GetWorldPosition() + _transform->GetForward() * 0.3f);
 
 }
 
