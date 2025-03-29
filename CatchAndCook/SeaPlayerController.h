@@ -29,6 +29,7 @@ private:
 
 
 public:
+	vec2 _centerMousePos;
 	float  _yaw = 0;
 	float _pitch = 0;
 	float _roll = 0;

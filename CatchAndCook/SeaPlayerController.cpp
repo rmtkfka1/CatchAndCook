@@ -14,6 +14,12 @@ SeaPlayerController::~SeaPlayerController()
 }
 void SeaPlayerController::Init()
 {
+	_centerMousePos = vec2(WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f);
+	POINT center;
+	center.x = static_cast<LONG>(_centerMousePos.x);
+	center.y = static_cast<LONG>(_centerMousePos.y);
+	ClientToScreen(Core::main->GetHandle(), &center);
+	SetCursorPos(center.x, center.y);
 
 }
 
@@ -102,14 +108,36 @@ void SeaPlayerController::Destroy()
 
 void SeaPlayerController::CalCulateYawPitchRoll()
 {
-	static vec2 lastMousePos = Input::main->GetMousePosition();
-	vec2 currentMousePos = Input::main->GetMousePosition();
+	if (Input::main->IsMouseLock() == false)
+	{
+	
+		static vec2 lastMousePos = Input::main->GetMousePosition();
+		vec2 currentMousePos = Input::main->GetMousePosition();
 
-	vec2 delta = (currentMousePos - lastMousePos) * 0.1f; 
+		vec2 delta = (currentMousePos - lastMousePos) * 0.1f;
 
-	_yaw += delta.x;
-	_pitch += delta.y;
-	_roll = 0;
+		_yaw += delta.x;
+		_pitch += delta.y;
+		_pitch = std::clamp(_pitch, -89.0f, 89.0f);
+		_roll = 0;
 
-	lastMousePos = currentMousePos;
-}
+		lastMousePos = currentMousePos;
+	}
+
+	else
+	{
+	
+
+		vec2 currentMousePos = Input::main->GetMousePosition();
+
+		vec2 delta = (currentMousePos - _centerMousePos) * 0.1f;
+
+		_yaw += delta.x;
+		_pitch += delta.y;
+		_pitch = std::clamp(_pitch, -89.0f, 89.0f);
+		_roll = 0;
+
+		SetCursorPos(Input::main->GetCenterMousePos().x, Input::main->GetCenterMousePos().y);
+	
+	}
+};

@@ -30,6 +30,7 @@ public:
     Input();
     ~Input();
 
+    void Init();
     void Update();
 
 
@@ -57,7 +58,7 @@ public:
     bool IsMouseLock() { return _isMouseLock; }
     void SetMouseLock(bool isMouseLock);
     bool _isMouseLock = false;
-
+	vec2 GetCenterMousePos() { return _centerMousePos; }
     void SetCursor(const Vector2& pos);
 
 private:
@@ -71,6 +72,6 @@ private:
     InputMouseData _inputMouseField[Input::_maxInputMouseField];
     Vector2 mousePos{ 0, 0 };
     Vector2 prevMousePos{ 0, 0 };
-
+	vec2 _centerMousePos;
 
 };

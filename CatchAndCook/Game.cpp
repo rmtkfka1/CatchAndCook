@@ -28,11 +28,15 @@
 void Game::Init(HWND hwnd)
 {
 	IGuid::StaticInit();
-	Time::main = make_unique<Time>();
-	Time::main->Init();
-	Input::main = make_unique<Input>();
 	Core::main = make_unique<Core>();
 	Core::main->Init(hwnd);
+
+	Time::main = make_unique<Time>();
+	Time::main->Init();
+
+	Input::main = make_unique<Input>();
+	Input::main->Init();
+
 
 	Profiler::main = make_unique<Profiler>();
 	Profiler::main->Init(_hwnd,_hInstance);

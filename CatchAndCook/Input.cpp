@@ -15,6 +15,15 @@ Input::~Input()
 
 }
 
+void Input::Init()
+{
+    POINT center;
+    center.x = static_cast<LONG>(WINDOW_WIDTH/2);
+    center.y = static_cast<LONG>(WINDOW_HEIGHT/2);
+    ClientToScreen(Core::main->GetHandle(), &center);
+    _centerMousePos = vec2(center.x, center.y);
+}
+
 void Input::Update()
 {
     prevMousePos = mousePos;
@@ -67,10 +76,16 @@ void Input::SetMouseLock(bool isMouseLock)
 {
 
     _isMouseLock = isMouseLock;
+
     if (_isMouseLock)
     {
         mousePos = prevMousePos = Vector2(WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f);
         SetCursor(mousePos);
+		//ShowCursor(false);
+    }
+    else
+    {
+		//ShowCursor(true);
     }
 
 }
