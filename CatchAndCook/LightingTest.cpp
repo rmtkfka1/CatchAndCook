@@ -71,9 +71,13 @@ void LightingTest::Init()
 
 			shared_ptr<GameObject> root = CreateGameObject(L"root_test");
 
+			root->AddComponent<testComponent>();
 			auto meshRenderer = root->AddComponent<MeshRenderer>();
 			auto& collider = root->AddComponent<Collider>();
-
+			root->_transform->SetPivotOffset(vec3(0, 1.0f, 0));
+			root->_transform->SetLocalPosition(vec3(0, 10.0f, 0));
+			root->_transform->SetLocalScale(vec3(1.0f, 1.0f, 1.0f));
+			root->_transform->SetLocalRotation(vec3(30.0f * D2R, 30.0f * D2R, 30.0f * D2R));
 
 			collider->SetBoundingBox(vec3(0, 0, 0), vec3(1.0f, 1.0f, 1.0f));
 

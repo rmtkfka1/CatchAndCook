@@ -83,8 +83,8 @@ void Transform::RenderBegin()
 {
 	Component::RenderBegin();
 
-	if (HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::WorldPivot))
-	{
+    if (HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::WorldPivot))
+    {
         Gizmo::Width(0.02f);
         auto o = GetWorldPosition();
         auto f = GetForward();
@@ -93,9 +93,7 @@ void Transform::RenderBegin()
         Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
         Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
         Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));
-	}
-
-  
+    }  
 
     _isLocalSRTChanged = false;
     _isLocalToWorldChanged = false;
@@ -375,8 +373,15 @@ bool Transform::GetLocalToWorldMatrix_BottomUp(Matrix& localToWorld)
 bool Transform::GetLocalSRTMatrix(Matrix& localSRT)
 {
     if (CheckNeedLocalSRTUpdate())
-    {
-        _localSRTMatrix = Matrix::CreateScale(_localScale) * Matrix::CreateFromQuaternion(_localRotation) * Matrix::CreateTranslation(_localPosition);
+    { 
+
+        vec3 pivotCorrection = _pivotOffset - vec3::Transform(_pivotOffset, Matrix::CreateFromQuaternion(_localRotation));
+
+        _localSRTMatrix =
+            Matrix::CreateScale(_localScale) *
+            Matrix::CreateFromQuaternion(_localRotation) *
+            Matrix::CreateTranslation(_localPosition + pivotCorrection);
+
         _needLocalSRTUpdated = false;
         _needLocalMatrixUpdated = true;
         localSRT = _localSRTMatrix;
@@ -482,6 +487,7 @@ bool Transform::BottomUpLocalToWorldUpdate()
             return true;
         }
     }
+
     else if (localUpdated || _needLocalToWorldUpdated)
     {
         _localToWorldMatrix = _localSRTMatrix;

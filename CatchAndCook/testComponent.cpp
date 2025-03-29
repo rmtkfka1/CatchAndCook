@@ -74,16 +74,16 @@ void testComponent::Update()
 
 	if (Input::main->GetKey(KeyCode::O))
 	{
-		auto direction = camera->GetCameraUp();
-		auto& pos = transform->GetLocalPosition();
-		transform->SetLocalPosition(pos + direction * dt);
+		static float i = 0;;
+		transform->SetLocalRotation(vec3(i * D2R, 0, 0));
+		i+=0.1f;
 	}
 
 	if (Input::main->GetKey(KeyCode::P))
 	{
-		auto direction = camera->GetCameraUp();
-		auto& pos = transform->GetLocalPosition();
-		transform->SetLocalPosition(pos - direction * dt);
+		static float i = 0;;
+		transform->SetLocalRotation(vec3(0, 0, i * D2R));
+		i += 0.1f;
 	}
 
 
