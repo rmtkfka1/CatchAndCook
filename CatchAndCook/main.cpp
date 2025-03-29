@@ -99,13 +99,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		
 		switch (msg)
 		{
-		case WM_MOVE:
-		{
-			if (Initalize){
-				Input::main->Init();
-			}
-			break;
-		}
+	
 		case WM_SIZE:
 		{
 			if (Initalize)
@@ -115,7 +109,6 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				WINDOW_WIDTH = rect.right - rect.left;
 				WINDOW_HEIGHT = rect.bottom - rect.top;
 				Core::main->ResizeWindowSize();
-				Input::main->Init();
 			}
 			break;
 		}

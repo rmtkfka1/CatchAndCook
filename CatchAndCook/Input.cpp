@@ -15,15 +15,6 @@ Input::~Input()
 
 }
 
-void Input::Init()
-{
-    POINT center;
-    center.x = static_cast<LONG>(WINDOW_WIDTH/2);
-    center.y = static_cast<LONG>(WINDOW_HEIGHT/2);
-    ClientToScreen(Core::main->GetHandle(), &center);
-    _centerMousePos = vec2(center.x, center.y);
-}
-
 void Input::Update()
 {
     prevMousePos = mousePos;

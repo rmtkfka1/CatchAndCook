@@ -36,8 +36,6 @@ void Game::Init(HWND hwnd)
 	Time::main->Init();
 
 	Input::main = make_unique<Input>();
-	Input::main->Init();
-
 
 	Profiler::main = make_unique<Profiler>();
 	Profiler::main->Init(_hwnd,_hInstance);

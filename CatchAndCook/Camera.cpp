@@ -141,6 +141,7 @@ void Camera::SetCameraLook(const vec3& look)
 {
     _cameraLook = look;
     _cameraLook.Normalize();
+
     _cameraRight = _cameraUp.Cross(_cameraLook);
     _cameraRight.Normalize();
 
