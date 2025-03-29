@@ -50,7 +50,8 @@ void ColliderManager::AddCollider(const std::shared_ptr<Collider>& collider)
 	{
 		if (collider->GetOwner()->GetType() == GameObjectType::Static)
 		{
-			_staticColliderGrids[cell].push_back(collider);
+			if(std::ranges::find(_staticColliderGrids[cell], collider) == _staticColliderGrids[cell].end())
+				_staticColliderGrids[cell].push_back(collider);
 		}
 		else if (collider->GetOwner()->GetType() == GameObjectType::Dynamic)
 		{
@@ -271,6 +272,9 @@ void ColliderManager::CallBackBegin(const std::shared_ptr<Collider>& collider, c
 	auto& components = collider->GetOwner()->GetComponentAll();
 	for (auto& component : components)
 		component->CollisionBegin(collider, other);
+	if (collider->groupRootObject.lock() != nullptr && collider->groupRootObject.lock() != collider->GetOwner())
+		for (auto& component : collider->groupRootObject.lock()->GetComponentAll())
+			component->CollisionBegin(collider, other);
 }
 
 void ColliderManager::CallBackEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
@@ -278,6 +282,9 @@ void ColliderManager::CallBackEnd(const std::shared_ptr<Collider>& collider, con
 	auto& components = collider->GetOwner()->GetComponentAll();
 	for (auto& component : components)
 		component->CollisionEnd(collider, other);
+	if (collider->groupRootObject.lock() != nullptr && collider->groupRootObject.lock() != collider->GetOwner())
+		for (auto& component : collider->groupRootObject.lock()->GetComponentAll())
+			component->CollisionEnd(collider, other);
 }
 
 RayHit ColliderManager::RayCast(const Ray& ray, const float& dis) const

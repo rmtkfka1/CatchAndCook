@@ -30,19 +30,16 @@ void Collider::Start()
 {
 	Component::Start();
 
-	ColliderManager::main->AddColliderForRay(GetCast<Collider>());
-
+	if (auto obj = GetOwner()->GetComponentWithParents<PhysicsComponent>())
+	{
+		groupId = obj->GetInstanceID();
+		groupRootObject = obj->GetOwner();
+	}
 	if (GetOwner()->GetType() == GameObjectType::Static)
 	{
 		CalculateBounding();
 		ColliderManager::main->AddCollider(GetCast<Collider>());
 	}
-
-	groupId = GetInstanceID();
-
-	if (auto obj = GetOwner()->GetComponentWithParents<PhysicsComponent>())
-		groupId = obj->GetInstanceID();
-
 }
 
 void Collider::Update()
@@ -66,11 +63,30 @@ void Collider::Update2()
 void Collider::Enable()
 {
 	Component::Enable();
+
+	ColliderManager::main->AddColliderForRay(GetCast<Collider>());
+
+	if (GetOwner()->GetType() == GameObjectType::Static)
+	{
+		CalculateBounding();
+		ColliderManager::main->AddCollider(GetCast<Collider>());
+	}
+
+	groupId = GetInstanceID();
+
+	if (auto obj = GetOwner()->GetComponentWithParents<PhysicsComponent>())
+	{
+		groupId = obj->GetInstanceID();
+		groupRootObject = obj->GetOwner();
+	}
 }
 
 void Collider::Disable()
 {
 	Component::Disable();
+
+	ColliderManager::main->RemoveCollider(GetCast<Collider>());
+	ColliderManager::main->RemoveAColliderForRay(GetCast<Collider>());
 }
 
 void Collider::RenderBegin()
@@ -124,8 +140,6 @@ void Collider::SetDestroy()
 void Collider::Destroy()
 {
 	Component::Destroy();
-	ColliderManager::main->RemoveCollider(GetCast<Collider>());
-	ColliderManager::main->RemoveAColliderForRay(GetCast<Collider>());
 }
 
 vec3 Collider::GetCenter()

@@ -1,6 +1,7 @@
 ﻿
 #include "ColliderManager.h"
 #include "Component.h"
+#include "Game.h"
 
 enum class CollisionType
 {
@@ -57,5 +58,7 @@ private:
 	CollisionType _type;
 	BoundingUnion _orgin;
 	BoundingUnion _bound;
+
 	int groupId = 0;
+	std::weak_ptr<GameObject> groupRootObject;
 };

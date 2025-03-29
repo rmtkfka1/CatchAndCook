@@ -30,26 +30,12 @@ void PlayerController::Start()
 {
 	Component::Start();
 	camera = FindObjectByType<CameraComponent>();
-
-	SetMoveType(MoveType::Water);
 }
 
 void PlayerController::Update()
 {
-
 	Component::Update();
 
-	if (moveType == MoveType::Water)
-		for (auto& renderer : GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>())
-			renderer->GetOwner()->SetActiveSelf(false);
-	if (moveType == MoveType::Field)
-		for (auto& renderer : GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>())
-			renderer->GetOwner()->SetActiveSelf(true);
-
-	if (Input::main->GetKeyDown(KeyCode::Num1))
-		SetMoveType(MoveType::Water);
-	if (Input::main->GetKeyDown(KeyCode::Num2))
-		SetMoveType(MoveType::Field);
 
 	CameraControl();
 	MoveControl();
@@ -57,43 +43,15 @@ void PlayerController::Update()
 	//GetOwner()->_transform->SetWorldPosition(GetOwner()->_transform->GetWorldPosition() + Vector3::Forward * 10.0f * Time::main->GetDeltaTime());
 }
 
-void PlayerController::SetMoveType(MoveType moveType)
-{
-	this->moveType = moveType;
-
-	switch (moveType)
-	{
-		case MoveType::Field:
-		{
-			controlInfo = fieldInfo;
-			break;
-		}
-		case MoveType::Water:
-		{
-			controlInfo = waterInfo;
-			break;
-		}
-	}
-}
 
 
 void PlayerController::CameraControl()
 {
 	auto cameraTransform = camera.lock()->GetOwner()->_transform;
 	auto currentMousePosition = Input::main->GetMousePosition();
-	switch (moveType)
-	{
-	case MoveType::Field:
-	{
-		_targetOffset = GetOwner()->_transform->GetWorldPosition() + Vector3::Up * 1.1f;
-		break;
-	}
-	case MoveType::Water:
-	{
-		_targetOffset = GetOwner()->_transform->GetWorldPosition();
-		break;
-	}
-	}
+
+	_targetOffset = GetOwner()->_transform->GetWorldPosition() + Vector3::Up * 1.1f;
+
 	_currentOffset = Vector3::Lerp(_currentOffset, _targetOffset,
 		(float)Time::main->GetDeltaTime() * controlInfo.cameraMoveSmooth
 		* std::min(Vector3::Distance(_currentOffset, _targetOffset), 1.0f));
@@ -116,31 +74,16 @@ void PlayerController::CameraControl()
 	Vector3 _currentNextDirection = Vector3::Transform(Vector3::Forward, finalRotation);
 
 
-	switch (moveType)
-	{
-		case MoveType::Field:
-		{
-			finalRotation = Quaternion::CreateFromYawPitchRoll(_currentEuler);
-			_currentNextDirection = Vector3::Transform(Vector3::Forward, finalRotation);
+	finalRotation = Quaternion::CreateFromYawPitchRoll(_currentEuler);
+	_currentNextDirection = Vector3::Transform(Vector3::Forward, finalRotation);
 
-			float distance = 3.6;
-			if (auto hit = ColliderManager::main->RayCast({ _currentOffset, -_currentNextDirection }, distance * 2))
-				if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
-					distance = std::min(hit.distance, distance) - 0.05f;
+	float distance = 3.6;
+	if (auto hit = ColliderManager::main->RayCast({ _currentOffset, -_currentNextDirection }, distance * 2))
+		if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
+			distance = std::min(hit.distance, distance) - 0.05f;
 
 
-			cameraNextPosition = _currentOffset - _currentNextDirection * distance;
-			break;
-		}
-
-		case MoveType::Water:
-		{
-			finalRotation = Quaternion::CreateFromYawPitchRoll(_targetEuler);
-			_currentNextDirection = Vector3::Transform(Vector3::Forward, finalRotation);
-			cameraNextPosition = _targetOffset;
-			break;
-		}
-	}
+	cameraNextPosition = _currentOffset - _currentNextDirection * distance;
 
 	cameraTransform->SetWorldPosition(cameraNextPosition);
 	cameraTransform->LookUp(_currentNextDirection, Vector3::Up);
@@ -149,20 +92,7 @@ void PlayerController::CameraControl()
 void PlayerController::MoveControl()
 {
 	Quaternion lookRotation = Quaternion::Identity;
-	switch (moveType)
-	{
-		case MoveType::Field:
-		{
-			lookRotation = Quaternion::CreateFromYawPitchRoll(Vector3(0, _targetEuler.y, 0));
-			break;
-		}
-
-		case MoveType::Water:
-		{
-			lookRotation = Quaternion::CreateFromYawPitchRoll(Vector3(_targetEuler.x, _targetEuler.y, 0));
-			break;
-		}
-	}
+	lookRotation = Quaternion::CreateFromYawPitchRoll(Vector3(0, _targetEuler.y, 0));
 
 	// ------------- 공통 로직 ------------- 
 	Vector3 moveDirection = Vector3(
@@ -185,40 +115,17 @@ void PlayerController::MoveControl()
 	}
 
 
-	switch (moveType)
-	{
-	case MoveType::Field:
-	{
-		GetOwner()->_transform->SetWorldRotation(currentLookWorldRotation);
-		break;
-	}
-	case MoveType::Water:
-	{
-		GetOwner()->_transform->SetWorldRotation(lookRotation);
-		break;
-	}
-	}
+	GetOwner()->_transform->SetWorldRotation(currentLookWorldRotation);
 
 
 	Vector3 currentPos = GetOwner()->_transform->GetWorldPosition();
 	Vector3 nextPos = currentPos + velocity * Time::main->GetDeltaTime();
 
-	switch (moveType)
-	{
-		case MoveType::Field:
-		{
-			Vector3 upRayOffset = nextPos + Vector3::Up * 1.0f;
+	Vector3 upRayOffset = nextPos + Vector3::Up * 1.0f;
 
-			if (auto hit = ColliderManager::main->RayCast({ upRayOffset, Vector3::Down }, 30))
-				if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
-					nextPos.y = upRayOffset.y - hit.distance;
-			break;
-		}
-		case MoveType::Water:
-		{
-			break;
-		}
-	}
+	if (auto hit = ColliderManager::main->RayCast({ upRayOffset, Vector3::Down }, 30))
+		if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
+			nextPos.y = upRayOffset.y - hit.distance;
 
 	// ------------- 공통 로직 ------------- 
 
@@ -250,6 +157,7 @@ void PlayerController::RenderBegin()
 void PlayerController::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 	Component::CollisionBegin(collider, other);
+	std::cout << "1234" << "\n";
 }
 
 void PlayerController::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
