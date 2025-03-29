@@ -34,7 +34,7 @@ void Collider::Start()
 	if (auto obj = GetOwner()->GetComponentWithParents<PhysicsComponent>()) {
 		groupRootObject = obj->GetOwner();
 	}
-	if (GetOwner()->GetType() == GameObjectType::Static)
+	if (GetOwner()->GetType() == GameObjectType::Static && GetOwner()->GetActive())
 	{
 		CalculateBounding();
 		ColliderManager::main->AddCollider(GetCast<Collider>());

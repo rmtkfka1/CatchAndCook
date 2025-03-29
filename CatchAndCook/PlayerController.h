@@ -66,5 +66,7 @@ private:
 	Vector3 velocity = Vector3::Zero;
 
 	ControlInfo controlInfo = fieldInfo;
+
+	
 };
 

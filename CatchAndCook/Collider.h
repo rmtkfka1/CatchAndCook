@@ -40,6 +40,7 @@ public:
 
 public:
 	CollisionType GetType() { return _type; }
+	int GetGroupID() const { return groupId; }
 	vec3 GetCenter();
 	bool CheckCollision(const std::shared_ptr<Collider>& other);
 	bool CheckCollision(const CollisionType& type, const BoundingUnion& bound);
@@ -49,8 +50,9 @@ public:
 	void SetBoundingFrustum(BoundingFrustum& boundingFrustum);
 	void CalculateBounding();
 	pair<vec3, vec3> GetMinMax();
-
 	BoundingUnion& GetBoundUnion() {return _bound;}
+
+
 
 private:
 	friend class ColliderManager;

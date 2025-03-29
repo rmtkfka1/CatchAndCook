@@ -7,6 +7,7 @@
 #include "Collider.h"
 #include "ColliderManager.h"
 #include "Gizmo.h"
+#include "PhysicsComponent.h"
 #include "SkinnedMeshRenderer.h"
 #include "Terrain.h"
 #include "TerrainManager.h"
@@ -41,24 +42,6 @@ void PlayerController::Update()
 	CameraControl();
 	MoveControl();
 
-
-	if (Input::main->GetMouse(KeyCode::LeftMouse))
-	{
-		auto mousePos = Input::main->GetMousePosition();
-		auto camera = CameraManager::main->GetActiveCamera();
-		auto cameraPos = camera->GetCameraPos();
-		vec3 cameraDir = camera->GetScreenToWorldPosition(mousePos) - camera->GetCameraPos();
-		cameraDir.Normalize();
-
-		auto hit = ColliderManager::main->RayCast({ cameraPos, cameraDir }, 500);
-		if (hit)
-		{
-			auto box = BoundingOrientedBox(hit.worldPos, Vector3::One, Quaternion::Identity);
-			Gizmo::Width(0.02f);
-			Gizmo::Box(box, ColliderManager::main->CollisionCheckDirect(CollisionType::Box, { .box = box })?Vector4(1,0.5,0,1): Vector4(0, 1, 0, 1));
-			Gizmo::WidthRollBack();
-		}
-	}
 
 	//GetOwner()->_transform->SetWorldPosition(GetOwner()->_transform->GetWorldPosition() + Vector3::Forward * 10.0f * Time::main->GetDeltaTime());
 }
@@ -133,13 +116,41 @@ void PlayerController::MoveControl()
 			velocity *= controlInfo.maxSpeed;
 		}
 	}
-
-
 	GetOwner()->_transform->SetWorldRotation(currentLookWorldRotation);
+
+
+
+
+	std::vector<std::pair<CollisionType, BoundingUnion>> colliderDatas;
+	std::vector<std::shared_ptr<Collider>> colliders;
+	GetOwner()->GetComponentsWithChilds<Collider>(colliders);
+	int groupID = PhysicsComponent::GetPhysicsGroupID(GetOwner());
+	for (auto& collider : colliders)
+	{
+		if (groupID == collider->GetGroupID())
+		{
+			collider->CalculateBounding();
+			colliderDatas.push_back(std::make_pair(collider->GetType(), collider->GetBoundUnion()));
+		}
+	}
+
+	bool tf = false;
+	for (auto [a, b] : colliderDatas)
+	{
+		if (a == CollisionType::Box)
+			b.box.Center = b.box.Center + velocity * Time::main->GetDeltaTime();
+		if (a == CollisionType::Sphere)
+			b.sphere.Center = b.sphere.Center + velocity * Time::main->GetDeltaTime();
+		tf |= ColliderManager::main->CollisionCheckDirect(a, b);
+	}
+
+	//Position
 
 
 	Vector3 currentPos = GetOwner()->_transform->GetWorldPosition();
 	Vector3 nextPos = currentPos + velocity * Time::main->GetDeltaTime();
+	if (tf)
+		nextPos = currentPos;
 
 	Vector3 upRayOffset = nextPos + Vector3::Up * 1.0f;
 
@@ -157,6 +168,25 @@ void PlayerController::MoveControl()
 void PlayerController::Update2()
 {
 	Component::Update2();
+
+	camera.lock()->Calculate();
+	if (Input::main->GetMouse(KeyCode::LeftMouse))
+	{
+		auto mousePos = Input::main->GetMousePosition();
+		auto camera = CameraManager::main->GetActiveCamera();
+		auto cameraPos = camera->GetCameraPos();
+		vec3 cameraDir = camera->GetScreenToWorldPosition(mousePos) - camera->GetCameraPos();
+		cameraDir.Normalize();
+
+		auto hit = ColliderManager::main->RayCast({ cameraPos, cameraDir }, 500);
+		if (hit)
+		{
+			auto box = BoundingOrientedBox(hit.worldPos, Vector3::One, Quaternion::Identity);
+			Gizmo::Width(0.02f);
+			Gizmo::Box(box, ColliderManager::main->CollisionCheckDirect(CollisionType::Box, { .box = box }) ? Vector4(1, 0.5, 0, 1) : Vector4(0, 1, 0, 1));
+			Gizmo::WidthRollBack();
+		}
+	}
 }
 
 void PlayerController::Enable()
