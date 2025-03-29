@@ -99,15 +99,16 @@ void SeaPlayerController::Update()
 		vec3 currentPos = _transform->GetWorldPosition();
 		vec3 nextPos = currentPos + _velocity * dt;
 
-		vec3 rotatedOffset = vec3::Transform(vec3(0, _cameraHeightOffset, 0), rotation);
-		vec3 predictedCameraPos = nextPos + rotatedOffset + _transform->GetForward();
+		vec3 predictedCameraPos = nextPos + vec3(0,_cameraHeightOffset,0) + _transform->GetForward();
 
 		float terrainHeight = _terrian->GetLocalHeight(predictedCameraPos);
+		const float safeHeightAboveGround = 1.0f;
+		float desiredY = terrainHeight + safeHeightAboveGround;
 
-		if (predictedCameraPos.y < terrainHeight + 1.0f)
+		if (predictedCameraPos.y < desiredY)
 		{
-			float deltaY = (terrainHeight + 1.0f) - predictedCameraPos.y;
-			nextPos.y += deltaY;
+			nextPos.y = desiredY - _cameraHeightOffset; // 플레이어 위치 자체를 올려줌
+			predictedCameraPos.y = desiredY;             // 카메라도 정확히 올려줌
 		}
 
 		_transform->SetWorldPosition(nextPos);
@@ -115,6 +116,8 @@ void SeaPlayerController::Update()
 	}
 
 	_velocity *= (1 - (_resistance * dt));
+
+	CameraManager::main->Setting(CameraType::SeaCamera);
 
 
 }

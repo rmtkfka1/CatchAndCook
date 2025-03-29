@@ -16,15 +16,15 @@ void Scene_Sea01::Init()
 	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
 	sceneLoader->Load(GetCast<Scene>());
 
-	auto player = Find(L"player")->AddComponent<SeaPlayerController>();
+	auto player = Find(L"player");
 
-	auto temp = Find(L"polySurface353");
-
-	if (temp)
+	if (player)
 	{
-		temp->AddComponent<testComponent>();
-		temp->_transform->SetPivotOffset(vec3(0, 0.2f, 0));
+		player->_transform->SetPivotOffset(vec3(0, 1.0f, 0));
+		player->AddComponent<SeaPlayerController>();
 	}
+
+	
 }
 
 void Scene_Sea01::Update()
