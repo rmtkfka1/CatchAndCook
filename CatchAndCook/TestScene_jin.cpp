@@ -130,8 +130,7 @@ void TestScene_jin::Init()
 	sceneLoader->Load(GetCast<Scene>());
 
 	auto player = Find(L"player")->AddComponent<PlayerController>();
-	auto player2 = Find(L"player")->AddComponent<testComponent>();
-	Find(L"player")->_transform->SetPivotOffset(vec3(0, 1.0f, 0));
+
 }
 
 void TestScene_jin::Update()
