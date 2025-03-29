@@ -37,7 +37,7 @@ public:
 
 	const float _moveForce = 30.0f;
 	const float _maxSpeed = 30.0f;
-	const float _resistance = 3.5f;
+	const float _resistance = 2.5f;
 
 
 

@@ -39,7 +39,9 @@ void SeaPlayerController::Update()
 
 	float dt = Time::main->GetDeltaTime();
 	CalCulateYawPitchRoll();
+
 	Quaternion rotation = Quaternion::CreateFromYawPitchRoll(_yaw * D2R, _pitch * D2R, 0);
+
 	_transform->SetLocalRotation(rotation);
 	_camera->SetCameraRotation(_yaw, _pitch, 0);
 
@@ -73,6 +75,9 @@ void SeaPlayerController::Update()
 
 	if (inputDir != vec3::Zero)
 	{
+
+		inputDir.Normalize();
+
 		vec3 moveDir = vec3::Transform(inputDir, rotation);
 
 		_velocity += moveDir * _moveForce * dt;
@@ -80,7 +85,7 @@ void SeaPlayerController::Update()
 		if (_velocity.Length() > _maxSpeed)
 		{
 			_velocity.Normalize();
-			_velocity *= _maxSpeed;
+			_velocity *=_maxSpeed;
 		}
 	}
 
