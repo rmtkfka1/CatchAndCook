@@ -107,8 +107,8 @@ void SeaPlayerController::Update()
 
 		if (predictedCameraPos.y < desiredY)
 		{
-			nextPos.y = desiredY - _cameraHeightOffset; // 플레이어 위치 자체를 올려줌
-			predictedCameraPos.y = desiredY;             // 카메라도 정확히 올려줌
+			nextPos.y = desiredY - _cameraHeightOffset; 
+			predictedCameraPos.y = desiredY;            
 		}
 
 		_transform->SetWorldPosition(nextPos);
