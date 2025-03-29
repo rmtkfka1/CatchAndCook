@@ -54,7 +54,6 @@ public:
 	void SetDestroy() override;
 	void Destroy() override;
 
-
 public:
 	void SetMoveType(MoveType moveType);
 	void CameraControl();

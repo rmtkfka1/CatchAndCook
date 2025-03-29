@@ -24,7 +24,8 @@
 #include "ImguiManager.h"
 #include "NavMeshManager.h"
 #include "Collider.h"
-
+#include "GameObject.h"
+#include "Terrain.h"
 void Game::Init(HWND hwnd)
 {
 	IGuid::StaticInit();
@@ -318,6 +319,12 @@ void Game::CameraUpdate()
 		//cout << rayhit.worldPos.x << " " << rayhit.worldPos.y << " " << rayhit.worldPos.z << endl;
 
 	}
+
+	/*if (auto& terrain = SceneManager::main->GetCurrentScene()->Find(L"Terrain"))
+	{
+		cout << terrain->GetComponent<Terrain>()->GetLocalHeight(camera->GetCameraPos()) << endl;;
+	}*/
+
 }
 
 void Game::SetHandle(HWND hwnd, HINSTANCE hInst)

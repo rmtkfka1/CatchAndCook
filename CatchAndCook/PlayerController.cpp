@@ -78,7 +78,6 @@ void PlayerController::SetMoveType(MoveType moveType)
 	}
 }
 
-
 void PlayerController::CameraControl()
 {
 	auto cameraTransform = camera.lock()->GetOwner()->_transform;
@@ -117,7 +116,6 @@ void PlayerController::CameraControl()
 	Quaternion finalRotation = Quaternion::CreateFromYawPitchRoll(_currentEuler);
 	Vector3 _currentNextDirection = Vector3::Transform(Vector3::Forward, finalRotation);
 
-
 	switch (moveType)
 	{
 		case MoveType::Field:
@@ -128,7 +126,9 @@ void PlayerController::CameraControl()
 			float distance = 3.6;
 			if (auto hit = ColliderManager::main->RayCast({ _currentOffset, -_currentNextDirection }, distance * 2))
 				if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
+				{
 					distance = std::min(hit.distance, distance) - 0.05f;
+				}
 
 
 			cameraNextPosition = _currentOffset - _currentNextDirection * distance;

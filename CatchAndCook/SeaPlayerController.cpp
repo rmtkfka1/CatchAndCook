@@ -4,7 +4,8 @@
 #include "Camera.h"
 #include "Collider.h"
 #include "Transform.h"
-
+#include "TerrainManager.h"
+#include "Terrain.h"
 SeaPlayerController::SeaPlayerController()
 {
 }
@@ -20,9 +21,6 @@ void SeaPlayerController::Init()
 	center.y = static_cast<LONG>(_centerMousePos.y);
 	ClientToScreen(Core::main->GetHandle(), &center);
 	SetCursorPos(center.x, center.y);
-
-
-
 }
 
 void SeaPlayerController::Start()
@@ -31,9 +29,16 @@ void SeaPlayerController::Start()
 	_transform = GetOwner()->_transform;
 	_collider = GetOwner()->GetComponent<Collider>();
 
+	if (auto terrian = SceneManager::main->GetCurrentScene()->Find(L"Terrain"))
+	{
+		cout << "찾음" << endl;
+		_terrian = terrian->GetComponent<Terrain>();
+	}
+
 	_camera->SetCameraPos(_transform->GetWorldPosition() + _transform->GetForward() * 0.3f);
 	_camera->SetCameraLook(_transform->GetForward());
 	_camera->SetCameraUp(_transform->GetUp());
+
 }
 
 void SeaPlayerController::Update()
@@ -97,6 +102,15 @@ void SeaPlayerController::Update()
 	{
 		vec3 currentPos = _transform->GetWorldPosition();
 		vec3 nextPos = currentPos + _velocity * dt;
+
+	/*	cout << _terrian->GetLocalHeight(nextPos) << endl;*/
+
+		if (nextPos.y < _terrian->GetLocalHeight(nextPos))
+		{
+			cout << "야호" << endl;
+		}
+
+
 		_transform->SetWorldPosition(nextPos);
 		_camera->SetCameraPos(_transform->GetWorldPosition() + _transform->GetForward() * 0.3f);
 	}

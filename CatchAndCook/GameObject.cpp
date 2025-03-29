@@ -180,11 +180,6 @@ void GameObject::Collision(const std::shared_ptr<Collider>& collider, const std:
 }
 
 
-
-
-
-
-
 std::shared_ptr<GameObject> GameObject::GetChild(int index)
 {
     if (index < 0 || index >= _childs.size())
@@ -414,7 +409,6 @@ void GameObject::ActiveUpdateChain(bool active_total)
 
         SyncActivePrev();
     }
-
 
     for (int i = 0; i < _childs.size(); i++)
     {

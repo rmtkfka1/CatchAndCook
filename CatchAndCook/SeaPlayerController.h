@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Component.h"
 class Camera;
+class Terrain;
 
 class SeaPlayerController :public Component
 {
@@ -26,7 +27,7 @@ private:
 	shared_ptr<Transform> _transform;
 	shared_ptr<Camera> _camera;
 	shared_ptr<Collider> _collider;
-
+	shared_ptr<Terrain> _terrian;
 
 public:
 	vec3 _velocity = vec3::Zero;

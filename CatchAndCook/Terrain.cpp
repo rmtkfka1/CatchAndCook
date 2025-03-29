@@ -93,6 +93,7 @@ void Terrain::Start()
         }
     }
 
+
     TerrainManager::main->PushTerrain(static_pointer_cast<Terrain>(shared_from_this()));
 
 }
@@ -196,11 +197,13 @@ void Terrain::SetHeightMap(const std::wstring& rawPath, const std::wstring& pngP
     LoadTerrain(rawPath);
 }
 
+
 float Terrain::GetHeight(const Vector2& heightMapPosition) const
 {
     const float fx = heightMapPosition.x;
     const float fz = heightMapPosition.y;
-    if (fx < 0 || fx > _heightRawSize.x || fz < 0 || fz > _heightRawSize.y)
+
+    if (fx < 0 || fx >= _heightRawSize.x - 1 || fz < 0 || fz >= _heightRawSize.y - 1)
         return 0;
 
     const int ix = static_cast<int>(fx);
@@ -229,8 +232,8 @@ float Terrain::GetLocalHeight(const Vector3& localPosition) // float x,float z
 {
     Vector3 terrainOrigin = GetOwner()->_transform->GetLocalPosition();
 
-    float tempX = localPosition.x;
-    float tempZ = localPosition.z;
+	float tempX = localPosition.x - terrainOrigin.x;
+    float tempZ = localPosition.z - terrainOrigin.z;
 
     float finalH = GetHeight(Vector2((tempX / _fieldSize.x) * _heightRawSize.x, (tempZ / _fieldSize.z) * _heightRawSize.y));
     return terrainOrigin.y + finalH;
