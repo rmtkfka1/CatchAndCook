@@ -72,7 +72,6 @@ private: // Camera Control
 
 private:
 	Vector3 velocity = Vector3::Zero;
-
 	MoveType moveType = MoveType::Field;
 	ControlInfo controlInfo = fieldInfo;
 };

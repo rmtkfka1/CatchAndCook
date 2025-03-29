@@ -68,7 +68,7 @@ void Game::Init(HWND hwnd)
 
 	CameraManager::main->AddCamera(CameraType::DebugCamera, make_shared<DebugCamera>());
 	CameraManager::main->AddCamera(CameraType::UiCamera, make_shared<UiCamera>());
-	CameraManager::main->AddCamera(CameraType::ThirdPersonCamera, make_shared<ThirdPersonCamera>());
+	CameraManager::main->AddCamera(CameraType::SeaCamera, make_shared<ThirdPersonCamera>());
 	CameraManager::main->GetCamera(CameraType::DebugCamera)->SetCameraPos(vec3(0, 0, -50.0f));
 
 	//CameraManager::main->SetActiveCamera(CameraType::DebugCamera);
@@ -95,7 +95,7 @@ void Game::Init(HWND hwnd)
 		LightManager::main->PushLight(light);
 	}
 
-	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
+	auto scene = SceneManager::main->AddScene(SceneType::Sea01);
 }
 
 void Game::PrevUpdate()
@@ -265,6 +265,7 @@ void Game::CameraUpdate()
 	if (Input::main->GetMouse(KeyCode::RightMouse))
 	{
 		static vec2 lastMousePos;
+		static vec2 sumDelta =vec2::Zero;
 		vec2 currentMousePos = Input::main->GetMousePosition();
 
 		//Ƣ������ ���
@@ -278,7 +279,9 @@ void Game::CameraUpdate()
 		vec2 delta = (currentMousePos - lastMousePos)*speed;
 		lastMousePos = currentMousePos;
 
-		camera->SetCameraRotation(delta.x, delta.y, 0);
+		sumDelta += delta;
+
+		camera->SetCameraRotation(sumDelta.x, sumDelta.y, 0);
 	}
 	
 	if (Input::main->GetMouseDown(KeyCode::LeftMouse))

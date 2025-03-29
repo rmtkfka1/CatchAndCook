@@ -8,6 +8,7 @@
 #include "WallSlideController.h"
 #include "PlayerController.h"
 #include "CameraComponent.h"
+#include "SeaPlayerController.h"
 void Scene_Sea01::Init()
 {
 
@@ -15,7 +16,7 @@ void Scene_Sea01::Init()
 	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
 	sceneLoader->Load(GetCast<Scene>());
 
-	auto player = Find(L"player")->AddComponent<PlayerController>();
+	auto player = Find(L"player")->AddComponent<SeaPlayerController>();
 }
 
 void Scene_Sea01::Update()

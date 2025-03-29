@@ -36,6 +36,8 @@ void PlayerController::Start()
 
 void PlayerController::Update()
 {
+	if (CameraManager::main->GetCameraType() == CameraType::DebugCamera)
+		return;
 
 	Component::Update();
 
@@ -169,6 +171,7 @@ void PlayerController::MoveControl()
 		(Input::main->GetKey(KeyCode::D) ? 1 : 0) - (Input::main->GetKey(KeyCode::A) ? 1 : 0), 0,
 		(Input::main->GetKey(KeyCode::W) ? 1 : 0) - (Input::main->GetKey(KeyCode::S) ? 1 : 0));
 	moveDirection.Normalize();
+
 	targetLookWorldDirection = Vector3::Transform(moveDirection, lookRotation);
 
 	if (targetLookWorldDirection != Vector3::Zero)
@@ -176,9 +179,9 @@ void PlayerController::MoveControl()
 		currentLookWorldRotation = Quaternion::Slerp(currentLookWorldRotation, Quaternion::LookRotation(targetLookWorldDirection, Vector3::Transform(Vector3::Up, lookRotation)),
 			Time::main->GetDeltaTime() * 30);
 
-
 		velocity += targetLookWorldDirection * controlInfo.moveForce * Time::main->GetDeltaTime() * 60;
-		if (velocity.Length() > controlInfo.maxSpeed) {
+		if (velocity.Length() > controlInfo.maxSpeed) 
+		{
 			velocity.Normalize();
 			velocity *= controlInfo.maxSpeed;
 		}
@@ -198,7 +201,6 @@ void PlayerController::MoveControl()
 		break;
 	}
 	}
-
 
 	Vector3 currentPos = GetOwner()->_transform->GetWorldPosition();
 	Vector3 nextPos = currentPos + velocity * Time::main->GetDeltaTime();

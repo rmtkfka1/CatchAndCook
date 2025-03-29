@@ -325,8 +325,10 @@
     </ClCompile>
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Item.cpp" />
-    <ClCompile Include="SeaPlayerComponent.cpp" />
     <ClCompile Include="WInMain.cpp" />
+    <ClCompile Include="SeaPlayerController.cpp">
+      <Filter>03.Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -612,8 +614,10 @@
     </ClInclude>
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="Item.h" />
-    <ClInclude Include="SeaPlayerComponent.h" />
     <ClInclude Include="WInMain.h" />
+    <ClInclude Include="SeaPlayerController.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">

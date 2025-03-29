@@ -391,7 +391,7 @@ void Scene::CameraControll()
 
     if (Input::main->GetKeyDown(KeyCode::F3))
     {
-        type = CameraType::ThirdPersonCamera;
+        type = CameraType::SeaCamera;
     }
 
 	CameraManager::main->Setting(type);
