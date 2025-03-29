@@ -93,20 +93,25 @@ void SeaPlayerController::Update()
 			_velocity *=_maxSpeed;
 		}
 	}
-
 	if (_velocity.Length() > 0.001f)
 	{
 		vec3 currentPos = _transform->GetWorldPosition();
 		vec3 nextPos = currentPos + _velocity * dt;
 
-		if (nextPos.y < _terrian->GetLocalHeight(nextPos))
+		vec3 rotatedOffset = vec3::Transform(vec3(0, _cameraHeightOffset, 0), rotation);
+		vec3 predictedCameraPos = nextPos + rotatedOffset + _transform->GetForward();
+
+		float terrainHeight = _terrian->GetLocalHeight(predictedCameraPos);
+
+		if (predictedCameraPos.y < terrainHeight + 1.5f)
 		{
-			nextPos.y = _terrian->GetLocalHeight(nextPos);
+			float deltaY = (terrainHeight + 1.5f) - predictedCameraPos.y;
+			nextPos.y += deltaY;
 		}
 
+
 		_transform->SetWorldPosition(nextPos);
-		vec3 rotatedOffset = vec3::Transform(vec3(0, _cameraHeightOffset, 0), rotation);
-		_camera->SetCameraPos(_transform->GetWorldPosition() + rotatedOffset);
+		_camera->SetCameraPos(predictedCameraPos);
 	}
 
 	_velocity *= (1 - (_resistance * dt));
