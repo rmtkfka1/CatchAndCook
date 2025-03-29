@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+enum class CollisionType;
+union BoundingUnion;
+
 struct RayHit
 {
 	Vector3 normal;
@@ -37,6 +40,8 @@ public:
 	void RemoveCollider(const std::shared_ptr<Collider>& collider);
 	void Update();
 
+	bool CollisionCheckDirect(CollisionType type, BoundingUnion bound);
+
 	bool IsCollision(const std::shared_ptr<Collider>& src);
 	bool IsCollision(const std::shared_ptr<Collider>& src, const std::shared_ptr<Collider>& dest);
 	std::unordered_set<std::shared_ptr<Collider>>& GetCollisionList(const std::shared_ptr<Collider>& src);
@@ -55,7 +60,9 @@ public:
 
 	vec3 GetGridCell(const vec3& position) const;
 	vector<vec3> GetOccupiedCells(const shared_ptr<Collider>& collider) const;
+	vector<vec3> GetOccupiedCellsDirect(CollisionType type, BoundingUnion bound) const;
 	std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialCollisions(std::shared_ptr<Collider>& collider);
+	std::unordered_set<std::shared_ptr<Collider>> GetPotentialCollisionsDirect(const vector<vec3>& vec);
 
 	std::unordered_map<vec3, std::vector<std::shared_ptr<Collider>>, PositionHash> _staticColliderGrids;
 	std::unordered_map<vec3, std::vector<std::shared_ptr<Collider>>, PositionHash> _dynamicColliderGrids;

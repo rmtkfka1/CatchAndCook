@@ -40,6 +40,78 @@ vector<vec3> ColliderManager::GetOccupiedCells(const shared_ptr<Collider>& colli
 	return occupiedCells;
 }
 
+vector<vec3> ColliderManager::GetOccupiedCellsDirect(CollisionType type, BoundingUnion bound) const
+{
+	vec3 min, max;
+	if (type == CollisionType::Box)
+	{
+		Matrix rotMatrix = Matrix::CreateFromQuaternion(bound.box.Orientation);
+		vec3 center = bound.box.Center;
+		vec3 extents = bound.box.Extents;
+
+		vec3 localVertices[8] = {
+			vec3(-extents.x, -extents.y, -extents.z),
+			vec3(-extents.x, -extents.y,  extents.z),
+			vec3(-extents.x,  extents.y, -extents.z),
+			vec3(-extents.x,  extents.y,  extents.z),
+			vec3(extents.x, -extents.y, -extents.z),
+			vec3(extents.x, -extents.y,  extents.z),
+			vec3(extents.x,  extents.y, -extents.z),
+			vec3(extents.x,  extents.y,  extents.z)
+		};
+
+		vec3 worldMin = vec3(FLT_MAX, FLT_MAX, FLT_MAX);
+		vec3 worldMax = vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+		for (int i = 0; i < 8; i++)
+		{
+			vec3 worldVertex = center + vec3(
+				localVertices[i].x * rotMatrix.m[0][0] + localVertices[i].y * rotMatrix.m[1][0] + localVertices[i].z * rotMatrix.m[2][0],
+				localVertices[i].x * rotMatrix.m[0][1] + localVertices[i].y * rotMatrix.m[1][1] + localVertices[i].z * rotMatrix.m[2][1],
+				localVertices[i].x * rotMatrix.m[0][2] + localVertices[i].y * rotMatrix.m[1][2] + localVertices[i].z * rotMatrix.m[2][2]
+			);
+
+			worldMin = vec3(
+				std::min(worldMin.x, worldVertex.x),
+				std::min(worldMin.y, worldVertex.y),
+				std::min(worldMin.z, worldVertex.z)
+			);
+
+			worldMax = vec3(
+				std::max(worldMax.x, worldVertex.x),
+				std::max(worldMax.y, worldVertex.y),
+				std::max(worldMax.z, worldVertex.z)
+			);
+		}
+
+		min = worldMin;
+		max = worldMax;
+	}
+
+	else if (type == CollisionType::Sphere)
+	{
+		min = bound.sphere.Center - vec3(bound.sphere.Radius);
+		max = bound.sphere.Center + vec3(bound.sphere.Radius);
+	}
+
+	vec3 minCell = GetGridCell(min);
+	vec3 maxCell = GetGridCell(max);
+
+	vector<vec3> occupiedCells;
+
+	for (int x = static_cast<int>(minCell.x); x <= static_cast<int>(maxCell.x); ++x)
+	{
+		for (int y = static_cast<int>(minCell.y); y <= static_cast<int>(maxCell.y); ++y)
+		{
+			for (int z = static_cast<int>(minCell.z); z <= static_cast<int>(maxCell.z); ++z)
+			{
+				occupiedCells.push_back(vec3(x, y, z));
+			}
+		}
+	}
+
+	return occupiedCells;
+}
 
 
 void ColliderManager::AddCollider(const std::shared_ptr<Collider>& collider)
@@ -55,7 +127,8 @@ void ColliderManager::AddCollider(const std::shared_ptr<Collider>& collider)
 		}
 		else if (collider->GetOwner()->GetType() == GameObjectType::Dynamic)
 		{
-			_dynamicColliderGrids[cell].push_back(collider);
+			if (std::ranges::find(_dynamicColliderGrids[cell], collider) == _dynamicColliderGrids[cell].end())
+				_dynamicColliderGrids[cell].push_back(collider);
 			_dynamicColliderCashing[collider].push_back(cell);
 		}
 	}
@@ -167,8 +240,41 @@ std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialColli
 	return potentialCollisions;
 }
 
+std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialCollisionsDirect(const vector<vec3>& vec)
+{
+	std::unordered_set<std::shared_ptr<Collider>> potentialCollisions;
+	const auto& occupiedCells = vec;
+
+	for (const auto& cell : occupiedCells)
+	{
+		{
+			auto it = _dynamicColliderGrids.find(cell);
+
+			if (it != _dynamicColliderGrids.end())
+			{
+				auto& colliders = it->second;
+				potentialCollisions.insert(colliders.begin(), colliders.end());
+			}
+		}
+
+		{
+			auto it = _staticColliderGrids.find(cell);
+
+			if (it != _staticColliderGrids.end())
+			{
+				auto& colliders = it->second;
+				potentialCollisions.insert(colliders.begin(), colliders.end());
+			}
+		}
+
+	};
+
+	return potentialCollisions;
+}
+
 void ColliderManager::Update()
 {
+	if (HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::DivideSpace))
 	for (auto& [cell, colliders] : _staticColliderGrids)
 	{
 		for (auto& collider : colliders)
@@ -217,6 +323,22 @@ void ColliderManager::Update()
 
 	_dynamicColliderGrids.clear();
 	_dynamicColliderCashing.clear();
+}
+
+bool ColliderManager::CollisionCheckDirect(CollisionType type, BoundingUnion bound)
+{
+	auto cells = GetOccupiedCellsDirect(type, bound);
+	auto potentialCollisions = GetPotentialCollisionsDirect(cells);
+
+	for (auto& other : potentialCollisions)
+	{
+		if (other->GetOwner()->GetActive() && other->CheckCollision(type, bound))
+		{
+			return true;
+		}
+	}
+	
+	return false;
 }
 
 //무언가와 충돌하고 있는지 체크

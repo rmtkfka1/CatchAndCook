@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "CameraComponent.h"
 #include "CameraManager.h"
+#include "Collider.h"
 #include "ColliderManager.h"
 #include "Gizmo.h"
 #include "SkinnedMeshRenderer.h"
@@ -39,6 +40,25 @@ void PlayerController::Update()
 
 	CameraControl();
 	MoveControl();
+
+
+	if (Input::main->GetMouse(KeyCode::LeftMouse))
+	{
+		auto mousePos = Input::main->GetMousePosition();
+		auto camera = CameraManager::main->GetActiveCamera();
+		auto cameraPos = camera->GetCameraPos();
+		vec3 cameraDir = camera->GetScreenToWorldPosition(mousePos) - camera->GetCameraPos();
+		cameraDir.Normalize();
+
+		auto hit = ColliderManager::main->RayCast({ cameraPos, cameraDir }, 500);
+		if (hit)
+		{
+			auto box = BoundingOrientedBox(hit.worldPos, Vector3::One, Quaternion::Identity);
+			Gizmo::Width(0.02f);
+			Gizmo::Box(box, ColliderManager::main->CollisionCheckDirect(CollisionType::Box, { .box = box })?Vector4(1,0.5,0,1): Vector4(0, 1, 0, 1));
+			Gizmo::WidthRollBack();
+		}
+	}
 
 	//GetOwner()->_transform->SetWorldPosition(GetOwner()->_transform->GetWorldPosition() + Vector3::Forward * 10.0f * Time::main->GetDeltaTime());
 }
@@ -157,7 +177,6 @@ void PlayerController::RenderBegin()
 void PlayerController::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 	Component::CollisionBegin(collider, other);
-	std::cout << "1234" << "\n";
 }
 
 void PlayerController::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)

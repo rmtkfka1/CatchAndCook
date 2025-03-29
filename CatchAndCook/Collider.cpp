@@ -30,9 +30,8 @@ void Collider::Start()
 {
 	Component::Start();
 
-	if (auto obj = GetOwner()->GetComponentWithParents<PhysicsComponent>())
-	{
-		groupId = obj->GetInstanceID();
+	groupId = PhysicsComponent::GetPhysicsGroupID(GetOwner());
+	if (auto obj = GetOwner()->GetComponentWithParents<PhysicsComponent>()) {
 		groupRootObject = obj->GetOwner();
 	}
 	if (GetOwner()->GetType() == GameObjectType::Static)
@@ -45,7 +44,8 @@ void Collider::Start()
 void Collider::Update()
 {
 	Component::Update();
-
+	CalculateBounding();
+	ColliderManager::main->AddCollider(GetCast<Collider>());
 	
 }
 
@@ -53,11 +53,8 @@ void Collider::Update2()
 {
 	Component::Update2();
 
-	if (GetOwner()->GetType() == GameObjectType::Dynamic)
-	{
-		CalculateBounding();
-		ColliderManager::main->AddCollider(GetCast<Collider>());
-	}
+	CalculateBounding();
+	ColliderManager::main->AddCollider(GetCast<Collider>());
 }
 
 void Collider::Enable()
@@ -72,11 +69,8 @@ void Collider::Enable()
 		ColliderManager::main->AddCollider(GetCast<Collider>());
 	}
 
-	groupId = GetInstanceID();
-
-	if (auto obj = GetOwner()->GetComponentWithParents<PhysicsComponent>())
-	{
-		groupId = obj->GetInstanceID();
+	groupId = PhysicsComponent::GetPhysicsGroupID(GetOwner());
+	if (auto obj = GetOwner()->GetComponentWithParents<PhysicsComponent>()) {
 		groupRootObject = obj->GetOwner();
 	}
 }
@@ -199,6 +193,61 @@ bool Collider::CheckCollision(const std::shared_ptr<Collider>& other)
 		else if (other->_type == CollisionType::Frustum)
 		{
 			return _bound.frustum.Intersects(other->_bound.frustum);
+		}
+
+
+	}
+
+	return false;
+}
+
+bool Collider::CheckCollision(const CollisionType& type, const BoundingUnion& bound)
+{
+	if (_type == CollisionType::Box)
+	{
+		if (type == CollisionType::Box)
+		{
+			return _bound.box.Intersects(bound.box);
+		}
+		else if (type == CollisionType::Sphere)
+		{
+			return _bound.box.Intersects(bound.sphere);
+		}
+		else if (type == CollisionType::Frustum)
+		{
+			return _bound.box.Intersects(bound.frustum);
+		}
+
+	}
+	else if (_type == CollisionType::Sphere)
+	{
+		if (type == CollisionType::Box)
+		{
+			return _bound.sphere.Intersects(bound.box);
+		}
+		else if (type == CollisionType::Sphere)
+		{
+			return _bound.sphere.Intersects(bound.sphere);
+		}
+		else if (type == CollisionType::Frustum)
+		{
+			return _bound.sphere.Intersects(bound.frustum);
+		}
+	}
+
+	else if (_type == CollisionType::Frustum)
+	{
+		if (type == CollisionType::Box)
+		{
+			return _bound.frustum.Intersects(bound.box);
+		}
+		else if (type == CollisionType::Sphere)
+		{
+			return _bound.frustum.Intersects(bound.sphere);
+		}
+		else if (type == CollisionType::Frustum)
+		{
+			return _bound.frustum.Intersects(bound.frustum);
 		}
 
 

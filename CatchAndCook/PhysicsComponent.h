@@ -18,5 +18,7 @@ public:
 	void ChangeParent(const std::shared_ptr<GameObject>& prev, const std::shared_ptr<GameObject>& current) override;
 	void SetDestroy() override;
 	void Destroy() override;
+
+	static int GetPhysicsGroupID(const std::shared_ptr<GameObject>& obj);
 };
 

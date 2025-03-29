@@ -42,6 +42,7 @@ public:
 	CollisionType GetType() { return _type; }
 	vec3 GetCenter();
 	bool CheckCollision(const std::shared_ptr<Collider>& other);
+	bool CheckCollision(const CollisionType& type, const BoundingUnion& bound);
 	bool RayCast(const Ray& ray, const float& dis, RayHit& hit);
 	void SetBoundingBox(vec3 center,vec3 extents);
 	void SetBoundingSphere(vec3 center,float radius);
