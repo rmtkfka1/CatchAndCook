@@ -93,6 +93,7 @@ void SeaPlayerController::Update()
 			_velocity *=_maxSpeed;
 		}
 	}
+
 	if (_velocity.Length() > 0.001f)
 	{
 		vec3 currentPos = _transform->GetWorldPosition();
@@ -103,12 +104,11 @@ void SeaPlayerController::Update()
 
 		float terrainHeight = _terrian->GetLocalHeight(predictedCameraPos);
 
-		if (predictedCameraPos.y < terrainHeight + 1.5f)
+		if (predictedCameraPos.y < terrainHeight + 1.0f)
 		{
-			float deltaY = (terrainHeight + 1.5f) - predictedCameraPos.y;
+			float deltaY = (terrainHeight + 1.0f) - predictedCameraPos.y;
 			nextPos.y += deltaY;
 		}
-
 
 		_transform->SetWorldPosition(nextPos);
 		_camera->SetCameraPos(predictedCameraPos);

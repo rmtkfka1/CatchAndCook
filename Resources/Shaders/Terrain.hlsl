@@ -4,7 +4,7 @@
 #include "Light_b3.hlsl"
 
 
-#define TessFactor 4
+#define TessFactor 8
 #define PI 3.14159f
 #define DIST_MAX 1000.0f
 #define DIST_MIN 0.1f
