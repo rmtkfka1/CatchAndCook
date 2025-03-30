@@ -25,14 +25,14 @@ void LightManager::SetData()
 
 void LightManager::Update()
 {
-	/*_lightParmas.eyeWorldPos = CameraManager::main->GetActiveCamera()->GetCameraPos();*/
+	_lightParmas.eyeWorldPos = CameraManager::main->GetActiveCamera()->GetCameraPos();
 
 #ifdef IMGUI_ON
-	/*for (int i = 0; i < _lightParmas.lightCount; ++i)
+	for (int i = 0; i < _lightParmas.lightCount; ++i)
 	{
 		if (ImguiManager::main->_light)
 			_lightParmas.light[i].position = ImguiManager::main->_light->_transform->GetWorldPosition();
-	}*/
+	}
 #endif 
 
 }
