@@ -54,6 +54,7 @@ private:
 
 public:
 	RayHit RayCast(const Ray& ray, const float& dis) const;
+	bool RayCastAll(const Ray& ray, const float& dis, std::vector<RayHit>& hitList) const;
 
 public:
 	float _cellSize = 100.0f;

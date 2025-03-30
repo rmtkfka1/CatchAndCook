@@ -146,6 +146,8 @@ void PlayerController::MoveControl()
 
 	//Position
 
+	if(!isGround)
+		velocity.y -= 0.981;
 
 	Vector3 currentPos = GetOwner()->_transform->GetWorldPosition();
 	Vector3 nextPos = currentPos + velocity * Time::main->GetDeltaTime();
@@ -156,7 +158,17 @@ void PlayerController::MoveControl()
 
 	if (auto hit = ColliderManager::main->RayCast({ upRayOffset, Vector3::Down }, 30))
 		if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
-			nextPos.y = upRayOffset.y - hit.distance;
+		{
+			if (upRayOffset.y - nextPos.y < upRayOffset.y - hit.distance)
+			{
+				isGround = false;
+			}
+			else
+			{
+				isGround = true;
+				nextPos.y = upRayOffset.y - hit.distance;
+			}
+		}
 
 	// ------------- 공통 로직 ------------- 
 
