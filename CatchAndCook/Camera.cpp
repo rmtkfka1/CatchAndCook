@@ -2,7 +2,7 @@
 #include "Camera.h"
 #include "Collider.h"
 #include "simple_mesh_ext.h"
-
+#include "Gizmo.h"
 Camera::Camera(CameraType type)
 {
 	_type = type;
@@ -11,6 +11,8 @@ Camera::Camera(CameraType type)
 void Camera::Update()
 {
     Calculate();
+
+
 }
 
 Vector3 Camera::GetScreenToWorldPosition(Vector2 mousePosition)

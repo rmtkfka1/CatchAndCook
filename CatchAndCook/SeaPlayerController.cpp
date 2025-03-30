@@ -6,6 +6,7 @@
 #include "Transform.h"
 #include "TerrainManager.h"
 #include "Terrain.h"
+#include "Gizmo.h"
 SeaPlayerController::SeaPlayerController()
 {
 }
@@ -39,88 +40,77 @@ void SeaPlayerController::Start()
 
 void SeaPlayerController::Update()
 {
-	if (CameraManager::main->GetCameraType() == CameraType::DebugCamera)
-		return;
+    float dt = Time::main->GetDeltaTime();
 
-	float dt = Time::main->GetDeltaTime();
+    CalCulateYawPitchRoll();
 
-	CalCulateYawPitchRoll();
+    Quaternion rotation = Quaternion::CreateFromYawPitchRoll(_yaw * D2R, _pitch * D2R, 0);
+    _transform->SetLocalRotation(rotation);
 
-	Quaternion rotation = Quaternion::CreateFromYawPitchRoll(_yaw * D2R, _pitch * D2R, 0);
-	_transform->SetLocalRotation(rotation);
-	_camera->SetCameraRotation(rotation);
+    vec3 inputDir = vec3::Zero;
 
-	vec3 inputDir = vec3::Zero;
+    if (Input::main->GetKey(KeyCode::UpArrow))
+        inputDir += vec3::Forward;
 
-	if (Input::main->GetKey(KeyCode::W))
-	{
-		inputDir += vec3::Forward;
-	}
+    if (Input::main->GetKey(KeyCode::DownArrow))
+        inputDir += vec3::Backward;
 
-	if (Input::main->GetKey(KeyCode::S))
-	{
-		inputDir += vec3::Backward;
-	}
+    if (Input::main->GetKey(KeyCode::LeftArrow))
+        inputDir += vec3::Left;
 
-	if (Input::main->GetKey(KeyCode::A))
-	{
-		inputDir += vec3::Left;
-	}
+    if (Input::main->GetKey(KeyCode::RightArrow))
+        inputDir += vec3::Right;
 
-	if (Input::main->GetKey(KeyCode::D))
-	{
-		inputDir += vec3::Right;
-	}
+    if (Input::main->GetKey(KeyCode::Space))
+        inputDir += vec3(0, 2, 0); // 점프 or 위로 이동
 
-	if (Input::main->GetKey(KeyCode::Space))
-	{
-		inputDir += vec3(0, 2, 0);
-	}
+    if (inputDir != vec3::Zero)
+    {
+        inputDir.Normalize();
+        vec3 moveDir = vec3::Transform(inputDir, rotation);
 
+        _velocity += moveDir * _moveForce * dt;
 
-	if (inputDir != vec3::Zero)
-	{
+        if (_velocity.Length() > _maxSpeed)
+        {
+            _velocity.Normalize();
+            _velocity *= _maxSpeed;
+        }
+    }
 
-		inputDir.Normalize();
+    vec3 currentPos = _transform->GetWorldPosition();
+    vec3 nextPos = currentPos + _velocity * dt;
 
-		vec3 moveDir = vec3::Transform(inputDir, rotation);
+    vec3 headOffset = vec3(0,_cameraHeightOffset, 0) + _transform->GetForward()*0.2f;                  // 머리까지의 offset
+    vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);     // 회전 적용
+    vec3 headPos = nextPos + rotatedHeadOffset;                         // 최종 머리 위치
 
-		_velocity += moveDir * _moveForce * dt;
+    // 지형 충돌 처리 (머리 위치 기준)
+    float terrainHeight = _terrian->GetLocalHeight(headPos);
+    if (headPos.y < terrainHeight +1.0f)
+    {
+        float deltaY = (terrainHeight+1.0f) - headPos.y;
+        nextPos.y += deltaY;
+        headPos.y += deltaY;
+    }
 
-		if (_velocity.Length() > _maxSpeed)
-		{
-			_velocity.Normalize();
-			_velocity *=_maxSpeed;
-		}
-	}
+    _transform->SetWorldPosition(nextPos);
+    _camera->SetCameraPos(headPos);
+    _camera->SetCameraRotation(rotation);
 
-	if (_velocity.Length() > 0.001f)
-	{
-		vec3 currentPos = _transform->GetWorldPosition();
-		vec3 nextPos = currentPos + _velocity * dt;
+    _velocity *= (1 - (_resistance * dt));
 
-		vec3 predictedCameraPos = nextPos + vec3(0,_cameraHeightOffset,0) + _transform->GetForward();
-
-		float terrainHeight = _terrian->GetLocalHeight(predictedCameraPos);
-		const float safeHeightAboveGround = 1.0f;
-		float desiredY = terrainHeight + safeHeightAboveGround;
-
-		if (predictedCameraPos.y < desiredY)
-		{
-			nextPos.y = desiredY - _cameraHeightOffset; 
-			predictedCameraPos.y = desiredY;            
-		}
-
-		_transform->SetWorldPosition(nextPos);
-		_camera->SetCameraPos(predictedCameraPos);
-	}
-
-	_velocity *= (1 - (_resistance * dt));
-
-	CameraManager::main->Setting(CameraType::SeaCamera);
-
-
-}
+    {
+        Gizmo::Width(0.1f);
+        auto o = _camera->GetCameraPos();
+        auto f = _camera->GetCameraLook();
+        auto u = _camera->GetCameraUp();
+        auto r = _camera->GetCameraRight();
+        Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1)); 
+        Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1)); 
+        Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1)); 
+    }
+};
 
 void SeaPlayerController::Update2()
 {

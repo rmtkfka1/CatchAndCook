@@ -20,7 +20,7 @@ void Scene_Sea01::Init()
 
 	if (player)
 	{
-		player->_transform->SetPivotOffset(vec3(0, 1.0f, 0));
+		//player->_transform->SetPivotOffset(vec3(0, 1.0f, 0));
 		player->AddComponent<SeaPlayerController>();
 	}
 
