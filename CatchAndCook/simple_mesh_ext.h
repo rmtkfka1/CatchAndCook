@@ -142,4 +142,24 @@ namespace DirectX::SimpleMath
             offsetX, offsetY, offsetZ, 1.0f   // Translation
         );
     }
+
+    inline BoundingOrientedBox TransformBoundingOrientedBox(const BoundingOrientedBox& box, const Matrix& mat, const Vector3& worldScale, const Quaternion& worldRot)
+    {
+        BoundingOrientedBox box2;
+        Vector3 corners[8];
+        box.GetCorners(corners);
+
+        // 2. 각 꼭지점에 변환 행렬 적용
+        Vector3 center;
+        for (int i = 0; i < 8; ++i)
+        {
+            corners[i] = Vector3::Transform(corners[i], mat);
+            center += corners[i];
+        }
+        center /= 8;
+        box2.Center = center;
+        box2.Extents = box.Extents * worldScale;
+        box2.Orientation = worldRot;
+        return box2;
+    }
 }

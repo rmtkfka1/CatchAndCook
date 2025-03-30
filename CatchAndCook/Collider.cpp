@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Gizmo.h"
 #include "PhysicsComponent.h"
+#include "simple_mesh_ext.h"
 #include "Transform.h"
 
 Collider::Collider() : _orgin(BoundingOrientedBox()), _bound(BoundingOrientedBox())
@@ -367,8 +368,8 @@ void Collider::CalculateBounding()
 
 		if (onwerTransform->IsLocalToWorldChanged())
 		{
-			_orgin.box.Transform(_bound.box, mat);
-			XMStoreFloat4(&_bound.box.Orientation, XMQuaternionNormalize(XMLoadFloat4(&_bound.box.Orientation)));
+			_bound.box = TransformBoundingOrientedBox(_orgin.box, mat, onwerTransform->GetWorldScale(), onwerTransform->GetWorldRotation());
+			Gizmo::Box(_bound.box);
 		}
 	}
 
