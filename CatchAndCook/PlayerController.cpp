@@ -141,27 +141,86 @@ void PlayerController::MoveControl()
 		}
 	}
 
-	bool tf = false;
-	for (auto [a, b] : colliderDatas)
-	{
-		if (a == CollisionType::Box)
-			b.box.Center = b.box.Center + velocity * Time::main->GetDeltaTime();
-		if (a == CollisionType::Sphere)
-			b.sphere.Center = b.sphere.Center + velocity * Time::main->GetDeltaTime();
-		tf |= ColliderManager::main->CollisionCheckDirect(a, b);
-	}
-
-	//Position
-
-	if(!isGround)
+	if (!isGround)
 		velocity.y -= 0.981;
+	else
+		velocity.y = 0;
+
+	// 충돌 슬라이딩.
+	bool tf = false;
+	Vector3 velocityDirection = velocity * Time::main->GetDeltaTime();
 
 	Vector3 currentPos = GetOwner()->_transform->GetWorldPosition();
-	Vector3 nextPos = currentPos + velocity * Time::main->GetDeltaTime();
+	Vector3 nextPos = currentPos + velocityDirection;
+	if (velocityDirection != Vector3::Zero)
+	{
+		for (auto [type, bound] : colliderDatas)
+		{
+			if (type == CollisionType::Box)
+				bound.box.Center = bound.box.Center + velocityDirection;
+			if (type == CollisionType::Sphere)
+				bound.sphere.Center = bound.sphere.Center + velocityDirection;
+
+			std::vector<std::shared_ptr<Collider>> colliders;
+			if (tf |= ColliderManager::main->CollisionChecksDirect(type, bound, colliders))
+			{
+				for (auto& collider : colliders)
+				{
+					if (collider->GetGroupID() != groupID)
+					{
+
+						Vector3 center;
+						float radius;
+						if (type == CollisionType::Box)
+						{
+							center = bound.box.Center;
+							radius = Vector3(bound.box.Extents).Length();
+						}
+						if (type == CollisionType::Sphere)
+						{
+							center = bound.sphere.Center;
+							radius = bound.sphere.Radius;
+						}
+
+
+						Vector3 colliderCenter = collider->GetBoundCenter();
+						Vector3 rayDir = colliderCenter - center;
+						rayDir.Normalize();
+						std::vector<RayHit> hitList;
+						if (ColliderManager::main->RayCastAll({ center, rayDir }, (colliderCenter - center).Length(), hitList))
+						{
+							RayHit findHit;
+							for (auto& hit : hitList)
+							{
+								if (hit.gameObject->GetRoot() != GetOwner()->GetRoot() && hit.collider != nullptr)
+								{
+									findHit = hit;
+									break;
+								}
+							}
+							if (findHit)
+							{
+								nextPos += findHit.normal * 0.05f;
+
+							}
+
+						}
+
+						break;
+					}
+				}
+				
+				break;
+			}
+		}
+	}
+
+
 	//if (tf)
 		//nextPos = currentPos;
 
-	Vector3 upRayOffset = nextPos + Vector3::Up * 1.0f;
+	float upDistance = 1.0f;
+	Vector3 upRayOffset = nextPos + Vector3::Up * upDistance;
 
 	std::vector<RayHit> hitList;
 	if (auto isHit = ColliderManager::main->RayCastAll({ upRayOffset, Vector3::Down }, 30, hitList))
@@ -170,21 +229,10 @@ void PlayerController::MoveControl()
 		{
 			if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
 			{
-				float rayH = upRayOffset.y - nextPos.y;
-				float groundH = hit.distance;
-				if (hit.distance < 0.7)
-				{
-					std::vector<RayHit> hitList2;
-					auto isHit2 = ColliderManager::main->RayCastAll({ upRayOffset, Vector3::Down }, 30, hitList2);
-					std::cout << hit.distance << "\n";
-					std::cout << hitList.size() << "\n";
-				}
-				if (rayH < groundH)
-				{
+				if (upDistance < hit.distance) {
 					isGround = false;
 				}
-				else
-				{
+				else {
 					isGround = true;
 					nextPos.y = upRayOffset.y - hit.distance;
 				}

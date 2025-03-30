@@ -41,6 +41,8 @@ public:
 	void Update();
 
 	bool CollisionCheckDirect(CollisionType type, BoundingUnion bound);
+	bool CollisionCheckDirect(CollisionType type, BoundingUnion bound, std::shared_ptr<Collider>& collider);
+	bool CollisionChecksDirect(CollisionType type, BoundingUnion bound, std::vector<std::shared_ptr<Collider>>& colliders);
 
 	bool IsCollision(const std::shared_ptr<Collider>& src);
 	bool IsCollision(const std::shared_ptr<Collider>& src, const std::shared_ptr<Collider>& dest);

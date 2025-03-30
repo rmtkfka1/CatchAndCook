@@ -327,6 +327,12 @@ void ColliderManager::Update()
 
 bool ColliderManager::CollisionCheckDirect(CollisionType type, BoundingUnion bound)
 {
+	std::shared_ptr<Collider> collider;
+	return CollisionCheckDirect(type, bound, collider);
+}
+
+bool ColliderManager::CollisionCheckDirect(CollisionType type, BoundingUnion bound, std::shared_ptr<Collider>& collider)
+{
 	auto cells = GetOccupiedCellsDirect(type, bound);
 	auto potentialCollisions = GetPotentialCollisionsDirect(cells);
 
@@ -334,11 +340,26 @@ bool ColliderManager::CollisionCheckDirect(CollisionType type, BoundingUnion bou
 	{
 		if (other->GetOwner()->GetActive() && other->CheckCollision(type, bound))
 		{
+			collider = other;
 			return true;
 		}
 	}
-	
 	return false;
+}
+
+bool ColliderManager::CollisionChecksDirect(CollisionType type, BoundingUnion bound, std::vector<std::shared_ptr<Collider>>& colliders)
+{
+	auto cells = GetOccupiedCellsDirect(type, bound);
+	auto potentialCollisions = GetPotentialCollisionsDirect(cells);
+
+	for (auto& other : potentialCollisions)
+	{
+		if (other->GetOwner()->GetActive() && other->CheckCollision(type, bound))
+		{
+			colliders.push_back(other);
+		}
+	}
+	return colliders.size() != 0;
 }
 
 //무언가와 충돌하고 있는지 체크

@@ -51,7 +51,7 @@ public:
 	void CalculateBounding();
 	pair<vec3, vec3> GetMinMax();
 	BoundingUnion& GetBoundUnion() {return _bound;}
-
+	Vector3 GetBoundCenter();
 
 
 private:

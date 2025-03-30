@@ -448,3 +448,16 @@ pair<vec3, vec3> Collider::GetMinMax()
 
 	return std::make_pair(vec3(0, 0, 0), vec3(0, 0, 0));
 }
+
+Vector3 Collider::GetBoundCenter()
+{
+	if (_type == CollisionType::Box)
+	{
+		return _bound.box.Center;
+	}
+	if (_type == CollisionType::Sphere)
+	{
+		return _bound.sphere.Center;
+	}
+	return Vector3::Zero;
+}
