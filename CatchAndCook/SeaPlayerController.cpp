@@ -40,6 +40,10 @@ void SeaPlayerController::Start()
 
 void SeaPlayerController::Update()
 {
+
+	if (CameraManager::main->GetCameraType() == CameraType::DebugCamera)
+		return;
+
     float dt = Time::main->GetDeltaTime();
 
     CalCulateYawPitchRoll();
@@ -81,15 +85,15 @@ void SeaPlayerController::Update()
     vec3 currentPos = _transform->GetWorldPosition();
     vec3 nextPos = currentPos + _velocity * dt;
 
-    vec3 headOffset = vec3(0,_cameraHeightOffset, 0) + _transform->GetForward()*0.2f;                  // 머리까지의 offset
-    vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);     // 회전 적용
-    vec3 headPos = nextPos + rotatedHeadOffset;                         // 최종 머리 위치
+    vec3 headOffset = vec3(0, _cameraHeightOffset, 0);          // 머리까지의 offset
+    vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);    // 회전 적용
+    vec3 headPos = nextPos + rotatedHeadOffset+ _transform->GetForward() * 0.2f;   // 최종 머리 위치
 
     // 지형 충돌 처리 (머리 위치 기준)
     float terrainHeight = _terrian->GetLocalHeight(headPos);
-    if (headPos.y < terrainHeight +1.0f)
+    if (headPos.y < terrainHeight +0.3f)
     {
-        float deltaY = (terrainHeight+1.0f) - headPos.y;
+        float deltaY = (terrainHeight+0.3f) - headPos.y;
         nextPos.y += deltaY;
         headPos.y += deltaY;
     }
@@ -100,16 +104,16 @@ void SeaPlayerController::Update()
 
     _velocity *= (1 - (_resistance * dt));
 
-    {
-        Gizmo::Width(0.1f);
-        auto o = _camera->GetCameraPos();
-        auto f = _camera->GetCameraLook();
-        auto u = _camera->GetCameraUp();
-        auto r = _camera->GetCameraRight();
-        Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1)); 
-        Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1)); 
-        Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1)); 
-    }
+    //{
+    //    Gizmo::Width(0.1f);
+    //    auto o = _camera->GetCameraPos();
+    //    auto f = _camera->GetCameraLook();
+    //    auto u = _camera->GetCameraUp();
+    //    auto r = _camera->GetCameraRight();
+    //    Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
+    //    Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
+    //    Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));
+    //}
 };
 
 void SeaPlayerController::Update2()
