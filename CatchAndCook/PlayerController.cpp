@@ -81,10 +81,15 @@ void PlayerController::CameraControl()
 	_currentNextDirection = Vector3::Transform(Vector3::Forward, finalRotation);
 
 	float distance = 3.6;
-	if (auto hit = ColliderManager::main->RayCast({ _currentOffset, -_currentNextDirection }, distance * 2))
-		if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
-			distance = std::min(hit.distance, distance) - 0.05f;
 
+	std::vector<RayHit> hitList;
+	if (auto isHit = ColliderManager::main->RayCastAll({ _currentOffset, -_currentNextDirection }, distance * 2, hitList))
+		for (auto& hit : hitList)
+			if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
+			{
+				distance = std::min(hit.distance, distance) - 0.05f;
+				break;
+			}
 
 	cameraNextPosition = _currentOffset - _currentNextDirection * distance;
 
@@ -109,12 +114,14 @@ void PlayerController::MoveControl()
 		currentLookWorldRotation = Quaternion::Slerp(currentLookWorldRotation, Quaternion::LookRotation(targetLookWorldDirection, Vector3::Transform(Vector3::Up, lookRotation)),
 			Time::main->GetDeltaTime() * 30);
 
-
-		velocity += targetLookWorldDirection * controlInfo.moveForce * Time::main->GetDeltaTime() * 60;
-		if (velocity.Length() > controlInfo.maxSpeed) {
-			velocity.Normalize();
-			velocity *= controlInfo.maxSpeed;
+		Vector3 prevVelocity = velocity;
+		prevVelocity += targetLookWorldDirection * controlInfo.moveForce * Time::main->GetDeltaTime() * 60;
+		prevVelocity.y = 0;
+		if (prevVelocity.Length() > controlInfo.maxSpeed) {
+			prevVelocity.Normalize();
+			prevVelocity *= controlInfo.maxSpeed;
 		}
+		velocity = Vector3(prevVelocity.x, velocity.y, prevVelocity.z);
 	}
 	GetOwner()->_transform->SetWorldRotation(currentLookWorldRotation);
 
@@ -151,24 +158,40 @@ void PlayerController::MoveControl()
 
 	Vector3 currentPos = GetOwner()->_transform->GetWorldPosition();
 	Vector3 nextPos = currentPos + velocity * Time::main->GetDeltaTime();
-	if (tf)
-		nextPos = currentPos;
+	//if (tf)
+		//nextPos = currentPos;
 
 	Vector3 upRayOffset = nextPos + Vector3::Up * 1.0f;
 
-	if (auto hit = ColliderManager::main->RayCast({ upRayOffset, Vector3::Down }, 30))
-		if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
+	std::vector<RayHit> hitList;
+	if (auto isHit = ColliderManager::main->RayCastAll({ upRayOffset, Vector3::Down }, 30, hitList))
+	{
+		for (auto& hit : hitList)
 		{
-			if (upRayOffset.y - nextPos.y < upRayOffset.y - hit.distance)
+			if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
 			{
-				isGround = false;
-			}
-			else
-			{
-				isGround = true;
-				nextPos.y = upRayOffset.y - hit.distance;
+				float rayH = upRayOffset.y - nextPos.y;
+				float groundH = hit.distance;
+				if (hit.distance < 0.7)
+				{
+					std::vector<RayHit> hitList2;
+					auto isHit2 = ColliderManager::main->RayCastAll({ upRayOffset, Vector3::Down }, 30, hitList2);
+					std::cout << hit.distance << "\n";
+					std::cout << hitList.size() << "\n";
+				}
+				if (rayH < groundH)
+				{
+					isGround = false;
+				}
+				else
+				{
+					isGround = true;
+					nextPos.y = upRayOffset.y - hit.distance;
+				}
+				break;
 			}
 		}
+	}
 
 	// ------------- 공통 로직 ------------- 
 

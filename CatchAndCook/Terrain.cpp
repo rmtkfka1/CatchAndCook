@@ -285,6 +285,16 @@ bool Terrain::RayCast(const Ray& ray, const float& dis, RayHit& hit)
                 middle = (left + right) / 2;
                 currentPos = offsetPos + dir * middle;
                 middleH = currentPos.y - GetLocalHeight(currentPos);
+                if(rightH == 0) {
+                    middle = right;
+                    middleH = rightH;
+                    break;
+                }
+                if (leftH == 0) {
+                    middle = left;
+                    middleH = leftH;
+                    break;
+                }
                 if (middleH * leftH < 0)
                 {
                     rightH = middleH;
