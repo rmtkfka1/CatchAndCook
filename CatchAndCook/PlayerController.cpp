@@ -149,9 +149,11 @@ void PlayerController::MoveControl()
 	// 충돌 슬라이딩.
 	bool tf = false;
 	Vector3 velocityDirection = velocity * Time::main->GetDeltaTime();
+	velocityDirection.y = 0;
 
 	Vector3 currentPos = GetOwner()->_transform->GetWorldPosition();
-	Vector3 nextPos = currentPos + velocityDirection;
+	Vector3 nextPos = currentPos;
+
 	if (velocityDirection != Vector3::Zero)
 	{
 		for (auto [type, bound] : colliderDatas)
@@ -190,32 +192,24 @@ void PlayerController::MoveControl()
 						if (ColliderManager::main->RayCastAll({ center, rayDir }, (colliderCenter - center).Length(), hitList))
 						{
 							RayHit findHit;
-							for (auto& hit : hitList)
-							{
-								if (hit.gameObject->GetRoot() != GetOwner()->GetRoot() && hit.collider != nullptr)
-								{
+							for (auto& hit : hitList) {
+								if (hit.gameObject->GetRoot() != GetOwner()->GetRoot() && hit.collider != nullptr) {
 									findHit = hit;
 									break;
 								}
 							}
-							if (findHit)
-							{
-								nextPos += findHit.normal * 0.05f;
-
+							if (findHit) {
+								velocityDirection += findHit.normal * velocityDirection.Length();
 							}
 
 						}
-
-						break;
 					}
 				}
-				
-				break;
 			}
 		}
 	}
-
-
+	velocityDirection.y = velocity.y * Time::main->GetDeltaTime();
+	nextPos += velocityDirection;
 	//if (tf)
 		//nextPos = currentPos;
 
