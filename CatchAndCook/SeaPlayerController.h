@@ -12,6 +12,8 @@ public:
 	virtual void Init();
 	virtual void Start();
 	virtual void Update();
+	void UpdatePlayerAndCamera(float dt, Quaternion& rotation);
+	void KeyUpdate(vec3& inputDir, Quaternion& rotation, float dt);
 	virtual void Update2();
 	virtual void Enable();
 	virtual void Disable();
@@ -22,7 +24,7 @@ public:
 	virtual void SetDestroy();
 	virtual void Destroy();
 
-	void CalCulateYawPitchRoll();
+	Quaternion CalCulateYawPitchRoll();
 private:
 	shared_ptr<Transform> _transform;
 	shared_ptr<Camera> _camera;

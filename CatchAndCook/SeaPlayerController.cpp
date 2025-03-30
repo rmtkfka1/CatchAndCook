@@ -46,13 +46,55 @@ void SeaPlayerController::Update()
 
     float dt = Time::main->GetDeltaTime();
 
-    CalCulateYawPitchRoll();
-
-    Quaternion rotation = Quaternion::CreateFromYawPitchRoll(_yaw * D2R, _pitch * D2R, 0);
-    _transform->SetLocalRotation(rotation);
+    Quaternion rotation = CalCulateYawPitchRoll();
 
     vec3 inputDir = vec3::Zero;
 
+    KeyUpdate(inputDir, rotation, dt);
+
+    UpdatePlayerAndCamera(dt, rotation);
+
+    //{
+    //    Gizmo::Width(0.1f);
+    //    auto o = _camera->GetCameraPos();
+    //    auto f = _camera->GetCameraLook();
+    //    auto u = _camera->GetCameraUp();
+    //    auto r = _camera->GetCameraRight();
+    //    Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
+    //    Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
+    //    Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));
+    //}
+}
+void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
+{
+    vec3 currentPos = _transform->GetWorldPosition();
+    vec3 nextPos = currentPos + _velocity * dt;
+
+    vec3 headOffset = vec3(0, _cameraHeightOffset, 0);          // 머리까지의 offset
+    vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);    // 회전 적용
+    vec3 headPos = nextPos + rotatedHeadOffset + _transform->GetForward() * 0.2f;   // 최종 머리 위치
+
+    // 지형 충돌 처리 (머리 위치 기준)
+    float terrainHeight = _terrian->GetLocalHeight(headPos);
+    if (headPos.y < terrainHeight + 0.3f)
+    {
+        float deltaY = (terrainHeight + 0.3f) - headPos.y;
+        nextPos.y += deltaY;
+        headPos.y += deltaY;
+    }
+
+    _transform->SetLocalRotation(rotation);
+    _transform->SetWorldPosition(nextPos);
+    _camera->SetCameraPos(headPos);
+    _camera->SetCameraRotation(rotation);
+
+    _velocity *= (1 - (_resistance * dt));
+
+    CameraManager::main->Setting(CameraType::SeaCamera);
+
+}
+void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float dt)
+{
     if (Input::main->GetKey(KeyCode::UpArrow))
         inputDir += vec3::Forward;
 
@@ -81,40 +123,8 @@ void SeaPlayerController::Update()
             _velocity *= _maxSpeed;
         }
     }
-
-    vec3 currentPos = _transform->GetWorldPosition();
-    vec3 nextPos = currentPos + _velocity * dt;
-
-    vec3 headOffset = vec3(0, _cameraHeightOffset, 0);          // 머리까지의 offset
-    vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);    // 회전 적용
-    vec3 headPos = nextPos + rotatedHeadOffset+ _transform->GetForward() * 0.2f;   // 최종 머리 위치
-
-    // 지형 충돌 처리 (머리 위치 기준)
-    float terrainHeight = _terrian->GetLocalHeight(headPos);
-    if (headPos.y < terrainHeight +0.3f)
-    {
-        float deltaY = (terrainHeight+0.3f) - headPos.y;
-        nextPos.y += deltaY;
-        headPos.y += deltaY;
-    }
-
-    _transform->SetWorldPosition(nextPos);
-    _camera->SetCameraPos(headPos);
-    _camera->SetCameraRotation(rotation);
-
-    _velocity *= (1 - (_resistance * dt));
-
-    //{
-    //    Gizmo::Width(0.1f);
-    //    auto o = _camera->GetCameraPos();
-    //    auto f = _camera->GetCameraLook();
-    //    auto u = _camera->GetCameraUp();
-    //    auto r = _camera->GetCameraRight();
-    //    Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
-    //    Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
-    //    Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));
-    //}
-};
+}
+;
 
 void SeaPlayerController::Update2()
 {
@@ -152,7 +162,7 @@ void SeaPlayerController::Destroy()
 {
 }
 
-void SeaPlayerController::CalCulateYawPitchRoll()
+Quaternion SeaPlayerController::CalCulateYawPitchRoll()
 {
 	if (Input::main->IsMouseLock() == false)
 	{
@@ -193,4 +203,7 @@ void SeaPlayerController::CalCulateYawPitchRoll()
 		SetCursorPos(center.x, center.y);
 	
 	}
+
+
+    return  Quaternion::CreateFromYawPitchRoll(_yaw * D2R, _pitch * D2R, 0);
 };
