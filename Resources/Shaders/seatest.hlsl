@@ -6,13 +6,13 @@
 #define MAX_WAVE 10
 struct Wave
 {
-    float amplitude; 
-    float wavelength; 
-    float speed; 
-    float steepness; 
+    float amplitude;
+    float wavelength;
+    float speed;
+    float steepness;
     
-    float2 direction; 
-    float2 padding; 
+    float2 direction;
+    float2 padding;
 };
 
 cbuffer SeaParam : register(b7)
@@ -31,14 +31,14 @@ cbuffer SeaParam : register(b7)
     
     float2 sea_padding;
 
-    Wave waves[MAX_WAVE]; 
+    Wave waves[MAX_WAVE];
 }
 
 
-Texture2DArray  _bumpMap : register(t1);
-Texture2D       _bumpMap2 : register(t2);
-Texture2D       _dudv : register(t3);
-TextureCube     _cubeMap : register(t4);
+Texture2DArray _bumpMap : register(t1);
+Texture2D _bumpMap2 : register(t2);
+Texture2D _dudv : register(t3);
+TextureCube _cubeMap : register(t4);
 
 
 
@@ -255,8 +255,8 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     float3 baseNormal = normalize(input.normal);
     float3 viewDir = normalize(g_eyeWorld - input.worldPos.xyz);
 
-    float3 N1 =ComputeNormalMapping(baseNormal, float3(1, 0, 0), normalLerp);
-    float3 N2 = ComputeNormalMapping(baseNormal, float3(1, 0, 0), _bumpMap2.Sample(sampler_lerp, input.uv * 32.0f + g_Time *0.01f));
+    float3 N1 = ComputeNormalMapping(baseNormal, float3(1, 0, 0), normalLerp);
+    float3 N2 = ComputeNormalMapping(baseNormal, float3(1, 0, 0), _bumpMap2.Sample(sampler_lerp, input.uv * 32.0f + g_Time * 0.01f));
     float3 N3 = normalize(N1 + N2);
 
     ///////////////////////////////////////////////////////////////////////////
@@ -290,7 +290,7 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     // 시야에 대한 반사 벡터 재계산 및 큐브 맵 좌표 회전
     float3 R2 = reflect(-viewDir, perturbedNormal);
     float3 rotatedR2 = float3(R2.z, R2.y, -R2.x);
-    float3 envReflection = _cubeMap.Sample(sampler_lerp, rotatedR2).rgb ;
+    float3 envReflection = _cubeMap.Sample(sampler_lerp, rotatedR2).rgb;
 
     ///////////////////////////////////////////////////////////////////////////
     // 6. 깊이 기반 색상 블렌딩 및 Fresnel 효과
@@ -303,7 +303,7 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     ///////////////////////////////////////////////////////////////////////////
     // 7. 최종 해양 색상 계산 및 출력
     ///////////////////////////////////////////////////////////////////////////
-    float3 sea_color = (g_seaBaseColor.rgb * diffuse ) + (g_seaShallowColor.rgb * shallowFactor) + envReflection * fresnel * g_envPower + specular;
+    float3 sea_color = (g_seaBaseColor.rgb * diffuse) + (g_seaShallowColor.rgb * shallowFactor) + envReflection * fresnel * g_envPower + specular;
     
     return float4(sea_color, 1.0f);
 }

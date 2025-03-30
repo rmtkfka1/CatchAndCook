@@ -31,13 +31,10 @@ void LightingTest::Init()
 	Scene::Init();
 
 
-	shared_ptr<Material> materialO = make_shared<Material>();
-	//shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
-	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
-
 	{
 		ShaderInfo info;
 		info._zTest = true;
+		info._zWrite = false;
 		info._stencilTest = false;
 		info.cullingType = CullingType::NONE;
 
@@ -49,8 +46,10 @@ void LightingTest::Init()
 
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"cubeMap");
 
-		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+		gameObject->_transform->SetLocalRotation(vec3(0, 90.0f, 0) * D2R);
 
+		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+		meshRenderer->SetCulling(false);
 
 		material = make_shared<Material>();
 		material->SetShader(shader);
@@ -59,39 +58,43 @@ void LightingTest::Init()
 
 		meshRenderer->AddMaterials({ material });
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
-		meshRenderer->SetCulling(false);
 	}
 
-	for (int i = 0; i < 1; ++i)
+
 	{
-		
-			shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::BACK;
+		info.cullingType = CullingType::NONE;
+		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
-			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest", L"seatest.hlsl", GeoMetryProp,
+			ShaderArg{ {{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}} }, info);
 
-			shared_ptr<GameObject> root = CreateGameObject(L"root_test");
+		shared_ptr<Material> material = make_shared<Material>();
 
-			root->AddComponent<testComponent>();
-			auto meshRenderer = root->AddComponent<MeshRenderer>();
-			auto& collider = root->AddComponent<Collider>();
-			root->_transform->SetPivotOffset(vec3(0, 1.0f, 0));
-			root->_transform->SetLocalPosition(vec3(0, 10.0f, 0));
-			root->_transform->SetLocalScale(vec3(1.0f, 1.0f, 1.0f));
-			root->_transform->SetLocalRotation(vec3(30.0f * D2R, 30.0f * D2R, 30.0f * D2R));
+		shared_ptr<GameObject> gameObject = CreateGameObject(L"grid_orgin");
+		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+		gameObject->AddComponent<WaterController>();
 
-			collider->SetBoundingBox(vec3(0, 0, 0), vec3(1.0f, 1.0f, 1.0f));
+		//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal_Sea"));
+		gameObject->_transform->SetLocalPosition(vec3(0, 9.5f, 0));
 
-			root->SetType(GameObjectType::Dynamic);
-			root->AddTag(GameObjectTag::Player);
+		material = make_shared<Material>();
+		material->SetShader(shader);
+		material->SetPass(RENDER_PASS::Forward);
+		material->SetTexture("_cubeMap", ResourceManager::main->Get<Texture>(L"cubemap"));
+		material->SetUseMaterialParams(true);
+		meshRenderer->AddMaterials({ material });
 
-			materialO->SetShader(shader);
-			materialO->SetPass(RENDER_PASS::Deffered);
-			materialO->SetTexture("_BaseMap", texture);
+		auto mesh = GeoMetryHelper::LoadGripMeshControlPoints(20000.0f, 20000.0f, 1000, 1000, false);
+		mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
+		meshRenderer->AddMesh(mesh);
+		meshRenderer->SetCulling(false);
 
-			meshRenderer->AddMaterials({ materialO });
-			meshRenderer->AddMesh(mesh);
-		
 	};
+
 
 
 
