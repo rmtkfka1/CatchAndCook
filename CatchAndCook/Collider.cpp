@@ -369,7 +369,6 @@ void Collider::CalculateBounding()
 		if (onwerTransform->IsLocalToWorldChanged())
 		{
 			_bound.box = TransformBoundingOrientedBox(_orgin.box, mat, onwerTransform->GetWorldScale(), onwerTransform->GetWorldRotation());
-			Gizmo::Box(_bound.box);
 		}
 	}
 
