@@ -76,9 +76,9 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
 
     // 지형 충돌 처리 (머리 위치 기준)
     float terrainHeight = _terrian->GetLocalHeight(headPos);
-    if (headPos.y < terrainHeight + 0.3f)
+    if (headPos.y < terrainHeight + 2.0f)
     {
-        float deltaY = (terrainHeight + 0.3f) - headPos.y;
+        float deltaY = (terrainHeight + 2.0f) - headPos.y;
         nextPos.y += deltaY;
         headPos.y += deltaY;
     }

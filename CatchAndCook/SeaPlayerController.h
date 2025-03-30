@@ -38,8 +38,8 @@ public:
 	float _pitch = 0;
 	float _roll = 0;
 
-	const float _moveForce = 30.0f;
-	const float _maxSpeed = 30.0f;
+	const float _moveForce = 100.0f;
+	const float _maxSpeed = 300.0f;
 	const float _resistance = 2.5f;
 
 };

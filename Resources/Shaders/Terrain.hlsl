@@ -6,7 +6,7 @@
 
 #define TessFactor 8
 #define PI 3.14159f
-#define DIST_MAX 1000.0f
+#define DIST_MAX 3000.0f
 #define DIST_MIN 0.1f
 
 
@@ -138,10 +138,30 @@ float CalculateTessLevel(float3 cameraWorldPos, float3 patchPos, float min, floa
    
     float distance = length(patchPos - float3(cameraWorldPos.x, 0, cameraWorldPos.z));
     
-    float ratio = smoothstep(min, max, distance);
+    //float ratio = smoothstep(min, max, distance);
 
-    float tessLevel = lerp(maxLv, 1.0f, ratio);
-
+    //float tessLevel = lerp(maxLv, 1.0f, ratio);
+    
+    float tessLevel = 1.0f;
+    
+    if(distance<300.0f)
+    {
+        8.0f;
+    }
+    else if (distance < 2000.0f)
+    {
+        tessLevel = 4.0f;
+    }
+    else if (distance < 3000.0f)
+    {
+        tessLevel = 2.0f;
+    }
+    else
+    {
+        tessLevel = 1.0f;
+    }
+   
+    
     return tessLevel;
 }
 
@@ -326,8 +346,7 @@ PS_OUT PS_Main(DS_OUT input)
         }
     }
 
-    
-
+   
     output.color = finalColor;
     output.normal = float4(input.normal, 1.0f);
     output.position = input.pos;
