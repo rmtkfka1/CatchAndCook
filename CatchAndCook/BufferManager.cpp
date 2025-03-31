@@ -40,8 +40,9 @@ void BufferManager::Init()
 	}
 
 	{
-		CreateInstanceBufferPool(BufferType::TransformInstanceParam,sizeof(Instance_Transform),10000,128);
+		CreateInstanceBufferPool(BufferType::TransformInstanceParam, sizeof(Instance_Transform), 10000, 128);
 		CreateInstanceBufferPool(BufferType::GizmoInstanceParam, sizeof(Instance_Gizmo), 100'000, 1);
+		CreateInstanceBufferPool(BufferType::ForwardLightParam, sizeof(ForwardLightParams), 100, 5000);
 	}
 	
 	{

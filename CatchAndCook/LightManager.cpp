@@ -23,6 +23,11 @@ void LightManager::SetData()
 	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(3,container->GPUAdress);
 }
 
+void LightManager::SetDataForward(void* addr, const std::shared_ptr<GameObject>& obj)
+{
+
+}
+
 void LightManager::Update()
 {
 	_lightParmas.eyeWorldPos = CameraManager::main->GetActiveCamera()->GetCameraPos();
@@ -35,4 +40,17 @@ void LightManager::Update()
 	}
 #endif 
 
+}
+
+
+void ForwardLightSetter::Init(GameObject* object)
+{
+	this->object = object;
+}
+
+void ForwardLightSetter::SetData(StructuredBuffer* buffer)
+{
+	ForwardLightParams params;
+	// 여기 작업해야함.
+	buffer->AddData(params);
 }

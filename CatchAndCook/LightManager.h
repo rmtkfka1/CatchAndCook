@@ -33,7 +33,7 @@ struct LightParams
 	vec3 eyeWorldPos{};
 	int lightCount = 0;
 
-	Light light[5];
+	std::array<Light, 5> light;
 
 	int useRim = 1;
 	vec3 rimColor = vec3(0,1.0f,0);
@@ -44,6 +44,12 @@ struct LightParams
 	float dummy2 = 0;
 };
 
+struct ForwardLightParams
+{
+	int lightCount = 0;
+	p3(0);
+	std::array<Light, 5> lights;
+};
 
 class LightManager
 {
@@ -54,6 +60,8 @@ public:
 	void PushLight(Light light);
 	void SetData();
 
+	void SetDataForward(void* addr, const std::shared_ptr<GameObject>& obj);
+
 private:
 	void Update();
 
@@ -61,3 +69,10 @@ public:
 	LightParams _lightParmas;
 };
 
+class ForwardLightSetter : public RenderStructuredSetter
+{
+public:
+	GameObject* object;
+	void Init(GameObject* object);
+	void SetData(StructuredBuffer* buffer) override;
+};

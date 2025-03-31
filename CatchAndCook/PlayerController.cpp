@@ -183,7 +183,8 @@ void PlayerController::MoveControl()
 						RayHit hitOtherCollider;
 						if (otherCollider->RayCast({ currentCenter, rayDir }, rayDis, hitOtherCollider))
 							if (hitOtherCollider)
-								velocityDirectionXZ += hitOtherCollider.normal * std::max(velocityDirectionXZ.Length(), (float)(2.0f * Time::main->GetDeltaTime()));
+								velocityDirectionXZ += hitOtherCollider.normal *
+								std::max(velocityDirectionXZ.Length(), static_cast<float>(4.0f * Time::main->GetDeltaTime()));
 					}
 				}
 			}
@@ -193,32 +194,37 @@ void PlayerController::MoveControl()
 	nextPos += Vector3(velocityDirectionXZ.x,  velocityDirectionY, velocityDirectionXZ.z); // velocityDirectionXZ.y + velocityDirectionY
 
 
+
+	float gitMargin = 0.1f;//오차 범위
 	float upDistance = 1.0f;
 	Vector3 upRayOffset = nextPos + Vector3::Up * upDistance;
 
+	RayHit foundGround;
 	std::vector<RayHit> hitList;
-	if (auto isHit = ColliderManager::main->RayCastAll({ upRayOffset, Vector3::Down }, 30, hitList))
+	if (auto isHit = ColliderManager::main->RayCastAll({ upRayOffset, Vector3::Down }, upDistance + gitMargin * 2, hitList))
 	{
 		for (auto& hit : hitList)
 		{
 			if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
 			{
-				if (upDistance < hit.distance) {
-					isGround = false;
-				}
-				else {
-					isGround = true;
-					nextPos.y = upRayOffset.y - hit.distance;
+				if (upDistance + gitMargin >= hit.distance) {
+					foundGround = hit;
 				}
 				break;
 			}
 		}
 	}
-
-	if (!isGround)
-		velocity.y -= 0.981;
-	else
+	if (foundGround)
+	{
+		isGround = true;
 		velocity.y = 0;
+		nextPos.y = upRayOffset.y - foundGround.distance; //upRayOffset.y -
+	}
+	else
+	{
+		isGround = false;
+		velocity.y -= 0.981;
+	}
 
 	// ------------- 공통 로직 ------------- 
 
@@ -232,6 +238,7 @@ void PlayerController::Update2()
 	Component::Update2();
 
 	camera.lock()->Calculate();
+	/*
 	if (Input::main->GetMouse(KeyCode::LeftMouse))
 	{
 		auto mousePos = Input::main->GetMousePosition();
@@ -249,6 +256,7 @@ void PlayerController::Update2()
 			Gizmo::WidthRollBack();
 		}
 	}
+	*/
 }
 
 void PlayerController::Enable()
