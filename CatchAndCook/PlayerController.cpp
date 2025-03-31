@@ -149,7 +149,7 @@ void PlayerController::MoveControl()
 	Vector3 velocityDirectionXZ = velocity * Time::main->GetDeltaTime();
 	velocityDirectionXZ.y = 0;
 
-	if (velocityDirectionXZ != Vector3::Zero)
+	//if (velocityDirectionXZ != Vector3::Zero)
 	{
 		for (auto [type, bound] : playerColliderDatas)
 		{
@@ -183,7 +183,7 @@ void PlayerController::MoveControl()
 						RayHit hitOtherCollider;
 						if (otherCollider->RayCast({ currentCenter, rayDir }, rayDis, hitOtherCollider))
 							if (hitOtherCollider)
-								velocityDirectionXZ += hitOtherCollider.normal * velocityDirectionXZ.Length();
+								velocityDirectionXZ += hitOtherCollider.normal * std::max(velocityDirectionXZ.Length(), (float)(2.0f * Time::main->GetDeltaTime()));
 					}
 				}
 			}
