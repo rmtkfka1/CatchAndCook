@@ -114,6 +114,7 @@ void PlayerController::MoveControl()
 		currentLookWorldRotation = Quaternion::Slerp(currentLookWorldRotation, Quaternion::LookRotation(targetLookWorldDirection, Vector3::Transform(Vector3::Up, lookRotation)),
 			Time::main->GetDeltaTime() * 30);
 
+		// 등속 운동 로직
 		Vector3 prevVelocity = velocity;
 		prevVelocity += targetLookWorldDirection * controlInfo.moveForce * Time::main->GetDeltaTime() * 60;
 		prevVelocity.y = 0;
@@ -121,82 +122,76 @@ void PlayerController::MoveControl()
 			prevVelocity.Normalize();
 			prevVelocity *= controlInfo.maxSpeed;
 		}
+
+		// 이동
 		velocity = Vector3(prevVelocity.x, velocity.y, prevVelocity.z);
 	}
 	GetOwner()->_transform->SetWorldRotation(currentLookWorldRotation);
 
 
 
-	std::vector<std::pair<CollisionType, BoundingUnion>> colliderDatas;
-	std::vector<std::shared_ptr<Collider>> colliders;
-	GetOwner()->GetComponentsWithChilds<Collider>(colliders);
-	int groupID = PhysicsComponent::GetPhysicsGroupID(GetOwner());
-	for (auto& collider : colliders)
-	{
-		if (groupID == collider->GetGroupID())
-		{
+	std::vector<std::pair<CollisionType, BoundingUnion>> playerColliderDatas;
+	std::vector<std::shared_ptr<Collider>> playerColliders;
+
+	GetOwner()->GetComponentsWithChilds<Collider>(playerColliders);
+	int playerGroupID = PhysicsComponent::GetPhysicsGroupID(GetOwner());
+	for (auto& collider : playerColliders) {
+		if (playerGroupID == collider->GetGroupID()) {
 			collider->CalculateBounding();
-			colliderDatas.push_back(std::make_pair(collider->GetType(), collider->GetBoundUnion()));
+			playerColliderDatas.push_back(std::make_pair(collider->GetType(), collider->GetBoundUnion()));
 		}
 	}
 
-	if (!isGround)
-		velocity.y -= 0.981;
-	else
-		velocity.y = 0;
-
-	Vector3 velocityDirection = velocity * Time::main->GetDeltaTime();
-	velocityDirection.y = 0;
 
 	Vector3 currentPos = GetOwner()->_transform->GetWorldPosition();
 	Vector3 nextPos = currentPos;
 
-	if (velocityDirection != Vector3::Zero)
+	Vector3 velocityDirectionXZ = velocity * Time::main->GetDeltaTime();
+	velocityDirectionXZ.y = 0;
+
+	if (velocityDirectionXZ != Vector3::Zero)
 	{
-		for (auto [type, bound] : colliderDatas)
+		for (auto [type, bound] : playerColliderDatas)
 		{
-			Vector3 center;
-			float radius;
+			// 이동할 위치 미리 계산
+			Vector3 currentCenter;
+			float currentRadius;
 			if (type == CollisionType::Box)
 			{
-				center = bound.box.Center = bound.box.Center + velocityDirection;
-				radius = Vector3(bound.box.Extents).Length();
+				currentCenter = bound.box.Center = bound.box.Center + velocityDirectionXZ;
+				currentRadius = Vector3(bound.box.Extents).Length();
 			}
 			if (type == CollisionType::Sphere)
 			{
-				center = bound.sphere.Center = bound.sphere.Center + velocityDirection;
-				radius = bound.sphere.Radius;
+				currentCenter = bound.sphere.Center = bound.sphere.Center + velocityDirectionXZ;
+				currentRadius = bound.sphere.Radius;
 			}
 
-			std::vector<std::shared_ptr<Collider>> colliders;
-			if (ColliderManager::main->CollisionChecksDirect(type, bound, colliders))
+			// 이동할 곳에서 충돌되는지 보기.
+			std::vector<std::shared_ptr<Collider>> otherColliders;
+			if (ColliderManager::main->CollisionChecksDirect(type, bound, otherColliders))
 			{
-				for (auto& collider : colliders)
+				for (auto& otherCollider : otherColliders)
 				{
-					if (collider->GetGroupID() != groupID)
+					if (otherCollider->GetGroupID() != playerGroupID)
 					{
-						Vector3 colliderCenter = collider->GetBoundCenter();
-						Vector3 rayDir = colliderCenter - center;
+						Vector3 otherColliderCenter = otherCollider->GetBoundCenter();
+						Vector3 rayDir = otherColliderCenter - currentCenter;
 						float rayDis = rayDir.Length();
 						rayDir.Normalize();
 
 						RayHit hitOtherCollider;
-						if (collider->RayCast({ center, rayDir }, rayDis, hitOtherCollider))
-						{
-							if (hitOtherCollider) {
-								velocityDirection += hitOtherCollider.normal * velocityDirection.Length();
-							}
-
-						}
+						if (otherCollider->RayCast({ currentCenter, rayDir }, rayDis, hitOtherCollider))
+							if (hitOtherCollider)
+								velocityDirectionXZ += hitOtherCollider.normal * velocityDirectionXZ.Length();
 					}
 				}
 			}
 		}
 	}
-	velocityDirection.y = velocity.y * Time::main->GetDeltaTime();
-	nextPos += velocityDirection;
-	//if (tf)
-		//nextPos = currentPos;
+	float velocityDirectionY = velocity.y * Time::main->GetDeltaTime();
+	nextPos += Vector3(velocityDirectionXZ.x,  velocityDirectionY, velocityDirectionXZ.z); // velocityDirectionXZ.y + velocityDirectionY
+
 
 	float upDistance = 1.0f;
 	Vector3 upRayOffset = nextPos + Vector3::Up * upDistance;
@@ -219,6 +214,11 @@ void PlayerController::MoveControl()
 			}
 		}
 	}
+
+	if (!isGround)
+		velocity.y -= 0.981;
+	else
+		velocity.y = 0;
 
 	// ------------- 공통 로직 ------------- 
 
