@@ -72,6 +72,8 @@ public:
 class ForwardLightSetter : public RenderStructuredSetter
 {
 public:
+	~ForwardLightSetter() override;
+
 	GameObject* object;
 	void Init(GameObject* object);
 	void SetData(StructuredBuffer* buffer) override;

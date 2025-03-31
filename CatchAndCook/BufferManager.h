@@ -21,11 +21,14 @@ enum class BufferType
 	FogParam,
 	UnderWaterParam,
 
+	PlayerMaterialParam,
+
+	InstanceOffsetParam,
+
 	// Instance
 	TransformInstanceParam,
 	GizmoInstanceParam,
 	GizmoTextInstanceParam,
-	InstanceOffsetParam,
 	ForwardLightParam,
 };
 

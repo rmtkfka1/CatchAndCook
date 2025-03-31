@@ -2,6 +2,15 @@
 #include "RendererBase.h"
 
 
+RenderStructuredSetter::~RenderStructuredSetter()
+{
+
+}
+
+RenderCBufferSetter::~RenderCBufferSetter()
+{
+}
+
 void RendererBase::AddStructuredSetter(const std::shared_ptr<RenderStructuredSetter>& setter, BufferType type)
 {
 	auto it = _structuredSetters.find(type);

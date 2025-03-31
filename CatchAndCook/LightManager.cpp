@@ -54,3 +54,8 @@ void ForwardLightSetter::SetData(StructuredBuffer* buffer)
 	// 여기 작업해야함.
 	buffer->AddData(params);
 }
+
+ForwardLightSetter::~ForwardLightSetter()
+{
+
+}
