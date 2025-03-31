@@ -58,6 +58,8 @@ public:
 	RayHit RayCast(const Ray& ray, const float& dis) const;
 	bool RayCastAll(const Ray& ray, const float& dis, std::vector<RayHit>& hitList) const;
 
+	static bool RayCastAll(const std::vector<std::shared_ptr<Collider>>& colliders, const Ray& ray, const float& dis, std::vector<RayHit>& hitList);
+
 public:
 	float _cellSize = 100.0f;
 

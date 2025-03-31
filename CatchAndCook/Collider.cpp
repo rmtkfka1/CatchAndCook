@@ -45,6 +45,7 @@ void Collider::Start()
 void Collider::Update()
 {
 	Component::Update();
+
 	CalculateBounding();
 	ColliderManager::main->AddCollider(GetCast<Collider>());
 	

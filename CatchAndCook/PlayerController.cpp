@@ -127,7 +127,6 @@ void PlayerController::MoveControl()
 
 
 
-
 	std::vector<std::pair<CollisionType, BoundingUnion>> colliderDatas;
 	std::vector<std::shared_ptr<Collider>> colliders;
 	GetOwner()->GetComponentsWithChilds<Collider>(colliders);
@@ -146,8 +145,6 @@ void PlayerController::MoveControl()
 	else
 		velocity.y = 0;
 
-	// 충돌 슬라이딩.
-	bool tf = false;
 	Vector3 velocityDirection = velocity * Time::main->GetDeltaTime();
 	velocityDirection.y = 0;
 
@@ -158,48 +155,36 @@ void PlayerController::MoveControl()
 	{
 		for (auto [type, bound] : colliderDatas)
 		{
+			Vector3 center;
+			float radius;
 			if (type == CollisionType::Box)
-				bound.box.Center = bound.box.Center + velocityDirection;
+			{
+				center = bound.box.Center = bound.box.Center + velocityDirection;
+				radius = Vector3(bound.box.Extents).Length();
+			}
 			if (type == CollisionType::Sphere)
-				bound.sphere.Center = bound.sphere.Center + velocityDirection;
+			{
+				center = bound.sphere.Center = bound.sphere.Center + velocityDirection;
+				radius = bound.sphere.Radius;
+			}
 
 			std::vector<std::shared_ptr<Collider>> colliders;
-			if (tf |= ColliderManager::main->CollisionChecksDirect(type, bound, colliders))
+			if (ColliderManager::main->CollisionChecksDirect(type, bound, colliders))
 			{
 				for (auto& collider : colliders)
 				{
 					if (collider->GetGroupID() != groupID)
 					{
-
-						Vector3 center;
-						float radius;
-						if (type == CollisionType::Box)
-						{
-							center = bound.box.Center;
-							radius = Vector3(bound.box.Extents).Length();
-						}
-						if (type == CollisionType::Sphere)
-						{
-							center = bound.sphere.Center;
-							radius = bound.sphere.Radius;
-						}
-
-
 						Vector3 colliderCenter = collider->GetBoundCenter();
 						Vector3 rayDir = colliderCenter - center;
+						float rayDis = rayDir.Length();
 						rayDir.Normalize();
-						std::vector<RayHit> hitList;
-						if (ColliderManager::main->RayCastAll({ center, rayDir }, (colliderCenter - center).Length(), hitList))
+
+						RayHit hitOtherCollider;
+						if (collider->RayCast({ center, rayDir }, rayDis, hitOtherCollider))
 						{
-							RayHit findHit;
-							for (auto& hit : hitList) {
-								if (hit.gameObject->GetRoot() != GetOwner()->GetRoot() && hit.collider != nullptr) {
-									findHit = hit;
-									break;
-								}
-							}
-							if (findHit) {
-								velocityDirection += findHit.normal * velocityDirection.Length();
+							if (hitOtherCollider) {
+								velocityDirection += hitOtherCollider.normal * velocityDirection.Length();
 							}
 
 						}

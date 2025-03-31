@@ -502,4 +502,40 @@ bool ColliderManager::RayCastAll(const Ray& ray, const float& dis, std::vector<R
 	return hitFound;
 }
 
+bool ColliderManager::RayCastAll(const std::vector<std::shared_ptr<Collider>>& colliders, const Ray& ray,
+	const float& dis, std::vector<RayHit>& hitList)
+{
+	RayHit closestHit;
+	closestHit.distance = dis;
+	bool hitFound = false;
+
+	for (const auto& collider : colliders)
+	{
+		RayHit currentHit;
+		currentHit.distance = dis;  // 최대 거리로 초기화
+		if (collider->RayCast(ray, dis, currentHit))
+		{
+			hitList.push_back(currentHit);
+			hitFound = true;
+		}
+	}
+
+	for (auto& terrain : TerrainManager::main->_terrains)
+	{
+		RayHit currentHit;
+		if (terrain->RayCast(ray, dis, currentHit))
+		{
+			hitList.push_back(currentHit);
+			hitFound = true;
+		}
+	}
+	std::ranges::sort(hitList, [&](const RayHit& hit, const RayHit& hit2)
+		{
+			return hit.distance < hit2.distance;
+		});
+
+
+	return hitFound;
+}
+
 
