@@ -77,36 +77,30 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
     vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);
     vec3 nextCameraPos = nextPlayerPos + rotatedHeadOffset + _transform->GetForward() * 0.2f;
 
-
     vec3 dir = _velocity;
     dir.Normalize();
 
     Ray lookRay;
-    lookRay.position = nextCameraPos;
-    lookRay.direction = dir;
-    float maxDist = 0.1f;
+    lookRay.position = nextCameraPos; //이동된 대가리에서 
+    lookRay.direction = dir; //이동방향으로 레이를쏜다
+    float maxDist = 1.0f;
 
     auto hit = ColliderManager::main->RayCast(lookRay, maxDist, GetOwner());
 
     if (hit.isHit)
     {
-        nextCameraPos += hit.normal * hit.distance;
         nextPlayerPos += hit.normal * hit.distance;
+        nextCameraPos += hit.normal * hit.distance;
     }
 
-
+ 
+    float terrainHeight = _terrian->GetLocalHeight(nextCameraPos);
+    if (nextCameraPos.y < terrainHeight + 3.0f)
     {
-
-        float terrainHeight = _terrian->GetLocalHeight(nextCameraPos);
-        if (nextCameraPos.y < terrainHeight + 3.0f)
-        {
-            float deltaY = (terrainHeight + 3.0f) - nextCameraPos.y;
-            nextPlayerPos.y += deltaY;
-            nextCameraPos.y += deltaY;
-        }
+        float deltaY = (terrainHeight + 3.0f) - nextCameraPos.y;
+        nextPlayerPos.y += deltaY;
+        nextCameraPos.y += deltaY;
     }
-
-
 
     _transform->SetWorldPosition(nextPlayerPos);
     _camera->SetCameraPos(nextCameraPos);
