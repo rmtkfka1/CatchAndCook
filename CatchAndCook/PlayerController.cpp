@@ -124,7 +124,7 @@ void PlayerController::CameraControl()
 			_currentNextDirection = Vector3::Transform(Vector3::Forward, finalRotation);
 
 			float distance = 3.6;
-			if (auto hit = ColliderManager::main->RayCast({ _currentOffset, -_currentNextDirection }, distance * 2))
+			if (auto hit = ColliderManager::main->RayCast({ _currentOffset, -_currentNextDirection }, distance * 2,GetOwner()))
 				if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
 				{
 					distance = std::min(hit.distance, distance) - 0.05f;
@@ -211,7 +211,7 @@ void PlayerController::MoveControl()
 		{
 			Vector3 upRayOffset = nextPos + Vector3::Up * 1.0f;
 
-			if (auto hit = ColliderManager::main->RayCast({ upRayOffset, Vector3::Down }, 30))
+			if (auto hit = ColliderManager::main->RayCast({ upRayOffset, Vector3::Down }, 30,GetOwner()))
 				if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
 					nextPos.y = upRayOffset.y - hit.distance;
 			break;

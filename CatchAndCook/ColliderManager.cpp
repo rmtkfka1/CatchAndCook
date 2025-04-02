@@ -280,7 +280,7 @@ void ColliderManager::CallBackEnd(const std::shared_ptr<Collider>& collider, con
 		component->CollisionEnd(collider, other);
 }
 
-RayHit ColliderManager::RayCast(const Ray& ray, const float& dis) const
+RayHit ColliderManager::RayCast(const Ray& ray, const float& dis, shared_ptr<GameObject>& owner) const
 {
 	RayHit closestHit;
 	closestHit.distance = dis;
@@ -288,6 +288,8 @@ RayHit ColliderManager::RayCast(const Ray& ray, const float& dis) const
 
 	for (const auto& collider : _collidersForRay)
 	{
+		if (collider->GetOwner() == owner) continue;
+
 		RayHit currentHit;
 		currentHit.distance = dis;  // 최대 거리로 초기화
 		if (collider->RayCast(ray, dis, currentHit))

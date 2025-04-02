@@ -41,8 +41,8 @@ void SeaPlayerController::Start()
 void SeaPlayerController::Update()
 {
 
-	if (CameraManager::main->GetCameraType() == CameraType::DebugCamera)
-		return;
+	//if (CameraManager::main->GetCameraType() == CameraType::DebugCamera)
+	//	return;
 
     float dt = Time::main->GetDeltaTime();
 
@@ -67,6 +67,9 @@ void SeaPlayerController::Update()
 }
 void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
 {
+    _transform->SetLocalRotation(rotation);
+    _camera->SetCameraRotation(rotation);
+
     vec3 currentPos = _transform->GetWorldPosition();
     vec3 nextPos = currentPos + _velocity * dt;
 
@@ -83,10 +86,9 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
         headPos.y += deltaY;
     }
 
-    _transform->SetLocalRotation(rotation);
+ 
     _transform->SetWorldPosition(nextPos);
     _camera->SetCameraPos(headPos);
-    _camera->SetCameraRotation(rotation);
 
     _velocity *= (1 - (_resistance * dt));
 

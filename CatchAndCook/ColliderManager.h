@@ -48,7 +48,7 @@ private:
 	void VisualizeOccupiedCells(const vec3& cell , const shared_ptr<Collider>& collider);
 
 public:
-	RayHit RayCast(const Ray& ray, const float& dis) const;
+	RayHit RayCast(const Ray& ray, const float& dis, shared_ptr<GameObject>& owner) const;
 
 public:
 	float _cellSize = 100.0f;
