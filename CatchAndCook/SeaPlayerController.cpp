@@ -42,7 +42,82 @@ void SeaPlayerController::Update()
     float dt = Time::main->GetDeltaTime();
     Quaternion rotation = CalCulateYawPitchRoll();
 
-    vec3 inputDir = vec3::Zero;
+	vec3 inputDir = vec3::Zero;
+
+	KeyUpdate(inputDir, rotation, dt);
+
+	UpdatePlayerAndCamera(dt, rotation);
+
+
+
+
+
+}
+void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
+{
+    _transform->SetLocalRotation(rotation);
+    _camera->SetCameraRotation(rotation);
+
+    vec3 currentPos = _transform->GetWorldPosition();
+    vec3 nextPos = currentPos + _velocity * dt;
+
+    // --- 카메라 기준 위치 계산 ---
+    vec3 headOffset = vec3(0, _cameraHeightOffset, 0);
+    vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);
+    vec3 headPos = nextPos + rotatedHeadOffset;
+
+    vec3 forward = _transform->GetForward();
+    float camTargetDist = 0.2f;
+    float rayPadding = 0.2f;
+    float rayStartOffset = 0.3f;
+
+    vec3 rayStart = headPos - forward * rayStartOffset;
+    float rayLength = camTargetDist + rayStartOffset + rayPadding;
+
+    Ray camRay;
+    camRay.position = rayStart;
+    camRay.direction = forward;
+
+    vec3 targetCameraPos = headPos + forward * camTargetDist;
+    vec3 finalCameraPos = targetCameraPos;
+
+    auto camHit = ColliderManager::main->RayCast(camRay, rayLength, GetOwner());
+
+    if (camHit.isHit)
+    {
+        float safeDist = camHit.distance - rayPadding;
+        if (safeDist < 0.0f) safeDist = 0.0f;
+
+        finalCameraPos = rayStart + forward * safeDist;
+
+        vec3 newHeadPos = finalCameraPos - forward * camTargetDist;
+        nextPos = newHeadPos - rotatedHeadOffset;
+
+        if (_velocity.Length() > 0.1f)
+        {
+            vec3 normal = camHit.normal;
+            vec3 velProj = normal * _velocity.Dot(normal);
+            _velocity -= velProj * 1.0f;
+        }
+    }
+
+    float terrainHeight = _terrian->GetLocalHeight(finalCameraPos);
+    if (finalCameraPos.y < terrainHeight + 2.5f)
+    {
+        float deltaY = (terrainHeight + 2.5f) - finalCameraPos.y;
+        nextPos.y += deltaY;
+        finalCameraPos.y += deltaY;
+    }
+
+
+    _transform->SetWorldPosition(nextPos);
+    _camera->SetCameraPos(finalCameraPos);
+    _velocity *= (1 - (_resistance * dt));
+};
+
+void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float dt)
+{
+    // --- 입력 ---
     if (Input::main->GetKey(KeyCode::UpArrow)) inputDir += vec3::Forward;
     if (Input::main->GetKey(KeyCode::DownArrow)) inputDir += vec3::Backward;
     if (Input::main->GetKey(KeyCode::LeftArrow)) inputDir += vec3::Left;
@@ -62,144 +137,6 @@ void SeaPlayerController::Update()
         }
     }
 
-    _transform->SetLocalRotation(rotation);
-    _camera->SetCameraRotation(rotation);
-
-
-    vec3 currentPos = _transform->GetWorldPosition();
-    vec3 nextPos = currentPos + _velocity * dt;
-
-
-    vec3 headOffset = vec3(0, _cameraHeightOffset, 0);
-    vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);
-    vec3 headPos = nextPos + rotatedHeadOffset;
-
-    vec3 forward = _transform->GetForward();
-    float camTargetDist = 0.2f;   
-    float rayPadding = 0.1f;      
-    float rayStartOffset = 0.3f;  
-
-    vec3 rayStart = headPos - forward * rayStartOffset;
-    float rayLength = camTargetDist + rayStartOffset + rayPadding; // 패딩 추가
-
-    Ray camRay;
-    camRay.position = rayStart;
-    camRay.direction = forward;
-
-    vec3 targetCameraPos = headPos + forward * camTargetDist;
-    vec3 finalCameraPos = targetCameraPos;
-
-    auto camHit = ColliderManager::main->RayCast(camRay, rayLength, GetOwner());
-    if (camHit.isHit)
-    {
-        
-        float safeDist = camHit.distance - rayPadding;
-        if (safeDist < 0.0f) safeDist = 0.0f;
-
-        finalCameraPos = rayStart + forward * safeDist;
-
-        vec3 newHeadPos = finalCameraPos - forward * camTargetDist;
-        nextPos = newHeadPos - rotatedHeadOffset;
-
-        if (_velocity.Length() > 0.1f) {
-            vec3 normal = camHit.normal;
-            vec3 velProj = normal * _velocity.Dot(normal);
-            _velocity -= velProj * 2.0f; 
-        }
-    }
-
-    float terrainHeight = _terrian->GetLocalHeight(finalCameraPos);
-    if (finalCameraPos.y < terrainHeight + 2.5f)
-    {
-        float deltaY = (terrainHeight + 2.5f) - finalCameraPos.y;
-        nextPos.y += deltaY;
-        finalCameraPos.y += deltaY;
-    }
-
-
-    _transform->SetWorldPosition(nextPos);
-    _camera->SetCameraPos(finalCameraPos);
-    _velocity *= (1 - (_resistance * dt));
-
-    Gizmo::Width(0.1f);
-    Gizmo::Line(rayStart, rayStart + forward * rayLength, Vector4(1, 0.5f, 0.5f, 1));
-}
-void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
-{
-    _transform->SetLocalRotation(rotation);
-    _camera->SetCameraRotation(rotation);
-
-    vec3 currentPlayerPos = _transform->GetWorldPosition();
-    vec3 nextPlayerPos = currentPlayerPos + _velocity * dt;
-
-    vec3 headOffset = vec3(0, _cameraHeightOffset, 0);
-    vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);
-    vec3 nextCameraPos = nextPlayerPos + rotatedHeadOffset + _transform->GetForward() * 0.1f;
-
-    vec3 dir = _velocity;
-    dir.Normalize();
-
-    Ray lookRay;
-    lookRay.position = nextCameraPos;  
-    lookRay.direction = dir; 
-    float maxDist = 3.0f;
-
-    auto hit = ColliderManager::main->RayCast(lookRay, maxDist, GetOwner());
-
-    if (hit.isHit)
-    {
-        nextPlayerPos += hit.normal * hit.distance;
-        nextCameraPos += hit.normal * hit.distance;
-
-        _velocity *= 0.3f;
-    }
-
- 
-    float terrainHeight = _terrian->GetLocalHeight(nextCameraPos);
-    if (nextCameraPos.y < terrainHeight + 3.0f)
-    {
-        float deltaY = (terrainHeight + 3.0f) - nextCameraPos.y;
-        nextPlayerPos.y += deltaY;
-        nextCameraPos.y += deltaY;
-    }
-
-    _transform->SetWorldPosition(nextPlayerPos);
-    _camera->SetCameraPos(nextCameraPos);
-
-    _velocity *= (1 - (_resistance * dt));
-    CameraManager::main->Setting(CameraType::SeaCamera);
-};
-
-void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float dt)
-{
-    if (Input::main->GetKey(KeyCode::UpArrow))
-        inputDir += vec3::Forward;
-
-    if (Input::main->GetKey(KeyCode::DownArrow))
-        inputDir += vec3::Backward;
-
-    if (Input::main->GetKey(KeyCode::LeftArrow))
-        inputDir += vec3::Left;
-
-    if (Input::main->GetKey(KeyCode::RightArrow))
-        inputDir += vec3::Right;
-
-    if (Input::main->GetKey(KeyCode::Space))
-        inputDir += vec3(0, 2, 0); // 점프 or 위로 이동
-
-    if (inputDir != vec3::Zero)
-    {
-        inputDir.Normalize();
-        vec3 moveDir = vec3::Transform(inputDir, rotation);
-
-        _velocity += moveDir * _moveForce * dt;
-
-        if (_velocity.Length() > _maxSpeed)
-        {
-            _velocity.Normalize();
-            _velocity *= _maxSpeed;
-        }
-    }
 }
 
 void SeaPlayerController::Update2()
