@@ -2,7 +2,7 @@
 #define _LIGHTING_HLSL_
 
 
-#define MAX_LIGHTS 5 
+#define MAX_LIGHTS 20
 
 
 
@@ -30,6 +30,8 @@ struct Light
     
     float3 position;
     float spotPower;
+    int onOff;
+    float3 dummy1;
 };
 
 
@@ -154,18 +156,21 @@ float4 ComputeLightColor(float3 worldPos ,float3 WorldNomral)
     [unroll]
     for (int i = 0; i < g_lightCount; ++i)
     {
-        if (g_lights[i].mateiral.lightType == 0)
+        if (g_lights[i].onOff == 1)
         {
-            lightColor += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, worldPos, WorldNomral, toEye);
-        }
-        else if (g_lights[i].mateiral.lightType == 1)
-        {
-            lightColor += ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye);
-        }
-        else if (g_lights[i].mateiral.lightType == 2)
-        {
-            lightColor += ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye);
-        }
+	        if (g_lights[i].mateiral.lightType == 0)
+	        {
+	            lightColor += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, worldPos, WorldNomral, toEye);
+	        }
+	        else if (g_lights[i].mateiral.lightType == 1)
+	        {
+	            lightColor += ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye);
+	        }
+	        else if (g_lights[i].mateiral.lightType == 2)
+	        {
+	            lightColor += ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye);
+	        }
+		}
     }
     
     return float4(lightColor, 1.0f);

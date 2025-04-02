@@ -38,12 +38,12 @@ void BufferManager::Init()
 
 	{
 		CreateStructuredBufferPool(BufferType::TransformParam,"TransformDatas",sizeof(Instance_Transform),20000);
+		CreateStructuredBufferPool(BufferType::ForwardLightParam, "ForwardLightDatas", sizeof(ForwardLightParams), 10000);
 	}
 
 	{
 		CreateInstanceBufferPool(BufferType::TransformInstanceParam, sizeof(Instance_Transform), 10000, 128);
 		CreateInstanceBufferPool(BufferType::GizmoInstanceParam, sizeof(Instance_Gizmo), 100'000, 1);
-		CreateInstanceBufferPool(BufferType::ForwardLightParam, sizeof(ForwardLightParams), 100, 5000);
 	}
 	
 	{
