@@ -69,20 +69,20 @@ int main()
 		}
 		else
 		{
-			 auto frameStart = std::chrono::high_resolution_clock::now();
+		/*	 auto frameStart = std::chrono::high_resolution_clock::now();*/
 
 			game->Run(); // 게임 프레임 실행
 
-			auto frameEnd = std::chrono::high_resolution_clock::now();
-			std::chrono::duration<float> frameDuration = frameEnd - frameStart;
+			//auto frameEnd = std::chrono::high_resolution_clock::now();
+			//std::chrono::duration<float> frameDuration = frameEnd - frameStart;
 
-			// 10 FPS → 프레임당 100ms 간격 유지
-			float targetFrameTime = 1.0f / 10.0f;
-			float sleepTime = targetFrameTime - frameDuration.count();
+			//// 10 FPS → 프레임당 100ms 간격 유지
+			//float targetFrameTime = 1.0f / 10.0f;
+			//float sleepTime = targetFrameTime - frameDuration.count();
 
-			if (sleepTime > 0.0f) {
-            std::this_thread::sleep_for(std::chrono::duration<float>(sleepTime));
-			}
+			//if (sleepTime > 0.0f) {
+   //         std::this_thread::sleep_for(std::chrono::duration<float>(sleepTime));
+			//}
 		}
 	}
 

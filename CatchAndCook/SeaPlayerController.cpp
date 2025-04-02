@@ -54,47 +54,67 @@ void SeaPlayerController::Update()
 
     UpdatePlayerAndCamera(dt, rotation);
 
-    //{
-    //    Gizmo::Width(0.1f);
-    //    auto o = _camera->GetCameraPos();
-    //    auto f = _camera->GetCameraLook();
-    //    auto u = _camera->GetCameraUp();
-    //    auto r = _camera->GetCameraRight();
-    //    Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
-    //    Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
-    //    Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));
-    //}
+    {
+        Gizmo::Width(0.1f);
+        auto o = _camera->GetCameraPos();
+        auto f = _camera->GetCameraLook();
+        auto u = _camera->GetCameraUp();
+        auto r = _camera->GetCameraRight();
+        Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
+        Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
+        Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));
+    }
 }
 void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
 {
     _transform->SetLocalRotation(rotation);
     _camera->SetCameraRotation(rotation);
 
-    vec3 currentPos = _transform->GetWorldPosition();
-    vec3 nextPos = currentPos + _velocity * dt;
+    vec3 currentPlayerPos = _transform->GetWorldPosition();
+    vec3 nextPlayerPos = currentPlayerPos + _velocity * dt;
 
-    vec3 headOffset = vec3(0, _cameraHeightOffset, 0);          // 머리까지의 offset
-    vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);    // 회전 적용
-    vec3 headPos = nextPos + rotatedHeadOffset + _transform->GetForward() * 0.2f;   // 최종 머리 위치
+    vec3 headOffset = vec3(0, _cameraHeightOffset, 0);
+    vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);
+    vec3 nextCameraPos = nextPlayerPos + rotatedHeadOffset + _transform->GetForward() * 0.2f;
 
-    // 지형 충돌 처리 (머리 위치 기준)
-    float terrainHeight = _terrian->GetLocalHeight(headPos);
-    if (headPos.y < terrainHeight + 2.0f)
+
+    vec3 dir = _velocity;
+    dir.Normalize();
+
+    Ray lookRay;
+    lookRay.position = nextCameraPos;
+    lookRay.direction = dir;
+    float maxDist = 0.1f;
+
+    auto hit = ColliderManager::main->RayCast(lookRay, maxDist, GetOwner());
+
+    if (hit.isHit)
     {
-        float deltaY = (terrainHeight + 2.0f) - headPos.y;
-        nextPos.y += deltaY;
-        headPos.y += deltaY;
+        nextCameraPos += hit.normal * hit.distance;
+        nextPlayerPos += hit.normal * hit.distance;
     }
 
- 
-    _transform->SetWorldPosition(nextPos);
-    _camera->SetCameraPos(headPos);
+
+    {
+
+        float terrainHeight = _terrian->GetLocalHeight(nextCameraPos);
+        if (nextCameraPos.y < terrainHeight + 3.0f)
+        {
+            float deltaY = (terrainHeight + 3.0f) - nextCameraPos.y;
+            nextPlayerPos.y += deltaY;
+            nextCameraPos.y += deltaY;
+        }
+    }
+
+
+
+    _transform->SetWorldPosition(nextPlayerPos);
+    _camera->SetCameraPos(nextCameraPos);
 
     _velocity *= (1 - (_resistance * dt));
-
     CameraManager::main->Setting(CameraType::SeaCamera);
+};
 
-}
 void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float dt)
 {
     if (Input::main->GetKey(KeyCode::UpArrow))
@@ -126,7 +146,6 @@ void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float 
         }
     }
 }
-;
 
 void SeaPlayerController::Update2()
 {

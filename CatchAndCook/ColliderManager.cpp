@@ -302,18 +302,18 @@ RayHit ColliderManager::RayCast(const Ray& ray, const float& dis, shared_ptr<Gam
 		}
 	}
 
-	for (auto& terrain : TerrainManager::main->_terrains)
-	{
-		RayHit currentHit;
-		if (terrain->RayCast(ray, dis, currentHit))
-		{
-			if (currentHit.distance < closestHit.distance)
-			{
-				closestHit = currentHit;
-				hitFound = true;
-			}
-		}
-	}
+	///*for (auto& terrain : TerrainManager::main->_terrains)
+	//{
+	//	RayHit currentHit;
+	//	if (terrain->RayCast(ray, dis, currentHit))
+	//	{
+	//		if (currentHit.distance < closestHit.distance)
+	//		{
+	//			closestHit = currentHit;
+	//			hitFound = true;
+	//		}
+	//	}
+	//}*/
 
 
 	return closestHit;
