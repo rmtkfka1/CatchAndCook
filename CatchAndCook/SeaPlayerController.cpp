@@ -37,34 +37,22 @@ void SeaPlayerController::Start()
 	GetOwner()->_transform->SetUp(vec3(0, 1, 0));
 
 }
-
 void SeaPlayerController::Update()
 {
     float dt = Time::main->GetDeltaTime();
-
     Quaternion rotation = CalCulateYawPitchRoll();
 
     vec3 inputDir = vec3::Zero;
-    if (Input::main->GetKey(KeyCode::UpArrow))
-        inputDir += vec3::Forward;
-
-    if (Input::main->GetKey(KeyCode::DownArrow))
-        inputDir += vec3::Backward;
-
-    if (Input::main->GetKey(KeyCode::LeftArrow))
-        inputDir += vec3::Left;
-
-    if (Input::main->GetKey(KeyCode::RightArrow))
-        inputDir += vec3::Right;
-
-    if (Input::main->GetKey(KeyCode::Space))
-        inputDir += vec3(0, 2, 0); // 점프 또는 위로 이동
+    if (Input::main->GetKey(KeyCode::UpArrow)) inputDir += vec3::Forward;
+    if (Input::main->GetKey(KeyCode::DownArrow)) inputDir += vec3::Backward;
+    if (Input::main->GetKey(KeyCode::LeftArrow)) inputDir += vec3::Left;
+    if (Input::main->GetKey(KeyCode::RightArrow)) inputDir += vec3::Right;
+    if (Input::main->GetKey(KeyCode::Space)) inputDir += vec3(0, 2, 0);
 
     if (inputDir != vec3::Zero)
     {
         inputDir.Normalize();
         vec3 moveDir = vec3::Transform(inputDir, rotation);
-
         _velocity += moveDir * _moveForce * dt;
 
         if (_velocity.Length() > _maxSpeed)
@@ -77,73 +65,65 @@ void SeaPlayerController::Update()
     _transform->SetLocalRotation(rotation);
     _camera->SetCameraRotation(rotation);
 
-    vec3 currentPlayerPos = _transform->GetWorldPosition();
-    vec3 nextPlayerPos = currentPlayerPos + _velocity * dt;
+
+    vec3 currentPos = _transform->GetWorldPosition();
+    vec3 nextPos = currentPos + _velocity * dt;
+
 
     vec3 headOffset = vec3(0, _cameraHeightOffset, 0);
     vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);
-    vec3 nextCameraPos = nextPlayerPos + rotatedHeadOffset + _transform->GetForward() * 0.1f;
+    vec3 headPos = nextPos + rotatedHeadOffset;
 
-    vec3 dir = _velocity;
-    dir.Normalize();
+    vec3 forward = _transform->GetForward();
+    float camTargetDist = 0.2f;   
+    float rayPadding = 0.1f;      
+    float rayStartOffset = 0.3f;  
 
-    Ray lookRay;
-    lookRay.position = nextCameraPos;
-    lookRay.direction = dir;
-    float maxDist = 3.0f;
+    vec3 rayStart = headPos - forward * rayStartOffset;
+    float rayLength = camTargetDist + rayStartOffset + rayPadding; // 패딩 추가
 
-    auto hit = ColliderManager::main->RayCast(lookRay, maxDist, GetOwner());
+    Ray camRay;
+    camRay.position = rayStart;
+    camRay.direction = forward;
 
-    if (hit.isHit)
+    vec3 targetCameraPos = headPos + forward * camTargetDist;
+    vec3 finalCameraPos = targetCameraPos;
+
+    auto camHit = ColliderManager::main->RayCast(camRay, rayLength, GetOwner());
+    if (camHit.isHit)
     {
-        // 슬라이딩 벡터 계산
-        vec3 slidingVector = _velocity - hit.normal * _velocity.Dot(hit.normal);
+        
+        float safeDist = camHit.distance - rayPadding;
+        if (safeDist < 0.0f) safeDist = 0.0f;
 
-        // 충돌 후 위치 수정 (떨림 방지)
-        const float minDist = 0.01f; // 최소 거리
-        if (hit.distance > minDist)
-        {
-            nextPlayerPos = hit.worldPos + slidingVector * dt;
-            nextCameraPos = hit.worldPos + rotatedHeadOffset + slidingVector * dt;
+        finalCameraPos = rayStart + forward * safeDist;
+
+        vec3 newHeadPos = finalCameraPos - forward * camTargetDist;
+        nextPos = newHeadPos - rotatedHeadOffset;
+
+        if (_velocity.Length() > 0.1f) {
+            vec3 normal = camHit.normal;
+            vec3 velProj = normal * _velocity.Dot(normal);
+            _velocity -= velProj * 2.0f; 
         }
-        else
-        {
-            // 속도가 너무 낮을 경우 정지
-            _velocity = vec3::Zero;
-        }
-
-        _velocity *= 0.5f; // 충돌 시 속도 감소
     }
 
-    float terrainHeight = _terrian->GetLocalHeight(nextCameraPos);
-    if (nextCameraPos.y < terrainHeight + 3.0f)
+    float terrainHeight = _terrian->GetLocalHeight(finalCameraPos);
+    if (finalCameraPos.y < terrainHeight + 2.5f)
     {
-        float deltaY = (terrainHeight + 3.0f) - nextCameraPos.y;
-        nextPlayerPos.y += deltaY;
-        nextCameraPos.y += deltaY;
+        float deltaY = (terrainHeight + 2.5f) - finalCameraPos.y;
+        nextPos.y += deltaY;
+        finalCameraPos.y += deltaY;
     }
 
-    _transform->SetWorldPosition(nextPlayerPos);
-    _camera->SetCameraPos(nextCameraPos);
 
-    // 속도 보간 처리 (부드러운 감속)
-    _velocity = vec3::Lerp(_velocity, vec3::Zero, dt * _resistance);
+    _transform->SetWorldPosition(nextPos);
+    _camera->SetCameraPos(finalCameraPos);
+    _velocity *= (1 - (_resistance * dt));
 
-    CameraManager::main->Setting(CameraType::SeaCamera);
-
-    // 디버그용 카메라 렌더링
-    {
-        Gizmo::Width(0.1f);
-        auto o = _camera->GetCameraPos();
-        auto f = _camera->GetCameraLook();
-        auto u = _camera->GetCameraUp();
-        auto r = _camera->GetCameraRight();
-        Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
-        Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
-        Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));
-    }
+    Gizmo::Width(0.1f);
+    Gizmo::Line(rayStart, rayStart + forward * rayLength, Vector4(1, 0.5f, 0.5f, 1));
 }
-
 void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
 {
     _transform->SetLocalRotation(rotation);
@@ -172,8 +152,6 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
         nextCameraPos += hit.normal * hit.distance;
 
         _velocity *= 0.3f;
-
-
     }
 
  
