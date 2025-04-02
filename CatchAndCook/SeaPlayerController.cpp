@@ -42,31 +42,16 @@ void SeaPlayerController::Update()
     float dt = Time::main->GetDeltaTime();
 
     Quaternion rotation = CalCulateYawPitchRoll();
+
+	vec3 inputDir = vec3::Zero;
+	KeyUpdate(inputDir, rotation, dt);
+	UpdatePlayerAndCamera(dt, rotation);
+
+}
+void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
+{
     _transform->SetLocalRotation(rotation);
     _camera->SetCameraRotation(rotation);
-
-
-    vec3 inputDir = vec3::Zero;
-    if (Input::main->GetKey(KeyCode::UpArrow)) inputDir += vec3::Forward;
-    if (Input::main->GetKey(KeyCode::DownArrow)) inputDir += vec3::Backward;
-    if (Input::main->GetKey(KeyCode::LeftArrow)) inputDir += vec3::Left;
-    if (Input::main->GetKey(KeyCode::RightArrow)) inputDir += vec3::Right;
-    if (Input::main->GetKey(KeyCode::Space)) inputDir += vec3(0, 2, 0);
-
-    if (inputDir != vec3::Zero)
-    {
-        inputDir.Normalize();
-        vec3 moveDir = vec3::Transform(inputDir, rotation);
-        _velocity += moveDir * _moveForce * dt;
-
-        if (_velocity.Length() > _maxSpeed)
-        {
-            vec3 temp = _velocity;
-            temp.Normalize();
-            _velocity = temp * _maxSpeed;
-        }
-    }
-
 
     vec3 currentPos = _transform->GetWorldPosition();
     vec3 nextPos = currentPos + _velocity * dt;
@@ -82,8 +67,7 @@ void SeaPlayerController::Update()
     {
         vec3 moveDir = _velocity;
         moveDir.Normalize();
-        float playerRadius = 1.5f;
-        float moveRayLength = _velocity.Length() * dt + playerRadius;
+        float moveRayLength = _velocity.Length() * dt + _playerRadius;
 
         Ray moveRay;
         moveRay.position = currentHeadPos;
@@ -93,13 +77,12 @@ void SeaPlayerController::Update()
         if (moveHit.isHit)
         {
             // 충돌 지점까지 거리 계산
-            float stopDistance = max(moveHit.distance - playerRadius, 0.0f);
+            float stopDistance = max(moveHit.distance - _playerRadius, 0.0f);
 
             // 뒤로 이동 판정
-            float dotProduct = moveDir.Dot(moveHit.normal);
-            if (dotProduct < -0.7f) // 뒤로 이동 중
+            if (_moveBack) 
             {
-                _velocity = vec3::Zero; // 완전 정지
+                _velocity *= 0.5F;
             }
             else // 전방/측면 이동
             {
@@ -111,7 +94,7 @@ void SeaPlayerController::Update()
             // 위치 보정
             vec3 newHeadPos = currentHeadPos + moveDir * stopDistance;
             nextPos = newHeadPos - rotatedHeadOffset;
-            nextHeadPos = nextPos + rotatedHeadOffset; // 머리 위치 업데이트
+            //nextHeadPos = nextPos + rotatedHeadOffset; // 머리 위치 업데이트
         }
     }
 
@@ -161,77 +144,35 @@ void SeaPlayerController::Update()
     _transform->SetWorldPosition(nextPos);
     _camera->SetCameraPos(finalCameraPos);
     _velocity *= (1 - (_resistance * dt));
-}
-void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
-{
-    _transform->SetLocalRotation(rotation);
-    _camera->SetCameraRotation(rotation);
-
-    vec3 currentPos = _transform->GetWorldPosition();
-    vec3 nextPos = currentPos + _velocity * dt;
-
-    // --- 카메라 기준 위치 계산 ---
-    vec3 headOffset = vec3(0, _cameraHeightOffset, 0);
-    vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);
-    vec3 headPos = nextPos + rotatedHeadOffset;
-
-    vec3 forward = _transform->GetForward();
-    float camTargetDist = 0.2f;
-    float rayPadding = 0.2f;
-    float rayStartOffset = 0.3f;
-
-    vec3 rayStart = headPos - forward * rayStartOffset;
-    float rayLength = camTargetDist + rayStartOffset + rayPadding;
-
-    Ray camRay;
-    camRay.position = rayStart;
-    camRay.direction = forward;
-
-    vec3 targetCameraPos = headPos + forward * camTargetDist;
-    vec3 finalCameraPos = targetCameraPos;
-
-    auto camHit = ColliderManager::main->RayCast(camRay, rayLength, GetOwner());
-
-    if (camHit.isHit)
-    {
-        float safeDist = camHit.distance - rayPadding;
-        if (safeDist < 0.0f) safeDist = 0.0f;
-
-        finalCameraPos = rayStart + forward * safeDist;
-
-        vec3 newHeadPos = finalCameraPos - forward * camTargetDist;
-        nextPos = newHeadPos - rotatedHeadOffset;
-
-        if (_velocity.Length() > 0.1f)
-        {
-            vec3 normal = camHit.normal;
-            vec3 velProj = normal * _velocity.Dot(normal);
-            _velocity -= velProj * 1.0f;
-        }
-    }
-
-    float terrainHeight = _terrian->GetLocalHeight(finalCameraPos);
-    if (finalCameraPos.y < terrainHeight + 2.5f)
-    {
-        float deltaY = (terrainHeight + 2.5f) - finalCameraPos.y;
-        nextPos.y += deltaY;
-        finalCameraPos.y += deltaY;
-    }
-
-
-    _transform->SetWorldPosition(nextPos);
-    _camera->SetCameraPos(finalCameraPos);
-    _velocity *= (1 - (_resistance * dt));
 };
 
 void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float dt)
 {
-    // --- 입력 ---
-    if (Input::main->GetKey(KeyCode::UpArrow)) inputDir += vec3::Forward;
-    if (Input::main->GetKey(KeyCode::DownArrow)) inputDir += vec3::Backward;
-    if (Input::main->GetKey(KeyCode::LeftArrow)) inputDir += vec3::Left;
-    if (Input::main->GetKey(KeyCode::RightArrow)) inputDir += vec3::Right;
-    if (Input::main->GetKey(KeyCode::Space)) inputDir += vec3(0, 2, 0);
+    if (Input::main->GetKey(KeyCode::UpArrow))
+    {
+        inputDir += vec3::Forward;
+    }
+    if (Input::main->GetKey(KeyCode::DownArrow))
+    {
+        inputDir += vec3::Backward;
+        _moveBack = true;
+    }
+    else
+    {
+		_moveBack = false;
+    }
+    if (Input::main->GetKey(KeyCode::LeftArrow))
+    {
+        inputDir += vec3::Left;
+    }
+    if (Input::main->GetKey(KeyCode::RightArrow))
+    {
+        inputDir += vec3::Right;
+    }
+    if (Input::main->GetKey(KeyCode::Space))
+    {
+        inputDir += vec3(0, 2, 0);
+    }
 
     if (inputDir != vec3::Zero)
     {
@@ -242,7 +183,7 @@ void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float 
         if (_velocity.Length() > _maxSpeed)
         {
             _velocity.Normalize();
-            _velocity *= _maxSpeed;
+            _velocity = _velocity * _maxSpeed;
         }
     }
 
