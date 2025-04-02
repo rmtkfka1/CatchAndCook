@@ -291,7 +291,7 @@ RayHit ColliderManager::RayCast(const Ray& ray, const float& dis, shared_ptr<Gam
 		if (collider->GetOwner() == owner) continue;
 
 		RayHit currentHit;
-		currentHit.distance = dis;  // 최대 거리로 초기화
+		currentHit.distance = dis;  
 		if (collider->RayCast(ray, dis, currentHit))
 		{
 			if (currentHit.distance < closestHit.distance)
