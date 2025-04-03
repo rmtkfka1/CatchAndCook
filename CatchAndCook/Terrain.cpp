@@ -200,30 +200,36 @@ void Terrain::SetHeightMap(const std::wstring& rawPath, const std::wstring& pngP
 
 float Terrain::GetHeight(const Vector2& heightMapPosition) const
 {
-    const float fx = heightMapPosition.x;
-    const float fz = heightMapPosition.y;
+    float fx = heightMapPosition.x;
+    float fz = heightMapPosition.y;
 
-    if (fx < 0 || fx >= _heightRawSize.x - 1 || fz < 0 || fz >= _heightRawSize.y - 1)
-        return 0;
+    if (fx < 1 || fx >= _heightRawSize.x - 2 || fz < 1 || fz >= _heightRawSize.y - 2)
+        return 0; // 가장자리 부분은 안전한 값을 반환하거나 보간하지 않습니다.
 
-    const int ix = static_cast<int>(fx);
-    const int iz = static_cast<int>(fz);
-
-    // 경계를 넘어가는 경우 방지
-    int ix1 = std::min(ix + 1, static_cast<int>(_heightRawSize.x - 1));
-    int iz1 = std::min(iz + 1, static_cast<int>(_heightRawSize.y - 1));
-
-    float hx0z0 = _heightRawMapData[iz][ix];
-    float hx1z0 = _heightRawMapData[iz][ix1];
-    float hx0z1 = _heightRawMapData[iz1][ix];
-    float hx1z1 = _heightRawMapData[iz1][ix1];
-
+    int ix = static_cast<int>(fx);
+    int iz = static_cast<int>(fz);
     float tx = fx - ix;
     float tz = fz - iz;
 
-    float h0 = hx0z0 * (1 - tx) + hx1z0 * tx;  // x 방향 보간
-    float h1 = hx0z1 * (1 - tx) + hx1z1 * tx;  // x 방향 보간
-    float finalHeight = h0 * (1 - tz) + h1 * tz; // z 방향 보간
+    // Bicubic 보간을 위한 4x4 영역 데이터
+    float data[4][4];
+    for (int m = -1; m <= 2; ++m)
+    {
+        for (int n = -1; n <= 2; ++n)
+        {
+            data[m + 1][n + 1] = _heightRawMapData[iz + m][ix + n];
+        }
+    }
+
+    // x 방향으로 Cubic 보간
+    float arr[4];
+    for (int i = 0; i < 4; ++i)
+    {
+        arr[i] = CubicInterpolate(data[i][0], data[i][1], data[i][2], data[i][3], tx);
+    }
+
+    // z 방향으로 최종 Cubic 보간
+    float finalHeight = CubicInterpolate(arr[0], arr[1], arr[2], arr[3], tz);
 
     return finalHeight;
 }
@@ -363,48 +369,5 @@ void Terrain::LoadTerrain(const std::wstring& rawData)
     file.close();
 }
 
-bool Terrain::InBounds(int32 z, int32 x) const
-{
-    return
-        z >= 0 && z < static_cast<int32>(_heightRawSize.y) &&
-        x >= 0 && x < static_cast<int32>(_heightRawSize.x);
-}
 
-void Terrain::Smooth()
-{
-    vector<vector<float>> temp;
-
-    temp = _heightRawMapData;
-
-    for (uint32 i = 0; i < _heightRawSize.y; ++i)
-    {
-        for (uint32 j = 0; j < _heightRawSize.x; ++j)
-        {
-            temp[i][j] = Average(i, j);
-        }
-    }
-
-    _heightRawMapData = temp;
-}
-
-
-float Terrain::Average(int32 i, int32 j)
-{
-    float avg = 0.0f;
-    float num = 0.0f;
-
-    for (int32 z = i - 1; z <= i + 1; ++z)
-    {
-        for (int32 x = j - 1; x <= j + 1; ++x)
-        {
-            if (InBounds(z, x))
-            {
-                avg += _heightRawMapData[z][x];
-                num += 1.0f;
-            }
-        }
-    }
-
-    return avg / num;
-}
 
