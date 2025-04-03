@@ -367,13 +367,3 @@ void Terrain::LoadTerrain(const std::wstring& rawData)
 
 
 
-float Terrain::CubicInterpolate(float v0, float v1, float v2, float v3, float frac)
-{
-    float P = (v3 - v2) - (v0 - v1);
-    float Q = (v0 - v1) - P;
-    float R = v2 - v0;
-    float S = v1;
-
-    return P * (frac * frac * frac) + Q * (frac * frac) + R * frac + S;
-}
-
