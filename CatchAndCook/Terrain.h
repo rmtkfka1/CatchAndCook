@@ -48,9 +48,6 @@ public:
 
 private:
 	void LoadTerrain(const std::wstring& rawData);
-	void Smooth();
-	bool InBounds(int32 z, int32 x) const;
-	float Average(int32 i,int32 j);
 
 public:
 	void SetData(Material* material) override;
