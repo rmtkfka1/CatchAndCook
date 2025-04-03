@@ -131,7 +131,7 @@ std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialColli
 
 	if (_dynamicColliderCashing.find(collider) != _dynamicColliderCashing.end())
 	{
-		occupiedCells = std::move(_dynamicColliderCashing[collider]);
+		occupiedCells = (_dynamicColliderCashing[collider]);
 	}
 	else
 	{
@@ -317,6 +317,37 @@ RayHit ColliderManager::RayCast(const Ray& ray, const float& dis, shared_ptr<Gam
 
 
 	return closestHit;
+}
+
+RayHit ColliderManager::RayCastForMyCell(const Ray& ray, const float& dis, shared_ptr<GameObject>& owner) 
+{
+	shared_ptr<Collider> Mycollider = owner->GetComponent<Collider>();
+	std::unordered_set<std::shared_ptr<Collider>> potencialColliders = GetPotentialCollisions(Mycollider);
+
+	RayHit closestHit;
+	closestHit.distance = dis;
+	bool hitFound = false;
+
+	cout << potencialColliders.size() << endl;
+
+	for (const auto& collider : potencialColliders)
+	{
+		if (collider == Mycollider) continue;
+
+		RayHit currentHit;
+		currentHit.distance = dis;
+		if (collider->RayCast(ray, dis, currentHit))
+		{
+			if (currentHit.distance < closestHit.distance)
+			{
+				closestHit = currentHit;
+				hitFound = true;
+			}
+		}
+	}
+
+	return closestHit;
+
 }
 
 

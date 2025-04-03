@@ -49,6 +49,7 @@ private:
 
 public:
 	RayHit RayCast(const Ray& ray, const float& dis, shared_ptr<GameObject>& owner) const;
+	RayHit RayCastForMyCell(const Ray& ray, const float& dis, shared_ptr<GameObject>& owner) ;
 
 public:
 	float _cellSize = 100.0f;

@@ -68,34 +68,29 @@ void SeaPlayerController::Update()
         }
     }
 
-    // 2. 충돌 검사 (회전 적용 전)
     vec3 currentPos = _transform->GetWorldPosition();
     vec3 nextPos = currentPos + _velocity * dt;
-
-    // 머리 위치 계산
     vec3 headOffset = vec3(0, _cameraHeightOffset, 0);
     vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);
     vec3 nextHeadPos = nextPos + rotatedHeadOffset + _transform->GetForward()*0.2f;
 
 
-	// 3. 충돌 검사
+
 	vec3 dir = _velocity;
     dir.Normalize();
-    float maxDist = 4.0f;
-	auto ray = ColliderManager::main->RayCast({ nextHeadPos, dir }, maxDist, GetOwner());
+    float maxDist = 2.0f;
+	auto ray = ColliderManager::main->RayCastForMyCell({ nextHeadPos, dir }, maxDist, GetOwner());
 
     if (ray.isHit)
     {
         vec3 normal = ray.normal;
 
-        // 반사 벡터 계산 (벽에 튕기듯 반사 또는 미끄러짐 처리)
-        _velocity = vec3::Reflect(_velocity, normal);
+        _velocity = _velocity - _velocity.Dot(normal) * normal;
 
-        // 벽에 너무 가까운 경우 살짝 밀어냄
-        float penetrationBuffer = 0.001f;
+        float penetrationBuffer = 0.01f;
         nextPos += normal * penetrationBuffer;
         nextHeadPos += normal * penetrationBuffer;
-	}
+    }
  
 
 

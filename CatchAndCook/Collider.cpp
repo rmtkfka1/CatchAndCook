@@ -49,7 +49,11 @@ void Collider::Update()
 {
 	Component::Update();
 
-	
+	if (GetOwner()->GetType() == GameObjectType::Dynamic)
+	{
+		CalculateBounding();
+		ColliderManager::main->AddCollider(GetCast<Collider>());
+	}
 }
 
 void Collider::Update2()
