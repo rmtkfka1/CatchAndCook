@@ -7,6 +7,14 @@
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 
+cbuffer PlantInfo : register(b8)
+{
+    float amplitude;
+    float frequency;
+    float padding;
+    float padding2;
+}
+
 struct VS_IN
 {
     float3 pos : POSITION;
@@ -25,7 +33,7 @@ struct VS_OUT
     
 };
 
-VS_OUT VS_Main(VS_IN input , uint id : SV_InstanceID)
+VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
 
@@ -34,20 +42,26 @@ VS_OUT VS_Main(VS_IN input , uint id : SV_InstanceID)
     row_major float4x4 l2wMatrix = data.localToWorld;
     row_major float4x4 w2lMatrix = data.worldToLocal;
     
-    output.pos = mul(float4(input.pos, 1.0f), l2wMatrix);
-    output.worldPos = output.pos.xyz;
-    
-    float4 clipPos = mul(output.pos, VPMatrix);
+    float angle = g_Time * frequency + id * 0.37; 
+    float swayX = sin(angle) * input.pos.y * amplitude;
+    float swayZ = cos(angle * 1.3) * input.pos.y * amplitude * 0.5;
+
+    float3 animatedPos = input.pos;
+    animatedPos.x += swayX;
+
+    float4 worldPos = mul(float4(animatedPos, 1.0f), l2wMatrix);
+    output.pos = worldPos;
+    output.worldPos = worldPos.xyz;
+
+    float4 clipPos = mul(worldPos, VPMatrix);
     output.pos = clipPos;
-    
+
     output.uv = input.uv;
-    
-    output.worldNormal = mul(float4(input.normal, 0.0f), l2wMatrix);
-    output.worldTangent = mul(float4(input.tangent, 0.0f), l2wMatrix);
-    
+    output.worldNormal = mul(float4(input.normal, 0.0f), l2wMatrix).xyz;
+    output.worldTangent = mul(float4(input.tangent, 0.0f), l2wMatrix).xyz;
+
     return output;
 }
-
 struct PS_OUT
 {
     float4 position : SV_Target0;
@@ -61,7 +75,7 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     
     output.position = float4(input.worldPos, 1.0f);
     float3 N= ComputeNormalMapping(input.worldNormal, input.worldTangent, _BumpMap.Sample(sampler_lerp, input.uv));
-    output.color = float4(1, 0, 0, 0);
+    output.color = _BaseMap.Sample(sampler_lerp, input.uv);
     output.normal = float4(N, 1.0f);
     return output;
 }

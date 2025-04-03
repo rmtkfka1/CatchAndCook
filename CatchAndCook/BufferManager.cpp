@@ -11,6 +11,7 @@
 #include "LightManager.h"
 #include "WaterController.h"
 #include "ComputeManager.h"
+#include "PlantComponent.h"
 void BufferManager::Init()
 {
 
@@ -32,6 +33,8 @@ void BufferManager::Init()
 		CreateBufferPool(BufferType::SeaParam, sizeof(TerrainDetailsParam), 1);
 		CreateBufferPool(BufferType::FogParam, sizeof(FogParam), 1);
 		CreateBufferPool(BufferType::UnderWaterParam, sizeof(UnderWaterParam), 1);
+		CreateBufferPool(BufferType::PlantInfo, sizeof(PlantInfo), 10);
+
 
 	}
 

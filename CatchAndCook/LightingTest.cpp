@@ -25,6 +25,7 @@
 #include "Model.h"
 #include "ModelMesh.h"
 #include "Collider.h"
+#include "PlantComponent.h"
 
 void LightingTest::Init()
 {
@@ -65,16 +66,59 @@ void LightingTest::Init()
 	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
 	sceneLoader->Load(GetCast<Scene>());
 
-	auto plant  = Find(L"plant_2_2");
-
-	if (plant)
 	{
-		plant->GetComponent<MeshRenderer>()->GetMaterials()[0]->SetShader(ResourceManager::main->Get<Shader>(L"Plant"));
+		auto plant = Find(L"1");
+
+		if (plant)
+		{
+			plant->GetComponent<MeshRenderer>()->GetMaterials()[0]->SetShader(ResourceManager::main->Get<Shader>(L"Plant"));
+			plant->AddComponent<PlantComponent>();
+		}
 	}
 
 
+	{
+		auto plant = Find(L"2");
+
+		if (plant)
+		{
+			cout << "찾음" << endl;
+			plant->GetComponent<MeshRenderer>()->GetMaterials()[0]->SetShader(ResourceManager::main->Get<Shader>(L"Plant"));
+			plant->AddComponent<PlantComponent>();
+		}
+	}
 
 
+	{
+		auto plant = Find(L"3");
+
+		if (plant)
+		{
+			plant->GetComponent<MeshRenderer>()->GetMaterials()[0]->SetShader(ResourceManager::main->Get<Shader>(L"Plant"));
+			plant->AddComponent<PlantComponent>();
+		}
+	}
+
+
+	{
+		auto plant = Find(L"4");
+
+		if (plant)
+		{
+			plant->GetComponent<MeshRenderer>()->GetMaterials()[0]->SetShader(ResourceManager::main->Get<Shader>(L"Plant"));
+			plant->AddComponent<PlantComponent>();
+		}
+	}
+
+	{
+		auto plant = Find(L"6");
+
+		if (plant)
+		{
+			plant->GetComponent<MeshRenderer>()->GetMaterials()[0]->SetShader(ResourceManager::main->Get<Shader>(L"Plant"));
+			plant->AddComponent<PlantComponent>();
+		}
+	}
 
 
 }

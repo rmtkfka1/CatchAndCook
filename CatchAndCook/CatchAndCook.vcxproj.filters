@@ -329,6 +329,9 @@
     <ClCompile Include="SeaPlayerController.cpp">
       <Filter>03.Component</Filter>
     </ClCompile>
+    <ClCompile Include="PlantComponent.cpp">
+      <Filter>03.Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -616,6 +619,9 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="WInMain.h" />
     <ClInclude Include="SeaPlayerController.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="PlantComponent.h">
       <Filter>03.Component</Filter>
     </ClInclude>
   </ItemGroup>

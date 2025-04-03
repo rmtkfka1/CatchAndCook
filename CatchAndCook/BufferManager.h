@@ -20,6 +20,7 @@ enum class BufferType
 	SeaParam,
 	FogParam,
 	UnderWaterParam,
+	PlantInfo,
 
 	// Instance
 	TransformInstanceParam,
