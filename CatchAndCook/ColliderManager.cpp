@@ -328,8 +328,6 @@ RayHit ColliderManager::RayCastForMyCell(const Ray& ray, const float& dis, share
 	closestHit.distance = dis;
 	bool hitFound = false;
 
-	cout << potencialColliders.size() << endl;
-
 	for (const auto& collider : potencialColliders)
 	{
 		if (collider == Mycollider) continue;

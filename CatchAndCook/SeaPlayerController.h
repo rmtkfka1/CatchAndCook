@@ -42,7 +42,7 @@ public:
 	float _roll = 0;
 
 	const float _moveForce = 100.0f;
-	const float _maxSpeed = 10.0f;
+	const float _maxSpeed = 300.0f;
 	const float _resistance = 2.5f;
 	const float _playerRadius = 2.5f;
 
