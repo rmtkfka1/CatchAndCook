@@ -78,7 +78,7 @@ void SeaPlayerController::Update()
 
 	vec3 dir = _velocity;
     dir.Normalize();
-    float maxDist = 2.0f;
+    float maxDist = _playerRadius;
 	auto ray = ColliderManager::main->RayCastForMyCell({ nextHeadPos, dir }, maxDist, GetOwner());
 
     if (ray.isHit)
@@ -120,11 +120,6 @@ void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float 
     if (Input::main->GetKey(KeyCode::DownArrow))
     {
         inputDir += vec3::Backward;
-        _moveBack = true;
-    }
-    else
-    {
-		_moveBack = false;
     }
     if (Input::main->GetKey(KeyCode::LeftArrow))
     {

@@ -34,7 +34,6 @@ private:
 public:
 	vec3 _velocity = vec3::Zero;
 
-	bool _moveBack = false;
 
 	float _cameraHeightOffset = 1.2f;
 	float  _yaw = 0;
@@ -44,7 +43,7 @@ public:
 	const float _moveForce = 100.0f;
 	const float _maxSpeed = 200.0f;
 	const float _resistance = 2.5f;
-	const float _playerRadius = 2.5f;
+	const float _playerRadius = 2.0f;
 
 };
 
