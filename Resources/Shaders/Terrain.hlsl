@@ -213,11 +213,7 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 3> quad, PatchConstOutput patchConst, float3 
 
     float2 uv = quad[0].uv * location.x + quad[1].uv * location.y + quad[2].uv * location.z;
     float2 uvTile = quad[0].uvTile * location.x + quad[1].uvTile * location.y + quad[2].uvTile * location.z;
-
-    // --- 위치 계산 ---
     float3 pos = quad[0].pos * location.x + quad[1].pos * location.y + quad[2].pos * location.z;
-
-    // --- 높이 보정 ---
     float height = heightMap.SampleLevel(sampler_point, uv, 0).r;
     pos.y += height * fieldSize.y;
 

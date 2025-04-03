@@ -103,8 +103,6 @@ void SeaPlayerController::Update()
         float deltaY = desiredCameraHeight - nextHeadPos.y;
         nextHeadPos.y += deltaY;
 		nextPos.y += deltaY; 
-
- 
     }
 
 
