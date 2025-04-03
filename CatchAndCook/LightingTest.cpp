@@ -61,39 +61,17 @@ void LightingTest::Init()
 	}
 
 
+	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/TestScene2.json");
+	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
+	sceneLoader->Load(GetCast<Scene>());
+
+	auto plant  = Find(L"plant_2_2");
+
+	if (plant)
 	{
-		ShaderInfo info;
-		info._zTest = true;
-		info._stencilTest = false;
-		info.cullingType = CullingType::BACK;
-		info.cullingType = CullingType::NONE;
-		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+		plant->GetComponent<MeshRenderer>()->GetMaterials()[0]->SetShader(ResourceManager::main->Get<Shader>(L"Plant"));
+	}
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest", L"seatest.hlsl", GeoMetryProp,
-			ShaderArg{ {{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}} }, info);
-
-		shared_ptr<Material> material = make_shared<Material>();
-
-		shared_ptr<GameObject> gameObject = CreateGameObject(L"grid_orgin");
-		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
-		gameObject->AddComponent<WaterController>();
-
-		//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal_Sea"));
-		gameObject->_transform->SetLocalPosition(vec3(0, 9.5f, 0));
-
-		material = make_shared<Material>();
-		material->SetShader(shader);
-		material->SetPass(RENDER_PASS::Forward);
-		material->SetTexture("_cubeMap", ResourceManager::main->Get<Texture>(L"cubemap"));
-		material->SetUseMaterialParams(true);
-		meshRenderer->AddMaterials({ material });
-
-		auto mesh = GeoMetryHelper::LoadGripMeshControlPoints(20000.0f, 20000.0f, 1000, 1000, false);
-		mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
-		meshRenderer->AddMesh(mesh);
-		meshRenderer->SetCulling(false);
-
-	};
 
 
 

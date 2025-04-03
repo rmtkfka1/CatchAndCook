@@ -73,8 +73,7 @@ void Game::Init(HWND hwnd)
 	CameraManager::main->AddCamera(CameraType::UiCamera, make_shared<UiCamera>());
 	CameraManager::main->AddCamera(CameraType::SeaCamera, make_shared<ThirdPersonCamera>());
 	CameraManager::main->GetCamera(CameraType::DebugCamera)->SetCameraPos(vec3(0, 0, -50.0f));
-
-	//CameraManager::main->SetActiveCamera(CameraType::DebugCamera);
+	CameraManager::main->SetActiveCamera(CameraType::DebugCamera);
 
 	LightManager::main = make_unique<LightManager>();
 	InstancingManager::main = make_unique<InstancingManager>();
@@ -98,7 +97,7 @@ void Game::Init(HWND hwnd)
 		LightManager::main->PushLight(light);
 	}
 
-	auto scene = SceneManager::main->AddScene(SceneType::Sea01);
+	auto scene = SceneManager::main->AddScene(SceneType::LightingTest);
 }
 
 void Game::PrevUpdate()

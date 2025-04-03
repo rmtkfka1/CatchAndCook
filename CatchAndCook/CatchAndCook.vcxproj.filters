@@ -710,5 +710,8 @@
     <FxCompile Include="..\Resources\Shaders\UiForward.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Plant.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
