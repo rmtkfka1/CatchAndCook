@@ -37,114 +37,84 @@ void SeaPlayerController::Start()
 	GetOwner()->_transform->SetUp(vec3(0, 1, 0));
 
 }
+
 void SeaPlayerController::Update()
 {
     float dt = Time::main->GetDeltaTime();
-
     Quaternion rotation = CalCulateYawPitchRoll();
 
-	vec3 inputDir = vec3::Zero;
-	KeyUpdate(inputDir, rotation, dt);
-	UpdatePlayerAndCamera(dt, rotation);
-
-}
-void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
-{
-    _transform->SetLocalRotation(rotation);
+	_transform->SetWorldRotation(rotation);
     _camera->SetCameraRotation(rotation);
 
+    vec3 inputDir = vec3::Zero;
+
+    // --- 입력 처리 ---
+    if (Input::main->GetKey(KeyCode::UpArrow)) inputDir += vec3::Forward;
+    if (Input::main->GetKey(KeyCode::DownArrow)) inputDir += vec3::Backward;
+    if (Input::main->GetKey(KeyCode::LeftArrow)) inputDir += vec3::Left;
+    if (Input::main->GetKey(KeyCode::RightArrow)) inputDir += vec3::Right;
+    if (Input::main->GetKey(KeyCode::Space)) inputDir += vec3(0, 2, 0);
+
+    if (inputDir != vec3::Zero)
+    {
+        inputDir.Normalize();
+        vec3 moveDir = vec3::Transform(inputDir, rotation);
+        _velocity += moveDir * _moveForce * dt;
+
+        if (_velocity.Length() > _maxSpeed)
+        {
+            _velocity.Normalize();
+            _velocity *= _maxSpeed;
+        }
+    }
+
+    // 2. 충돌 검사 (회전 적용 전)
     vec3 currentPos = _transform->GetWorldPosition();
     vec3 nextPos = currentPos + _velocity * dt;
 
     // 머리 위치 계산
     vec3 headOffset = vec3(0, _cameraHeightOffset, 0);
     vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);
-    vec3 currentHeadPos = currentPos + rotatedHeadOffset;
-    vec3 nextHeadPos = nextPos + rotatedHeadOffset;
+    vec3 nextHeadPos = nextPos + rotatedHeadOffset + _transform->GetForward()*0.2f;
 
-    // 4. 이동 방향 충돌 검사
-    if (_velocity.Length() > 0.1f)
+
+	// 3. 충돌 검사
+	vec3 dir = _velocity;
+    dir.Normalize();
+    float maxDist = 4.0f;
+	auto ray = ColliderManager::main->RayCast({ nextHeadPos, dir }, maxDist, GetOwner());
+
+    if (ray.isHit)
     {
-        vec3 moveDir = _velocity;
-        moveDir.Normalize();
-        float moveRayLength = _velocity.Length() * dt + _playerRadius;
+        vec3 normal = ray.normal;
 
-        Ray moveRay;
-        moveRay.position = currentHeadPos;
-        moveRay.direction = moveDir;
+        // 반사 벡터 계산 (벽에 튕기듯 반사 또는 미끄러짐 처리)
+        _velocity = vec3::Reflect(_velocity, normal);
 
-        auto moveHit = ColliderManager::main->RayCast(moveRay, moveRayLength, GetOwner());
-        if (moveHit.isHit)
-        {
-            // 충돌 지점까지 거리 계산
-            float stopDistance = max(moveHit.distance - _playerRadius, 0.0f);
+        // 벽에 너무 가까운 경우 살짝 밀어냄
+        float penetrationBuffer = 0.001f;
+        nextPos += normal * penetrationBuffer;
+        nextHeadPos += normal * penetrationBuffer;
+	}
+ 
 
-            // 뒤로 이동 판정
-            if (_moveBack) 
-            {
-                _velocity *= 0.5F;
-            }
-            else // 전방/측면 이동
-            {
-                vec3 wallNormal = moveHit.normal;
-                vec3 slideDirection = _velocity - wallNormal * _velocity.Dot(wallNormal);
-                _velocity = slideDirection * 1.0f;
-            }
 
-            // 위치 보정
-            vec3 newHeadPos = currentHeadPos + moveDir * stopDistance;
-            nextPos = newHeadPos - rotatedHeadOffset;
-            //nextHeadPos = nextPos + rotatedHeadOffset; // 머리 위치 업데이트
-        }
-    }
-
-    // 5. 카메라 위치 계산 및 충돌 검사
-    vec3 forward = _transform->GetForward();
-    float camTargetDist = 0.2f;
-    float rayPadding = 0.2f;
-    float rayStartOffset = 0.3f;
-
-    vec3 rayStart = nextHeadPos - forward * rayStartOffset;
-    float rayLength = camTargetDist + rayStartOffset + rayPadding;
-
-    Ray camRay;
-    camRay.position = rayStart;
-    camRay.direction = forward;
-
-    vec3 targetCameraPos = nextHeadPos + forward * camTargetDist;
-    vec3 finalCameraPos = targetCameraPos;
-
-    auto camHit = ColliderManager::main->RayCast(camRay, rayLength, GetOwner());
-    if (camHit.isHit)
+    // 지형 충돌 처리
+    float terrainHeight = _terrian->GetLocalHeight(nextHeadPos);
+    if (nextHeadPos.y < terrainHeight + 2.5f)
     {
-        float safeDist = max(camHit.distance - rayPadding, 0.0f);
-        finalCameraPos = rayStart + forward * safeDist;
-
-        vec3 newHeadPos = finalCameraPos - forward * camTargetDist;
-        nextPos = newHeadPos - rotatedHeadOffset;
-
-        if (_velocity.Length() > 0.1f)
-        {
-            vec3 normal = camHit.normal;
-            vec3 velProj = normal * _velocity.Dot(normal);
-            _velocity -= velProj * 1.5f;
-        }
-    }
-
-    // 6. 지형 충돌 처리
-    float terrainHeight = _terrian->GetLocalHeight(finalCameraPos);
-    if (finalCameraPos.y < terrainHeight + 2.5f)
-    {
-        float deltaY = (terrainHeight + 2.5f) - finalCameraPos.y;
+        float deltaY = (terrainHeight + 2.5f) - nextHeadPos.y;
         nextPos.y += deltaY;
-        finalCameraPos.y += deltaY;
+        nextHeadPos.y += deltaY;
     }
 
-    // 7. 최종 적용
+
+
+    // 최종 위치 적용
     _transform->SetWorldPosition(nextPos);
-    _camera->SetCameraPos(finalCameraPos);
+    _camera->SetCameraPos(nextHeadPos);
     _velocity *= (1 - (_resistance * dt));
-};
+}
 
 void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float dt)
 {
