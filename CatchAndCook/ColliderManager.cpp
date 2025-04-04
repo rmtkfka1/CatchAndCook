@@ -127,9 +127,11 @@ void ColliderManager::AddCollider(const std::shared_ptr<Collider>& collider)
 		}
 		else if (collider->GetOwner()->GetType() == GameObjectType::Dynamic)
 		{
-			if (std::ranges::find(_dynamicColliderGrids[cell], collider) == _dynamicColliderGrids[cell].end())
+			if (std::ranges::find(_dynamicColliderList, collider) == _dynamicColliderList.end())
+				_dynamicColliderList.push_back(collider);
+			/*if (std::ranges::find(_dynamicColliderGrids[cell], collider) == _dynamicColliderGrids[cell].end())
 				_dynamicColliderGrids[cell].push_back(collider);
-			_dynamicColliderCashing[collider].push_back(cell);
+			_dynamicColliderCashing[collider].push_back(cell);*/
 		}
 	}
 
@@ -180,6 +182,10 @@ void ColliderManager::RemoveCollider(const std::shared_ptr<Collider>& collider)
 				if (colliderIt != colliders.end())
 					colliders.erase(colliderIt);
 			}
+
+			auto it2 = std::ranges::find(_dynamicColliderList, collider);
+			if (it2 != _dynamicColliderList.end())
+				_dynamicColliderList.erase(it2);
 		}
 	}
 
@@ -283,6 +289,7 @@ void ColliderManager::Update()
 		}
 	}
 
+	UpdateDynamicCells();
 	for (auto& [cell, colliders] : _dynamicColliderGrids)
 	{
 		if (colliders.size() <= 1  && _staticColliderGrids[cell].size() ==0 ) continue;
@@ -323,6 +330,21 @@ void ColliderManager::Update()
 
 	_dynamicColliderGrids.clear();
 	_dynamicColliderCashing.clear();
+}
+
+void ColliderManager::UpdateDynamicCells()
+{
+	for (auto& collider : _dynamicColliderList)
+	{
+		auto occupiedCells = GetOccupiedCells(collider);
+		for (const auto& cell : occupiedCells)
+		{
+			if (std::ranges::find(_dynamicColliderGrids[cell], collider) == _dynamicColliderGrids[cell].end())
+				_dynamicColliderGrids[cell].push_back(collider);
+			if (std::ranges::find(_dynamicColliderCashing[collider], cell) == _dynamicColliderCashing[collider].end())
+				_dynamicColliderCashing[collider].push_back(cell);
+		}
+	}
 }
 
 bool ColliderManager::CollisionCheckDirect(CollisionType type, BoundingUnion bound)

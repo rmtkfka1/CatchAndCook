@@ -38,10 +38,9 @@ void PlayerController::Update()
 {
 	Component::Update();
 
-
+	ColliderManager::main->UpdateDynamicCells();
 	CameraControl();
 	MoveControl();
-
 
 	//GetOwner()->_transform->SetWorldPosition(GetOwner()->_transform->GetWorldPosition() + Vector3::Forward * 10.0f * Time::main->GetDeltaTime());
 }
@@ -238,6 +237,7 @@ void PlayerController::Update2()
 	Component::Update2();
 
 	camera.lock()->Calculate();
+
 	/*
 	if (Input::main->GetMouse(KeyCode::LeftMouse))
 	{

@@ -35,11 +35,14 @@ void Collider::Start()
 	if (auto obj = GetOwner()->GetComponentWithParents<PhysicsComponent>()) {
 		groupRootObject = obj->GetOwner();
 	}
-	if (GetOwner()->GetType() == GameObjectType::Static && GetOwner()->GetActive())
-	{
-		CalculateBounding();
-		ColliderManager::main->AddCollider(GetCast<Collider>());
-	}
+
+	//if (GetOwner()->GetType() == GameObjectType::Static && GetOwner()->GetActive())
+	//{
+	//	CalculateBounding();
+	//	ColliderManager::main->AddCollider(GetCast<Collider>());
+	//}
+	CalculateBounding();
+	ColliderManager::main->AddCollider(GetCast<Collider>());
 }
 
 void Collider::Update()
@@ -48,7 +51,6 @@ void Collider::Update()
 
 	CalculateBounding();
 	ColliderManager::main->AddCollider(GetCast<Collider>());
-	
 }
 
 void Collider::Update2()
@@ -56,7 +58,6 @@ void Collider::Update2()
 	Component::Update2();
 
 	CalculateBounding();
-	ColliderManager::main->AddCollider(GetCast<Collider>());
 }
 
 void Collider::Enable()
@@ -66,10 +67,8 @@ void Collider::Enable()
 	ColliderManager::main->AddColliderForRay(GetCast<Collider>());
 
 	if (GetOwner()->GetType() == GameObjectType::Static)
-	{
 		CalculateBounding();
-		ColliderManager::main->AddCollider(GetCast<Collider>());
-	}
+	
 
 	groupId = PhysicsComponent::GetPhysicsGroupID(GetOwner());
 	if (auto obj = GetOwner()->GetComponentWithParents<PhysicsComponent>()) {
