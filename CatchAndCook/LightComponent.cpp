@@ -33,10 +33,12 @@ void LightComponent::Start()
 	Component::Start();
 
 	light->material.lightType = static_cast<int32>(type);
+	light->intensity = intensity;
 	light->strength = color;
 	light->fallOffStart = 0;
 	light->fallOffEnd = range;
-	light->spotPower = spotAngle;
+	light->spotAngle = spotAngle * D2R;
+	light->innerSpotAngle = innerSpotAngle * D2R;
 
 	LightManager::main->PushLight(light);
 }

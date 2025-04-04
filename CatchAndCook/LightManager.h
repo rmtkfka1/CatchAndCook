@@ -27,6 +27,11 @@ struct Light
 	vec3 position = vec3(0,0,0);
 	float spotPower = 64.0f;
 
+	float dummy2;
+	float spotAngle = 30.0f * D2R;
+	float innerSpotAngle = 10.0f * D2R;
+	float intensity = 1.0f;
+
 	int onOff = 1;
 	vec3 dummy1;
 };

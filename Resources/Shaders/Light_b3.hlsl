@@ -30,6 +30,12 @@ struct Light
     
     float3 position;
     float spotPower;
+
+    float dummy2;
+	float spotAngle;
+    float innerSpotAngle;
+    float intensity;
+
     int onOff;
     float3 dummy1;
 };
@@ -55,6 +61,15 @@ cbuffer LightParams : register(b3)
 float CalcAttenuation(float d, float falloffStart, float falloffEnd)
 {
     return saturate((falloffEnd - d) / (falloffEnd - falloffStart));
+}
+
+float MyFunction(float x, float f)
+{
+    // x가 [1-f, 1] 구간에서 선형 보간: x = 1-f일 때 0, x = 1일 때 1
+    float ramp = saturate((x - (1.0 - f)) / f);
+    // x가 1을 초과하면 0, 1 이하이면 1을 반환하는 마스크 (1.0+epsilon 사용)
+    float mask = 1.0 - step(1.0 + 1e-5, x);
+    return ramp * mask;
 }
 
 float3 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 toEye, LightMateiral mat)
@@ -84,7 +99,7 @@ float3 ComputeDirectionalLight(Light L, LightMateiral mat,float3 worldPos, float
     //float3 lightVec = normalize(L.position - worldPos);
     float3 lightVec = normalize(-L.direction);
     float ndotl = max(dot(normal, lightVec), 0.0f);
-    float3 LightStrength = L.strength * ndotl;
+    float3 LightStrength = L.strength * L.intensity * ndotl;
     return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
 }
 
@@ -105,7 +120,7 @@ float3 ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, 
         
         float ndotl = saturate(dot(normal, lightVec));
         
-        float3 LightStrength = L.strength * ndotl;
+        float3 LightStrength = L.strength * L.intensity * ndotl;
         
         float att = CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
         LightStrength *= att;
@@ -133,13 +148,17 @@ float3 ComputeSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal, f
         
         float ndotl = saturate(dot(normal, lightVec));
         
-        float3 LightStrength = L.strength * ndotl;
+        float3 LightStrength = L.strength * L.intensity * ndotl;
         
         float att = CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
         LightStrength *= att;
         
-        float spotFactor = pow(saturate(dot(-lightVec, L.direction)), L.spotPower);
-        
+        //float spotFactor = pow(saturate(dot(-lightVec, L.direction)), L.spotPower);
+        //LightStrength *= spotFactor;
+
+        float cosThreshold = cos(L.spotAngle/2);
+        float cosInnerThreshold = cos(L.innerSpotAngle/2);
+		float spotFactor = saturate((dot(-lightVec, L.direction) - cosThreshold) / (cosInnerThreshold - cosThreshold) );
         LightStrength *= spotFactor;
         
         //return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
