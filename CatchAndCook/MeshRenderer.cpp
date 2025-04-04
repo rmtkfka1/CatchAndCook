@@ -36,6 +36,8 @@ void MeshRenderer::Start()
 {
 	Component::Start();
 
+	AddStructuredSetter(_setter_ForwardLight, BufferType::ForwardLightParam);
+
 	auto owner = GetOwner();
 	if(owner && owner->GetType() == GameObjectType::Static)
 	{
@@ -50,7 +52,6 @@ void MeshRenderer::Start()
 		}
 		SetBound(totalBox);
 	}
-	AddStructuredSetter(_setter_ForwardLight, BufferType::ForwardLightParam);
 }
 
 void MeshRenderer::Update()

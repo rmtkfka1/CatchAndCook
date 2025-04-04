@@ -2,6 +2,8 @@
 #include "Component.h"
 #include "SkinnedHierarchy.h"
 
+class ForwardLightSetter;
+
 class SkinnedMeshRenderer : public Component, public  RendererBase
 {
 public:
@@ -47,6 +49,8 @@ private:
 	std::wstring _boneName;
 	std::weak_ptr<SkinnedHierarchy> _hierarchy;
 
+
+	std::shared_ptr<ForwardLightSetter> _setter_ForwardLight;
 	friend class SkinnedHierarchy;
 };
 

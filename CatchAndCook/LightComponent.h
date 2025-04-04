@@ -20,10 +20,19 @@ public:
 	void SetDestroy() override;
 	void Destroy() override;
 
-	void SetLight(const Light& light) { this->light = light; };
-	Light& GetLight() { return light; };
+	void SetLight(const std::shared_ptr<Light>& light) { this->light = light; };
+	std::shared_ptr<Light>& GetLight() { return light; };
 
 public:
-	Light light;
+	std::shared_ptr<Light> light;
+
+public:
+	LIGHT_TYPE type;
+	Vector3 color = Vector3::One;
+	float intensity = 1;
+	float range = 1;
+	float innerSpotAngle = 360 * D2R;
+	float spotAngle = 360 * D2R;
+	float shadowAngle = 360 * D2R;
 };
 

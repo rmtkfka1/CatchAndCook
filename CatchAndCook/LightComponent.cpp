@@ -2,6 +2,7 @@
 #include "LightComponent.h"
 
 #include "LightManager.h"
+#include "Transform.h"
 
 LightComponent::~LightComponent()
 {
@@ -16,26 +17,34 @@ void LightComponent::Init()
 {
 	Component::Init();
 
-	light.direction = vec3(-1.0f, -1.0f, 1.0f);
-	light.position = vec3(0, 1000.0f, 0);
-	light.direction.Normalize();
+	light = std::make_shared<Light>();
 
-	light.material.ambient = vec3(0.2f, 0.2f, 0.2f);
-	light.material.diffuse = vec3(1.0f, 1.0f, 1.0f);
-	light.material.specular = vec3(1.0f, 1.0f, 1.0f);
-	light.material.shininess = 61.0f;
-	light.material.lightType = static_cast<int32>(LIGHT_TYPE::DIRECTIONAL_LIGHT);
-	light.strength = vec3(1.0f, 1.0f, 1.0f);
+		 
+	light->material.ambient = vec3(0.2f, 0.2f, 0.2f);
+	light->material.diffuse = vec3(1.0f, 1.0f, 1.0f);
+	light->material.specular = vec3(1.0f, 1.0f, 1.0f);
+	light->material.shininess = 61.0f;
+	//light->material.lightType = static_cast<int32>(LIGHT_TYPE::POINT_LIGHT);
+	//light->strength = vec3(1.0f, 1.0f, 1.0f);
 }
 
 void LightComponent::Start()
 {
 	Component::Start();
+
+	light->material.lightType = static_cast<int32>(type);
+	light->strength = color;
+	light->fallOffStart = 0;
+	light->fallOffEnd = range;
+
+	LightManager::main->PushLight(light);
 }
 
 void LightComponent::Update()
 {
 	Component::Update();
+	light->direction = GetOwner()->_transform->GetForward();
+	light->position = GetOwner()->_transform->GetWorldPosition();
 }
 
 void LightComponent::Update2()
@@ -46,16 +55,20 @@ void LightComponent::Update2()
 void LightComponent::Enable()
 {
 	Component::Enable();
+	light->onOff = 1;
 }
 
 void LightComponent::Disable()
 {
 	Component::Disable();
+	light->onOff = 0;
 }
 
 void LightComponent::RenderBegin()
 {
 	Component::RenderBegin();
+
+
 }
 
 void LightComponent::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
@@ -81,4 +94,5 @@ void LightComponent::SetDestroy()
 void LightComponent::Destroy()
 {
 	Component::Destroy();
+	LightManager::main->RemoveLight(light);
 }

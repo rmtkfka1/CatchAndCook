@@ -8,10 +8,11 @@
 struct LightForwardParams
 {
     int g_lightCount;
+    float3 padding;
     Light g_lights[MAX_LIGHTS_FORWARD];
 };
 
-StructuredBuffer<LightForwardParams> ForwardLightDatas : register(t30);
+StructuredBuffer<LightForwardParams> ForwardLightDatas : register(t31);
 
 
 #endif

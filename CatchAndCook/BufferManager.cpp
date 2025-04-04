@@ -93,7 +93,7 @@ void BufferManager::CreateStructuredBufferPool(BufferType type,const string& nam
 	shared_ptr<StructuredBuffer> strBuffer = make_shared<StructuredBuffer>();
 	strBuffer->Init(elementSize, elementCount);
 	_structuredMap[type] = strBuffer;
-	_structuredNameMappingTable[name] = BufferType::TransformParam;
+	_structuredNameMappingTable[name] = type;
 }
 
 

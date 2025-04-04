@@ -9,6 +9,7 @@
 #include "Collider.h"
 #include "Scene.h"
 #include "Component.h"
+#include "LightComponent.h"
 #include "Transform.h"
 #include "MeshRenderer.h"
 #include "ModelMesh.h"
@@ -174,6 +175,11 @@ void SceneLoader::PrevProcessingComponent(json& data)
     if (type == L"Tags")
     {
         auto terr = CreateObject<CameraComponent>(guid);
+        component = terr;
+    }
+    if (type == L"Light")
+    {
+        auto terr = CreateObject<LightComponent>(guid);
         component = terr;
     }
 
@@ -519,6 +525,36 @@ void SceneLoader::LinkComponent(json& jsonData)
 
 		navMesh->SetNavMeshData(datas);
         navMesh->SetNavMeshEdgeData(edgeDatas);
+    }
+    if (type == L"Light")
+    {
+        auto light = IGuid::FindObjectByGuid<LightComponent>(guid);
+
+        auto type = jsonData["lightType"].get<string>();
+
+        if (type == "Directional")
+            light->type = LIGHT_TYPE::DIRECTIONAL_LIGHT;
+        if (type == "Point")
+            light->type = LIGHT_TYPE::POINT_LIGHT;
+        if (type == "Spot")
+            light->type = LIGHT_TYPE::SPOT_LIGHT;
+
+        auto color = Vector3(
+            jsonData["color"][0].get<float>(),
+            jsonData["color"][1].get<float>(),
+            jsonData["color"][2].get<float>());
+        auto intensity = jsonData["intensity"].get<float>();
+        auto range = jsonData["range"].get<float>();
+        auto innerSpotAngle = jsonData["innerSpotAngle"].get<float>();
+        auto spotAngle = jsonData["spotAngle"].get<float>();
+        auto shadowAngle = jsonData["shadowAngle"].get<float>();
+
+		light->color = color;
+        light->intensity = intensity;
+        light->range = range;
+        light->innerSpotAngle = innerSpotAngle;
+        light->spotAngle = spotAngle;
+        light->shadowAngle = shadowAngle;
     }
 }
 
