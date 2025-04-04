@@ -58,10 +58,13 @@ cbuffer LightParams : register(b3)
 };
 
 
+#define Square(x) ((x) * (x))
 float CalcAttenuation(float d, float falloffStart, float falloffEnd)
 {
+    // 1
     return saturate((falloffEnd - d) / (falloffEnd - falloffStart));
 }
+
 
 float MyFunction(float x, float f)
 {
@@ -120,7 +123,7 @@ float3 ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, 
         
         float ndotl = saturate(dot(normal, lightVec));
         
-        float3 LightStrength = L.strength * L.intensity * ndotl;
+        float3 LightStrength = L.strength * ndotl * log10(L.intensity); // * ndotl
         
         float att = CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
         LightStrength *= att;
@@ -148,7 +151,7 @@ float3 ComputeSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal, f
         
         float ndotl = saturate(dot(normal, lightVec));
         
-        float3 LightStrength = L.strength * L.intensity * ndotl;
+        float3 LightStrength = L.strength * ndotl * log10(L.intensity);// * sqrt(L.intensity / (d * d))
         
         float att = CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
         LightStrength *= att;
