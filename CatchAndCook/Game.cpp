@@ -79,6 +79,7 @@ void Game::Init(HWND hwnd)
 	box.Center = vec3(0, 0, 0);
 	box.Extents = vec3(5.0f,5.0f,5.0f);
 
+	if (false)
 	{
 		std::shared_ptr<Light> light = std::make_shared<Light>();
 		light->onOff = 1;

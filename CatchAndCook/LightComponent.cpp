@@ -36,6 +36,7 @@ void LightComponent::Start()
 	light->strength = color;
 	light->fallOffStart = 0;
 	light->fallOffEnd = range;
+	light->spotPower = spotAngle;
 
 	LightManager::main->PushLight(light);
 }
