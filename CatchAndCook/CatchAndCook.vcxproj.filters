@@ -335,6 +335,9 @@
     <ClCompile Include="PathStamp.cpp">
       <Filter>04.Resource</Filter>
     </ClCompile>
+    <ClCompile Include="PathFinder.cpp">
+      <Filter>03.Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -629,6 +632,9 @@
     </ClInclude>
     <ClInclude Include="PathStamp.h">
       <Filter>04.Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="PathFinder.h">
+      <Filter>03.Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

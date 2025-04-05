@@ -27,7 +27,7 @@
 #include "Collider.h"
 #include "PlantComponent.h"
 #include "PathStamp.h"
-
+#include "PathFinder.h"
 void LightingTest::Init()
 {
 	Scene::Init();
@@ -72,42 +72,9 @@ void LightingTest::Init()
 
 		if (plant)
 		{
-			plant->GetComponent<MeshRenderer>()->GetMaterials()[0]->SetShader(ResourceManager::main->Get<Shader>(L"Plant"));
 			plant->AddComponent<PlantComponent>();
-		}
-	}
-
-
-	{
-		auto plant = Find(L"2");
-
-		if (plant)
-		{
-			cout << "찾음" << endl;
-			plant->GetComponent<MeshRenderer>()->GetMaterials()[0]->SetShader(ResourceManager::main->Get<Shader>(L"Plant"));
-			plant->AddComponent<PlantComponent>();
-		}
-	}
-
-
-	{
-		auto plant = Find(L"3");
-
-		if (plant)
-		{
-			plant->GetComponent<MeshRenderer>()->GetMaterials()[0]->SetShader(ResourceManager::main->Get<Shader>(L"Plant"));
-			plant->AddComponent<PlantComponent>();
-		}
-	}
-
-
-	{
-		auto plant = Find(L"4");
-
-		if (plant)
-		{
-			plant->GetComponent<MeshRenderer>()->GetMaterials()[0]->SetShader(ResourceManager::main->Get<Shader>(L"Plant"));
-			plant->AddComponent<PlantComponent>();
+			auto finder =plant->AddComponent<PathFinder>();
+			finder->ReadPathFile(L"BezierLines.txt");
 		}
 	}
 

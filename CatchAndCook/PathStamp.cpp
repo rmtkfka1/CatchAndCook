@@ -46,17 +46,6 @@ void PathStamp::Run()
 		}
 	}
 
-	if (Input::main->GetKeyDown(KeyCode::End))
-	{
-		if (_lineData.size() >= 2)
-		{
-			vec3 first = _lineData.front();
-			vec3 last = _lineData.back();
-
-			_lineData.push_back(last);
-			_lineData.push_back(first);
-		}
-	}
 
 	if (Input::main->GetKeyDown(KeyCode::Delete))
 	{
