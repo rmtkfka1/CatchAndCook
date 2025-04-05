@@ -7,13 +7,13 @@
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 
-cbuffer PlantInfo : register(b8)
-{
-    float amplitude;
-    float frequency;
-    float padding;
-    float padding2;
-}
+//cbuffer PlantInfo : register(b8)
+//{
+//    float amplitude;
+//    float frequency;
+//    float padding;
+//    float padding2;
+//}
 
 struct VS_IN
 {
@@ -33,6 +33,9 @@ struct VS_OUT
     
 };
 
+static float amplitude = 0.5;
+static float frequency = 1.0;
+
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
@@ -44,7 +47,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     
     float angle = g_Time * frequency + id * 0.37; 
     float swayX = sin(angle) * input.pos.y * amplitude;
-    float swayZ = cos(angle * 1.3) * input.pos.y * amplitude * 0.5;
+    //float swayZ = cos(angle * 1.3) * input.pos.y * amplitude * 0.5;
 
     float3 animatedPos = input.pos;
     animatedPos.x += swayX;
