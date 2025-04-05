@@ -26,6 +26,7 @@
 #include "Collider.h"
 #include "GameObject.h"
 #include "Terrain.h"
+#include "PathStamp.h"
 void Game::Init(HWND hwnd)
 {
 	IGuid::StaticInit();
@@ -77,6 +78,9 @@ void Game::Init(HWND hwnd)
 
 	LightManager::main = make_unique<LightManager>();
 	InstancingManager::main = make_unique<InstancingManager>();
+
+	PathStamp::main = make_unique<PathStamp>();
+	PathStamp::main->Init();
 
 	box.Center = vec3(0, 0, 0);
 	box.Extents = vec3(5.0f,5.0f,5.0f);

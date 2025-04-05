@@ -220,6 +220,7 @@
     <ClCompile Include="ModelNode.cpp" />
     <ClCompile Include="NavMesh.cpp" />
     <ClCompile Include="NavMeshManager.cpp" />
+    <ClCompile Include="PathStamp.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>
@@ -338,6 +339,7 @@
     <ClInclude Include="ModelNode.h" />
     <ClInclude Include="NavMesh.h" />
     <ClInclude Include="NavMeshManager.h" />
+    <ClInclude Include="PathStamp.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PlantComponent.h" />
     <ClInclude Include="PlayerController.h" />

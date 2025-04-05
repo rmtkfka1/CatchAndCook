@@ -26,6 +26,7 @@
 #include "ModelMesh.h"
 #include "Collider.h"
 #include "PlantComponent.h"
+#include "PathStamp.h"
 
 void LightingTest::Init()
 {
@@ -126,6 +127,9 @@ void LightingTest::Init()
 void LightingTest::Update()
 {
 	Scene::Update();
+
+	PathStamp::main->Run();
+
 }
 
 void LightingTest::RenderBegin()
@@ -136,6 +140,7 @@ void LightingTest::RenderBegin()
 void LightingTest::Rendering()
 {
 	Scene::Rendering();
+
 }
 
 void LightingTest::RenderEnd()
