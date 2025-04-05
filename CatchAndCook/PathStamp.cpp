@@ -58,7 +58,6 @@ void PathStamp::Run()
 		}
 	}
 
-
 	if (Input::main->GetKeyDown(KeyCode::Delete))
 	{
 		if (!_controllPoint.empty())
@@ -84,12 +83,6 @@ void PathStamp::Run()
 
 		file.close();
 	}
-
-
-
-
-
-
 }
 
 vec3 PathStamp::BezierQuadratic(vec3& p0, vec3& p1, vec3& p2, float& t)
