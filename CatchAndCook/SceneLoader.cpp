@@ -280,9 +280,9 @@ void SceneLoader::LinkComponent(json& jsonData)
                 auto shaderName = std::to_wstring(materialData["shaderName"].get<std::string>());
                 auto shader = ResourceManager::main->Get<Shader>(shaderName);
                 if (shader == nullptr)
-                    shader = ResourceManager::main->Get<Shader>(L"Deffered");
+                    shader = ResourceManager::main->Get<Shader>(L"DefaultForward");// Deffered DefaultForward_Skinned DefaultForward
                 material->SetShader(shader);
-				material->SetPass(RENDER_PASS::Deffered);
+				material->SetPass(RENDER_PASS::Forward);
                 materials.push_back(material);
             }
 

@@ -53,8 +53,10 @@ private:
     unordered_map<wstring, shared_ptr<Texture>> _textureMap;
     unordered_map<wstring, shared_ptr<Animation>> _animationMap;
 
+public:
     std::shared_ptr<Texture> _noneTexture;
     std::shared_ptr<Texture> _noneTexture_debug;
+    std::shared_ptr<Texture> _bakedGITexture;
 };
 
 template<typename T>

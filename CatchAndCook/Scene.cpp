@@ -309,11 +309,6 @@ void Scene::ComputePass(ComPtr<ID3D12GraphicsCommandList>& cmdList)
     ComputeManager::main->Dispatch(cmdList);
 }
 
-void Scene::SettingPrevData(RenderObjectStrucutre& data, const RENDER_PASS::PASS& pass)
-{
-
-}
-
 
 void Scene::GlobalSetting()
 {
@@ -329,6 +324,11 @@ void Scene::GlobalSetting()
 
     cmdList->SetGraphicsRootConstantBufferView(0,CbufferContainer->GPUAdress);
     cmdList->SetComputeRootConstantBufferView(0, CbufferContainer->GPUAdress);
+}
+
+void Scene::SettingPrevData(RenderObjectStrucutre& data, const RENDER_PASS::PASS& pass)
+{
+    data.material->SetTexture("_BakedGIMap", ResourceManager::main->_bakedGITexture);
 }
 
 void Scene::DebugRendering()

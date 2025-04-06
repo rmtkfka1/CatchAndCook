@@ -92,8 +92,11 @@ float4 PS_Main(VS_OUT input) : SV_Target
     
     float4 lightColor = ComputeLightColor(input.positionWS.xyz, N);
     
-    float4 BaseColor = _BaseMap.Sample(sampler_lerp, input.uv);
+    float4 BaseColor = _BaseMap.Sample(sampler_lerp, input.uv * _baseMapST.xy + _baseMapST.zw) * color;
+    float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
 
+    return lerp(ShadowColor * BaseColor, BaseColor, saturate(dot(normalize(float3(1, 2, 1)), N)));
+    
     return ComputeLightColor(input.positionWS, input.normalWS);
     return BaseColor * lightColor * color;
 }
