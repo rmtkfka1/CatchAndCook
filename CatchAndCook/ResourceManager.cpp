@@ -190,6 +190,7 @@ void ResourceManager::CreateDefaultTexture()
 {
 	_noneTexture = Load<Texture>(L"none", L"Configs/noneTexture.png");
 	_noneTexture_debug = Load<Texture>(L"none_debug", L"Configs/noneTexture_debug.png");
+	Load<Texture>(L"BakedGI", L"Configs/BakedGI.png");
 }
 
 void ResourceManager::CreateDefaultAnimation()

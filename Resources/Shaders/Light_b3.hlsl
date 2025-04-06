@@ -123,7 +123,7 @@ float3 ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, 
         
         float ndotl = saturate(dot(normal, lightVec));
         
-        float3 LightStrength = L.strength * ndotl * log10(L.intensity); // * ndotl
+        float3 LightStrength = L.strength * ndotl *  sqrt(L.intensity / (d * d)); // * ndotl
         
         float att = CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
         LightStrength *= att;
@@ -151,7 +151,7 @@ float3 ComputeSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal, f
         
         float ndotl = saturate(dot(normal, lightVec));
         
-        float3 LightStrength = L.strength * ndotl * log10(L.intensity);// * sqrt(L.intensity / (d * d))
+        float3 LightStrength = L.strength * ndotl *  sqrt(L.intensity / (d * d));// * sqrt(L.intensity / (d * d))
         
         float att = CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
         LightStrength *= att;
