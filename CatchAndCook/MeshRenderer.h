@@ -3,6 +3,7 @@
 #include "RendererBase.h"
 
 
+class ForwardLightSetter;
 class Material;
 class Mesh;
 class Shader;
@@ -46,5 +47,6 @@ private:
 	shared_ptr<Shader> _normalDebugShader;
 
 
+	std::shared_ptr<ForwardLightSetter> _setter_ForwardLight;
 };
 

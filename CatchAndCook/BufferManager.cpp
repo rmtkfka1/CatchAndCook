@@ -29,21 +29,23 @@ void BufferManager::Init()
 		CreateBufferPool(BufferType::LightParam,sizeof(LightParams),1);
 
 		CreateBufferPool(BufferType::BoneParam,sizeof(BoneParam),256);
-		CreateBufferPool(BufferType::InstanceOffsetParam,sizeof(InstanceOffsetParam),10000);
 		CreateBufferPool(BufferType::SeaParam, sizeof(TerrainDetailsParam), 1);
 		CreateBufferPool(BufferType::FogParam, sizeof(FogParam), 1);
 		CreateBufferPool(BufferType::UnderWaterParam, sizeof(UnderWaterParam), 1);
 		CreateBufferPool(BufferType::PlantInfo, sizeof(PlantInfo), 10);
 
 
+		CreateBufferPool(BufferType::InstanceOffsetParam, sizeof(InstanceOffsetParam), 10000);
+
 	}
 
 	{
 		CreateStructuredBufferPool(BufferType::TransformParam,"TransformDatas",sizeof(Instance_Transform),20000);
+		CreateStructuredBufferPool(BufferType::ForwardLightParam, "ForwardLightDatas", sizeof(ForwardLightParams), 10000);
 	}
 
 	{
-		CreateInstanceBufferPool(BufferType::TransformInstanceParam,sizeof(Instance_Transform),10000,128);
+		CreateInstanceBufferPool(BufferType::TransformInstanceParam, sizeof(Instance_Transform), 10000, 128);
 		CreateInstanceBufferPool(BufferType::GizmoInstanceParam, sizeof(Instance_Gizmo), 100'000, 1);
 	}
 	
@@ -94,7 +96,7 @@ void BufferManager::CreateStructuredBufferPool(BufferType type,const string& nam
 	shared_ptr<StructuredBuffer> strBuffer = make_shared<StructuredBuffer>();
 	strBuffer->Init(elementSize, elementCount);
 	_structuredMap[type] = strBuffer;
-	_structuredNameMappingTable[name] = BufferType::TransformParam;
+	_structuredNameMappingTable[name] = type;
 }
 
 

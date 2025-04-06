@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Gizmo.h"
 #include "PhysicsComponent.h"
+#include "simple_mesh_ext.h"
 #include "Transform.h"
 
 Collider::Collider() : _orgin(BoundingOrientedBox()), _bound(BoundingOrientedBox())
@@ -30,51 +31,57 @@ void Collider::Start()
 {
 	Component::Start();
 
-	ColliderManager::main->AddColliderForRay(GetCast<Collider>());
-
-	if (GetOwner()->GetType() == GameObjectType::Static)
-	{
-		CalculateBounding();
-		ColliderManager::main->AddCollider(GetCast<Collider>());
+	groupId = PhysicsComponent::GetPhysicsGroupID(GetOwner());
+	if (auto obj = GetOwner()->GetComponentWithParents<PhysicsComponent>()) {
+		groupRootObject = obj->GetOwner();
 	}
 
-	groupId = GetInstanceID();
-
-	if (auto obj = GetOwner()->GetComponentWithParents<PhysicsComponent>())
-		groupId = obj->GetInstanceID();
-
+	//if (GetOwner()->GetType() == GameObjectType::Static && GetOwner()->GetActive())
+	//{
+	//	CalculateBounding();
+	//	ColliderManager::main->AddCollider(GetCast<Collider>());
+	//}
+	CalculateBounding();
+	ColliderManager::main->AddCollider(GetCast<Collider>());
 }
 
 void Collider::Update()
 {
 	Component::Update();
 
-	if (GetOwner()->GetType() == GameObjectType::Dynamic)
-	{
-		CalculateBounding();
-		ColliderManager::main->AddCollider(GetCast<Collider>());
-	}
+	CalculateBounding();
+	ColliderManager::main->AddCollider(GetCast<Collider>());
 }
 
 void Collider::Update2()
 {
 	Component::Update2();
 
-	if (GetOwner()->GetType() == GameObjectType::Dynamic)
-	{
-		CalculateBounding();
-		ColliderManager::main->AddCollider(GetCast<Collider>());
-	}
+	CalculateBounding();
 }
 
 void Collider::Enable()
 {
 	Component::Enable();
+
+	ColliderManager::main->AddColliderForRay(GetCast<Collider>());
+
+	if (GetOwner()->GetType() == GameObjectType::Static)
+		CalculateBounding();
+	
+
+	groupId = PhysicsComponent::GetPhysicsGroupID(GetOwner());
+	if (auto obj = GetOwner()->GetComponentWithParents<PhysicsComponent>()) {
+		groupRootObject = obj->GetOwner();
+	}
 }
 
 void Collider::Disable()
 {
 	Component::Disable();
+
+	ColliderManager::main->RemoveCollider(GetCast<Collider>());
+	ColliderManager::main->RemoveAColliderForRay(GetCast<Collider>());
 }
 
 void Collider::RenderBegin()
@@ -88,7 +95,7 @@ void Collider::RenderBegin()
 
 		if (_type == CollisionType::Box)
 		{
-			Gizmo::Width(0.05f);
+			Gizmo::Width(0.1f);
 			Gizmo::Box(_bound.box, !isCollision ? Vector4(0, 1, 0, 1) : Vector4(1, 0.5, 0, 1));
 			Gizmo::WidthRollBack();
 		}
@@ -128,8 +135,6 @@ void Collider::SetDestroy()
 void Collider::Destroy()
 {
 	Component::Destroy();
-	ColliderManager::main->RemoveCollider(GetCast<Collider>());
-	ColliderManager::main->RemoveAColliderForRay(GetCast<Collider>());
 }
 
 vec3 Collider::GetCenter()
@@ -189,6 +194,61 @@ bool Collider::CheckCollision(const std::shared_ptr<Collider>& other)
 		else if (other->_type == CollisionType::Frustum)
 		{
 			return _bound.frustum.Intersects(other->_bound.frustum);
+		}
+
+
+	}
+
+	return false;
+}
+
+bool Collider::CheckCollision(const CollisionType& type, const BoundingUnion& bound)
+{
+	if (_type == CollisionType::Box)
+	{
+		if (type == CollisionType::Box)
+		{
+			return _bound.box.Intersects(bound.box);
+		}
+		else if (type == CollisionType::Sphere)
+		{
+			return _bound.box.Intersects(bound.sphere);
+		}
+		else if (type == CollisionType::Frustum)
+		{
+			return _bound.box.Intersects(bound.frustum);
+		}
+
+	}
+	else if (_type == CollisionType::Sphere)
+	{
+		if (type == CollisionType::Box)
+		{
+			return _bound.sphere.Intersects(bound.box);
+		}
+		else if (type == CollisionType::Sphere)
+		{
+			return _bound.sphere.Intersects(bound.sphere);
+		}
+		else if (type == CollisionType::Frustum)
+		{
+			return _bound.sphere.Intersects(bound.frustum);
+		}
+	}
+
+	else if (_type == CollisionType::Frustum)
+	{
+		if (type == CollisionType::Box)
+		{
+			return _bound.frustum.Intersects(bound.box);
+		}
+		else if (type == CollisionType::Sphere)
+		{
+			return _bound.frustum.Intersects(bound.sphere);
+		}
+		else if (type == CollisionType::Frustum)
+		{
+			return _bound.frustum.Intersects(bound.frustum);
 		}
 
 
@@ -308,8 +368,7 @@ void Collider::CalculateBounding()
 
 		if (onwerTransform->IsLocalToWorldChanged())
 		{
-			_orgin.box.Transform(_bound.box, mat);
-			XMStoreFloat4(&_bound.box.Orientation, XMQuaternionNormalize(XMLoadFloat4(&_bound.box.Orientation)));
+			_bound.box = TransformBoundingOrientedBox(_orgin.box, mat, onwerTransform->GetWorldScale(), onwerTransform->GetWorldRotation());
 		}
 	}
 
@@ -388,4 +447,17 @@ pair<vec3, vec3> Collider::GetMinMax()
 	}
 
 	return std::make_pair(vec3(0, 0, 0), vec3(0, 0, 0));
+}
+
+Vector3 Collider::GetBoundCenter()
+{
+	if (_type == CollisionType::Box)
+	{
+		return _bound.box.Center;
+	}
+	if (_type == CollisionType::Sphere)
+	{
+		return _bound.sphere.Center;
+	}
+	return Vector3::Zero;
 }

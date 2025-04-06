@@ -10,6 +10,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Transform.h"
+#include "LightManager.h"
 
 MeshRenderer::~MeshRenderer()
 {
@@ -26,11 +27,16 @@ void MeshRenderer::Init()
 	Component::Init();
 
 	GetOwner()->_renderer = GetCast<MeshRenderer>();
+
+	_setter_ForwardLight = std::make_shared<ForwardLightSetter>();
+	_setter_ForwardLight->Init(GetOwner().get());
 }
 
 void MeshRenderer::Start()
 {
 	Component::Start();
+
+	AddStructuredSetter(_setter_ForwardLight, BufferType::ForwardLightParam);
 
 	auto owner = GetOwner();
 	if(owner && owner->GetType() == GameObjectType::Static)
@@ -74,7 +80,7 @@ void MeshRenderer::Destroy()
 {
 	Component::Destroy();
 
-
+	RemoveStructuredSetter(_setter_ForwardLight);
 }
 
 void MeshRenderer::RenderBegin()

@@ -17,12 +17,14 @@ struct RenderObjectStrucutre
 class RenderStructuredSetter
 {
 public:
+	virtual ~RenderStructuredSetter();
 	virtual void SetData(StructuredBuffer* buffer = nullptr) = 0;
 };
 
 class RenderCBufferSetter
 {
 public:
+	virtual ~RenderCBufferSetter();
 	virtual void SetData(Material* material =nullptr) = 0;
 };
 

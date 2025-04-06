@@ -4,8 +4,10 @@
 #include "Camera.h"
 #include "CameraComponent.h"
 #include "CameraManager.h"
+#include "Collider.h"
 #include "ColliderManager.h"
 #include "Gizmo.h"
+#include "PhysicsComponent.h"
 #include "SkinnedMeshRenderer.h"
 #include "Terrain.h"
 #include "TerrainManager.h"
@@ -30,71 +32,27 @@ void PlayerController::Start()
 {
 	Component::Start();
 	camera = FindObjectByType<CameraComponent>();
-
-	SetMoveType(MoveType::Water);
 }
 
 void PlayerController::Update()
 {
-	if (CameraManager::main->GetCameraType() == CameraType::DebugCamera)
-		return;
-
 	Component::Update();
 
-	if (moveType == MoveType::Water)
-		for (auto& renderer : GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>())
-			renderer->GetOwner()->SetActiveSelf(true);
-	if (moveType == MoveType::Field)
-		for (auto& renderer : GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>())
-			renderer->GetOwner()->SetActiveSelf(true);
-
-	if (Input::main->GetKeyDown(KeyCode::Num1))
-		SetMoveType(MoveType::Water);
-	if (Input::main->GetKeyDown(KeyCode::Num2))
-		SetMoveType(MoveType::Field);
-
+	ColliderManager::main->UpdateDynamicCells();
 	CameraControl();
 	MoveControl();
 
 	//GetOwner()->_transform->SetWorldPosition(GetOwner()->_transform->GetWorldPosition() + Vector3::Forward * 10.0f * Time::main->GetDeltaTime());
 }
 
-void PlayerController::SetMoveType(MoveType moveType)
-{
-	this->moveType = moveType;
 
-	switch (moveType)
-	{
-		case MoveType::Field:
-		{
-			controlInfo = fieldInfo;
-			break;
-		}
-		case MoveType::Water:
-		{
-			controlInfo = waterInfo;
-			break;
-		}
-	}
-}
 
 void PlayerController::CameraControl()
 {
 	auto cameraTransform = camera.lock()->GetOwner()->_transform;
 	auto currentMousePosition = Input::main->GetMousePosition();
-	switch (moveType)
-	{
-	case MoveType::Field:
-	{
-		_targetOffset = GetOwner()->_transform->GetWorldPosition() + Vector3::Up * 1.1f;
-		break;
-	}
-	case MoveType::Water:
-	{
-		_targetOffset = GetOwner()->_transform->GetWorldPosition();
-		break;
-	}
-	}
+
+	_targetOffset = GetOwner()->_transform->GetWorldPosition() + Vector3::Up * 1.1f;
 
 	_currentOffset = Vector3::Lerp(_currentOffset, _targetOffset,
 		(float)Time::main->GetDeltaTime() * controlInfo.cameraMoveSmooth
@@ -112,37 +70,27 @@ void PlayerController::CameraControl()
 	_targetEuler = calculateEuler;
 	_currentEuler = Vector3::Lerp(_currentEuler, _targetEuler, Time::main->GetDeltaTime() * controlInfo.cameraRotationSmooth);
 
+
 	Vector3 cameraNextPosition = _currentOffset;
 	Quaternion finalRotation = Quaternion::CreateFromYawPitchRoll(_currentEuler);
 	Vector3 _currentNextDirection = Vector3::Transform(Vector3::Forward, finalRotation);
 
-	switch (moveType)
-	{
-		case MoveType::Field:
-		{
-			finalRotation = Quaternion::CreateFromYawPitchRoll(_currentEuler);
-			_currentNextDirection = Vector3::Transform(Vector3::Forward, finalRotation);
 
-			float distance = 3.6;
-			if (auto hit = ColliderManager::main->RayCast({ _currentOffset, -_currentNextDirection }, distance * 2,GetOwner()))
-				if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
-				{
-					distance = std::min(hit.distance, distance) - 0.05f;
-				}
+	finalRotation = Quaternion::CreateFromYawPitchRoll(_currentEuler);
+	_currentNextDirection = Vector3::Transform(Vector3::Forward, finalRotation);
 
+	float distance = 3.6;
 
-			cameraNextPosition = _currentOffset - _currentNextDirection * distance;
-			break;
-		}
+	std::vector<RayHit> hitList;
+	if (auto isHit = ColliderManager::main->RayCastAll({ _currentOffset, -_currentNextDirection }, distance * 2, hitList))
+		for (auto& hit : hitList)
+			if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
+			{
+				distance = std::min(hit.distance, distance) - 0.05f;
+				break;
+			}
 
-		case MoveType::Water:
-		{
-			finalRotation = Quaternion::CreateFromYawPitchRoll(_targetEuler);
-			_currentNextDirection = Vector3::Transform(Vector3::Forward, finalRotation);
-			cameraNextPosition = _targetOffset;
-			break;
-		}
-	}
+	cameraNextPosition = _currentOffset - _currentNextDirection * distance;
 
 	cameraTransform->SetWorldPosition(cameraNextPosition);
 	cameraTransform->LookUp(_currentNextDirection, Vector3::Up);
@@ -151,27 +99,13 @@ void PlayerController::CameraControl()
 void PlayerController::MoveControl()
 {
 	Quaternion lookRotation = Quaternion::Identity;
-	switch (moveType)
-	{
-		case MoveType::Field:
-		{
-			lookRotation = Quaternion::CreateFromYawPitchRoll(Vector3(0, _targetEuler.y, 0));
-			break;
-		}
-
-		case MoveType::Water:
-		{
-			lookRotation = Quaternion::CreateFromYawPitchRoll(Vector3(_targetEuler.x, _targetEuler.y, 0));
-			break;
-		}
-	}
+	lookRotation = Quaternion::CreateFromYawPitchRoll(Vector3(0, _targetEuler.y, 0));
 
 	// ------------- 공통 로직 ------------- 
 	Vector3 moveDirection = Vector3(
 		(Input::main->GetKey(KeyCode::D) ? 1 : 0) - (Input::main->GetKey(KeyCode::A) ? 1 : 0), 0,
 		(Input::main->GetKey(KeyCode::W) ? 1 : 0) - (Input::main->GetKey(KeyCode::S) ? 1 : 0));
 	moveDirection.Normalize();
-
 	targetLookWorldDirection = Vector3::Transform(moveDirection, lookRotation);
 
 	if (targetLookWorldDirection != Vector3::Zero)
@@ -179,47 +113,116 @@ void PlayerController::MoveControl()
 		currentLookWorldRotation = Quaternion::Slerp(currentLookWorldRotation, Quaternion::LookRotation(targetLookWorldDirection, Vector3::Transform(Vector3::Up, lookRotation)),
 			Time::main->GetDeltaTime() * 30);
 
-		velocity += targetLookWorldDirection * controlInfo.moveForce * Time::main->GetDeltaTime() * 60;
-		if (velocity.Length() > controlInfo.maxSpeed) 
-		{
-			velocity.Normalize();
-			velocity *= controlInfo.maxSpeed;
+		// 등속 운동 로직
+		Vector3 prevVelocity = velocity;
+		prevVelocity += targetLookWorldDirection * controlInfo.moveForce * Time::main->GetDeltaTime() * 60;
+		prevVelocity.y = 0;
+		if (prevVelocity.Length() > controlInfo.maxSpeed) {
+			prevVelocity.Normalize();
+			prevVelocity *= controlInfo.maxSpeed;
+		}
+
+		// 이동
+		velocity = Vector3(prevVelocity.x, velocity.y, prevVelocity.z);
+	}
+	GetOwner()->_transform->SetWorldRotation(currentLookWorldRotation);
+
+	
+
+	std::vector<std::pair<CollisionType, BoundingUnion>> playerColliderDatas;
+	std::vector<std::shared_ptr<Collider>> playerColliders;
+
+	GetOwner()->GetComponentsWithChilds<Collider>(playerColliders);
+	int playerGroupID = PhysicsComponent::GetPhysicsGroupID(GetOwner());
+	for (auto& collider : playerColliders) {
+		if (playerGroupID == collider->GetGroupID()) {
+			collider->CalculateBounding();
+			playerColliderDatas.push_back(std::make_pair(collider->GetType(), collider->GetBoundUnion()));
 		}
 	}
 
-
-	switch (moveType)
-	{
-	case MoveType::Field:
-	{
-		GetOwner()->_transform->SetWorldRotation(currentLookWorldRotation);
-		break;
-	}
-	case MoveType::Water:
-	{
-		GetOwner()->_transform->SetWorldRotation(lookRotation);
-		break;
-	}
-	}
 
 	Vector3 currentPos = GetOwner()->_transform->GetWorldPosition();
-	Vector3 nextPos = currentPos + velocity * Time::main->GetDeltaTime();
+	Vector3 nextPos = currentPos;
 
-	switch (moveType)
+	Vector3 velocityDirectionXZ = velocity * Time::main->GetDeltaTime();
+	velocityDirectionXZ.y = 0;
+
+	//if (velocityDirectionXZ != Vector3::Zero)
 	{
-		case MoveType::Field:
+		for (auto [type, bound] : playerColliderDatas)
 		{
-			Vector3 upRayOffset = nextPos + Vector3::Up * 1.0f;
+			// 이동할 위치 미리 계산
+			Vector3 currentCenter;
+			float currentRadius;
+			if (type == CollisionType::Box)
+			{
+				currentCenter = bound.box.Center = bound.box.Center + velocityDirectionXZ;
+				currentRadius = Vector3(bound.box.Extents).Length();
+			}
+			if (type == CollisionType::Sphere)
+			{
+				currentCenter = bound.sphere.Center = bound.sphere.Center + velocityDirectionXZ;
+				currentRadius = bound.sphere.Radius;
+			}
 
-			if (auto hit = ColliderManager::main->RayCast({ upRayOffset, Vector3::Down }, 30,GetOwner()))
-				if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
-					nextPos.y = upRayOffset.y - hit.distance;
-			break;
+			// 이동할 곳에서 충돌되는지 보기.
+			std::vector<std::shared_ptr<Collider>> otherColliders;
+			if (ColliderManager::main->CollisionChecksDirect(type, bound, otherColliders))
+			{
+				for (auto& otherCollider : otherColliders)
+				{
+					if (otherCollider->GetGroupID() != playerGroupID)
+					{
+						Vector3 otherColliderCenter = otherCollider->GetBoundCenter();
+						Vector3 rayDir = otherColliderCenter - currentCenter;
+						float rayDis = rayDir.Length();
+						rayDir.Normalize();
+
+						RayHit hitOtherCollider;
+						if (otherCollider->RayCast({ currentCenter, rayDir }, rayDis, hitOtherCollider))
+							if (hitOtherCollider)
+								velocityDirectionXZ += hitOtherCollider.normal *
+								std::max(velocityDirectionXZ.Length(), static_cast<float>(4.0f * Time::main->GetDeltaTime()));
+					}
+				}
+			}
 		}
-		case MoveType::Water:
+	}
+	float velocityDirectionY = velocity.y * Time::main->GetDeltaTime();
+	nextPos += Vector3(velocityDirectionXZ.x,  velocityDirectionY, velocityDirectionXZ.z); // velocityDirectionXZ.y + velocityDirectionY
+
+
+
+	float gitMargin = 0.1f;//오차 범위
+	float upDistance = 1.0f;
+	Vector3 upRayOffset = nextPos + Vector3::Up * upDistance;
+
+	RayHit foundGround;
+	std::vector<RayHit> hitList;
+	if (auto isHit = ColliderManager::main->RayCastAll({ upRayOffset, Vector3::Down }, upDistance + gitMargin * 2, hitList))
+	{
+		for (auto& hit : hitList)
 		{
-			break;
+			if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
+			{
+				if (upDistance + gitMargin >= hit.distance) {
+					foundGround = hit;
+				}
+				break;
+			}
 		}
+	}
+	if (foundGround)
+	{
+		isGround = true;
+		velocity.y = 0;
+		nextPos.y = upRayOffset.y - foundGround.distance; //upRayOffset.y -
+	}
+	else
+	{
+		isGround = false;
+		velocity.y -= 0.981;
 	}
 
 	// ------------- 공통 로직 ------------- 
@@ -232,6 +235,28 @@ void PlayerController::MoveControl()
 void PlayerController::Update2()
 {
 	Component::Update2();
+
+	camera.lock()->Calculate();
+
+	/*
+	if (Input::main->GetMouse(KeyCode::LeftMouse))
+	{
+		auto mousePos = Input::main->GetMousePosition();
+		auto camera = CameraManager::main->GetActiveCamera();
+		auto cameraPos = camera->GetCameraPos();
+		vec3 cameraDir = camera->GetScreenToWorldPosition(mousePos) - camera->GetCameraPos();
+		cameraDir.Normalize();
+
+		auto hit = ColliderManager::main->RayCast({ cameraPos, cameraDir }, 500);
+		if (hit)
+		{
+			auto box = BoundingOrientedBox(hit.worldPos, Vector3::One, Quaternion::Identity);
+			Gizmo::Width(0.02f);
+			Gizmo::Box(box, ColliderManager::main->CollisionCheckDirect(CollisionType::Box, { .box = box }) ? Vector4(1, 0.5, 0, 1) : Vector4(0, 1, 0, 1));
+			Gizmo::WidthRollBack();
+		}
+	}
+	*/
 }
 
 void PlayerController::Enable()
