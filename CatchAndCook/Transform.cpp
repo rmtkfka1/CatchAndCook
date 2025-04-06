@@ -318,6 +318,8 @@ const Quaternion& Transform::SetWorldRotation(const Quaternion& quaternion)
     else
         _localRotation = quaternion;
 
+
+
     _needLocalSRTUpdated = true;
 
     return quaternion;
@@ -396,6 +398,7 @@ bool Transform::SetLocalSRTMatrix(Matrix& localSRT)
     // 행렬을 위치, 회전, 스케일로 분해
     _localSRTMatrix = localSRT;
     _needLocalMatrixUpdated = true;
+
     if (localSRT.Decompose(scale, rotation, position))
     {
         _localScale = scale;
@@ -502,6 +505,14 @@ bool Transform::BottomUpLocalToWorldUpdate()
 void Transform::LookUp(const vec3& dir, const vec3& up)
 {
     SetWorldRotation(LookToQuaternion(dir, up));
+}
+
+void Transform::LookUpSmooth(const vec3& dir, const vec3& up, float speed)
+{
+	Quaternion target = LookToQuaternion(dir, up);
+	Quaternion current = GetWorldRotation();
+	Quaternion result = Quaternion::Slerp(current, target, speed * Time::main->GetDeltaTime());
+	SetWorldRotation(result);
 }
 
 vec3 Transform::LocalToWorld_Position(const vec3& value)

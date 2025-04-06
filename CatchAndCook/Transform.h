@@ -65,6 +65,7 @@ public:
     bool BottomUpLocalToWorldUpdate();
 
     void LookUp(const vec3& dir, const vec3& up);
+	void LookUpSmooth(const vec3& dir, const vec3& up, float speed);
 
     vec3 LocalToWorld_Position(const vec3& value);
     vec3 LocalToWorld_Direction(const vec3& value);

@@ -39,14 +39,11 @@ void PathFinder::Update()
     if (dir.LengthSquared() > 0.0001f)
     {
         dir.Normalize();
-        Quaternion targetRot = Quaternion::LookRotation(dir,vec3::Up); 
+       GetOwner()-> _transform->LookUpSmooth(dir,vec3::Up,5.0f);
 
-        Quaternion currentRot = GetOwner()->_transform->GetLocalRotation();
-        float turnSpeed = 5.0f; 
+        float turnSpeed = 30.0f; 
         float dt = Time::main->GetDeltaTime();
 
-        Quaternion smoothRot = Quaternion::Slerp(currentRot, targetRot, dt * turnSpeed);
-        GetOwner()->_transform->SetLocalRotation(smoothRot);
     }
 
 

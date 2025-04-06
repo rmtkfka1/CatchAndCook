@@ -25,7 +25,7 @@ private:
 	vector<vec3> _paths;
 
 	int currentIndex = 0;
-	float moveSpeed = 30.0f; // 초당 거리 (단위: units/sec)
+	float moveSpeed = 200.0f; 
 	float distanceMoved = 0.0f;
 	float segmentLength = 0.0f;
 

@@ -97,8 +97,7 @@ namespace DirectX::SimpleMath
         return CreateRotationZXY(euler.z, euler.x, euler.y);
     }
 
-    inline Quaternion LookToQuaternion(const Vector3& _forward,
-                                       const Vector3& up = Vector3::UnitY)
+    inline Quaternion LookToQuaternion(const Vector3& _forward, const Vector3& up = Vector3::UnitY)
     {
         // forward 벡터 정규화
         Vector3 forward = _forward;
