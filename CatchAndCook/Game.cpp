@@ -39,7 +39,7 @@ void Game::Init(HWND hwnd)
 	Input::main = make_unique<Input>();
 
 	Profiler::main = make_unique<Profiler>();
-	Profiler::main->Init(_hwnd,_hInstance);
+	Profiler::main->Init(_hwnd, _hInstance);
 
 	ResourceManager::main = make_unique<ResourceManager>();
 	ResourceManager::main->Init();
@@ -83,27 +83,26 @@ void Game::Init(HWND hwnd)
 	PathStamp::main->Init();
 
 	box.Center = vec3(0, 0, 0);
-	box.Extents = vec3(5.0f,5.0f,5.0f);
+	box.Extents = vec3(5.0f, 5.0f, 5.0f);
 
-	if (false)
-	{
-		std::shared_ptr<Light> light = std::make_shared<Light>();
-		light->onOff = 1;
-		light->direction = vec3(-1.0f, -1.0f, 1.0f);
-		light->position = vec3(0, 1000.0f, 0);
-		light->direction.Normalize();
-			 
-		light->material.ambient = vec3(0.2f, 0.2f, 0.2f);
-		light->material.diffuse = vec3(1.0f, 1.0f, 1.0f);
-		light->material.specular = vec3(1.0f,1.0f,1.0f);
-		light->material.shininess = 61.0f;
-		light->material.lightType = static_cast<int32>(LIGHT_TYPE::DIRECTIONAL_LIGHT);
-		light->strength = vec3(1.0f, 1.0f, 1.0f);
-		LightManager::main->PushLight(light);
-	}
 
-	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
-}
+	std::shared_ptr<Light> light = std::make_shared<Light>();
+	light->onOff = 1;
+	light->direction = vec3(-1.0f, -1.0f, 1.0f);
+	light->position = vec3(0, 1000.0f, 0);
+	light->direction.Normalize();
+
+	light->material.ambient = vec3(0.2f, 0.2f, 0.2f);
+	light->material.diffuse = vec3(1.0f, 1.0f, 1.0f);
+	light->material.specular = vec3(1.0f, 1.0f, 1.0f);
+	light->material.shininess = 61.0f;
+	light->material.lightType = static_cast<int32>(LIGHT_TYPE::DIRECTIONAL_LIGHT);
+	light->strength = vec3(1.0f, 1.0f, 1.0f);
+	LightManager::main->PushLight(light);
+
+
+	auto scene = SceneManager::main->AddScene(SceneType::Sea01);
+};
 
 void Game::PrevUpdate()
 {
