@@ -33,8 +33,21 @@ void PathFinder::Update()
 
     float t = std::clamp(distanceMoved / segmentLength, 0.0f, 1.0f);
     vec3 pos = vec3::Lerp(start, end, t);
-    vec3 currentPos = GetOwner()->_transform->SetLocalPosition(pos);
+    vec3 currentPos = GetOwner()->_transform->SetWorldPosition(pos);
 
+    vec3 dir = end - start;
+    if (dir.LengthSquared() > 0.0001f)
+    {
+        dir.Normalize();
+        Quaternion targetRot = Quaternion::LookRotation(dir,vec3::Up); 
+
+        Quaternion currentRot = GetOwner()->_transform->GetLocalRotation();
+        float turnSpeed = 5.0f; 
+        float dt = Time::main->GetDeltaTime();
+
+        Quaternion smoothRot = Quaternion::Slerp(currentRot, targetRot, dt * turnSpeed);
+        GetOwner()->_transform->SetLocalRotation(smoothRot);
+    }
 
 
     if (t >= 1.0f)
@@ -44,7 +57,6 @@ void PathFinder::Update()
         segmentLength = 0.0f;
     }
 
-    // 시각화
     for (size_t i = 0; i < _paths.size() - 1; ++i)
     {
         Gizmo::main->Line(_paths[i], _paths[i + 1], vec4(1, 1, 0, 1));
@@ -54,7 +66,7 @@ void PathFinder::Update()
     {
         Gizmo::main->Line(_paths.back(), _paths.front(), vec4(1, 1, 0, 1));
     }
-}
+};
 void PathFinder::Update2()
 {
 }
