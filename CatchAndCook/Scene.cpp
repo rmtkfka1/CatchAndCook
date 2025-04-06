@@ -28,7 +28,9 @@ void Scene::AddGameObject(const std::shared_ptr<GameObject>& gameObject)
 
 void Scene::Init()
 {
-
+	_finalDefferedMaterial = std::make_shared<Material>();
+	_finalDefferedMaterial->SetShader(ResourceManager::main->Get<Shader>(L"finalShader"));
+    _finalDefferedMaterial->SetPass(RENDER_PASS::Deffered);
 }
 
 void Scene::Update()
@@ -297,9 +299,14 @@ void Scene::FinalRender(ComPtr<ID3D12GraphicsCommandList>& cmdList)
     Core::main->GetRenderTarget()->RenderBegin();
 
     auto mesh = ResourceManager::main->Get<Mesh>(L"finalMesh");
-    auto shader = ResourceManager::main->Get<Shader>(L"finalShader");
+    auto shader = _finalDefferedMaterial->GetShader();
 
     cmdList->SetPipelineState(shader->_pipelineState.Get());
+
+    RenderObjectStrucutre ROS = { _finalDefferedMaterial.get(), mesh.get(), nullptr };
+    SettingPrevData(ROS, RENDER_PASS::PASS::Deffered);
+
+    _finalDefferedMaterial->SetData();
     mesh->Redner();
 }
 
