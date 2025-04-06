@@ -235,10 +235,7 @@ float Terrain::GetLocalHeight(const Vector3& localPosition)
     float tempX = localPosition.x - terrainOrigin.x;
     float tempZ = localPosition.z - terrainOrigin.z;
 
-    float mapX = (tempX / _fieldSize.x) * (_heightRawSize.x - 1);
-    float mapZ = (tempZ / _fieldSize.z) * (_heightRawSize.y - 1);
-
-    float finalH = GetHeight(Vector2(mapX, mapZ));
+    float finalH = GetHeight(Vector2((tempX / _fieldSize.x) * _heightRawSize.x, (tempZ / _fieldSize.z) * _heightRawSize.y));
     return terrainOrigin.y + finalH;
 }
 float Terrain::GetWorldHeight(const Vector3& worldPosition)
