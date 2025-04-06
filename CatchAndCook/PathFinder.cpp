@@ -36,16 +36,12 @@ void PathFinder::Update()
     vec3 currentPos = GetOwner()->_transform->SetWorldPosition(pos);
 
     vec3 dir = end - start;
+
     if (dir.LengthSquared() > 0.0001f)
     {
         dir.Normalize();
        GetOwner()-> _transform->LookUpSmooth(dir,vec3::Up,5.0f);
-
-        float turnSpeed = 30.0f; 
-        float dt = Time::main->GetDeltaTime();
-
     }
-
 
     if (t >= 1.0f)
     {

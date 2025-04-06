@@ -121,7 +121,6 @@ void Transform::SetData(StructuredBuffer* buffer)
 
 vec3 Transform::SetForward(const vec3& dir)
 {
-
     _forward = dir;
     _forward.Normalize(_forward);
     _right = _up.Cross(_forward);
