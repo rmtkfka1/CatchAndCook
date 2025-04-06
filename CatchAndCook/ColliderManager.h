@@ -58,6 +58,7 @@ private:
 public:
 	RayHit RayCast(const Ray& ray, const float& dis, shared_ptr<GameObject>& owner) const;
 	RayHit RayCastForMyCell(const Ray& ray, const float& dis, shared_ptr<GameObject>& owner) ;
+	bool RayCastAll(const Ray& ray, const float& dis, std::vector<RayHit>& hitList) const;
 
 	static bool RayCastAll(const std::vector<std::shared_ptr<Collider>>& colliders, const Ray& ray, const float& dis, std::vector<RayHit>& hitList);
 
