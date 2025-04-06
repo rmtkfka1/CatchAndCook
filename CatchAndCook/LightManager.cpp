@@ -70,7 +70,9 @@ void ForwardLightSetter::Init(GameObject* object)
 void ForwardLightSetter::SetData(StructuredBuffer* buffer)
 {
 	ForwardLightParams params;
+
 	Vector3 worldPos = this->object->_transform->GetWorldPosition();
+
 	std::ranges::sort(LightManager::main->_lights, [&](const std::shared_ptr<Light>& light1, const std::shared_ptr<Light>& light2) {
 			return (light1->position - worldPos).LengthSquared() < (light2->position - worldPos).LengthSquared();
 		});

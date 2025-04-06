@@ -68,17 +68,18 @@ void LightingTest::Init()
 	sceneLoader->Load(GetCast<Scene>());
 
 	{
-		auto plant = Find(L"1");
+		auto plant = Find(L"2");
 
 		if (plant)
 		{
-			plant->AddComponent<PlantComponent>();
 			auto finder =plant->AddComponent<PathFinder>();
 			finder->ReadPathFile(L"BezierLines.txt");
+
+			cout << "찾앗다 슈발" << endl;
 		}
 	}
 
-	{
+	/*{
 		auto plant = Find(L"6");
 
 		if (plant)
@@ -86,7 +87,7 @@ void LightingTest::Init()
 			plant->GetComponent<MeshRenderer>()->GetMaterials()[0]->SetShader(ResourceManager::main->Get<Shader>(L"Plant"));
 			plant->AddComponent<PlantComponent>();
 		}
-	}
+	}*/
 
 
 }
