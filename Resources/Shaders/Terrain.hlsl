@@ -146,7 +146,7 @@ float CalculateTessLevel(float3 cameraWorldPos, float3 patchPos, float min, floa
     
     if(distance<300.0f)
     {
-        8.0f;
+        32.0f;
     }
     else if (distance < 2000.0f)
     {

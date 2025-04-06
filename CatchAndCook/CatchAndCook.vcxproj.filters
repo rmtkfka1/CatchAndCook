@@ -476,9 +476,6 @@
     <ClInclude Include="TestScene_jin.h">
       <Filter>06.Scene</Filter>
     </ClInclude>
-    <ClInclude Include="GameObjectSetting.h">
-      <Filter>01.GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="WaterHeight.h">
       <Filter>03.Component</Filter>
     </ClInclude>
@@ -636,6 +633,7 @@
     <ClInclude Include="PathFinder.h">
       <Filter>03.Component</Filter>
     </ClInclude>
+    <ClInclude Include="GameObjectSetting.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">

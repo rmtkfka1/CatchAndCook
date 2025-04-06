@@ -228,17 +228,19 @@ float Terrain::GetHeight(const Vector2& heightMapPosition) const
     return finalHeight;
 }
 
-float Terrain::GetLocalHeight(const Vector3& localPosition) // float x,float z
+float Terrain::GetLocalHeight(const Vector3& localPosition)
 {
     Vector3 terrainOrigin = GetOwner()->_transform->GetLocalPosition();
 
-	float tempX = localPosition.x - terrainOrigin.x;
+    float tempX = localPosition.x - terrainOrigin.x;
     float tempZ = localPosition.z - terrainOrigin.z;
 
-    float finalH = GetHeight(Vector2((tempX / _fieldSize.x) * _heightRawSize.x, (tempZ / _fieldSize.z) * _heightRawSize.y));
+    float mapX = (tempX / _fieldSize.x) * (_heightRawSize.x - 1);
+    float mapZ = (tempZ / _fieldSize.z) * (_heightRawSize.y - 1);
+
+    float finalH = GetHeight(Vector2(mapX, mapZ));
     return terrainOrigin.y + finalH;
 }
-
 float Terrain::GetWorldHeight(const Vector3& worldPosition)
 {
     Matrix matrix;
