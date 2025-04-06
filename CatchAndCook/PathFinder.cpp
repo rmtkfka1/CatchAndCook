@@ -33,7 +33,8 @@ void PathFinder::Update()
 
     float t = std::clamp(distanceMoved / segmentLength, 0.0f, 1.0f);
     vec3 pos = vec3::Lerp(start, end, t);
-    GetOwner()->_transform->SetLocalPosition(pos);
+    vec3 currentPos = GetOwner()->_transform->SetLocalPosition(pos);
+
 
 
     if (t >= 1.0f)
