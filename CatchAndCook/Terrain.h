@@ -53,7 +53,7 @@ public:
 	void SetData(Material* material) override;
 
 private:
-	static const int CellsPerPatch = 32;
+	static const int CellsPerPatch = 128;
 
 	shared_ptr<Mesh> _gridMesh{};
 	shared_ptr<Texture> _heightTexture{};
