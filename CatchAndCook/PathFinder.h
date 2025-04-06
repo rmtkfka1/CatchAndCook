@@ -21,6 +21,7 @@ public:
 	void ReadPathFile(const std::wstring& fileName);
 
 private:
+	vector<vec3> _controllPoints;
 	vector<vec3> _paths;
 
 	int currentIndex = 0;

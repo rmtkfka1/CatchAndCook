@@ -73,7 +73,7 @@ void LightingTest::Init()
 		if (plant)
 		{
 			auto finder =plant->AddComponent<PathFinder>();
-			finder->ReadPathFile(L"BezierLines.txt");
+			finder->ReadPathFile(L"BezierData.txt");
 
 			cout << "찾앗다 슈발" << endl;
 		}

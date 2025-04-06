@@ -54,23 +54,30 @@ void PathStamp::Run()
 			_controllPoint.pop_back();
 		}
 	}
-
 	if (Input::main->GetKeyDown(KeyCode::Insert))
 	{
-		std::ofstream file("BezierLines.txt");
+		std::ofstream file("BezierData.txt");
 
 		if (!file.is_open())
 		{
-			std::cerr << "베지어 파일 저장 실패" << std::endl;
+			std::cerr << "베지어 데이터 파일 저장 실패" << std::endl;
 			return;
 		}
+	
+		file << "# ControlPoints\n";
+		for (const auto& cp : _controllPoint)
+		{
+			file << cp.x << " " << cp.y << " " << cp.z << "\n";
+		}
 
+		file << "# LineData\n";
 		for (const auto& point : _lineData)
 		{
-			file << point.x << " " << point.y << " " << point.z << std::endl;
+			file << point.x << " " << point.y << " " << point.z << "\n";
 		}
 
 		file.close();
+		std::cout << "컨트롤 포인트 + 베지어 라인 저장 완료!" << std::endl;
 	}
 }
 
