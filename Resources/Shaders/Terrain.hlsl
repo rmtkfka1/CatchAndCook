@@ -136,17 +136,15 @@ struct PatchConstOutput
 float CalculateTessLevel(float3 cameraWorldPos, float3 patchPos, float min, float max, float maxLv)
 {
    
-    float distance = length(patchPos - float3(cameraWorldPos.x, 0, cameraWorldPos.z));
+    float distance = length(float3(patchPos.x,0,patchPos.z) - float3(cameraWorldPos.x, 0, cameraWorldPos.z));
     
-    //float ratio = smoothstep(min, max, distance);
 
-    //float tessLevel = lerp(maxLv, 1.0f, ratio);
     
     float tessLevel = 1.0f;
     
     if(distance<300.0f)
     {
-        32.0f;
+        tessLevel =32.0f;
     }
     else if (distance < 2000.0f)
     {
@@ -171,9 +169,9 @@ PatchConstOutput ConstantHS(InputPatch<VS_OUT, 3> patch, uint patchID : SV_Primi
 
     PatchConstOutput pt;
     
-    float3 edge0Pos = (patch[1].pos + patch[2].pos) / 2.f;
-    float3 edge1Pos = (patch[2].pos + patch[0].pos) / 2.f;
-    float3 edge2Pos = (patch[0].pos + patch[1].pos) / 2.f;
+    float3 edge0Pos = (patch[1].pos.xyz + patch[2].pos.xyz) / 2.f;
+    float3 edge1Pos = (patch[2].pos.xyz + patch[0].pos.xyz) / 2.f;
+    float3 edge2Pos = (patch[0].pos.xyz + patch[1].pos.xyz) / 2.f;
 
     float edge0TessLevel = CalculateTessLevel(cameraPos.xyz, edge0Pos, DIST_MIN, DIST_MAX, TessFactor);
     float edge1TessLevel = CalculateTessLevel(cameraPos.xyz, edge1Pos, DIST_MIN, DIST_MAX, TessFactor);
