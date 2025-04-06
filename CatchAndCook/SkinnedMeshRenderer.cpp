@@ -2,6 +2,7 @@
 #include "SkinnedMeshRenderer.h"
 
 #include "GameObject.h"
+#include "LightManager.h"
 #include "Transform.h"
 #include "Mesh.h"
 #include "SkinnedHierarchy.h"
@@ -20,11 +21,16 @@ void SkinnedMeshRenderer::Init()
 {
 	Component::Init();
 	GetOwner()->_renderer = GetCast<SkinnedMeshRenderer>();
+
+	_setter_ForwardLight = std::make_shared<ForwardLightSetter>();
+	_setter_ForwardLight->Init(GetOwner().get());
 }
 
 void SkinnedMeshRenderer::Start()
 {
 	Component::Start();
+
+	AddStructuredSetter(_setter_ForwardLight, BufferType::ForwardLightParam);
 
 	auto root = GetOwner()->GetParent();
 	if (root != nullptr)
@@ -80,6 +86,8 @@ void SkinnedMeshRenderer::Disable()
 void SkinnedMeshRenderer::Destroy()
 {
 	Component::Destroy();
+
+	RemoveStructuredSetter(_setter_ForwardLight);
 }
 
 void SkinnedMeshRenderer::RenderBegin()

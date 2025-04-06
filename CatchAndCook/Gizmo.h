@@ -33,6 +33,7 @@ enum class GizmoFlags : uint32_t
 	Culling = 1 << 2,   
 	Collision = 1 << 3,   
 	WorldPivot = 1 << 4,
+	Custom = 1 << 5,
 };
 
 inline GizmoFlags operator|(GizmoFlags a, GizmoFlags b) {

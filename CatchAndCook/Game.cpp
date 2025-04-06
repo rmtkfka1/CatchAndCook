@@ -85,19 +85,20 @@ void Game::Init(HWND hwnd)
 	box.Center = vec3(0, 0, 0);
 	box.Extents = vec3(5.0f,5.0f,5.0f);
 
+	if (false)
 	{
-		Light light;
-
-		light.direction = vec3(-1.0f, -1.0f, 1.0f);
-		light.position = vec3(0, 1000.0f, 0);
-		light.direction.Normalize();
-	
-		light.material.ambient = vec3(0.2f, 0.2f, 0.2f);
-		light.material.diffuse = vec3(1.0f, 1.0f, 1.0f);
-		light.material.specular = vec3(1.0f,1.0f,1.0f);
-		light.material.shininess = 61.0f;
-		light.material.lightType = static_cast<int32>(LIGHT_TYPE::DIRECTIONAL_LIGHT);
-		light.strength = vec3(1.0f, 1.0f, 1.0f);
+		std::shared_ptr<Light> light = std::make_shared<Light>();
+		light->onOff = 1;
+		light->direction = vec3(-1.0f, -1.0f, 1.0f);
+		light->position = vec3(0, 1000.0f, 0);
+		light->direction.Normalize();
+			 
+		light->material.ambient = vec3(0.2f, 0.2f, 0.2f);
+		light->material.diffuse = vec3(1.0f, 1.0f, 1.0f);
+		light->material.specular = vec3(1.0f,1.0f,1.0f);
+		light->material.shininess = 61.0f;
+		light->material.lightType = static_cast<int32>(LIGHT_TYPE::DIRECTIONAL_LIGHT);
+		light->strength = vec3(1.0f, 1.0f, 1.0f);
 		LightManager::main->PushLight(light);
 	}
 

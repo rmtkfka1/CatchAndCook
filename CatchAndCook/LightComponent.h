@@ -1,10 +1,11 @@
 ﻿#pragma once
-#include "Component.h"
+#include "LightManager.h"
 
-class PhysicsComponent : public Component
+
+class LightComponent : public Component
 {
 public:
-	~PhysicsComponent() override;
+	~LightComponent() override;
 	bool IsExecuteAble() override;
 	void Init() override;
 	void Start() override;
@@ -19,6 +20,19 @@ public:
 	void SetDestroy() override;
 	void Destroy() override;
 
-	static int GetPhysicsGroupID(const std::shared_ptr<GameObject>& obj);
+	void SetLight(const std::shared_ptr<Light>& light) { this->light = light; };
+	std::shared_ptr<Light>& GetLight() { return light; };
+
+public:
+	std::shared_ptr<Light> light;
+
+public:
+	LIGHT_TYPE type;
+	Vector3 color = Vector3::One;
+	float intensity = 1;
+	float range = 1;
+	float innerSpotAngle = 360 * D2R;
+	float spotAngle = 360 * D2R;
+	float shadowAngle = 360 * D2R;
 };
 

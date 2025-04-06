@@ -1,6 +1,7 @@
 ﻿
 #include "ColliderManager.h"
 #include "Component.h"
+#include "Game.h"
 
 enum class CollisionType
 {
@@ -39,16 +40,19 @@ public:
 
 public:
 	CollisionType GetType() { return _type; }
+	int GetGroupID() const { return groupId; }
 	vec3 GetCenter();
 	bool CheckCollision(const std::shared_ptr<Collider>& other);
+	bool CheckCollision(const CollisionType& type, const BoundingUnion& bound);
 	bool RayCast(const Ray& ray, const float& dis, RayHit& hit);
 	void SetBoundingBox(vec3 center,vec3 extents);
 	void SetBoundingSphere(vec3 center,float radius);
 	void SetBoundingFrustum(BoundingFrustum& boundingFrustum);
 	void CalculateBounding();
 	pair<vec3, vec3> GetMinMax();
-
 	BoundingUnion& GetBoundUnion() {return _bound;}
+	Vector3 GetBoundCenter();
+
 
 private:
 	friend class ColliderManager;
@@ -57,5 +61,7 @@ private:
 	CollisionType _type;
 	BoundingUnion _orgin;
 	BoundingUnion _bound;
+
 	int groupId = 0;
+	std::weak_ptr<GameObject> groupRootObject;
 };

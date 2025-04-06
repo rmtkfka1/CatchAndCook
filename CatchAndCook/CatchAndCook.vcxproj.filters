@@ -338,6 +338,7 @@
     <ClCompile Include="PathFinder.cpp">
       <Filter>03.Component</Filter>
     </ClCompile>
+    <ClCompile Include="LightComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -634,6 +635,7 @@
       <Filter>03.Component</Filter>
     </ClInclude>
     <ClInclude Include="GameObjectSetting.h" />
+    <ClInclude Include="LightComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -725,6 +727,10 @@
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\UiForward.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\PlayerShader.hlsl" />
+    <FxCompile Include="..\Resources\Shaders\Light_Forward_t31.hlsl">
+      <Filter>998.HLSL\Module</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Plant.hlsl">
       <Filter>998.HLSL\Graphics</Filter>

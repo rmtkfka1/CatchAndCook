@@ -26,13 +26,6 @@ const ControlInfo fieldInfo = {
 	8,
 	0.25,
 };
-const ControlInfo waterInfo = {
-	100,
-	100,
-	0.32,
-	6,
-	0.04,
-};
 
 class PlayerController : public Component
 {
@@ -55,7 +48,6 @@ public:
 	void Destroy() override;
 
 public:
-	void SetMoveType(MoveType moveType);
 	void CameraControl();
 	void MoveControl();
 
@@ -71,7 +63,7 @@ private: // Camera Control
 
 private:
 	Vector3 velocity = Vector3::Zero;
-	MoveType moveType = MoveType::Field;
 	ControlInfo controlInfo = fieldInfo;
+	bool isGround = true;
 };
 

@@ -204,6 +204,7 @@
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="IType.cpp" />
     <ClCompile Include="IUnit.cpp" />
+    <ClCompile Include="LightComponent.cpp" />
     <ClCompile Include="LightingTest.cpp" />
     <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="main.cpp">
@@ -330,6 +331,7 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="IType.h" />
     <ClInclude Include="IUnit.h" />
+    <ClInclude Include="LightComponent.h" />
     <ClInclude Include="LightingTest.h" />
     <ClInclude Include="LightManager.h" />
     <ClInclude Include="Material.h" />
@@ -476,6 +478,14 @@
     <FxCompile Include="..\Resources\Shaders\Plant.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Light_Forward_t31.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\PlayerShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>

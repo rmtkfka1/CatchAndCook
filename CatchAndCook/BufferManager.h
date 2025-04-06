@@ -22,11 +22,15 @@ enum class BufferType
 	UnderWaterParam,
 	PlantInfo,
 
+	PlayerMaterialParam,
+
+	InstanceOffsetParam,
+
 	// Instance
 	TransformInstanceParam,
 	GizmoInstanceParam,
 	GizmoTextInstanceParam,
-	InstanceOffsetParam,
+	ForwardLightParam,
 };
 
 class CBufferPool;

@@ -130,6 +130,10 @@ void ImguiManager::GizmoController()
 	{
 		Gizmo::main->_flags = Gizmo::main->_flags | GizmoFlags::WorldPivot;
 	}
+    if (ImGui::Button("Custom"))
+    {
+        Gizmo::main->_flags = Gizmo::main->_flags | GizmoFlags::Custom;
+    }
 }
 
 void ImguiManager::ComputeController()

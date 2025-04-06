@@ -71,3 +71,11 @@ void PhysicsComponent::Destroy()
 	Component::Destroy();
 }
 
+int PhysicsComponent::GetPhysicsGroupID(const std::shared_ptr<GameObject>& obj)
+{
+	auto groupId = obj->GetInstanceID();
+	if (auto obj2 = obj->GetComponentWithParents<PhysicsComponent>())
+		groupId = obj2->GetOwner()->GetInstanceID();
+	return groupId;
+}
+
