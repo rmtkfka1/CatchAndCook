@@ -39,7 +39,6 @@ public:
 	void RemoveAColliderForRay(const std::shared_ptr<Collider>& collider);
 	void RemoveCollider(const std::shared_ptr<Collider>& collider);
 	void Update();
-	void UpdateDynamicCells();
 
 	bool CollisionCheckDirect(CollisionType type, BoundingUnion bound);
 	bool CollisionCheckDirect(CollisionType type, BoundingUnion bound, std::shared_ptr<Collider>& collider);
@@ -50,6 +49,7 @@ public:
 	std::unordered_set<std::shared_ptr<Collider>>& GetCollisionList(const std::shared_ptr<Collider>& src);
 
 private:
+	void UpdateDynamicCells();
 	void CallBackBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
 	void CallBackEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
 	bool TotalCheckCollision(const std::shared_ptr<Collider>& a, const std::shared_ptr<Collider>& b);
@@ -59,7 +59,6 @@ public:
 	RayHit RayCast(const Ray& ray, const float& dis, shared_ptr<GameObject>& owner) const;
 	RayHit RayCastForMyCell(const Ray& ray, const float& dis, shared_ptr<GameObject>& owner) ;
 	bool RayCastAll(const Ray& ray, const float& dis, std::vector<RayHit>& hitList) const;
-
 	static bool RayCastAll(const std::vector<std::shared_ptr<Collider>>& colliders, const Ray& ray, const float& dis, std::vector<RayHit>& hitList);
 
 public:

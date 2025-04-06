@@ -175,6 +175,7 @@ void ColliderManager::RemoveCollider(const std::shared_ptr<Collider>& collider)
 		else if (collider->GetOwner()->GetType() == GameObjectType::Dynamic)
 		{
 			auto it = _dynamicColliderGrids.find(cell);
+
 			if (it != _dynamicColliderGrids.end())
 			{
 				auto& colliders = it->second;
@@ -290,6 +291,7 @@ void ColliderManager::Update()
 	}
 
 	UpdateDynamicCells();
+
 	for (auto& [cell, colliders] : _dynamicColliderGrids)
 	{
 		if (colliders.size() <= 1  && _staticColliderGrids[cell].size() ==0 ) continue;
@@ -337,6 +339,7 @@ void ColliderManager::UpdateDynamicCells()
 	for (auto& collider : _dynamicColliderList)
 	{
 		auto occupiedCells = GetOccupiedCells(collider);
+
 		for (const auto& cell : occupiedCells)
 		{
 			if (std::ranges::find(_dynamicColliderGrids[cell], collider) == _dynamicColliderGrids[cell].end())

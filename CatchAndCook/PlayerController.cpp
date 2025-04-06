@@ -37,8 +37,7 @@ void PlayerController::Start()
 void PlayerController::Update()
 {
 	Component::Update();
-
-	ColliderManager::main->UpdateDynamicCells();
+	//ColliderManager::main->UpdateDynamicCells();
 	CameraControl();
 	MoveControl();
 

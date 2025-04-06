@@ -14,7 +14,9 @@ public:
 		_writeOffsetIndex++;
 		_writeByteOffset += sizeof(T);
 	}
-	void* AllocPtr(int byteSize) {
+
+	void* AllocPtr(int byteSize) 
+	{
 		auto resultPtr = static_cast<uint8*>(_mappedData) + _writeByteOffset;
 		_writeOffsetIndex++;
 		_writeByteOffset += byteSize;

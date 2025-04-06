@@ -47,12 +47,7 @@ void Transform::Update()
 {
 	Component::Update();
 
-    //if(_useTerrain)
-    /*{
-        vec3 world = GetWorldPosition();
-		auto height= TerrainManager::main->GetTerrains()[0]->GetWorldHeight(world);
-		SetWorldPosition(vec3(world.x,height,world.z));
-    }*/
+   
 }
 
 void Transform::Update2()
