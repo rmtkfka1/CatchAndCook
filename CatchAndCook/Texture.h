@@ -69,8 +69,14 @@ private:
 	static D3D12_CPU_DESCRIPTOR_HANDLE _SharedDSVHandle;
 	D3D12_CPU_DESCRIPTOR_HANDLE _dsvHandle;
 	DXGI_FORMAT _format;
+	TextureUsageFlags _usageFlags;
+	bool _jump = false;
+	bool _detphShared = false;
+	vec4 _clearValue = vec4::One;
 public:
 	D3D12_RESOURCE_STATES _state; // 추적용
 
+
+	friend class Core;
 };
 

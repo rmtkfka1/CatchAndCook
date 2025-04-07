@@ -304,7 +304,6 @@
     <ClCompile Include="WallSlideController.cpp">
       <Filter>03.Component</Filter>
     </ClCompile>
-    <ClCompile Include="IUnit.cpp" />
     <ClCompile Include="NavMesh.cpp">
       <Filter>03.Component</Filter>
     </ClCompile>
@@ -337,6 +336,12 @@
     </ClCompile>
     <ClCompile Include="PathFinder.cpp">
       <Filter>03.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="LightComponent.cpp">
+      <Filter>03.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="IUnit.cpp">
+      <Filter>997.Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -596,7 +601,6 @@
     <ClInclude Include="WallSlideController.h">
       <Filter>03.Component</Filter>
     </ClInclude>
-    <ClInclude Include="IUnit.h" />
     <ClInclude Include="NavMesh.h">
       <Filter>03.Component</Filter>
     </ClInclude>
@@ -634,6 +638,12 @@
       <Filter>03.Component</Filter>
     </ClInclude>
     <ClInclude Include="GameObjectSetting.h" />
+    <ClInclude Include="LightComponent.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="IUnit.h">
+      <Filter>997.Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -728,6 +738,18 @@
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Plant.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\PlayerShader.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\final_MainField.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Light_Forward_t31.hlsl">
+      <Filter>998.HLSL\Module</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\vignette.hlsl">
+      <Filter>998.HLSL\Compute</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

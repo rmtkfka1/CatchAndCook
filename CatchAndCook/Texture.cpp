@@ -322,6 +322,12 @@ void Texture::ResourceBarrier(D3D12_RESOURCE_STATES after)
 
 void Texture::CreateStaticTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalState, uint32 width, uint32 height, TextureUsageFlags usageFlags ,bool jump, bool detphShared, vec4 clearValue )
 {
+    _format = format;
+    _usageFlags = usageFlags;
+    _jump = jump;
+    _detphShared = detphShared;
+    _clearValue = clearValue;
+
     D3D12_RESOURCE_DESC desc = CD3DX12_RESOURCE_DESC::Tex2D(format, width, height);
     desc.MipLevels = 1;
     desc.Flags = D3D12_RESOURCE_FLAG_NONE;
@@ -423,6 +429,8 @@ void Texture::CreateStaticTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES init
 
 void Texture::CreateDynamicTexture(DXGI_FORMAT format, uint32 width, uint32 height)
 {
+    _format = format;
+
     D3D12_RESOURCE_DESC desc = {};
     desc.MipLevels = 1;
     desc.Format = format;

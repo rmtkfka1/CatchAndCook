@@ -45,6 +45,7 @@ public:
 	ComPtr<ID3D12DescriptorHeap>& GetImguiHeap() { return _imguiHeap; }
 
 	void CopyDepthTexture(const std::shared_ptr<Texture>& destDSTexture, const std::shared_ptr<Texture>& sourceDSTexture);
+	void ResizeTexture(std::shared_ptr<Texture>& texture, int w, int h);
 
 private:
 	void InitDirectX12();

@@ -108,12 +108,14 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float4 BaseColor = _BaseMap.Sample(sampler_lerp, input.uv * _baseMapST.xy + _baseMapST.zw) * color;
     float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
 
-    float4 d = input.positionCS;
+    //float4 d = input.positionCS;
     //d/w
 
-    float2 a = TransformClipToScreen(input.positionCS);
+    //float2 a = TransformClipToScreen(input.positionCS);
     
-    return saturate(DepthTexture.Sample(sampler_lerp, TransformClipToScreen(input.positionCS)).r);
+    //return saturate(DepthTexture.Sample(sampler_lerp, TransformClipToScreen(input.positionCS)).r);
+
+    //return lightColor;
 
     return lerp(ShadowColor * BaseColor, BaseColor, saturate(dot(normalize(float3(1, 2, 1)), N)));
 }

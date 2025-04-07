@@ -132,6 +132,7 @@ void Core::ResizeWindowSize()
     Fence();
     _renderTarget->ResizeWindowSize(_swapChain,_swapChainFlags);
     _gBuffer->Init();
+    ResizeTexture(_dsReadTexture, WINDOW_WIDTH, WINDOW_HEIGHT);
 	ComputeManager::main->Resize();
 
 }
@@ -171,6 +172,25 @@ void Core::CopyDepthTexture(const std::shared_ptr<Texture>& destDSTexture, const
 
     sourceDSTexture->ResourceBarrier(prevSourceState);
     destDSTexture->ResourceBarrier(prevDestState);
+}
+
+void Core::ResizeTexture(std::shared_ptr<Texture>& texture, int w, int h)
+{
+
+    if (HasFlag(texture->_usageFlags, TextureUsageFlags::RTV)) {
+        Core::main->GetBufferManager()->GetTextureBufferPool()->FreeRTVHandle(texture->GetRTVCpuHandle());
+    }
+    if (HasFlag(texture->_usageFlags, TextureUsageFlags::UAV)) {
+        Core::main->GetBufferManager()->GetTextureBufferPool()->FreeSRVHandle(texture->GetUAVCpuHandle());
+    }
+    if (HasFlag(texture->_usageFlags, TextureUsageFlags::SRV)) {
+        Core::main->GetBufferManager()->GetTextureBufferPool()->FreeSRVHandle(texture->GetSRVCpuHandle());
+    }
+    if (HasFlag(texture->_usageFlags, TextureUsageFlags::DSV)) {
+        Core::main->GetBufferManager()->GetTextureBufferPool()->FreeDSVHandle(texture->GetDSVCpuHandle());
+    }
+
+    texture->CreateStaticTexture(texture->GetFormat(), D3D12_RESOURCE_STATE_COMMON, w, h, texture->_usageFlags, texture->_jump, texture->_detphShared);
 }
 
 void Core::InitDirectX12()
