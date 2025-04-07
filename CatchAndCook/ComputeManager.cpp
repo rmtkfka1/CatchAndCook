@@ -525,21 +525,10 @@ void VignetteRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x,
 	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 	_tableContainer = table->Alloc(8);
 
-	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
-	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
-
 	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
 	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
-	auto& PositionTexture = Core::main->GetGBuffer()->GetTexture(0);
-	PositionTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
-
-	auto& NormalTexture = Core::main->GetGBuffer()->GetTexture(1);
-	NormalTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
-
-	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 0);
 	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
-	table->CopyHandle(_tableContainer.CPUHandle, NormalTexture->GetSRVCpuHandle(), 2);
 	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 4);
 
 	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
@@ -555,8 +544,6 @@ void VignetteRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x,
 	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
 	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
 	cmdList->CopyResource(renderTarget->GetResource().Get(), _pingTexture->GetResource().Get());
-
-	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_DEPTH_WRITE);
 }
 
 void VignetteRender::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
