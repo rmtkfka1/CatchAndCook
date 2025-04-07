@@ -45,7 +45,7 @@ void PathFinder::Update()
     if (dir.LengthSquared() > 0.0001f)
     {
         dir.Normalize();
-        GetOwner()->_transform->LookUpSmooth(dir, vec3::Up,5.0f,_firstQuat);
+        GetOwner()->_transform->LookUpSmooth(dir, vec3::Up,3.0f,_firstQuat);
     }
 
     if (t >= 1.0f)

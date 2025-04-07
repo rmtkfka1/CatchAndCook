@@ -158,8 +158,8 @@ void LightingTest::Init()
 		{
 			auto finder =plant->AddComponent<PathFinder>();
 			finder->ReadPathFile(L"BezierData.txt");
-
-			cout << "찾앗다 슈발" << endl;
+			finder->SetMoveSpeed(300.0f);
+			finder->SetStartIndex(30);
 		}
 	}
 
@@ -170,8 +170,20 @@ void LightingTest::Init()
 		{
 			auto finder = plant->AddComponent<PathFinder>();
 			finder->ReadPathFile(L"BezierData.txt");
+			finder->SetMoveSpeed(250.0f);
+			finder->SetStartIndex(100);
+		}
+	}
 
-			cout << "찾앗다 슈발2" << endl;
+	{
+		auto plant = Find(L"4");
+
+		if (plant)
+		{
+			auto finder = plant->AddComponent<PathFinder>();
+			finder->ReadPathFile(L"BezierData.txt");
+			finder->SetMoveSpeed(50.0f);
+			finder->SetStartIndex(150);
 		}
 	}
 

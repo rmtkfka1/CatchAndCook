@@ -19,6 +19,9 @@ public:
 
 public:
 	void ReadPathFile(const std::wstring& fileName);
+	void SetMoveSpeed(float speed) { moveSpeed = speed; }
+	void SetStartIndex(int index) { currentIndex = index; }
+
 
 private:
 	vector<vec3> _controllPoints;
