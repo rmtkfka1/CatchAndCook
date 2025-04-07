@@ -16,6 +16,7 @@
 #include "Transform.h"
 #include "GameObject.h"
 #include "MeshRenderer.h"
+#include "PathFinder.h"
 void Scene::AddGameObject(const std::shared_ptr<GameObject>& gameObject)
 {
 	gameObject->SetScene(GetCast<Scene>());
@@ -315,6 +316,7 @@ void Scene::Finish()
 {
     Gizmo::main->Clear();
     Scene::ExecuteDestroyGameObjects();
+    PathFinder::ClearDebugDraw();
     GameObject::ExecuteDestroyComponents();
 }
 

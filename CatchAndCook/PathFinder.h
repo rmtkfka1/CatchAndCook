@@ -1,5 +1,14 @@
 ﻿#pragma once
 #include "Component.h"
+
+
+struct FishPath
+{
+	vector<vec3> path;
+	bool AreyouDraw = false;
+};
+
+
 class PathFinder :public Component
 {
 
@@ -18,20 +27,20 @@ public:
 	bool IsExecuteAble() { return true; };
 
 public:
-	void ReadPathFile(const std::wstring& fileName);
 	void SetMoveSpeed(float speed) { moveSpeed = speed; }
 	void SetStartIndex(int index) { currentIndex = index; }
-
-
+	void SetPass(const wstring& path);
+	static void ClearDebugDraw();
 private:
-	vector<vec3> _paths;
+	void ReadPathFile(const std::wstring& fileName);
+private:
+	static unordered_map<wstring, FishPath> _pathList;
 
 	int currentIndex = 0;
 	float moveSpeed = 200.0f; 
 	float distanceMoved = 0.0f;
 	float segmentLength = 0.0f;
-
-
+	wstring _pathName = L"Null";
 	Quaternion _firstQuat;
 
 };

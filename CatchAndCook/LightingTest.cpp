@@ -157,7 +157,7 @@ void LightingTest::Init()
 		if (plant)
 		{
 			auto finder =plant->AddComponent<PathFinder>();
-			finder->ReadPathFile(L"BezierData.txt");
+			finder->SetPass(L"BezierData.txt");
 			finder->SetMoveSpeed(300.0f);
 			finder->SetStartIndex(30);
 		}
@@ -169,7 +169,7 @@ void LightingTest::Init()
 		if (plant)
 		{
 			auto finder = plant->AddComponent<PathFinder>();
-			finder->ReadPathFile(L"BezierData.txt");
+			finder->SetPass(L"BezierData.txt");
 			finder->SetMoveSpeed(250.0f);
 			finder->SetStartIndex(100);
 		}
@@ -181,7 +181,7 @@ void LightingTest::Init()
 		if (plant)
 		{
 			auto finder = plant->AddComponent<PathFinder>();
-			finder->ReadPathFile(L"BezierData.txt");
+			finder->SetPass(L"BezierData.txt");
 			finder->SetMoveSpeed(50.0f);
 			finder->SetStartIndex(150);
 		}

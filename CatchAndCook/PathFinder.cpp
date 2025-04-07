@@ -3,6 +3,9 @@
 #include "Transform.h"
 #include "Gizmo.h"
 #include "simple_mesh_ext.h"
+
+unordered_map<wstring, FishPath> PathFinder::_pathList;
+
 PathFinder::PathFinder()
 {
 }
@@ -22,12 +25,13 @@ void PathFinder::Start()
 
 void PathFinder::Update()
 {
+    if (_pathList[_pathName].path.size() < 2 && _pathName ==L"Null")
+		assert(false);
 
-    if (_paths.size() < 2)
-        return;
+	vector<vec3>& myPath = _pathList[_pathName].path;
 
-    vec3 start = _paths[currentIndex];
-    vec3 end = _paths[(currentIndex + 1) % _paths.size()];
+    vec3 start = myPath[currentIndex];
+    vec3 end = myPath[(currentIndex + 1) % myPath.size()];
 
     if (segmentLength == 0.0f)
         segmentLength = (end - start).Length();
@@ -48,20 +52,27 @@ void PathFinder::Update()
 
     if (t >= 1.0f)
     {
-        currentIndex = (currentIndex + 1) % _paths.size();
+        currentIndex = (currentIndex + 1) % myPath.size();
         distanceMoved = 0.0f;
         segmentLength = 0.0f;
     }
 
-    for (size_t i = 0; i < _paths.size() - 1; ++i)
-    {
-        Gizmo::main->Line(_paths[i], _paths[i + 1], vec4(1, 1, 0, 1));
-    }
 
-    if (_paths.size() >= 2)
-    {
-        Gizmo::main->Line(_paths.back(), _paths.front(), vec4(1, 1, 0, 1));
-    }
+	if (_pathList[_pathName].AreyouDraw==false)
+	{
+        for (size_t i = 0; i < myPath.size() - 1; ++i)
+        {
+            Gizmo::main->Line(myPath[i], myPath[i + 1], vec4(1, 1, 0, 1));
+        }
+
+        if (myPath.size() >= 2)
+        {
+            Gizmo::main->Line(myPath.back(), myPath.front(), vec4(1, 1, 0, 1));
+        }
+
+		_pathList[_pathName].AreyouDraw = true;
+	}
+
 };
 void PathFinder::Update2()
 {
@@ -96,23 +107,38 @@ void PathFinder::ReadPathFile(const std::wstring& fileName)
         return;
     }
 
-    _paths.clear();
 
     std::string line;
- 
+
     while (std::getline(file, line))
     {
         if (line.empty()) continue;
-
-      
 
         std::istringstream ss(line);
         float x, y, z;
         ss >> x >> y >> z;
         vec3 point(x, y, z);
-        _paths.push_back(point);
+        _pathList[fileName].path.push_back(point);
     }
 
     file.close();
-     cout << "라인 데이터: " << _paths.size() << "개 읽음." << std::endl;
+     cout << "라인 데이터: " << _pathList[fileName].path.size() << "개 읽음." << std::endl;
+}
+
+void PathFinder::ClearDebugDraw()
+{
+	for (auto& path : _pathList)
+	{
+		path.second.AreyouDraw = false;
+	}
+}
+
+void PathFinder::SetPass(const wstring& path)
+{
+    if (_pathList.find(path) == _pathList.end())
+    {
+        ReadPathFile(path);
+    }
+
+    _pathName = path;
 }
