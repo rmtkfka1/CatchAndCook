@@ -52,6 +52,9 @@ void Core::Init(HWND hwnd)
 	_gBuffer = make_shared<GBuffer>();
 	_gBuffer->Init();
 
+	_dsReadTexture = make_shared<Texture>();
+	_dsReadTexture->CreateStaticTexture(DXGI_FORMAT_R32_TYPELESS, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::SRV, false, true);
+
     _rootSignature = make_shared<RootSignature>();
     _rootSignature->Init();
 
@@ -154,6 +157,21 @@ void Core::Fence()
 }
 
 
+void Core::CopyDepthTexture(const std::shared_ptr<Texture>& destDSTexture, const std::shared_ptr<Texture>& sourceDSTexture)
+{
+    ComPtr<ID3D12GraphicsCommandList> cmdList = Core::main->GetCmdList();
+
+    auto prevDestState = destDSTexture->_state;
+    auto prevSourceState = sourceDSTexture->_state;
+
+    sourceDSTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
+    destDSTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
+
+    cmdList->CopyResource(destDSTexture->GetResource().Get(), sourceDSTexture->GetResource().Get());
+
+    sourceDSTexture->ResourceBarrier(prevSourceState);
+    destDSTexture->ResourceBarrier(prevDestState);
+}
 
 void Core::InitDirectX12()
 {

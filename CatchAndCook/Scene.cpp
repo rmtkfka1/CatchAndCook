@@ -101,10 +101,21 @@ void Scene::Rendering()
     FinalRender(cmdList);
     Profiler::Fin();
 
+    Core::main->CopyDepthTexture(Core::main->GetDSReadTexture(), Core::main->GetRenderTarget()->GetDSTexture());
+    Core::main->GetDSReadTexture()->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
 	//
     Profiler::Set("PASS : Forward", BlockTag::GPU);
     ForwardPass(cmdList);
     Profiler::Fin();
+
+    Core::main->CopyDepthTexture(Core::main->GetDSReadTexture(), Core::main->GetRenderTarget()->GetDSTexture());
+    Core::main->GetDSReadTexture()->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+
+    Gizmo::main->Image(Core::main->GetDSReadTexture(),
+        CameraManager::main->GetActiveCamera()->GetCameraPos() + CameraManager::main->GetActiveCamera()->GetCameraLook(),
+        CameraManager::main->GetActiveCamera()->GetCameraLook(), CameraManager::main->GetActiveCamera()->GetCameraUp());
 
     //
     Profiler::Set("PASS : Transparent", BlockTag::GPU);
@@ -331,6 +342,12 @@ void Scene::GlobalSetting()
 
     cmdList->SetGraphicsRootConstantBufferView(0,CbufferContainer->GPUAdress);
     cmdList->SetComputeRootConstantBufferView(0, CbufferContainer->GPUAdress);
+
+
+    auto& table = Core::main->GetBufferManager()->GetTable();
+    tableContainer container = Core::main->GetBufferManager()->GetTable()->Alloc(1);
+    table->CopyHandle(container.CPUHandle, Core::main->GetDSReadTexture()->GetSRVCpuHandle(), 0);
+    cmdList->SetGraphicsRootDescriptorTable(GLOBAL_SRV_DEPTH_INDEX, container.GPUHandle);
 }
 
 void Scene::SettingPrevData(RenderObjectStrucutre& data, const RENDER_PASS::PASS& pass)

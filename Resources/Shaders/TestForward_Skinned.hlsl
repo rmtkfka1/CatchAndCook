@@ -36,7 +36,8 @@ struct VS_IN
 
 struct VS_OUT
 {
-    float4 positionCS : SV_Position;
+    float4 position : SV_Position;
+    float4 positionCS : PositionCS;
     float4 positionWS : PositionWS;
     float3 normalOS : NormalOS;
     float3 normalWS : NormalWS;
@@ -81,6 +82,8 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 #endif
     output.positionCS = TransformWorldToClip(output.positionWS);
 
+    output.position = output.positionCS;
+
 #ifdef INSTANCED
 		output.normalWS = TransformNormalLocalToWorld(output.normalOS, boneIds, boneWs, w2lMatrix);
 		output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix);
@@ -104,6 +107,13 @@ float4 PS_Main(VS_OUT input) : SV_Target
     
     float4 BaseColor = _BaseMap.Sample(sampler_lerp, input.uv * _baseMapST.xy + _baseMapST.zw) * color;
     float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
+
+    float4 d = input.positionCS;
+    //d/w
+
+    float2 a = TransformClipToScreen(input.positionCS);
+    
+    return saturate(DepthTexture.Sample(sampler_lerp, TransformClipToScreen(input.positionCS)).r);
 
     return lerp(ShadowColor * BaseColor, BaseColor, saturate(dot(normalize(float3(1, 2, 1)), N)));
 }

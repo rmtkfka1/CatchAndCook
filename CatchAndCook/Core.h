@@ -39,9 +39,12 @@ public:
 	ComPtr<ID3D12CommandQueue>& GetCmdQueue() { return _cmdQueue; }
 	shared_ptr<RenderTarget>& GetRenderTarget() { return _renderTarget; }
 	shared_ptr<GBuffer>& GetGBuffer() {return _gBuffer;}
+	shared_ptr<Texture>& GetDSReadTexture() { return _dsReadTexture; }
 	shared_ptr<RootSignature>& GetRootSignature() { return _rootSignature; }
 	shared_ptr<BufferManager>& GetBufferManager() { return _bufferManager; }
 	ComPtr<ID3D12DescriptorHeap>& GetImguiHeap() { return _imguiHeap; }
+
+	void CopyDepthTexture(const std::shared_ptr<Texture>& destDSTexture, const std::shared_ptr<Texture>& sourceDSTexture);
 
 private:
 	void InitDirectX12();
@@ -55,6 +58,8 @@ private:
 private:
 	shared_ptr<GBuffer> _gBuffer;
 	shared_ptr<RenderTarget> _renderTarget;
+	shared_ptr<Texture> _dsReadTexture;
+
 	shared_ptr<RootSignature> _rootSignature;
 	shared_ptr<BufferManager> _bufferManager;
 

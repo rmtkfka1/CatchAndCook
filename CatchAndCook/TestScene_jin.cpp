@@ -67,7 +67,7 @@ void TestScene_jin::Init()
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"cubemap", L"cubemap.hlsl", GeoMetryProp,
 			ShaderArg{}, info);
 
-		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"cubemap", L"Textures/cubemap/FS000_Day_02.png.dds", TextureType::CubeMap);
+		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"cubemap", L"Textures/cubemap/FS000_Day_05_Sunless.dds", TextureType::CubeMap);
 		shared_ptr<Material> material = make_shared<Material>();
 
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"cubeMap");

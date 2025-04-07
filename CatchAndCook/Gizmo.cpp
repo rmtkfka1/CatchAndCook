@@ -307,7 +307,7 @@ void Gizmo::Rendering(Material* material, Mesh* mesh, int instanceCount)
 	cmdList->DrawInstanced(2, lineDatas.size(),0,0);
 
 
-
+    
 }
 
 

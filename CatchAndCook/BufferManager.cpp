@@ -29,9 +29,9 @@ void BufferManager::Init()
 		CreateBufferPool(BufferType::LightParam,sizeof(LightParams),1);
 
 		CreateBufferPool(BufferType::BoneParam,sizeof(BoneParam),256);
-		CreateBufferPool(BufferType::SeaParam, sizeof(TerrainDetailsParam), 1);
-		CreateBufferPool(BufferType::FogParam, sizeof(FogParam), 1);
-		CreateBufferPool(BufferType::UnderWaterParam, sizeof(UnderWaterParam), 1);
+		CreateBufferPool(BufferType::SeaParam, sizeof(TerrainDetailsParam), 5);
+		CreateBufferPool(BufferType::FogParam, sizeof(FogParam), 5);
+		CreateBufferPool(BufferType::UnderWaterParam, sizeof(UnderWaterParam), 5);
 		CreateBufferPool(BufferType::PlantInfo, sizeof(PlantInfo), 10);
 
 

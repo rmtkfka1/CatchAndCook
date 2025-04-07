@@ -103,7 +103,6 @@ void RenderTarget::ClearDepth()
 }
 
 
-
 void RenderTarget::ChangeIndex()
 {
 	_RenderTargetIndex = _swapChain->GetCurrentBackBufferIndex();
@@ -149,11 +148,11 @@ void GBuffer::Init()
 	}
 
 	//position 정보
-	_textures[0]->CreateStaticTexture(DXGI_FORMAT_R32G32B32A32_FLOAT,D3D12_RESOURCE_STATE_COMMON,WINDOW_WIDTH,WINDOW_HEIGHT,TextureUsageFlags::RTV| TextureUsageFlags::SRV | TextureUsageFlags::UAV,false,true);
+	_textures[0]->CreateStaticTexture(DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_RESOURCE_STATE_COMMON,WINDOW_WIDTH,WINDOW_HEIGHT,TextureUsageFlags::RTV| TextureUsageFlags::SRV | TextureUsageFlags::UAV,false,true);
 	//normal 정보
-	_textures[1]->CreateStaticTexture(DXGI_FORMAT_R32G32B32A32_FLOAT,D3D12_RESOURCE_STATE_COMMON,WINDOW_WIDTH,WINDOW_HEIGHT,TextureUsageFlags::RTV | TextureUsageFlags::SRV | TextureUsageFlags::UAV,false,true);
+	_textures[1]->CreateStaticTexture(DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_RESOURCE_STATE_COMMON,WINDOW_WIDTH,WINDOW_HEIGHT,TextureUsageFlags::RTV | TextureUsageFlags::SRV | TextureUsageFlags::UAV,false,true);
 	//color 정보
-	_textures[2]->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM,D3D12_RESOURCE_STATE_COMMON,WINDOW_WIDTH,WINDOW_HEIGHT,TextureUsageFlags::RTV | TextureUsageFlags::SRV | TextureUsageFlags::UAV,false,true);
+	_textures[2]->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON,WINDOW_WIDTH,WINDOW_HEIGHT,TextureUsageFlags::RTV | TextureUsageFlags::SRV | TextureUsageFlags::UAV,false,true);
 	
 }
 
@@ -192,7 +191,7 @@ void GBuffer::RenderEnd()
 	{
 		tableContainer container = table->Alloc(1);
 		table->CopyHandle(container.CPUHandle,_textures[i]->GetSRVCpuHandle(),0);
-		list->SetGraphicsRootDescriptorTable(GLOBAL_SRV_POSITION_INDEX+i,container.GPUHandle);
+		list->SetGraphicsRootDescriptorTable(GLOBAL_SRV_POSITION_INDEX+i, container.GPUHandle);
 	}
 }
 
