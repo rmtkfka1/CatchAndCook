@@ -30,8 +30,8 @@ void PathFinder::Update()
 
 	const vector<vec3>& myPath = _pathList[_pathName].path;
 
-    vec3 start = myPath[_currentIndex];
-    vec3 end = myPath[(_currentIndex + 1) % myPath.size()];
+    const vec3& start = myPath[_currentIndex];
+    const vec3& end = myPath[(_currentIndex + 1) % myPath.size()];
 
     if (_segmentLength == 0.0f)
         _segmentLength = (end - start).Length();
