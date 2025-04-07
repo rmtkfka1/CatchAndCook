@@ -113,10 +113,6 @@ void Scene::Rendering()
     Core::main->GetDSReadTexture()->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
 
-    Gizmo::main->Image(Core::main->GetDSReadTexture(),
-        CameraManager::main->GetActiveCamera()->GetCameraPos() + CameraManager::main->GetActiveCamera()->GetCameraLook(),
-        CameraManager::main->GetActiveCamera()->GetCameraLook(), CameraManager::main->GetActiveCamera()->GetCameraUp());
-
     //
     Profiler::Set("PASS : Transparent", BlockTag::GPU);
     TransparentPass(cmdList); // Position,

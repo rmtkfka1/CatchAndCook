@@ -563,6 +563,82 @@ void VignetteRender::Resize()
 
 }
 
+SSAORender::SSAORender()
+{
+}
+
+SSAORender::~SSAORender()
+{
+}
+
+void SSAORender::Init()
+{
+	_pingTexture = make_shared<Texture>();
+	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+
+	_shader = make_shared<Shader>();
+	ShaderInfo info;
+	info._computeShader = true;
+	_shader->Init(L"SSAO.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
+}
+
+void SSAORender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	cmdList->SetPipelineState(_shader->_pipelineState.Get());
+	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	_tableContainer = table->Alloc(8);
+
+	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
+	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	auto& NormalTexture = Core::main->GetGBuffer()->GetTexture(1);
+	NormalTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	auto& PositionTexture = Core::main->GetGBuffer()->GetTexture(0);
+	PositionTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 0);
+	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
+	table->CopyHandle(_tableContainer.CPUHandle, PositionTexture->GetSRVCpuHandle(), 2);
+	table->CopyHandle(_tableContainer.CPUHandle, NormalTexture->GetSRVCpuHandle(), 3);
+	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 4);
+
+	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+
+
+	cmdList->Dispatch(x, y, z);
+
+
+	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
+	cmdList->CopyResource(renderTarget->GetResource().Get(), _pingTexture->GetResource().Get());
+
+	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_DEPTH_WRITE);
+}
+
+void SSAORender::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+
+}
+
+void SSAORender::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+
+}
+
+void SSAORender::Resize()
+{
+	auto& textureBufferPool = Core::main->GetBufferManager()->GetTextureBufferPool();
+	textureBufferPool->FreeSRVHandle(_pingTexture->GetUAVCpuHandle());
+
+	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+
+}
+
 
 /*************************
 *	ComputeManager       *
@@ -585,6 +661,8 @@ void ComputeManager::Init()
 	_vignetteRender = make_shared<VignetteRender>();
 	_vignetteRender->Init();
 
+	_ssaoRender = make_shared<SSAORender>();
+	_ssaoRender->Init();
 
 }
 
@@ -608,6 +686,8 @@ void ComputeManager::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
 	_vignetteRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
+	_ssaoRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+
 	Core::main->GetRenderTarget()->GetRenderTarget()->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 }
@@ -619,6 +699,7 @@ void ComputeManager::Resize()
 	_depthRender->Resize();
 	_underWaterEffect->Resize();
 	_vignetteRender->Resize();
+	_ssaoRender->Resize();
 }
 
 

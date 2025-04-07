@@ -217,7 +217,30 @@ private:
 	friend class ComputeManager;
 };
 
+class SSAORender : public ComputeBase
+{
 
+public:
+	SSAORender();
+	virtual ~SSAORender();
+
+public:
+	virtual void Init();
+	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+
+private:
+	virtual void Resize();
+
+private:
+	shared_ptr<Texture> _pingTexture;
+	shared_ptr<Shader> _shader;
+
+	friend class ComputeManager;
+};
 
 
 class ComputeManager 
@@ -237,6 +260,7 @@ private:
 	shared_ptr<UnderWaterEffect> _underWaterEffect;
 
 	shared_ptr<VignetteRender> _vignetteRender;
+	shared_ptr<SSAORender> _ssaoRender;
 
 };
 
