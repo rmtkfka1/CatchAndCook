@@ -66,7 +66,6 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
 
     //resultTexture[texCoord.xy] = vig;
     resultTexture[texCoord.xy] = float4(color * (1 - invMask) + (1 - color) * vignetteColor * invMask, 1.0f); // color.xyz *
-    resultTexture[texCoord] =  PositionT[texCoord.xy];
     return;
 
     //float Height = PositionT.SampleLevel(sampler_lerp, uv, 0).y;
