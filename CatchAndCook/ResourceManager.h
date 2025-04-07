@@ -57,6 +57,11 @@ public:
     std::shared_ptr<Texture> _noneTexture;
     std::shared_ptr<Texture> _noneTexture_debug;
     std::shared_ptr<Texture> _bakedGITexture;
+
+
+    shared_ptr<Material> _depthNormal;
+    shared_ptr<Material> _depthNormal_Skinned;
+	shared_ptr<Material> _depthNormal_Instanced;
 };
 
 template<typename T>

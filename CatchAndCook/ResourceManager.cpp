@@ -144,6 +144,62 @@ void ResourceManager::CreateDefaultShader()
 		info._zTest = true;
 		info._stencilTest = false;
 
+		info.renderTargetCount = 3;
+
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->Init(L"ForwardPreDepthNormal.hlsl", StaticProp, ShaderArg{}, info);
+		Add<Shader>(L"DepthNormal", shader);
+	}
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+
+		info.renderTargetCount = 3;
+
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetMacro({ {"SKINNED",nullptr} });
+		shader->Init(L"ForwardPreDepthNormal.hlsl", SkinProp, ShaderArg{}, info);
+		Add<Shader>(L"DepthNormal_Skinned", shader);
+	}
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+
+		info.renderTargetCount = 3;
+
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetMacro({ {"INSTANCED",nullptr} });
+		shader->SetInstanceProp(TransformInstanceProp);
+		shader->Init(L"ForwardPreDepthNormal.hlsl", SkinProp, ShaderArg{}, info);
+		Add<Shader>(L"DepthNormal_Instanced", shader);
+	}
+
+
+	//ForwardPreDepthNormal.hlsl
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetInjector({ BufferType::DefaultMaterialParam, BufferType::PlayerMaterialParam });
 		shader->SetMacro({ {"SKINNED",nullptr} });
@@ -184,6 +240,17 @@ void ResourceManager::CreateDefaultShader()
 
 void ResourceManager::CreateDefaultMaterial()
 {
+	_depthNormal = std::make_shared<Material>();
+	_depthNormal->SetShader(ResourceManager::main->Get<Shader>(L"DepthNormal"));
+	_depthNormal->SetPass(RENDER_PASS::Deffered);
+
+	_depthNormal_Skinned = std::make_shared<Material>();
+	_depthNormal_Skinned->SetShader(ResourceManager::main->Get<Shader>(L"DepthNormal_Skinned"));
+	_depthNormal_Skinned->SetPass(RENDER_PASS::Deffered);
+
+	_depthNormal_Instanced = std::make_shared<Material>();
+	_depthNormal_Instanced->SetShader(ResourceManager::main->Get<Shader>(L"DepthNormal_Instanced"));
+	_depthNormal_Instanced->SetPass(RENDER_PASS::Deffered);
 }
 
 void ResourceManager::CreateDefaultTexture()

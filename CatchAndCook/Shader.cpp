@@ -672,7 +672,7 @@ std::shared_ptr<ShaderCode> Shader::LoadBlob(std::wstring path, std::string endP
 
 void Shader::Init(const std::wstring& path, const std::vector<VertexProp>& prop, const ShaderArg& shaderParams, const ShaderInfo& info)
 {
- 
+	_name = to_string(path);
     for (auto& pair : shaderParams.shaderParams)
     {
         auto shaderCodeData = LoadBlob(path, pair.first, pair.second);
