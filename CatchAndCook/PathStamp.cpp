@@ -64,13 +64,6 @@ void PathStamp::Run()
 			return;
 		}
 	
-		file << "# ControlPoints\n";
-		for (const auto& cp : _controllPoint)
-		{
-			file << cp.x << " " << cp.y << " " << cp.z << "\n";
-		}
-
-		file << "# LineData\n";
 		for (const auto& point : _lineData)
 		{
 			file << point.x << " " << point.y << " " << point.z << "\n";

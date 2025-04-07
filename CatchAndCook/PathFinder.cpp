@@ -23,9 +23,7 @@ void PathFinder::Start()
 void PathFinder::Update()
 {
 
-
-
-    if (_paths.size() < 2 || _controllPoints.size() < 2)
+    if (_paths.size() < 2)
         return;
 
     vec3 start = _paths[currentIndex];
@@ -98,40 +96,23 @@ void PathFinder::ReadPathFile(const std::wstring& fileName)
         return;
     }
 
-    _controllPoints.clear();
     _paths.clear();
 
     std::string line;
-    enum class Section { None, ControlPoints, LineData } section = Section::None;
-
+ 
     while (std::getline(file, line))
     {
         if (line.empty()) continue;
 
-        if (line == "# ControlPoints")
-        {
-            section = Section::ControlPoints;
-            continue;
-        }
-        if (line == "# LineData")
-        {
-            section = Section::LineData;
-            continue;
-        }
+      
 
         std::istringstream ss(line);
         float x, y, z;
         ss >> x >> y >> z;
         vec3 point(x, y, z);
-
-        if (section == Section::ControlPoints)
-            _controllPoints.push_back(point);
-        else if (section == Section::LineData)
-            _paths.push_back(point);
+        _paths.push_back(point);
     }
 
     file.close();
-
-    std::cout << "컨트롤 포인트: " << _controllPoints.size() << "개, "
-        << "라인 데이터: " << _paths.size() << "개 읽음." << std::endl;
+     cout << "라인 데이터: " << _paths.size() << "개 읽음." << std::endl;
 }
