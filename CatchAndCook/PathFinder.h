@@ -27,8 +27,8 @@ public:
 	bool IsExecuteAble() { return true; };
 
 public:
-	void SetMoveSpeed(float speed) { moveSpeed = speed; }
-	void SetStartIndex(int index) { currentIndex = index; }
+	void SetMoveSpeed(float speed) { _moveSpeed = speed; }
+	void SetStartIndex(int index) { _currentIndex = index; }
 	void SetPass(const wstring& path);
 	static void ClearDebugDraw();
 private:
@@ -36,10 +36,10 @@ private:
 private:
 	static unordered_map<wstring, FishPath> _pathList;
 
-	int currentIndex = 0;
-	float moveSpeed = 200.0f; 
-	float distanceMoved = 0.0f;
-	float segmentLength = 0.0f;
+	int _currentIndex = 0;
+	float _moveSpeed = 200.0f; 
+	float _distanceMoved = 0.0f;
+	float _segmentLength = 0.0f;
 	wstring _pathName = L"Null";
 	Quaternion _firstQuat;
 

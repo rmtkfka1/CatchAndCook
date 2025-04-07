@@ -28,17 +28,17 @@ void PathFinder::Update()
     if (_pathList[_pathName].path.size() < 2 && _pathName ==L"Null")
 		assert(false);
 
-	vector<vec3>& myPath = _pathList[_pathName].path;
+	const vector<vec3>& myPath = _pathList[_pathName].path;
 
-    vec3 start = myPath[currentIndex];
-    vec3 end = myPath[(currentIndex + 1) % myPath.size()];
+    vec3 start = myPath[_currentIndex];
+    vec3 end = myPath[(_currentIndex + 1) % myPath.size()];
 
-    if (segmentLength == 0.0f)
-        segmentLength = (end - start).Length();
+    if (_segmentLength == 0.0f)
+        _segmentLength = (end - start).Length();
 
-    distanceMoved += Time::main->GetDeltaTime() * moveSpeed;
+    _distanceMoved += Time::main->GetDeltaTime() * _moveSpeed;
 
-    float t = std::clamp(distanceMoved / segmentLength, 0.0f, 1.0f);
+    float t = std::clamp(_distanceMoved / _segmentLength, 0.0f, 1.0f);
     vec3 pos = vec3::Lerp(start, end, t);
     vec3 currentPos = GetOwner()->_transform->SetWorldPosition(pos);
 
@@ -52,9 +52,9 @@ void PathFinder::Update()
 
     if (t >= 1.0f)
     {
-        currentIndex = (currentIndex + 1) % myPath.size();
-        distanceMoved = 0.0f;
-        segmentLength = 0.0f;
+        _currentIndex = (_currentIndex + 1) % myPath.size();
+        _distanceMoved = 0.0f;
+        _segmentLength = 0.0f;
     }
 
 
