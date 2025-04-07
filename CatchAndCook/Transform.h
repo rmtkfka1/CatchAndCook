@@ -64,8 +64,8 @@ public:
     bool TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool isParentUpdate = false);
     bool BottomUpLocalToWorldUpdate();
 
-    void LookUp(const vec3& dir, const vec3& up);
-	void LookUpSmooth(const vec3& dir, const vec3& up, float speed);
+    void LookUp(const vec3& dir, const vec3& up, const Quaternion& orgin = Quaternion::Identity);
+	void LookUpSmooth(const vec3& dir, const vec3& up, float speed , const Quaternion& orgin = Quaternion::Identity);
 
     vec3 LocalToWorld_Position(const vec3& value);
     vec3 LocalToWorld_Direction(const vec3& value);

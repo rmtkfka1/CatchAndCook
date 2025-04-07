@@ -29,5 +29,8 @@ private:
 	float distanceMoved = 0.0f;
 	float segmentLength = 0.0f;
 
+
+	Quaternion _firstQuat;
+
 };
 

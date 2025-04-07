@@ -2,6 +2,7 @@
 #include "PathFinder.h"
 #include "Transform.h"
 #include "Gizmo.h"
+#include "simple_mesh_ext.h"
 PathFinder::PathFinder()
 {
 }
@@ -16,10 +17,14 @@ void PathFinder::Init()
 
 void PathFinder::Start()
 {
+    _firstQuat = GetOwner()->_transform->GetWorldRotation();
 }
 
 void PathFinder::Update()
 {
+
+
+
     if (_paths.size() < 2 || _controllPoints.size() < 2)
         return;
 
@@ -40,7 +45,7 @@ void PathFinder::Update()
     if (dir.LengthSquared() > 0.0001f)
     {
         dir.Normalize();
-       GetOwner()-> _transform->LookUpSmooth(dir,vec3::Up,5.0f);
+        GetOwner()->_transform->LookUpSmooth(dir, vec3::Up,5.0f,_firstQuat);
     }
 
     if (t >= 1.0f)

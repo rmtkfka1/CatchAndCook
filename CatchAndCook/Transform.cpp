@@ -501,18 +501,23 @@ bool Transform::BottomUpLocalToWorldUpdate()
     return false;
 }
 
-void Transform::LookUp(const vec3& dir, const vec3& up)
+
+
+void Transform::LookUp(const vec3& dir, const vec3& up, const Quaternion& orgin)
 {
-    SetWorldRotation(LookToQuaternion(dir, up));
+    SetWorldRotation(orgin * LookToQuaternion(dir, up));
 }
 
-void Transform::LookUpSmooth(const vec3& dir, const vec3& up, float speed)
+void Transform::LookUpSmooth(const vec3& dir, const vec3& up, float speed, const Quaternion& orgin)
 {
-	Quaternion target = LookToQuaternion(dir, up);
-	Quaternion current = GetWorldRotation();
-	Quaternion result = Quaternion::Slerp(current, target, speed * Time::main->GetDeltaTime());
-	SetWorldRotation(result);
+    Quaternion target = orgin * LookToQuaternion(dir, up);
+    Quaternion current = GetWorldRotation();
+    float delta = speed * Time::main->GetDeltaTime();
+    Quaternion result = Quaternion::Slerp(current, target, delta);
+    SetWorldRotation(result);
 }
+
+
 
 vec3 Transform::LocalToWorld_Position(const vec3& value)
 {
