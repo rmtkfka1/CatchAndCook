@@ -19,8 +19,10 @@ void TestScene_jin::Init()
 {
 	Scene::Init();
 
+	_finalDefferedMaterial->SetShader(ResourceManager::main->Get<Shader>(L"finalShader_MainField"));
+	_finalDefferedMaterial->SetPass(RENDER_PASS::Deffered);
+
 	shared_ptr<Material> materialO = make_shared<Material>();
-	//shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
 	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
 
 	for (int i = 0; i < 0; ++i)

@@ -80,6 +80,17 @@ void ResourceManager::CreateDefaultShader()
 	}
 
 	{
+		ShaderInfo info;
+		info._zTest = false;
+		info._zWrite = false;
+		info._stencilTest = false;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->Init(L"final_MainField.hlsl", GeoMetryProp, ShaderArg{}, info);
+		Add<Shader>(L"finalShader_MainField", shader);
+	}
+
+	{
 
 		ShaderInfo info;
 		info._zTest = false;

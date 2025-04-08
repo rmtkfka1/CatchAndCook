@@ -30,6 +30,27 @@ cbuffer cameraParams : register(b2)
     float4 cameraScreenData;
 };
 
+
+
+float NdcDepthToViewDepth(float z_ndc)
+{
+    float viewZ = ProjectionMatrix[3][2] / (z_ndc - ProjectionMatrix[2][2]);
+    return viewZ;
+}
+float OcclusionFunction(float distZ)
+{
+	float occlusion = 0.0f;
+    float gSurfaceEpsilon = 0.025;
+    float gOcclusionFadeStart = 0;
+    float gOcclusionFadeEnd = 0.5;
+	if(distZ > gSurfaceEpsilon)
+	{
+		occlusion = saturate( (gOcclusionFadeEnd - distZ) / gOcclusionFadeEnd - gOcclusionFadeStart );
+	}
+	
+	return occlusion;	
+}
+
 RWTexture2D<float4> resultTexture : register(u0);
 Texture2D depthT : register(t0); 
 Texture2D<float4> RenderT : register(t1);
@@ -45,20 +66,27 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
 
     // depth texture에서 픽셀의 깊이값(0~1 범위)을 읽어옴
     float depth = depthT.Load(int3(texCoord, 0));
+    float3 normal = normalize(NormalT.Load(int3(texCoord, 0)).xyz * 2.0 - 1.0);
+    float3 worldPos = PositionT.Load(int3(texCoord, 0)).xyz;
+    //float3 normal
 
-    // 재구성을 위해 클립 공간 좌표로 변환 ([0,1] → [-1,1])
+        // 재구성을 위해 클립 공간 좌표로 변환 ([0,1] → [-1,1])
     float4 clipPos;
     clipPos.xy = uv * 2.0 - 1.0;
-    clipPos.z = depth * 2.0 - 1.0;
+	clipPos.y *= -1;
+    clipPos.z = depth;
     clipPos.w = 1.0;
 
-    // InverseProjectionMatrix를 사용하여 뷰 공간 좌표로 변환
-    float4 viewPos4 = mul(InvertProjectionMatrix, clipPos);
+   // InverseProjectionMatrix를 사용하여 뷰 공간 좌표로 변환
+    float4 viewPos4 = mul(clipPos, InvertProjectionMatrix);
     viewPos4 /= viewPos4.w;
     float3 viewPos = viewPos4.xyz;
 
-    // NormalT에서 픽셀의 법선값을 읽어 [0,1] → [-1,1] 재매핑 후 normalize
-    float3 normal = normalize(NormalT.Load(int3(texCoord, 0)).xyz * 2.0 - 1.0);
+
+    //float4 viewPos4 = mul(float4(worldPos, 1.0), ViewMatrix);
+    //viewPos4 /= viewPos4.w;
+    //float3 viewPos = viewPos4.xyz;
+
 
     // 뷰 공간 좌표가 유효하지 않으면(예: 배경) 처리
     if(length(viewPos) == 0)
@@ -93,11 +121,11 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     };
 
      float3 tangent;
-    if (abs(normal.y) < 0.999)
-        tangent = normalize(cross(normal, float3(0, 1, 0)));
-    else
-        tangent = normalize(cross(normal, float3(1, 0, 0)));
-    float3 bitangent = cross(normal, tangent);
+    //if (abs(normal.y) < 0.999)
+        //tangent = normalize(cross(normal, float3(0, 1, 0)));
+    //else
+    tangent = normalize(cross(normal, float3(0, 0, 1)));
+    float3 bitangent = cross(tangent, normal);
 
     // 각 커널 샘플에 대해 오클루전 기여 산출
     for (int i = 0; i < kernelSize; i++)
@@ -108,34 +136,55 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
                                      bitangent * sampleKernel[i].y +
                                      normal    * sampleKernel[i].z);
         // 뷰 공간에서 샘플 위치 계산
-        float3 samplePos = viewPos + sampleDir * radius * scale;
+        float3 sampleWorldPos = worldPos + sampleDir * radius * scale;
 
         // 샘플 위치를 VPMatrix를 사용해 클립 공간으로 변환하고, 이후 화면 UV 계산
-        float4 sampleClip = mul(VPMatrix, float4(samplePos, 1.0));
-        sampleClip /= sampleClip.w;
-        float2 sampleUV = sampleClip.xy * 0.5 + 0.5;
+        float4 sampleViewPos = mul(float4(sampleWorldPos, 1.0), ViewMatrix);
+        float4 sampleClipPos = mul(sampleViewPos, ProjectionMatrix);
+        sampleClipPos /= sampleClipPos.w;
+        sampleClipPos.y *= -1;
+        float2 sampleScreenUV = sampleClipPos.xy * 0.5 + 0.5;
 
         // 화면 범위를 벗어나는 샘플은 무시
-        if(sampleUV.x < 0.0 || sampleUV.x > 1.0 ||
-           sampleUV.y < 0.0 || sampleUV.y > 1.0)
+        if(sampleScreenUV.x < 0.0 || sampleScreenUV.x > 1.0 ||
+           sampleScreenUV.y < 0.0 || sampleScreenUV.y > 1.0)
             continue;
 
-        // 샘플 위치의 예상 깊이 (클립 z값을 [0,1]로 재매핑)
-        float sampleExpectedDepth = sampleClip.z * 0.5 + 0.5;
-
         // sampleUV를 정수 픽셀 좌표로 변환하여 depth texture에서 실제 깊이 읽기
-        int2 sampleCoord = int2(sampleUV * cameraScreenData.xy);
-        float sampleDepth = depthT.Load(int3(sampleCoord, 0));
+        int2 sampleCoord = int2(sampleScreenUV * cameraScreenData.xy + 0.5);
+
+
+	    float depth2 = depthT.Load(int3(sampleCoord, 0));
+	    float4 clipPos;
+	    clipPos.xy = sampleScreenUV * 2.0 - 1.0;
+		clipPos.y *= -1;
+	    clipPos.z = depth2;
+	    clipPos.w = 1.0;
+
+	   // InverseProjectionMatrix를 사용하여 뷰 공간 좌표로 변환
+	    float4 viewPos4 = mul(clipPos, InvertProjectionMatrix);
+	    viewPos4 /= viewPos4.w;
+	    float sampleRealDepth = viewPos4.z;
+        
+
+     //   float3 sampleRealWorldPos = PositionT.Load(int3(sampleCoord, 0));
+
+	    //float4 sampleRealViewPos = mul(float4(sampleRealWorldPos, 1), ViewMatrix);
+	    //sampleRealViewPos /= sampleRealViewPos.w;
+	    //float sampleRealDepth = sampleRealViewPos.z;
+
+        // 샘플 위치의 예상 깊이 (클립 z값을 [0,1]로 재매핑)
+        float sampleExpectedDepth = sampleViewPos.z;
 
         // 뷰 공간 z값의 차이에 따른 가중치 (거리 기반 조절)
-        float rangeCheck = smoothstep(0.0, 1.0, radius / abs(viewPos.z - samplePos.z));
+        float rangeCheck = smoothstep(0.0, 1.0, radius / abs(viewPos.z - sampleViewPos.z));
 
         // 깊이 비교: depth texture의 값이 예상 깊이보다 크면(즉, 더 멀다면) 오클루전 기여
-        occlusion += (sampleDepth >= sampleExpectedDepth + bias ? 1.0 : 0.0) * rangeCheck;
+        occlusion += (sampleRealDepth >= sampleExpectedDepth + bias ? 1.0 : 0.0) * rangeCheck; //  * rangeCheck
     }
 
-    //occlusion = 1.0 - (occlusion / kernelSize);
-    occlusion = (occlusion / kernelSize);
+    occlusion = 1.0 - (occlusion / kernelSize);
+    //occlusion = (occlusion / kernelSize);
     resultTexture[texCoord] = float4(occlusion, occlusion, occlusion, 1.0);
 }
 
