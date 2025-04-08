@@ -56,6 +56,8 @@ public:
 	void SetUseMaterialParams(bool use) { _useMaterialParams = use; }
 
 	void SetInjector(const std::vector<std::shared_ptr<ICBufferInjector>>& injectors) { _customInjectors = injectors; }
+	void SetPreDepthNormal(bool preDepthNormal) { _preDepthNormal = preDepthNormal; }
+	bool GetPreDepthNormal() const { return _preDepthNormal; }
 
 	int GetPropertyInt(const std::string& name) { return _propertyInts[name]; };
 	void SetPropertyInt(const std::string& name, int data) { _propertyInts[name] = data; };
@@ -95,6 +97,7 @@ private:
 	CBufferContainer* _cbufferContainer;
 	bool _useMaterialParams = false;
 	RENDER_PASS::PASS _pass = RENDER_PASS::Forward;
+	bool _preDepthNormal = false;
 	int _stencilIndex = 0;
 
 	uint32 _instanceID=0;

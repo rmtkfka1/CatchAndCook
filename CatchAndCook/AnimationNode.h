@@ -11,6 +11,14 @@ public:
 
 	void Init(std::shared_ptr<Animation> animation);
 
+
+	Matrix CalculateTransformMatrix(const double& time, bool xyLock = false) const;
+	Matrix CalculateTransformMatrixMapping(const std::shared_ptr<ModelNode>& _originModelNode, const std::shared_ptr<ModelNode>& _animModelNode, const double& time, bool xyLock = false) const;
+	Vector3 CalculatePosition(const double& time) const;
+	Quaternion CalculateRotation(const double& time) const;
+	Vector3 CalculateScale(const double& time) const;
+
+private:
 	void SetKeyFrames(aiAnimation* anim, aiNodeAnim* animNode);
 	void SetPosition(aiAnimation* anim, aiNodeAnim* animNode);
 	void SetRotation(aiAnimation* anim, aiNodeAnim* animNode);
@@ -22,11 +30,9 @@ public:
 	void SetOffsetPostRotation(const Quaternion& scale);
 
 	static int FindKeyFrameIndex(const vector<AnimationKeyFrame>& vec, const double& time);
-	Matrix CalculateTransformMatrix(const std::shared_ptr<ModelNode>& _originModelNode, const std::shared_ptr<ModelNode>& _animModelNode, const double& time, bool xyLock = false) const;
-	Vector3 CalculatePosition(const double& time) const;
-	Quaternion CalculateRotation(const double& time) const;
-	Vector3 CalculateScale(const double& time) const;
 
+
+public:
 	void SetNodeName(const string& name){
 		_nodeName = name;
 	}
@@ -59,4 +65,7 @@ public:
 	vector<AnimationKeyFrame> _keyFrame_positions;
 	vector<AnimationKeyFrame> _keyFrame_rotations;
 	vector<AnimationKeyFrame> _keyFrame_scales;
+
+
+	friend class Animation;
 };

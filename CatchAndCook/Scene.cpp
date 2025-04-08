@@ -29,7 +29,9 @@ void Scene::AddGameObject(const std::shared_ptr<GameObject>& gameObject)
 
 void Scene::Init()
 {
-
+	_finalDefferedMaterial = std::make_shared<Material>();
+	_finalDefferedMaterial->SetShader(ResourceManager::main->Get<Shader>(L"finalShader"));
+    _finalDefferedMaterial->SetPass(RENDER_PASS::Deffered);
 }
 
 void Scene::Update()
@@ -100,10 +102,17 @@ void Scene::Rendering()
     FinalRender(cmdList);
     Profiler::Fin();
 
+    Core::main->CopyDepthTexture(Core::main->GetDSReadTexture(), Core::main->GetRenderTarget()->GetDSTexture());
+    Core::main->GetDSReadTexture()->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
 	//
     Profiler::Set("PASS : Forward", BlockTag::GPU);
     ForwardPass(cmdList);
     Profiler::Fin();
+
+    Core::main->CopyDepthTexture(Core::main->GetDSReadTexture(), Core::main->GetRenderTarget()->GetDSTexture());
+    Core::main->GetDSReadTexture()->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
 
     //
     Profiler::Set("PASS : Transparent", BlockTag::GPU);
@@ -120,36 +129,52 @@ void Scene::Rendering()
 
 }
 
-void Scene::UiPass(ComPtr<ID3D12GraphicsCommandList>& cmdList)
-{
-    {
-        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::UI)];
-
-        for (auto& [shader, vec] : targets)
-        {
-            cmdList->SetPipelineState(shader->_pipelineState.Get());
-
-			for (auto& [material, mesh, target] : vec)
-			{
-				target->Rendering(material, mesh);
-			}
-        }
-    }
-};
 
 void Scene::TransparentPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 {
-    { // Transparent
+    { // Forward
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Transparent)];
 
-        for(auto& [shader,vec] : targets)
-        {
-            cmdList->SetPipelineState(shader->_pipelineState.Get());
+		std::vector<RenderObjectStrucutre> vec;
+        vec.reserve(2048);
+        for (auto& [shader, vec2] : targets)
+            vec.insert(vec.end(), vec2.begin(), vec2.end());
 
-            for(auto& [material,mesh,target] : vec)
+    	Vector3 cameraPos = CameraManager::main->GetActiveCamera()->GetCameraPos();
+        Vector3 cameraDir = CameraManager::main->GetActiveCamera()->GetCameraLook();
+
+        auto tangentDistanceSquared = [&](const Vector3& center) -> float {
+            Vector3 offset = center - cameraPos;
+            float projection = offset.Dot(cameraDir);
+            return offset.LengthSquared() - projection * projection;
+        };
+
+        std::ranges::sort(vec, [&](const RenderObjectStrucutre& a, const RenderObjectStrucutre& b) {
+            return tangentDistanceSquared(a.renderer->_bound.Center) < tangentDistanceSquared(b.renderer->_bound.Center);
+        });
+
+        Shader* prevShader = nullptr;
+        for (auto& ele : vec)
+        {
+            Shader* shader = ele.material->GetShader().get();
+            if (shader != nullptr && shader != prevShader)
+				cmdList->SetPipelineState(shader->_pipelineState.Get());
+
+        	g_debug_forward_count++;
+
+            if (ele.renderer->IsCulling() == true)
             {
-                target->Rendering(material,mesh);
+                if (CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound()) == false)
+                {
+                    g_debug_forward_culling_count++;
+                    continue;
+                }
             }
+
+            SettingPrevData(ele, RENDER_PASS::PASS::Transparent);
+            InstancingManager::main->RenderNoInstancing(ele);
+
+			prevShader = shader;
         }
     }
 }
@@ -177,6 +202,7 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                     }
                 }
 
+                SettingPrevData(ele, RENDER_PASS::PASS::Forward);
                 if (ele.renderer->isInstancing() == false)
                 {
                     InstancingManager::main->RenderNoInstancing(ele);
@@ -217,11 +243,12 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                        }
                    }
 
+                   SettingPrevData(ele, RENDER_PASS::PASS::Deffered);
+
                    if (ele.renderer->isInstancing() == false)
                    {
                        InstancingManager::main->RenderNoInstancing(ele);
                    }
-
                    else
                    {    //동적인스턴싱이면 1개짜리 객체라도 스터럭쳐버퍼로 transform 데이터넣어줌.
                        InstancingManager::main->AddObject(ele);
@@ -246,22 +273,48 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
         {
             cmdList->SetPipelineState(ResourceManager::main->Get<Shader>(L"Shadow")->_pipelineState.Get());
 
-            for(auto& [material,mesh,target] : vec)
+            for(auto& renderStructure : vec)
             {
+                auto& [material, mesh, target] = renderStructure;
+                SettingPrevData(renderStructure, RENDER_PASS::PASS::Shadow);
                 target->Rendering(nullptr,mesh);
             }
         }
     }
 }
 
+void Scene::UiPass(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+    {
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::UI)];
+
+        for (auto& [shader, vec] : targets)
+        {
+            cmdList->SetPipelineState(shader->_pipelineState.Get());
+
+            for (auto& renderStructure : vec)
+            {
+                auto& [material, mesh, target] = renderStructure;
+                SettingPrevData(renderStructure, RENDER_PASS::PASS::UI);
+                target->Rendering(material, mesh);
+            }
+        }
+    }
+};
+
 void Scene::FinalRender(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
     Core::main->GetRenderTarget()->RenderBegin();
 
     auto mesh = ResourceManager::main->Get<Mesh>(L"finalMesh");
-    auto shader = ResourceManager::main->Get<Shader>(L"finalShader");
+    auto shader = _finalDefferedMaterial->GetShader();
 
     cmdList->SetPipelineState(shader->_pipelineState.Get());
+
+    RenderObjectStrucutre ROS = { _finalDefferedMaterial.get(), mesh.get(), nullptr };
+    SettingPrevData(ROS, RENDER_PASS::PASS::Deffered);
+
+    _finalDefferedMaterial->SetData();
     mesh->Redner();
 }
 
@@ -270,6 +323,7 @@ void Scene::ComputePass(ComPtr<ID3D12GraphicsCommandList>& cmdList)
     //후처리작업진행할거임.
     ComputeManager::main->Dispatch(cmdList);
 }
+
 
 void Scene::GlobalSetting()
 {
@@ -285,6 +339,17 @@ void Scene::GlobalSetting()
 
     cmdList->SetGraphicsRootConstantBufferView(0,CbufferContainer->GPUAdress);
     cmdList->SetComputeRootConstantBufferView(0, CbufferContainer->GPUAdress);
+
+
+    auto& table = Core::main->GetBufferManager()->GetTable();
+    tableContainer container = Core::main->GetBufferManager()->GetTable()->Alloc(1);
+    table->CopyHandle(container.CPUHandle, Core::main->GetDSReadTexture()->GetSRVCpuHandle(), 0);
+    cmdList->SetGraphicsRootDescriptorTable(GLOBAL_SRV_DEPTH_INDEX, container.GPUHandle);
+}
+
+void Scene::SettingPrevData(RenderObjectStrucutre& data, const RENDER_PASS::PASS& pass)
+{
+    data.material->SetTexture("_BakedGIMap", ResourceManager::main->_bakedGITexture);
 }
 
 void Scene::DebugRendering()

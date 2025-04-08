@@ -108,6 +108,10 @@ void SkinnedMeshRenderer::RenderBegin()
 		auto currentMaterial = _uniqueMaterials[i % _uniqueMaterials.size()];
 
 		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(),currentMesh.get(),this);
+
+		if (RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward)) {
+			SceneManager::main->GetCurrentScene()->AddRenderer(ResourceManager::main->_depthNormal_Skinned.get(), currentMesh.get(), this);
+		}
 	}
 
 	for(int j = 0; j < _sharedMaterials.size(); j++)

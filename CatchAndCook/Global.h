@@ -13,8 +13,10 @@ extern size_t CBV_ROOT_INDEX_COUNT;
 extern size_t SRV_TABLE_INDEX;
 extern size_t SRV_LONG_TABLE_INDEX;
 extern size_t SRV_STRUCTURED_TABLE_INDEX;
+
 extern size_t UAV_TABLE_INDEX;
 extern size_t SPRITE_TABLE_INDEX;
+
 const size_t SRV_TABLE_REGISTER_COUNT = 16;
 const size_t SRV_LONG_TABLE_REGISTER_COUNT = 60;
 const size_t SRV_LONG_TABLE_REGISTER_OFFSET = 40;
@@ -38,6 +40,8 @@ extern size_t GLOBAL_SRV_SHADOW_INDEX;
 extern size_t GLOBAL_SRV_POSITION_INDEX;
 extern size_t GLOBAL_SRV_NORAML_INDEX;
 extern size_t GLOBAL_SRV_COLOR_INDEX;
+extern size_t GLOBAL_SRV_DEPTH_INDEX;
+
 
 extern size_t g_debug_forward_count;
 extern size_t g_debug_forward_culling_count;

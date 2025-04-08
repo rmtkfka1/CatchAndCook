@@ -115,6 +115,14 @@ void MeshRenderer::RenderBegin()
 		auto currentMaterial = _uniqueMaterials[i % _uniqueMaterials.size()];
 
 		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(), currentMesh.get(), this);
+
+		if (RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward) && currentMaterial->GetPreDepthNormal())
+		{
+			if (HasInstanceBuffer())
+				SceneManager::main->GetCurrentScene()->AddRenderer(ResourceManager::main->_depthNormal_Instanced.get(), currentMesh.get(), this);
+			else
+				SceneManager::main->GetCurrentScene()->AddRenderer(ResourceManager::main->_depthNormal.get(), currentMesh.get(), this);
+		}
 	}
 
 	for (int j = 0; j < _sharedMaterials.size(); j++)
@@ -127,7 +135,6 @@ void MeshRenderer::RenderBegin()
 			SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(),currentMesh.get(),this);
 		}
 	}
-
 }
 
 void MeshRenderer::Rendering(Material* material, Mesh* mesh,int instanceCount)

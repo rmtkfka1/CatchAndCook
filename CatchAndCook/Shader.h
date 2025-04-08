@@ -188,6 +188,7 @@ public:
 class Shader
 {
 public:
+    string _name = "";
 
     std::unordered_map<std::string, std::shared_ptr<ShaderCode>> _shaderCodeTable;
     ShaderInfo _info;

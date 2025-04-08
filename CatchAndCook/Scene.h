@@ -37,6 +37,9 @@ private:
 	void FinalRender(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
 	void ComputePass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
 
+private:
+	virtual void SettingPrevData(RenderObjectStrucutre& data, const RENDER_PASS::PASS& pass);
+
 public:
 	void SetName(const std::string& name) { _name = name; };
 
@@ -79,6 +82,8 @@ public:
 	SceneType _type;
 
 	GlobalParam _globalParam;
+	std::shared_ptr<Material> _finalDefferedMaterial;
 };
+
 
 

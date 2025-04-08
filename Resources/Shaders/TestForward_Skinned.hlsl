@@ -36,7 +36,8 @@ struct VS_IN
 
 struct VS_OUT
 {
-    float4 positionCS : SV_Position;
+    float4 position : SV_Position;
+    float4 positionCS : PositionCS;
     float4 positionWS : PositionWS;
     float3 normalOS : NormalOS;
     float3 normalWS : NormalWS;
@@ -47,6 +48,7 @@ struct VS_OUT
 
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
+Texture2D _BakedGIMap : register(t8);
 
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
@@ -80,6 +82,8 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 #endif
     output.positionCS = TransformWorldToClip(output.positionWS);
 
+    output.position = output.positionCS;
+
 #ifdef INSTANCED
 		output.normalWS = TransformNormalLocalToWorld(output.normalOS, boneIds, boneWs, w2lMatrix);
 		output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix);
@@ -87,8 +91,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     output.normalWS = TransformNormalLocalToWorld(input.normal, boneIds, boneWs, w2lMatrix);
     output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix);
 #endif
-    
-    output.uv = input.uv;
+
 
     output.uv = input.uv;
 
@@ -102,18 +105,17 @@ float4 PS_Main(VS_OUT input) : SV_Target
     
     float4 lightColor = ComputeLightColor(input.positionWS.xyz, N);
     
-    float4 BaseColor =_BaseMap.Sample(sampler_lerp, input.uv);
+    float4 BaseColor = _BaseMap.Sample(sampler_lerp, input.uv * _baseMapST.xy + _baseMapST.zw) * color;
+    float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
 
-    return BaseColor * lightColor * color;
+    //float4 d = input.positionCS;
+    //d/w
 
-    //float3 totalNormalWS = TransformNormalTangentToSpace(NormalUnpack(_BumpMap.Sample(sampler_lerp, input.uv).xyz, 0.2), normalize(input.normalWS), normalize(input.tangentWS));
-    //float3 totalNormalWS = TransformNormalTangentToSpace(float3(0,0,1), normalize(input.normalWS), normalize(input.tangentWS));
-    //return float4(normalize(input.normalWS), 1);
-    //return float4(_BumpMap.Sample(sampler_lerp, input.uv).xyz, 1);
-	//return float4(normalize(totalNormalWS), 1)* 0.5 + 0.5;
-    //float4 finalColor = _BaseMap.Sample(sampler_lerp, input.uv);
-    //if (finalColor.a < 0.01)
-		//discard;
-    //return finalColor * color * (saturate(dot(totalNormalWS, normalize(float3(0, 1, -1)))) * 0.7 + 0.3);
+    //float2 a = TransformClipToScreen(input.positionCS);
+    
+    //return saturate(DepthTexture.Sample(sampler_lerp, TransformClipToScreen(input.positionCS)).r);
 
+    //return lightColor;
+
+    return lerp(ShadowColor * BaseColor, BaseColor, saturate(dot(normalize(float3(1, 2, 1)), N)));
 }

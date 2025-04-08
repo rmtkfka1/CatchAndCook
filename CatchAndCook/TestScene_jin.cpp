@@ -19,8 +19,10 @@ void TestScene_jin::Init()
 {
 	Scene::Init();
 
+	_finalDefferedMaterial->SetShader(ResourceManager::main->Get<Shader>(L"finalShader_MainField"));
+	_finalDefferedMaterial->SetPass(RENDER_PASS::Deffered);
+
 	shared_ptr<Material> materialO = make_shared<Material>();
-	//shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
 	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
 
 	for (int i = 0; i < 0; ++i)
@@ -67,7 +69,7 @@ void TestScene_jin::Init()
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"cubemap", L"cubemap.hlsl", GeoMetryProp,
 			ShaderArg{}, info);
 
-		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"cubemap", L"Textures/cubemap/output.dds", TextureType::CubeMap);
+		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"cubemap", L"Textures/cubemap/FS000_Day_05_Sunless.dds", TextureType::CubeMap);
 		shared_ptr<Material> material = make_shared<Material>();
 
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"cubeMap");

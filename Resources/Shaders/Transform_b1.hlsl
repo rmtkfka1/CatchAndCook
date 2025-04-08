@@ -234,5 +234,11 @@ float4 TransformClipToView(float4 clipPos)
 {
 	return mul(clipPos, InvertProjectionMatrix);
 }
+float2 TransformClipToScreen(float4 clipPos)
+{
+    float2 uv = (clipPos.xy / clipPos.w) * 0.5 + 0.5;
+    uv.y = 1.0 - uv.y;
+	return uv;
+}
 
 #endif

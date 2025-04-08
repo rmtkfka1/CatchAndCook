@@ -48,7 +48,7 @@ struct alignas(16) PlayerMaterialParam
 	Vector4 temp;
 };
 
-CBUFFER_INJECTOR("PlayerMaterialParam", PlayerMaterialParam, 64, BufferType::PlayerMaterialParam, std::shared_ptr<Material>,
+CBUFFER_INJECTOR("PlayerMaterialParam", PlayerMaterialParam, 256, BufferType::PlayerMaterialParam, std::shared_ptr<Material>,
 	data.temp = Vector4(1, 0, 0, 1);
 	// data <- source
 	//data.color = Vector4(source->GetPropertyVector("_Color"));
@@ -65,7 +65,7 @@ struct alignas(16) TerrainDetailsParam
 	//Vector4 color;
 };
 
-CBUFFER_INJECTOR("TerrainDetailsParam",TerrainDetailsParam,256,BufferType::TerrainDetailsParam, std::shared_ptr<Material>,
+CBUFFER_INJECTOR("TerrainDetailsParam", TerrainDetailsParam, 256, BufferType::TerrainDetailsParam, std::shared_ptr<Material>,
 	data.fieldSize = Vector3(source->GetPropertyVector("fieldSize"));
 	data.detailsCount = source->GetPropertyInt("detailsCount");
 	data.blendCount = source->GetPropertyInt("blendCount");

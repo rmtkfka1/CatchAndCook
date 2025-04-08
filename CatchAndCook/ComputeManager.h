@@ -181,6 +181,66 @@ private:
 
 };
 
+struct VignetteParam
+{
+	float power = 1;
+	Vector3 color = Vector3(0.1,0.04,0.08);
+	float startRound = 0.85;
+	float Range = 1.4;
+	Vector2 padding;
+
+};
+class VignetteRender : public ComputeBase
+{
+
+public:
+	VignetteRender();
+	virtual ~VignetteRender();
+
+public:
+	virtual void Init();
+	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+
+private:
+	virtual void Resize();
+
+private:
+	shared_ptr<Texture> _pingTexture;
+	shared_ptr<Shader> _shader;
+
+	VignetteParam _vignetteParam;
+
+	friend class ComputeManager;
+};
+
+class SSAORender : public ComputeBase
+{
+
+public:
+	SSAORender();
+	virtual ~SSAORender();
+
+public:
+	virtual void Init();
+	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+
+private:
+	virtual void Resize();
+
+private:
+	shared_ptr<Texture> _pingTexture;
+	shared_ptr<Shader> _shader;
+
+	friend class ComputeManager;
+};
 
 
 class ComputeManager 
@@ -198,6 +258,9 @@ private:
 	shared_ptr<Bloom> _bloom;
 	shared_ptr<DepthRender> _depthRender;
 	shared_ptr<UnderWaterEffect> _underWaterEffect;
+
+	shared_ptr<VignetteRender> _vignetteRender;
+	shared_ptr<SSAORender> _ssaoRender;
 
 };
 
