@@ -64,7 +64,7 @@ void SkinnedHierarchy::Update2()
 	auto a = ResourceManager::main->GetResourceMap<Animation>();
 	for (auto& b : a)
 	{
-		if (b.first == L"Fish_Armature|fish_animation")
+		if (b.first == L"Armature|Take 001.001")
 		{
 			Animate(b.second, Time::main->GetTime());
 			break;

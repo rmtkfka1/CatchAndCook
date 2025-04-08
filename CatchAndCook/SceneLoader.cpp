@@ -56,6 +56,7 @@ std::vector<std::shared_ptr<GameObject>> SceneLoader::Load(const std::shared_ptr
     for (auto& ref : refJson_GameObjectTable)
         LinkGameObject(*ref.second);
 
+    ProcessingAnimationModelLoad(animationModelListJson);
     ProcessingAnimationMapping(animationBoneMappingJson);
 
     std::vector<std::shared_ptr<GameObject>> result = gameObjectCache;
@@ -84,6 +85,7 @@ void SceneLoader::Init(const std::wstring& path)
     this->_path = path;
     reader >> referenceJson;
     animationBoneMappingJson = referenceJson["AnimationBoneMapping"];
+	animationModelListJson = referenceJson["AnimationModels"];
     referenceJson = referenceJson["references"];
 }
 
@@ -606,6 +608,14 @@ void SceneLoader::LinkMaterial(json& jsonData)
 }
 
 
+void SceneLoader::ProcessingAnimationModelLoad(json& jsonData)
+{
+    for (auto it = jsonData.begin(); it != jsonData.end(); ++it) {
+		auto modelName = std::to_wstring(it.value().get<std::string>());
+		auto path = std::to_wstring(it.value().get<std::string>());
+		auto model = ResourceManager::main->Load<Model>(modelName, path, VertexType::Vertex_Skinned);
+    }
+}
 
 void SceneLoader::ProcessingAnimationMapping(json& jsonData)
 {

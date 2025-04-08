@@ -39,11 +39,13 @@ public:
     void LinkComponent(json& jsonData);
     void LinkMaterial(json& jsonData);
 
+    void ProcessingAnimationModelLoad(json& jsonData);
     void ProcessingAnimationMapping(json& jsonData);
 
 public:
     json referenceJson;
     json animationBoneMappingJson;
+    json animationModelListJson;
     std::wstring _path;
 };
 
