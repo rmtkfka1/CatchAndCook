@@ -51,9 +51,10 @@ void SkinnedHierarchy::Update()
 
 	//_boneHumanNameTable
 	//if (animation->_nodeTables.contains(name))
-	{
+	//{
 		//auto pos = animation->_nodeTables[name]->CalculatePosition(animation->CalculateTime(Time::main->GetTime()));
-	}
+		//GetOwner()->_transform->SetWorldPosition(pos);
+	//}
 	
 }
 
@@ -63,9 +64,9 @@ void SkinnedHierarchy::Update2()
 	auto a = ResourceManager::main->GetResourceMap<Animation>();
 	for (auto& b : a)
 	{
-		//if (b.first == L"mixamo.com")
+		if (b.first == L"Fish_Armature|fish_animation")
 		{
-			Animate(b.second, Time::main->GetTime()*0.00001);
+			Animate(b.second, Time::main->GetTime());
 			break;
 		}
 	}
@@ -77,8 +78,26 @@ void SkinnedHierarchy::Animate(const std::shared_ptr<Animation>& animation, doub
 	if (animation == nullptr)
 		return;
 	auto finalTime = animation->CalculateTime(time);
+
 	for (auto& animNode : animation->_nodeLists)
 	{
+		auto it = FindByName(animNode->GetNodeName(), nodeObjectTable);
+		if (it != nodeObjectTable.end())
+		{
+			auto obj = it->second.lock();
+			auto matrix = animNode->CalculateTransformMatrix(finalTime, animation->_isApplyTransform && animNode->IsRoot());
+			obj->_transform->SetLocalSRTMatrix(matrix);
+		}
+	}
+
+
+	/*
+	if (animation == nullptr)
+		return;
+	auto finalTime = animation->CalculateTime(time);
+	for (auto& animNode : animation->_nodeLists)
+	{
+
 		//auto it = nodeObjectTable.find(animNode->GetNodeName());
 		auto it = FindByName(animNode->GetNodeName(), nodeObjectTable);
 		auto it2 = FindByName(animNode->GetNodeName(), _model->_nameToOriginalNodeTable);
@@ -95,12 +114,15 @@ void SkinnedHierarchy::Animate(const std::shared_ptr<Animation>& animation, doub
 			
 			if (obj != nullptr) {
 				auto transform = obj->_transform;
-				auto matrix = animNode->CalculateTransformMatrix(currentModelNode, animModelNode, finalTime, animation->_isApplyTransform && animNode->IsRoot());
+				auto matrix = animNode->CalculateTransformMatrixMapping(currentModelNode, animModelNode, finalTime, animation->_isApplyTransform && animNode->IsRoot());
+
+				animNode->CalculatePosition(finalTime);
+
 				transform->SetLocalSRTMatrix(matrix);
 			}
 		}
 	}
-
+	*/
 }
 
 

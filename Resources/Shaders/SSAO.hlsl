@@ -40,13 +40,11 @@ float NdcDepthToViewDepth(float z_ndc)
 float OcclusionFunction(float distZ)
 {
 	float occlusion = 0.0f;
-    float gSurfaceEpsilon = 0.025;
-    float gOcclusionFadeStart = 0;
-    float gOcclusionFadeEnd = 0.5;
+    float gSurfaceEpsilon = 0.05;
+    float gOcclusionFadeStart = 0.2;
+    float gOcclusionFadeEnd = 0.2;
 	if(distZ > gSurfaceEpsilon)
-	{
-		occlusion = saturate( (gOcclusionFadeEnd - distZ) / gOcclusionFadeEnd - gOcclusionFadeStart );
-	}
+		occlusion = saturate( (gOcclusionFadeEnd - distZ) / (gOcclusionFadeEnd - gOcclusionFadeStart) );
 	
 	return occlusion;	
 }
@@ -67,125 +65,104 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     // depth texture에서 픽셀의 깊이값(0~1 범위)을 읽어옴
     float depth = depthT.Load(int3(texCoord, 0));
     float3 normal = normalize(NormalT.Load(int3(texCoord, 0)).xyz * 2.0 - 1.0);
-    float3 worldPos = PositionT.Load(int3(texCoord, 0)).xyz;
-    //float3 normal
+    float3 posWS = PositionT.Load(int3(texCoord, 0)).xyz;
 
-        // 재구성을 위해 클립 공간 좌표로 변환 ([0,1] → [-1,1])
-    float4 clipPos;
-    clipPos.xy = uv * 2.0 - 1.0;
-	clipPos.y *= -1;
-    clipPos.z = depth;
-    clipPos.w = 1.0;
+    float3 normalVS = normalize(mul(normal, (float3x3)ViewMatrix));
+    float4 posVS = mul(float4(posWS, 1.0), ViewMatrix);
+    float depthVS = NdcDepthToViewDepth(depth);
+    posVS = posVS / posVS.w;
 
-   // InverseProjectionMatrix를 사용하여 뷰 공간 좌표로 변환
-    float4 viewPos4 = mul(clipPos, InvertProjectionMatrix);
-    viewPos4 /= viewPos4.w;
-    float3 viewPos = viewPos4.xyz;
+    float3 p = (depthVS/posVS.z) * posVS;
 
 
-    //float4 viewPos4 = mul(float4(worldPos, 1.0), ViewMatrix);
-    //viewPos4 /= viewPos4.w;
-    //float3 viewPos = viewPos4.xyz;
-
-
-    // 뷰 공간 좌표가 유효하지 않으면(예: 배경) 처리
-    if(length(viewPos) == 0)
-    {
-        resultTexture[texCoord] = float4(1, 1, 1, 1);
-        return;
-    }
-    
-    float occlusion = 0.0;
-    float radius = 0.5;
-    float bias = 0.025;
     int kernelSize = 16;
 
     // SSAO용 반구 내 샘플 벡터 (상수 배열)
-    static const float3 sampleKernel[16] = {
-         float3(0.5381, 0.1856, 0.4319),
-         float3(0.1379, 0.2486, 0.4430),
-         float3(0.3371, 0.5679, 0.0057),
-         float3(0.7152, 0.3456, 0.2937),
-         float3(0.2462, 0.3225, 0.5749),
-         float3(0.1343, 0.3111, 0.4546),
-         float3(0.7215, 0.4532, 0.2364),
-         float3(0.3154, 0.6213, 0.1468),
-         float3(0.2346, 0.7452, 0.2983),
-         float3(0.5621, 0.2314, 0.1423),
-         float3(0.4235, 0.3127, 0.1876),
-         float3(0.1876, 0.4123, 0.3127),
-         float3(0.3214, 0.1247, 0.4215),
-         float3(0.5123, 0.3412, 0.1345),
-         float3(0.3127, 0.6543, 0.1234),
-         float3(0.4215, 0.2314, 0.3127)
-    };
+	static const float3 sampleKernel[16] = {
+	    float3(-0.1392, -0.9657, -0.2208),
+	    float3(0.7393, 0.5051, -0.4468),
+	    float3(0.0957, -0.1436, 0.9849),
+	    float3(0.7894, 0.2286, 0.5707),
+	    float3(-0.0263, 0.8501, -0.5260),
+	    float3(-0.3846, -0.3665, 0.8472),
+	    float3(-0.5411, 0.7505, 0.3806),
+	    float3(0.1929, -0.6776, -0.7093),
+	    float3(0.2148, 0.8233, 0.5251),
+	    float3(-0.8032, 0.1084, -0.5855),
+	    float3(0.5173, -0.6829, -0.5144),
+	    float3(-0.2836, 0.3437, 0.8957),
+	    float3(-0.4712, -0.0945, -0.8769),
+	    float3(0.9461, 0.1915, -0.2606),
+	    float3(-0.6822, 0.6235, -0.3818),
+	    float3(0.1376, -0.9849, 0.1054)
+	};
 
-     float3 tangent;
-    //if (abs(normal.y) < 0.999)
-        //tangent = normalize(cross(normal, float3(0, 1, 0)));
-    //else
-    tangent = normalize(cross(normal, float3(0, 0, 1)));
-    float3 bitangent = cross(tangent, normal);
+    float gOcclusionRadius = 0.25;
+    float occlusionSum = 0;
+    for(int i = 0; i < kernelSize; ++i)
+	{
+		// Are offset vectors are fixed and uniformly distributed (so that our offset vectors
+		// do not clump in the same direction).  If we reflect them about a random vector
+		// then we get a random uniform distribution of offset vectors.
+		float3 offset = sampleKernel[i].xyz;
+	
+		// Flip offset vector if it is behind the plane defined by (p, n).
+		float flip = sign( dot(offset, normalVS) );
+		
+		// Sample a point near p within the occlusion radius.
+		float3 q = p + flip * gOcclusionRadius * offset;
+		
+		// Project q and generate projective tex-coords.  
+		float4 projQ = mul(float4(q, 1.0f), ProjectionMatrix);
+		projQ /= projQ.w;
 
-    // 각 커널 샘플에 대해 오클루전 기여 산출
-    for (int i = 0; i < kernelSize; i++)
-    {
-        // 샘플 분포 스케일 조절 (더 가까운 샘플은 낮은 scale)
-        float scale = lerp(0.1, 1.0, (float(i) / float(kernelSize)) * (float(i) / float(kernelSize)));
-        float3 sampleDir = normalize(tangent * sampleKernel[i].x +
-                                     bitangent * sampleKernel[i].y +
-                                     normal    * sampleKernel[i].z);
-        // 뷰 공간에서 샘플 위치 계산
-        float3 sampleWorldPos = worldPos + sampleDir * radius * scale;
-
-        // 샘플 위치를 VPMatrix를 사용해 클립 공간으로 변환하고, 이후 화면 UV 계산
-        float4 sampleViewPos = mul(float4(sampleWorldPos, 1.0), ViewMatrix);
-        float4 sampleClipPos = mul(sampleViewPos, ProjectionMatrix);
-        sampleClipPos /= sampleClipPos.w;
-        sampleClipPos.y *= -1;
-        float2 sampleScreenUV = sampleClipPos.xy * 0.5 + 0.5;
-
-        // 화면 범위를 벗어나는 샘플은 무시
-        if(sampleScreenUV.x < 0.0 || sampleScreenUV.x > 1.0 ||
-           sampleScreenUV.y < 0.0 || sampleScreenUV.y > 1.0)
+		// Find the nearest depth value along the ray from the eye to q (this is not
+		// the depth of q, as q is just an arbitrary point near p and might
+		// occupy empty space).  To find the nearest depth we look it up in the depthmap.
+		projQ.y *= -1;
+		projQ.xy = projQ.xy * 0.5 + 0.5;
+		if (projQ.x < 0 || projQ.x > 1 || projQ.y < 0 || projQ.y > 1)
             continue;
+		float rz = depthT.Load(int3((float2(projQ.xy) * cameraScreenData.xy) - 0.5, 0));
+        rz = NdcDepthToViewDepth(rz);
 
-        // sampleUV를 정수 픽셀 좌표로 변환하여 depth texture에서 실제 깊이 읽기
-        int2 sampleCoord = int2(sampleScreenUV * cameraScreenData.xy + 0.5);
+		// Reconstruct full view space position r = (rx,ry,rz).  We know r
+		// lies on the ray of q, so there exists a t such that r = t*q.
+		// r.z = t*q.z ==> t = r.z / q.z
+
+		float3 r = (rz / q.z) * q;
 
 
-	    float depth2 = depthT.Load(int3(sampleCoord, 0));
-	    float4 clipPos;
-	    clipPos.xy = sampleScreenUV * 2.0 - 1.0;
-		clipPos.y *= -1;
-	    clipPos.z = depth2;
-	    clipPos.w = 1.0;
+		
+		//
+		// Test whether r occludes p.
+		//   * The product dot(n, normalize(r - p)) measures how much in front
+		//     of the plane(p,n) the occluder point r is.  The more in front it is, the
+		//     more occlusion weight we give it.  This also prevents self shadowing where 
+		//     a point r on an angled plane (p,n) could give a false occlusion since they
+		//     have different depth values with respect to the eye.
+		//   * The weight of the occlusion is scaled based on how far the occluder is from
+		//     the point we are computing the occlusion of.  If the occluder r is far away
+		//     from p, then it does not occlude it.
+		// 
+		
+		float distZ = p.z - r.z;
+		float dp = saturate(dot(normalVS, normalize(r - p)));
 
-	   // InverseProjectionMatrix를 사용하여 뷰 공간 좌표로 변환
-	    float4 viewPos4 = mul(clipPos, InvertProjectionMatrix);
-	    viewPos4 /= viewPos4.w;
-	    float sampleRealDepth = viewPos4.z;
-        
+        float occlusion = dp * OcclusionFunction(distZ);
 
-     //   float3 sampleRealWorldPos = PositionT.Load(int3(sampleCoord, 0));
+		occlusionSum += occlusion;
+	}
 
-	    //float4 sampleRealViewPos = mul(float4(sampleRealWorldPos, 1), ViewMatrix);
-	    //sampleRealViewPos /= sampleRealViewPos.w;
-	    //float sampleRealDepth = sampleRealViewPos.z;
+    occlusionSum /= kernelSize;
+	
+	float access = 1.0f - occlusionSum;
 
-        // 샘플 위치의 예상 깊이 (클립 z값을 [0,1]로 재매핑)
-        float sampleExpectedDepth = sampleViewPos.z;
+    //int2 sampleCoord = int2(sampleScreenUV * cameraScreenData.xy + 0.5);
 
-        // 뷰 공간 z값의 차이에 따른 가중치 (거리 기반 조절)
-        float rangeCheck = smoothstep(0.0, 1.0, radius / abs(viewPos.z - sampleViewPos.z));
-
-        // 깊이 비교: depth texture의 값이 예상 깊이보다 크면(즉, 더 멀다면) 오클루전 기여
-        occlusion += (sampleRealDepth >= sampleExpectedDepth + bias ? 1.0 : 0.0) * rangeCheck; //  * rangeCheck
-    }
-
-    occlusion = 1.0 - (occlusion / kernelSize);
-    //occlusion = (occlusion / kernelSize);
-    resultTexture[texCoord] = float4(occlusion, occlusion, occlusion, 1.0);
+    resultTexture[texCoord] = saturate(pow(access, 6.0f));
+	//resultTexture[texCoord] = float4(normal, 1);
+    //resultTexture[texCoord] = float4(occlusion, occlusion, occlusion, 1.0);
 }
 
 
