@@ -90,8 +90,20 @@ void Animation::Init(std::shared_ptr<Model> model, aiAnimation* anim, aiNode* ro
 			trs.Decompose(scale, rot, pos);
 			part.second->SetOffsetPostRotation(rot);
 		}
-
 	}
+	
+	for (auto& animNode : _nodeLists) {
+		if (animNode->IsRoot()) {
+			_rootBoneNode = animNode;
+			break;
+		}
+	}
+	if (_rootBoneNode == nullptr)
+		if (model->_rootBoneNode != nullptr)
+		{
+			_rootBoneNode = _nodeTables[_model.lock()->_rootBoneNode->GetOriginalName()];
+			_rootBoneNode->SetRoot(true);
+		}
 }
 
 

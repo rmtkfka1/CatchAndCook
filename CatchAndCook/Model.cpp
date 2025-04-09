@@ -27,6 +27,9 @@ void AssimpPack::Init(std::wstring path, bool xFlip)
 	assert(std::filesystem::exists(p));
 
     importer = std::make_shared<Assimp::Importer>();
+	//importer->SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
+	//
+
     unsigned int flag = //aiProcess_MakeLeftHanded | // �޼� ��ǥ��� ����
         //aiProcess_ConvertToLeftHanded |
         aiProcess_FlipWindingOrder | //CW, CCW �ٲٴ°���.
@@ -427,8 +430,9 @@ void Model::LoadAnimation(aiAnimation* aiAnim, aiNode* root)
 	auto anim = std::make_shared<Animation>();
 	anim->Init(GetCast<Model>(), aiAnim, root);
 	_animationList.push_back(anim);
-	_nameToAnimationTable[to_string(anim->GetName())] = anim;
-	ResourceManager::main->Add(anim->GetName(), anim);
+	auto keyName = GetName() + "|" + to_string(anim->GetName());
+	_nameToAnimationTable[keyName] = anim;
+	ResourceManager::main->Add(to_wstring(keyName), anim);
 }
 
 void Model::LoadRootBone(aiScene* scene)
@@ -456,9 +460,16 @@ void Model::LoadRootBone(aiScene* scene)
 				}
 			}
 			while (findBoneNode != nullptr && findBoneNode->GetParent() != findMeshNode)
-				findBoneNode = findBoneNode->GetParent();
-			if (findBoneNode != nullptr)
-				_rootBoneNode = findBoneNode;
+			{
+				if (findBoneNode != nullptr)
+				{
+					if (findBoneNode->IsBone())
+						_rootBoneNode = findBoneNode;
+					findBoneNode = findBoneNode->GetParent();
+				}
+				else
+					break;
+			}
 		}
 		else
 		{
