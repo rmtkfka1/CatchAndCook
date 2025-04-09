@@ -158,7 +158,7 @@ void LightingTest::Init()
 		{
 			auto finder =plant->AddComponent<PathFinder>();
 			finder->SetPass(L"BezierData.txt");
-			finder->SetMoveSpeed(300.0f);
+			finder->SetMoveSpeed(50.0f);
 			finder->SetStartIndex(30);
 		}
 	}
