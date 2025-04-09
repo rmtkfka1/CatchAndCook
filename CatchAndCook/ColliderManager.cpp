@@ -332,13 +332,10 @@ void ColliderManager::Update()
 		}
 	}
 
-}
-
-void ColliderManager::Clear()
-{
 	_dynamicColliderGrids.clear();
 	_dynamicColliderCashing.clear();
 }
+
 
 void ColliderManager::UpdateDynamicCells()
 {
