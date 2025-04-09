@@ -216,7 +216,7 @@ std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialColli
 	}
 	else
 	{
-		assert(false);
+	/*	cout << "못찾음" << endl;*/
 		occupiedCells = GetOccupiedCells(collider);
 	}
 
@@ -282,11 +282,13 @@ std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialColli
 void ColliderManager::Update()
 {
 	if (HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::DivideSpace))
-	for (auto& [cell, colliders] : _staticColliderGrids)
 	{
-		for (auto& collider : colliders)
+		for (auto& [cell, colliders] : _staticColliderGrids)
 		{
-			VisualizeOccupiedCells(cell,collider);
+			for (auto& collider : colliders)
+			{
+				VisualizeOccupiedCells(cell, collider);
+			}
 		}
 	}
 
@@ -330,6 +332,10 @@ void ColliderManager::Update()
 		}
 	}
 
+}
+
+void ColliderManager::Clear()
+{
 	_dynamicColliderGrids.clear();
 	_dynamicColliderCashing.clear();
 }
@@ -343,9 +349,13 @@ void ColliderManager::UpdateDynamicCells()
 		for (const auto& cell : occupiedCells)
 		{
 			if (std::ranges::find(_dynamicColliderGrids[cell], collider) == _dynamicColliderGrids[cell].end())
+			{
 				_dynamicColliderGrids[cell].push_back(collider);
+			}
 			if (std::ranges::find(_dynamicColliderCashing[collider], cell) == _dynamicColliderCashing[collider].end())
+			{
 				_dynamicColliderCashing[collider].push_back(cell);
+			}
 		}
 	}
 }
