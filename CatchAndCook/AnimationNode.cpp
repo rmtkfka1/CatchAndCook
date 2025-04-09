@@ -443,10 +443,10 @@ Quaternion AnimationNode::CalculateRotation(const double& time) const
         }
     }
 
-    if (hasPreRotation)
-        interpolatedRotation = interpolatedRotation * offsetPreRotation;
-    if (hasPostRotation)
-        interpolatedRotation = offsetPostRotation * interpolatedRotation;
+    //if (hasPreRotation)
+    //    interpolatedRotation = interpolatedRotation * offsetPreRotation;
+    //if (hasPostRotation)
+    //    interpolatedRotation = offsetPostRotation * interpolatedRotation;
     return interpolatedRotation;
 }
 

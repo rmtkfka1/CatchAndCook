@@ -51,6 +51,7 @@ void ResourceManager::CreateDefaultShader()
 			ShaderArg{},info);
 
 		shader->SetInjector({ BufferType::DefaultMaterialParam });
+		shader->SetPass(RENDER_PASS::Deffered);
 	}
 
 	{
@@ -63,7 +64,7 @@ void ResourceManager::CreateDefaultShader()
 
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"Plant", L"Plant.hlsl", StaticProp,
 			ShaderArg{}, info);
-
+		shader->SetPass(RENDER_PASS::Deffered);
 	}
 
 
@@ -75,6 +76,7 @@ void ResourceManager::CreateDefaultShader()
 		info._stencilTest = false;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Deffered);
 		shader->Init(L"final.hlsl", GeoMetryProp,ShaderArg{},info);
 		Add<Shader>(L"finalShader",shader);
 	}
@@ -86,6 +88,7 @@ void ResourceManager::CreateDefaultShader()
 		info._stencilTest = false;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Deffered);
 		shader->Init(L"final_MainField.hlsl", GeoMetryProp, ShaderArg{}, info);
 		Add<Shader>(L"finalShader_MainField", shader);
 	}
@@ -98,12 +101,13 @@ void ResourceManager::CreateDefaultShader()
 		info._blendEnable = true;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Forward);
 		shader->Init(L"SpriteShader.hlsl", ColorProp, ShaderArg{}, info);
 		Add<Shader>(L"SpriteShader", shader);
 	}
 
 
-	
+	//Forward
 	{
 
 		ShaderInfo info;
@@ -112,14 +116,9 @@ void ResourceManager::CreateDefaultShader()
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetInjector({BufferType::DefaultMaterialParam});
-		shader->Init(L"TestForward_Skinned.hlsl", StaticProp, ShaderArg{}, info);
+		shader->SetPass(RENDER_PASS::Forward);
+		shader->Init(L"TestForward_Total.hlsl", StaticProp, ShaderArg{}, info);
 		Add<Shader>(L"DefaultForward", shader);
-	}
-
-	{
-		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->Init(L"UiForward.hlsl", StaticProp, ShaderArg{});
-		Add<Shader>(L"UiForward", shader);
 	}
 
 	{
@@ -131,7 +130,8 @@ void ResourceManager::CreateDefaultShader()
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetInjector({BufferType::DefaultMaterialParam});
 		shader->SetMacro({{"SKINNED",nullptr}});
-		shader->Init(L"TestForward_Skinned.hlsl", SkinProp, ShaderArg{}, info);
+		shader->SetPass(RENDER_PASS::Forward);
+		shader->Init(L"TestForward_Total.hlsl", SkinProp, ShaderArg{}, info);
 		Add<Shader>(L"DefaultForward_Skinned", shader);
 	}
 
@@ -143,10 +143,30 @@ void ResourceManager::CreateDefaultShader()
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetInjector({BufferType::DefaultMaterialParam});
+		shader->SetPass(RENDER_PASS::Forward);
 		shader->SetMacro({{"INSTANCED",nullptr}});
 		shader->SetInstanceProp(TransformInstanceProp);
-		shader->Init(L"TestForward_Skinned.hlsl", SkinProp,ShaderArg{},info);
+		shader->Init(L"TestForward_Total.hlsl", SkinProp,ShaderArg{},info);
 		Add<Shader>(L"DefaultForward_Instanced",shader);
+	}
+	//Deferred
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+
+		info.renderTargetCount = 3;
+
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetInjector({ BufferType::DefaultMaterialParam });
+		shader->SetPass(RENDER_PASS::Deffered);
+		shader->Init(L"TestDeferred_Total.hlsl", StaticProp, ShaderArg{}, info);
+		Add<Shader>(L"DefaultDeferred", shader);
 	}
 
 	{
@@ -162,6 +182,57 @@ void ResourceManager::CreateDefaultShader()
 		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetInjector({ BufferType::DefaultMaterialParam });
+		shader->SetMacro({ {"SKINNED",nullptr} });
+		shader->SetPass(RENDER_PASS::Deffered);
+		shader->Init(L"TestDeferred_Total.hlsl", SkinProp, ShaderArg{}, info);
+		Add<Shader>(L"DefaultDeferred_Skinned", shader);
+	}
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+
+		info.renderTargetCount = 3;
+
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetInjector({ BufferType::DefaultMaterialParam });
+		shader->SetMacro({ {"INSTANCED",nullptr} });
+		shader->SetInstanceProp(TransformInstanceProp);
+		shader->SetPass(RENDER_PASS::Deffered);
+		shader->Init(L"TestDeferred_Total.hlsl", SkinProp, ShaderArg{}, info);
+		Add<Shader>(L"DefaultDeferred_Instanced", shader);
+	}
+
+
+	{
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::UI);
+		shader->Init(L"UiForward.hlsl", StaticProp, ShaderArg{});
+		Add<Shader>(L"UiForward", shader);
+	}
+
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+
+		info.renderTargetCount = 3;
+
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Deffered);
 		shader->Init(L"ForwardPreDepthNormal.hlsl", StaticProp, ShaderArg{}, info);
 		Add<Shader>(L"DepthNormal", shader);
 	}
@@ -180,6 +251,7 @@ void ResourceManager::CreateDefaultShader()
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetMacro({ {"SKINNED",nullptr} });
+		shader->SetPass(RENDER_PASS::Deffered);
 		shader->Init(L"ForwardPreDepthNormal.hlsl", SkinProp, ShaderArg{}, info);
 		Add<Shader>(L"DepthNormal_Skinned", shader);
 	}
@@ -199,6 +271,7 @@ void ResourceManager::CreateDefaultShader()
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetMacro({ {"INSTANCED",nullptr} });
 		shader->SetInstanceProp(TransformInstanceProp);
+		shader->SetPass(RENDER_PASS::Deffered);
 		shader->Init(L"ForwardPreDepthNormal.hlsl", SkinProp, ShaderArg{}, info);
 		Add<Shader>(L"DepthNormal_Instanced", shader);
 	}
@@ -214,6 +287,7 @@ void ResourceManager::CreateDefaultShader()
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetInjector({ BufferType::DefaultMaterialParam, BufferType::PlayerMaterialParam });
 		shader->SetMacro({ {"SKINNED",nullptr} });
+		shader->SetPass(RENDER_PASS::Forward);
 		shader->Init(L"PlayerShader.hlsl", SkinProp, ShaderArg{}, info);
 		Add<Shader>(L"PlayerShader", shader);
 	}
@@ -230,6 +304,7 @@ void ResourceManager::CreateDefaultShader()
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetInstanceProp(GizmoInstanceProp);
 		shader->Init(L"Gizmo.hlsl", {},ShaderArg{{{"PS_Main","ps"},{"VS_Main","vs"},{"GS_Main","gs"}}},info);
+		shader->SetPass(RENDER_PASS::Debug);
 		Add<Shader>(L"Gizmo",shader);
 	}
 
@@ -242,6 +317,7 @@ void ResourceManager::CreateDefaultShader()
 		info.cullingType = CullingType::BACK;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Debug);
 		shader->Init(L"Gizmo_Text.hlsl", StaticProp, ShaderArg{{{"PS_Main","ps"},{"VS_Main","vs"}}}, info);
 		Add<Shader>(L"GizmoTexture",shader);
 	}

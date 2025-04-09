@@ -87,16 +87,29 @@ float3 Phong(float3 lightStrength, float3 lightVec, float3 normal, float3 toEye,
     return mat.ambient + (mat.diffuse + specular) * lightStrength;
 }
 
-float3 ComputeDirectionalLight(Light L, LightMateiral mat,float3 worldPos, float3 normal, float3 toEye)
+struct LightingResult
+{
+	float3 color;
+    float atten;
+
+    float3 subColor;
+    float subAtten;
+};
+
+float3 ComputeDirectionalLight(Light L, LightMateiral mat,float3 worldPos, float3 normal, float3 toEye, inout LightingResult lightingResult)
 {
     //float3 lightVec = normalize(L.position - worldPos);
     float3 lightVec = normalize(-L.direction);
     float ndotl = max(dot(normal, lightVec), 0.0f);
     float3 LightStrength = L.strength * L.intensity * ndotl;
+
+    lightingResult.atten = ndotl * clamp(0, 1, L.intensity);
+    lightingResult.color = L.strength* L.intensity;
+
     return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
 }
 
-float3 ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye)
+float3 ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout LightingResult lightingResult)
 {
     float3 lightVec = L.position - pos;
 
@@ -118,6 +131,9 @@ float3 ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, 
         float att = 1 - CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
 
         LightStrength *= att;
+
+        lightingResult.subColor += LightStrength;
+        lightingResult.subAtten += att * ndotl;
         
         //return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
         return mat.diffuse * LightStrength;
@@ -125,7 +141,7 @@ float3 ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, 
     }
 }
 
-float3 ComputeSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye)
+float3 ComputeSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout LightingResult lightingResult)
 {
     float3 lightVec = L.position - pos;
 
@@ -154,6 +170,9 @@ float3 ComputeSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal, f
         float cosInnerThreshold = cos(L.innerSpotAngle/2);
 		float spotFactor = saturate((dot(-lightVec, L.direction) - cosThreshold) / (cosInnerThreshold - cosThreshold) );
         LightStrength *= spotFactor;
+
+        lightingResult.subColor += LightStrength;
+        lightingResult.subAtten += spotFactor * ndotl * att;
         
         //return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
         return mat.diffuse * LightStrength;
@@ -166,6 +185,8 @@ float4 ComputeLightColor(float3 worldPos ,float3 WorldNomral)
 
     float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
 
+
+    LightingResult result = (LightingResult)0;
     [unroll]
     for (int i = 0; i < g_lightCount; ++i)
     {
@@ -173,21 +194,20 @@ float4 ComputeLightColor(float3 worldPos ,float3 WorldNomral)
         {
 	        if (g_lights[i].mateiral.lightType == 0)
 	        {
-	            lightColor += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, worldPos, WorldNomral, toEye);
+	            lightColor += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, worldPos, WorldNomral, toEye, result);
 	        }
 	        else if (g_lights[i].mateiral.lightType == 1)
 	        {
-	            lightColor += ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye);
+	            lightColor += ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, result);
 	        }
 	        else if (g_lights[i].mateiral.lightType == 2)
 	        {
-	            lightColor += ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye);
+	            lightColor += ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, result);
 	        }
 		}
     }
     
     return float4(lightColor, 1.0f);
-
 }
 
 #endif

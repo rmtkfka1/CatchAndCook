@@ -193,6 +193,8 @@ public:
     std::unordered_map<std::string, std::shared_ptr<ShaderCode>> _shaderCodeTable;
     ShaderInfo _info;
     ShaderProfileInfo _profileInfo;
+	RENDER_PASS::PASS _pass = RENDER_PASS::Forward;
+
     std::vector<BufferType> _cbufferInjectorTypes;
     std::vector<VertexProp> _instanceProp;
     std::vector<D3D_SHADER_MACRO> _macros = {{nullptr,nullptr}};
@@ -207,6 +209,8 @@ public:
 	void SetInjector(const std::vector<BufferType>& injectors);
     void SetInstanceProp(const std::vector<VertexProp>& props);
     void SetInfo(const ShaderInfo& info);
+    void SetPass(RENDER_PASS::PASS pass) { _pass = pass; }
+    RENDER_PASS::PASS GetPass() const { return _pass; }
     void Profile();
 
     int GetRegisterIndex(const std::string& name);

@@ -283,15 +283,15 @@ void SceneLoader::LinkComponent(json& jsonData)
                 auto shader = ResourceManager::main->Get<Shader>(shaderName);
                 if (shader == nullptr)
                 {
-                    shader = ResourceManager::main->Get<Shader>(L"DefaultForward");// Deffered DefaultForward_Skinned DefaultForward
+                    shader = ResourceManager::main->Get<Shader>(L"DefaultDeferred");// Deffered DefaultForward_Skinned DefaultForward
                     material->SetShader(shader);
-                    material->SetPass(RENDER_PASS::Forward);
+                    material->SetPass(shader->GetPass());
                 }
                 else
                 {
                     material->SetShader(shader);
+                    material->SetPass(shader->GetPass());
                 }
-				material->SetPass(RENDER_PASS::Forward);
                 material->SetPreDepthNormal(true);
                 materials.push_back(material);
             }
@@ -329,11 +329,12 @@ void SceneLoader::LinkComponent(json& jsonData)
                 {
                     shader = ResourceManager::main->Get<Shader>(L"DefaultForward_Skinned");
                     material->SetShader(shader);
-                    material->SetPass(RENDER_PASS::Forward);
+                    material->SetPass(shader->GetPass());
                 }
                 else
                 {
                     material->SetShader(shader);
+                    material->SetPass(shader->GetPass());
                 }
                 material->SetPreDepthNormal(true);
                 materials.push_back(material);

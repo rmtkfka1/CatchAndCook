@@ -85,8 +85,19 @@ void SkinnedHierarchy::Animate(const std::shared_ptr<Animation>& animation, doub
 		if (it != nodeObjectTable.end())
 		{
 			auto obj = it->second.lock();
-			auto matrix = animNode->CalculateTransformMatrix(finalTime, animation->_isApplyTransform && animNode->IsRoot());
-			obj->_transform->SetLocalSRTMatrix(matrix);
+			
+			auto q1 = animNode->CalculateRotation(finalTime);
+			auto p1 = animNode->CalculatePosition(finalTime);
+			auto s1 = animNode->CalculateScale(finalTime);
+
+			auto q2 = animNode->CalculateRotation(finalTime);
+			auto p2 = animNode->CalculatePosition(finalTime);
+			auto s2 = animNode->CalculateScale(finalTime);
+
+			Matrix finalMatrix = Matrix::CreateScale(s1) *
+				Matrix::CreateFromQuaternion(q1 * animNode->offsetPreRotation) *
+				Matrix::CreateTranslation(p1);
+			obj->_transform->SetLocalSRTMatrix(finalMatrix);
 		}
 	}
 

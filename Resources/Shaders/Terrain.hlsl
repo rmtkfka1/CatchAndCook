@@ -41,6 +41,7 @@ struct VS_OUT
 struct DS_OUT
 {
     float4 pos : SV_POSITION;
+    float4 worldPos : POSITION;
     float2 uv : TEXCOORD;
     float2 uvTile : TEXCOORD1;
     float3 normal : NORMAL;
@@ -213,19 +214,21 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 3> quad, PatchConstOutput patchConst, float3 
     float height = heightMap.SampleLevel(sampler_point, uv, 0).r;
     pos.y += height * fieldSize.y;
 
-    float texelSize = 1.0f / 4096.0f; 
+    //float texelSize = 1.0f / 4096.0f;
+    float texelSize = (1.0f / 4096.0f); 
 
-    float heightL = heightMap.SampleLevel(sampler_point, uv + float2(-texelSize, 0), 0).r;
-    float heightR = heightMap.SampleLevel(sampler_point, uv + float2(texelSize, 0), 0).r;
-    float heightD = heightMap.SampleLevel(sampler_point, uv + float2(0, -texelSize), 0).r;
-    float heightU = heightMap.SampleLevel(sampler_point, uv + float2(0, texelSize), 0).r;
+    float heightL = heightMap.SampleLevel(sampler_lerp_clamp, uv + float2(-texelSize, 0), 0).r;
+    float heightR = heightMap.SampleLevel(sampler_lerp_clamp, uv + float2(texelSize, 0), 0).r;
+    float heightD = heightMap.SampleLevel(sampler_lerp_clamp, uv + float2(0, -texelSize), 0).r;
+    float heightU = heightMap.SampleLevel(sampler_lerp_clamp, uv + float2(0, texelSize), 0).r;
 
-    float3 dx = float3(2 * texelSize * fieldSize.x, (heightR - heightL) * fieldSize.y, 0);
-    float3 dz = float3(0, (heightU - heightD) * fieldSize.y, 2 * texelSize * fieldSize.z);
+    float3 dx = float3(2*texelSize * fieldSize.x, (heightR - heightL) * fieldSize.y, 0);
+    float3 dz = float3(0, (heightD - heightU) * fieldSize.y,2* texelSize * fieldSize.z);
 
     float3 normal = normalize(cross(dz, dx));
 
     dout.pos = mul(float4(pos, 1.0f), VPMatrix);
+    dout.worldPos = float4(pos, 1.0f);
     dout.uv = uv;
     dout.uvTile = uvTile;
     dout.normal = normal;
@@ -340,8 +343,8 @@ PS_OUT PS_Main(DS_OUT input)
 
    
     output.color = finalColor;
-    output.normal = float4(input.normal, 1.0f);
-    output.position = input.pos;
+    output.normal = float4(normalize(input.normal), 1.0f);
+    output.position = input.worldPos;
     
     return output;
 }
