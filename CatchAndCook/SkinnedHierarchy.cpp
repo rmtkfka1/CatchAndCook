@@ -29,6 +29,8 @@ void SkinnedHierarchy::Init()
 		matrix = Matrix::Identity;
 	for (auto& matrix : _finalMatrixList)
 		matrix = Matrix::Identity;
+
+
 }
 
 void SkinnedHierarchy::Start()
@@ -140,20 +142,8 @@ void SkinnedHierarchy::RenderBegin()
 {
 	Component::RenderBegin();
 
-	GetOwner()->_transform->TopDownLocalToWorldUpdate(Matrix::Identity, false);
-
-	int boneCount = _boneNameList.size();
-	for (int i = 0; i < boneCount; i++)
-	{
-		_finalMatrixList[i] = _boneOffsetMatrixList[i];
-		if (auto current = _boneNodeList[i].lock()) {
-			_finalMatrixList[i] = _finalMatrixList[i] * current->_transform->_localToWorldMatrix;
-			_finalMatrixList[i].Invert(_finalInvertMatrixList[i]);
-		}
-	}
-	_boneCBuffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::BoneParam)->Alloc(1);
-	memcpy(&(static_cast<BoneParam*>(_boneCBuffer->ptr)->boneMatrixs), _finalMatrixList.data(), sizeof(Matrix) * boneCount);
-	memcpy(&(static_cast<BoneParam*>(_boneCBuffer->ptr)->boneInvertMatrixs), _finalInvertMatrixList.data(),sizeof(Matrix) * boneCount);
+	
+	
 }
 
 void SkinnedHierarchy::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
@@ -228,6 +218,22 @@ void SkinnedHierarchy::SetMappingTable(const std::unordered_map<std::string, std
 
 void SkinnedHierarchy::SetData(Material* material)
 {
+	GetOwner()->_transform->TopDownLocalToWorldUpdate(Matrix::Identity, false);
+
+	int boneCount = _boneNameList.size();
+	for (int i = 0; i < boneCount; i++)
+	{
+		_finalMatrixList[i] = _boneOffsetMatrixList[i];
+		if (auto current = _boneNodeList[i].lock()) {
+			_finalMatrixList[i] = _finalMatrixList[i] * current->_transform->_localToWorldMatrix;
+			_finalMatrixList[i].Invert(_finalInvertMatrixList[i]);
+		}
+	}
+
+	_boneCBuffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::BoneParam)->Alloc(1);
+	memcpy(&(static_cast<BoneParam*>(_boneCBuffer->ptr)->boneMatrixs), _finalMatrixList.data(), sizeof(Matrix) * boneCount);
+	memcpy(&(static_cast<BoneParam*>(_boneCBuffer->ptr)->boneInvertMatrixs), _finalInvertMatrixList.data(), sizeof(Matrix) * boneCount);
+
 	int index = material->GetShader()->GetRegisterIndex("BoneParam");
 	if(index != -1)
 		Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(index, _boneCBuffer->GPUAdress);

@@ -394,13 +394,13 @@ void Model::LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& cu
 
 				const int MAX_BONE_COUNT = 4;
 
-				// ���� �Ⱦ��� ID�� �ִ��� ����
 				for(int l = 0; l < MAX_BONE_COUNT; ++l)
 					if(idArray[l] == -1)
 					{
 						findIndex = l;
 						break;
 					}
+
 				if((currentVertex.boneId.x + currentVertex.boneId.y + currentVertex.boneId.z + currentVertex.boneId.w == -4) && findIndex != -1)
 				{
 					(&currentVertex.boneId.x)[findIndex] = static_cast<float>(bone->GetIndex());

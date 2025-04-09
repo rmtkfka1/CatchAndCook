@@ -49,14 +49,15 @@ void Animation::Init(std::shared_ptr<Model> model, aiAnimation* anim, aiNode* ro
 			_nodeTables[originalName] = part;
 			_nodeLists.push_back(part);
 		}
+
 		if (model && model->_rootBoneNode && model->_rootBoneNode->GetOriginalName() == originalName)
 		{
 			_rootBoneNode = part;
 			part->SetRoot(true);
 		}
+
 		part->SetKeyFrames(anim, anim->mChannels[i]);
 	}
-
 
 	for (auto& part : _nodeTables)
 	{
