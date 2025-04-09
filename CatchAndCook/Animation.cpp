@@ -38,6 +38,7 @@ void Animation::Init(std::shared_ptr<Model> model, aiAnimation* anim, aiNode* ro
 			vector<string> originalList = str::split(name, "_$AssimpFbx$");
 			originalName = originalList[0];
 		}
+
 		auto part = _nodeTables[originalName];
 		if (part == nullptr)
 		{

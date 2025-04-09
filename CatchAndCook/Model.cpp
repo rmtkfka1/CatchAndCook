@@ -217,6 +217,7 @@ void Model::Init(const wstring& path, VertexType vertexType)
 	}
 
 	_rootNode->CalculateTPoseNode(nullptr);
+
 	for (int i = 0; i < scene->mNumAnimations; i++) {
 		LoadAnimation(scene->mAnimations[i], scene->mRootNode);
 	}
@@ -408,11 +409,12 @@ void Model::LoadBone(aiMesh* currentAIMesh, const std::shared_ptr<ModelMesh>& cu
 			}
 		}
 	}
+
 	for (int vertexIndex = 0; vertexIndex < vertexs.size(); vertexIndex++)
 	{
 		auto& currentVertex = vertexs[vertexIndex];
-		if (currentVertex.boneWeight.LengthSquared() > 1)
-			currentVertex.boneWeight.Normalize();
+
+		currentVertex.boneWeight.Normalize();
 	}
 	
 }
