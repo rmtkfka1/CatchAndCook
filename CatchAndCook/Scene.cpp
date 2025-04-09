@@ -31,7 +31,7 @@ void Scene::Init()
 {
 	_finalDefferedMaterial = std::make_shared<Material>();
 	_finalDefferedMaterial->SetShader(ResourceManager::main->Get<Shader>(L"finalShader"));
-    _finalDefferedMaterial->SetPass(RENDER_PASS::Deffered);
+    _finalDefferedMaterial->SetPass(RENDER_PASS::Forward);
 }
 
 void Scene::Update()

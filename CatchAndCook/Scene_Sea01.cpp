@@ -13,6 +13,8 @@ void Scene_Sea01::Init()
 {
 
 
+	Scene::Init();
+
 #pragma region DebugXYZ
 	{
 
