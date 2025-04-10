@@ -87,8 +87,8 @@ void Terrain::Start()
             renderer->SetInstancing(false);
             for (auto& material : renderer->GetMaterials())
             {
-                material->SetShader(ResourceManager::main->Get<Shader>(L"DefaultForward_Instanced"));
-                material->SetPass(RENDER_PASS::Forward);
+                material->SetShader(ResourceManager::main->Get<Shader>(L"DefaultDeferred_Instanced"));
+                material->SetPass(RENDER_PASS::Deffered);
             }
         }
     }

@@ -82,7 +82,7 @@ public:
 	SceneType _type;
 
 	GlobalParam _globalParam;
-	std::shared_ptr<Material> _finalDefferedMaterial;
+	std::shared_ptr<Material> _finalShader;
 };
 
 

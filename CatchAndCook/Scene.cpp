@@ -29,9 +29,9 @@ void Scene::AddGameObject(const std::shared_ptr<GameObject>& gameObject)
 
 void Scene::Init()
 {
-	_finalDefferedMaterial = std::make_shared<Material>();
-	_finalDefferedMaterial->SetShader(ResourceManager::main->Get<Shader>(L"finalShader"));
-    _finalDefferedMaterial->SetPass(RENDER_PASS::Forward);
+	_finalShader = std::make_shared<Material>();
+	_finalShader->SetShader(ResourceManager::main->Get<Shader>(L"finalShader"));
+    _finalShader->SetPass(RENDER_PASS::Forward);
 }
 
 void Scene::Update()
@@ -102,19 +102,17 @@ void Scene::Rendering()
     FinalRender(cmdList);
     Profiler::Fin();
 
-    Core::main->CopyDepthTexture(Core::main->GetDSReadTexture(), Core::main->GetRenderTarget()->GetDSTexture());
-    Core::main->GetDSReadTexture()->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+  /*  Core::main->CopyDepthTexture(Core::main->GetDSReadTexture(), Core::main->GetRenderTarget()->GetDSTexture());
+    Core::main->GetDSReadTexture()->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);*/
 
-	//
     Profiler::Set("PASS : Forward", BlockTag::GPU);
     ForwardPass(cmdList);
     Profiler::Fin();
 
-    Core::main->CopyDepthTexture(Core::main->GetDSReadTexture(), Core::main->GetRenderTarget()->GetDSTexture());
-    Core::main->GetDSReadTexture()->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+    //Core::main->CopyDepthTexture(Core::main->GetDSReadTexture(), Core::main->GetRenderTarget()->GetDSTexture());
+    //Core::main->GetDSReadTexture()->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
 
-    //
     Profiler::Set("PASS : Transparent", BlockTag::GPU);
     TransparentPass(cmdList); // Position,
     Profiler::Fin();
@@ -203,6 +201,7 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                 }
 
                 SettingPrevData(ele, RENDER_PASS::PASS::Forward);
+
                 if (ele.renderer->isInstancing() == false)
                 {
                     InstancingManager::main->RenderNoInstancing(ele);
@@ -307,14 +306,14 @@ void Scene::FinalRender(ComPtr<ID3D12GraphicsCommandList>& cmdList)
     Core::main->GetRenderTarget()->RenderBegin();
 
     auto mesh = ResourceManager::main->Get<Mesh>(L"finalMesh");
-    auto shader = _finalDefferedMaterial->GetShader();
+    auto shader = _finalShader->GetShader();
 
     cmdList->SetPipelineState(shader->_pipelineState.Get());
 
-    RenderObjectStrucutre ROS = { _finalDefferedMaterial.get(), mesh.get(), nullptr };
+    RenderObjectStrucutre ROS = { _finalShader.get(), mesh.get(), nullptr };
     SettingPrevData(ROS, RENDER_PASS::PASS::Deffered);
 
-    _finalDefferedMaterial->SetData();
+    _finalShader->SetData();
     mesh->Redner();
 }
 
