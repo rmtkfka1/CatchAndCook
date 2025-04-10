@@ -101,7 +101,7 @@ void Game::Init(HWND hwnd)
 	LightManager::main->PushLight(light);
 
 
-	auto scene = SceneManager::main->AddScene(SceneType::Sea01);
+	auto scene = SceneManager::main->AddScene(SceneType::LightingTest);
 };
 
 void Game::PrevUpdate()
@@ -224,9 +224,12 @@ void Game::Release()
 
 void Game::CameraUpdate()
 {
+	if (CameraManager::main->GetActiveCamera()->GetCameraType() != CameraType::DebugCamera)
+		return;
+
 	shared_ptr<Camera> camera = CameraManager::main->GetCamera(CameraType::DebugCamera);
 
-	const float speed = 150.0f;
+	const float speed = 500.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;
 
 	if (Input::main->GetKey(KeyCode::W))

@@ -119,15 +119,17 @@ void FishMonster::Idle(float dt)
 void FishMonster::Move(float dt)
 {
 
-	if (_fishPath.size() < 2 && _pathName == L"Null")
-		assert(false);
+	//if (_fishPath.size() < 2 && _pathName == L"Null")
+	//	assert(false);
 
 	const vector<vec3>& myPath = _fishPath;
 
-	const vec3& start = myPath[_currentIndex];
-	const vec3& end = myPath[(_currentIndex + 1) % myPath.size()];
+	int nextIndex = _forward ? _currentIndex + 1 : _currentIndex - 1;
 
-	if (_segmentLength == 0.0f)
+	const vec3& start = myPath[_currentIndex];
+	const vec3& end = myPath[nextIndex];
+
+	if (_segmentLength < 0.0001f)
 		_segmentLength = (end - start).Length();
 
 	_distanceMoved += Time::main->GetDeltaTime() * _moveSpeed;
@@ -146,9 +148,32 @@ void FishMonster::Move(float dt)
 
 	if (t >= 1.0f)
 	{
-		_currentIndex = (_currentIndex + 1) % myPath.size();
 		_distanceMoved = 0.0f;
 		_segmentLength = 0.0f;
+
+		if (_forward)
+		{
+			_currentIndex += 1;
+
+			if (_currentIndex >= myPath.size()-1)
+			{
+				cout << "forward false " << endl;
+				_forward = false;
+				return;
+			}
+		}
+
+		else
+		{
+			_currentIndex -= 1;
+
+			if (_currentIndex <= 0)
+			{
+				_forward = true;
+				return;
+			}
+
+		}
 	}
 
 	for (size_t i = 0; i < myPath.size() - 1; ++i)
@@ -156,10 +181,10 @@ void FishMonster::Move(float dt)
 		Gizmo::main->Line(myPath[i], myPath[i + 1], vec4(1, 1, 0, 1));
 	}
 
-	if (myPath.size() >= 2)
-	{
-		Gizmo::main->Line(myPath.back(), myPath.front(), vec4(1, 1, 0, 1));
-	}
+	//cout << "Current Index: " << _currentIndex << ", Next: " << nextIndex << endl;
+	//cout << "Forward: " << _forward << ", t: " << t << ", DistanceMoved: " << _distanceMoved << endl;
+
+
 
 }
 
@@ -177,6 +202,8 @@ void FishMonster::Hit(float dt)
 
 void FishMonster::ReadPathFile(const std::wstring& fileName)
 {
+	_pathName = fileName;
+
 	std::ifstream file(fileName);
 	if (!file.is_open())
 	{

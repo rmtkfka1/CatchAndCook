@@ -25,53 +25,76 @@ void PathFinder::Start()
 
 void PathFinder::Update()
 {
-    if (_pathList[_pathName].path.size() < 2 && _pathName ==L"Null")
-		assert(false);
+
+	//if (_fishPath.size() < 2 && _pathName == L"Null")
+//	assert(false);
+
 
 	const vector<vec3>& myPath = _pathList[_pathName].path;
 
-    const vec3& start = myPath[_currentIndex];
-    const vec3& end = myPath[(_currentIndex + 1) % myPath.size()];
+	int nextIndex = _forward ? _currentIndex + 1 : _currentIndex - 1;
 
-    if (_segmentLength == 0.0f)
-        _segmentLength = (end - start).Length();
+	const vec3& start = myPath[_currentIndex];
+	const vec3& end = myPath[nextIndex];
 
-    _distanceMoved += Time::main->GetDeltaTime() * _moveSpeed;
+	if (_segmentLength < 0.0001f)
+		_segmentLength = (end - start).Length();
 
-    float t = std::clamp(_distanceMoved / _segmentLength, 0.0f, 1.0f);
-    vec3 pos = vec3::Lerp(start, end, t);
-    vec3 currentPos = GetOwner()->_transform->SetWorldPosition(pos);
+	_distanceMoved += Time::main->GetDeltaTime() * _moveSpeed;
 
-    vec3 dir = end - start;
+	float t = std::clamp(_distanceMoved / _segmentLength, 0.0f, 1.0f);
+	vec3 pos = vec3::Lerp(start, end, t);
+	vec3 currentPos = GetOwner()->_transform->SetWorldPosition(pos);
 
-    if (dir.LengthSquared() > 0.0001f)
-    {
-        dir.Normalize();
-        GetOwner()->_transform->LookUpSmooth(dir, vec3::Up,3.0f,_firstQuat);
-    }
+	vec3 dir = end - start;
 
-    if (t >= 1.0f)
-    {
-        _currentIndex = (_currentIndex + 1) % myPath.size();
-        _distanceMoved = 0.0f;
-        _segmentLength = 0.0f;
-    }
-
-
-	if (_pathList[_pathName].AreyouDraw==false)
+	if (dir.LengthSquared() > 0.0001f)
 	{
-        for (size_t i = 0; i < myPath.size() - 1; ++i)
-        {
-            Gizmo::main->Line(myPath[i], myPath[i + 1], vec4(1, 1, 0, 1));
-        }
+		dir.Normalize();
+		GetOwner()->_transform->LookUpSmooth(dir, vec3::Up, 3.0f, _firstQuat);
+	}
 
-        if (myPath.size() >= 2)
-        {
-            Gizmo::main->Line(myPath.back(), myPath.front(), vec4(1, 1, 0, 1));
-        }
+	if (t >= 1.0f)
+	{
+		_distanceMoved = 0.0f;
+		_segmentLength = 0.0f;
 
+		if (_forward)
+		{
+			_currentIndex += 1;
+
+			if (_currentIndex >= myPath.size() - 1)
+			{
+				cout << "forward false " << endl;
+				_forward = false;
+				return;
+			}
+		}
+
+		else
+		{
+			_currentIndex -= 1;
+
+			if (_currentIndex <= 0)
+			{
+				_forward = true;
+				return;
+			}
+
+		}
+	}
+
+
+	if (_pathList[_pathName].AreyouDraw == false)
+	{
+		for (size_t i = 0; i < myPath.size() - 1; ++i)
+		{
+			Gizmo::main->Line(myPath[i], myPath[i + 1], vec4(1, 1, 0, 1));
+		}
 		_pathList[_pathName].AreyouDraw = true;
 	}
+
+
 
 };
 void PathFinder::Update2()

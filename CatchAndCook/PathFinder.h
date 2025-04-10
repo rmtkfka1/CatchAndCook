@@ -36,6 +36,7 @@ private:
 private:
 	static unordered_map<wstring, FishPath> _pathList;
 
+	bool _forward = true;
 	int _currentIndex = 0;
 	float _moveSpeed = 200.0f; 
 	float _distanceMoved = 0.0f;
