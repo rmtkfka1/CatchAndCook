@@ -34,7 +34,6 @@ private:
 public:
 	vec3 _velocity = vec3::Zero;
 
-
 	float _cameraHeightOffset = 1.2f;
 	float  _yaw = 0;
 	float _pitch = 0;

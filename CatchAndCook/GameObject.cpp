@@ -53,6 +53,7 @@ void GameObject::Start()
 
 void GameObject::Update()
 {
+
     if (_active_total) 
     {
         for (auto& component : _components) 
@@ -61,7 +62,6 @@ void GameObject::Update()
                 component->Update();
         }
     }
-
 
     if (Input::main->GetKeyDown(KeyCode::M))
     {

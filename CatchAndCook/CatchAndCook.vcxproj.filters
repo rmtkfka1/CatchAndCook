@@ -751,5 +751,7 @@
     <FxCompile Include="..\Resources\Shaders\vignette.hlsl">
       <Filter>998.HLSL\Compute</Filter>
     </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\ForwardPreDepthNormal.hlsl" />
+    <FxCompile Include="..\Resources\Shaders\SSAO.hlsl" />
   </ItemGroup>
 </Project>

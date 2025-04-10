@@ -48,38 +48,25 @@ void SeaPlayerController::Update()
 
     vec3 inputDir = vec3::Zero;
 
-    // --- 입력 처리 ---
-    if (Input::main->GetKey(KeyCode::UpArrow)) inputDir += vec3::Forward;
-    if (Input::main->GetKey(KeyCode::DownArrow)) inputDir += vec3::Backward;
-    if (Input::main->GetKey(KeyCode::LeftArrow)) inputDir += vec3::Left;
-    if (Input::main->GetKey(KeyCode::RightArrow)) inputDir += vec3::Right;
-    if (Input::main->GetKey(KeyCode::Space)) inputDir += vec3(0, 2, 0);
+	KeyUpdate(inputDir, rotation, dt);
 
-    if (inputDir != vec3::Zero)
-    {
-        inputDir.Normalize();
-        vec3 moveDir = vec3::Transform(inputDir, rotation);
-        _velocity += moveDir * _moveForce * dt;
+	UpdatePlayerAndCamera(dt, rotation);
+}
 
-        if (_velocity.Length() > _maxSpeed)
-        {
-            _velocity.Normalize();
-            _velocity *= _maxSpeed;
-        }
-    }
-
+void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
+{
     vec3 currentPos = _transform->GetWorldPosition();
     vec3 nextPos = currentPos + _velocity * dt;
     vec3 headOffset = vec3(0, _cameraHeightOffset, 0);
     vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);
-    vec3 nextHeadPos = nextPos + rotatedHeadOffset + _transform->GetForward()*0.2f;
+    vec3 nextHeadPos = nextPos + rotatedHeadOffset + _transform->GetForward() * 0.2f;
 
 
 
-	vec3 dir = _velocity;
+    vec3 dir = _velocity;
     dir.Normalize();
     float maxDist = _playerRadius;
-	auto ray = ColliderManager::main->RayCastForMyCell({ nextHeadPos, dir }, maxDist, GetOwner());
+    auto ray = ColliderManager::main->RayCastForMyCell({ nextHeadPos, dir }, maxDist, GetOwner());
 
     if (ray.isHit)
     {
@@ -91,7 +78,7 @@ void SeaPlayerController::Update()
         nextPos += normal * penetrationBuffer;
         nextHeadPos += normal * penetrationBuffer;
     }
- 
+
 
 
     // 지형 충돌 처리
@@ -102,21 +89,21 @@ void SeaPlayerController::Update()
     {
         float deltaY = desiredCameraHeight - nextHeadPos.y;
         nextHeadPos.y += deltaY;
-		nextPos.y += deltaY; 
+        nextPos.y += deltaY;
     }
 
-   /* Gizmo::Width(0.02f);
-    auto o = _camera->GetCameraPos();
-    auto f = _camera->GetCameraLook();
-    auto u = _camera->GetCameraUp();
-    auto r = _camera->GetCameraRight();
+    /* Gizmo::Width(0.02f);
+     auto o = _camera->GetCameraPos();
+     auto f = _camera->GetCameraLook();
+     auto u = _camera->GetCameraUp();
+     auto r = _camera->GetCameraRight();
 
-    Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
-    Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
-    Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));*/
+     Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
+     Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
+     Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));*/
 
 
-    // 최종 위치 적용
+     // 최종 위치 적용
     _transform->SetWorldPosition(nextPos);
     _camera->SetCameraPos(nextHeadPos);
     _velocity *= (1 - (_resistance * dt));
