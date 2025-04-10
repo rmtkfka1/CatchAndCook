@@ -43,6 +43,7 @@ void ImguiManager::Render()
 	ImGui::NewFrame();
 
 	Debug();
+	DebugJin();
 
 	ImGui::Render();
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), Core::main->GetCmdList().Get());
@@ -86,6 +87,7 @@ void ImguiManager::Debug()
 	ImGui::End();
 
 }
+
 
 void ImguiManager::BoidMove()
 {
@@ -307,5 +309,98 @@ void ImguiManager::SeaController()
             }
         }
         ImGui::TreePop(); 
+    }
+}
+
+
+
+
+void ImguiManager::DebugJin()
+{
+    ImGui::Begin("Jin");
+    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
+
+
+    Test();
+
+    ImGui::End();
+}
+float a = 0;
+
+void ImguiManager::Test()
+{
+    if (ImGui::CollapsingHeader("Scene Hierarchy"))
+    {
+		auto currentScene = SceneManager::main->GetCurrentScene();
+
+        if (ImGui::TreeNode("Dynamic & Static"))
+        {
+            for (auto& obj : currentScene->_gameObjects)
+            {
+                if (obj->GetRoot() == obj)
+                {
+	                struct ObjectBlock
+	                {
+						bool isOpen = false;
+	                };
+                    obj->ForHierarchyBeginEndAll([&](const std::shared_ptr<GameObject>& obj) {
+						ObjectBlock block;
+                        auto str = to_string(obj->GetName());
+                        ImGui::PushID(obj.get());
+                        if (block.isOpen = ImGui::TreeNode(str.c_str()))
+                        {
+
+                        }
+                        return block;
+                    }, [&](const ObjectBlock& block, const std::shared_ptr<GameObject>& obj) {
+						if (block.isOpen)
+						{
+							ImGui::TreePop();
+						}
+                        ImGui::PopID();
+                    });
+                }
+            }
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode("Deactivate"))
+        {
+            for (auto& obj : currentScene->_gameObjects_deactivate)
+            {
+
+            }
+            ImGui::TreePop();
+        }
+        /*
+        if (_seaParam)
+        {
+
+            if (ImGui::TreeNode("Anim"))
+            {
+
+                ImGui::SliderFloat("a", &a, 0, 1);
+            }
+        }
+        */
+    }
+    if (ImGui::CollapsingHeader("Jin"))
+    {
+	    if (ImGui::TreeNode("Jin Test"))
+	    {
+	        ImGui::SliderFloat("a", &a, 0, 1);
+	        /*
+	        if (_seaParam)
+	        {
+
+	            if (ImGui::TreeNode("Anim"))
+	            {
+
+	                ImGui::SliderFloat("a", &a, 0, 1);
+	            }
+	        }
+			*/
+	        ImGui::TreePop();
+	    }
     }
 }
