@@ -45,9 +45,11 @@ public:
 
 	std::vector<std::shared_ptr<RenderCBufferSetter>> _cbufferSetters;
 
-	BoundingBox& GetBound() {
+	BoundingBox& GetBound() 
+	{
 		return _bound;
 	};
+
 	void SetBound(const BoundingBox& bound) {
 		_bound = bound;
 	};

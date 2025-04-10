@@ -46,7 +46,7 @@ void SkinnedMeshRenderer::Start()
 	}
 
 	auto owner = GetOwner();
-	if(owner && owner->GetType() == GameObjectType::Static)
+	if(owner)
 	{
 		Matrix matrix;
 		owner->_transform->GetLocalToWorldMatrix_BottomUp(matrix);
@@ -60,7 +60,6 @@ void SkinnedMeshRenderer::Start()
 		SetBound(totalBox);
 	}
 
-	SetInstancing(false);
 }
 
 void SkinnedMeshRenderer::Update()
