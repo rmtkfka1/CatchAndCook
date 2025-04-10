@@ -125,12 +125,12 @@ void TestScene_jin::Init()
 
 	
 
-	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/MainField4.json");
+	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/MainField2.json");
 	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
 	sceneLoader->Load(GetCast<Scene>());
 
 
-	Find(L"player")->AddComponent<PlayerController>();
+	//Find(L"player")->AddComponent<PlayerController>();
 }
 
 void TestScene_jin::Update()

@@ -50,9 +50,12 @@ public:
 		return _bound;
 	};
 
-	void SetBound(const BoundingBox& bound) {
+	void SetBound(const BoundingBox& bound) 
+	{
 		_bound = bound;
+		_orginBound = bound;
 	};
+
 	void SetCulling(bool isCulling) {
 		_isCulling = isCulling;
 	};
@@ -72,6 +75,7 @@ public:
 	};
 
 	BoundingBox _bound;
+	BoundingBox _orginBound;
 	bool _isCulling = true;
 	bool _isInstancing = true;
 	InstanceBufferContainer* _staticInstanceBuffer = nullptr;

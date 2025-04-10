@@ -39,20 +39,19 @@ void MeshRenderer::Start()
 	AddStructuredSetter(_setter_ForwardLight, BufferType::ForwardLightParam);
 
 	auto owner = GetOwner();
-	if(owner && owner->GetType() == GameObjectType::Static)
-	{
-		Matrix matrix;
-		owner->_transform->GetLocalToWorldMatrix_BottomUp(matrix);
-		BoundingBox totalBox;
-		for(int i = 0; i < _mesh.size(); i++) {
-			auto currentMesh = _mesh[i];
-			auto bound = currentMesh->CalculateBound(matrix);
-			if(i == 0) totalBox = bound;
-			else  BoundingBox::CreateMerged(totalBox,totalBox,bound);
-		}
-		SetBound(totalBox);
+
+	Matrix matrix;
+	owner->_transform->GetLocalToWorldMatrix_BottomUp(matrix);
+	BoundingBox totalBox;
+	for (int i = 0; i < _mesh.size(); i++) {
+		auto currentMesh = _mesh[i];
+		auto bound = currentMesh->CalculateBound(matrix);
+		if (i == 0) totalBox = bound;
+		else  BoundingBox::CreateMerged(totalBox, totalBox, bound);
 	}
-}
+	SetBound(totalBox);
+
+};
 
 void MeshRenderer::Update()
 {
@@ -88,19 +87,12 @@ void MeshRenderer::RenderBegin()
 	Component::RenderBegin();
 
 	auto owner = GetOwner();
+
 	if(owner && owner->GetType() == GameObjectType::Dynamic)
 	{
 		Matrix matrix;
 		owner->_transform->GetLocalToWorldMatrix_BottomUp(matrix);
-		BoundingBox totalBox;
-		for(int i = 0; i < _mesh.size(); i++) {
-			auto currentMesh = _mesh[i];
-			auto bound = currentMesh->CalculateBound(matrix);
-			if(i == 0) totalBox = bound;
-			else  BoundingBox::CreateMerged(totalBox,totalBox,bound);
-		}
-
-		SetBound(totalBox);
+		_orginBound.Transform(_bound, matrix);
 	}
 
 	if(HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::Culling))
