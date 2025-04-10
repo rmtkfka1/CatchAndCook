@@ -100,7 +100,7 @@ void Game::Init(HWND hwnd)
 	light->strength = vec3(1.0f, 1.0f, 1.0f);
 	LightManager::main->PushLight(light);
 
-	auto scene = SceneManager::main->AddScene(SceneType::Sea01);
+	auto scene = SceneManager::main->AddScene(SceneType::LightingTest);
 };
 
 void Game::PrevUpdate()
