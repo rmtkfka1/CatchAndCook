@@ -29,8 +29,6 @@ void SkinnedHierarchy::Init()
 		matrix = Matrix::Identity;
 	for (auto& matrix : _finalMatrixList)
 		matrix = Matrix::Identity;
-
-
 }
 
 void SkinnedHierarchy::Start()
@@ -52,27 +50,45 @@ void SkinnedHierarchy::Update()
 	//auto name = GetOwner()->GetComponentWithChilds<SkinnedMeshRenderer>()->_model->_rootBoneNode->GetOriginalName();
 
 	//_boneHumanNameTable
-	//if (animation->_nodeTables.contains(name))
-	//{
-		//auto pos = animation->_nodeTables[name]->CalculatePosition(animation->CalculateTime(Time::main->GetTime()));
-		//GetOwner()->_transform->SetWorldPosition(pos);
-	//}
-	
+
+	if (animation != nullptr)
+	{
+		auto currentAnimationTime = animation->CalculateTime(Time::main->GetTime());
+
+		auto name = _model->_rootBoneNode->GetOriginalName();
+		if (animation->_nodeTables.contains(name))
+		{
+			auto pos = animation->_nodeTables[name]->CalculateDeltaPosition(prevAnimationTime, currentAnimationTime);
+			pos = Vector3::Transform(pos, GetOwner()->_transform->GetWorldRotation());
+
+			GetOwner()->_transform->SetWorldPosition(GetOwner()->_transform->GetWorldPosition() + pos);
+		}
+		prevAnimationTime = animation->CalculateTime(Time::main->GetTime());
+	}
 }
+
+int selectIndex = -1;
 
 void SkinnedHierarchy::Update2()
 {
 	Component::Update2();
 	auto a = ResourceManager::main->GetResourceMap<Animation>();
-
-	for (auto& b : a)
-	{
-		if (b.first == L"Shark_Armature|Swim")
+	std::vector<std::shared_ptr<Animation>> animations;
+	for (auto& b : a) {
+		animations.push_back(b.second);
+	}
+	
+	for (int i=0;i<9;i++)
+		if (Input::main->GetKeyDown(KeyCode::Num1 + i))
 		{
-			Animate(b.second, Time::main->GetTime());
+			selectIndex = i;
 			break;
 		}
-	}
+	if (Input::main->GetKeyDown(KeyCode::Num0))
+		selectIndex = -1;
+	if (selectIndex != -1)
+		SetAnimation(animations[selectIndex]);
+	Animate(GetAnimation(), Time::main->GetTime());
 }
 
 
@@ -88,8 +104,21 @@ void SkinnedHierarchy::Animate(const std::shared_ptr<Animation>& animation, doub
 		if (it != nodeObjectTable.end())
 		{
 			auto obj = it->second.lock();
-			auto matrix = animNode->CalculateTransformMatrix(finalTime, animation->_isApplyTransform && animNode->IsRoot());
-			obj->_transform->SetLocalSRTMatrix(matrix);
+			
+			auto q1 = animNode->CalculateRotation(finalTime);
+			auto p1 = animNode->CalculatePosition(finalTime);
+			auto s1 = animNode->CalculateScale(finalTime);
+			if (animNode->GetNodeName() == _model->_rootBoneNode->GetOriginalName())
+				std::cout << animNode->GetNodeName() << "\n";
+
+			bool finalRoot = animNode->IsRoot();
+			if (animation->_isApplyTransform && ((animNode->GetNodeName() == _model->_rootBoneNode->GetOriginalName())))
+				p1 = Vector3(0, p1.y, 0);
+
+			Matrix finalMatrix = Matrix::CreateScale(s1) *
+				Matrix::CreateFromQuaternion(q1 * animNode->offsetPreRotation) *
+				Matrix::CreateTranslation(p1);
+			obj->_transform->SetLocalSRTMatrix(finalMatrix);
 		}
 	}
 
@@ -143,8 +172,20 @@ void SkinnedHierarchy::RenderBegin()
 {
 	Component::RenderBegin();
 
-	
-	
+	GetOwner()->_transform->TopDownLocalToWorldUpdate(Matrix::Identity, false);
+
+	int boneCount = _boneNameList.size();
+	for (int i = 0; i < boneCount; i++)
+	{
+		_finalMatrixList[i] = _boneOffsetMatrixList[i];
+		if (auto current = _boneNodeList[i].lock()) {
+			_finalMatrixList[i] = _finalMatrixList[i] * current->_transform->_localToWorldMatrix;
+			_finalMatrixList[i].Invert(_finalInvertMatrixList[i]);
+		}
+	}
+	_boneCBuffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::BoneParam)->Alloc(1);
+	memcpy(&(static_cast<BoneParam*>(_boneCBuffer->ptr)->boneMatrixs), _finalMatrixList.data(), sizeof(Matrix) * boneCount);
+	memcpy(&(static_cast<BoneParam*>(_boneCBuffer->ptr)->boneInvertMatrixs), _finalInvertMatrixList.data(),sizeof(Matrix) * boneCount);
 }
 
 void SkinnedHierarchy::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
@@ -219,22 +260,6 @@ void SkinnedHierarchy::SetMappingTable(const std::unordered_map<std::string, std
 
 void SkinnedHierarchy::SetData(Material* material)
 {
-	GetOwner()->_transform->TopDownLocalToWorldUpdate(Matrix::Identity, false);
-
-	int boneCount = _boneNameList.size();
-	for (int i = 0; i < boneCount; i++)
-	{
-		_finalMatrixList[i] = _boneOffsetMatrixList[i];
-		if (auto current = _boneNodeList[i].lock()) {
-			_finalMatrixList[i] = _finalMatrixList[i] * current->_transform->_localToWorldMatrix;
-			_finalMatrixList[i].Invert(_finalInvertMatrixList[i]);
-		}
-	}
-
-	_boneCBuffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::BoneParam)->Alloc(1);
-	memcpy(&(static_cast<BoneParam*>(_boneCBuffer->ptr)->boneMatrixs), _finalMatrixList.data(), sizeof(Matrix) * boneCount);
-	memcpy(&(static_cast<BoneParam*>(_boneCBuffer->ptr)->boneInvertMatrixs), _finalInvertMatrixList.data(), sizeof(Matrix) * boneCount);
-
 	int index = material->GetShader()->GetRegisterIndex("BoneParam");
 	if(index != -1)
 		Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(index, _boneCBuffer->GPUAdress);
@@ -244,6 +269,11 @@ void SkinnedHierarchy::SetData(Material* material)
 void SkinnedHierarchy::SetAnimation(const std::shared_ptr<Animation>& animation)
 {
 	this->animation = animation;
+}
+
+std::shared_ptr<Animation> SkinnedHierarchy::GetAnimation()
+{
+	return animation;
 }
 
 void SkinnedHierarchy::FindNodeObjects()

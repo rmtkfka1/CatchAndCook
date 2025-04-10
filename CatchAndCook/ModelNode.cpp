@@ -81,8 +81,8 @@ void ModelNode::CalculateTPoseNode(const std::shared_ptr<ModelNode>& parent)
 	
 	if (originalParent = GetOriginalParent())
 	{
-		std::cout << GetName() << "\n";
-		std::cout << originalParent->GetName() << "\n\n";
+		//std::cout << GetName() << "\n";
+		//std::cout << originalParent->GetName() << "\n\n";
 
 		_globalTPose = _localTPose * originalParent->_globalTPose;
 		_parent_globalTPose = originalParent->_globalTPose;

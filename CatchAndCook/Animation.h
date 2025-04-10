@@ -40,7 +40,7 @@ public:
 	double _totalTime;
 
 	bool _isLoop = false;
-	bool _isApplyTransform = false;
+	bool _isApplyTransform = true;
 
 	std::unordered_map<string, std::shared_ptr<AnimationNode>> _nodeTables;
 	std::vector<std::shared_ptr<AnimationNode>> _nodeLists;

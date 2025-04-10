@@ -207,10 +207,10 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 4> quad, PatchConstOutput patchConst, float2 
 		lerp(quad[2].uv, quad[3].uv, location.x),
 		location.y);
 
-    dout.normal = lerp(
-		lerp(quad[0].normal, quad[1].normal, location.x),
-		lerp(quad[2].normal, quad[3].normal, location.x),
-		location.y);
+    dout.normal = normalize(lerp(
+		normalize(lerp(quad[0].normal, quad[1].normal, location.x)),
+		normalize(lerp(quad[2].normal, quad[3].normal, location.x)),
+		location.y));
     
     dout.uvTile = lerp(
 		lerp(quad[0].uvTile, quad[1].uvTile, location.x),
@@ -333,7 +333,7 @@ PS_OUT PS_Main(DS_OUT input)
 
    
     output.color = finalColor;
-    output.normal = float4(input.normal, 1.0f);
+    output.normal = float4(normalize(input.normal), 1.0f);
     output.position = input.pos;
     
     return output;

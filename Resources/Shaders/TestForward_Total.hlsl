@@ -2,7 +2,7 @@
 #include "Global_b0.hlsl"
 #include "Transform_b1.hlsl"
 #include "Camera_b2.hlsl"
-#include "Light_Forward_t31.hlsl"
+#include "Light_b3.hlsl"
 #include "Skinned_b5.hlsl"
 
 
@@ -10,11 +10,6 @@ cbuffer DefaultMaterialParam : register(b7)
 {
     float4 color = float4(1, 1, 1, 1);
     float4 _baseMapST = float4(1, 1, 1, 1);
-};
-
-cbuffer PlayerMaterialParam : register(b8)
-{
-    float4 temp = float4(1, 1, 1, 1);
 };
 
 struct VS_IN
@@ -31,37 +26,45 @@ struct VS_IN
     float4 boneIds : BONEIDs;
     float4 boneWs : BONEWs;
 	#endif
-
+    
+    #ifdef INSTANCED
+    MATRIX_DEFINE(instance_trs, 0);
+    MATRIX_DEFINE(instance_invert_trs, 1);
+    float3 instance_worldPos : FLOAT3_0;
+	#endif
 };
 
 struct VS_OUT
 {
-    float4 positionCS : SV_Position;
+    float4 position : SV_Position;
+    float4 positionCS : PositionCS;
     float4 positionWS : PositionWS;
     float3 normalOS : NormalOS;
     float3 normalWS : NormalWS;
     float3 tangentOS : TangentOS;
     float3 tangentWS : TangentWS;
     float2 uv : TEXCOORD0;
-    float3 color : COLOR;
 };
 
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
-
 Texture2D _BakedGIMap : register(t8);
 
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    Instance_Transform transformData = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
-    LightForwardParams lightingData = ForwardLightDatas[offset[STRUCTURED_OFFSET(31)].r + id];
-
-    row_major float4x4 l2wMatrix = transformData.localToWorld;
-    row_major float4x4 w2lMatrix = transformData.worldToLocal;
+    Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
+    row_major float4x4 l2wMatrix = data.localToWorld;
+    row_major float4x4 w2lMatrix = data.worldToLocal;
     float4 boneIds = 0;
     float4 boneWs = 0;
+    
+   
+#ifdef INSTANCED
+		l2wMatrix = MATRIX(input.instance_trs);
+		w2lMatrix = MATRIX(input.instance_invert_trs);
+#endif
     
     
 #ifdef SKINNED
@@ -72,19 +75,28 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     output.normalOS = input.normal;
     output.tangentOS = input.tangent;
 
-
+#ifdef INSTANCED
+		output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f),  boneIds, boneWs, l2wMatrix);
+#else
     output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f), boneIds, boneWs, l2wMatrix);
+#endif
     output.positionCS = TransformWorldToClip(output.positionWS);
 
+    output.position = output.positionCS;
+
+#ifdef INSTANCED
+		output.normalWS = TransformNormalLocalToWorld(output.normalOS, boneIds, boneWs, w2lMatrix);
+		output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix);
+#else
     output.normalWS = TransformNormalLocalToWorld(input.normal, boneIds, boneWs, w2lMatrix);
     output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix);
+#endif
+
 
     output.uv = input.uv;
-    output.color = lightingData.g_lights[0].strength.xyz;
 
     return output;
 }
-
 
 
 LightingResult ComputeLightColorForward(float3 worldPos ,float3 WorldNomral)
@@ -117,7 +129,6 @@ LightingResult ComputeLightColorForward(float3 worldPos ,float3 WorldNomral)
     
     return result;
 }
-
 
 [earlydepthstencil]
 float4 PS_Main(VS_OUT input) : SV_Target

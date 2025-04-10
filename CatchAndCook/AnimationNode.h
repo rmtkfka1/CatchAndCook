@@ -18,6 +18,8 @@ public:
 	Quaternion CalculateRotation(const double& time) const;
 	Vector3 CalculateScale(const double& time) const;
 
+	Vector3 CalculateDeltaPosition(const double& prevTime, const double& time) const;
+
 private:
 	void SetKeyFrames(aiAnimation* anim, aiNodeAnim* animNode);
 	void SetPosition(aiAnimation* anim, aiNodeAnim* animNode);
@@ -28,6 +30,8 @@ private:
 	void SetOffsetScale(const Vector3& scale);
 	void SetOffsetPreRotation(const Quaternion& scale);
 	void SetOffsetPostRotation(const Quaternion& scale);
+
+	void CheckMoveNode();
 
 	static int FindKeyFrameIndex(const vector<AnimationKeyFrame>& vec, const double& time);
 

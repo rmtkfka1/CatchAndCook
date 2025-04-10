@@ -48,7 +48,6 @@ struct VS_OUT
 
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
-Texture2D _BakedGIMap : register(t8);
 
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
@@ -98,24 +97,25 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     return output;
 }
 
-[earlydepthstencil]
-float4 PS_Main(VS_OUT input) : SV_Target
+struct PS_OUT
 {
+    float4 position : SV_Target0;
+    float4 normal : SV_Target1;
+    float4 color : SV_Target2;
+};
+
+
+PS_OUT PS_Main(VS_OUT input) : SV_Target
+{
+    PS_OUT output = (PS_OUT) 0;
+
     float3 N = ComputeNormalMapping(input.normalWS, input.tangentWS, _BumpMap.Sample(sampler_lerp, input.uv));
-    
-    float4 lightColor = ComputeLightColor(input.positionWS.xyz, N);
-    
     float4 BaseColor = _BaseMap.Sample(sampler_lerp, input.uv * _baseMapST.xy + _baseMapST.zw) * color;
-    float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
 
-    //float4 d = input.positionCS;
-    //d/w
-
-    //float2 a = TransformClipToScreen(input.positionCS);
-    
-    //return saturate(DepthTexture.Sample(sampler_lerp, TransformClipToScreen(input.positionCS)).r);
-
-    //return lightColor;
-
-    return lerp(ShadowColor * BaseColor, BaseColor, saturate(dot(normalize(float3(1, 2, 1)), N)));
+    output.position = input.positionWS;
+    output.color = BaseColor;
+    output.normal = float4(N, 1.0f);
+    if (output.color.a <= 0.1f)
+        discard;
+    return output;
 }

@@ -62,6 +62,7 @@ public:
 	
 
 	void SetAnimation(const std::shared_ptr<Animation>& animation);
+	std::shared_ptr<Animation> GetAnimation();
 	void FindNodeObjects();
 	void Animate(const std::shared_ptr<Animation>& animation, double time);
 	void SetData(Material* material) override;
@@ -86,6 +87,10 @@ public:
 	std::array<Matrix, 256> _finalInvertMatrixList;
 
 	CBufferContainer* _boneCBuffer;
+
+
+
+	float prevAnimationTime = 0;
 };
 
 

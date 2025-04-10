@@ -31,6 +31,8 @@ void AnimationNode::SetKeyFrames(aiAnimation* anim, aiNodeAnim* animNode)
 	SetPosition(anim, animNode);
 	SetRotation(anim, animNode);
 	SetScale(anim, animNode);
+
+    CheckMoveNode();
 }
 
 void AnimationNode::SetPosition(aiAnimation* anim, aiNodeAnim* animNode)
@@ -116,6 +118,22 @@ void AnimationNode::SetOffsetPostRotation(const Quaternion& quat)
 {
 	offsetPostRotation = quat;
     hasPostRotation = true;
+}
+
+void AnimationNode::CheckMoveNode()
+{
+    const float SOME_THRESHOLD = 0.1f;
+
+    if (_keyFrame_positions.size() != 0)
+    {
+        auto firstPos = _keyFrame_positions[0].position;
+        auto lastPos = _keyFrame_positions[_keyFrame_positions.size() - 1].position;
+
+        // 좌표 간의 차이가 일정 기준 이상이면 움직임이 있다고 판단
+        if ((lastPos - firstPos).Length() > SOME_THRESHOLD) {
+            _isRoot = true;
+        }
+    }
 }
 
 int AnimationNode::FindKeyFrameIndex(const vector<AnimationKeyFrame>& keyFrames, const double& time)
@@ -400,6 +418,55 @@ Matrix AnimationNode::CalculateTransformMatrixMapping(const std::shared_ptr<Mode
     return matrix;
 }
 
+Vector3 AnimationNode::CalculateDeltaPosition(const double& prevTime, const double& time) const
+{
+    Vector3 interpolatedPosition = offsetPosition;
+    Vector3 interpolatedPositionPrev = offsetPosition;
+
+    {
+        const size_t keyCount = _keyFrame_positions.size();
+        if (keyCount != 0)
+        {
+            if (keyCount == 1)
+                interpolatedPosition = _keyFrame_positions[0].position;
+            int index = FindKeyFrameIndex(_keyFrame_positions, time);
+            index = std::max(index, 0);
+            int nextIndex = (index + 1 < keyCount) ? index + 1 : 0;
+            const auto& key0 = _keyFrame_positions[index];
+            const auto& key1 = _keyFrame_positions[nextIndex];
+            const double dt = key1._time - key0._time;
+            const double t = (dt != 0.f) ? (time - key0._time) / dt : 0.f;
+            Vector3::Lerp(key0.position, key1.position, t, interpolatedPosition);
+        }
+    }
+
+    {
+        const size_t keyCount = _keyFrame_positions.size();
+        if (keyCount != 0)
+        {
+            if (keyCount == 1)
+                interpolatedPositionPrev = _keyFrame_positions[0].position;
+            int index = FindKeyFrameIndex(_keyFrame_positions, prevTime);
+            index = std::max(index, 0);
+            int nextIndex = (index + 1 < keyCount) ? index + 1 : 0;
+
+            const auto& key0 = _keyFrame_positions[index];
+            const auto& key1 = _keyFrame_positions[nextIndex];
+            const double dt = key1._time - key0._time;
+            const double t = (dt != 0.f) ? (prevTime - key0._time) / dt : 0.f;
+            Vector3::Lerp(key0.position, key1.position, t, interpolatedPositionPrev);
+
+
+            if ((time - prevTime) < 0) {
+                interpolatedPositionPrev = _keyFrame_positions[0].position - (_keyFrame_positions[keyCount - 1].position - interpolatedPositionPrev);
+            }
+        }
+    }
+
+    return interpolatedPosition - interpolatedPositionPrev;
+}
+
+
 Vector3 AnimationNode::CalculatePosition(const double& time) const
 {
     Vector3 interpolatedPosition = offsetPosition;
@@ -443,10 +510,10 @@ Quaternion AnimationNode::CalculateRotation(const double& time) const
         }
     }
 
-    if (hasPreRotation)
-        interpolatedRotation = interpolatedRotation * offsetPreRotation;
-    if (hasPostRotation)
-        interpolatedRotation = offsetPostRotation * interpolatedRotation;
+    //if (hasPreRotation)
+    //    interpolatedRotation = interpolatedRotation * offsetPreRotation;
+    //if (hasPostRotation)
+    //    interpolatedRotation = offsetPostRotation * interpolatedRotation;
     return interpolatedRotation;
 }
 

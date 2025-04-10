@@ -56,6 +56,7 @@ std::vector<std::shared_ptr<GameObject>> SceneLoader::Load(const std::shared_ptr
     for (auto& ref : refJson_GameObjectTable)
         LinkGameObject(*ref.second);
 
+    ProcessingAnimationModelLoad(animationModelListJson);
     ProcessingAnimationMapping(animationBoneMappingJson);
 
     std::vector<std::shared_ptr<GameObject>> result = gameObjectCache;
@@ -84,6 +85,7 @@ void SceneLoader::Init(const std::wstring& path)
     this->_path = path;
     reader >> referenceJson;
     animationBoneMappingJson = referenceJson["AnimationBoneMapping"];
+	animationModelListJson = referenceJson["AnimationModels"];
     referenceJson = referenceJson["references"];
 }
 
@@ -281,15 +283,15 @@ void SceneLoader::LinkComponent(json& jsonData)
                 auto shader = ResourceManager::main->Get<Shader>(shaderName);
                 if (shader == nullptr)
                 {
-                    shader = ResourceManager::main->Get<Shader>(L"DefaultForward");// Deffered DefaultForward_Skinned DefaultForward
+                    shader = ResourceManager::main->Get<Shader>(L"DefaultDeferred");// Deffered DefaultForward_Skinned DefaultForward
                     material->SetShader(shader);
-                    material->SetPass(RENDER_PASS::Forward);
+                    material->SetPass(shader->GetPass());
                 }
                 else
                 {
                     material->SetShader(shader);
+                    material->SetPass(shader->GetPass());
                 }
-				material->SetPass(RENDER_PASS::Forward);
                 material->SetPreDepthNormal(true);
                 materials.push_back(material);
             }
@@ -327,11 +329,12 @@ void SceneLoader::LinkComponent(json& jsonData)
                 {
                     shader = ResourceManager::main->Get<Shader>(L"DefaultForward_Skinned");
                     material->SetShader(shader);
-                    material->SetPass(RENDER_PASS::Forward);
+                    material->SetPass(shader->GetPass());
                 }
                 else
                 {
                     material->SetShader(shader);
+                    material->SetPass(shader->GetPass());
                 }
                 material->SetPreDepthNormal(true);
                 materials.push_back(material);
@@ -606,6 +609,14 @@ void SceneLoader::LinkMaterial(json& jsonData)
 }
 
 
+void SceneLoader::ProcessingAnimationModelLoad(json& jsonData)
+{
+    for (auto it = jsonData.begin(); it != jsonData.end(); ++it) {
+		auto modelName = std::to_wstring(it.value().get<std::string>());
+		auto path = std::to_wstring(it.value().get<std::string>());
+		auto model = ResourceManager::main->Load<Model>(modelName, path, VertexType::Vertex_Skinned);
+    }
+}
 
 void SceneLoader::ProcessingAnimationMapping(json& jsonData)
 {
