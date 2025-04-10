@@ -64,9 +64,10 @@ void SkinnedHierarchy::Update2()
 {
 	Component::Update2();
 	auto a = ResourceManager::main->GetResourceMap<Animation>();
+
 	for (auto& b : a)
 	{
-		if (b.first == L"Armature|Swim")
+		if (b.first == L"Shark_Armature|Swim")
 		{
 			Animate(b.second, Time::main->GetTime());
 			break;

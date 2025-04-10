@@ -40,6 +40,8 @@ void SeaPlayerController::Start()
 
 void SeaPlayerController::Update()
 {
+   
+
     float dt = Time::main->GetDeltaTime();
     Quaternion rotation = CalCulateYawPitchRoll();
 
@@ -62,8 +64,6 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
     vec3 headOffset = vec3(0, _cameraHeightOffset, 0);
     vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);
     vec3 nextHeadPos = nextPos + rotatedHeadOffset + _transform->GetForward() * 0.2f;
-
-
 
     vec3 dir = _velocity;
     dir.Normalize();
@@ -146,6 +146,14 @@ void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float 
             _velocity = _velocity * _maxSpeed;
         }
     }
+
+    if (Input::main->GetKey(KeyCode::F1))
+    {
+        auto& camera = CameraManager::main->GetCamera(CameraType::DebugCamera);
+
+		_transform->SetWorldPosition(camera->GetCameraPos());
+    }
+
 
 }
 

@@ -46,7 +46,7 @@ private:
 	vector<vec3> _fishPath;
 	bool _forward =true;
 	int _currentIndex = 0;
-	float _moveSpeed = 200.0f;
+	float _moveSpeed = 100.0f;
 	float _distanceMoved = 0.0f;
 	float _segmentLength = 0.0f;
 	wstring _pathName = L"Null";

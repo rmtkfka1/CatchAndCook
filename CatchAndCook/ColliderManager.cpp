@@ -503,12 +503,17 @@ RayHit ColliderManager::RayCast(const Ray& ray, const float& dis, shared_ptr<Gam
 
 RayHit ColliderManager::RayCastForMyCell(const Ray& ray, const float& dis, shared_ptr<GameObject>& owner) 
 {
+
+
 	shared_ptr<Collider> Mycollider = owner->GetComponent<Collider>();
 	std::unordered_set<std::shared_ptr<Collider>> potencialColliders = GetPotentialCollisions(Mycollider);
 
 	RayHit closestHit;
 	closestHit.distance = dis;
 	bool hitFound = false;
+
+	if (ray.direction == vec3::Zero)
+		return closestHit;
 
 	for (const auto& collider : potencialColliders)
 	{
