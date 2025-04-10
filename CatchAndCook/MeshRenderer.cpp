@@ -15,7 +15,7 @@
 MeshRenderer::~MeshRenderer()
 {
 
-} 
+}
 
 bool MeshRenderer::IsExecuteAble()
 {
@@ -39,19 +39,20 @@ void MeshRenderer::Start()
 	AddStructuredSetter(_setter_ForwardLight, BufferType::ForwardLightParam);
 
 	auto owner = GetOwner();
-
-	Matrix matrix;
-	owner->_transform->GetLocalToWorldMatrix_BottomUp(matrix);
-	BoundingBox totalBox;
-	for (int i = 0; i < _mesh.size(); i++) {
-		auto currentMesh = _mesh[i];
-		auto bound = currentMesh->CalculateBound(matrix);
-		if (i == 0) totalBox = bound;
-		else  BoundingBox::CreateMerged(totalBox, totalBox, bound);
+	if (owner && owner->GetType() == GameObjectType::Static)
+	{
+		Matrix matrix;
+		owner->_transform->GetLocalToWorldMatrix_BottomUp(matrix);
+		BoundingBox totalBox;
+		for (int i = 0; i < _mesh.size(); i++) {
+			auto currentMesh = _mesh[i];
+			auto bound = currentMesh->CalculateBound(matrix);
+			if (i == 0) totalBox = bound;
+			else  BoundingBox::CreateMerged(totalBox, totalBox, bound);
+		}
+		SetBound(totalBox);
 	}
-	SetBound(totalBox);
-
-};
+}
 
 void MeshRenderer::Update()
 {
@@ -87,18 +88,25 @@ void MeshRenderer::RenderBegin()
 	Component::RenderBegin();
 
 	auto owner = GetOwner();
-
-	if(owner && owner->GetType() == GameObjectType::Dynamic)
+	if (owner && owner->GetType() == GameObjectType::Dynamic)
 	{
 		Matrix matrix;
 		owner->_transform->GetLocalToWorldMatrix_BottomUp(matrix);
-		_orginBound.Transform(_bound, matrix);
+		BoundingBox totalBox;
+		for (int i = 0; i < _mesh.size(); i++) {
+			auto currentMesh = _mesh[i];
+			auto bound = currentMesh->CalculateBound(matrix);
+			if (i == 0) totalBox = bound;
+			else  BoundingBox::CreateMerged(totalBox, totalBox, bound);
+		}
+
+		SetBound(totalBox);
 	}
 
-	if(HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::Culling))
+	if (HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::Culling))
 	{
 		Gizmo::Width(0.2f);
-		Gizmo::Box(GetBound(),vec4(0,0,1.0f,1.0f));
+		Gizmo::Box(GetBound(), vec4(0, 0, 1.0f, 1.0f));
 	}
 
 	for (int i = 0; i < _mesh.size(); i++)
@@ -123,13 +131,13 @@ void MeshRenderer::RenderBegin()
 
 		for (int i = 0; i < _mesh.size(); i++)
 		{
-			auto &currentMesh = _mesh[i];
-			SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(),currentMesh.get(),this);
+			auto& currentMesh = _mesh[i];
+			SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(), currentMesh.get(), this);
 		}
 	}
 }
 
-void MeshRenderer::Rendering(Material* material, Mesh* mesh,int instanceCount)
+void MeshRenderer::Rendering(Material* material, Mesh* mesh, int instanceCount)
 {
 	auto& cmdList = Core::main->GetCmdList();
 
@@ -155,7 +163,7 @@ void MeshRenderer::CollisionBegin(const std::shared_ptr<Collider>& collider, con
 {
 	Component::CollisionBegin(collider, other);
 
-	
+
 }
 
 void MeshRenderer::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
