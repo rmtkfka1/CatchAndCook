@@ -6,7 +6,7 @@ namespace RENDER_PASS
 	enum PASS
 	{
 		Shadow = 1 << 0,
-		Deffered = 1 << 1,
+		Deferred = 1 << 1,
 		Forward = 1 << 2,
 		Transparent = 1 << 3,
 		PostProcessing = 1 << 4,
@@ -28,7 +28,7 @@ namespace RENDER_PASS
 	inline int ToIndex(PASS pass) {
 		switch (pass) {
 		case Shadow: return 0;
-		case Deffered: return 1;
+		case Deferred: return 1;
 		case Forward: return 2;
 		case Transparent: return 3;
 		case PostProcessing: return 4;

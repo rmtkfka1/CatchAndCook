@@ -32,7 +32,7 @@ private:
 	void UiPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
 	void TransparentPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
 	void ForwardPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
-	void DefferedPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
+	void DeferredPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
 	void ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
 	void FinalRender(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
 	void ComputePass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);

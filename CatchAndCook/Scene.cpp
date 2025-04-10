@@ -30,7 +30,7 @@ void Scene::Init()
 {
 	_finalDefferedMaterial = std::make_shared<Material>();
 	_finalDefferedMaterial->SetShader(ResourceManager::main->Get<Shader>(L"finalShader"));
-    _finalDefferedMaterial->SetPass(RENDER_PASS::Deffered);
+    _finalDefferedMaterial->SetPass(RENDER_PASS::Deferred);
 }
 
 void Scene::Update()
@@ -96,8 +96,8 @@ void Scene::Rendering()
     Core::main->GetRenderTarget()->ClearDepth();
 
     ShadowPass(cmdList);
-    Profiler::Set("PASS : Deffered", BlockTag::GPU);
-    DefferedPass(cmdList);
+    Profiler::Set("PASS : Deferred", BlockTag::GPU);
+    DeferredPass(cmdList);
     FinalRender(cmdList);
     Profiler::Fin();
 
@@ -218,12 +218,12 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
     }
 }
 
-void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
+void Scene::DeferredPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 {
 	Core::main->GetGBuffer()->RenderBegin();
 
-    { // Deffered
-        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deffered)];
+    { // Deferred
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deferred)];
 
         for (auto& [shader, vec] : targets)
         {
@@ -242,7 +242,7 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                        }
                    }
 
-                   SettingPrevData(ele, RENDER_PASS::PASS::Deffered);
+                   SettingPrevData(ele, RENDER_PASS::PASS::Deferred);
 
                    if (ele.renderer->isInstancing() == false)
                    {
@@ -311,7 +311,7 @@ void Scene::FinalRender(ComPtr<ID3D12GraphicsCommandList>& cmdList)
     cmdList->SetPipelineState(shader->_pipelineState.Get());
 
     RenderObjectStrucutre ROS = { _finalDefferedMaterial.get(), mesh.get(), nullptr };
-    SettingPrevData(ROS, RENDER_PASS::PASS::Deffered);
+    SettingPrevData(ROS, RENDER_PASS::PASS::Deferred);
 
     _finalDefferedMaterial->SetData();
     mesh->Redner();

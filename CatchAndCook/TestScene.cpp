@@ -39,14 +39,14 @@ void TestScene::Init()
 	//auto& a = ResourceManager::main->Load<Model>(L"kind", L"../Resources/Models/PaperPlane.obj", VertexType::Vertex_Skinned);
 
 	shared_ptr<Material> materialO = make_shared<Material>();
-	materialO->SetPass(RENDER_PASS::Deffered);
+	materialO->SetPass(RENDER_PASS::Deferred);
 	//shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
 	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
 
 	for (int i = 0; i < 1000; ++i)
 	{
 		{
-			shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deffered");
+			shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deferred");
 
 			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
 
