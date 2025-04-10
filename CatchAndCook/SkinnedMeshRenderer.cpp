@@ -1,12 +1,11 @@
 ﻿#include "pch.h"
 #include "SkinnedMeshRenderer.h"
-
 #include "GameObject.h"
 #include "LightManager.h"
 #include "Transform.h"
 #include "Mesh.h"
 #include "SkinnedHierarchy.h"
-
+#include "Gizmo.h"
 
 SkinnedMeshRenderer::~SkinnedMeshRenderer()
 {
@@ -46,20 +45,34 @@ void SkinnedMeshRenderer::Start()
 	}
 
 	auto owner = GetOwner();
-	if(owner)
+
+	if (owner && owner->GetType() == GameObjectType::Static)
 	{
+
 		Matrix matrix;
 		owner->_transform->GetLocalToWorldMatrix_BottomUp(matrix);
 		BoundingBox totalBox;
-		for(int i = 0; i < _mesh.size(); i++) {
+		for (int i = 0; i < _mesh.size(); i++) {
 			auto currentMesh = _mesh[i];
 			auto bound = currentMesh->CalculateBound(matrix);
-			if(i == 0) totalBox = bound;
-			else  BoundingBox::CreateMerged(totalBox,totalBox,bound);
+			if (i == 0) totalBox = bound;
+			else  BoundingBox::CreateMerged(totalBox, totalBox, bound);
 		}
 		SetBound(totalBox);
 	}
 
+	else
+	{
+		BoundingBox localBox;
+		for (int i = 0; i < _mesh.size(); i++)
+		{
+			auto currentMesh = _mesh[i];
+			auto bound = currentMesh->CalculateBound(Matrix::Identity);
+			if (i == 0) localBox = bound;
+			else BoundingBox::CreateMerged(localBox, localBox, bound);
+		}
+		SetOriginBound(localBox);
+	}
 }
 
 void SkinnedMeshRenderer::Update()
@@ -93,12 +106,20 @@ void SkinnedMeshRenderer::RenderBegin()
 {
 	Component::RenderBegin();
 
-	auto owner = GetOwner()->_transform;
-	Matrix matrix;
-	owner->GetLocalToWorldMatrix_BottomUp(matrix);
-	BoundingBox box(Vector3(0,0,0),Vector3(5,5,5));
-	box.Transform(box,matrix);
-	SetBound(box);
+	auto owner = GetOwner();
+
+	if (owner && owner->GetType() == GameObjectType::Dynamic)
+	{
+		Matrix worldMatrix;
+		owner->_transform->GetLocalToWorldMatrix_BottomUp(worldMatrix);
+		_orginBound.Transform(_bound, worldMatrix);
+	}
+
+	if (HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::Culling))
+	{
+		Gizmo::Width(3.0f);
+		Gizmo::Box(GetBound(), vec4(0, 0, 1.0f, 1.0f));
+	}
 
 	for(int i = 0; i < _mesh.size(); i++)
 	{

@@ -40,16 +40,36 @@ void MeshRenderer::Start()
 
 	auto owner = GetOwner();
 
-	Matrix matrix;
-	owner->_transform->GetLocalToWorldMatrix_BottomUp(matrix);
-	BoundingBox totalBox;
-	for (int i = 0; i < _mesh.size(); i++) {
-		auto currentMesh = _mesh[i];
-		auto bound = currentMesh->CalculateBound(matrix);
-		if (i == 0) totalBox = bound;
-		else  BoundingBox::CreateMerged(totalBox, totalBox, bound);
+
+
+
+	if (owner && owner->GetType() == GameObjectType::Static)
+	{
+		
+		Matrix matrix;
+		owner->_transform->GetLocalToWorldMatrix_BottomUp(matrix);
+		BoundingBox totalBox;
+		for (int i = 0; i < _mesh.size(); i++) {
+			auto currentMesh = _mesh[i];
+			auto bound = currentMesh->CalculateBound(matrix);
+			if (i == 0) totalBox = bound;
+			else  BoundingBox::CreateMerged(totalBox, totalBox, bound);
+		}
+		SetBound(totalBox);
 	}
-	SetBound(totalBox);
+
+	else
+	{
+		BoundingBox localBox;
+		for (int i = 0; i < _mesh.size(); i++)
+		{
+			auto currentMesh = _mesh[i];
+			auto bound = currentMesh->CalculateBound(Matrix::Identity);
+			if (i == 0) localBox = bound;
+			else BoundingBox::CreateMerged(localBox, localBox, bound);
+		}
+		SetOriginBound(localBox);
+	}
 
 };
 
@@ -90,21 +110,14 @@ void MeshRenderer::RenderBegin()
 
 	if (owner && owner->GetType() == GameObjectType::Dynamic)
 	{
-		Matrix matrix;
-		owner->_transform->GetLocalToWorldMatrix_BottomUp(matrix);
-		BoundingBox totalBox;
-		for (int i = 0; i < _mesh.size(); i++) {
-			auto currentMesh = _mesh[i];
-			auto bound = currentMesh->CalculateBound(matrix);
-			if (i == 0) totalBox = bound;
-			else  BoundingBox::CreateMerged(totalBox, totalBox, bound);
-		}
-		SetBound(totalBox);
+		Matrix worldMatrix;
+		owner->_transform->GetLocalToWorldMatrix_BottomUp(worldMatrix);
+		_orginBound.Transform(_bound, worldMatrix); 
 	}
 
 	if (HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::Culling))
 	{
-		Gizmo::Width(0.2f);
+		Gizmo::Width(3.0f);
 		Gizmo::Box(GetBound(), vec4(0, 0, 1.0f, 1.0f));
 	}
 

@@ -53,7 +53,12 @@ public:
 	void SetBound(const BoundingBox& bound) 
 	{
 		_bound = bound;
+	};
+
+	void SetOriginBound(const BoundingBox& bound)
+	{
 		_orginBound = bound;
+
 	};
 
 	void SetCulling(bool isCulling) {
