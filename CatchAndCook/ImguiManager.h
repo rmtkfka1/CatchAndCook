@@ -19,6 +19,7 @@ public:
 
 private:
 	void Debug();
+
 	void DebugJin();
 
 	void BoidMove();
@@ -32,6 +33,8 @@ private:
 	void SeaController();
 
 	void Test();
+
+	void Test2();
 
 
 	

@@ -256,9 +256,11 @@ public:
 	{
 		auto obj = GetCast<GameObject>();
 		auto result = func(obj);
-		for (auto& child : _childs)
-			if (!child.expired())
-				child.lock()->ForHierarchyBeginEndAll(func, func2);
+		if (result) {
+			for (auto& child : _childs)
+				if (!child.expired())
+					child.lock()->ForHierarchyBeginEndAll(func, func2);
+		}
 		func2(result, obj);
 	}
 

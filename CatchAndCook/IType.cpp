@@ -16,11 +16,15 @@ std::string& IType::GetTypeName()
     if (_className.empty())
     {
         std::string fullName = GetTypeFullName();
-
+        _className = fullName;
         // "struct " 또는 "class " 같은 접두사 제거
-        size_t pos = fullName.find_last_of("::");
-        if (pos != std::string::npos)
-        {
+
+        size_t pos = fullName.find_last_of(" ");
+        if (pos != std::string::npos) {
+            _className = fullName.substr(pos + 1);
+        }
+    	pos = fullName.find_last_of("::");
+        if (pos != std::string::npos) {
             _className = fullName.substr(pos + 1);
         }
 

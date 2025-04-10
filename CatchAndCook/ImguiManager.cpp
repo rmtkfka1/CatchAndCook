@@ -9,6 +9,7 @@
 #include "Gizmo.h"
 #include "CameraManager.h"
 #include "Camera.h"
+#include "LightComponent.h"
 unique_ptr<ImguiManager> ImguiManager::main;
 
 ImguiManager::~ImguiManager()
@@ -34,6 +35,11 @@ void ImguiManager::Init()
 		DXGI_FORMAT_R8G8B8A8_UNORM, Core::main->GetImguiHeap().Get(),
 		Core::main->GetImguiHeap()->GetCPUDescriptorHandleForHeapStart(),
 		Core::main->GetImguiHeap()->GetGPUDescriptorHandleForHeapStart());
+
+    ImFont* font = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\malgun.ttf", 16.0f, nullptr, io.Fonts->GetGlyphRangesKorean());
+    if (!font) {
+        std::cout << "Imgui Font Load 실패\n";
+    }
 }
 
 void ImguiManager::Render()
@@ -319,13 +325,88 @@ void ImguiManager::DebugJin()
 {
     ImGui::Begin("Jin");
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
-
-
     Test();
+    ImGui::End();
 
+    ImGui::Begin("Inspector");
+    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
+    Test2();
     ImGui::End();
 }
+
+
 float a = 0;
+std::weak_ptr<GameObject> selectGameObject;
+
+void ImguiManager::Test2()
+{
+    if (ImGui::CollapsingHeader("Inspector"))
+    {
+        auto select = selectGameObject.lock();
+        if (select != nullptr)
+        {
+            Gizmo::Width(0.02f);
+            auto o = select->_transform->GetWorldPosition();
+            auto f = select->_transform->GetForward();
+            auto u = select->_transform->GetUp();
+            auto r = select->_transform->GetRight();
+            Gizmo::Width(0.1f);
+            Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
+            Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
+            Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));
+            Gizmo::WidthRollBack();
+
+
+            ImGui::Text(std::format("Name : {0}", to_string(select->GetName())).c_str());
+            ImGui::Text("Active : %s", select->GetActive() ? "true" : "false");
+            ImGui::Text("ActiveSelf : %s", select->GetActiveSelf() ? "true" : "false");
+            if (select->GetType() == GameObjectType::Dynamic) {
+                ImGui::Text("Type : Dynamic");
+            }
+            else if (select->GetType() == GameObjectType::Deactivate) {
+                ImGui::Text("Type : Deactivate");
+            }
+            else {
+                ImGui::Text("Type : Static");
+            }
+            if (ImGui::TreeNode("Components"))
+            {
+                for (auto& com : select->GetComponentAll())
+                {
+                    auto& name = com->GetTypeName();
+                    ImGui::PushID(com->GetInstanceID());
+                    if (ImGui::TreeNode(name.c_str()))
+                    {
+                        if (name == "Transform")
+                        {
+							auto transform = std::static_pointer_cast<Transform>(com);
+							ImGui::SliderFloat3("Position", &transform->_localPosition.x, -1000.0f, 1000.0f);
+                            vec3 eu = transform->GetLocalEuler() * R2D;
+                            if (ImGui::SliderFloat3("LocalEuler", &eu.x, -180.0f, 180.0f))
+                                transform->SetLocalRotation(eu * D2R);
+							ImGui::SliderFloat3("Scale", &transform->_localScale.x, 0.1f, 100.0f);
+                        }
+                        if (name == "LightComponent")
+                        {
+                            auto lightComponent = std::static_pointer_cast<LightComponent>(com);
+                            ImGui::SliderFloat("Intensity", &lightComponent->light->intensity, 0.0f, 40.0f);
+                            ImGui::SliderFloat4("Color", &lightComponent->light->strength.x, 0.0f, 1.0f);
+                            ImGui::SliderFloat3("Direction", &lightComponent->light->direction.x, -1.0f, 1.0f);
+                        }
+                        if (name == "Collider")
+                        {
+							
+                        }
+
+                        ImGui::TreePop();
+                    }
+                    ImGui::PopID();
+                }
+                ImGui::TreePop();
+            }
+        }
+    }
+}
 
 void ImguiManager::Test()
 {
@@ -333,42 +414,45 @@ void ImguiManager::Test()
     {
 		auto currentScene = SceneManager::main->GetCurrentScene();
 
-        if (ImGui::TreeNode("Dynamic & Static"))
+        if (ImGui::TreeNode("GameObjects"))
         {
-            for (auto& obj : currentScene->_gameObjects)
+            auto objectList = currentScene->_gameObjects;
+            objectList.insert(objectList.end(), currentScene->_gameObjects_deactivate.begin(), currentScene->_gameObjects_deactivate.end());
+            std::ranges::sort(objectList, [&](const auto& a, const auto& b) {
+                    return a->GetName() < b->GetName();
+                });
+            for (auto& obj : objectList)
             {
                 if (obj->GetRoot() == obj)
                 {
 	                struct ObjectBlock
 	                {
 						bool isOpen = false;
+                        operator bool() const { return isOpen; }
 	                };
                     obj->ForHierarchyBeginEndAll([&](const std::shared_ptr<GameObject>& obj) {
 						ObjectBlock block;
-                        auto str = to_string(obj->GetName());
-                        ImGui::PushID(obj.get());
-                        if (block.isOpen = ImGui::TreeNode(str.c_str()))
+                        auto str = to_string(obj->GetName(), CP_UTF8);
+                        ImGui::PushID(obj->GetInstanceID());
+                        block.isOpen = ImGui::TreeNode(str.c_str());
+
+                        if (ImGui::IsItemClicked() || ImGui::IsItemClicked(ImGuiMouseButton_Right))
+                            selectGameObject = obj;
+                        
+
+                        if (block)
                         {
 
                         }
                         return block;
                     }, [&](const ObjectBlock& block, const std::shared_ptr<GameObject>& obj) {
-						if (block.isOpen)
+						if (block)
 						{
 							ImGui::TreePop();
 						}
                         ImGui::PopID();
                     });
                 }
-            }
-            ImGui::TreePop();
-        }
-
-        if (ImGui::TreeNode("Deactivate"))
-        {
-            for (auto& obj : currentScene->_gameObjects_deactivate)
-            {
-
             }
             ImGui::TreePop();
         }

@@ -369,6 +369,7 @@ void Scene::DebugRendering()
             }
         }
     }
+    Gizmo::main->Clear();
 }
 
 void Scene::RenderEnd()
@@ -378,7 +379,6 @@ void Scene::RenderEnd()
 
 void Scene::Finish()
 {
-    Gizmo::main->Clear();
     Scene::ExecuteDestroyGameObjects();
     GameObject::ExecuteDestroyComponents();
 }
