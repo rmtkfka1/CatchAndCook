@@ -8,7 +8,6 @@ struct FishPath
 	bool AreyouDraw = false;
 };
 
-
 class PathFinder :public Component
 {
 
@@ -33,6 +32,7 @@ public:
 	static void ClearDebugDraw();
 private:
 	void ReadPathFile(const std::wstring& fileName);
+
 private:
 	static unordered_map<wstring, FishPath> _pathList;
 

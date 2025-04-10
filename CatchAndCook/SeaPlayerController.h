@@ -3,6 +3,16 @@
 class Camera;
 class Terrain;
 
+enum class SeaPlayerState
+{
+	Idle,
+	Move,
+	Attack,
+	Skill,
+	Die,
+	Hit,
+};
+
 class SeaPlayerController :public Component
 {
 
@@ -24,7 +34,20 @@ public:
 	virtual void SetDestroy();
 	virtual void Destroy();
 
+private:
 	Quaternion CalCulateYawPitchRoll();
+
+private:
+	void CheckState(float dt);
+	void SetState(SeaPlayerState state);
+
+private:
+	void Idle(float dt);
+	void Move(float dt);
+	void Attack(float dt);
+
+
+
 private:
 	shared_ptr<Transform> _transform;
 	shared_ptr<Camera> _camera;
@@ -32,6 +55,7 @@ private:
 	shared_ptr<Terrain> _terrian;
 
 public:
+	SeaPlayerState _state = SeaPlayerState::Idle;
 	vec3 _velocity = vec3::Zero;
 
 	float _cameraHeightOffset = 1.2f;

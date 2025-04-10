@@ -50,6 +50,8 @@ void SeaPlayerController::Update()
 
 	KeyUpdate(inputDir, rotation, dt);
 
+    CheckState(dt);
+
 	UpdatePlayerAndCamera(dt, rotation);
 }
 
@@ -227,4 +229,67 @@ Quaternion SeaPlayerController::CalCulateYawPitchRoll()
 
 
     return  Quaternion::CreateFromYawPitchRoll(_yaw * D2R, _pitch * D2R, 0);
+}
+
+void SeaPlayerController::CheckState(float dt)
+{
+    switch (_state)
+    {
+    case SeaPlayerState::Idle:
+        break;
+    case SeaPlayerState::Move:
+        break;
+    case SeaPlayerState::Attack:
+        break;
+    case SeaPlayerState::Skill:
+        break;
+    case SeaPlayerState::Die:
+        break;
+    case SeaPlayerState::Hit:
+        break;
+    default:
+        break;
+    }
+}
+void SeaPlayerController::SetState(SeaPlayerState state)
+{
+	if (_state == state)
+		return;
+
+	_state = state;
+
+	switch (_state)
+	{
+	case SeaPlayerState::Idle:
+
+		break;
+	case SeaPlayerState::Move:
+
+		break;
+	case SeaPlayerState::Attack:
+
+		break;
+	case SeaPlayerState::Skill:
+
+		break;
+	case SeaPlayerState::Die:
+
+		break;
+	case SeaPlayerState::Hit:
+
+		break;
+	default:
+		break;
+	}
+}
+void SeaPlayerController::Idle(float dt)
+{
+}
+void SeaPlayerController::Move(float dt)
+{
+
+}
+void SeaPlayerController::Attack(float dt)
+{
+
 };
