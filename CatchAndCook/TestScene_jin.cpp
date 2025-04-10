@@ -22,8 +22,6 @@ void TestScene_jin::Init()
 	_finalShader->SetShader(ResourceManager::main->Get<Shader>(L"finalShader_MainField"));
 	_finalShader->SetPass(RENDER_PASS::Forward);
 
-	shared_ptr<Material> materialO = make_shared<Material>();
-	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
 
 
 	{
