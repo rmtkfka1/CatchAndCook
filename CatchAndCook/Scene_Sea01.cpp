@@ -5,10 +5,11 @@
 #include "MeshRenderer.h"
 #include "Collider.h"
 #include "Transform.h"
-#include "WallSlideController.h"
+#include "PathStamp.h"
 #include "PlayerController.h"
 #include "CameraComponent.h"
 #include "SeaPlayerController.h"
+#include "FishMonster.h"
 void Scene_Sea01::Init()
 {
 
@@ -111,12 +112,24 @@ void Scene_Sea01::Init()
 	
 	}
 
+	{
+		auto plant = Find(L"2");
+
+		if (plant)
+		{
+			auto finder = plant->AddComponent<FishMonster>();
+			finder->ReadPathFile(L"BezierData.txt");
+		}
+	}
+
 	
 }
 
 void Scene_Sea01::Update()
 {
 	Scene::Update();
+
+	PathStamp::main->Run();
 }
 
 void Scene_Sea01::RenderBegin()

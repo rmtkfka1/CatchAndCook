@@ -12,7 +12,6 @@ enum class FishMonsterState
 };
 
 
-
 class FishMonster :public Component
 {
 public:
@@ -30,7 +29,8 @@ public:
 	virtual void ChangeParent(const std::shared_ptr<GameObject>& prev, const std::shared_ptr<GameObject>& current);
 	virtual void SetDestroy();
 	virtual void Destroy();
-private:
+
+public:
 	void ReadPathFile(const std::wstring& fileName);
 
 private:

@@ -19,7 +19,7 @@
 #include "Model.h"
 #include "ModelMesh.h"
 #include "Collider.h"
-#include "WallSlideController.h"
+
 void TestScene::Init()
 {
 	Scene::Init();
@@ -66,7 +66,6 @@ void TestScene::Init()
 			{
 				
 				root->AddComponent<testComponent>();
-				root->AddComponent<WallSlideController>();
 				root->_transform->SetLocalPosition(vec3(0, 0, 0));
 				root->_transform->SetLocalScale(vec3(5.0f, 5.0f, 5.0f));
 				root->_transform->SetLocalRotation(vec3(0, 0,0));

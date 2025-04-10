@@ -274,7 +274,6 @@
     <ClCompile Include="UITestScene.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="BoidsMove.cpp" />
-    <ClCompile Include="WallSlideController.cpp" />
     <ClCompile Include="WaterController.cpp" />
     <ClCompile Include="WaterHeight.cpp" />
     <ClCompile Include="WInMain.cpp">
@@ -384,7 +383,6 @@
     <ClInclude Include="UITestScene.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="BoidsMove.h" />
-    <ClInclude Include="WallSlideController.h" />
     <ClInclude Include="WaterController.h" />
     <ClInclude Include="WaterHeight.h" />
     <ClInclude Include="WInMain.h">

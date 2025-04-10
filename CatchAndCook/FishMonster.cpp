@@ -151,6 +151,16 @@ void FishMonster::Move(float dt)
 		_segmentLength = 0.0f;
 	}
 
+	for (size_t i = 0; i < myPath.size() - 1; ++i)
+	{
+		Gizmo::main->Line(myPath[i], myPath[i + 1], vec4(1, 1, 0, 1));
+	}
+
+	if (myPath.size() >= 2)
+	{
+		Gizmo::main->Line(myPath.back(), myPath.front(), vec4(1, 1, 0, 1));
+	}
+
 }
 
 void FishMonster::Attack(float dt)
