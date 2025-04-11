@@ -88,7 +88,7 @@ void Terrain::Start()
             for (auto& material : renderer->GetMaterials())
             {
                 material->SetShader(ResourceManager::main->Get<Shader>(L"DefaultDeferred_Instanced"));
-                material->SetPass(RENDER_PASS::Deffered);
+                material->SetPass(RENDER_PASS::Deferred);
             }
         }
     }

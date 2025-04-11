@@ -311,7 +311,7 @@ void Scene::FinalRender(ComPtr<ID3D12GraphicsCommandList>& cmdList)
     cmdList->SetPipelineState(shader->_pipelineState.Get());
 
     RenderObjectStrucutre ROS = { _finalShader.get(), mesh.get(), nullptr };
-    SettingPrevData(ROS, RENDER_PASS::PASS::Deffered);
+    SettingPrevData(ROS, RENDER_PASS::PASS::Deferred);
 
     _finalShader->SetData();
     mesh->Redner();

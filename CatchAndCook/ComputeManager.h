@@ -240,7 +240,7 @@ private:
 	std::shared_ptr<Texture> _ssaoTexture;
 	shared_ptr<Shader> _shader;
 
-	bool ssaoOnOff = true;
+	bool ssaoOnOff = false;
 
 	friend class ComputeManager;
 };

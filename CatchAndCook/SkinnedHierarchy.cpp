@@ -109,7 +109,7 @@ void SkinnedHierarchy::Animate(const std::shared_ptr<Animation>& animation, doub
 			auto p1 = animNode->CalculatePosition(finalTime);
 			auto s1 = animNode->CalculateScale(finalTime);
 			if (animNode->GetNodeName() == _model->_rootBoneNode->GetOriginalName())
-				std::cout << animNode->GetNodeName() << "\n";
+				/*std::cout << animNode->GetNodeName() << "\n";*/
 
 			bool finalRoot = animNode->IsRoot();
 			if (animation->_isApplyTransform && ((animNode->GetNodeName() == _model->_rootBoneNode->GetOriginalName())))
