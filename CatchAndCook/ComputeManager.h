@@ -237,7 +237,10 @@ private:
 
 private:
 	shared_ptr<Texture> _pingTexture;
+	std::shared_ptr<Texture> _ssaoTexture;
 	shared_ptr<Shader> _shader;
+
+	bool ssaoOnOff = true;
 
 	friend class ComputeManager;
 };

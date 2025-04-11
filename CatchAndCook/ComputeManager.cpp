@@ -576,17 +576,30 @@ void SSAORender::Init()
 	_pingTexture = make_shared<Texture>();
 	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
 
+	_ssaoTexture = make_shared<Texture>();
+	_ssaoTexture->CreateStaticTexture(DXGI_FORMAT_R32_FLOAT, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+
 	_shader = make_shared<Shader>();
 	ShaderInfo info;
 	info._computeShader = true;
 	_shader->Init(L"SSAO.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
+
+#ifdef IMGUI_ON
+	ImguiManager::main->_ssaoOnOff = &ssaoOnOff;
+#endif // IMGUI_ON
 }
 
 void SSAORender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
 {
+	if (!ssaoOnOff)
+		return;
+
 	auto& table = Core::main->GetBufferManager()->GetTable();
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
+
 	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	_ssaoTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
 	_tableContainer = table->Alloc(8);
 
 	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
@@ -605,7 +618,9 @@ void SSAORender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int
 	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
 	table->CopyHandle(_tableContainer.CPUHandle, PositionTexture->GetSRVCpuHandle(), 2);
 	table->CopyHandle(_tableContainer.CPUHandle, NormalTexture->GetSRVCpuHandle(), 3);
+
 	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 4);
+	table->CopyHandle(_tableContainer.CPUHandle, _ssaoTexture->GetUAVCpuHandle(), 5);
 
 	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
 
@@ -634,8 +649,10 @@ void SSAORender::Resize()
 {
 	auto& textureBufferPool = Core::main->GetBufferManager()->GetTextureBufferPool();
 	textureBufferPool->FreeSRVHandle(_pingTexture->GetUAVCpuHandle());
+	textureBufferPool->FreeSRVHandle(_ssaoTexture->GetUAVCpuHandle());
 
 	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+	_ssaoTexture->CreateStaticTexture(DXGI_FORMAT_R32_FLOAT, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
 
 }
 
@@ -686,7 +703,7 @@ void ComputeManager::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
 	_vignetteRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
-	//_ssaoRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+	_ssaoRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
 	Core::main->GetRenderTarget()->GetRenderTarget()->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
 

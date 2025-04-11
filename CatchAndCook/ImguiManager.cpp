@@ -182,6 +182,10 @@ void ImguiManager::ComputeController()
         ImGui::SliderFloat("Underwater Fog Min", &_underWaterParam->g_fogMin, 0.0f, 5000.0f);
         ImGui::SliderFloat3("Underwater Color", &_underWaterParam->g_underWaterColor.x, 0.0f, 1.0f);
     }
+    if (ImGui::Button("SSAO ON/OFF"))
+    {
+        *_ssaoOnOff = !(*_ssaoOnOff);
+    }
 }
 
 void ImguiManager::LightController()

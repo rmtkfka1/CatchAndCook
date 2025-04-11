@@ -66,7 +66,7 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float4 AlbedoColor = AlbedoTexture.Sample(sampler_lerp, input.uv);
 
     LightingResult lightColor = ComputeLightColorDeferred(worldPos.xyz, WolrdNormal.xyz);
-    float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp, saturate(dot(float3(0, 1, 0), WolrdNormal) * 0.5 + 0.5));
+    float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), WolrdNormal) * 0.5 + 0.5));
 
     float3 finalColor = (lerp(ShadowColor * AlbedoColor, AlbedoColor, lightColor.atten) + float4(lightColor.subColor, 0)).xyz;
     

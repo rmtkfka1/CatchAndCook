@@ -46,6 +46,7 @@ public:
 	FogParam* _fogParam;
 	UnderWaterParam* _underWaterParam;
 	SeaParam* _seaParam;
+	bool* _ssaoOnOff;
 
 	float* separationWeight;
 	float* alignmentWeight;
