@@ -9,6 +9,7 @@ enum class SeaPlayerState
 	Move,
 	Attack,
 	Skill,
+	PushBack,
 	Die,
 	Hit,
 };
@@ -38,7 +39,7 @@ private:
 	Quaternion CalCulateYawPitchRoll();
 
 private:
-	void CheckState(float dt);
+	void UpdateState(float dt);
 	void SetState(SeaPlayerState state);
 
 private:
@@ -54,7 +55,8 @@ private:
 	shared_ptr<Collider> _collider;
 	shared_ptr<Terrain> _terrian;
 
-public:
+private:
+	weak_ptr<GameObject> _other;
 	SeaPlayerState _state = SeaPlayerState::Idle;
 	vec3 _velocity = vec3::Zero;
 
@@ -67,6 +69,9 @@ public:
 	const float _maxSpeed = 500.0f;
 	const float _resistance = 2.5f;
 	const float _playerRadius = 2.0f;
+
+private:
+
 
 };
 

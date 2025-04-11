@@ -17,6 +17,7 @@ void FishMonster::Init()
 
 void FishMonster::Start()
 {
+	_firstQuat = GetOwner()->_transform->GetWorldRotation();
 }
 
 void FishMonster::Update()
@@ -202,9 +203,12 @@ void FishMonster::Hit(float dt)
 
 void FishMonster::ReadPathFile(const std::wstring& fileName)
 {
+	const wstring path = L"../Resources/Graph/";;
+
 	_pathName = fileName;
 
-	std::ifstream file(fileName);
+	std::ifstream file(path+fileName);
+
 	if (!file.is_open())
 	{
 		std::wcout << L"Failed to open file: " << fileName << std::endl;

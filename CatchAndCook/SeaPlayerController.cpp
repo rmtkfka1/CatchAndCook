@@ -52,7 +52,7 @@ void SeaPlayerController::Update()
 
 	KeyUpdate(inputDir, rotation, dt);
 
-    CheckState(dt);
+    UpdateState(dt);
 
 	UpdatePlayerAndCamera(dt, rotation);
 }
@@ -175,10 +175,25 @@ void SeaPlayerController::RenderBegin()
 
 void SeaPlayerController::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
+    if (auto& owner = other->GetOwner())
+    {
+        if (owner->GetName() == L"2")
+        {
+			_state = SeaPlayerState::PushBack;
+			_other = owner;
+        }
+    }
 }
 
 void SeaPlayerController::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
+    if (auto& owner = other->GetOwner())
+    {
+        if (owner->GetName() == L"2")
+        {
+            _state = SeaPlayerState::Idle;
+        }
+    }
 }
 
 void SeaPlayerController::ChangeParent(const std::shared_ptr<GameObject>& prev, const std::shared_ptr<GameObject>& current)
@@ -239,7 +254,7 @@ Quaternion SeaPlayerController::CalCulateYawPitchRoll()
     return  Quaternion::CreateFromYawPitchRoll(_yaw * D2R, _pitch * D2R, 0);
 }
 
-void SeaPlayerController::CheckState(float dt)
+void SeaPlayerController::UpdateState(float dt)
 {
     switch (_state)
     {
@@ -253,6 +268,24 @@ void SeaPlayerController::CheckState(float dt)
         break;
     case SeaPlayerState::Die:
         break;
+    case SeaPlayerState::PushBack:
+    {
+        vec3 pushDir{};
+        float pushSpeed{};
+       
+        if (auto& object =_other.lock())
+        {
+            vec3 otherCenter =object->GetComponent<Collider>()->GetBoundCenter();
+            vec3 myCenter = _collider->GetBoundCenter();
+            pushSpeed = (otherCenter - myCenter).Length();
+            pushDir = (myCenter - otherCenter);
+            pushDir.Normalize();
+        }
+
+        vec3 newPosition = _transform->GetWorldPosition() + pushDir * pushSpeed * dt;
+        _transform->SetWorldPosition(newPosition);
+    }
+    break;
     case SeaPlayerState::Hit:
         break;
     default:

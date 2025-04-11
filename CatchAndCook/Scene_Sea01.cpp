@@ -117,7 +117,7 @@ void Scene_Sea01::Init()
 		if (plant)
 		{
 			auto finder = plant->AddComponent<FishMonster>();
-			finder->ReadPathFile(L"BezierData.txt");
+			finder->ReadPathFile(L"TutleMove");
 		}
 	}
 
