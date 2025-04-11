@@ -95,8 +95,8 @@ protected:
     float _pitch=0;
     float _roll=0;
 
-    float _near = 0.03f;
-    float _far = 5000.f;
+    float _near = 0.01f;
+    float _far = 7000.f;
     float _fov = XM_PI / 3.f;
 
     vec2 _orthoSize = { 100.0f,100.0f };
@@ -126,11 +126,11 @@ public:
 private:
 };
 
-class ThirdPersonCamera : public Camera
+class SeaCamera : public Camera
 {
 public:
-    ThirdPersonCamera();
-    virtual ~ThirdPersonCamera();
+    SeaCamera();
+    virtual ~SeaCamera();
 
     virtual void Update();
 

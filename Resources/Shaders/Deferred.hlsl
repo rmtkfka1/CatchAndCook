@@ -69,9 +69,8 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     
     output.position = float4(input.worldPos, 1.0f);
     float3 N = ComputeNormalMapping(input.worldNormal, input.worldTangent, _BumpMap.Sample(sampler_lerp, input.uv));
-    output.color = _BaseMap.Sample(sampler_lerp, input.uv) * color;
+    output.color = _BaseMap.Sample(sampler_lerp, input.uv) ;
     output.normal = float4(N, 1.0f);
-    if (output.color.a <= 0.1f)
-        discard;
+
     return output;
 }

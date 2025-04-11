@@ -3,7 +3,6 @@
 #include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
 
-
 #define TessFactor 8
 #define PI 3.14159f
 #define DIST_MAX 3000.0f
@@ -134,32 +133,19 @@ struct PatchConstOutput
 
 
 
-float CalculateTessLevel(float3 cameraWorldPos, float3 patchPos, float min, float max, float maxLv)
+float CalculateTessLevel(float3 cameraWorldPos, float3 patchPos, float minDist, float maxDist, float maxLv)
 {
-   
-    float distance = length(float3(patchPos.x,0,patchPos.z) - float3(cameraWorldPos.x, 0, cameraWorldPos.z));
-    
-    float tessLevel = 1.0f;
-    
-    if(distance<1000.0f)
-    {
-        tessLevel =8.0f;
-    }
-    else if (distance < 2000.0f)
-    {
-        tessLevel =4.0f;
-    }
-    else if (distance < 3000.0f)
-    {
-        tessLevel = 2.0f;
-    }
-    else
-    {
-        tessLevel = 1.0f;
-    }
-   
-    
-    return tessLevel;
+    // 수직 거리 무시 (XZ 평면 기준 거리 계산)
+    float distance = length(float3(patchPos.x, 0, patchPos.z) - float3(cameraWorldPos.x, 0, cameraWorldPos.z));
+
+    // 거리를 [minDist, maxDist] 구간으로 정규화
+    float t = saturate((distance - minDist) / (maxDist - minDist));
+
+    // 거리가 가까울수록 maxLv, 멀수록 1.0
+    float tessLevel = lerp(maxLv, 1.0f, t);
+
+    // 결과를 보정 범위 안에 클램프
+    return clamp(tessLevel, 1.0f, maxLv);
 }
 
 //패치단위로 호출

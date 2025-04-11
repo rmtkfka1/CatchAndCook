@@ -206,16 +206,16 @@ void DebugCamera::Update()
 *                        *
 **************************/
 
-ThirdPersonCamera::ThirdPersonCamera() : Camera(CameraType::SeaCamera)
+SeaCamera::SeaCamera() : Camera(CameraType::SeaCamera)
 {
     _type = CameraType::SeaCamera;
 }
 
-ThirdPersonCamera::~ThirdPersonCamera()
+SeaCamera::~SeaCamera()
 {
 }
 
-void ThirdPersonCamera::Update()
+void SeaCamera::Update()
 {
 	Camera::Update();
 }
