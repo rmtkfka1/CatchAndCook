@@ -675,12 +675,11 @@ void ComputeManager::Init()
 	_underWaterEffect = make_shared<UnderWaterEffect>();
 	_underWaterEffect->Init();
 
-	_vignetteRender = make_shared<VignetteRender>();
-	_vignetteRender->Init();
-
 	_ssaoRender = make_shared<SSAORender>();
 	_ssaoRender->Init();
 
+	_vignetteRender = make_shared<VignetteRender>();
+	_vignetteRender->Init();
 }
 
 void ComputeManager::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList)
@@ -693,9 +692,6 @@ void ComputeManager::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
 	int32 dispath[3] = {dispatchX,dispatchY,1};
 
-	_blur->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
-
-	_bloom->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
 	_depthRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
@@ -704,6 +700,10 @@ void ComputeManager::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 	_vignetteRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
 	_ssaoRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+
+	_bloom->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+
+	_blur->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
 	Core::main->GetRenderTarget()->GetRenderTarget()->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
 

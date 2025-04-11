@@ -231,8 +231,7 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     float3 worldNormal = normalize(NormalT.Load(int3(texCoord, 0)).xyz);
     float depth = depthT.Load(int3(texCoord, 0));
 
-    if (depth >= 0.9999)
-    {
+    if (depth >= 0.9999) { // 뎁스 없음.
         resultTexture[texCoord] = RenderT.Load(int3(texCoord, 0));
         return;
     }
@@ -250,7 +249,7 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     {
         float3 sampleDir = samples[i];
 
-        float2 rotatedOffset = float2(
+        float2 rotatedOffset = float2( // 삼각 덧샘공식으로 랜덤 벡터에 샘플 더해
             sampleDir.x * cosAngle - sampleDir.y * sinAngle,
             sampleDir.x * sinAngle + sampleDir.y * cosAngle
         );
@@ -269,24 +268,15 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
         if (sampleUV.x < 0.0 || sampleUV.x > 1.0 || sampleUV.y < 0.0 || sampleUV.y > 1.0)
             continue;
 
-        int2 sampleTexCoord = int2(sampleUV * cameraScreenData.xy);
+        int2 sampleTexCoord = int2(sampleUV * cameraScreenData.xy); //샘플 위치의 depth 값을 가져오기
         float sampleDepth = depthT.Load(int3(sampleTexCoord, 0));
         float sampleViewZ = NdcDepthToViewDepth(sampleDepth);
-
-        float4 sampleViewPos;
-        sampleViewPos.xy = projectedPos.xy;
-        sampleViewPos.z = sampleDepth;
-        sampleViewPos.w = 1.0;
-        float4 sampleWorldPos = mul(sampleViewPos, InvertVPMatrix);
-        sampleWorldPos /= sampleWorldPos.w;
 
         float rangeCheck = smoothstep(0.0, 1.0, RADIUS / abs(viewPos.z - sampleViewZ));
         occlusion += (sampleViewZ <= (samplePos.z - BIAS) ? 1.0 : 0.0) * rangeCheck;
     }
 
     occlusion = 1.0 - (occlusion * saturate((100 - viewPos.z) / 100) / SAMPLE_COUNT) * INTENSITY;
-
-    occlusion = occlusion;
 
     //float4 originalColor = RenderT.Load(int3(texCoord, 0));
     //float4 finalColor = originalColor * occlusion;
