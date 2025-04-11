@@ -228,8 +228,34 @@ void Game::CameraUpdate()
 
 	shared_ptr<Camera> camera = CameraManager::main->GetCamera(CameraType::DebugCamera);
 
-	const float speed = 500.0f;
+	static float speed = 500.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;
+
+	if (Input::main->GetKey(KeyCode::Minus))
+	{
+
+		speed -= 10.0f * dt;
+
+		if(speed<=0)
+		{
+			speed = 0;
+		}
+		
+	}
+
+	if (Input::main->GetKey(KeyCode::Plus))
+	{
+		if (speed <= 1000)
+		{
+			speed += 10.0f * dt;
+		}
+		else
+		{
+			speed = 1000;
+		}
+	}
+
+
 
 	if (Input::main->GetKey(KeyCode::W))
 	{

@@ -212,6 +212,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	        eventDesc.mouse.isCtrl = wParam & MK_CONTROL;
 	        eventDesc.mouse.isShift = wParam & MK_SHIFT;
 	        eventDesc.keyCode = KeyCode::CenterMouse;
+			eventDesc.mouse.wheelDelta= GET_WHEEL_DELTA_WPARAM(wParam);
+			eventDesc.mouse.wheelDeltaH = GET_WHEEL_DELTA_WPARAM(wParam);
 	        Input::main->_eventQueue.push(eventDesc);
 	        break;
 	    }

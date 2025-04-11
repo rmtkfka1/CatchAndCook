@@ -66,8 +66,9 @@ enum KeyCode : short
     Num9 = 57,
     Num0 = 48,
 
-    Minus = 189,        // - 키
-    Eqauls = 187,       // = 키
+    Minus = 189,       
+    Equals = 187,      
+    Plus = 187,        
 
     Tap = 9,            // Tab 키
     Capslock = 20,      // Caps Lock 키
@@ -184,6 +185,10 @@ struct InputMouseDesc
     bool isInClient;
     float posX;
     float posY;
+
+    int wheelDelta = 0;       // 세로 휠
+    int wheelDeltaH = 0;      // 가로 휠 (WM_MOUSEHWHEEL)
+
 };
 
 struct InputEventDesc
@@ -194,7 +199,7 @@ struct InputEventDesc
 class InputEvent
 {
 public:
-    InputEvent() = default;
+    InputEvent() {};
     InputType type;
 
     short keyCode;
