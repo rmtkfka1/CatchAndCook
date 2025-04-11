@@ -33,5 +33,5 @@ float4 PS_Main(VS_OUT input) : SV_Target
 
     float3 lightColor = ComputeLightColor(worldPos.xyz, WolrdNormal.xyz);
     
-    return /*float4(lightColor, 1.0f) **/ AlbedoColor;
+    return float4(lightColor, 1.0f) * AlbedoColor;
 };
