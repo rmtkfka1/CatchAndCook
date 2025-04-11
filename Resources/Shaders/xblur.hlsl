@@ -39,6 +39,8 @@ void CS_Main(int3 threadIndex : SV_DispatchThreadID, uint3 groupThreadID : SV_Gr
     int2 tileStart = int2(groupID.x * threadGroupSizeX, groupID.y * threadGroupSizeY);
     int2 tileEnd   = tileStart + int2(threadGroupSizeX, threadGroupSizeY);
     
+    // 성능이 느린 이유각 각 픽셀마다 인접한 픽셀을 매번 Load 하던게 문제였음. 픽셀 수 * 19. 너무 많아.
+    // 그래서 해당 그룹 내 픽셀들은 전부 캐싱해서 한번만 Load하고 공유하게 바꿈.
 
     int localIndex = groupThreadID.x + groupThreadID.y * threadGroupSizeX;
     int2 loadCoord = tileStart + int2(groupThreadID.xy);
@@ -61,7 +63,7 @@ void CS_Main(int3 threadIndex : SV_DispatchThreadID, uint3 groupThreadID : SV_Gr
         sampleCoord.y = clamp(sampleCoord.y, 0, g_window_size.y - 1);
          
         float3 color;
-        if (sampleCoord.x >= tileStart.x && sampleCoord.x < tileEnd.x && //캐싱구간이면 캐싱 사용, 아니면 직접 Load
+        if (sampleCoord.x >= tileStart.x && sampleCoord.x < tileEnd.x && //캐싱구간이면 캐싱 사용
 			sampleCoord.y >= tileStart.y && sampleCoord.y < tileEnd.y)
         {
             int2 localCoord = sampleCoord - tileStart;
@@ -69,7 +71,7 @@ void CS_Main(int3 threadIndex : SV_DispatchThreadID, uint3 groupThreadID : SV_Gr
             color = sharedTile[sharedIndex];
         }
         else
-            color = inputTexture.Load(int3(sampleCoord, 0)).rgb;
+            color = inputTexture.Load(int3(sampleCoord, 0)).rgb; // 아니면 직접 Load
         
         blurColor += weights[i + blurRadius] * color;
     }
