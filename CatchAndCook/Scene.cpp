@@ -97,8 +97,8 @@ void Scene::Rendering()
     Core::main->GetRenderTarget()->ClearDepth();
 
     ShadowPass(cmdList);
-    Profiler::Set("PASS : Deffered", BlockTag::GPU);
-    DefferedPass(cmdList);
+    Profiler::Set("PASS : Deferred", BlockTag::GPU);
+    DeferredPass(cmdList);
     FinalRender(cmdList);
     Profiler::Fin();
 
@@ -218,12 +218,12 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
     }
 }
 
-void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
+void Scene::DeferredPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 {
 	Core::main->GetGBuffer()->RenderBegin();
 
-    { // Deffered
-        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deffered)];
+    { // Deferred
+        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deferred)];
 
         for (auto& [shader, vec] : targets)
         {
@@ -242,7 +242,7 @@ void Scene::DefferedPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                        }
                    }
 
-                   SettingPrevData(ele, RENDER_PASS::PASS::Deffered);
+                   SettingPrevData(ele, RENDER_PASS::PASS::Deferred);
 
                    if (ele.renderer->isInstancing() == false)
                    {
@@ -369,6 +369,7 @@ void Scene::DebugRendering()
             }
         }
     }
+    Gizmo::main->Clear();
 }
 
 void Scene::RenderEnd()
@@ -378,7 +379,6 @@ void Scene::RenderEnd()
 
 void Scene::Finish()
 {
-    Gizmo::main->Clear();
     Scene::ExecuteDestroyGameObjects();
     PathFinder::ClearDebugDraw();
     GameObject::ExecuteDestroyComponents();

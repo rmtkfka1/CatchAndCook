@@ -47,11 +47,11 @@ void ResourceManager::CreateDefaultShader()
 		info.RTVForamts[1]=DXGI_FORMAT_R32G32B32A32_FLOAT;
 		info.RTVForamts[2]=DXGI_FORMAT_R8G8B8A8_UNORM;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"Deffered",L"Deferred.hlsl",StaticProp,
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"Deferred",L"Deferred.hlsl",StaticProp,
 			ShaderArg{},info);
 
 		shader->SetInjector({ BufferType::DefaultMaterialParam });
-		shader->SetPass(RENDER_PASS::Deffered);
+		shader->SetPass(RENDER_PASS::Deferred);
 	}
 
 	{
@@ -64,7 +64,7 @@ void ResourceManager::CreateDefaultShader()
 
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"Plant", L"Plant.hlsl", StaticProp,
 			ShaderArg{}, info);
-		shader->SetPass(RENDER_PASS::Deffered);
+		shader->SetPass(RENDER_PASS::Deferred);
 	}
 
 
@@ -76,7 +76,7 @@ void ResourceManager::CreateDefaultShader()
 		info._stencilTest = false;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->SetPass(RENDER_PASS::Deffered);
+		shader->SetPass(RENDER_PASS::Deferred);
 		shader->Init(L"final.hlsl", GeoMetryProp,ShaderArg{},info);
 		Add<Shader>(L"finalShader",shader);
 	}
@@ -88,7 +88,7 @@ void ResourceManager::CreateDefaultShader()
 		info._stencilTest = false;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->SetPass(RENDER_PASS::Deffered);
+		shader->SetPass(RENDER_PASS::Deferred);
 		shader->Init(L"final_MainField.hlsl", GeoMetryProp, ShaderArg{}, info);
 		Add<Shader>(L"finalShader_MainField", shader);
 	}
@@ -164,7 +164,7 @@ void ResourceManager::CreateDefaultShader()
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetInjector({ BufferType::DefaultMaterialParam });
-		shader->SetPass(RENDER_PASS::Deffered);
+		shader->SetPass(RENDER_PASS::Deferred);
 		shader->Init(L"TestDeferred_Total.hlsl", StaticProp, ShaderArg{}, info);
 		Add<Shader>(L"DefaultDeferred", shader);
 	}
@@ -184,7 +184,7 @@ void ResourceManager::CreateDefaultShader()
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetInjector({ BufferType::DefaultMaterialParam });
 		shader->SetMacro({ {"SKINNED",nullptr} });
-		shader->SetPass(RENDER_PASS::Deffered);
+		shader->SetPass(RENDER_PASS::Deferred);
 		shader->Init(L"TestDeferred_Total.hlsl", SkinProp, ShaderArg{}, info);
 		Add<Shader>(L"DefaultDeferred_Skinned", shader);
 	}
@@ -205,7 +205,7 @@ void ResourceManager::CreateDefaultShader()
 		shader->SetInjector({ BufferType::DefaultMaterialParam });
 		shader->SetMacro({ {"INSTANCED",nullptr} });
 		shader->SetInstanceProp(TransformInstanceProp);
-		shader->SetPass(RENDER_PASS::Deffered);
+		shader->SetPass(RENDER_PASS::Deferred);
 		shader->Init(L"TestDeferred_Total.hlsl", SkinProp, ShaderArg{}, info);
 		Add<Shader>(L"DefaultDeferred_Instanced", shader);
 	}
@@ -232,7 +232,7 @@ void ResourceManager::CreateDefaultShader()
 		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->SetPass(RENDER_PASS::Deffered);
+		shader->SetPass(RENDER_PASS::Deferred);
 		shader->Init(L"ForwardPreDepthNormal.hlsl", StaticProp, ShaderArg{}, info);
 		Add<Shader>(L"DepthNormal", shader);
 	}
@@ -251,7 +251,7 @@ void ResourceManager::CreateDefaultShader()
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetMacro({ {"SKINNED",nullptr} });
-		shader->SetPass(RENDER_PASS::Deffered);
+		shader->SetPass(RENDER_PASS::Deferred);
 		shader->Init(L"ForwardPreDepthNormal.hlsl", SkinProp, ShaderArg{}, info);
 		Add<Shader>(L"DepthNormal_Skinned", shader);
 	}
@@ -271,7 +271,7 @@ void ResourceManager::CreateDefaultShader()
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetMacro({ {"INSTANCED",nullptr} });
 		shader->SetInstanceProp(TransformInstanceProp);
-		shader->SetPass(RENDER_PASS::Deffered);
+		shader->SetPass(RENDER_PASS::Deferred);
 		shader->Init(L"ForwardPreDepthNormal.hlsl", SkinProp, ShaderArg{}, info);
 		Add<Shader>(L"DepthNormal_Instanced", shader);
 	}
@@ -329,15 +329,15 @@ void ResourceManager::CreateDefaultMaterial()
 {
 	_depthNormal = std::make_shared<Material>();
 	_depthNormal->SetShader(ResourceManager::main->Get<Shader>(L"DepthNormal"));
-	_depthNormal->SetPass(RENDER_PASS::Deffered);
+	_depthNormal->SetPass(RENDER_PASS::Deferred);
 
 	_depthNormal_Skinned = std::make_shared<Material>();
 	_depthNormal_Skinned->SetShader(ResourceManager::main->Get<Shader>(L"DepthNormal_Skinned"));
-	_depthNormal_Skinned->SetPass(RENDER_PASS::Deffered);
+	_depthNormal_Skinned->SetPass(RENDER_PASS::Deferred);
 
 	_depthNormal_Instanced = std::make_shared<Material>();
 	_depthNormal_Instanced->SetShader(ResourceManager::main->Get<Shader>(L"DepthNormal_Instanced"));
-	_depthNormal_Instanced->SetPass(RENDER_PASS::Deffered);
+	_depthNormal_Instanced->SetPass(RENDER_PASS::Deferred);
 }
 
 void ResourceManager::CreateDefaultTexture()

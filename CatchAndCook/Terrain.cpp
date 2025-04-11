@@ -54,7 +54,7 @@ void Terrain::Start()
 
     _material->SetPropertyVector("fieldSize", Vector4(_fieldSize));
     _material->SetShader(shader);
-    _material->SetPass(RENDER_PASS::Deffered);
+    _material->SetPass(RENDER_PASS::Deferred);
     auto meshRenderer = GetOwner()->GetComponent<MeshRenderer>();
     meshRenderer->AddMaterials({ _material });
 

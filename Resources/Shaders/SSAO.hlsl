@@ -50,119 +50,240 @@ float OcclusionFunction(float distZ)
 }
 
 RWTexture2D<float4> resultTexture : register(u0);
+RWTexture2D<float> ssaoResultTexture : register(u1);
+
 Texture2D depthT : register(t0); 
 Texture2D<float4> RenderT : register(t1);
 Texture2D<float4> PositionT : register(t2);
 Texture2D<float4> NormalT : register(t3);
 
+
+#define SAMPLE_COUNT 16
+#define RADIUS 0.3
+#define BIAS 0.05
+#define INTENSITY 1.0
+#define POWER 3
+
+static const float3 samples[SAMPLE_COUNT] = 
+{
+    float3(0.135, 0.242, 0.968),
+    float3(-0.545, 0.312, 0.778),
+    float3(0.635, 0.133, 0.759),
+    float3(-0.322, -0.455, 0.835),
+    float3(-0.742, -0.031, 0.669),
+    float3(0.160, -0.532, 0.832),
+    float3(0.464, -0.540, 0.701),
+    float3(-0.104, -0.840, 0.533),
+    float3(-0.687, -0.566, 0.456),
+    float3(0.445, 0.735, 0.512),
+    float3(-0.248, 0.859, 0.452),
+    float3(0.814, 0.415, 0.406),
+    float3(0.846, -0.380, 0.371),
+    float3(-0.894, 0.242, 0.375),
+    float3(-0.352, -0.924, 0.147),
+    float3(0.125, 0.210, 0.969)
+};
+
+float Hash(float2 p)
+{
+    return frac(sin(dot(p, float2(12.9898, 78.233))) * 43758.5453);
+}
+
+float GetRandomRotation(float2 texCoord)
+{
+    return Hash(texCoord) * 2.0 * 3.14159265;
+}
+
+[numthreads(16, 16, 1)]
+void CS_Blur(uint3 dispatchThreadID : SV_DispatchThreadID)
+{
+    int2 texCoord = dispatchThreadID.xy;
+    const int BLUR_RADIUS = 6;
+    if (texCoord.x >= (uint)cameraScreenData.x || texCoord.y >= (uint)cameraScreenData.y)
+    {
+        return;
+    }
+    
+    float depth = depthT.Load(int3(texCoord, 0));
+
+    if (depth >= 0.9999)
+    {
+        resultTexture[texCoord] = RenderT.Load(int3(texCoord, 0));
+        return;
+    }
+
+    float horizontalBlur = 0.0;
+    float weight = 0.0;
+
+    for (int x = -BLUR_RADIUS; x <= BLUR_RADIUS; x++)
+    {
+        int2 sampleCoord = texCoord + int2(x, 0);
+
+        if (sampleCoord.x < 0 || sampleCoord.x >= (int)cameraScreenData.x || 
+            sampleCoord.y < 0 || sampleCoord.y >= (int)cameraScreenData.y)
+            continue;
+            
+        float sampleDepth = depthT.Load(int3(sampleCoord, 0));
+
+        if (abs(depth - sampleDepth) > 0.1)
+            continue;
+
+        float sampleAO = ssaoResultTexture[sampleCoord];
+        horizontalBlur += sampleAO;
+        weight += 1.0;
+    }
+    
+    horizontalBlur /= max(weight, 1.0);
+
+    float finalBlur = 0.0;
+    weight = 0.0;
+    
+    for (int y = -BLUR_RADIUS; y <= BLUR_RADIUS; y++)
+    {
+        int2 sampleCoord = texCoord + int2(0, y);
+
+        if (sampleCoord.x < 0 || sampleCoord.x >= (int)cameraScreenData.x || 
+            sampleCoord.y < 0 || sampleCoord.y >= (int)cameraScreenData.y)
+            continue;
+            
+        float sampleDepth = depthT.Load(int3(sampleCoord, 0));
+
+        if (abs(depth - sampleDepth) > 0.1)
+            continue;
+
+        float verticalBlur = 0.0;
+        float innerWeight = 0.0;
+        
+        for (int x = -2; x <= 2; x++)
+        {
+            int2 innerSampleCoord = sampleCoord + int2(x, 0);
+
+            if (innerSampleCoord.x < 0 || innerSampleCoord.x >= (int)cameraScreenData.x || 
+                innerSampleCoord.y < 0 || innerSampleCoord.y >= (int)cameraScreenData.y)
+                continue;
+                
+            float innerSampleAO = ssaoResultTexture[innerSampleCoord];
+            verticalBlur += innerSampleAO;
+            innerWeight += 1.0;
+        }
+        
+        verticalBlur /= max(innerWeight, 1.0);
+        finalBlur += verticalBlur;
+        weight += 1.0;
+    }
+    
+    finalBlur /= max(weight, 1.0);
+
+    float diagonalBlur = 0.0;
+    weight = 0.0;
+    
+    for (int d = -BLUR_RADIUS/2; d <= BLUR_RADIUS/2; d++)
+    {
+        {
+            int2 sampleCoord = texCoord + int2(d, d);
+            
+            if (sampleCoord.x >= 0 && sampleCoord.x < (int)cameraScreenData.x && 
+                sampleCoord.y >= 0 && sampleCoord.y < (int)cameraScreenData.y)
+            {
+                float sampleAO = ssaoResultTexture[sampleCoord];
+                diagonalBlur += sampleAO;
+                weight += 1.0;
+            }
+        }
+
+        {
+            int2 sampleCoord = texCoord + int2(-d, d);
+            
+            if (sampleCoord.x >= 0 && sampleCoord.x < (int)cameraScreenData.x && 
+                sampleCoord.y >= 0 && sampleCoord.y < (int)cameraScreenData.y)
+            {
+                float sampleAO = ssaoResultTexture[sampleCoord];
+                diagonalBlur += sampleAO;
+                weight += 1.0;
+            }
+        }
+    }
+    
+    diagonalBlur /= max(weight, 1.0);
+
+    float aoBlurred = (horizontalBlur + finalBlur + diagonalBlur) / 3.0;
+
+    float aoFinal = lerp(ssaoResultTexture[texCoord], aoBlurred, 0.8);
+
+    float4 originalColor = RenderT.Load(int3(texCoord, 0));
+    float4 finalColor = originalColor * aoFinal;
+
+    resultTexture[texCoord] = finalColor;
+}
+
 [numthreads(16, 16, 1)]
 void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
 {
-    // 현재 픽셀의 화면 좌표와 UV 계산
     int2 texCoord = dispatchThreadID.xy;
+
+    if (texCoord.x >= (uint)cameraScreenData.x || texCoord.y >= (uint)cameraScreenData.y) {
+        return;
+    }
+    
     float2 uv = (float2(texCoord) + 0.5) / cameraScreenData.xy;
 
-    // depth texture에서 픽셀의 깊이값(0~1 범위)을 읽어옴
+    float3 worldPos = PositionT.Load(int3(texCoord, 0)).xyz;
+    float3 worldNormal = normalize(NormalT.Load(int3(texCoord, 0)).xyz);
     float depth = depthT.Load(int3(texCoord, 0));
-    float3 normal = normalize(NormalT.Load(int3(texCoord, 0)).xyz * 2.0 - 1.0);
-    float3 posWS = PositionT.Load(int3(texCoord, 0)).xyz;
 
-    float3 normalVS = normalize(mul(normal, (float3x3)ViewMatrix));
-    float4 posVS = mul(float4(posWS, 1.0), ViewMatrix);
-    float depthVS = NdcDepthToViewDepth(depth);
-    posVS = posVS / posVS.w;
+    if (depth >= 0.9999) { // 뎁스 없음.
+        resultTexture[texCoord] = RenderT.Load(int3(texCoord, 0));
+        return;
+    }
 
-    float3 p = (depthVS/posVS.z) * posVS;
+    float3 viewPos = mul(float4(worldPos, 1.0), ViewMatrix).xyz;
+    float3 viewNormal = normalize(mul(float4(worldNormal, 0.0), ViewMatrix).xyz);
 
+    float randomAngle = GetRandomRotation(texCoord);
+    float cosAngle = cos(randomAngle);
+    float sinAngle = sin(randomAngle);
 
-    int kernelSize = 16;
+    float occlusion = 0.0;
+    
+    for (int i = 0; i < SAMPLE_COUNT; i++)
+    {
+        float3 sampleDir = samples[i];
 
-    // SSAO용 반구 내 샘플 벡터 (상수 배열)
-	static const float3 sampleKernel[16] = {
-	    float3(-0.1392, -0.9657, -0.2208),
-	    float3(0.7393, 0.5051, -0.4468),
-	    float3(0.0957, -0.1436, 0.9849),
-	    float3(0.7894, 0.2286, 0.5707),
-	    float3(-0.0263, 0.8501, -0.5260),
-	    float3(-0.3846, -0.3665, 0.8472),
-	    float3(-0.5411, 0.7505, 0.3806),
-	    float3(0.1929, -0.6776, -0.7093),
-	    float3(0.2148, 0.8233, 0.5251),
-	    float3(-0.8032, 0.1084, -0.5855),
-	    float3(0.5173, -0.6829, -0.5144),
-	    float3(-0.2836, 0.3437, 0.8957),
-	    float3(-0.4712, -0.0945, -0.8769),
-	    float3(0.9461, 0.1915, -0.2606),
-	    float3(-0.6822, 0.6235, -0.3818),
-	    float3(0.1376, -0.9849, 0.1054)
-	};
+        float2 rotatedOffset = float2( // 삼각 덧샘공식으로 랜덤 벡터에 샘플 더해
+            sampleDir.x * cosAngle - sampleDir.y * sinAngle,
+            sampleDir.x * sinAngle + sampleDir.y * cosAngle
+        );
 
-    float gOcclusionRadius = 0.25;
-    float occlusionSum = 0;
-    for(int i = 0; i < kernelSize; ++i)
-	{
-		// Are offset vectors are fixed and uniformly distributed (so that our offset vectors
-		// do not clump in the same direction).  If we reflect them about a random vector
-		// then we get a random uniform distribution of offset vectors.
-		float3 offset = sampleKernel[i].xyz;
-	
-		// Flip offset vector if it is behind the plane defined by (p, n).
-		float flip = sign( dot(offset, normalVS) );
-		
-		// Sample a point near p within the occlusion radius.
-		float3 q = p + flip * gOcclusionRadius * offset;
-		
-		// Project q and generate projective tex-coords.  
-		float4 projQ = mul(float4(q, 1.0f), ProjectionMatrix);
-		projQ /= projQ.w;
+        float3 offset = float3(rotatedOffset, sampleDir.z);
+        if (dot(offset, viewNormal) < 0.0)
+            offset = -offset;
 
-		// Find the nearest depth value along the ray from the eye to q (this is not
-		// the depth of q, as q is just an arbitrary point near p and might
-		// occupy empty space).  To find the nearest depth we look it up in the depthmap.
-		projQ.y *= -1;
-		projQ.xy = projQ.xy * 0.5 + 0.5;
-		if (projQ.x < 0 || projQ.x > 1 || projQ.y < 0 || projQ.y > 1)
+        float3 samplePos = viewPos + offset * RADIUS;
+
+        float4 projectedPos = mul(float4(samplePos, 1.0), ProjectionMatrix);
+        projectedPos.xy /= projectedPos.w;
+        projectedPos.y = -projectedPos.y;
+        float2 sampleUV = projectedPos.xy * 0.5 + 0.5;
+
+        if (sampleUV.x < 0.0 || sampleUV.x > 1.0 || sampleUV.y < 0.0 || sampleUV.y > 1.0)
             continue;
-		float rz = depthT.Load(int3((float2(projQ.xy) * cameraScreenData.xy) - 0.5, 0));
-        rz = NdcDepthToViewDepth(rz);
 
-		// Reconstruct full view space position r = (rx,ry,rz).  We know r
-		// lies on the ray of q, so there exists a t such that r = t*q.
-		// r.z = t*q.z ==> t = r.z / q.z
+        int2 sampleTexCoord = int2(sampleUV * cameraScreenData.xy); //샘플 위치의 depth 값을 가져오기
+        float sampleDepth = depthT.Load(int3(sampleTexCoord, 0));
+        float sampleViewZ = NdcDepthToViewDepth(sampleDepth);
 
-		float3 r = (rz / q.z) * q;
+        float rangeCheck = smoothstep(0.0, 1.0, RADIUS / abs(viewPos.z - sampleViewZ));
+        occlusion += (sampleViewZ <= (samplePos.z - BIAS) ? 1.0 : 0.0) * rangeCheck;
+    }
 
+    occlusion = 1.0 - (occlusion * saturate((100 - viewPos.z) / 100) / SAMPLE_COUNT) * INTENSITY;
 
-		
-		//
-		// Test whether r occludes p.
-		//   * The product dot(n, normalize(r - p)) measures how much in front
-		//     of the plane(p,n) the occluder point r is.  The more in front it is, the
-		//     more occlusion weight we give it.  This also prevents self shadowing where 
-		//     a point r on an angled plane (p,n) could give a false occlusion since they
-		//     have different depth values with respect to the eye.
-		//   * The weight of the occlusion is scaled based on how far the occluder is from
-		//     the point we are computing the occlusion of.  If the occluder r is far away
-		//     from p, then it does not occlude it.
-		// 
-		
-		float distZ = p.z - r.z;
-		float dp = saturate(dot(normalVS, normalize(r - p)));
+    //float4 originalColor = RenderT.Load(int3(texCoord, 0));
+    //float4 finalColor = originalColor * occlusion;
 
-        float occlusion = dp * OcclusionFunction(distZ);
+    ssaoResultTexture[texCoord] = occlusion;
 
-		occlusionSum += occlusion;
-	}
+    GroupMemoryBarrierWithGroupSync(); // 싱크 걸고 블러링
 
-    occlusionSum /= kernelSize;
-	
-	float access = 1.0f - occlusionSum;
-
-    //int2 sampleCoord = int2(sampleScreenUV * cameraScreenData.xy + 0.5);
-
-    resultTexture[texCoord] = saturate(pow(access, 6.0f));
-	//resultTexture[texCoord] = float4(normal, 1);
-    //resultTexture[texCoord] = float4(occlusion, occlusion, occlusion, 1.0);
+    CS_Blur(dispatchThreadID);
 }
-
-

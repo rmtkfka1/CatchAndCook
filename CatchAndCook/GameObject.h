@@ -251,6 +251,19 @@ public:
 				child.lock()->ForHierarchyAll(func);
 	}
 
+	template <class T, class Y>
+	void ForHierarchyBeginEndAll(const T& func, const Y& func2)
+	{
+		auto obj = GetCast<GameObject>();
+		auto result = func(obj);
+		if (result) {
+			for (auto& child : _childs)
+				if (!child.expired())
+					child.lock()->ForHierarchyBeginEndAll(func, func2);
+		}
+		func2(result, obj);
+	}
+
 
 private:
 	bool AddChild(const std::shared_ptr<GameObject>& obj);

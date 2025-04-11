@@ -20,6 +20,8 @@ public:
 private:
 	void Debug();
 
+	void DebugJin();
+
 	void BoidMove();
 
 	void GizmoController();
@@ -29,6 +31,10 @@ private:
 	void LightController();
 
 	void SeaController();
+
+	void Test();
+
+	void Test2();
 
 
 	
@@ -40,6 +46,7 @@ public:
 	FogParam* _fogParam;
 	UnderWaterParam* _underWaterParam;
 	SeaParam* _seaParam;
+	bool* _ssaoOnOff;
 
 	float* separationWeight;
 	float* alignmentWeight;

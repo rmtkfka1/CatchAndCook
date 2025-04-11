@@ -18,4 +18,10 @@ cbuffer cameraParams : register(b2)
     float4 cameraScreenData;
 };
 
+float NdcDepthToViewDepth(float z_ndc)
+{
+    float viewZ = ProjectionMatrix[3][2] / (z_ndc - ProjectionMatrix[2][2]);
+    return viewZ;
+}
+
 #endif

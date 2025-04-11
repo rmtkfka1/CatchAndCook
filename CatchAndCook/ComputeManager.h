@@ -48,7 +48,7 @@ private:
 	void YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x ,int y ,int z);
 
 private:
-	int32 _blurCount=50;
+	int32 _blurCount = 6;
 
 	bool _on =false;
 
@@ -84,7 +84,7 @@ private:
 	void Blooming(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 
 private:
-	int32 _blurCount = 50;
+	int32 _blurCount = 6;
 	bool _on = false;
 	shared_ptr<Texture> _bloomTexture;
 	shared_ptr<Texture> _pingtexture;
@@ -237,7 +237,10 @@ private:
 
 private:
 	shared_ptr<Texture> _pingTexture;
+	std::shared_ptr<Texture> _ssaoTexture;
 	shared_ptr<Shader> _shader;
+
+	bool ssaoOnOff = true;
 
 	friend class ComputeManager;
 };

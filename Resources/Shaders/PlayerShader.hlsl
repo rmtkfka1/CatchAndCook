@@ -36,7 +36,8 @@ struct VS_IN
 
 struct VS_OUT
 {
-    float4 positionCS : SV_Position;
+    float4 position : SV_Position;
+    float4 positionCS : PositionCS;
     float4 positionWS : PositionWS;
     float3 normalOS : NormalOS;
     float3 normalWS : NormalWS;
@@ -75,6 +76,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 
     output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f), boneIds, boneWs, l2wMatrix);
     output.positionCS = TransformWorldToClip(output.positionWS);
+    output.position = output.positionCS;
 
     output.normalWS = TransformNormalLocalToWorld(input.normal, boneIds, boneWs, w2lMatrix);
     output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix);
@@ -118,6 +120,35 @@ LightingResult ComputeLightColorForward(float3 worldPos ,float3 WorldNomral)
     return result;
 }
 
+float Sobel(float4 positionCS)
+{
+    float2 uv = positionCS.xy / positionCS.w;
+    uv.y *= -1;
+    uv = uv * 0.5 + 0.5;
+
+	float2 texelSize = 2.0f / g_window_size;
+
+	// 주변 9개 픽셀의 깊이를 샘플링
+	float d0 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_lerp, uv + float2(-texelSize.x, -texelSize.y)).r);
+	float d1 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_lerp, uv + float2( 0.0f,       -texelSize.y)).r);
+	float d2 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_lerp, uv + float2( texelSize.x, -texelSize.y)).r);
+	float d3 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_lerp, uv + float2(-texelSize.x,  0.0f       )).r);
+	//float d4 = DepthTexture.Sample(sampler_lerp, uv).r;  // 센터 픽셀 (필요시 사용)
+	float d5 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_lerp, uv + float2( texelSize.x,  0.0f       )).r);
+	float d6 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_lerp, uv + float2(-texelSize.x,  texelSize.y )).r);
+	float d7 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_lerp, uv + float2( 0.0f,        texelSize.y )).r);
+	float d8 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_lerp, uv + float2( texelSize.x,  texelSize.y )).r);
+
+    float gx = (d2 + 2.0f * d5 + d8) - (d0 + 2.0f * d3 + d6);
+    float gy = (d0 + 2.0f * d1 + d2) - (d6 + 2.0f * d7 + d8);
+    
+    // 기울기의 크기를 계산
+    float edgeStrength = length(float2(gx, gy));
+    
+    // 임계값을 설정하여 엣지 여부 판정 (필요에 따라 조정)
+    float threshold = 0.05f; // 이 값을 조정하여 민감도를 변경할 수 있습니다.
+    return edgeStrength; //  > threshold ? 1.0f : 0.0f
+}
 
 [earlydepthstencil]
 float4 PS_Main(VS_OUT input) : SV_Target
@@ -127,9 +158,11 @@ float4 PS_Main(VS_OUT input) : SV_Target
     LightingResult lightColor = ComputeLightColorForward(input.positionWS.xyz, N);
     
     float4 BaseColor = _BaseMap.Sample(sampler_lerp, input.uv * _baseMapST.xy + _baseMapST.zw) * color;
-    float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
+    float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
 
     float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, lightColor.atten) + float4(lightColor.subColor, 0)).xyz;
+
+    return float4(finalColor, 1) + Sobel(input.positionCS);
 
 	return float4(finalColor, 1);
 }

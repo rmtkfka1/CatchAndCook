@@ -102,6 +102,7 @@ private:
     CBufferContainer* _cbufferContainer;
 
     friend class SkinnedHierarchy;
+	friend class ImguiManager;
 };
 
 
