@@ -69,6 +69,8 @@ public:
 
 	std::shared_ptr<Model> _model;
 	std::shared_ptr<Animation> animation;
+	std::shared_ptr<Animation> _nextAnimation;
+
 	std::unordered_map<std::string, std::string> _boneHumanNameTable;
 
 	std::unordered_map<std::string, std::weak_ptr<GameObject>> nodeObjectTable;
