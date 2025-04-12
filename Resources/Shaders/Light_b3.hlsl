@@ -266,7 +266,7 @@ float3 ComputeSeaSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal
         float spotFactor = saturate((dot(-lightVec, L.direction) - cosThreshold) / (cosInnerThreshold - cosThreshold));
         LightStrength *= spotFactor;
         
-        lightingInfluence += spotFactor;
+        lightingInfluence += att + spotFactor;
         
         return mat.diffuse * LightStrength;
     }
@@ -301,8 +301,6 @@ float4 ComputeSeaLightColor(float3 worldPos, float3 WorldNomral, inout float lig
     
     return float4(lightColor, 1.0f);
 }
-
-
 
 #endif
 
