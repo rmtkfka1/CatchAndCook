@@ -192,8 +192,14 @@ void ImguiManager::LightController()
 {
     if (ImGui::TreeNode("Lighting"))
     {
-        /*ImGui::SliderFloat3("Light Direction", &LightManager::main->_lights[1]->direction.x, -1.0f, 1.0f);
-        ImGui::SliderFloat3("Light Pos", &LightManager::main->_lights[1]->position.x, -300000.0f, 300000.0f);*/
+        ImGui::SliderFloat3("Light Direction", &LightManager::main->_lights[0]->direction.x, -1.0f, 1.0f);
+        ImGui::SliderFloat3("Light Pos", &LightManager::main->_lights[0]->position.x, -300000.0f, 300000.0f);
+        ImGui::SliderFloat("Light Power", &LightManager::main->_lights[0]->spotPower, 0, 100000.0f);
+		ImGui::SliderFloat("Light FallOffStart", &LightManager::main->_lights[0]->fallOffStart, 0, 100000.0f);
+		ImGui::SliderFloat("Light FallOffEnd", &LightManager::main->_lights[0]->fallOffEnd, 0, 100000.0f);
+		ImGui::SliderFloat("Light inner", &LightManager::main->_lights[0]->innerSpotAngle, 0, 360.0f*D2R);
+		ImGui::SliderFloat("Light outer", &LightManager::main->_lights[0]->spotAngle, 0, 360.0f * D2R);
+		ImGui::SliderFloat("Light intensity", &LightManager::main->_lights[0]->intensity, 0.0f, 100000.0f);
         ImGui::TreePop();
     };
 }

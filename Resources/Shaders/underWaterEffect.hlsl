@@ -90,16 +90,12 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     float fogFactor = CalculateFogFactor(viewPos);
     float lightingInfluence = 0.0f;
     
-    //float HeightUV = smoothstep(0, 2000.0f, abs(worldPos.y));
-    //float3 fogColor = ColorGrading.SampleLevel(sampler_lerp, float2(HeightUV, 0), 0).xyz;
-    
     float3 lightColor = ComputeSeaLightColor(worldPos.xyz, worldNormal, lightingInfluence).xyz;
     float3 lightingAlbedoColor = lightColor * albedoColor;
     lightingInfluence = saturate(lightingInfluence);
-    float3 tintedColor = lerp(g_underWaterColor * lightingAlbedoColor, lightingAlbedoColor, lightingInfluence);
+    float3 tintedColor = lerp(g_underWaterColor , lightingAlbedoColor, lightingInfluence);
 
-    float finalFogFactor = fogFactor * lightingInfluence;
-    float3 finalColor = lerp(g_fogColor, tintedColor, finalFogFactor);
+    float3 finalColor = lerp(g_fogColor, tintedColor, fogFactor);
 
-    resultTexture[texCoord] = float4(lightingAlbedoColor, 1.0f);
+    resultTexture[texCoord] = float4(finalColor, 1.0f);
 }

@@ -14,6 +14,7 @@
 #include "SceneManager.h"
 #include "ComputeManager.h"
 #include "ImguiManager.h"
+#include "LightManager.h"
 unique_ptr<Core> Core::main=nullptr;
 
 Core::Core()
@@ -74,6 +75,7 @@ void Core::RenderBegin()
 
 void Core::RenderEnd()
 {
+    ForwardLightSetter::i = 0;
 
     {
 #ifdef  IMGUI_ON

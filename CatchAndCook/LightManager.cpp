@@ -7,6 +7,8 @@
 #include "Camera.h"
 #include "ImguiManager.h"
 
+int ForwardLightSetter::i = 0;
+
 unique_ptr<LightManager> LightManager::main ;
 
 void LightManager::PushLight(const std::shared_ptr<Light>& light)
@@ -59,20 +61,12 @@ void LightManager::Update()
 	}
 
 
-
-//#ifdef IMGUI_ON
-//	for (int i = 0; i < _lightParmas.lightCount; ++i)
-//	{
-//		if (ImguiManager::main->_light)
-//			_lightParmas.light[i].position = ImguiManager::main->_light->_transform->GetWorldPosition();
-//	}
-//#endif 
-
 }
 
 
 void ForwardLightSetter::Init(GameObject* object)
 {
+
 	this->object = object;
 }
 
@@ -92,8 +86,9 @@ void ForwardLightSetter::SetData(StructuredBuffer* buffer)
 		params.lights[params.lightCount] = *light.get();
 		params.lightCount++;
 	}
-	
+
 	buffer->AddData(params);
+
 }
 
 ForwardLightSetter::~ForwardLightSetter()
