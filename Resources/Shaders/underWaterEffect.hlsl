@@ -47,6 +47,9 @@ Texture2D depthT : register(t0);
 Texture2D<float4> RenderT : register(t1);
 Texture2D<float4> PositionT : register(t2);
 Texture2D<float4> ColorGrading : register(t3);
+Texture2D<float4> NormalT : register(t4);
+
+
 
 
 float3 ProjToView(float2 texCoord)
@@ -61,7 +64,6 @@ float3 ProjToView(float2 texCoord)
     float4 posView = mul(posProj, InvertProjectionMatrix);
     return posView.xyz / posView.w;
 }
-
 
 float CalculateFogFactor(float3 posView)
 {
@@ -85,13 +87,12 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     //float HeightUV = smoothstep(0, 140.0f, Height);
     //float3 ColorGradingColor = ColorGrading.SampleLevel(sampler_lerp_clamp, float2(HeightUV, 0), 0);
     
-    float3 BaseColor = RenderT.SampleLevel(sampler_lerp, uv, 0).xyz;
-    BaseColor *= g_underWaterColor;
+    float3 AlbedoColor = RenderT.SampleLevel(sampler_lerp, uv, 0).xyz;
+    AlbedoColor *= g_underWaterColor;
 
     float3 viewPos = ProjToView(float2(texCoord));
     float fogFactor = CalculateFogFactor(viewPos);
     
-    float3 finalColor = lerp(g_fogColor, BaseColor, fogFactor);
-   
+    float3 finalColor = lerp(g_fogColor, AlbedoColor, fogFactor);
     resultTexture[texCoord] = float4(finalColor, 1.0f);
 }
