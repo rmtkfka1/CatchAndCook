@@ -6,6 +6,9 @@ SamplerState sampler_aniso16 : register(s4);
 SamplerState sampler_shadow : register(s5);
 SamplerState sampler_lerp_clamp : register(s6);
 
+#include "Light_b3.hlsl"
+
+
 cbuffer GLOBAL_DATA : register(b0)
 {
     float2 g_window_size;
@@ -45,9 +48,9 @@ cbuffer cameraParams : register(b2)
 RWTexture2D<float4> resultTexture : register(u0);
 Texture2D depthT : register(t0);
 Texture2D<float4> RenderT : register(t1);
-Texture2D<float4> PositionT : register(t2);
-Texture2D<float4> ColorGrading : register(t3);
-Texture2D<float4> NormalT : register(t4);
+Texture2D<float4> PositionTexture : register(t2);
+Texture2D<float4> NormalTexture : register(t3);
+Texture2D<float4> ColorGrading : register(t4);
 
 
 
@@ -88,11 +91,13 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     //float3 ColorGradingColor = ColorGrading.SampleLevel(sampler_lerp_clamp, float2(HeightUV, 0), 0);
     
     float3 AlbedoColor = RenderT.SampleLevel(sampler_lerp, uv, 0).xyz;
-    AlbedoColor *= g_underWaterColor;
-
+    float3 WolrdNormal = normalize(NormalTexture.SampleLevel(sampler_point, uv,0).xyz);
+    float4 worldPos = PositionTexture.SampleLevel(sampler_point, uv,0);
+    float3 lightColor = ComputeLightColor(worldPos.xyz, WolrdNormal.xyz).xyz;
+    
     float3 viewPos = ProjToView(float2(texCoord));
     float fogFactor = CalculateFogFactor(viewPos);
     
-    float3 finalColor = lerp(g_fogColor, AlbedoColor, fogFactor);
+    float3 finalColor = lerp(g_fogColor, AlbedoColor * lightColor, fogFactor);
     resultTexture[texCoord] = float4(finalColor, 1.0f);
 }

@@ -457,19 +457,20 @@ void UnderWaterEffect::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int 
 	auto& PositionTexture = Core::main->GetGBuffer()->GetTexture(0);
 	PositionTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
+	auto& NormalTexture = Core::main->GetGBuffer()->GetTexture(1);
+	PositionTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
 	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 0);
 	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
 	table->CopyHandle(_tableContainer.CPUHandle, PositionTexture->GetSRVCpuHandle(), 2);
-	//table->CopyHandle(_tableContainer.CPUHandle, _colorGrading->GetSRVCpuHandle(), 3);
+	table->CopyHandle(_tableContainer.CPUHandle, NormalTexture->GetSRVCpuHandle(), 3);
 	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 4);
 
 	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
 
-
 	auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::UnderWaterParam)->Alloc(1);
 	memcpy(CbufferContainer->ptr, (void*)&_underWaterParam, sizeof(_underWaterParam));
 	cmdList->SetComputeRootConstantBufferView(1, CbufferContainer->GPUAdress);
-
 
 	cmdList->Dispatch(x, y, z);
 

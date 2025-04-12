@@ -29,6 +29,7 @@ void LightManager::SetData()
 	CBufferContainer* container = Core::main->GetBufferManager()->GetBufferPool(BufferType::LightParam)->Alloc(1);
 	memcpy(container->ptr,(void*)&_lightParmas,sizeof(LightParams));
 	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(3, container->GPUAdress);
+	Core::main->GetCmdList()->SetComputeRootConstantBufferView(3, container->GPUAdress);
 }
 
 void LightManager::SetDataForward(void* addr, const std::shared_ptr<GameObject>& obj)

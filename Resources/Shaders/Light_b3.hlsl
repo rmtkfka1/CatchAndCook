@@ -185,7 +185,6 @@ float4 ComputeLightColor(float3 worldPos ,float3 WorldNomral)
 
     float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
 
-
     LightingResult result = (LightingResult)0;
     [unroll]
     for (int i = 0; i < g_lightCount; ++i)

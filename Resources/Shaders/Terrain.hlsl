@@ -135,17 +135,20 @@ struct PatchConstOutput
 
 float CalculateTessLevel(float3 cameraWorldPos, float3 patchPos, float minDist, float maxDist, float maxLv)
 {
-    // 수직 거리 무시 (XZ 평면 기준 거리 계산)
-    float distance = length(float3(patchPos.x, 0, patchPos.z) - float3(cameraWorldPos.x, 0, cameraWorldPos.z));
+    
+    return 8;
+    
+    //// 수직 거리 무시 (XZ 평면 기준 거리 계산)
+    //float distance = length(float3(patchPos.x, 0, patchPos.z) - float3(cameraWorldPos.x, 0, cameraWorldPos.z));
 
-    // 거리를 [minDist, maxDist] 구간으로 정규화
-    float t = saturate((distance - minDist) / (maxDist - minDist));
+    //// 거리를 [minDist, maxDist] 구간으로 정규화
+    //float t = saturate((distance - minDist) / (maxDist - minDist));
 
-    // 거리가 가까울수록 maxLv, 멀수록 1.0
-    float tessLevel = lerp(maxLv, 1.0f, t);
+    //// 거리가 가까울수록 maxLv, 멀수록 1.0
+    //float tessLevel = lerp(maxLv, 1.0f, t);
 
-    // 결과를 보정 범위 안에 클램프
-    return clamp(tessLevel, 1.0f, maxLv);
+    //// 결과를 보정 범위 안에 클램프
+    //return clamp(tessLevel, 1.0f, maxLv);
 }
 
 //패치단위로 호출

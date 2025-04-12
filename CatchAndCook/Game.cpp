@@ -94,7 +94,7 @@ void Game::Init(HWND hwnd)
 
 	light->material.ambient = vec3(0.2f, 0.2f, 0.2f);
 	light->material.diffuse = vec3(1.0f, 1.0f, 1.0f);
-	light->material.specular = vec3(1.0f, 1.0f, 1.0f);
+	light->material.specular = vec3(0, 0, 0);
 	light->material.shininess = 61.0f;
 	light->material.lightType = static_cast<int32>(LIGHT_TYPE::DIRECTIONAL_LIGHT);
 	light->strength = vec3(1.0f, 1.0f, 1.0f);
