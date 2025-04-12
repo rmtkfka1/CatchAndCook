@@ -88,19 +88,18 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     float3 worldNormal = normalize(NormalTexture.SampleLevel(sampler_point, uv, 0).xyz);
     float4 worldPos = PositionTexture.SampleLevel(sampler_point, uv, 0);
 
-    // 라이팅 계산
-    float3 lightColor = ComputeLightColor(worldPos.xyz, worldNormal).xyz;
-    float3 litColor = albedoColor * lightColor;
-
-    // 수중 색 톤 적용 (조명 결과와 수중 컬러의 블렌딩)
-    float3 underwaterTintedColor = lerp(litColor, litColor * g_underWaterColor, 0.4f); // 블렌딩 정도 조절 가능
-
-    // 뷰 공간 좌표로 변환 후 안개 계산
-    float3 viewPos = ProjToView(float2(texCoord));
+    float3 viewPos = ProjToView(texCoord);
     float fogFactor = CalculateFogFactor(viewPos);
+    float fogAtt = 0;
 
-    // 최종 컬러: 안개 컬러와 블렌딩
-    float3 finalColor = lerp(g_fogColor, underwaterTintedColor, fogFactor);
+    float3 lightColor = ComputeSeaLightColor(worldPos.xyz, worldNormal, fogAtt).xyz;
+    float3 lightingAlbedoColor = lightColor * albedoColor;
+
+    float lightingInfluence = saturate(fogAtt); 
+    float3 tintedColor = lerp(g_underWaterColor * lightingAlbedoColor, lightingAlbedoColor, lightingInfluence);
+
+    float finalFogFactor = fogFactor * (0.5 + lightingInfluence * 0.5); //0.5~1.0 * fogfactor
+    float3 finalColor = lerp(g_fogColor, tintedColor, finalFogFactor);
 
     resultTexture[texCoord] = float4(finalColor, 1.0f);
 }
