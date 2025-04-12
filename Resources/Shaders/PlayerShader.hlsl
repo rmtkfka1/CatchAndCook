@@ -2,7 +2,7 @@
 #include "Global_b0.hlsl"
 #include "Transform_b1.hlsl"
 #include "Camera_b2.hlsl"
-#include "Light_Forward_t31.hlsl"
+#include "Light_b3.hlsl"
 #include "Skinned_b5.hlsl"
 
 
@@ -44,7 +44,7 @@ struct VS_OUT
     float3 tangentOS : TangentOS;
     float3 tangentWS : TangentWS;
     float2 uv : TEXCOORD0;
-    float3 color : COLOR;
+    
 };
 
 Texture2D _BaseMap : register(t0);
@@ -57,7 +57,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     VS_OUT output = (VS_OUT) 0;
 
     Instance_Transform transformData = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
-    LightForwardParams lightingData = ForwardLightDatas[offset[STRUCTURED_OFFSET(31)].r + id];
+    //LightForwardParams lightingData = ForwardLightDatas[offset[STRUCTURED_OFFSET(31)].r + id];
 
     row_major float4x4 l2wMatrix = transformData.localToWorld;
     row_major float4x4 w2lMatrix = transformData.worldToLocal;
@@ -82,7 +82,6 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix);
 
     output.uv = input.uv;
-    output.color = lightingData.g_lights[0].strength.xyz;
 
     return output;
 }
