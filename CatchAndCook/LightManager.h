@@ -22,8 +22,10 @@ struct Light
 	LightMaterial material;
 	vec3 strength = vec3(1.0f,1.0f,1.0f);
 	float fallOffStart = 0;
+
 	vec3 direction = vec3(0,-1.0f,0);
 	float fallOffEnd = 0;
+
 	vec3 position = vec3(0,0,0);
 	float spotPower = 64.0f;
 

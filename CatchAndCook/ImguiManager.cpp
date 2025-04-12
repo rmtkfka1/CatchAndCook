@@ -192,11 +192,8 @@ void ImguiManager::LightController()
 {
     if (ImGui::TreeNode("Lighting"))
     {
-        ImGui::SliderFloat3("Light Direction", &LightManager::main->_lights[0]->direction.x, -1.0f, 1.0f);
-        ImGui::SliderFloat3("Diffuse Color", &LightManager::main->_lights[0]->material.diffuse.x, 0.0f, 1.0f);
-        ImGui::SliderFloat3("Ambient Color", &LightManager::main->_lights[0]->material.ambient.x, 0.0f, 1.0f);
-        ImGui::SliderFloat3("Specular Color", &LightManager::main->_lights[0]->material.specular.x, 0.0f, 1.0f);
-        ImGui::SliderFloat("Specular Power", &LightManager::main->_lights[0]->material.shininess, 0.0f, 512.0f);
+        /*ImGui::SliderFloat3("Light Direction", &LightManager::main->_lights[1]->direction.x, -1.0f, 1.0f);
+        ImGui::SliderFloat3("Light Pos", &LightManager::main->_lights[1]->position.x, -300000.0f, 300000.0f);*/
         ImGui::TreePop();
     };
 }

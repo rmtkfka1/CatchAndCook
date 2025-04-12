@@ -104,14 +104,11 @@ void Game::Init(HWND hwnd)
 	{
 		std::shared_ptr<Light> light = std::make_shared<Light>();
 		light->onOff = 1;
-		light->direction = vec3(-1.0f, -1.0f, 1.0f);
-		light->position = vec3(0, 1000.0f, 0);
 		light->direction.Normalize();
-
 		light->fallOffStart = 0.0f;
-		light->fallOffEnd = 200000.0f;
-		light->spotPower = 20000.0f;
-		light->material.ambient = vec3(1.0f,1.0f, 1.0f);
+		light->fallOffEnd = 500.0f;
+		light->spotPower = 300.0f;
+		light->material.ambient = vec3(0.0,0.0, 0.0);
 		light->material.diffuse = vec3(1.0f, 1.0f, 1.0f);
 		light->material.specular = vec3(0, 0, 0);
 		light->material.shininess = 61.0f;

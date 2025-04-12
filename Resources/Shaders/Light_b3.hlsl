@@ -203,6 +203,7 @@ float4 ComputeLightColor(float3 worldPos ,float3 WorldNomral)
 
 float3 ComputeSeaDirectionalLight(Light L, LightMateiral mat, float3 worldPos, float3 normal, float3 toEye, inout float fogAtt)
 {
+    return float3(0, 0, 0);
     //float3 lightVec = normalize(L.position - worldPos);
     float3 lightVec = normalize(-L.direction);
     float ndotl = max(dot(normal, lightVec), 0.0f);
@@ -218,6 +219,7 @@ float3 ComputeSeaDirectionalLight(Light L, LightMateiral mat, float3 worldPos, f
 
 float3 ComputeSeaPointLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout float lightingInfluence)
 {
+
     float3 lightVec = L.position - pos;
     float d = length(lightVec);
     
@@ -230,7 +232,7 @@ float3 ComputeSeaPointLight(Light L, LightMateiral mat, float3 pos, float3 norma
         lightVec /= d;
         float ndotl = saturate(dot(normal, lightVec));
         float3 LightStrength = L.strength * ndotl * sqrt(L.intensity) / d; // * ndotl   *  sqrt(L.intensity / (d * d))
-        float att = 1 - CalcAttenuation(d, L.fallOffStart, L.fallOffEnd); 
+        float att = 1 - CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
         //가까우면 → attenuation = 0 → att = 1
         //멀어지면 → attenuation = 1 → att = 0
         
@@ -240,9 +242,9 @@ float3 ComputeSeaPointLight(Light L, LightMateiral mat, float3 pos, float3 norma
     }
 }
 
-
 float3 ComputeSeaSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout float lightingInfluence)
 {
+    
     float3 lightVec = L.position - pos;
 
     float d = length(lightVec);
@@ -257,19 +259,16 @@ float3 ComputeSeaSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal
         
         float ndotl = saturate(dot(normal, lightVec));
         
-        float3 LightStrength = L.strength * ndotl * sqrt(L.intensity) / d; 
+        float3 LightStrength = L.strength * ndotl;
         
-        float att = 1 - CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
+        float att = CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
         LightStrength *= att;
         
-        lightingInfluence = max(lightingInfluence, att);
-  
-        float cosThreshold = cos(L.spotAngle / 2);
-        float cosInnerThreshold = cos(L.innerSpotAngle / 2);
-        float spotFactor = saturate((dot(-lightVec, L.direction) - cosThreshold) / (cosInnerThreshold - cosThreshold));
+        float spotFactor = pow(saturate(dot(-lightVec, L.direction)), L.spotPower);
+        
         LightStrength *= spotFactor;
-
-        return mat.diffuse * LightStrength;
+        
+        return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
     }
 }
 
