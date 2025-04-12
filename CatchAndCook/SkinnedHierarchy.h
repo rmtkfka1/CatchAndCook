@@ -64,35 +64,49 @@ public:
 	void SetAnimation(const std::shared_ptr<Animation>& animation);
 	std::shared_ptr<Animation> GetAnimation();
 	void FindNodeObjects();
-	void Animate(const std::shared_ptr<Animation>& animation, double time);
 	void SetData(Material* material) override;
 
+	void Animate(const std::shared_ptr<Animation>& animation, double time);
+
+	void IsPlay(const std::shared_ptr<Animation>& animation, bool isLoop);
+	void IsPlay();
+
+public: // Animation Control
 	std::shared_ptr<Model> _model;
 	std::shared_ptr<Animation> animation;
 	std::shared_ptr<Animation> _nextAnimation;
 
+
+	float prevAnimationTime = 0;
+	bool _isLoop = true;
+	bool _isPlaying = true;
+
+public:// Animation Data
+
+	// Node Name to HumanName
 	std::unordered_map<std::string, std::string> _boneHumanNameTable;
 
+	// Node Name To Object
 	std::unordered_map<std::string, std::weak_ptr<GameObject>> nodeObjectTable;
-
+	// Node Object List
 	vector<std::weak_ptr<GameObject>> nodeObjectList;
-	std::array<std::weak_ptr<GameObject>, 256> _boneNodeList;
+
+	
 	std::weak_ptr<GameObject> _rootBone;
 
 	std::vector<wstring> _boneNameList;
 	std::vector<wstring> _nodeNameList;
 
 
-	std::array<Matrix, 256> _boneOffsetMatrixList; 
+	//Bone Array Object
+	std::array<std::weak_ptr<GameObject>, 256> _boneNodeList;
 
+	std::array<Matrix, 256> _boneOffsetMatrixList;
 	std::array<Matrix, 256> _finalMatrixList;
 	std::array<Matrix, 256> _finalInvertMatrixList;
 
 	CBufferContainer* _boneCBuffer;
 
-
-
-	float prevAnimationTime = 0;
 };
 
 

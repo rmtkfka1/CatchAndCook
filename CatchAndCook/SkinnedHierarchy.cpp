@@ -157,6 +157,17 @@ void SkinnedHierarchy::Animate(const std::shared_ptr<Animation>& animation, doub
 	*/
 }
 
+void SkinnedHierarchy::IsPlay(const std::shared_ptr<Animation>& animation, bool isLoop)
+{
+	_isPlaying = true;
+	this->_isLoop = isLoop;
+}
+
+void SkinnedHierarchy::IsPlay()
+{
+	_isPlaying = true;
+}
+
 
 void SkinnedHierarchy::Enable()
 {
