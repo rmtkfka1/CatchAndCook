@@ -157,6 +157,21 @@ void SkinnedHierarchy::Animate(const std::shared_ptr<Animation>& animation, doub
 	*/
 }
 
+void SkinnedHierarchy::Play()
+{
+	_isPlaying = true;
+}
+
+void SkinnedHierarchy::Stop()
+{
+	_isPlaying = false;
+}
+
+void SkinnedHierarchy::Pause()
+{
+	_isPlaying = false;
+}
+
 
 void SkinnedHierarchy::Enable()
 {

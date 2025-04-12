@@ -63,7 +63,7 @@ void CS_Main(int3 threadIndex : SV_DispatchThreadID, uint3 groupThreadID : SV_Gr
     [unroll]
     for (int i = -blurRadius; i <= blurRadius; i++)
     {
-        int2 sampleCoord = texCoord + int2(0, i * 2);
+        int2 sampleCoord = texCoord + int2(0, i);
         sampleCoord.x = clamp(sampleCoord.x, 0, g_window_size.x - 1);
         sampleCoord.y = clamp(sampleCoord.y, 0, g_window_size.y - 1);
          

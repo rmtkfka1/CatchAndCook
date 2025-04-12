@@ -39,6 +39,8 @@ public:
 	double _duration;
 	double _totalTime;
 
+	double _speedMultiplier = 1;
+
 	bool _isLoop = false;
 	bool _isApplyTransform = true;
 
