@@ -91,5 +91,4 @@ public:
 	void Init(GameObject* object);
 	void SetData(StructuredBuffer* buffer) override;
 
-	static int i;
 };

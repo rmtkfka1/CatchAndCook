@@ -45,8 +45,6 @@ private:
 	std::vector<std::shared_ptr<Material>> _uniqueMaterials;
 	std::vector<std::shared_ptr<Material>> _sharedMaterials;
 	shared_ptr<Shader> _normalDebugShader;
-
-
 	std::shared_ptr<ForwardLightSetter> _setter_ForwardLight;
 };
 

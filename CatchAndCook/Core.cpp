@@ -75,7 +75,7 @@ void Core::RenderBegin()
 
 void Core::RenderEnd()
 {
-    ForwardLightSetter::i = 0;
+
 
     {
 #ifdef  IMGUI_ON

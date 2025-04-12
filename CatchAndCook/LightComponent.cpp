@@ -19,7 +19,6 @@ void LightComponent::Init()
 
 	light = std::make_shared<Light>();
 
-		 
 	light->material.ambient = vec3(0.2f, 0.2f, 0.2f);
 	light->material.diffuse = vec3(1.0f, 1.0f, 1.0f);
 	light->material.specular = vec3(1.0f, 1.0f, 1.0f);

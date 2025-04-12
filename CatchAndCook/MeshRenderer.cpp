@@ -35,13 +35,8 @@ void MeshRenderer::Init()
 void MeshRenderer::Start()
 {
 	Component::Start();
-
 	//AddStructuredSetter(_setter_ForwardLight, BufferType::ForwardLightParam);
-
 	auto owner = GetOwner();
-
-
-
 
 	if (owner && owner->GetType() == GameObjectType::Static)
 	{

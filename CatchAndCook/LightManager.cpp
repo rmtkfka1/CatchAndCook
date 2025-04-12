@@ -13,7 +13,6 @@ void LightManager::PushLight(const std::shared_ptr<Light>& light)
 {
 	if (std::ranges::find(_lights, light) == _lights.end())
 		_lights.push_back(light);
-
 }
 
 void LightManager::RemoveLight(const std::shared_ptr<Light>& light)
@@ -74,7 +73,6 @@ void ForwardLightSetter::SetData(StructuredBuffer* buffer)
 	ForwardLightParams params;
 	Vector3 worldPos = this->object->_transform->GetWorldPosition();
 
-
 	_lightForwards.reserve(LightManager::main->_lights.size());
 	_lightForwards.insert(_lightForwards.end(), LightManager::main->_lights.begin(), LightManager::main->_lights.end());
 	std::ranges::sort(_lightForwards, [&](const std::shared_ptr<Light>& light1, const std::shared_ptr<Light>& light2) {
@@ -87,7 +85,7 @@ void ForwardLightSetter::SetData(StructuredBuffer* buffer)
 		params.lights[params.lightCount] = *light.get();
 		params.lightCount++;
 	}
-	
+
 	buffer->AddData(params);
 }
 
