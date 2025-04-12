@@ -201,6 +201,8 @@ void ImguiManager::LightController()
             {
                 std::string prefix = "Light " + std::to_string(i) + " ";
 				ImGui::Text("Light Type : %s", light->material.lightType == 0 ? "Directional" : light->material.lightType == 1 ? "Point" : "Spot");
+                ImGui::SliderFloat3((prefix + "Diffuse").c_str(), &light->material.diffuse.x, 0, 1.0f);
+                ImGui::SliderFloat3((prefix + "ambient").c_str(), &light->material.ambient.x, 0, 1.0f);
                 ImGui::SliderFloat3((prefix + "Direction").c_str(), &light->direction.x, -1.0f, 1.0f);
                 ImGui::SliderFloat3((prefix + "Position").c_str(), &light->position.x, -300000.0f, 300000.0f);
                 ImGui::SliderFloat((prefix + "FallOff Start").c_str(), &light->fallOffStart, 0.0f, 100000.0f);

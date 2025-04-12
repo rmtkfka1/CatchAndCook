@@ -213,6 +213,7 @@ float3 ComputeSeaDirectionalLight(Light L, LightMateiral mat, float3 worldPos, f
     //fogAtt = factor;
     lightingInfluence += saturate(1.0f - abs(worldPos.y) / 2000.0f)*1.5f;
     return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
+    
 }
 
 

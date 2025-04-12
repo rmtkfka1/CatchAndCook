@@ -96,11 +96,9 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     
     float3 lightingAlbedoColor = lightColor * albedoColor;
 
-    // 빛 영향을 받는 정도에 따라 색 보정
     float3 tintedColor = lerp(g_underWaterColor * lightingAlbedoColor, lightingAlbedoColor, lightingInfluence);
 
-    // 빛 영향이 높을수록 안개 영향 줄이기 (1 - lightingInfluence)
-    float fogWeight = fogFactor * lightingInfluence;
+    float fogWeight = fogFactor ;
     float3 finalColor = lerp(g_fogColor, tintedColor, fogWeight);
 
     resultTexture[texCoord] = float4(finalColor, 1.0f);
