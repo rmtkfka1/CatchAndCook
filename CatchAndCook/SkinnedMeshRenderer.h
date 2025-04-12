@@ -50,7 +50,7 @@ private:
 	std::weak_ptr<SkinnedHierarchy> _hierarchy;
 
 
-	std::shared_ptr<ForwardLightSetter> _setter_ForwardLight;
+	//std::shared_ptr<ForwardLightSetter> _setter_ForwardLight;
 	friend class SkinnedHierarchy;
 };
 

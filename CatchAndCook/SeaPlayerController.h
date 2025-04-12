@@ -14,6 +14,8 @@ enum class SeaPlayerState
 	Hit,
 };
 
+class Animator;
+
 class SeaPlayerController :public Component
 {
 

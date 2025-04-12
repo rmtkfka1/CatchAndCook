@@ -336,7 +336,6 @@ void ColliderManager::Update()
 	_dynamicColliderCashing.clear();
 }
 
-
 void ColliderManager::UpdateDynamicCells()
 {
 	for (auto& collider : _dynamicColliderList)

@@ -92,10 +92,10 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     
     float3 lightColor = ComputeSeaLightColor(worldPos.xyz, worldNormal, lightingInfluence).xyz;
     float3 lightingAlbedoColor = lightColor * albedoColor;
-    lightingInfluence = saturate(lightingInfluence);
+    lightingInfluence = saturate(lightingInfluence*1.5f);
     float3 tintedColor = lerp(g_underWaterColor , lightingAlbedoColor, lightingInfluence);
 
     float3 finalColor = lerp(g_fogColor, tintedColor, fogFactor);
-
+    
     resultTexture[texCoord] = float4(finalColor, 1.0f);
 }

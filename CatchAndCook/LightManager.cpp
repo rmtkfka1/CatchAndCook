@@ -29,6 +29,7 @@ void LightManager::SetData()
 	CBufferContainer* container = Core::main->GetBufferManager()->GetBufferPool(BufferType::LightParam)->Alloc(1);
 	memcpy(container->ptr,(void*)&_lightParmas,sizeof(LightParams));
 	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(3, container->GPUAdress);
+	Core::main->GetCmdList()->SetComputeRootConstantBufferView(3, container->GPUAdress);
 }
 
 void LightManager::SetDataForward(void* addr, const std::shared_ptr<GameObject>& obj)
@@ -46,6 +47,12 @@ void LightManager::Update()
 	{
 		if (light->onOff == 1)
 		{
+			if (light->material.lightType == static_cast<int>(LIGHT_TYPE::SPOT_LIGHT))
+			{
+				light->direction = CameraManager::main->GetActiveCamera()->GetCameraLook();
+				light->position = CameraManager::main->GetActiveCamera()->GetCameraPos();
+			}
+
 			_lightParmas.light[_lightParmas.lightCount] = *light.get();
 			_lightParmas.lightCount++;
 		}

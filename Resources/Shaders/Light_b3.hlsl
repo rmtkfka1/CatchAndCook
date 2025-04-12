@@ -201,7 +201,7 @@ float4 ComputeLightColor(float3 worldPos ,float3 WorldNomral)
 //                UnderWaterLighting                 //
 ///////////////////////////////////////////////////////
 
-float3 ComputeSeaDirectionalLight(Light L, LightMateiral mat, float3 worldPos, float3 normal, float3 toEye, inout float fogAtt)
+float3 ComputeSeaDirectionalLight(Light L, LightMateiral mat, float3 worldPos, float3 normal, float3 toEye, inout float lightingInfluence)
 {
 
     //float3 lightVec = normalize(L.position - worldPos);
@@ -211,8 +211,7 @@ float3 ComputeSeaDirectionalLight(Light L, LightMateiral mat, float3 worldPos, f
     
     //float factor = smoothstep(0, 2000.0f, abs(worldPos.y));
     //fogAtt = factor;
-    float factor = 1.0f - saturate(abs(worldPos.y) / 2000.0f);
-    fogAtt = max(fogAtt, factor);
+    lightingInfluence += saturate(1.0f - abs(worldPos.y) / 2000.0f)*1.5f;
     return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
 }
 
@@ -234,7 +233,7 @@ float3 ComputeSeaPointLight(Light L, LightMateiral mat, float3 pos, float3 norma
         float3 LightStrength = L.strength * ndotl * sqrt(L.intensity) / d; // * ndotl   *  sqrt(L.intensity / (d * d))
         float att = 1 - CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
         LightStrength *= att;
-        lightingInfluence = max(lightingInfluence, att);
+        lightingInfluence += att;
         return mat.diffuse * LightStrength;
     }
 }
@@ -267,7 +266,7 @@ float3 ComputeSeaSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal
         float spotFactor = saturate((dot(-lightVec, L.direction) - cosThreshold) / (cosInnerThreshold - cosThreshold));
         LightStrength *= spotFactor;
         
-        lightingInfluence = att * spotFactor;
+        lightingInfluence += spotFactor;
         
         return mat.diffuse * LightStrength;
     }

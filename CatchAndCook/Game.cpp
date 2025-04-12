@@ -103,7 +103,7 @@ void Game::Init(HWND hwnd)
 		LightManager::main->PushLight(light);
 	}
 
-	/*{
+	{
 		std::shared_ptr<Light> light = std::make_shared<Light>();
 		light->onOff = 1;
 		light->direction = vec3(-1.0f, -1.0f, 1.0f);
@@ -117,9 +117,9 @@ void Game::Init(HWND hwnd)
 		light->material.lightType = static_cast<int32>(LIGHT_TYPE::DIRECTIONAL_LIGHT);
 		light->strength = vec3(1.0f, 1.0f, 1.0f);
 		LightManager::main->PushLight(light);
-	}*/
+	}
 
-	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
+	auto scene = SceneManager::main->AddScene(SceneType::Sea01);
 };
 
 void Game::PrevUpdate()
