@@ -68,8 +68,11 @@ public:
 
 	void Animate(const std::shared_ptr<Animation>& animation, double time);
 
-	void IsPlay(const std::shared_ptr<Animation>& animation, bool isLoop);
-	void IsPlay();
+	void Play(const std::shared_ptr<Animation>& animation, bool isLoop);
+	void Play();
+	bool IsPlay() { return _isPlaying; }
+	void Stop();
+	void Pause();
 
 public: // Animation Control
 	std::shared_ptr<Model> _model;
@@ -110,3 +113,9 @@ public:// Animation Data
 };
 
 
+struct AnimationHint
+{
+	float prevBlendStartTime = 0;
+	float prevBlendEndTime = 1;
+	float nextBlendStartTime = 0;
+};

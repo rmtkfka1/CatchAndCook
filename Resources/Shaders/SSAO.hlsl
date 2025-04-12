@@ -98,91 +98,53 @@ float GetRandomRotation(float2 texCoord)
 void CS_Blur(uint3 dispatchThreadID : SV_DispatchThreadID)
 {
     int2 texCoord = dispatchThreadID.xy;
-    const int BLUR_RADIUS = 6;
-    if (texCoord.x >= (uint)cameraScreenData.x || texCoord.y >= (uint)cameraScreenData.y)
-    {
-        return;
-    }
-    
-    float depth = depthT.Load(int3(texCoord, 0));
+    const int BLUR_RADIUS = 3;
 
-    if (depth >= 0.9999)
-    {
-        resultTexture[texCoord] = RenderT.Load(int3(texCoord, 0));
+    if (texCoord.x >= (uint)cameraScreenData.x || texCoord.y >= (uint)cameraScreenData.y)
         return;
-    }
 
     float horizontalBlur = 0.0;
     float weight = 0.0;
 
+    [unroll]
     for (int x = -BLUR_RADIUS; x <= BLUR_RADIUS; x++)
     {
         int2 sampleCoord = texCoord + int2(x, 0);
-
-        if (sampleCoord.x < 0 || sampleCoord.x >= (int)cameraScreenData.x || 
-            sampleCoord.y < 0 || sampleCoord.y >= (int)cameraScreenData.y)
+        if (sampleCoord.x < 0 || sampleCoord.x >= (int)cameraScreenData.x)
             continue;
-            
-        float sampleDepth = depthT.Load(int3(sampleCoord, 0));
-
-        if (abs(depth - sampleDepth) > 0.1)
-            continue;
-
+        
         float sampleAO = ssaoResultTexture[sampleCoord];
         horizontalBlur += sampleAO;
         weight += 1.0;
     }
-    
     horizontalBlur /= max(weight, 1.0);
 
-    float finalBlur = 0.0;
+    float verticalBlur = 0.0;
     weight = 0.0;
-    
+
+    [unroll]
     for (int y = -BLUR_RADIUS; y <= BLUR_RADIUS; y++)
     {
         int2 sampleCoord = texCoord + int2(0, y);
-
-        if (sampleCoord.x < 0 || sampleCoord.x >= (int)cameraScreenData.x || 
-            sampleCoord.y < 0 || sampleCoord.y >= (int)cameraScreenData.y)
+        if (sampleCoord.y < 0 || sampleCoord.y >= (int)cameraScreenData.y)
             continue;
-            
-        float sampleDepth = depthT.Load(int3(sampleCoord, 0));
-
-        if (abs(depth - sampleDepth) > 0.1)
-            continue;
-
-        float verticalBlur = 0.0;
-        float innerWeight = 0.0;
         
-        for (int x = -2; x <= 2; x++)
-        {
-            int2 innerSampleCoord = sampleCoord + int2(x, 0);
-
-            if (innerSampleCoord.x < 0 || innerSampleCoord.x >= (int)cameraScreenData.x || 
-                innerSampleCoord.y < 0 || innerSampleCoord.y >= (int)cameraScreenData.y)
-                continue;
-                
-            float innerSampleAO = ssaoResultTexture[innerSampleCoord];
-            verticalBlur += innerSampleAO;
-            innerWeight += 1.0;
-        }
-        
-        verticalBlur /= max(innerWeight, 1.0);
-        finalBlur += verticalBlur;
+        float sampleAO = ssaoResultTexture[sampleCoord];
+        verticalBlur += sampleAO;
         weight += 1.0;
     }
-    
-    finalBlur /= max(weight, 1.0);
+    verticalBlur /= max(weight, 1.0);
 
     float diagonalBlur = 0.0;
     weight = 0.0;
-    
-    for (int d = -BLUR_RADIUS/2; d <= BLUR_RADIUS/2; d++)
+
+    //대각선
+    [unroll]
+    for (int d = -2; d <= 2; d++)
     {
         {
             int2 sampleCoord = texCoord + int2(d, d);
-            
-            if (sampleCoord.x >= 0 && sampleCoord.x < (int)cameraScreenData.x && 
+            if (sampleCoord.x >= 0 && sampleCoord.x < (int)cameraScreenData.x &&
                 sampleCoord.y >= 0 && sampleCoord.y < (int)cameraScreenData.y)
             {
                 float sampleAO = ssaoResultTexture[sampleCoord];
@@ -190,11 +152,9 @@ void CS_Blur(uint3 dispatchThreadID : SV_DispatchThreadID)
                 weight += 1.0;
             }
         }
-
         {
             int2 sampleCoord = texCoord + int2(-d, d);
-            
-            if (sampleCoord.x >= 0 && sampleCoord.x < (int)cameraScreenData.x && 
+            if (sampleCoord.x >= 0 && sampleCoord.x < (int)cameraScreenData.x &&
                 sampleCoord.y >= 0 && sampleCoord.y < (int)cameraScreenData.y)
             {
                 float sampleAO = ssaoResultTexture[sampleCoord];
@@ -203,11 +163,10 @@ void CS_Blur(uint3 dispatchThreadID : SV_DispatchThreadID)
             }
         }
     }
-    
+
     diagonalBlur /= max(weight, 1.0);
 
-    float aoBlurred = (horizontalBlur + finalBlur + diagonalBlur) / 3.0;
-
+    float aoBlurred = (horizontalBlur + verticalBlur + diagonalBlur) / 3.0;
     float aoFinal = lerp(ssaoResultTexture[texCoord], aoBlurred, 0.8);
 
     float4 originalColor = RenderT.Load(int3(texCoord, 0));
@@ -224,6 +183,8 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     if (texCoord.x >= (uint)cameraScreenData.x || texCoord.y >= (uint)cameraScreenData.y) {
         return;
     }
+
+    const float MaxDepth = 100;
     
     float2 uv = (float2(texCoord) + 0.5) / cameraScreenData.xy;
 
@@ -233,18 +194,28 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
 
     if (depth >= 0.9999) { // 뎁스 없음.
         resultTexture[texCoord] = RenderT.Load(int3(texCoord, 0));
+        ssaoResultTexture[texCoord] = 1;
         return;
     }
 
     float3 viewPos = mul(float4(worldPos, 1.0), ViewMatrix).xyz;
     float3 viewNormal = normalize(mul(float4(worldNormal, 0.0), ViewMatrix).xyz);
 
+    if (viewPos.z > MaxDepth)
+    {
+	    resultTexture[texCoord] = RenderT.Load(int3(texCoord, 0));
+        ssaoResultTexture[texCoord] = 1;
+        return;
+    }
+
+
     float randomAngle = GetRandomRotation(texCoord);
     float cosAngle = cos(randomAngle);
     float sinAngle = sin(randomAngle);
 
     float occlusion = 0.0;
-    
+
+    [unroll]
     for (int i = 0; i < SAMPLE_COUNT; i++)
     {
         float3 sampleDir = samples[i];
@@ -276,13 +247,12 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
         occlusion += (sampleViewZ <= (samplePos.z - BIAS) ? 1.0 : 0.0) * rangeCheck;
     }
 
-    occlusion = 1.0 - (occlusion * saturate((100 - viewPos.z) / 100) / SAMPLE_COUNT) * INTENSITY;
+    occlusion = 1.0 - (occlusion * saturate((MaxDepth - viewPos.z) / MaxDepth) / SAMPLE_COUNT) * INTENSITY;
 
     //float4 originalColor = RenderT.Load(int3(texCoord, 0));
     //float4 finalColor = originalColor * occlusion;
 
     ssaoResultTexture[texCoord] = occlusion;
-
     GroupMemoryBarrierWithGroupSync(); // 싱크 걸고 블러링
 
     CS_Blur(dispatchThreadID);

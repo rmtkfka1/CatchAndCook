@@ -110,6 +110,8 @@ void Animation::Init(std::shared_ptr<Model> model, aiAnimation* anim, aiNode* ro
 double Animation::CalculateTime(double time) const
 {
 	if(_totalTime == 0)
-		return time;
-	return std::fmod(time,_totalTime);
+		return 0;
+	if (_isLoop)
+		return std::fmod(time * _speedMultiplier,_totalTime);
+	return std::clamp(time, 0.0, _totalTime);
 }
