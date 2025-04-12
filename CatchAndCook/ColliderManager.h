@@ -48,8 +48,9 @@ public:
 	bool IsCollision(const std::shared_ptr<Collider>& src, const std::shared_ptr<Collider>& dest);
 	std::unordered_set<std::shared_ptr<Collider>>& GetCollisionList(const std::shared_ptr<Collider>& src);
 
-private:
 	void UpdateDynamicCells();
+
+private:
 	void CallBackBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
 	void CallBackEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
 	bool TotalCheckCollision(const std::shared_ptr<Collider>& a, const std::shared_ptr<Collider>& b);
