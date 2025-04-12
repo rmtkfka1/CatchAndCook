@@ -53,8 +53,6 @@ Texture2D<float4> NormalTexture : register(t3);
 Texture2D<float4> ColorGrading : register(t4);
 
 
-
-
 float3 ProjToView(float2 texCoord)
 {
     float4 posProj;
@@ -90,16 +88,18 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
 
     float3 viewPos = ProjToView(texCoord);
     float fogFactor = CalculateFogFactor(viewPos);
-    float fogAtt = 0;
-
-    float3 lightColor = ComputeSeaLightColor(worldPos.xyz, worldNormal, fogAtt).xyz;
+    float lightingInfluence = 0.0f;
+    
+    //float HeightUV = smoothstep(0, 2000.0f, abs(worldPos.y));
+    //float3 fogColor = ColorGrading.SampleLevel(sampler_lerp, float2(HeightUV, 0), 0).xyz;
+    
+    float3 lightColor = ComputeSeaLightColor(worldPos.xyz, worldNormal, lightingInfluence).xyz;
     float3 lightingAlbedoColor = lightColor * albedoColor;
-
-    float lightingInfluence = saturate(fogAtt); 
+    lightingInfluence = saturate(lightingInfluence);
     float3 tintedColor = lerp(g_underWaterColor * lightingAlbedoColor, lightingAlbedoColor, lightingInfluence);
 
-    float finalFogFactor = fogFactor * (0.5 + lightingInfluence * 0.5); //0.5~1.0 * fogfactor
+    float finalFogFactor = fogFactor * lightingInfluence;
     float3 finalColor = lerp(g_fogColor, tintedColor, finalFogFactor);
 
-    resultTexture[texCoord] = float4(finalColor, 1.0f);
+    resultTexture[texCoord] = float4(lightingAlbedoColor, 1.0f);
 }

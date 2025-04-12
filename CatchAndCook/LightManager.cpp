@@ -47,18 +47,26 @@ void LightManager::Update()
 	{
 		if (light->onOff == 1)
 		{
+			if (light->material.lightType == static_cast<int>(LIGHT_TYPE::SPOT_LIGHT))
+			{
+				light->position = CameraManager::main->GetActiveCamera()->GetCameraPos();
+				light->direction = CameraManager::main->GetActiveCamera()->GetCameraLook();
+			}
+		
 			_lightParmas.light[_lightParmas.lightCount] = *light.get();
 			_lightParmas.lightCount++;
 		}
 	}
 
-#ifdef IMGUI_ON
-	for (int i = 0; i < _lightParmas.lightCount; ++i)
-	{
-		if (ImguiManager::main->_light)
-			_lightParmas.light[i].position = ImguiManager::main->_light->_transform->GetWorldPosition();
-	}
-#endif 
+
+
+//#ifdef IMGUI_ON
+//	for (int i = 0; i < _lightParmas.lightCount; ++i)
+//	{
+//		if (ImguiManager::main->_light)
+//			_lightParmas.light[i].position = ImguiManager::main->_light->_transform->GetWorldPosition();
+//	}
+//#endif 
 
 }
 

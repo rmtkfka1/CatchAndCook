@@ -102,7 +102,7 @@ void Scene_Sea01::Init()
 	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
 	sceneLoader->Load(GetCast<Scene>());
 
-	auto player = Find(L"player");
+	auto player = Find(L"seaPlayer");
 
 	if (player)
 	{

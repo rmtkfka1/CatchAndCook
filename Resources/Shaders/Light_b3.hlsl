@@ -201,18 +201,22 @@ float4 ComputeLightColor(float3 worldPos ,float3 WorldNomral)
 //                UnderWaterLighting                 //
 ///////////////////////////////////////////////////////
 
-float3 ComputeSeaDirectionalLight(Light L, LightMateiral mat, float3 worldPos, float3 normal, float3 toEye)
+float3 ComputeSeaDirectionalLight(Light L, LightMateiral mat, float3 worldPos, float3 normal, float3 toEye, inout float fogAtt)
 {
     //float3 lightVec = normalize(L.position - worldPos);
     float3 lightVec = normalize(-L.direction);
     float ndotl = max(dot(normal, lightVec), 0.0f);
     float3 LightStrength = L.strength * L.intensity * ndotl;
-
+    
+    //float factor = smoothstep(0, 2000.0f, abs(worldPos.y));
+    //fogAtt = factor;
+    float factor = 1.0f - saturate(abs(worldPos.y) / 2000.0f);
+    fogAtt = max(fogAtt, factor);
     return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
 }
 
 
-float3 ComputeSeaPointLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout float fogAtt)
+float3 ComputeSeaPointLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout float lightingInfluence)
 {
     float3 lightVec = L.position - pos;
     float d = length(lightVec);
@@ -226,15 +230,18 @@ float3 ComputeSeaPointLight(Light L, LightMateiral mat, float3 pos, float3 norma
         lightVec /= d;
         float ndotl = saturate(dot(normal, lightVec));
         float3 LightStrength = L.strength * ndotl * sqrt(L.intensity) / d; // * ndotl   *  sqrt(L.intensity / (d * d))
-        float att = 1 - CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
+        float att = 1 - CalcAttenuation(d, L.fallOffStart, L.fallOffEnd); 
+        //가까우면 → attenuation = 0 → att = 1
+        //멀어지면 → attenuation = 1 → att = 0
+        
         LightStrength *= att;
-        fogAtt = att;
+        lightingInfluence = max(lightingInfluence, att);
         return mat.diffuse * LightStrength;
     }
 }
 
 
-float3 ComputeSeaSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout float fogAtt)
+float3 ComputeSeaSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout float lightingInfluence)
 {
     float3 lightVec = L.position - pos;
 
@@ -250,25 +257,23 @@ float3 ComputeSeaSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal
         
         float ndotl = saturate(dot(normal, lightVec));
         
-        float3 LightStrength = L.strength * ndotl * sqrt(L.intensity) / d; // * ndotl   *  sqrt(L.intensity / (d * d))
+        float3 LightStrength = L.strength * ndotl * sqrt(L.intensity) / d; 
         
         float att = 1 - CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
         LightStrength *= att;
         
-        //float spotFactor = pow(saturate(dot(-lightVec, L.direction)), L.spotPower);
-        //LightStrength *= spotFactor;
-
+        lightingInfluence = max(lightingInfluence, att);
+  
         float cosThreshold = cos(L.spotAngle / 2);
         float cosInnerThreshold = cos(L.innerSpotAngle / 2);
         float spotFactor = saturate((dot(-lightVec, L.direction) - cosThreshold) / (cosInnerThreshold - cosThreshold));
         LightStrength *= spotFactor;
 
-        //return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
         return mat.diffuse * LightStrength;
     }
 }
 
-float4 ComputeSeaLightColor(float3 worldPos, float3 WorldNomral, inout float fogAtt)
+float4 ComputeSeaLightColor(float3 worldPos, float3 WorldNomral, inout float lightingInfluence)
 {
     float3 lightColor = float3(0, 0, 0);
 
@@ -282,15 +287,15 @@ float4 ComputeSeaLightColor(float3 worldPos, float3 WorldNomral, inout float fog
         {
             if (g_lights[i].mateiral.lightType == 0)
             {
-                lightColor += ComputeSeaDirectionalLight(g_lights[i], g_lights[i].mateiral, worldPos, WorldNomral, toEye);
+                lightColor += ComputeSeaDirectionalLight(g_lights[i], g_lights[i].mateiral, worldPos, WorldNomral, toEye, lightingInfluence);
             }
             else if (g_lights[i].mateiral.lightType == 1)
             {
-                lightColor += ComputeSeaPointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, fogAtt);
+                lightColor += ComputeSeaPointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, lightingInfluence);
             }
             else if (g_lights[i].mateiral.lightType == 2)
             {
-                lightColor += ComputeSeaSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, fogAtt);
+                lightColor += ComputeSeaSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, lightingInfluence);
             }
         }
     }
