@@ -13,6 +13,7 @@ void LightManager::PushLight(const std::shared_ptr<Light>& light)
 {
 	if (std::ranges::find(_lights, light) == _lights.end())
 		_lights.push_back(light);
+
 }
 
 void LightManager::RemoveLight(const std::shared_ptr<Light>& light)
@@ -69,15 +70,20 @@ void ForwardLightSetter::Init(GameObject* object)
 
 void ForwardLightSetter::SetData(StructuredBuffer* buffer)
 {
+	std::vector<std::shared_ptr<Light>> _lightForwards;
 	ForwardLightParams params;
 	Vector3 worldPos = this->object->_transform->GetWorldPosition();
-	std::ranges::sort(LightManager::main->_lights, [&](const std::shared_ptr<Light>& light1, const std::shared_ptr<Light>& light2) {
+
+
+	_lightForwards.reserve(LightManager::main->_lights.size());
+	_lightForwards.insert(_lightForwards.end(), LightManager::main->_lights.begin(), LightManager::main->_lights.end());
+	std::ranges::sort(_lightForwards, [&](const std::shared_ptr<Light>& light1, const std::shared_ptr<Light>& light2) {
 			return (light1->position - worldPos).LengthSquared() < (light2->position - worldPos).LengthSquared();
 		});
 
-	for(int i=0;i<std::min(5, static_cast<int>(LightManager::main->_lights.size()));i++)
+	for(int i=0;i<std::min(5, static_cast<int>(_lightForwards.size()));i++)
 	{
-		auto& light = LightManager::main->_lights[i];
+		auto& light = _lightForwards[i];
 		params.lights[params.lightCount] = *light.get();
 		params.lightCount++;
 	}

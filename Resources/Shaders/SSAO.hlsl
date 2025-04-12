@@ -98,7 +98,7 @@ float GetRandomRotation(float2 texCoord)
 void CS_Blur(uint3 dispatchThreadID : SV_DispatchThreadID)
 {
     int2 texCoord = dispatchThreadID.xy;
-    const int BLUR_RADIUS = 3;
+    const int BLUR_RADIUS = 4;
 
     if (texCoord.x >= (uint)cameraScreenData.x || texCoord.y >= (uint)cameraScreenData.y)
         return;
@@ -140,7 +140,7 @@ void CS_Blur(uint3 dispatchThreadID : SV_DispatchThreadID)
 
     //대각선
     [unroll]
-    for (int d = -2; d <= 2; d++)
+    for (int d = -3; d <= 3; d++)
     {
         {
             int2 sampleCoord = texCoord + int2(d, d);

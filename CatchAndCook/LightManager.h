@@ -77,6 +77,7 @@ private:
 public:
 	LightParams _lightParmas;
 	std::vector<std::shared_ptr<Light>> _lights;
+	std::vector<std::shared_ptr<Light>> _lightForwards;
 };
 
 class ForwardLightSetter : public RenderStructuredSetter
