@@ -22,11 +22,11 @@ cbuffer underWatgerParam : register(b1)
     float g_fog_power;
 
     float3 g_underWaterColor;
-    float g_fogMin; // 기본 0
+    float g_fogMin;
 
     float2 padding;
-    int g_on; // (예: -1: 비활성화, 1: 활성화)
-    float g_fogMax; // 기본 1000.0f 정도
+    int g_on; 
+    float g_fogMax; 
 };
 
 cbuffer cameraParams : register(b2)
@@ -82,22 +82,25 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
 {
     int2 texCoord = dispatchThreadID.xy;
     float2 uv = (float2(texCoord) + 0.5f) / cameraScreenData.xy;
-    
-    //float2 distortion = float2(sin(uv.y * 10.0f + g_Time), cos(uv.x * 10.0f + g_Time)) * 0.06f;
-    //float2 uvDistorted = uv + distortion *0.02f;
-    
-    //float Height = abs(PositionT.SampleLevel(sampler_lerp, uvDistorted, 0).y);
-    //float HeightUV = smoothstep(0, 140.0f, Height);
-    //float3 ColorGradingColor = ColorGrading.SampleLevel(sampler_lerp_clamp, float2(HeightUV, 0), 0);
-    
-    float3 AlbedoColor = RenderT.SampleLevel(sampler_lerp, uv, 0).xyz;
-    float3 WolrdNormal = normalize(NormalTexture.SampleLevel(sampler_point, uv,0).xyz);
-    float4 worldPos = PositionTexture.SampleLevel(sampler_point, uv,0);
-    float3 lightColor = ComputeLightColor(worldPos.xyz, WolrdNormal.xyz).xyz;
-    
+
+    // 텍스처 샘플링
+    float3 albedoColor = RenderT.SampleLevel(sampler_lerp, uv, 0).xyz;
+    float3 worldNormal = normalize(NormalTexture.SampleLevel(sampler_point, uv, 0).xyz);
+    float4 worldPos = PositionTexture.SampleLevel(sampler_point, uv, 0);
+
+    // 라이팅 계산
+    float3 lightColor = ComputeLightColor(worldPos.xyz, worldNormal).xyz;
+    float3 litColor = albedoColor * lightColor;
+
+    // 수중 색 톤 적용 (조명 결과와 수중 컬러의 블렌딩)
+    float3 underwaterTintedColor = lerp(litColor, litColor * g_underWaterColor, 0.4f); // 블렌딩 정도 조절 가능
+
+    // 뷰 공간 좌표로 변환 후 안개 계산
     float3 viewPos = ProjToView(float2(texCoord));
     float fogFactor = CalculateFogFactor(viewPos);
-    
-    float3 finalColor = lerp(g_fogColor, AlbedoColor * lightColor, fogFactor);
+
+    // 최종 컬러: 안개 컬러와 블렌딩
+    float3 finalColor = lerp(g_fogColor, underwaterTintedColor, fogFactor);
+
     resultTexture[texCoord] = float4(finalColor, 1.0f);
 }

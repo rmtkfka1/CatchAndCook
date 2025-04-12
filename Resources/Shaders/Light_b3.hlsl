@@ -112,32 +112,22 @@ float3 ComputeDirectionalLight(Light L, LightMateiral mat,float3 worldPos, float
 float3 ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout LightingResult lightingResult)
 {
     float3 lightVec = L.position - pos;
-
     float d = length(lightVec);
-
     if (d > L.fallOffEnd)
     {
         return float3(0.0, 0.0, 0.0);
     }
     else
     {
-     
         lightVec /= d;
-        
         float ndotl = saturate(dot(normal, lightVec));
-        
         float3 LightStrength = L.strength * ndotl * sqrt(L.intensity) / d; // * ndotl   *  sqrt(L.intensity / (d * d))
-        
         float att = 1 - CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
-
         LightStrength *= att;
-
         lightingResult.subColor += LightStrength;
         lightingResult.subAtten += att * ndotl;
-        
         //return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
         return mat.diffuse * LightStrength;
-
     }
 }
 
@@ -208,6 +198,8 @@ float4 ComputeLightColor(float3 worldPos ,float3 WorldNomral)
     
     return float4(lightColor, 1.0f);
 }
+
+
 
 #endif
 
