@@ -18,7 +18,10 @@ public:
 	Quaternion CalculateRotation(const double& time) const;
 	Vector3 CalculateScale(const double& time) const;
 
+
 	Vector3 CalculateDeltaPosition(const double& prevTime, const double& time) const;
+	Quaternion CalculateDeltaRotation(const double& prevTime, const double& time) const;
+	Vector3 CalculateDeltaScale(const double& prevTime, const double& time) const;
 
 private:
 	void SetKeyFrames(aiAnimation* anim, aiNodeAnim* animNode);

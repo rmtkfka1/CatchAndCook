@@ -1,6 +1,15 @@
 ﻿#pragma once
 #include "Component.h"
 
+
+struct AnimationHint
+{
+	float prevBlendStartTime = 0;
+	float prevBlendEndTime = 1;
+	float nextBlendStartTime = 0;
+};
+
+
 class SkinnedHierarchy : public Component, public RenderCBufferSetter
 {
 public:
@@ -67,6 +76,7 @@ public:
 	void SetData(Material* material) override;
 
 	void Animate(const std::shared_ptr<Animation>& animation, double time);
+	void AnimateBlend(const std::shared_ptr<Animation>& prevAnim, const std::shared_ptr<Animation>& nextAnim, const AnimationHint& hint, double time);
 
 	void Play(const std::shared_ptr<Animation>& animation, bool isLoop);
 	void Play();
@@ -110,12 +120,4 @@ public:// Animation Data
 
 	CBufferContainer* _boneCBuffer;
 
-};
-
-
-struct AnimationHint
-{
-	float prevBlendStartTime = 0;
-	float prevBlendEndTime = 1;
-	float nextBlendStartTime = 0;
 };

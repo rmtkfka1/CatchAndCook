@@ -423,8 +423,8 @@ Vector3 AnimationNode::CalculateDeltaPosition(const double& prevTime, const doub
     Vector3 interpolatedPosition = offsetPosition;
     Vector3 interpolatedPositionPrev = offsetPosition;
 
+    const size_t keyCount = _keyFrame_positions.size();
     {
-        const size_t keyCount = _keyFrame_positions.size();
         if (keyCount != 0)
         {
             if (keyCount == 1)
@@ -441,7 +441,6 @@ Vector3 AnimationNode::CalculateDeltaPosition(const double& prevTime, const doub
     }
 
     {
-        const size_t keyCount = _keyFrame_positions.size();
         if (keyCount != 0)
         {
             if (keyCount == 1)
@@ -464,6 +463,101 @@ Vector3 AnimationNode::CalculateDeltaPosition(const double& prevTime, const doub
     }
 
     return interpolatedPosition - interpolatedPositionPrev;
+}
+
+Quaternion AnimationNode::CalculateDeltaRotation(const double& prevTime, const double& time) const
+{
+    Quaternion interpolatedRotation = offsetRotation;
+    Quaternion interpolatedPrevRotation = offsetRotation;
+
+    const size_t keyCount = _keyFrame_rotations.size();
+    {
+        if (keyCount != 0)
+        {
+            if (keyCount == 1)
+                interpolatedRotation = _keyFrame_rotations[0].rotation;
+            int index = FindKeyFrameIndex(_keyFrame_rotations, time);
+            index = std::max(index, 0);
+            int nextIndex = (index + 1 < keyCount) ? index + 1 : 0;
+            const auto& key0 = _keyFrame_rotations[index];
+            const auto& key1 = _keyFrame_rotations[nextIndex];
+            const double dt = key1._time - key0._time;
+            const double t = (dt != 0.f) ? (time - key0._time) / dt : 0.f;
+            Quaternion::Slerp(key0.rotation, key1.rotation, t, interpolatedRotation);
+        }
+    }
+
+    {
+        if (keyCount != 0)
+        {
+            if (keyCount == 1)
+                interpolatedPrevRotation = _keyFrame_rotations[0].rotation;
+            int index = FindKeyFrameIndex(_keyFrame_rotations, prevTime);
+            index = std::max(index, 0);
+            int nextIndex = (index + 1 < keyCount) ? index + 1 : 0;
+            const auto& key0 = _keyFrame_rotations[index];
+            const auto& key1 = _keyFrame_rotations[nextIndex];
+            const double dt = key1._time - key0._time;
+            const double t = (dt != 0.f) ? (prevTime - key0._time) / dt : 0.f;
+            Quaternion::Slerp(key0.rotation, key1.rotation, t, interpolatedPrevRotation);
+
+            if ((time - prevTime) < 0) {
+                Quaternion tempR;
+                _keyFrame_rotations[keyCount - 1].rotation.Inverse(tempR);
+                Quaternion rotationDiff = tempR * interpolatedPrevRotation;
+                interpolatedPrevRotation = _keyFrame_rotations[0].rotation * rotationDiff;
+            }
+        }
+    }
+
+    Quaternion tempR;
+    interpolatedPrevRotation.Inverse(tempR);
+    return tempR * interpolatedRotation;
+}
+
+Vector3 AnimationNode::CalculateDeltaScale(const double& prevTime, const double& time) const
+{
+    Vector3 interpolatedScale = offsetScale;
+    Vector3 interpolatedPrevScale = offsetScale;
+
+    const size_t keyCount = _keyFrame_scales.size();
+    {
+        if (keyCount != 0)
+        {
+            if (keyCount == 1)
+                interpolatedScale = _keyFrame_scales[0].scale;
+            int index = FindKeyFrameIndex(_keyFrame_scales, time);
+            index = std::max(index, 0);
+            int nextIndex = (index + 1 < keyCount) ? index + 1 : 0;
+            const auto& key0 = _keyFrame_scales[index];
+            const auto& key1 = _keyFrame_scales[nextIndex];
+            const double dt = key1._time - key0._time;
+            const double t = (dt != 0.f) ? (time - key0._time) / dt : 0.f;
+            Vector3::Lerp(key0.scale, key1.scale, t, interpolatedScale);
+        }
+    }
+
+    {
+        if (keyCount != 0)
+        {
+            if (keyCount == 1)
+                interpolatedPrevScale = _keyFrame_scales[0].scale;
+            int index = FindKeyFrameIndex(_keyFrame_scales, prevTime);
+            index = std::max(index, 0);
+            int nextIndex = (index + 1 < keyCount) ? index + 1 : 0;
+            const auto& key0 = _keyFrame_scales[index];
+            const auto& key1 = _keyFrame_scales[nextIndex];
+            const double dt = key1._time - key0._time;
+            const double t = (dt != 0.f) ? (prevTime - key0._time) / dt : 0.f;
+            Vector3::Lerp(key0.scale, key1.scale, t, interpolatedPrevScale);
+
+            if ((time - prevTime) < 0) {
+                interpolatedPrevScale = _keyFrame_scales[0].scale - (_keyFrame_scales[keyCount - 1].scale - interpolatedPrevScale);
+            }
+        }
+    }
+
+    return interpolatedScale - interpolatedPrevScale;
 }
 
 

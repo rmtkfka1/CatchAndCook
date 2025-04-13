@@ -240,10 +240,39 @@ private:
 	std::shared_ptr<Texture> _ssaoTexture;
 	shared_ptr<Shader> _shader;
 
-	bool ssaoOnOff = false;
+	bool ssaoOnOff = true;
 
 	friend class ComputeManager;
 };
+
+class ColorGrading : public ComputeBase
+{
+
+public:
+	ColorGrading();
+	virtual ~ColorGrading();
+
+public:
+	virtual void Init();
+	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+
+private:
+	virtual void Resize();
+
+private:
+	shared_ptr<Texture> _pingTexture;
+	std::shared_ptr<Texture> _ssaoTexture;
+	shared_ptr<Shader> _shader;
+
+	bool ssaoOnOff = true;
+
+	friend class ComputeManager;
+};
+
 
 
 class ComputeManager 
@@ -264,6 +293,6 @@ private:
 
 	shared_ptr<VignetteRender> _vignetteRender;
 	shared_ptr<SSAORender> _ssaoRender;
-
+	// color grading
 };
 
