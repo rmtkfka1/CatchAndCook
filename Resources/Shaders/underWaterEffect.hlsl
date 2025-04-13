@@ -93,7 +93,7 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
 
     float3 underWaterColor = lerp(g_underWaterColor * albedoColor, albedoColor, lightColor.atten);
     
-    float3 finalColor = lerp(g_fogColor , underWaterColor, fogFactor) + lightColor.subColor;
+    float3 finalColor = lerp(g_fogColor, underWaterColor, fogFactor) + lightColor.subColor;
 
     resultTexture[texCoord] = float4(finalColor, 1.0f);
 }

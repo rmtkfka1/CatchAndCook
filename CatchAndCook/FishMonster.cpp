@@ -158,7 +158,6 @@ void FishMonster::Move(float dt)
 
 			if (_currentIndex >= myPath.size()-1)
 			{
-				cout << "forward false " << endl;
 				_forward = false;
 				return;
 			}

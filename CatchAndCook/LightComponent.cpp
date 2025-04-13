@@ -46,8 +46,8 @@ void LightComponent::Start()
 void LightComponent::Update()
 {
 	Component::Update();
-	//light->direction = GetOwner()->_transform->GetForward();
-	//light->position = GetOwner()->_transform->GetWorldPosition();
+	light->direction = GetOwner()->_transform->GetForward();
+	light->position = GetOwner()->_transform->GetWorldPosition();
 }
 
 void LightComponent::Update2()
