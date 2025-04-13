@@ -35,8 +35,6 @@ void SkinnedHierarchy::Start()
 {
 	Component::Start();
 
-	FindNodeObjects();
-
 	auto o = _rootBone.lock();
 
 	for (auto& renderer : GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>())
@@ -245,9 +243,13 @@ void SkinnedHierarchy::SetNodeList(const std::vector<std::shared_ptr<ModelNode>>
 
 void SkinnedHierarchy::SetModel(const std::shared_ptr<Model>& model)
 {
-	_model = model;
-	SetNodeList(model->GetNodeList());
-	SetBoneList(model->GetBoneList());
+	if (_model != model)
+	{
+		_model = model;
+		SetNodeList(model->GetNodeList());
+		SetBoneList(model->GetBoneList());
+		FindNodeObjects();
+	}
 }
 
 void SkinnedHierarchy::SetMappingTable(const std::unordered_map<std::string, std::string>& table)
