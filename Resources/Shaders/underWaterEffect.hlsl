@@ -89,17 +89,11 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     float3 viewPos = ProjToView(texCoord);
     float fogFactor = CalculateFogFactor(viewPos);
     
-    float lightingInfluence = 0.1f;
-    float3 lightColor = ComputeSeaLightColor(worldPos.xyz, worldNormal, lightingInfluence).xyz;
-    
-    lightingInfluence = saturate(lightingInfluence);
-    
-    float3 lightingAlbedoColor = lightColor * albedoColor;
+    LightingResult lightColor = ComputeLightColor(worldPos.xyz, worldNormal.xyz);
 
-    float3 tintedColor = lerp(g_underWaterColor * lightingAlbedoColor, lightingAlbedoColor, lightingInfluence);
+    float3 underWaterColor = lerp(g_underWaterColor * albedoColor, albedoColor, lightColor.atten) + float4(lightColor.subColor, 0).xyz;
 
-    float fogWeight = fogFactor ;
-    float3 finalColor = lerp(g_fogColor, tintedColor, fogWeight);
+    float3 finalColor = lerp(g_fogColor, underWaterColor, fogFactor);
 
     resultTexture[texCoord] = float4(finalColor, 1.0f);
 }

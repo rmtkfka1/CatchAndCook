@@ -99,43 +99,13 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 }
 
 
-LightingResult ComputeLightColorForward(float3 worldPos ,float3 WorldNomral)
-{
-    float3 lightColor = float3(0, 0, 0);
-
-    float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
-
-    LightingResult result = (LightingResult)0;
-
-    [unroll]
-    for (int i = 0; i < g_lightCount; ++i)
-    {
-        if (g_lights[i].onOff == 1)
-        {
-	        if (g_lights[i].mateiral.lightType == 0)
-	        {
-	            lightColor += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, worldPos, WorldNomral, toEye, result);
-	        }
-	        else if (g_lights[i].mateiral.lightType == 1)
-	        {
-	            lightColor += ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, result);
-	        }
-	        else if (g_lights[i].mateiral.lightType == 2)
-	        {
-	            lightColor += ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, result);
-	        }
-		}
-    }
-    
-    return result;
-}
 
 [earlydepthstencil]
 float4 PS_Main(VS_OUT input) : SV_Target
 {
     float3 N = ComputeNormalMapping(input.normalWS, input.tangentWS, _BumpMap.Sample(sampler_lerp, input.uv));
     
-    LightingResult lightColor = ComputeLightColorForward(input.positionWS.xyz, N);
+    LightingResult lightColor = ComputeLightColor(input.positionWS.xyz, N);
     
     float4 BaseColor = _BaseMap.Sample(sampler_lerp, input.uv * _baseMapST.xy + _baseMapST.zw) * color;
     float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));

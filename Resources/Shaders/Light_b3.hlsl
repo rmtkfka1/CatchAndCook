@@ -96,26 +96,25 @@ struct LightingResult
     float subAtten;
 };
 
-float3 ComputeDirectionalLight(Light L, LightMateiral mat,float3 worldPos, float3 normal, float3 toEye, inout LightingResult lightingResult)
+void ComputeDirectionalLight(Light L, LightMateiral mat, float3 worldPos, float3 normal, float3 toEye, inout LightingResult lightingResult)
 {
     //float3 lightVec = normalize(L.position - worldPos);
     float3 lightVec = normalize(-L.direction);
     float ndotl = max(dot(normal, lightVec), 0.0f);
-    float3 LightStrength = L.strength * L.intensity * ndotl;
+    //float3 LightStrength = L.strength * L.intensity * ndotl;
 
     lightingResult.atten = ndotl * clamp(0, 1, L.intensity);
     lightingResult.color = L.strength* L.intensity;
 
-    return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
 }
 
-float3 ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout LightingResult lightingResult)
+void ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout LightingResult lightingResult)
 {
     float3 lightVec = L.position - pos;
     float d = length(lightVec);
     if (d > L.fallOffEnd)
     {
-        return float3(0.0, 0.0, 0.0);
+        return;
     }
     else
     {
@@ -127,11 +126,11 @@ float3 ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, 
         lightingResult.subColor += LightStrength;
         lightingResult.subAtten += att * ndotl;
         //return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
-        return mat.diffuse * LightStrength;
+        //return mat.diffuse * LightStrength;
     }
 }
 
-float3 ComputeSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout LightingResult lightingResult)
+void ComputeSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout LightingResult lightingResult)
 {
     float3 lightVec = L.position - pos;
 
@@ -139,7 +138,7 @@ float3 ComputeSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal, f
 
     if (d > L.fallOffEnd)
     {
-        return float3(0.0f, 0.0f, 0.0f);
+        return;
     }
     else
     {
@@ -163,14 +162,13 @@ float3 ComputeSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal, f
         lightingResult.subColor += LightStrength;
         lightingResult.subAtten += spotFactor * ndotl * att;
         //return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
-        return mat.diffuse * LightStrength;
+        //return mat.diffuse * LightStrength;
     }
 }
 
-float4 ComputeLightColor(float3 worldPos ,float3 WorldNomral)
+LightingResult ComputeLightColor(float3 worldPos, float3 WorldNomral)
 {
-    float3 lightColor = float3(0, 0, 0);
-
+   
     float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
 
     LightingResult result = (LightingResult)0;
@@ -181,127 +179,128 @@ float4 ComputeLightColor(float3 worldPos ,float3 WorldNomral)
         {
 	        if (g_lights[i].mateiral.lightType == 0)
 	        {
-	            lightColor += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, worldPos, WorldNomral, toEye, result);
+	            ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, worldPos, WorldNomral, toEye, result);
 	        }
 	        else if (g_lights[i].mateiral.lightType == 1)
 	        {
-	            lightColor += ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, result);
+	            ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, result);
 	        }
 	        else if (g_lights[i].mateiral.lightType == 2)
 	        {
-	            lightColor += ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, result);
+	           ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, result);
 	        }
 		}
     }
     
-    return float4(lightColor, 1.0f);
+    return result;
+
 }
 
 ///////////////////////////////////////////////////////
 //                UnderWaterLighting                 //
 ///////////////////////////////////////////////////////
 
-float3 ComputeSeaDirectionalLight(Light L, LightMateiral mat, float3 worldPos, float3 normal, float3 toEye, inout float lightingInfluence)
-{
+//float3 ComputeSeaDirectionalLight(Light L, LightMateiral mat, float3 worldPos, float3 normal, float3 toEye, inout float lightingInfluence)
+//{
 
-    //float3 lightVec = normalize(L.position - worldPos);
-    float3 lightVec = normalize(-L.direction);
-    float ndotl = max(dot(normal, lightVec), 0.0f);
-    float3 LightStrength = L.strength * L.intensity * ndotl;
+//    //float3 lightVec = normalize(L.position - worldPos);
+//    float3 lightVec = normalize(-L.direction);
+//    float ndotl = max(dot(normal, lightVec), 0.0f);
+//    float3 LightStrength = L.strength * L.intensity * ndotl;
     
-    //float factor = smoothstep(0, 2000.0f, abs(worldPos.y));
-    //fogAtt = factor;
-    lightingInfluence += saturate(1.0f - abs(worldPos.y) / 2000.0f)*1.5f;
-    return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
+//    //float factor = smoothstep(0, 2000.0f, abs(worldPos.y));
+//    //fogAtt = factor;
+//    lightingInfluence += saturate(1.0f - abs(worldPos.y) / 2000.0f)*1.5f;
+//    return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
     
-}
+//}
 
 
-float3 ComputeSeaPointLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout float lightingInfluence)
-{
+//float3 ComputeSeaPointLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout float lightingInfluence)
+//{
 
-    float3 lightVec = L.position - pos;
-    float d = length(lightVec);
+//    float3 lightVec = L.position - pos;
+//    float d = length(lightVec);
     
-    if (d > L.fallOffEnd)
-    {
-        return float3(0.0, 0.0, 0.0);
-    }
-    else
-    {
-        lightVec /= d;
-        float ndotl = saturate(dot(normal, lightVec));
-        float3 LightStrength = L.strength * ndotl * sqrt(L.intensity) / d; // * ndotl   *  sqrt(L.intensity / (d * d))
-        float att = 1 - CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
-        LightStrength *= att;
-        lightingInfluence += att;
-        return mat.diffuse * LightStrength;
-    }
-}
+//    if (d > L.fallOffEnd)
+//    {
+//        return float3(0.0, 0.0, 0.0);
+//    }
+//    else
+//    {
+//        lightVec /= d;
+//        float ndotl = saturate(dot(normal, lightVec));
+//        float3 LightStrength = L.strength * ndotl * sqrt(L.intensity) / d; // * ndotl   *  sqrt(L.intensity / (d * d))
+//        float att = 1 - CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
+//        LightStrength *= att;
+//        lightingInfluence += att;
+//        return mat.diffuse * LightStrength;
+//    }
+//}
 
-float3 ComputeSeaSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout float lightingInfluence)
-{
+//float3 ComputeSeaSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout float lightingInfluence)
+//{
     
-    float3 lightVec = L.position - pos;
+//    float3 lightVec = L.position - pos;
 
-    float d = length(lightVec);
+//    float d = length(lightVec);
 
-    if (d > L.fallOffEnd)
-    {
-        return float3(0.0f, 0.0f, 0.0f);
-    }
-    else
-    {
-        lightVec /= d;
+//    if (d > L.fallOffEnd)
+//    {
+//        return float3(0.0f, 0.0f, 0.0f);
+//    }
+//    else
+//    {
+//        lightVec /= d;
         
-        float ndotl = saturate(dot(normal, lightVec));
+//        float ndotl = saturate(dot(normal, lightVec));
         
-        float3 LightStrength = L.strength * ndotl * sqrt(L.intensity) / d; // * ndotl   *  sqrt(L.intensity / (d * d))
+//        float3 LightStrength = L.strength * ndotl * sqrt(L.intensity) / d; // * ndotl   *  sqrt(L.intensity / (d * d))
         
-        float att = 1 - CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
-        LightStrength *= att;
+//        float att = 1 - CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
+//        LightStrength *= att;
         
       
-        float cosThreshold = cos(L.spotAngle / 2);
-        float cosInnerThreshold = cos(L.innerSpotAngle / 2);
-        float spotFactor = saturate((dot(-lightVec, L.direction) - cosThreshold) / (cosInnerThreshold - cosThreshold));
-        LightStrength *= spotFactor;
+//        float cosThreshold = cos(L.spotAngle / 2);
+//        float cosInnerThreshold = cos(L.innerSpotAngle / 2);
+//        float spotFactor = saturate((dot(-lightVec, L.direction) - cosThreshold) / (cosInnerThreshold - cosThreshold));
+//        LightStrength *= spotFactor;
         
-        lightingInfluence += att + spotFactor;
+//        lightingInfluence += att + spotFactor;
         
-        return mat.diffuse * LightStrength;
-    }
-}
+//        return mat.diffuse * LightStrength;
+//    }
+//}
 
-float4 ComputeSeaLightColor(float3 worldPos, float3 WorldNomral, inout float lightingInfluence)
-{
-    float3 lightColor = float3(0, 0, 0);
+//float4 ComputeSeaLightColor(float3 worldPos, float3 WorldNomral, inout float lightingInfluence)
+//{
+//    float3 lightColor = float3(0, 0, 0);
 
-    float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
+//    float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
 
-    LightingResult result = (LightingResult) 0;
-    [unroll]
-    for (int i = 0; i < g_lightCount; ++i)
-    {
-        if (g_lights[i].onOff == 1)
-        {
-            if (g_lights[i].mateiral.lightType == 0)
-            {
-                lightColor += ComputeSeaDirectionalLight(g_lights[i], g_lights[i].mateiral, worldPos, WorldNomral, toEye, lightingInfluence);
-            }
-            else if (g_lights[i].mateiral.lightType == 1)
-            {
-                lightColor += ComputeSeaPointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, lightingInfluence);
-            }
-            else if (g_lights[i].mateiral.lightType == 2)
-            {
-                lightColor += ComputeSeaSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, lightingInfluence);
-            }
-        }
-    }
+//    LightingResult result = (LightingResult) 0;
+//    [unroll]
+//    for (int i = 0; i < g_lightCount; ++i)
+//    {
+//        if (g_lights[i].onOff == 1)
+//        {
+//            if (g_lights[i].mateiral.lightType == 0)
+//            {
+//                lightColor += ComputeSeaDirectionalLight(g_lights[i], g_lights[i].mateiral, worldPos, WorldNomral, toEye, lightingInfluence);
+//            }
+//            else if (g_lights[i].mateiral.lightType == 1)
+//            {
+//                lightColor += ComputeSeaPointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, lightingInfluence);
+//            }
+//            else if (g_lights[i].mateiral.lightType == 2)
+//            {
+//                lightColor += ComputeSeaSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, lightingInfluence);
+//            }
+//        }
+//    }
     
-    return float4(lightColor, 1.0f);
-}
+//    return float4(lightColor, 1.0f);
+//}
 
 #endif
 
