@@ -51,7 +51,7 @@ void SkinnedHierarchy::Update()
 
 	//_boneHumanNameTable
 
-	if (animation != nullptr)
+	/*if (animation != nullptr)
 	{
 		auto currentAnimationTime = animation->CalculateTime(Time::main->GetTime());
 
@@ -64,7 +64,7 @@ void SkinnedHierarchy::Update()
 			GetOwner()->_transform->SetWorldPosition(GetOwner()->_transform->GetWorldPosition() + pos);
 		}
 		prevAnimationTime = animation->CalculateTime(Time::main->GetTime());
-	}
+	}*/
 }
 
 int selectIndex = -1;

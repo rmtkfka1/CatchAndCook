@@ -38,15 +38,16 @@ void LightComponent::Start()
 	light->fallOffEnd = range;
 	light->spotAngle = spotAngle * D2R;
 	light->innerSpotAngle = innerSpotAngle * D2R;
-
+	light->direction = GetOwner()->_transform->GetForward();
+	light->position = GetOwner()->_transform->GetWorldPosition();
 	LightManager::main->PushLight(light);
 }
 
 void LightComponent::Update()
 {
 	Component::Update();
-	light->direction = GetOwner()->_transform->GetForward();
-	light->position = GetOwner()->_transform->GetWorldPosition();
+	//light->direction = GetOwner()->_transform->GetForward();
+	//light->position = GetOwner()->_transform->GetWorldPosition();
 }
 
 void LightComponent::Update2()

@@ -47,11 +47,11 @@ void LightManager::Update()
 	{
 		if (light->onOff == 1)
 		{
-			if (light->material.lightType == static_cast<int>(LIGHT_TYPE::SPOT_LIGHT))
+		/*	if (light->material.lightType == static_cast<int>(LIGHT_TYPE::SPOT_LIGHT))
 			{
 				light->direction = CameraManager::main->GetActiveCamera()->GetCameraLook();
 				light->position = CameraManager::main->GetActiveCamera()->GetCameraPos();
-			}
+			}*/
 
 			_lightParmas.light[_lightParmas.lightCount] = *light.get();
 			_lightParmas.lightCount++;
