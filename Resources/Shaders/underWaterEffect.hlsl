@@ -81,7 +81,7 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     int2 texCoord = dispatchThreadID.xy;
     float2 uv = (float2(texCoord) + 0.5f) / cameraScreenData.xy;
 
-    // 텍스처 샘플링
+ 
     float3 albedoColor = RenderT.SampleLevel(sampler_lerp, uv, 0).xyz;
     float3 worldNormal = normalize(NormalTexture.SampleLevel(sampler_point, uv, 0).xyz);
     float4 worldPos = PositionTexture.SampleLevel(sampler_point, uv, 0);
@@ -91,9 +91,9 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     
     LightingResult lightColor = ComputeLightColor(worldPos.xyz, worldNormal.xyz);
 
-    float3 underWaterColor = lerp(g_underWaterColor * albedoColor, albedoColor, lightColor.atten) + float4(lightColor.subColor, 0).xyz;
+    float3 underWaterColor = lerp(g_underWaterColor * albedoColor, albedoColor, lightColor.atten);
 
-    float3 finalColor = lerp(g_fogColor, underWaterColor, fogFactor);
+    float3 finalColor = lerp(g_fogColor, underWaterColor, fogFactor) + lightColor.subColor;
 
     resultTexture[texCoord] = float4(finalColor, 1.0f);
 }
