@@ -505,6 +505,9 @@ RayHit ColliderManager::RayCastForMyCell(const Ray& ray, const float& dis, share
 
 
 	shared_ptr<Collider> Mycollider = owner->GetComponent<Collider>();
+
+	UpdateDynamicCells();
+
 	std::unordered_set<std::shared_ptr<Collider>> potencialColliders = GetPotentialCollisions(Mycollider);
 
 	RayHit closestHit;
