@@ -2,14 +2,6 @@
 #include "Component.h"
 
 
-struct AnimationHint
-{
-	float prevBlendStartTime = 0;
-	float prevBlendEndTime = 1;
-	float nextBlendStartTime = 0;
-};
-
-
 class SkinnedHierarchy : public Component, public RenderCBufferSetter
 {
 public:
@@ -76,9 +68,15 @@ public:
 	void SetData(Material* material) override;
 
 	void Animate(const std::shared_ptr<Animation>& animation, double time);
-	void AnimateBlend(const std::shared_ptr<Animation>& prevAnim, const std::shared_ptr<Animation>& nextAnim, const AnimationHint& hint, double time);
+	double AnimateBlend(const std::shared_ptr<Animation>& currentAnim,
+	                    const std::shared_ptr<Animation>& nextAnim,
+	                    const double& duration = 0.25);
 
-	void Play(const std::shared_ptr<Animation>& animation, bool isLoop);
+	Vector3 BlendDeltaPosition(const std::string& name,
+	                           const std::shared_ptr<Animation>& currentAnim,
+	                           const std::shared_ptr<Animation>& nextAnim, const double& duration = 0.25);
+
+	void Play(const std::shared_ptr<Animation>& animation, const double& duration = 0.25);
 	void Play();
 	bool IsPlay() { return _isPlaying; }
 	void Stop();
@@ -86,12 +84,20 @@ public:
 
 public: // Animation Control
 	std::shared_ptr<Model> _model;
-	std::shared_ptr<Animation> animation;
+	std::shared_ptr<Animation> _animation;
 	std::shared_ptr<Animation> _nextAnimation;
 
 
-	float prevAnimationTime = 0;
-	bool _isLoop = true;
+	double _animationTime = 0;
+	double _prevAnimationTime = 0;
+
+	double _animationBlendTime = 0;
+	double _prevAnimationBlendTime = 0;
+
+
+	double _duration = 0.25;
+	double _speedMultiple = 1.2;
+	Vector3 rootMoveLock = Vector3(0, 1, 0);
 	bool _isPlaying = true;
 
 public:// Animation Data
@@ -119,5 +125,4 @@ public:// Animation Data
 	std::array<Matrix, 256> _finalInvertMatrixList;
 
 	CBufferContainer* _boneCBuffer;
-
 };
