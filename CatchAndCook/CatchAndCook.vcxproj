@@ -192,6 +192,7 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="IComponentFactory.cpp" />
     <ClCompile Include="IDelayDestroy.cpp" />
     <ClCompile Include="IGuid.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -319,6 +320,7 @@
     <ClInclude Include="convert_string.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="IComponentFactory.h" />
     <ClInclude Include="IDelayDestroy.h" />
     <ClInclude Include="IGuid.h" />
     <ClInclude Include="d3dx12.h" />

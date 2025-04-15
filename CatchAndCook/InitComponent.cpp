@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "InitComponent.h"
 
+#include "IComponentFactory.h"
+
 InitComponent::~InitComponent()
 {
 }
@@ -80,9 +82,18 @@ void InitComponent::Destroy()
 void TagsComponent::Init()
 {
 	InitComponent::Init();
+	for (auto& tag : _tagNames)
+	{
+		if (GameObjectTagMap.contains(tag))
+			GetOwner()->AddTag(GameObjectTagMap[tag]);
+	}
 }
 
 void ScriptsComponent::Init()
 {
 	InitComponent::Init();
+	for (auto& script : _scriptNames)
+	{
+		GetOwner()->AddComponent(IComponentFactory::Create(script));
+	}
 }

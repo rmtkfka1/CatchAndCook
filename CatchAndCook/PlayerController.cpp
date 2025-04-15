@@ -13,8 +13,12 @@
 #include "TerrainManager.h"
 #include "Transform.h"
 
+
+COMPONENT(PlayerController)
+
 PlayerController::~PlayerController()
 {
+
 }
 
 bool PlayerController::IsExecuteAble()

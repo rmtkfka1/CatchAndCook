@@ -22,7 +22,7 @@ public:
 class TagsComponent : public InitComponent
 {
 public:
-	std::vector<GameObjectTag> _tags;
+	std::vector<std::string> _tagNames;
 
 	void Init() override;
 };
@@ -30,6 +30,6 @@ public:
 class ScriptsComponent : public InitComponent
 {
 public:
-	std::vector<std::wstring> _scriptNames;
+	std::vector<std::string> _scriptNames;
 	void Init() override;
 };
