@@ -23,64 +23,119 @@ AssimpPack::~AssimpPack()
 
 void AssimpPack::Init(std::wstring path, bool xFlip)
 {
-	auto p = std::filesystem::path(path);
-	assert(std::filesystem::exists(p));
-
-    importer = std::make_shared<Assimp::Importer>();
 	//importer->SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 	//
 
-    unsigned int flag = //aiProcess_MakeLeftHanded | // �޼� ��ǥ��� ����
-        //aiProcess_ConvertToLeftHanded |
-        aiProcess_FlipWindingOrder | //CW, CCW �ٲٴ°���.
-        aiProcess_FlipUVs | // ���״�� uv�� y���� ������. �׸��� bitangent�� ������.
-        aiProcess_Triangulate | // 4���� 5������ 3��������
-        //aiProcess_GenSmoothNormals | // Normal�� ������ Smmoth Normal ����
-        aiProcess_GenNormals | // Normal�� ������ Normal ����
-        //aiProcess_ImproveCacheLocality | // �ﰢ�� ����. �� �Ǹ� �Ѻ��� ĳ����Ʈ���� ���� �ﰢ�� ��������.
-        //aiProcess_GenUVCoords | // UV������ UV ����ϰ�[ ��Ű��
-        aiProcess_CalcTangentSpace | // ź��Ʈ ���
-        //aiProcess_SplitLargeMeshes |// �Ž��� �ʹ� Ŭ�� �ɰ��°� �Ž� Ŭ�� ������ ����.
-        //aiProcess_Debone | �սǾ��� �� ����. �� ��������.
-        //aiProcess_RemoveComponent | // (animations, materials, light sources, cameras, textures, vertex components ����
-        //aiProcess_PreTransformVertices | // root Node�� ������ ��� ���� ���� ���� ��źȭ. ���� ����.
-        //aiProcess_ValidateDataStructure | // ���� ��ȿ�� �˻�
-        //aiProcess_RemoveRedundantMaterials | // �ߺ��̳� �Ⱦ��°� ����
-        aiProcess_FixInfacingNormals | //�߸� ����Ǽ� ���峭 ��� ���� ����
-        //aiProcess_FindDegenerates | //�ﰢ������ ���� ���Ĺ����� �����̳� ���� �ǹ����µ�, �̰� Line�̳� Point�� ��ȯ�ϴ°���. �Ⱦ��°� ����.
-        //aiProcess_FindInvalidData | //��ȿ���� �ʴ� ������ ������ ����, ���� UV�� ������. �̷��� �����ϰ� ���� aiProcess_GenNormals������ ���Ӱ� �������ٰ���. �ִϸ��̼ǿ����� ������ �ִٰ���.
-        //aiProcess_GenUVCoords  | //UV�� ��ü������ �����. �𵨸������� �����ϴ°� ��õ�ϰ�, UV�� ������ ���Ӱ� �����ϴ°���.
-        //aiProcess_FindInstances | //�ʹ� �Ž��� ������ Ű����. �����ٴ°Ű���. ���� ������ �Ž����� �ϳ��� ���Ĺ����� ����ε�.
-        //aiProcess_OptimizeMeshes |// �Ž� �� �ٿ��ִ� ����ȭ �ɼ��ε�. aiProcess_OptimizeGraph�� ���� ���°� ����, #aiProcess_SplitLargeMeshes and #aiProcess_SortByPType.�� ȣȯ��.
-        //�� ��Ű�°� ������. ���� �ؿ� �ɼ��̶� ȣȯ�Ǵ� ����ε�, �ؿ� �ɼ��� ����.
-        //aiProcess_OptimizeGraph |//�ʿ���� ��带 ������. ��尡 �±׷� ���϶� �����Ǵ� ������ �ճ���, ��Ű�°� ������. ���������� �սǵȴٰ� ��.
-        aiProcess_TransformUVCoords | //UV�� ���ؼ� ��ȯó�� �Ѵٰ� �ϴ°Ű���. �ؽ��� �̻������� ����������
-        aiProcess_JoinIdenticalVertices// �ߺ����� �� �ε��� ���� ������� ��ȯ
-        //aiProcess_SortByPType // �������� Ÿ�Ժ��� ��������. aiProcess_Triangulate ���� ������ �ﰢ���� ���Ƽ� �ʿ� ����. �ϴ� �־�~ 
-        | aiProcess_GlobalScale;
-	xFlip = true;
-	if (!xFlip)
-    {
-        flag |= aiProcess_MakeLeftHanded;
-        scene = importer->ReadFile(std::to_string(path + L"\0"), flag);
-    }
-    else
-    {
-        scene = importer->ReadFile(std::to_string(path + L"\0"), flag);
-    }
-	if (scene == nullptr)
+	bool bakedLoad = false;
+
+	if (BakingLoadMode)
 	{
-		std::cout << "assimp load failed : path not found (" << std::to_string(path) << "\n";
-		assert(scene != nullptr);
+		importer = std::make_shared<Assimp::Importer>();
+
+		auto subPath = wstr::split(path, L"../Resources/");
+		auto bakingRootPath = L"../Resources/BakedModels/";
+		if (subPath.size() > 1)
+		{
+			auto splitSubPath = wstr::split(subPath[1], L"/");
+			auto subFolderPath = std::wstring();
+			for (size_t i = 0; i < splitSubPath.size() - 1; i++) {
+				subFolderPath = subFolderPath + splitSubPath[i] + L"/";
+			}
+			auto bakingFolderPath = bakingRootPath + subFolderPath;
+			auto bakingFullPath = bakingFolderPath + (splitSubPath[splitSubPath.size() - 1] + L".assbin") + L"\0";
+
+			if (std::filesystem::exists(bakingFolderPath)) {
+				scene = importer->ReadFile(std::to_string(bakingFullPath), 0);
+				if (scene != nullptr)
+					bakedLoad = true;
+			}
+		}
 	}
-	if(!xFlip)
+	if (!bakedLoad)
 	{
-	} else
-	{
-		MakeLeftHandedProcess leftHandedProcess;
-		leftHandedProcess.Execute(const_cast<aiScene*>(scene));
+		importer = std::make_shared<Assimp::Importer>();
+		auto p = std::filesystem::path(path);
+		assert(std::filesystem::exists(p));
+
+		unsigned int flag = //aiProcess_MakeLeftHanded | // �޼� ��ǥ��� ����
+			//aiProcess_ConvertToLeftHanded |
+			aiProcess_FlipWindingOrder | //CW, CCW �ٲٴ°���.
+			aiProcess_FlipUVs | // ���״�� uv�� y���� ������. �׸��� bitangent�� ������.
+			aiProcess_Triangulate | // 4���� 5������ 3��������
+			//aiProcess_GenSmoothNormals | // Normal�� ������ Smmoth Normal ����
+			aiProcess_GenNormals | // Normal�� ������ Normal ����
+			//aiProcess_ImproveCacheLocality | // �ﰢ�� ����. �� �Ǹ� �Ѻ��� ĳ����Ʈ���� ���� �ﰢ�� ��������.
+			//aiProcess_GenUVCoords | // UV������ UV ����ϰ�[ ��Ű��
+			aiProcess_CalcTangentSpace | // ź��Ʈ ���
+			//aiProcess_SplitLargeMeshes |// �Ž��� �ʹ� Ŭ�� �ɰ��°� �Ž� Ŭ�� ������ ����.
+			//aiProcess_Debone | �սǾ��� �� ����. �� ��������.
+			//aiProcess_RemoveComponent | // (animations, materials, light sources, cameras, textures, vertex components ����
+			//aiProcess_PreTransformVertices | // root Node�� ������ ��� ���� ���� ���� ��źȭ. ���� ����.
+			//aiProcess_ValidateDataStructure | // ���� ��ȿ�� �˻�
+			//aiProcess_RemoveRedundantMaterials | // �ߺ��̳� �Ⱦ��°� ����
+			aiProcess_FixInfacingNormals | //�߸� ����Ǽ� ���峭 ��� ���� ����
+			//aiProcess_FindDegenerates | //�ﰢ������ ���� ���Ĺ����� �����̳� ���� �ǹ����µ�, �̰� Line�̳� Point�� ��ȯ�ϴ°���. �Ⱦ��°� ����.
+			//aiProcess_FindInvalidData | //��ȿ���� �ʴ� ������ ������ ����, ���� UV�� ������. �̷��� �����ϰ� ���� aiProcess_GenNormals������ ���Ӱ� �������ٰ���. �ִϸ��̼ǿ����� ������ �ִٰ���.
+			//aiProcess_GenUVCoords  | //UV�� ��ü������ �����. �𵨸������� �����ϴ°� ��õ�ϰ�, UV�� ������ ���Ӱ� �����ϴ°���.
+			//aiProcess_FindInstances | //�ʹ� �Ž��� ������ Ű����. �����ٴ°Ű���. ���� ������ �Ž����� �ϳ��� ���Ĺ����� ����ε�.
+			//aiProcess_OptimizeMeshes |// �Ž� �� �ٿ��ִ� ����ȭ �ɼ��ε�. aiProcess_OptimizeGraph�� ���� ���°� ����, #aiProcess_SplitLargeMeshes and #aiProcess_SortByPType.�� ȣȯ��.
+			//�� ��Ű�°� ������. ���� �ؿ� �ɼ��̶� ȣȯ�Ǵ� ����ε�, �ؿ� �ɼ��� ����.
+			//aiProcess_OptimizeGraph |//�ʿ���� ��带 ������. ��尡 �±׷� ���϶� �����Ǵ� ������ �ճ���, ��Ű�°� ������. ���������� �սǵȴٰ� ��.
+			aiProcess_TransformUVCoords | //UV�� ���ؼ� ��ȯó�� �Ѵٰ� �ϴ°Ű���. �ؽ��� �̻������� ����������
+			aiProcess_JoinIdenticalVertices// �ߺ����� �� �ε��� ���� ������� ��ȯ
+			//aiProcess_SortByPType // �������� Ÿ�Ժ��� ��������. aiProcess_Triangulate ���� ������ �ﰢ���� ���Ƽ� �ʿ� ����. �ϴ� �־�~ 
+			| aiProcess_GlobalScale;
+		xFlip = true;
+		if (!xFlip)
+		{
+			flag |= aiProcess_MakeLeftHanded;
+			scene = importer->ReadFile(std::to_string(path + L"\0"), flag);
+		}
+		else
+		{
+			scene = importer->ReadFile(std::to_string(path + L"\0"), flag);
+		}
+		if (scene == nullptr)
+		{
+			std::cout << "assimp load failed : path not found (" << std::to_string(path) << "\n";
+			assert(scene != nullptr);
+		}
+		if (!xFlip)
+		{
+
+		}
+		else
+		{
+			MakeLeftHandedProcess leftHandedProcess;
+			leftHandedProcess.Execute(const_cast<aiScene*>(scene));
+		}
 	}
-	
+
+	if (BakingLoadMode && (!bakedLoad))
+	{
+		auto exporter = std::make_shared<Assimp::Exporter>();
+
+		auto subPath = wstr::split(path, L"../Resources/");
+		auto bakingRootPath = L"../Resources/BakedModels/";
+		if (subPath.size() > 1)
+		{
+			auto splitSubPath = wstr::split(subPath[1], L"/");
+			auto subFolderPath = std::wstring();
+			for (size_t i = 0; i < splitSubPath.size() - 1; i++) {
+				subFolderPath = subFolderPath + splitSubPath[i] + L"/";
+			}
+			auto bakingFolderPath = bakingRootPath + subFolderPath;
+			auto bakingFullPath = bakingFolderPath + (splitSubPath[splitSubPath.size() - 1] + L".assbin") + L"\0";
+
+			if (!std::filesystem::exists(bakingFolderPath))
+				std::filesystem::create_directories(bakingFolderPath);
+
+			aiReturn result = exporter->Export(scene, "assbin", to_string(bakingFullPath).c_str());
+			if (result != aiReturn_SUCCESS)
+				std::cerr << "Assbin Export failed: " << exporter->GetErrorString() << "\n";
+			
+		}
+	}
 }
 
 std::shared_ptr<GameObject> Model::CreateGameObject(const std::shared_ptr<Scene>& scene)

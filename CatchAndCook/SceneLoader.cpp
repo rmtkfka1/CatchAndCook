@@ -608,6 +608,11 @@ void SceneLoader::LinkMaterial(json& jsonData)
         ));
 }
 
+void SceneLoader::PostProcessingComponent()
+{
+
+}
+
 
 void SceneLoader::ProcessingAnimationModelLoad(json& jsonData)
 {

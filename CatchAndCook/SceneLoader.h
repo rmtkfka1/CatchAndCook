@@ -39,6 +39,8 @@ public:
     void LinkComponent(json& jsonData);
     void LinkMaterial(json& jsonData);
 
+    void PostProcessingComponent();
+
     void ProcessingAnimationModelLoad(json& jsonData);
     void ProcessingAnimationMapping(json& jsonData);
 
