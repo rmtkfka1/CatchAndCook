@@ -12,6 +12,7 @@ public:
 	void Init(std::shared_ptr<Model> model, aiAnimation* anim, aiNode* root);
 
 	double CalculateTime(double time) const;
+	bool IsEndTime(double time);
 
 	void SetName(const wstring& name){
 		_name = name;
@@ -41,7 +42,7 @@ public:
 
 	double _speedMultiplier = 1;
 
-	bool _isLoop = false;
+	bool _isLoop = true;
 	bool _isApplyTransform = true;
 
 	std::unordered_map<string, std::shared_ptr<AnimationNode>> _nodeTables;

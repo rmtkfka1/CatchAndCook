@@ -198,6 +198,7 @@
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="guid_utility.cpp" />
     <ClCompile Include="ImguiManager.cpp" />
+    <ClCompile Include="InitComponent.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="input_module.cpp" />
     <ClCompile Include="InstancingManager.cpp" />
@@ -325,6 +326,7 @@
     <ClInclude Include="Global.h" />
     <ClInclude Include="guid_utility.h" />
     <ClInclude Include="ImguiManager.h" />
+    <ClInclude Include="InitComponent.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="input_module.h" />
     <ClInclude Include="InstancingManager.h" />

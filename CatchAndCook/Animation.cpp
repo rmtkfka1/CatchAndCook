@@ -114,6 +114,11 @@ double Animation::CalculateTime(double time) const
 	if(_totalTime == 0)
 		return 0;
 	if (_isLoop)
-		return std::fmod(time * _speedMultiplier,_totalTime);
+		return std::fmod(time,_totalTime);
 	return std::clamp(time, 0.0, _totalTime);
+}
+
+bool Animation::IsEndTime(double time)
+{
+	return (!_isLoop) && _totalTime <= time;
 }

@@ -37,7 +37,7 @@ void Terrain::Start()
 
     ShaderInfo info;
     info.renderTargetCount = 3;
-	//info.cullingType = CullingType::WIREFRAME;
+    //info.cullingType = CullingType::WIREFRAME;
     info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
     info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
     info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -100,16 +100,22 @@ void Terrain::Start()
 
 void Terrain::Update()
 {
-    Vector3 cameraPos = Vector3(CameraManager::main->GetActiveCamera()->GetCameraPos().x, 0, CameraManager::main->GetActiveCamera()->GetCameraPos().z);
+    Vector3 cameraPos = CameraManager::main->GetActiveCamera()->GetCameraPos();
+    Vector3 cameraLook = CameraManager::main->GetActiveCamera()->GetCameraLook();
+
+    float maxAngle = ((WINDOW_WIDTH / (float)WINDOW_HEIGHT) * (60 + 3) * D2R) / 2;
+    float maxDistance = 10;
 
     for (int i = 0; i < _instanceDatas.size(); ++i)
     {
         _instanceBuffers[i]->Clear();
         for (int j = 0; j < _instanceDatas[i].size(); j++)
         {
-            if (Vector3::Distance(Vector3(_instanceDatas[i][j].worldPosition.x, 0, _instanceDatas[i][j].worldPosition.z), cameraPos) < 10)
-            {
-                //Todo : 작업해야함.
+            Vector3 targetDirection = _instanceDatas[i][j].worldPosition - cameraPos;
+            bool distanceBool = targetDirection.LengthSquared() < (maxDistance * maxDistance);
+            targetDirection.Normalize();
+            bool angleBool = std::acos(targetDirection.Dot(cameraLook)) < maxAngle;
+            if (angleBool || distanceBool) {
                 _instanceBuffers[i]->AddData(_instanceDatas[i][j]);
             }
         }
@@ -287,7 +293,7 @@ bool Terrain::RayCast(const Ray& ray, const float& dis, RayHit& hit)
                 middle = (left + right) / 2;
                 currentPos = offsetPos + dir * middle;
                 middleH = currentPos.y - GetLocalHeight(currentPos);
-                if(rightH == 0) {
+                if (rightH == 0) {
                     middle = right;
                     middleH = rightH;
                     break;

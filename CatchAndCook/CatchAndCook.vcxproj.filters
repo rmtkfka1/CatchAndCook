@@ -301,9 +301,6 @@
     <ClCompile Include="BoidsMove.cpp">
       <Filter>03.Component</Filter>
     </ClCompile>
-    <ClCompile Include="WallSlideController.cpp">
-      <Filter>03.Component</Filter>
-    </ClCompile>
     <ClCompile Include="NavMesh.cpp">
       <Filter>03.Component</Filter>
     </ClCompile>
@@ -342,6 +339,10 @@
     </ClCompile>
     <ClCompile Include="IUnit.cpp">
       <Filter>997.Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="FishMonster.cpp" />
+    <ClCompile Include="InitComponent.cpp">
+      <Filter>03.Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -598,9 +599,6 @@
     <ClInclude Include="Scene_Sea01.h">
       <Filter>06.Scene</Filter>
     </ClInclude>
-    <ClInclude Include="WallSlideController.h">
-      <Filter>03.Component</Filter>
-    </ClInclude>
     <ClInclude Include="NavMesh.h">
       <Filter>03.Component</Filter>
     </ClInclude>
@@ -643,6 +641,10 @@
     </ClInclude>
     <ClInclude Include="IUnit.h">
       <Filter>997.Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="FishMonster.h" />
+    <ClInclude Include="InitComponent.h">
+      <Filter>03.Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -709,9 +711,6 @@
     <FxCompile Include="..\Resources\Shaders\TerrainQuad.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\TestForward_Skinned.hlsl">
-      <Filter>998.HLSL\Graphics</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\xblur.hlsl">
       <Filter>998.HLSL\Compute</Filter>
     </FxCompile>
@@ -751,7 +750,17 @@
     <FxCompile Include="..\Resources\Shaders\vignette.hlsl">
       <Filter>998.HLSL\Compute</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\ForwardPreDepthNormal.hlsl" />
-    <FxCompile Include="..\Resources\Shaders\SSAO.hlsl" />
+    <FxCompile Include="..\Resources\Shaders\TestForward_Total.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\TestDeferred_Total.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\SSAO.hlsl">
+      <Filter>998.HLSL\Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\ForwardPreDepthNormal.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

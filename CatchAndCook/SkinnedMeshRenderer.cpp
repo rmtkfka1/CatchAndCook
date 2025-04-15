@@ -23,6 +23,7 @@ void SkinnedMeshRenderer::Init()
 
 	//_setter_ForwardLight = std::make_shared<ForwardLightSetter>();
 	//_setter_ForwardLight->Init(GetOwner().get());
+
 }
 
 void SkinnedMeshRenderer::Start()
@@ -35,7 +36,7 @@ void SkinnedMeshRenderer::Start()
 	if (root != nullptr)
 	{
 		auto hierarchys = GetOwner()->GetComponentsWithParents<SkinnedHierarchy>();
-		if(!hierarchys.empty())
+		if (!hierarchys.empty())
 			_hierarchy = hierarchys[0];
 		else
 		{

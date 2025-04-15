@@ -493,7 +493,7 @@ void ImguiManager::Test()
     {
 	    if (ImGui::TreeNode("Jin Test"))
 	    {
-	        ImGui::SliderFloat("testValue", &testValue, 0, 30);
+	        ImGui::SliderFloat("testValue", &testValue, 0, 4);
 	        /*
 	        if (_seaParam)
 	        {

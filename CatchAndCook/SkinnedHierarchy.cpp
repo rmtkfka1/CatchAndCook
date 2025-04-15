@@ -35,12 +35,11 @@ void SkinnedHierarchy::Start()
 {
 	Component::Start();
 
-	FindNodeObjects();
-
 	auto o = _rootBone.lock();
 
 	for (auto& renderer : GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>())
 		renderer->AddCbufferSetter(GetCast<SkinnedHierarchy>());
+
 	//SetAnimation(GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>()[0]->_model->_animationList[0]);
 }
 
@@ -49,25 +48,17 @@ void SkinnedHierarchy::Update()
 	Component::Update();
 	//auto name = GetOwner()->GetComponentWithChilds<SkinnedMeshRenderer>()->_model->_rootBoneNode->GetOriginalName();
 
-	//_boneHumanNameTable
-
-	/*if (animation != nullptr)
+	if (IsPlay())
 	{
-		auto currentAnimationTime = animation->CalculateTime(Time::main->GetTime());
 
 		auto name = _model->_rootBoneNode->GetOriginalName();
-		if (animation->_nodeTables.contains(name))
-		{
-			auto pos = animation->_nodeTables[name]->CalculateDeltaPosition(prevAnimationTime, currentAnimationTime);
-			pos = Vector3::Transform(pos, GetOwner()->_transform->GetWorldRotation());
-
-			GetOwner()->_transform->SetWorldPosition(GetOwner()->_transform->GetWorldPosition() + pos);
-		}
-		prevAnimationTime = animation->CalculateTime(Time::main->GetTime());
-	}*/
+		auto pos = BlendDeltaPosition(name, _animation, _nextAnimation, _duration);
+		pos *= Vector3::One - rootMoveLock;
+		pos = Vector3::Transform(pos, GetOwner()->_transform->GetWorldRotation());
+		GetOwner()->_transform->SetWorldPosition(GetOwner()->_transform->GetWorldPosition() + pos);
+	}
 }
 
-int selectIndex = -1;
 
 void SkinnedHierarchy::Update2()
 {
@@ -77,18 +68,43 @@ void SkinnedHierarchy::Update2()
 	for (auto& b : a) {
 		animations.push_back(b.second);
 	}
-	
-	for (int i=0;i<9;i++)
-		if (Input::main->GetKeyDown(KeyCode::Num1 + i))
+
+
+	if (Input::main->GetKeyDown(KeyCode::Num1))
+		Play(animations[2], 0.25);
+	if (Input::main->GetKeyDown(KeyCode::Num2))
+		Play(animations[4], 0.25);
+	if (Input::main->GetKeyDown(KeyCode::Num3))
+		Play(animations[1], 0.25);
+	if (Input::main->GetKeyDown(KeyCode::Num4))
+		Pause();
+	if (Input::main->GetKeyDown(KeyCode::Num5))
+		Play();
+	if (Input::main->GetKeyDown(KeyCode::Num6))
+		Stop();
+
+	if (IsPlay())
+	{
+		if (_animation)
 		{
-			selectIndex = i;
-			break;
+			AnimateBlend(_animation, _nextAnimation, _duration);
 		}
-	if (Input::main->GetKeyDown(KeyCode::Num0))
-		selectIndex = -1;
-	if (selectIndex != -1)
-		SetAnimation(animations[selectIndex]);
-	Animate(GetAnimation(), Time::main->GetTime());
+
+		// 후처리
+		if (_animation)
+		{
+			_prevAnimationTime = _animationTime;
+			_animationTime += Time::main->GetDeltaTime() * _animation->_speedMultiplier * _speedMultiple;
+
+			if (_animation->IsEndTime(_animation->CalculateTime(_animationTime))) // 루프가 아닐때 멈추기
+				Stop();
+		}
+		if (_nextAnimation)
+		{
+			_prevAnimationBlendTime = _animationBlendTime;
+			_animationBlendTime += Time::main->GetDeltaTime() * _nextAnimation->_speedMultiplier * _speedMultiple; //애니메이션 타임 흐름 재생
+		}
+	}
 }
 
 
@@ -96,6 +112,9 @@ void SkinnedHierarchy::Animate(const std::shared_ptr<Animation>& animation, doub
 {
 	if (animation == nullptr)
 		return;
+
+
+	animation->_isLoop = true;
 	auto finalTime = animation->CalculateTime(time);
 
 	for (auto& animNode : animation->_nodeLists)
@@ -108,12 +127,13 @@ void SkinnedHierarchy::Animate(const std::shared_ptr<Animation>& animation, doub
 			auto q1 = animNode->CalculateRotation(finalTime);
 			auto p1 = animNode->CalculatePosition(finalTime);
 			auto s1 = animNode->CalculateScale(finalTime);
-			if (animNode->GetNodeName() == _model->_rootBoneNode->GetOriginalName())
-				/*std::cout << animNode->GetNodeName() << "\n";*/
 
 			bool finalRoot = animNode->IsRoot();
 			if (animation->_isApplyTransform && ((animNode->GetNodeName() == _model->_rootBoneNode->GetOriginalName())))
+			{
 				p1 = Vector3(0, p1.y, 0);
+				//q1 = Quaternion::Identity;
+			}
 
 			Matrix finalMatrix = Matrix::CreateScale(s1) *
 				Matrix::CreateFromQuaternion(q1 * animNode->offsetPreRotation) *
@@ -124,10 +144,10 @@ void SkinnedHierarchy::Animate(const std::shared_ptr<Animation>& animation, doub
 
 
 	/*
-	if (animation == nullptr)
+	if (_animation == nullptr)
 		return;
-	auto finalTime = animation->CalculateTime(time);
-	for (auto& animNode : animation->_nodeLists)
+	auto finalTime = _animation->CalculateTime(time);
+	for (auto& animNode : _animation->_nodeLists)
 	{
 
 		//auto it = nodeObjectTable.find(animNode->GetNodeName());
@@ -146,7 +166,7 @@ void SkinnedHierarchy::Animate(const std::shared_ptr<Animation>& animation, doub
 			
 			if (obj != nullptr) {
 				auto transform = obj->_transform;
-				auto matrix = animNode->CalculateTransformMatrixMapping(currentModelNode, animModelNode, finalTime, animation->_isApplyTransform && animNode->IsRoot());
+				auto matrix = animNode->CalculateTransformMatrixMapping(currentModelNode, animModelNode, finalTime, _animation->_isApplyTransform && animNode->IsRoot());
 
 				animNode->CalculatePosition(finalTime);
 
@@ -157,6 +177,163 @@ void SkinnedHierarchy::Animate(const std::shared_ptr<Animation>& animation, doub
 	*/
 }
 
+double SkinnedHierarchy::AnimateBlend(const std::shared_ptr<Animation>& currentAnim, const std::shared_ptr<Animation>& nextAnim, const double& duration)
+{
+	if (!currentAnim)
+		return 0;
+
+	double currentAnimTime;
+	double nextAnimTime;
+	auto blendInterpolValue = 0.0;
+
+
+	if (currentAnim) {
+		currentAnimTime = currentAnim->CalculateTime(_animationTime);
+	}
+	if (nextAnim) {
+		nextAnimTime = nextAnim->CalculateTime(_animationBlendTime);
+		blendInterpolValue = std::clamp(_animationBlendTime / duration, 0.0, 1.0);
+	}
+
+	for (auto& animNode : currentAnim->_nodeLists)
+	{
+		auto it = FindByName(animNode->GetNodeName(), nodeObjectTable);
+
+		Quaternion finalAnim_interpolatedRotation;
+		Vector3 finalAnim_interpolatedPosition;
+		Vector3 finalAnim_interpolatedScale;
+
+		if (it != nodeObjectTable.end())
+		{
+			auto obj = it->second.lock();
+
+			finalAnim_interpolatedRotation = animNode->CalculateRotation(currentAnimTime);
+			finalAnim_interpolatedPosition = animNode->CalculatePosition(currentAnimTime);
+			finalAnim_interpolatedScale = animNode->CalculateScale(currentAnimTime);
+		}
+
+		if (nextAnim)
+		{
+			auto nextAnimNodeIter = FindByName(animNode->GetNodeName(), nextAnim->_nodeTables);
+			if (nextAnimNodeIter != nextAnim->_nodeTables.end())
+			{
+				auto nextAnimNode = nextAnimNodeIter->second;
+				auto obj = it->second.lock();
+
+				Quaternion nextAnim_interpolatedRotation = nextAnimNode->CalculateRotation(nextAnimTime);
+				Vector3 nextAnim_interpolatedPosition = nextAnimNode->CalculatePosition(nextAnimTime);
+				Vector3 nextAnim_interpolatedScale = nextAnimNode->CalculateScale(nextAnimTime);
+
+				Vector3::Lerp(finalAnim_interpolatedPosition, nextAnim_interpolatedPosition, blendInterpolValue, finalAnim_interpolatedPosition);
+				Vector3::Lerp(finalAnim_interpolatedScale, nextAnim_interpolatedScale, blendInterpolValue, finalAnim_interpolatedScale);
+				Quaternion::Slerp(finalAnim_interpolatedRotation, nextAnim_interpolatedRotation, blendInterpolValue,	finalAnim_interpolatedRotation);
+			}
+		}
+		
+		bool finalRoot = animNode->IsRoot();
+		if (currentAnim->_isApplyTransform && ((animNode->GetNodeName() == _model->_rootBoneNode->GetOriginalName())))
+		{
+			finalAnim_interpolatedPosition = finalAnim_interpolatedPosition * rootMoveLock;
+		}
+
+		Matrix finalMatrix = Matrix::CreateScale(finalAnim_interpolatedScale) *
+			Matrix::CreateFromQuaternion(finalAnim_interpolatedRotation * animNode->offsetPreRotation) *
+			Matrix::CreateTranslation(finalAnim_interpolatedPosition);
+		if (it != nodeObjectTable.end())
+			it->second.lock()->_transform->SetLocalSRTMatrix(finalMatrix);
+		
+	}
+
+
+	if (blendInterpolValue >= 1)
+	{
+		_animationTime = _animationBlendTime;
+		_prevAnimationTime = _prevAnimationBlendTime;
+		_animation = _nextAnimation;
+
+		_nextAnimation = nullptr;
+		_animationBlendTime = 0;
+		_prevAnimationBlendTime = 0;
+	}
+
+	return blendInterpolValue;
+}
+
+Vector3 SkinnedHierarchy::BlendDeltaPosition(const std::string& name,const std::shared_ptr<Animation>& currentAnim, const std::shared_ptr<Animation>& nextAnim, const double& duration)
+{
+	Vector3 finalAnim_interpolatedPosition = Vector3::Zero;
+
+	if (!currentAnim)
+		return finalAnim_interpolatedPosition;
+
+	double currentAnimTime;
+	double nextAnimTime;
+	double currentAnimPrevTime;
+	double nextAnimPrevTime;
+
+	auto blendInterpolValue = 0.0;
+
+
+	if (currentAnim) {
+		currentAnimTime = currentAnim->CalculateTime(_animationTime);
+		currentAnimPrevTime = currentAnim->CalculateTime(_prevAnimationTime);
+	}
+	if (nextAnim) {
+		nextAnimTime = nextAnim->CalculateTime(_animationBlendTime);
+		nextAnimPrevTime = currentAnim->CalculateTime(_prevAnimationBlendTime);
+		blendInterpolValue = std::clamp(_animationBlendTime / duration, 0.0, 1.0);
+	}
+	std::cout << blendInterpolValue << "\n";
+
+	auto animNodeIter = FindByName(name, currentAnim->_nodeTables);
+	auto it = FindByName(name, nodeObjectTable);
+
+	if (animNodeIter != currentAnim->_nodeTables.end())
+	{
+		auto animNode = animNodeIter->second;
+		if (it != nodeObjectTable.end())
+		{
+			auto obj = it->second.lock();
+
+			finalAnim_interpolatedPosition = animNode->CalculateDeltaPosition(currentAnimPrevTime, currentAnimTime);
+		}
+
+		if (nextAnim)
+		{
+			auto nextAnimNodeIter = FindByName(name, nextAnim->_nodeTables);
+			if (nextAnimNodeIter != nextAnim->_nodeTables.end())
+			{
+				auto nextAnimNode = nextAnimNodeIter->second;
+				auto obj = it->second.lock();
+
+				Vector3 nextAnim_interpolatedPosition = nextAnimNode->CalculateDeltaPosition(nextAnimPrevTime, nextAnimTime);
+
+				Vector3::Lerp(finalAnim_interpolatedPosition, nextAnim_interpolatedPosition, blendInterpolValue, finalAnim_interpolatedPosition);
+			}
+		}
+	}
+	return finalAnim_interpolatedPosition;
+}
+
+void SkinnedHierarchy::Play(const std::shared_ptr<Animation>& animation, const double& duration)
+{
+	if (!_isPlaying || _animation == nullptr)
+	{
+		_animation = animation;
+	}
+	else
+	{
+		if (_animation == animation)
+			return;
+
+		_nextAnimation = animation;
+		_animationBlendTime = 0;
+		_prevAnimationBlendTime = 0;
+	}
+	_duration = std::max(duration, 0.001);
+	_isPlaying = true;
+}
+
 void SkinnedHierarchy::Play()
 {
 	_isPlaying = true;
@@ -165,6 +342,10 @@ void SkinnedHierarchy::Play()
 void SkinnedHierarchy::Stop()
 {
 	_isPlaying = false;
+	_animationTime = 0;
+	_animationBlendTime = 0;
+	_prevAnimationTime = 0;
+	_prevAnimationBlendTime = 0;
 }
 
 void SkinnedHierarchy::Pause()
@@ -245,9 +426,13 @@ void SkinnedHierarchy::SetNodeList(const std::vector<std::shared_ptr<ModelNode>>
 
 void SkinnedHierarchy::SetModel(const std::shared_ptr<Model>& model)
 {
-	_model = model;
-	SetNodeList(model->GetNodeList());
-	SetBoneList(model->GetBoneList());
+	if (_model != model)
+	{
+		_model = model;
+		SetNodeList(model->GetNodeList());
+		SetBoneList(model->GetBoneList());
+		FindNodeObjects();
+	}
 }
 
 void SkinnedHierarchy::SetMappingTable(const std::unordered_map<std::string, std::string>& table)
@@ -283,12 +468,12 @@ void SkinnedHierarchy::SetData(Material* material)
 
 void SkinnedHierarchy::SetAnimation(const std::shared_ptr<Animation>& animation)
 {
-	this->animation = animation;
+	this->_animation = animation;
 }
 
 std::shared_ptr<Animation> SkinnedHierarchy::GetAnimation()
 {
-	return animation;
+	return _animation;
 }
 
 void SkinnedHierarchy::FindNodeObjects()

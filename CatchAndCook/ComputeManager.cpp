@@ -522,7 +522,6 @@ void VignetteRender::Init()
 
 void VignetteRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
 {
-	return;
 
 	auto& table = Core::main->GetBufferManager()->GetTable();
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
@@ -658,6 +657,34 @@ void SSAORender::Resize()
 	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
 	_ssaoTexture->CreateStaticTexture(DXGI_FORMAT_R32_FLOAT, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
 
+}
+
+ColorGrading::ColorGrading()
+{
+}
+
+ColorGrading::~ColorGrading()
+{
+}
+
+void ColorGrading::Init()
+{
+}
+
+void ColorGrading::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+}
+
+void ColorGrading::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+}
+
+void ColorGrading::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+}
+
+void ColorGrading::Resize()
+{
 }
 
 

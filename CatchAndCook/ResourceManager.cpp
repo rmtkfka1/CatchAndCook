@@ -113,6 +113,7 @@ void ResourceManager::CreateDefaultShader()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetInjector({BufferType::DefaultMaterialParam});
@@ -126,6 +127,7 @@ void ResourceManager::CreateDefaultShader()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetInjector({BufferType::DefaultMaterialParam});
@@ -140,6 +142,7 @@ void ResourceManager::CreateDefaultShader()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetInjector({BufferType::DefaultMaterialParam});
@@ -155,6 +158,7 @@ void ResourceManager::CreateDefaultShader()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
 
 		info.renderTargetCount = 3;
 
@@ -174,6 +178,7 @@ void ResourceManager::CreateDefaultShader()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
 
 		info.renderTargetCount = 3;
 
@@ -194,6 +199,7 @@ void ResourceManager::CreateDefaultShader()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
 
 		info.renderTargetCount = 3;
 

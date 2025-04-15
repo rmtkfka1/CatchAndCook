@@ -75,6 +75,7 @@ using namespace Microsoft::WRL;
 #endif
 
 #include <assimp/Importer.hpp>
+#include <assimp/Exporter.hpp>
 #include <assimp/scene.h>
 #include <Assimp/postprocess.h>
 #include <assimp/cimport.h>
