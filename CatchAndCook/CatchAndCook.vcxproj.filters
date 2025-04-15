@@ -341,7 +341,9 @@
       <Filter>997.Utils</Filter>
     </ClCompile>
     <ClCompile Include="FishMonster.cpp" />
-    <ClCompile Include="InitComponent.cpp" />
+    <ClCompile Include="InitComponent.cpp">
+      <Filter>03.Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -641,7 +643,9 @@
       <Filter>997.Utils</Filter>
     </ClInclude>
     <ClInclude Include="FishMonster.h" />
-    <ClInclude Include="InitComponent.h" />
+    <ClInclude Include="InitComponent.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -746,9 +750,17 @@
     <FxCompile Include="..\Resources\Shaders\vignette.hlsl">
       <Filter>998.HLSL\Compute</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\ForwardPreDepthNormal.hlsl" />
-    <FxCompile Include="..\Resources\Shaders\SSAO.hlsl" />
-    <FxCompile Include="..\Resources\Shaders\TestDeferred_Total.hlsl" />
-    <FxCompile Include="..\Resources\Shaders\TestForward_Total.hlsl" />
+    <FxCompile Include="..\Resources\Shaders\TestForward_Total.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\TestDeferred_Total.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\SSAO.hlsl">
+      <Filter>998.HLSL\Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\ForwardPreDepthNormal.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
