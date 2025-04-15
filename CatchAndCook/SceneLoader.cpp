@@ -9,6 +9,7 @@
 #include "Collider.h"
 #include "Scene.h"
 #include "Component.h"
+#include "InitComponent.h"
 #include "LightComponent.h"
 #include "Transform.h"
 #include "MeshRenderer.h"
@@ -176,7 +177,7 @@ void SceneLoader::PrevProcessingComponent(json& data)
     }
     if (type == L"Tags")
     {
-        auto terr = CreateObject<CameraComponent>(guid);
+        auto terr = CreateObject<InitComponent>(guid);
         component = terr;
     }
     if (type == L"Light")
@@ -574,6 +575,11 @@ void SceneLoader::LinkComponent(json& jsonData)
         light->innerSpotAngle = innerSpotAngle;
         light->spotAngle = spotAngle;
         light->shadowAngle = shadowAngle;
+    }
+    if (type == L"Tags")
+    {
+        auto init = IGuid::FindObjectByGuid<InitComponent>(guid);
+
     }
 }
 
