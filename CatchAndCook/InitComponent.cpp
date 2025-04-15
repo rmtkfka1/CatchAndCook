@@ -69,5 +69,20 @@ void InitComponent::SetDestroy()
 void InitComponent::Destroy()
 {
 	Component::Destroy();
-	std::cout << "InitComponent Destroy" << "\n";
+}
+
+
+
+
+//--------------------------------
+
+
+void TagsComponent::Init()
+{
+	InitComponent::Init();
+}
+
+void ScriptsComponent::Init()
+{
+	InitComponent::Init();
 }

@@ -19,3 +19,17 @@ public:
 	void Destroy() override;
 };
 
+class TagsComponent : public InitComponent
+{
+public:
+	std::vector<GameObjectTag> _tags;
+
+	void Init() override;
+};
+
+class ScriptsComponent : public InitComponent
+{
+public:
+	std::vector<std::wstring> _scriptNames;
+	void Init() override;
+};
