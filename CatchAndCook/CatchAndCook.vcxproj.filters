@@ -345,6 +345,7 @@
       <Filter>03.Component</Filter>
     </ClCompile>
     <ClCompile Include="IComponentFactory.cpp" />
+    <ClCompile Include="AnimationListComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -648,6 +649,7 @@
       <Filter>03.Component</Filter>
     </ClInclude>
     <ClInclude Include="IComponentFactory.h" />
+    <ClInclude Include="AnimationListComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">

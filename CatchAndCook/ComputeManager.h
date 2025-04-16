@@ -76,7 +76,7 @@ private:
 	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
 
 private:
-	virtual void Resize();
+	virtual void Resize(); 
 private:
 	void Black(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 	void XBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
