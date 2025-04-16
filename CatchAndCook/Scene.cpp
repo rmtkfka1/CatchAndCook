@@ -249,7 +249,7 @@ void Scene::DeferredPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                        InstancingManager::main->RenderNoInstancing(ele);
                    }
                    else
-                   {    //동적인스턴싱이면 1개짜리 객체라도 스터럭쳐버퍼로 transform 데이터넣어줌.
+                   {  
                        InstancingManager::main->AddObject(ele);
                    }           
             }

@@ -113,7 +113,6 @@ void SkinnedHierarchy::Animate(const std::shared_ptr<Animation>& animation, doub
 	if (animation == nullptr)
 		return;
 
-
 	animation->_isLoop = true;
 	auto finalTime = animation->CalculateTime(time);
 
@@ -244,7 +243,7 @@ double SkinnedHierarchy::AnimateBlend(const std::shared_ptr<Animation>& currentA
 		
 	}
 
-
+   
 	if (blendInterpolValue >= 1)
 	{
 		_animationTime = _animationBlendTime;
@@ -283,7 +282,7 @@ Vector3 SkinnedHierarchy::BlendDeltaPosition(const std::string& name,const std::
 		nextAnimPrevTime = currentAnim->CalculateTime(_prevAnimationBlendTime);
 		blendInterpolValue = std::clamp(_animationBlendTime / duration, 0.0, 1.0);
 	}
-	std::cout << blendInterpolValue << "\n";
+	//std::cout << blendInterpolValue << "\n";
 
 	auto animNodeIter = FindByName(name, currentAnim->_nodeTables);
 	auto it = FindByName(name, nodeObjectTable);
@@ -321,6 +320,7 @@ void SkinnedHierarchy::Play(const std::shared_ptr<Animation>& animation, const d
 	{
 		_animation = animation;
 	}
+
 	else
 	{
 		if (_animation == animation)
