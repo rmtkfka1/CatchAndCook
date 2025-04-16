@@ -48,10 +48,10 @@ void ResourceManager::CreateDefaultShader()
 		info.RTVForamts[2]=DXGI_FORMAT_R8G8B8A8_UNORM;
 		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"Deferred",L"Deferred.hlsl",StaticProp,
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"DeferredSea",L"DeferredSea.hlsl",StaticProp,
 			ShaderArg{},info);
 
-		shader->SetInjector({ BufferType::DefaultMaterialParam });
+		//shader->SetInjector({ BufferType::DefaultMaterialParam });
 		shader->SetPass(RENDER_PASS::Deferred);
 	}
 

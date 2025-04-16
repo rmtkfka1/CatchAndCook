@@ -1,8 +1,6 @@
 #include "Global_b0.hlsl"
 #include "Light_b3.hlsl"
 
-//[쉐이더정리][컬링처리]
-
 struct VS_IN
 {
     float3 pos : POSITION;

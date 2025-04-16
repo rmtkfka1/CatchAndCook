@@ -7,7 +7,8 @@ public:
 	std::unordered_map<string, string> _animationKeys;
 	std::unordered_map<string, std::shared_ptr<Animation>> _animations;
 
-	std::unordered_map<string, std::shared_ptr<Animation>>& GetAnimations() {
+	std::unordered_map<string, std::shared_ptr<Animation>>& GetAnimations() 
+	{
 		return _animations;
 	}
 	

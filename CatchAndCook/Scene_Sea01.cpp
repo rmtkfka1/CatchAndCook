@@ -13,8 +13,8 @@
 void Scene_Sea01::Init()
 {
 	Scene::Init();
-	_finalShader->SetShader(ResourceManager::main->Get<Shader>(L"finalShader_MainField"));
-	_finalShader->SetPass(RENDER_PASS::Forward);
+	//_finalShader->SetShader(ResourceManager::main->Get<Shader>(L"finalShader_MainField"));
+	//_finalShader->SetPass(RENDER_PASS::Forward);
 
 #pragma region DebugXYZ
 	{
@@ -118,6 +118,16 @@ void Scene_Sea01::Init()
 		{
 			auto finder = plant->AddComponent<FishMonster>();
 			finder->ReadPathFile(L"TutleMove");
+		}
+	}
+
+	{
+		auto plant = Find(L"shark");
+
+		if (plant)
+		{
+			auto finder = plant->AddComponent<FishMonster>();
+			finder->ReadPathFile(L"SharkMove");
 		}
 	}
 

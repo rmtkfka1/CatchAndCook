@@ -116,6 +116,7 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     output.position = input.positionWS;
     output.color = BaseColor;
     output.normal = float4(N, 1.0f);
+    
     if (output.color.a <= 0.1f)
         discard;
     return output;
