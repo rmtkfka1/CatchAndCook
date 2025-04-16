@@ -2,10 +2,18 @@
 //[wall] <-> [player][molgogi]
 enum class GameObjectTag : uint32
 {
-	Defualt = 1<<0,
-	Player = 1<<1,
+	Defualt = 1 << 0,
+	Player = 1 << 1,
 	Monster = 1 << 2,
-	Wall = 1 <<3,
+	Wall = 1 << 3,
+};
+
+static unordered_map<string, GameObjectTag> GameObjectTagMap =
+{
+	{ "Defualt", GameObjectTag::Defualt },
+	{ "Player", GameObjectTag::Player },
+	{ "Monster", GameObjectTag::Monster },
+	{ "Wall", GameObjectTag::Wall },
 };
 
 

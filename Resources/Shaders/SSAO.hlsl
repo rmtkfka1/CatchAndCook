@@ -229,7 +229,7 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
         if (dot(offset, viewNormal) < 0.0)
             offset = -offset;
 
-        float3 samplePos = viewPos + offset * RADIUS;
+        float3 samplePos = viewPos + offset * RADIUS * saturate((MaxDepth - viewPos.z) / MaxDepth);
 
         float4 projectedPos = mul(float4(samplePos, 1.0), ProjectionMatrix);
         projectedPos.xy /= projectedPos.w;

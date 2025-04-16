@@ -1,9 +1,17 @@
 ﻿#pragma once
 
-class InitComponent : public Component
+
+class AnimationListComponent : public Component
 {
 public:
-	~InitComponent() override;
+	std::unordered_map<string, string> _animationKeys;
+	std::unordered_map<string, std::shared_ptr<Animation>> _animations;
+
+	std::unordered_map<string, std::shared_ptr<Animation>>& GetAnimations() {
+		return _animations;
+	}
+	
+	~AnimationListComponent() override;
 	bool IsExecuteAble() override;
 	void Init() override;
 	void Start() override;
@@ -19,17 +27,3 @@ public:
 	void Destroy() override;
 };
 
-class TagsComponent : public InitComponent
-{
-public:
-	std::vector<std::string> _tagNames;
-
-	void Init() override;
-};
-
-class ScriptsComponent : public InitComponent
-{
-public:
-	std::vector<std::string> _scriptNames;
-	void Init() override;
-};

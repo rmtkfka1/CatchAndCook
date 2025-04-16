@@ -81,7 +81,7 @@ class Texture;
 class GBuffer
 {
 public:
-	static const uint32 _count = 3;
+	static const uint32 _count = 4;
 
 	GBuffer();
 	~GBuffer();
@@ -94,6 +94,7 @@ public:
 
 private:
 	array<shared_ptr<Texture>,_count> _textures = {nullptr,};
+
 	D3D12_VIEWPORT _viewport;
 	D3D12_RECT _scissorRect;
 };

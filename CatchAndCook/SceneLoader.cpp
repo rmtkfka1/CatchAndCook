@@ -4,6 +4,7 @@
 
 #include <nlohmann/json_fwd.hpp>
 
+#include "AnimationListComponent.h"
 #include "BufferPool.h"
 #include "CameraComponent.h"
 #include "Collider.h"
@@ -50,15 +51,15 @@ std::vector<std::shared_ptr<GameObject>> SceneLoader::Load(const std::shared_ptr
                 PrevProcessingMaterial(objectJson);
     }
 
+    ProcessingAnimationModelLoad(animationModelListJson);
+    ProcessingAnimationMapping(animationBoneMappingJson);
+
     for (auto& ref : refJson_MaterialTable)
         LinkMaterial(*ref.second);
     for (auto& ref : refJson_ComponentTable)
         LinkComponent(*ref.second);
     for (auto& ref : refJson_GameObjectTable)
         LinkGameObject(*ref.second);
-
-    ProcessingAnimationModelLoad(animationModelListJson);
-    ProcessingAnimationMapping(animationBoneMappingJson);
 
     std::vector<std::shared_ptr<GameObject>> result = gameObjectCache;
 
@@ -177,12 +178,22 @@ void SceneLoader::PrevProcessingComponent(json& data)
     }
     if (type == L"Tags")
     {
-        auto terr = CreateObject<InitComponent>(guid);
+        auto terr = CreateObject<TagsComponent>(guid);
+        component = terr;
+    }
+    if (type == L"Scripts")
+    {
+        auto terr = CreateObject<ScriptsComponent>(guid);
         component = terr;
     }
     if (type == L"Light")
     {
         auto terr = CreateObject<LightComponent>(guid);
+        component = terr;
+    }
+    if (type == L"AnimationList")
+    {
+        auto terr = CreateObject<AnimationListComponent>(guid);
         component = terr;
     }
 
@@ -578,8 +589,37 @@ void SceneLoader::LinkComponent(json& jsonData)
     }
     if (type == L"Tags")
     {
-        auto init = IGuid::FindObjectByGuid<InitComponent>(guid);
+        auto compo = IGuid::FindObjectByGuid<TagsComponent>(guid);
+		//compo->SetTag(std::to_wstring(jsonData["tag"].get<std::string>()));
+        auto& tags = jsonData["tags"];
 
+        int tagsCount = tags.size();
+        for (int i = 0; i < tagsCount; i++)
+        {
+			compo->_tagNames.push_back(tags[i].get<std::string>());
+        }
+    }
+    if (type == L"Scripts")
+    {
+        auto compo = IGuid::FindObjectByGuid<ScriptsComponent>(guid);
+        auto& scripts = jsonData["scripts"];
+
+        int scriptsCount = scripts.size();
+        for (int i = 0; i < scriptsCount; i++)
+        {
+            compo->_scriptNames.push_back(scripts[i].get<std::string>());
+        }
+    }
+    if (type == L"AnimationList")
+    {
+        auto compo = IGuid::FindObjectByGuid<AnimationListComponent>(guid);
+        auto& scripts = jsonData["animationKeys"];
+
+        int scriptsCount = scripts.size();
+
+        for (auto it = scripts.begin(); it != scripts.end(); ++it) {
+            compo->_animationKeys.emplace(it.key(), it.value());
+        }
     }
 }
 

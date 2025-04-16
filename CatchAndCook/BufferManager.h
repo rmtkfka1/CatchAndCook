@@ -15,6 +15,7 @@ enum class BufferType
 	SpriteTextureParam,
 	TestParam,
 	DefaultMaterialParam,
+	EnvMaterialParam,
 	LightParam,
 	TerrainDetailsParam,
 	SeaParam,

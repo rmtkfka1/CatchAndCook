@@ -35,22 +35,7 @@ void Terrain::Start()
 {
     Component::Start();
 
-    ShaderInfo info;
-    info.renderTargetCount = 3;
-    //info.cullingType = CullingType::WIREFRAME;
-    info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
-    info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
-    info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
-    info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
-
-#ifdef RECT_TERRAIN
-    shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest", L"TerrainQuad.hlsl", GeoMetryProp,
-        ShaderArg{ {{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}} }, info);
-#else
-    shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"TerrainTest", L"Terrain.hlsl", GeoMetryProp,
-        ShaderArg{ {{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}} }, info);
-#endif
-    shader->SetInjector({ BufferType::TerrainDetailsParam });
+    auto shader = ResourceManager::main->Get<Shader>(L"Terrain");
 
     _material->SetPropertyVector("fieldSize", Vector4(_fieldSize));
     _material->SetShader(shader);
@@ -87,8 +72,11 @@ void Terrain::Start()
             renderer->SetInstancing(false);
             for (auto& material : renderer->GetMaterials())
             {
-                material->SetShader(ResourceManager::main->Get<Shader>(L"DefaultDeferred_Instanced"));
-                material->SetPass(RENDER_PASS::Deferred);
+                auto newMaterial = std::make_shared<Material>();
+                material->CopyMaterial(newMaterial);
+                renderer->SetMaterials({ newMaterial });
+                newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Instanced"));
+                newMaterial->SetPass(RENDER_PASS::Deferred);
             }
         }
     }
