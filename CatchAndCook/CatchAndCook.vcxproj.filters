@@ -764,5 +764,8 @@
     <FxCompile Include="..\Resources\Shaders\ForwardPreDepthNormal.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Environment.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

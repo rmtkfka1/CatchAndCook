@@ -259,12 +259,15 @@ void Bloom::Black(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int 
 {
 	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
 	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+	auto& MAOTexture = Core::main->GetGBuffer()->GetTexture(3);
+	MAOTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
 	auto& table = Core::main->GetBufferManager()->GetTable();
 	cmdList->SetPipelineState(_BlackShader->_pipelineState.Get());
 	_tableContainer = table->Alloc(8);
 	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 0);
+	table->CopyHandle(_tableContainer.CPUHandle, MAOTexture->GetSRVCpuHandle(), 1);
 	table->CopyHandle(_tableContainer.CPUHandle, _pingtexture->GetUAVCpuHandle(), 5);
 	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
 	cmdList->Dispatch(x, y, z);

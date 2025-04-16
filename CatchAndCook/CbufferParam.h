@@ -36,11 +36,30 @@ struct alignas(16) DefaultMaterialParam
 	Vector4 _baseMapST;
 };
 
-CBUFFER_INJECTOR("DefaultMaterialParam", DefaultMaterialParam, 2560, BufferType::DefaultMaterialParam, std::shared_ptr<Material>,
+CBUFFER_INJECTOR("DefaultMaterialParam", DefaultMaterialParam, 256, BufferType::DefaultMaterialParam, std::shared_ptr<Material>,
 	// data <- source
 	data.color = Vector4(source->GetPropertyVector("_Color"));
 	data._baseMapST = Vector4(source->GetPropertyVector("_BaseMap_ST"));
 )
+
+
+struct alignas(16) EnvMaterialParam
+{
+	Vector4 color;
+	Vector4 _baseMapST;
+	Vector4 emissionColor = Vector4(0, 0, 0, 0);
+	float emission = 0;
+	Vector3 padding;
+};
+
+CBUFFER_INJECTOR("EnvMaterialParam", EnvMaterialParam, 1024, BufferType::EnvMaterialParam, std::shared_ptr<Material>,
+	// data <- source
+	data.color = Vector4(source->GetPropertyVector("_Color"));
+	data._baseMapST = Vector4(source->GetPropertyVector("_BaseMap_ST"));
+	data.emissionColor = Vector4(source->GetPropertyVector("_EmissionColor"));
+	data.emission = source->GetPropertyFloat("_Emission");
+)
+
 
 
 struct alignas(16) PlayerMaterialParam

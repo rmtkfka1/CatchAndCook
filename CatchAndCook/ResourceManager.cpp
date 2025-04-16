@@ -41,11 +41,12 @@ void ResourceManager::CreateDefaultShader()
 {
 	{
 		ShaderInfo info;
-		info.renderTargetCount=3;
+		info.renderTargetCount=4;
 
 		info.RTVForamts[0]=DXGI_FORMAT_R32G32B32A32_FLOAT;
 		info.RTVForamts[1]=DXGI_FORMAT_R32G32B32A32_FLOAT;
 		info.RTVForamts[2]=DXGI_FORMAT_R8G8B8A8_UNORM;
+		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"Deferred",L"Deferred.hlsl",StaticProp,
 			ShaderArg{},info);
@@ -56,18 +57,38 @@ void ResourceManager::CreateDefaultShader()
 
 	{
 		ShaderInfo info;
-		info.renderTargetCount = 3;
+		info.renderTargetCount = 4;
 
 		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"Plant", L"Plant.hlsl", StaticProp,
 			ShaderArg{}, info);
 		shader->SetPass(RENDER_PASS::Deferred);
 	}
 
+	{
+		ShaderInfo info;
+		info.renderTargetCount = 4;
+		//info.cullingType = CullingType::WIREFRAME;
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
+#ifdef RECT_TERRAIN
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"Terrain", L"TerrainQuad.hlsl", GeoMetryProp,
+			ShaderArg{ {{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}} }, info);
+#else
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"Terrain", L"Terrain.hlsl", GeoMetryProp,
+			ShaderArg{ {{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}} }, info);
+#endif
+		shader->SetInjector({ BufferType::TerrainDetailsParam });
+		shader->SetPass(RENDER_PASS::Deferred);
+	}
 
 	{
 		ShaderInfo info;
@@ -160,11 +181,12 @@ void ResourceManager::CreateDefaultShader()
 		info._stencilTest = false;
 		info.cullingType = CullingType::NONE;
 
-		info.renderTargetCount = 3;
+		info.renderTargetCount = 4;
 
 		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetInjector({ BufferType::DefaultMaterialParam });
@@ -180,11 +202,12 @@ void ResourceManager::CreateDefaultShader()
 		info._stencilTest = false;
 		info.cullingType = CullingType::NONE;
 
-		info.renderTargetCount = 3;
+		info.renderTargetCount = 4;
 
 		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetInjector({ BufferType::DefaultMaterialParam });
@@ -201,11 +224,12 @@ void ResourceManager::CreateDefaultShader()
 		info._stencilTest = false;
 		info.cullingType = CullingType::NONE;
 
-		info.renderTargetCount = 3;
+		info.renderTargetCount = 4;
 
 		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetInjector({ BufferType::DefaultMaterialParam });
@@ -215,6 +239,74 @@ void ResourceManager::CreateDefaultShader()
 		shader->Init(L"TestDeferred_Total.hlsl", SkinProp, ShaderArg{}, info);
 		Add<Shader>(L"DefaultDeferred_Instanced", shader);
 	}
+
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+
+		info.renderTargetCount = 4;
+
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetInjector({ BufferType::EnvMaterialParam });
+		shader->SetPass(RENDER_PASS::Deferred);
+		shader->Init(L"Environment.hlsl", StaticProp, ShaderArg{}, info);
+		Add<Shader>(L"Environment", shader);
+	}
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+
+		info.renderTargetCount = 4;
+
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetInjector({ BufferType::EnvMaterialParam });
+		shader->SetMacro({ {"SKINNED",nullptr} });
+		shader->SetPass(RENDER_PASS::Deferred);
+		shader->Init(L"Environment.hlsl", SkinProp, ShaderArg{}, info);
+		Add<Shader>(L"Environment_Skinned", shader);
+	}
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+
+		info.renderTargetCount = 4;
+
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetInjector({ BufferType::EnvMaterialParam });
+		shader->SetMacro({ {"INSTANCED",nullptr} });
+		shader->SetInstanceProp(TransformInstanceProp);
+		shader->SetPass(RENDER_PASS::Deferred);
+		shader->Init(L"Environment.hlsl", SkinProp, ShaderArg{}, info);
+		Add<Shader>(L"Environment_Instanced", shader);
+	}
+
 
 
 	{
@@ -231,11 +323,12 @@ void ResourceManager::CreateDefaultShader()
 		info._zTest = true;
 		info._stencilTest = false;
 
-		info.renderTargetCount = 3;
+		info.renderTargetCount = 4;
 
 		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetPass(RENDER_PASS::Deferred);
@@ -249,11 +342,12 @@ void ResourceManager::CreateDefaultShader()
 		info._zTest = true;
 		info._stencilTest = false;
 
-		info.renderTargetCount = 3;
+		info.renderTargetCount = 4;
 
 		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetMacro({ {"SKINNED",nullptr} });
@@ -268,11 +362,12 @@ void ResourceManager::CreateDefaultShader()
 		info._zTest = true;
 		info._stencilTest = false;
 
-		info.renderTargetCount = 3;
+		info.renderTargetCount = 4;
 
 		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetMacro({ {"INSTANCED",nullptr} });

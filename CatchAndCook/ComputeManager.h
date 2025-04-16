@@ -84,7 +84,7 @@ private:
 	void Blooming(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 
 private:
-	int32 _blurCount = 6;
+	int32 _blurCount = 10;
 	bool _on = false;
 	shared_ptr<Texture> _bloomTexture;
 	shared_ptr<Texture> _pingtexture;

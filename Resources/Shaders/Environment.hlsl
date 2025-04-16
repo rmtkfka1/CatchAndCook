@@ -6,10 +6,13 @@
 #include "Skinned_b5.hlsl"
 
 
-cbuffer DefaultMaterialParam : register(b7)
+cbuffer EnvMaterialParam : register(b7)
 {
     float4 color = float4(1, 1, 1, 1);
     float4 _baseMapST = float4(1, 1, 1, 1);
+    float4 emissionColor = float4(0, 0, 0, 0);
+    float emission = 0;
+    float3 padding;
 };
 
 struct VS_IN
@@ -116,6 +119,10 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     output.position = input.positionWS;
     output.color = BaseColor;
     output.normal = float4(N, 1.0f);
+    output.maoe = float4(0,0,0,emission);
+    if (emission == 1)
+		output.color = emissionColor;
+
     if (output.color.a <= 0.1f)
         discard;
     return output;
