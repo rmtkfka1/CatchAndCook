@@ -53,7 +53,7 @@ struct PS_OUT
     float4 position : SV_Target0;
     float4 normal : SV_Target1;
     float4 color : SV_Target2;
-    float4 maoe : SV_Target3;
+    //float4 maoe : SV_Target3;
 };
 
 PS_OUT PS_Main(VS_OUT input) : SV_Target

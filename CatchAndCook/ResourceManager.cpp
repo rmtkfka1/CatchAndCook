@@ -39,17 +39,42 @@ void ResourceManager::CreateDefaultMesh()
 
 void ResourceManager::CreateDefaultShader()
 {
+
+	CreateDefaultShaderKSH();
+	CreateDefaultShaderlJHS();
+
+
+}
+
+void ResourceManager::CreateDefaultShaderKSH()
+{
 	{
 		ShaderInfo info;
-		info.renderTargetCount=4;
+		info.renderTargetCount = 4;
 
-		info.RTVForamts[0]=DXGI_FORMAT_R32G32B32A32_FLOAT;
-		info.RTVForamts[1]=DXGI_FORMAT_R32G32B32A32_FLOAT;
-		info.RTVForamts[2]=DXGI_FORMAT_R8G8B8A8_UNORM;
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"DeferredSea",L"DeferredSea.hlsl",StaticProp,
-			ShaderArg{},info);
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"DeferredSea", L"DeferredSea.hlsl", StaticProp,
+			ShaderArg{}, info);
+
+		//shader->SetInjector({ BufferType::DefaultMaterialParam });
+		shader->SetPass(RENDER_PASS::Deferred);
+	}
+
+	{
+		ShaderInfo info;
+		info.renderTargetCount = 4;
+
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"DeferredSeaSkinned", L"DeferredSeaSkinned.hlsl", SkinProp,
+			ShaderArg{}, info);
 
 		//shader->SetInjector({ BufferType::DefaultMaterialParam });
 		shader->SetPass(RENDER_PASS::Deferred);
@@ -98,21 +123,11 @@ void ResourceManager::CreateDefaultShader()
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetPass(RENDER_PASS::Deferred);
-		shader->Init(L"final.hlsl", GeoMetryProp,ShaderArg{},info);
-		Add<Shader>(L"finalShader",shader);
+		shader->Init(L"final.hlsl", GeoMetryProp, ShaderArg{}, info);
+		Add<Shader>(L"finalShader", shader);
 	}
 
-	{
-		ShaderInfo info;
-		info._zTest = false;
-		info._zWrite = false;
-		info._stencilTest = false;
 
-		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->SetPass(RENDER_PASS::Deferred);
-		shader->Init(L"final_MainField.hlsl", GeoMetryProp, ShaderArg{}, info);
-		Add<Shader>(L"finalShader_MainField", shader);
-	}
 
 	{
 
@@ -128,6 +143,33 @@ void ResourceManager::CreateDefaultShader()
 	}
 
 
+
+
+
+
+	{
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::UI);
+		shader->Init(L"UiForward.hlsl", StaticProp, ShaderArg{});
+		Add<Shader>(L"UiForward", shader);
+	}
+
+
+}
+
+void ResourceManager::CreateDefaultShaderlJHS()
+{
+	{
+		ShaderInfo info;
+		info._zTest = false;
+		info._zWrite = false;
+		info._stencilTest = false;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Deferred);
+		shader->Init(L"final_MainField.hlsl", GeoMetryProp, ShaderArg{}, info);
+		Add<Shader>(L"finalShader_MainField", shader);
+	}
 	//Forward
 	{
 
@@ -137,7 +179,7 @@ void ResourceManager::CreateDefaultShader()
 		info.cullingType = CullingType::NONE;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->SetInjector({BufferType::DefaultMaterialParam});
+		shader->SetInjector({ BufferType::DefaultMaterialParam });
 		shader->SetPass(RENDER_PASS::Forward);
 		shader->Init(L"TestForward_Total.hlsl", StaticProp, ShaderArg{}, info);
 		Add<Shader>(L"DefaultForward", shader);
@@ -151,8 +193,8 @@ void ResourceManager::CreateDefaultShader()
 		info.cullingType = CullingType::NONE;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->SetInjector({BufferType::DefaultMaterialParam});
-		shader->SetMacro({{"SKINNED",nullptr}});
+		shader->SetInjector({ BufferType::DefaultMaterialParam });
+		shader->SetMacro({ {"SKINNED",nullptr} });
 		shader->SetPass(RENDER_PASS::Forward);
 		shader->Init(L"TestForward_Total.hlsl", SkinProp, ShaderArg{}, info);
 		Add<Shader>(L"DefaultForward_Skinned", shader);
@@ -166,12 +208,12 @@ void ResourceManager::CreateDefaultShader()
 		info.cullingType = CullingType::NONE;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->SetInjector({BufferType::DefaultMaterialParam});
+		shader->SetInjector({ BufferType::DefaultMaterialParam });
 		shader->SetPass(RENDER_PASS::Forward);
-		shader->SetMacro({{"INSTANCED",nullptr}});
+		shader->SetMacro({ {"INSTANCED",nullptr} });
 		shader->SetInstanceProp(TransformInstanceProp);
-		shader->Init(L"TestForward_Total.hlsl", SkinProp,ShaderArg{},info);
-		Add<Shader>(L"DefaultForward_Instanced",shader);
+		shader->Init(L"TestForward_Total.hlsl", SkinProp, ShaderArg{}, info);
+		Add<Shader>(L"DefaultForward_Instanced", shader);
 	}
 	//Deferred
 	{
@@ -307,16 +349,6 @@ void ResourceManager::CreateDefaultShader()
 		Add<Shader>(L"Environment_Instanced", shader);
 	}
 
-
-
-	{
-		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->SetPass(RENDER_PASS::UI);
-		shader->Init(L"UiForward.hlsl", StaticProp, ShaderArg{});
-		Add<Shader>(L"UiForward", shader);
-	}
-
-
 	{
 
 		ShaderInfo info;
@@ -404,9 +436,9 @@ void ResourceManager::CreateDefaultShader()
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetInstanceProp(GizmoInstanceProp);
-		shader->Init(L"Gizmo.hlsl", {},ShaderArg{{{"PS_Main","ps"},{"VS_Main","vs"},{"GS_Main","gs"}}},info);
+		shader->Init(L"Gizmo.hlsl", {}, ShaderArg{ {{"PS_Main","ps"},{"VS_Main","vs"},{"GS_Main","gs"}} }, info);
 		shader->SetPass(RENDER_PASS::Debug);
-		Add<Shader>(L"Gizmo",shader);
+		Add<Shader>(L"Gizmo", shader);
 	}
 
 	{
@@ -419,11 +451,9 @@ void ResourceManager::CreateDefaultShader()
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetPass(RENDER_PASS::Debug);
-		shader->Init(L"Gizmo_Text.hlsl", StaticProp, ShaderArg{{{"PS_Main","ps"},{"VS_Main","vs"}}}, info);
-		Add<Shader>(L"GizmoTexture",shader);
+		shader->Init(L"Gizmo_Text.hlsl", StaticProp, ShaderArg{ {{"PS_Main","ps"},{"VS_Main","vs"}} }, info);
+		Add<Shader>(L"GizmoTexture", shader);
 	}
-
-
 }
 
 void ResourceManager::CreateDefaultMaterial()
@@ -440,6 +470,8 @@ void ResourceManager::CreateDefaultMaterial()
 	_depthNormal_Instanced->SetShader(ResourceManager::main->Get<Shader>(L"DepthNormal_Instanced"));
 	_depthNormal_Instanced->SetPass(RENDER_PASS::Deferred);
 }
+
+
 
 void ResourceManager::CreateDefaultTexture()
 {

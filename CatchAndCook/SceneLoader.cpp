@@ -368,18 +368,45 @@ void SceneLoader::LinkComponent(json& jsonData)
                 auto& materialData = (*refJson_MaterialTable[materialGuid]);
                 auto shaderName = std::to_wstring(materialData["shaderName"].get<std::string>());
                 auto shader = ResourceManager::main->Get<Shader>(shaderName);
-                if (shader == nullptr)
+
+                if (_scene->GetSceneType() != SceneType::Sea01)
                 {
-                    shader = ResourceManager::main->Get<Shader>(L"DefaultForward_Skinned");
-                    material->SetShader(shader);
-                    material->SetPass(shader->GetPass());
+                    if (shader == nullptr)
+                    {
+                        shader = ResourceManager::main->Get<Shader>(L"DefaultForward_Skinned");
+                        material->SetShader(shader);
+                        material->SetPass(shader->GetPass());
+                    }
+                    else
+                    {
+                        material->SetShader(shader);
+                        material->SetPass(shader->GetPass());
+                    }
+
+                    material->SetPreDepthNormal(true);
                 }
                 else
                 {
-                    material->SetShader(shader);
-                    material->SetPass(shader->GetPass());
+                    if (shader == nullptr)
+                    {
+                        cout << "호잇" << endl;
+                        shader = ResourceManager::main->Get<Shader>(L"DeferredSeaSkinned");
+                        material->SetShader(shader);
+                        material->SetPass(shader->GetPass());
+                    }
+                    else
+                    {
+       
+                        if (shaderName == L"PlayerShader")
+                        {
+                            shader = ResourceManager::main->Get<Shader>(L"DeferredSeaSkinned");
+                        }
+
+                        material->SetShader(shader);
+                        material->SetPass(shader->GetPass());
+                    }
                 }
-                material->SetPreDepthNormal(true);
+     
                 materials.push_back(material);
             }
 
