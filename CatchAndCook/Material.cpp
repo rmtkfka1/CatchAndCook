@@ -140,3 +140,19 @@ bool Material::HasPropertyMatrix(const std::string& name)
 {
 	return _propertyMatrixs.contains(name);
 }
+
+void Material::CopyMaterial(std::shared_ptr<Material> material)
+{
+	material->_propertyInts = _propertyInts;
+	material->_propertyFloats = _propertyFloats;
+	material->_propertyVectors = _propertyVectors;
+	material->_propertyMatrixs = _propertyMatrixs;
+	material->_propertyHandle = _propertyHandle;
+	material->_propertyTexture = _propertyTexture;
+	material->_shaderInjectors = _shaderInjectors;
+	material->_customInjectors = _customInjectors;
+	material->_shader = _shader;
+	material->_pass = _pass;
+	material->_stencilIndex = _stencilIndex;
+	material->_useMaterialParams = _useMaterialParams;
+}

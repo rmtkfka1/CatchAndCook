@@ -72,8 +72,11 @@ void Terrain::Start()
             renderer->SetInstancing(false);
             for (auto& material : renderer->GetMaterials())
             {
-                material->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Instanced"));
-                material->SetPass(RENDER_PASS::Deferred);
+                auto newMaterial = std::make_shared<Material>();
+                material->CopyMaterial(newMaterial);
+                renderer->SetMaterials({ newMaterial });
+                newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Instanced"));
+                newMaterial->SetPass(RENDER_PASS::Deferred);
             }
         }
     }
