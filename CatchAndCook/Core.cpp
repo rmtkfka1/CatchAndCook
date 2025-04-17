@@ -137,7 +137,7 @@ void Core::FlushResCMDQueue()
 
 void Core::ResizeWindowSize()
 {
-    FenceAll();
+    Fence();
     _renderTarget->ResizeWindowSize(_swapChain,_swapChainFlags);
     _gBuffer->Init();
     ResizeTexture(_dsReadTexture, WINDOW_WIDTH, WINDOW_HEIGHT);
