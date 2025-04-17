@@ -105,7 +105,12 @@ void BufferManager::CreateStructuredBufferPool(uint32 index, BufferType type,con
 	shared_ptr<StructuredBuffer> strBuffer = make_shared<StructuredBuffer>();
 	strBuffer->Init(elementSize, elementCount);
 	_structuredMap[index][type] = strBuffer;
-	_structuredNameMappingTable[name] = type;
+
+	if (_structuredNameMappingTable.find(name) == _structuredNameMappingTable.end())
+	{
+		_structuredNameMappingTable[name] = type;
+	}
+
 }
 
 
