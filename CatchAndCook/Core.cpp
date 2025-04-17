@@ -66,20 +66,23 @@ void Core::Init(HWND hwnd)
 
 void Core::RenderBegin()
 {
-    ThrowIfFailed(_cmdMemory->Reset());
-    ThrowIfFailed(_cmdList->Reset(_cmdMemory.Get(), nullptr));
-    _cmdList->SetGraphicsRootSignature(_rootSignature->GetGraphicsRootSignature().Get());
-    _cmdList->SetComputeRootSignature(_rootSignature->GetComputeRootSignature().Get());
-    _cmdList->SetDescriptorHeaps(1, _bufferManager->GetTable()->GetDescriptorHeap().GetAddressOf());
+    ComPtr<ID3D12GraphicsCommandList> cmdList = _cmdList[CURRENT_CONTEXT_INDEX];
+	ComPtr<ID3D12CommandAllocator> cmdMemory = _cmdMemory[CURRENT_CONTEXT_INDEX];
+
+    ThrowIfFailed(cmdMemory->Reset());
+    ThrowIfFailed(cmdList->Reset(cmdMemory.Get(), nullptr));
+    cmdList->SetGraphicsRootSignature(_rootSignature->GetGraphicsRootSignature().Get());
+    cmdList->SetComputeRootSignature(_rootSignature->GetComputeRootSignature().Get());
+    cmdList->SetDescriptorHeaps(1, _bufferManager->GetTable()->GetDescriptorHeap().GetAddressOf());
 }
 
 void Core::RenderEnd()
 {
-
+    ComPtr<ID3D12GraphicsCommandList> cmdList = _cmdList[CURRENT_CONTEXT_INDEX];
     {
 #ifdef  IMGUI_ON
 		Core::main->GetRenderTarget()->GetRenderTarget()->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
-		_cmdList->SetDescriptorHeaps(1, _imguiHeap.GetAddressOf());
+        cmdList->SetDescriptorHeaps(1, _imguiHeap.GetAddressOf());
         ImguiManager::main->Render();
 #endif //  IMGUI_ON
     }
@@ -87,9 +90,9 @@ void Core::RenderEnd()
     _renderTarget->RenderEnd();
 
     //IMGUIRENDER
-    _cmdList->Close();
+    cmdList->Close();
 
-    ID3D12CommandList* ppCommandLists[] = { _cmdList.Get() };
+    ID3D12CommandList* ppCommandLists[] = { cmdList.Get() };
     _cmdQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
  
     Fence();
@@ -103,11 +106,12 @@ void Core::RenderEnd()
         uiPresentFlags = DXGI_PRESENT_ALLOW_TEARING;
     }
 
-
-
      ThrowIfFailed(_swapChain->Present(uiSyncInterval, uiPresentFlags));
 
     _renderTarget->ChangeIndex();
+
+	CURRENT_CONTEXT_INDEX = (CURRENT_CONTEXT_INDEX + 1) % MAX_FRAME_COUNT;
+
     _bufferManager->Reset();
     g_debug_deferred_count = 0;
 	g_debug_forward_count = 0;
@@ -125,7 +129,7 @@ void Core::FlushResCMDQueue()
     ID3D12CommandList* cmdListArr[] = { _resCmdList.Get() };
     _cmdQueue->ExecuteCommandLists(_countof(cmdListArr), cmdListArr);
 
-    Fence();
+    FenceCurrentFrame();
 
     _resCmdMemory->Reset();
     _resCmdList->Reset(_resCmdMemory.Get(), nullptr);
@@ -133,7 +137,7 @@ void Core::FlushResCMDQueue()
 
 void Core::ResizeWindowSize()
 {
-    Fence();
+    FenceAll();
     _renderTarget->ResizeWindowSize(_swapChain,_swapChainFlags);
     _gBuffer->Init();
     ResizeTexture(_dsReadTexture, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -144,19 +148,51 @@ void Core::ResizeWindowSize()
 
 void Core::Fence()
 {
-    // Advance the fence value to mark commands up to this fence point.
     _fenceValue++;
-
     _cmdQueue->Signal(_fence.Get(), _fenceValue);
+	_lastFenceValue[CURRENT_CONTEXT_INDEX] = _fenceValue;
 
-    if (_fence->GetCompletedValue() < _fenceValue)
-    {
-        // Fire event when GPU hits current fence.  
-        _fence->SetEventOnCompletion(_fenceValue, _fenceEvent);
+    uint64 nextFenceValue = _lastFenceValue[(CURRENT_CONTEXT_INDEX + 1) % MAX_FRAME_COUNT];
 
-        // Wait until the GPU hits current fence event is fired.
+    if (_fence->GetCompletedValue() < nextFenceValue)
+    { 
+        _fence->SetEventOnCompletion(nextFenceValue, _fenceEvent);
         ::WaitForSingleObject(_fenceEvent, INFINITE);
     }
+}
+
+void Core::FenceCurrentFrame()
+{
+    _fenceValue++;
+    _cmdQueue->Signal(_fence.Get(), _fenceValue);
+
+    const uint64 ExpectedFenceValue = _fenceValue;
+
+    if (_fence->GetCompletedValue() < ExpectedFenceValue)
+    {
+        _fence->SetEventOnCompletion(ExpectedFenceValue, _fenceEvent);
+        WaitForSingleObject(_fenceEvent, INFINITE);
+    }
+
+}
+
+void Core::FenceAll()
+{
+    for (uint32 i = 0; i < MAX_FRAME_COUNT; ++i)
+    {
+        _fenceValue++;
+        _cmdQueue->Signal(_fence.Get(), _fenceValue);
+        _lastFenceValue[CURRENT_CONTEXT_INDEX] = _fenceValue;
+    }
+
+	for (uint32 i = 0; i < MAX_FRAME_COUNT; ++i)
+	{
+		if (_fence->GetCompletedValue() < _lastFenceValue[i])
+		{
+			_fence->SetEventOnCompletion(_lastFenceValue[i], _fenceEvent);
+			WaitForSingleObject(_fenceEvent, INFINITE);
+		}
+	}
 }
 
 
@@ -340,9 +376,15 @@ void Core::CreateCmdQueue()
     desc.NodeMask = 0;
 
     ThrowIfFailed(_device->CreateCommandQueue(&desc, IID_PPV_ARGS(&_cmdQueue)));
-    ThrowIfFailed(_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&_cmdMemory)));
-    ThrowIfFailed(_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, _cmdMemory.Get(), nullptr, IID_PPV_ARGS(&_cmdList)));
-    ThrowIfFailed(_cmdList->Close());
+
+    for (int i = 0; i < MAX_FRAME_COUNT; ++i)
+    {
+        ThrowIfFailed(_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&_cmdMemory[i])));
+        ThrowIfFailed(_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, _cmdMemory[i].Get(), nullptr, IID_PPV_ARGS(&_cmdList[i])));
+        ThrowIfFailed(_cmdList[i]->Close());
+    }
+
+   
 
 
     ThrowIfFailed(_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&_resCmdMemory)));
