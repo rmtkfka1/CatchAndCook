@@ -186,7 +186,7 @@ void Game::Run()
 {
 	std::shared_ptr<Scene> currentScene = SceneManager::main->GetCurrentScene();
 
-	Profiler::Set("CPU_TIME");
+	Profiler::Set("CPU_Time");
 
 	Input::main->Update();
 	Time::main->Update();

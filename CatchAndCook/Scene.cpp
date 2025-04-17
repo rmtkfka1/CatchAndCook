@@ -71,7 +71,7 @@ void Scene::Update()
             gameObject->Update2();
     Profiler::Fin();
 
-    Profiler::Set("Logic_ColliderManager");
+    Profiler::Set("Logic_CollisionCheck");
     ColliderManager::main->Update();
     Profiler::Fin();
 }
