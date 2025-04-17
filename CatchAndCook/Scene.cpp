@@ -81,11 +81,11 @@ void Scene::RenderBegin()
     for (auto& ele : _passObjects)
         ele.clear();
 
-    Profiler::Set("ObjectRenderBegin");
+    Profiler::Set("Logic_RenderBegin");
     for (auto& gameObject : _gameObjects)
     	gameObject->RenderBegin();
-
     Profiler::Fin();
+
     Gizmo::main->RenderBegin();
 }
 
@@ -98,8 +98,11 @@ void Scene::Rendering()
 
     ShadowPass(cmdList);
     Profiler::Set("PASS : Deferred", BlockTag::GPU);
-    DeferredPass(cmdList);
-    FinalRender(cmdList);
+        DeferredPass(cmdList);
+    Profiler::Fin();
+
+    Profiler::Set("PASS : FinalPass", BlockTag::GPU);
+        FinalRender(cmdList);
     Profiler::Fin();
 
     Core::main->CopyDepthTexture(Core::main->GetDSReadTexture(), Core::main->GetRenderTarget()->GetDSTexture());

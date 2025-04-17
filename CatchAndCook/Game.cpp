@@ -224,11 +224,8 @@ void Game::Run()
 		Core::main->RenderEnd();
 	Profiler::Fin();
 
+
 	currentScene->Finish();
-
-
-
-
 	Profiler::main->Reset();
 }
 
