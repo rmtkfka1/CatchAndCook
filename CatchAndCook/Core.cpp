@@ -15,6 +15,7 @@
 #include "ComputeManager.h"
 #include "ImguiManager.h"
 #include "LightManager.h"
+
 unique_ptr<Core> Core::main=nullptr;
 
 Core::Core()
@@ -72,10 +73,8 @@ void Core::RenderBegin()
     _cmdList->SetDescriptorHeaps(1, _bufferManager->GetTable()->GetDescriptorHeap().GetAddressOf());
 }
 
-
 void Core::RenderEnd()
 {
-
 
     {
 #ifdef  IMGUI_ON
@@ -92,7 +91,7 @@ void Core::RenderEnd()
 
     ID3D12CommandList* ppCommandLists[] = { _cmdList.Get() };
     _cmdQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
-
+ 
     Fence();
 
     uint32 SyncInterval = 0;
@@ -105,6 +104,7 @@ void Core::RenderEnd()
     }
 
      ThrowIfFailed(_swapChain->Present(uiSyncInterval, uiPresentFlags));
+
     _renderTarget->ChangeIndex();
     _bufferManager->Reset();
     g_debug_deferred_count = 0;

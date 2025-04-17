@@ -356,8 +356,6 @@ void Scene::DebugRendering()
 
     auto& cmdList = Core::main->GetCmdList();
 
-
-
     { // forward
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Debug)];
 
