@@ -23,6 +23,8 @@ VS_OUT VS_Main(VS_IN input)
     return output;
 }
 
+Texture2D _BakedGIMap : register(t8);
+
 float4 PS_Main(VS_OUT input) : SV_Target
 {
     float4 worldPos = PositionTexture.Sample(sampler_point, input.uv);

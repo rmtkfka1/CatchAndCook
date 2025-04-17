@@ -60,7 +60,7 @@ cbuffer LightParams : register(b3)
 float CalcAttenuation(float d, float falloffStart, float falloffEnd)
 {
     // 1
-    return clamp((d - falloffStart) / (falloffEnd - falloffStart), 0, 1);
+    return 1.0 - clamp((d - falloffStart) / (falloffEnd - falloffStart), 0, 1);
 }
 
 
@@ -94,6 +94,7 @@ struct LightingResult
 
     float3 subColor;
     float subAtten;
+
 };
 
 void ComputeDirectionalLight(Light L, LightMateiral mat, float3 worldPos, float3 normal, float3 toEye, inout LightingResult lightingResult)
@@ -121,7 +122,7 @@ void ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, fl
         lightVec /= d;
         float ndotl = saturate(dot(normal, lightVec));
         float3 LightStrength = L.strength * ndotl * sqrt(L.intensity) / d; // * ndotl   *  sqrt(L.intensity / (d * d))
-        float att = 1 - CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
+        float att = CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
         LightStrength *= att;
         lightingResult.subColor += LightStrength;
         lightingResult.subAtten += att * ndotl;
@@ -148,7 +149,7 @@ void ComputeSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal, flo
         
         float3 LightStrength = L.strength * ndotl * sqrt(L.intensity) / d; // * ndotl   *  sqrt(L.intensity / (d * d))
         
-        float att = 1 - CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
+        float att = CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
         LightStrength *= att;
         
         //float spotFactor = pow(saturate(dot(-lightVec, L.direction)), L.spotPower);
