@@ -184,45 +184,51 @@ void Game::PrevUpdate()
 
 void Game::Run()
 {
-	Profiler::Set("All");
-	Profiler::Set("Other");
+	std::shared_ptr<Scene> currentScene = SceneManager::main->GetCurrentScene();
+
+	Profiler::Set("CPU_TIME");
 
 	Input::main->Update();
 	Time::main->Update();
-	PrevUpdate();
+		PrevUpdate();
+
 	if (_quit)
 		return;
 
 	CameraUpdate();
 
-	std::shared_ptr<Scene> currentScene = SceneManager::main->GetCurrentScene();
-
-	Profiler::Set("Other_Core");
+	
+	Profiler::Set("CoreRenderBegin");
 	Core::main->RenderBegin();
 	Profiler::Fin();
 
-	Profiler::Fin();
-	Profiler::Set("Logic_Total");
-		currentScene->Update();
-		currentScene->RenderBegin();
-		Profiler::Set("Logic_Light");
-		LightManager::main->SetData();
+	{
+		Profiler::Set("Logic_Total");
+			currentScene->Update();
+			currentScene->RenderBegin();
+				Profiler::Set("Logic_Light");
+					LightManager::main->SetData();
+				Profiler::Fin();
 		Profiler::Fin();
-	Profiler::Fin();
+	}
 
-	Profiler::Set("Rendering_Total", BlockTag::GPU);
-	Profiler::Set("Rendering_PASS", BlockTag::GPU);
+	
+	Profiler::Set("Rendering_PASS", BlockTag::CPU);
 		currentScene->Rendering();
 		currentScene->DebugRendering();
 		currentScene->RenderEnd();
 	Profiler::Fin();
-	Profiler::Set("Rendering_GPU", BlockTag::GPU);
-		Core::main->RenderEnd();
-	Profiler::Fin();
-		currentScene->Finish();
 	Profiler::Fin();
 
+	Profiler::Set("GPU_Time", BlockTag::GPU);
+		Core::main->RenderEnd();
 	Profiler::Fin();
+
+	currentScene->Finish();
+
+
+
+
 	Profiler::main->Reset();
 }
 

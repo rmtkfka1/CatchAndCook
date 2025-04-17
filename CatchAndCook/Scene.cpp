@@ -81,7 +81,7 @@ void Scene::RenderBegin()
     for (auto& ele : _passObjects)
         ele.clear();
 
-    Profiler::Set("Render_RenderBegin");
+    Profiler::Set("ObjectRenderBegin");
     for (auto& gameObject : _gameObjects)
     	gameObject->RenderBegin();
 
