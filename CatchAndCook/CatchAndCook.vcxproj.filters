@@ -344,8 +344,12 @@
     <ClCompile Include="InitComponent.cpp">
       <Filter>03.Component</Filter>
     </ClCompile>
-    <ClCompile Include="IComponentFactory.cpp" />
-    <ClCompile Include="AnimationListComponent.cpp" />
+    <ClCompile Include="AnimationListComponent.cpp">
+      <Filter>03.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="IComponentFactory.cpp">
+      <Filter>997.Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -648,8 +652,12 @@
     <ClInclude Include="InitComponent.h">
       <Filter>03.Component</Filter>
     </ClInclude>
-    <ClInclude Include="IComponentFactory.h" />
-    <ClInclude Include="AnimationListComponent.h" />
+    <ClInclude Include="AnimationListComponent.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="IComponentFactory.h">
+      <Filter>997.Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">

@@ -94,21 +94,21 @@ void Terrain::Update()
     Vector3 cameraLook = CameraManager::main->GetActiveCamera()->GetCameraLook();
 
     float maxAngle = ((WINDOW_WIDTH / (float)WINDOW_HEIGHT) * (60 + 3) * D2R) / 2;
-    float maxDistance = 1000;
+    float maxDistance = 10;
 
     for (int i = 0; i < _instanceDatas.size(); ++i)
     {
         _instanceBuffers[i]->Clear();
         for (int j = 0; j < _instanceDatas[i].size(); j++)
         {
-       /*     Vector3 targetDirection = _instanceDatas[i][j].worldPosition - cameraPos;
+            Vector3 targetDirection = _instanceDatas[i][j].worldPosition - cameraPos;
             bool distanceBool = targetDirection.LengthSquared() < (maxDistance * maxDistance);
             targetDirection.Normalize();
             bool angleBool = std::acos(targetDirection.Dot(cameraLook)) < maxAngle;
             if (angleBool || distanceBool)
-            {*/
+            {
                 _instanceBuffers[i]->AddData(_instanceDatas[i][j]);
-            
+            }
         }
     }
 }
