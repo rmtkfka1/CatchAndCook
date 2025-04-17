@@ -29,7 +29,7 @@ public:
 
 	void Fence();
 	void FenceCurrentFrame();
-	void FenceAll();
+	//void FenceAll();
 
 	void FlushResCMDQueue();
 	void ResizeWindowSize();

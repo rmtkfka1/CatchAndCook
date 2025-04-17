@@ -176,24 +176,24 @@ void Core::FenceCurrentFrame()
 
 }
 
-void Core::FenceAll()
-{
-    for (uint32 i = 0; i < MAX_FRAME_COUNT; ++i)
-    {
-        _fenceValue++;
-        _cmdQueue->Signal(_fence.Get(), _fenceValue);
-        _lastFenceValue[CURRENT_CONTEXT_INDEX] = _fenceValue;
-    }
-
-	for (uint32 i = 0; i < MAX_FRAME_COUNT; ++i)
-	{
-		if (_fence->GetCompletedValue() < _lastFenceValue[i])
-		{
-			_fence->SetEventOnCompletion(_lastFenceValue[i], _fenceEvent);
-			WaitForSingleObject(_fenceEvent, INFINITE);
-		}
-	}
-}
+//void Core::FenceAll()
+//{
+//    for (uint32 i = 0; i < MAX_FRAME_COUNT; ++i)
+//    {
+//        _fenceValue++;
+//        _cmdQueue->Signal(_fence.Get(), _fenceValue);
+//        _lastFenceValue[CURRENT_CONTEXT_INDEX] = _fenceValue;
+//    }
+//
+//	for (uint32 i = 0; i < MAX_FRAME_COUNT; ++i)
+//	{
+//		if (_fence->GetCompletedValue() < _lastFenceValue[i])
+//		{
+//			_fence->SetEventOnCompletion(_lastFenceValue[i], _fenceEvent);
+//			WaitForSingleObject(_fenceEvent, INFINITE);
+//		}
+//	}
+//}
 
 
 void Core::CopyDepthTexture(const std::shared_ptr<Texture>& destDSTexture, const std::shared_ptr<Texture>& sourceDSTexture)
