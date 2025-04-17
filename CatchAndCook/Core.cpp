@@ -142,8 +142,6 @@ void Core::ResizeWindowSize()
 }
 
 
-
-
 void Core::Fence()
 {
     // Advance the fence value to mark commands up to this fence point.

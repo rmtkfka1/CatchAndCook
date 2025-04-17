@@ -80,10 +80,7 @@ private:
 	ComPtr<ID3D12CommandAllocator> _resCmdMemory{};
 	ComPtr<ID3D12GraphicsCommandList> _resCmdList{};
 
-
 	ComPtr<ID3D12DescriptorHeap> _imguiHeap;
-
-
 
 	ComPtr<ID3D12Fence> _fence = nullptr;
 	HANDLE _fenceEvent = nullptr;
