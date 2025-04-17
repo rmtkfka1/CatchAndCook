@@ -17,37 +17,6 @@ struct VS_OUT
 
 Texture2D _BakedGIMap : register(t8);
 
-LightingResult ComputeLightColorDeferred(float3 worldPos ,float3 WorldNomral)
-{
-    float3 lightColor = float3(0, 0, 0);
-
-    float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
-
-    LightingResult result = (LightingResult)0;
-
-    [unroll]
-    for (int i = 0; i < g_lightCount; ++i)
-    {
-        if (g_lights[i].onOff == 1)
-        {
-	        if (g_lights[i].mateiral.lightType == 0)
-	        {
-	            lightColor += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, worldPos, WorldNomral, toEye, result);
-	        }
-	        else if (g_lights[i].mateiral.lightType == 1)
-	        {
-	            lightColor += ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, result);
-	        }
-	        else if (g_lights[i].mateiral.lightType == 2)
-	        {
-	            lightColor += ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, result);
-	        }
-		}
-    }
-    
-    return result;
-}
-
 
 VS_OUT VS_Main(VS_IN input)
 {
@@ -65,7 +34,7 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float3 WolrdNormal = normalize(NormalTexture.Sample(sampler_point, input.uv).xyz);
     float4 AlbedoColor = AlbedoTexture.Sample(sampler_lerp, input.uv);
 
-    LightingResult lightColor = ComputeLightColorDeferred(worldPos.xyz, WolrdNormal.xyz);
+    LightingResult lightColor = ComputeLightColor(worldPos.xyz, WolrdNormal.xyz);
     float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), WolrdNormal) * 0.5 + 0.5));
 
     float3 finalColor = (lerp(ShadowColor * AlbedoColor, AlbedoColor, lightColor.atten) + float4(lightColor.subColor, 0)).xyz;

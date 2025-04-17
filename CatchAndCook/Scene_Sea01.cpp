@@ -13,8 +13,8 @@
 void Scene_Sea01::Init()
 {
 	Scene::Init();
-	//_finalShader->SetShader(ResourceManager::main->Get<Shader>(L"finalShader_MainField"));
-	//_finalShader->SetPass(RENDER_PASS::Forward);
+	_finalShader->SetShader(ResourceManager::main->Get<Shader>(L"finalShader_MainField"));
+	_finalShader->SetPass(RENDER_PASS::Forward);
 
 #pragma region DebugXYZ
 	{

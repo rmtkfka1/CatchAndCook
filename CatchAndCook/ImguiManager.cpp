@@ -192,16 +192,30 @@ void ImguiManager::LightController()
 {
     if (ImGui::TreeNode("Lighting"))
     {
-        ImGui::SliderFloat3("Light Direction", &LightManager::main->_lights[0]->direction.x, -1.0f, 1.0f);
-        ImGui::SliderFloat3("Light Pos", &LightManager::main->_lights[0]->position.x, -300000.0f, 300000.0f);
-        ImGui::SliderFloat("Light Power", &LightManager::main->_lights[0]->spotPower, 0, 100000.0f);
-		ImGui::SliderFloat("Light FallOffStart", &LightManager::main->_lights[0]->fallOffStart, 0, 100000.0f);
-		ImGui::SliderFloat("Light FallOffEnd", &LightManager::main->_lights[0]->fallOffEnd, 0, 100000.0f);
-		ImGui::SliderFloat("Light inner", &LightManager::main->_lights[0]->innerSpotAngle, 0, 360.0f*D2R);
-		ImGui::SliderFloat("Light outer", &LightManager::main->_lights[0]->spotAngle, 0, 360.0f * D2R);
-		ImGui::SliderFloat("Light intensity", &LightManager::main->_lights[0]->intensity, 0.0f, 100000.0f);
+        size_t size = LightManager::main->_lights.size();
+        for (size_t i = 0; i < size; i++)
+        {
+            auto light = LightManager::main->_lights[i];
+
+            if (ImGui::TreeNode((std::string("Light ") + std::to_string(i)).c_str()))
+            {
+                std::string prefix = "Light " + std::to_string(i) + " ";
+				ImGui::Text("Light Type : %s", light->material.lightType == 0 ? "Directional" : light->material.lightType == 1 ? "Point" : "Spot");
+                ImGui::SliderFloat3((prefix + "strength").c_str(), &light->strength.x, 0, 1.0f);
+                ImGui::SliderFloat3((prefix + "Diffuse").c_str(), &light->material.diffuse.x, 0, 1.0f);
+                ImGui::SliderFloat3((prefix + "ambient").c_str(), &light->material.ambient.x, 0, 1.0f);
+                ImGui::SliderFloat3((prefix + "Direction").c_str(), &light->direction.x, -1.0f, 1.0f);
+                ImGui::SliderFloat3((prefix + "Position").c_str(), &light->position.x, -10000.0f, 10000.0f);
+                ImGui::SliderFloat((prefix + "FallOff Start").c_str(), &light->fallOffStart, 0.0f, 100000.0f);
+                ImGui::SliderFloat((prefix + "FallOff End").c_str(), &light->fallOffEnd, 0.0f, 100000.0f);
+                ImGui::SliderFloat((prefix + "Inner Angle").c_str(), &light->innerSpotAngle, 0.0f, 360.0f * D2R);
+                ImGui::SliderFloat((prefix + "Outer Angle").c_str(), &light->spotAngle, 0.0f, 360.0f * D2R);
+                ImGui::SliderFloat((prefix + "Intensity").c_str(), &light->intensity, 0.0f, 100000.0f);
+                ImGui::TreePop(); 
+            }
+        }
         ImGui::TreePop();
-    };
+    }
 }
 
 void ImguiManager::SeaController()

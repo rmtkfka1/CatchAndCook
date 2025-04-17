@@ -41,7 +41,7 @@ void BufferManager::Init()
 
 	{
 		CreateStructuredBufferPool(BufferType::TransformParam,"TransformDatas",sizeof(Instance_Transform),20000);
-		CreateStructuredBufferPool(BufferType::ForwardLightParam, "ForwardLightDatas", sizeof(ForwardLightParams), 10000);
+	/*	CreateStructuredBufferPool(BufferType::ForwardLightParam, "ForwardLightDatas", sizeof(ForwardLightParams), 10000);*/
 	}
 
 	{

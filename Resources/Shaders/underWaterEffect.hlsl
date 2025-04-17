@@ -81,21 +81,19 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     int2 texCoord = dispatchThreadID.xy;
     float2 uv = (float2(texCoord) + 0.5f) / cameraScreenData.xy;
 
-    // 텍스처 샘플링
+ 
     float3 albedoColor = RenderT.SampleLevel(sampler_lerp, uv, 0).xyz;
     float3 worldNormal = normalize(NormalTexture.SampleLevel(sampler_point, uv, 0).xyz);
     float4 worldPos = PositionTexture.SampleLevel(sampler_point, uv, 0);
 
     float3 viewPos = ProjToView(texCoord);
     float fogFactor = CalculateFogFactor(viewPos);
-    float lightingInfluence = 0.0f;
     
-    float3 lightColor = ComputeSeaLightColor(worldPos.xyz, worldNormal, lightingInfluence).xyz;
-    float3 lightingAlbedoColor = lightColor * albedoColor;
-    lightingInfluence = saturate(lightingInfluence);
-    float3 tintedColor = lerp(g_underWaterColor , lightingAlbedoColor, lightingInfluence);
+    LightingResult lightColor = ComputeLightColor(worldPos.xyz, worldNormal.xyz);
 
-    float3 finalColor = lerp(g_fogColor, tintedColor, fogFactor);
+    float3 underWaterColor = lerp(g_underWaterColor * albedoColor, albedoColor, lightColor.atten);
+    
+    float3 finalColor = lerp(g_fogColor, underWaterColor, fogFactor) + lightColor.subColor;
 
     resultTexture[texCoord] = float4(finalColor, 1.0f);
 }
