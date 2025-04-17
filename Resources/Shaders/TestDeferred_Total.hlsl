@@ -119,5 +119,6 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     
     if (output.color.a <= 0.1f)
         discard;
+    
     return output;
 }

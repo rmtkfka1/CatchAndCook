@@ -103,6 +103,8 @@ void Core::RenderEnd()
         uiPresentFlags = DXGI_PRESENT_ALLOW_TEARING;
     }
 
+
+
      ThrowIfFailed(_swapChain->Present(uiSyncInterval, uiPresentFlags));
 
     _renderTarget->ChangeIndex();

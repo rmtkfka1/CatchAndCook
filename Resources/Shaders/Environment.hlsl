@@ -120,6 +120,7 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     output.color = BaseColor;
     output.normal = float4(N, 1.0f);
     output.maoe = float4(0,0,0,emission);
+    
     if (emission == 1)
 		output.color = emissionColor;
 

@@ -20,6 +20,7 @@ void CS_Main(int3 threadIndex : SV_DispatchThreadID)
 	float bloomFactor = saturate((relativeLuminance - th) / (1.0 - th)); // 스무스 하게 처리
 
 	color *= bloomFactor;
+
     if (MAOTexture[texCoord].a > 0.1f)
 		color = inputTexture[texCoord];
     

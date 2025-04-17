@@ -688,9 +688,6 @@
     <FxCompile Include="..\Resources\Shaders\cubemap.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Deferred.hlsl">
-      <Filter>998.HLSL\Graphics</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\final.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
@@ -769,5 +766,7 @@
     <FxCompile Include="..\Resources\Shaders\Environment.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\DeferredSea.hlsl" />
+    <FxCompile Include="..\Resources\Shaders\DeferredSeaSkinned.hlsl" />
   </ItemGroup>
 </Project>
