@@ -45,6 +45,7 @@ void PlayerController::Update()
 	CameraControl();
 	MoveControl();
 
+	currentCameraDistance += ((Input::main->GetMouseDown(KeyCode::WheelDownMouse) ? 1 : 0) - (Input::main->GetMouseDown(KeyCode::WheelUpMouse) ? 1 : 0)) * 0.5f;
 	//GetOwner()->_transform->SetWorldPosition(GetOwner()->_transform->GetWorldPosition() + Vector3::Forward * 10.0f * Time::main->GetDeltaTime());
 }
 
@@ -82,18 +83,19 @@ void PlayerController::CameraControl()
 	finalRotation = Quaternion::CreateFromYawPitchRoll(_currentEuler);
 	_currentNextDirection = Vector3::Transform(Vector3::Forward, finalRotation);
 
-	float distance = 3.6;
 
+	currentCameraDistance = std::clamp(currentCameraDistance, minCameraDistance, maxCameraDistance);
+	double finalCameraDistance = currentCameraDistance;
 	std::vector<RayHit> hitList;
-	if (auto isHit = ColliderManager::main->RayCastAll({ _currentOffset, -_currentNextDirection }, distance * 2, hitList))
+	if (auto isHit = ColliderManager::main->RayCastAll({ _currentOffset, -_currentNextDirection }, finalCameraDistance * 2, hitList))
 		for (auto& hit : hitList)
 			if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
 			{
-				distance = std::min(hit.distance, distance) - 0.05f;
+				finalCameraDistance = std::min((double)hit.distance, finalCameraDistance) - 0.05f;
 				break;
 			}
 
-	cameraNextPosition = _currentOffset - _currentNextDirection * distance;
+	cameraNextPosition = _currentOffset - _currentNextDirection * finalCameraDistance;
 
 	cameraTransform->SetWorldPosition(cameraNextPosition);
 	cameraTransform->LookUp(_currentNextDirection, Vector3::Up);

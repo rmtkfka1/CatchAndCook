@@ -40,7 +40,6 @@ void LightComponent::Start()
 	light->innerSpotAngle = innerSpotAngle * D2R;
 	light->direction = GetOwner()->_transform->GetForward();
 	light->position = GetOwner()->_transform->GetWorldPosition();
-	LightManager::main->PushLight(light);
 }
 
 void LightComponent::Update()
@@ -59,12 +58,15 @@ void LightComponent::Enable()
 {
 	Component::Enable();
 	light->onOff = 1;
+
+	LightManager::main->PushLight(light);
 }
 
 void LightComponent::Disable()
 {
 	Component::Disable();
 	light->onOff = 0;
+	LightManager::main->RemoveLight(light);
 }
 
 void LightComponent::RenderBegin()
@@ -97,5 +99,4 @@ void LightComponent::SetDestroy()
 void LightComponent::Destroy()
 {
 	Component::Destroy();
-	LightManager::main->RemoveLight(light);
 }

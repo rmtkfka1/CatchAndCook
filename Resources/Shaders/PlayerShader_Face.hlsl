@@ -50,6 +50,8 @@ struct VS_OUT
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 
+Texture2D _Thinkness : register(t2);
+
 Texture2D _BakedGIMap : register(t8);
 
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
@@ -162,7 +164,9 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, lightColor.atten) + float4(lightColor.subColor, 0)).xyz;
 
 
-    return float4(finalColor, 1) + Sobel(input.positionCS);
+    float3 viewDir = normalize(cameraPos - input.positionWS.xyz);
+    float3 H = normalize(lightColor.direction + N * 0.4f);
+    return float4(pow(saturate(dot(viewDir, -H)), 3) * float3(1, 0, 0) * _Thinkness.Sample(sampler_lerp, input.uv).r, 1); // SSS
 
-	return float4(finalColor, 1);
+    return float4(finalColor, 1) + Sobel(input.positionCS);
 }

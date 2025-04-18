@@ -777,5 +777,11 @@
     <FxCompile Include="..\Resources\Shaders\Environment.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\PlayerShader_Skin.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\PlayerShader_Face.hlsl">
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

@@ -145,6 +145,8 @@ enum KeyCode : short
     CenterMouse = MOUSE_KEYCODE_OFFSET + 2,
     X1Mouse = MOUSE_KEYCODE_OFFSET + 3,
     X2Mouse = MOUSE_KEYCODE_OFFSET + 4,
+    WheelUpMouse = MOUSE_KEYCODE_OFFSET + 5,
+    WheelDownMouse = MOUSE_KEYCODE_OFFSET + 6,
 
     KEYBOARD_KEYCODE_ENDPOINT = 256
 };

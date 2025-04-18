@@ -73,7 +73,7 @@ void Terrain::Start()
             for (auto& material : renderer->GetMaterials())
             {
                 auto newMaterial = std::make_shared<Material>();
-                material->CopyMaterial(newMaterial);
+                newMaterial = material->Clone();
                 renderer->SetMaterials({ newMaterial });
                 newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Instanced"));
                 newMaterial->SetPass(RENDER_PASS::Deferred);

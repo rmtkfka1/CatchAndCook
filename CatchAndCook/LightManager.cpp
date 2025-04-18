@@ -52,7 +52,8 @@ void LightManager::Update()
 				light->direction = CameraManager::main->GetActiveCamera()->GetCameraLook();
 				light->position = CameraManager::main->GetActiveCamera()->GetCameraPos();
 			}*/
-
+			if (_lightParmas.light.size() <= _lightParmas.lightCount)
+				break;
 			_lightParmas.light[_lightParmas.lightCount] = *light.get();
 			_lightParmas.lightCount++;
 		}

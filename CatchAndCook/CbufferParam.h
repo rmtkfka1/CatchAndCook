@@ -43,6 +43,7 @@ CBUFFER_INJECTOR("DefaultMaterialParam", DefaultMaterialParam, 256, BufferType::
 )
 
 
+//환경 쉐이더
 struct alignas(16) EnvMaterialParam
 {
 	Vector4 color;
@@ -59,8 +60,6 @@ CBUFFER_INJECTOR("EnvMaterialParam", EnvMaterialParam, 1024, BufferType::EnvMate
 	data.emissionColor = Vector4(source->GetPropertyVector("_EmissionColor"));
 	data.emission = source->GetPropertyFloat("_Emission");
 )
-
-
 
 struct alignas(16) PlayerMaterialParam
 {

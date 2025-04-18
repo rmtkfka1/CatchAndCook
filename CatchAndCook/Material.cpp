@@ -141,8 +141,9 @@ bool Material::HasPropertyMatrix(const std::string& name)
 	return _propertyMatrixs.contains(name);
 }
 
-void Material::CopyMaterial(std::shared_ptr<Material> material)
+std::shared_ptr<Material> Material::Clone()
 {
+	std::shared_ptr<Material> material = make_shared<Material>();
 	material->_propertyInts = _propertyInts;
 	material->_propertyFloats = _propertyFloats;
 	material->_propertyVectors = _propertyVectors;
@@ -155,4 +156,6 @@ void Material::CopyMaterial(std::shared_ptr<Material> material)
 	material->_pass = _pass;
 	material->_stencilIndex = _stencilIndex;
 	material->_useMaterialParams = _useMaterialParams;
+	return material;
+
 }

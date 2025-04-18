@@ -202,16 +202,16 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	    }
 	    case WM_MOUSEWHEEL:
 	    {
-	        int deltaZ = (wParam >> 16) & 0xffff;
+	        short deltaZ = (wParam >> 16) & 0xffff;
 	        char sign = std::sign(deltaZ);
 	        eventDesc.type = InputType::Mouse;
 	        eventDesc.mouse.posX = 0;
 	        eventDesc.mouse.posY = deltaZ;
-	        eventDesc.mouse.isDown = sign < 0;
-	        eventDesc.mouse.isUp = sign > 0;
-	        eventDesc.mouse.isCtrl = wParam & MK_CONTROL;
-	        eventDesc.mouse.isShift = wParam & MK_SHIFT;
-	        eventDesc.keyCode = KeyCode::CenterMouse;
+			eventDesc.mouse.isDown = true;
+			eventDesc.mouse.isUp = true;
+			eventDesc.mouse.isCtrl = wParam & MK_CONTROL;
+			eventDesc.mouse.isShift = wParam & MK_SHIFT;
+			eventDesc.keyCode = (sign > 0) ? KeyCode::WheelUpMouse : KeyCode::WheelDownMouse;
 			eventDesc.mouse.wheelDelta= GET_WHEEL_DELTA_WPARAM(wParam);
 			eventDesc.mouse.wheelDeltaH = GET_WHEEL_DELTA_WPARAM(wParam);
 	        Input::main->_eventQueue.push(eventDesc);

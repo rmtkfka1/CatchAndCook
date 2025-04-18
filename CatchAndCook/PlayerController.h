@@ -63,6 +63,10 @@ private: // Camera Control
 	Vector3 targetLookWorldDirection;
 	Quaternion currentLookWorldRotation;
 
+	double currentCameraDistance = 3.6;
+	double minCameraDistance = 0.75f;
+	double maxCameraDistance = 3.6;
+
 private:
 	Vector3 velocity = Vector3::Zero;
 	ControlInfo controlInfo = fieldInfo;

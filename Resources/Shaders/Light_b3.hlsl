@@ -2,7 +2,7 @@
 #define _LIGHTING_HLSL_
 
 
-#define MAX_LIGHTS 20
+#define MAX_LIGHTS 30
 
 
 
@@ -91,6 +91,7 @@ struct LightingResult
 {
 	float3 color;
     float atten;
+    float3 direction;
 
     float3 subColor;
     float subAtten;
@@ -103,6 +104,7 @@ void ComputeDirectionalLight(Light L, LightMateiral mat, float3 worldPos, float3
     float ndotl = max(dot(normal, lightVec), 0.0f);
     //float3 LightStrength = L.strength * L.intensity * ndotl;
 
+    lightingResult.direction = lightVec;
     lightingResult.atten = ndotl * clamp(0, 1, L.intensity);
     lightingResult.color = L.strength* L.intensity;
 
@@ -172,7 +174,7 @@ LightingResult ComputeLightColor(float3 worldPos, float3 WorldNomral)
     float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
 
     LightingResult result = (LightingResult)0;
-    [unroll]
+    //[unroll]
     for (int i = 0; i < g_lightCount; ++i)
     {
         if (g_lights[i].onOff == 1)

@@ -75,7 +75,7 @@ public:
 	bool HasPropertyVector(const std::string& name);
 	bool HasPropertyMatrix(const std::string& name);
 
-	void CopyMaterial(std::shared_ptr<Material> material);
+	std::shared_ptr<Material> Clone();
 
 	tableContainer _tableContainer;
 	tableContainer _tableLongContainer;

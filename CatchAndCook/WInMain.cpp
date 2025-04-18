@@ -194,16 +194,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_MOUSEWHEEL:
 	{
-		int deltaZ = (wParam >> 16) & 0xffff;
+		short deltaZ = (wParam >> 16) & 0xffff;
 		char sign = std::sign(deltaZ);
 		eventDesc.type = InputType::Mouse;
 		eventDesc.mouse.posX = 0;
 		eventDesc.mouse.posY = deltaZ;
-		eventDesc.mouse.isDown = sign < 0;
-		eventDesc.mouse.isUp = sign > 0;
+		eventDesc.mouse.isDown = true;
+		eventDesc.mouse.isUp = true;
 		eventDesc.mouse.isCtrl = wParam & MK_CONTROL;
 		eventDesc.mouse.isShift = wParam & MK_SHIFT;
-		eventDesc.keyCode = KeyCode::CenterMouse;
+		eventDesc.keyCode = (sign > 0) ? KeyCode::WheelUpMouse : KeyCode::WheelDownMouse;
 		Input::main->_eventQueue.push(eventDesc);
 		break;
 	}

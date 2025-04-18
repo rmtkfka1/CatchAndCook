@@ -393,6 +393,34 @@ void ResourceManager::CreateDefaultShader()
 		Add<Shader>(L"PlayerShader", shader);
 	}
 
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetInjector({ BufferType::DefaultMaterialParam, BufferType::PlayerMaterialParam });
+		shader->SetMacro({ {"SKINNED",nullptr} });
+		shader->SetPass(RENDER_PASS::Forward);
+		shader->Init(L"PlayerShader_Skin.hlsl", SkinProp, ShaderArg{}, info);
+		Add<Shader>(L"PlayerShader_Skin", shader);
+	}
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetInjector({ BufferType::DefaultMaterialParam, BufferType::PlayerMaterialParam });
+		shader->SetMacro({ {"SKINNED",nullptr} });
+		shader->SetPass(RENDER_PASS::Forward);
+		shader->Init(L"PlayerShader_Face.hlsl", SkinProp, ShaderArg{}, info);
+		Add<Shader>(L"PlayerShader_Face", shader);
+	}
+
 
 
 	{

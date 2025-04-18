@@ -65,7 +65,7 @@ private:
     void DataBeginUpdate();
 
     static const int _maxInputKeyField = 512;
-    static const int _maxInputMouseField = 518;
+    static const int _maxInputMouseField = 540;
     InputKeyData _inputKeyboardField[Input::_maxInputKeyField];
     InputMouseData _inputMouseField[Input::_maxInputMouseField];
     Vector2 mousePos{ 0, 0 };

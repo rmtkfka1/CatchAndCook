@@ -103,6 +103,7 @@ void Game::Init(HWND hwnd)
 	//	LightManager::main->PushLight(light);
 	//}
 
+	if (false)
 	{
 		std::shared_ptr<Light> light = std::make_shared<Light>();
 		light->onOff = 1;
@@ -119,7 +120,7 @@ void Game::Init(HWND hwnd)
 		LightManager::main->PushLight(light);
 	}
 
-	auto scene = SceneManager::main->AddScene(SceneType::Sea01);
+	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
 };
 
 void Game::PrevUpdate()
