@@ -23,21 +23,7 @@ void FishMonster::Start()
 
 	std::unordered_map<string, std::shared_ptr<Animation>> aniList;
 
-	if (auto Animator = GetOwner()->GetComponent<AnimationListComponent>())
-	{
-		aniList =Animator->GetAnimations();
-	}
 
-	if (auto& hieracy = GetOwner()->GetComponent<SkinnedHierarchy>())
-	{
-		if (!aniList.empty()) 
-		{
-			auto firstAnimation = aniList.begin()->second; 
-			if (firstAnimation) {
-				hieracy->SetAnimation(firstAnimation);
-			}
-		}
-	}
 
 }
 
