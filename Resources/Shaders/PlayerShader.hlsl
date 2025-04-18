@@ -88,6 +88,20 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 
 
 
+void ComputeForwardDirectionalLight(Light L, LightMateiral mat, float3 worldPos, float3 normal, float3 toEye, inout LightingResult lightingResult)
+{
+    //float3 lightVec = normalize(L.position - worldPos);
+    float3 lightVec = normalize(-L.direction);
+    float ndotl = max(dot(normal, lightVec), 0.0f);
+    ndotl = 1-pow(1-ndotl, 20);
+    //float3 LightStrength = L.strength * L.intensity * ndotl;
+
+    lightingResult.direction = lightVec;
+    lightingResult.atten = ndotl * clamp(0, 1, L.intensity);
+    lightingResult.color = L.strength* L.intensity;
+    lightingResult.intensity = L.intensity;
+}
+
 LightingResult ComputeLightColorForward(float3 worldPos ,float3 WorldNomral)
 {
     float3 lightColor = float3(0, 0, 0);
@@ -103,7 +117,7 @@ LightingResult ComputeLightColorForward(float3 worldPos ,float3 WorldNomral)
         {
 	        if (g_lights[i].mateiral.lightType == 0)
 	        {
-	            ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, worldPos, WorldNomral, toEye, result);
+	            ComputeForwardDirectionalLight(g_lights[i], g_lights[i].mateiral, worldPos, WorldNomral, toEye, result);
 	        }
 	        else if (g_lights[i].mateiral.lightType == 1)
 	        {
@@ -119,13 +133,13 @@ LightingResult ComputeLightColorForward(float3 worldPos ,float3 WorldNomral)
     return result;
 }
 
-float Sobel(float4 positionCS)
+float Sobel(float4 positionCS, float scale)
 {
     float2 uv = positionCS.xy / positionCS.w;
     uv.y *= -1;
     uv = uv * 0.5 + 0.5;
 
-	float2 texelSize = 2.0f / g_window_size;
+	float2 texelSize = scale / g_window_size;
 
 	// ¡÷∫Ø 9∞≥ «»ºø¿« ±Ì¿Ã∏¶ ª˘«√∏µ
 	float d0 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_lerp, uv + float2(-texelSize.x, -texelSize.y)).r);
@@ -162,7 +176,13 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, lightColor.atten) + float4(lightColor.subColor, 0)).xyz;
 
 
-    return float4(finalColor, 1) + Sobel(input.positionCS);
+    float3 viewDir = normalize(cameraPos - input.positionWS.xyz);
+    // * pow(max(dot(viewDir, reflect(-lightColor.direction, N)), 0), 3)
+    float N2L = 1 - pow(1 - saturate(dot(lightColor.direction, N)), 1);
+    float sobelW = 6;
+    float sobel = clamp(0, 1, Sobel(input.positionCS, sobelW / input.positionCS.w)) * 0.6 * N2L;
+
+    return float4(finalColor, 1) + sobel; // * dot(N, viewDir)
 
 	return float4(finalColor, 1);
 }

@@ -91,6 +91,7 @@ struct LightingResult
 {
 	float3 color;
     float atten;
+    float intensity;
     float3 direction;
 
     float3 subColor;
@@ -107,7 +108,7 @@ void ComputeDirectionalLight(Light L, LightMateiral mat, float3 worldPos, float3
     lightingResult.direction = lightVec;
     lightingResult.atten = ndotl * clamp(0, 1, L.intensity);
     lightingResult.color = L.strength* L.intensity;
-
+    lightingResult.intensity = L.intensity;
 }
 
 void ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout LightingResult lightingResult)

@@ -17,6 +17,15 @@ cbuffer PlayerMaterialParam : register(b8)
     float4 temp = float4(1, 1, 1, 1);
 };
 
+cbuffer PlayerSkinMaterialParam : register(b8)
+{
+    float4 temp2 = float4(1, 1, 1, 1);
+};
+cbuffer PlayerFaceMaterialParam : register(b8)
+{
+    float4 temp3 = float4(1, 1, 1, 1);
+};
+
 struct VS_IN
 {
     float3 pos : POSITION;
@@ -31,7 +40,6 @@ struct VS_IN
     float4 boneIds : BONEIDs;
     float4 boneWs : BONEWs;
 	#endif
-
 };
 
 struct VS_OUT
@@ -44,7 +52,7 @@ struct VS_OUT
     float3 tangentOS : TangentOS;
     float3 tangentWS : TangentWS;
     float2 uv : TEXCOORD0;
-    
+
 };
 
 Texture2D _BaseMap : register(t0);
@@ -89,6 +97,21 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 
 
 
+
+void ComputeForwardDirectionalLight(Light L, LightMateiral mat, float3 worldPos, float3 normal, float3 toEye, inout LightingResult lightingResult)
+{
+    //float3 lightVec = normalize(L.position - worldPos);
+    float3 lightVec = normalize(-L.direction);
+    float ndotl = max(dot(normal, lightVec), 0.0f);
+    ndotl = 1-pow(1-ndotl, 20);
+    //float3 LightStrength = L.strength * L.intensity * ndotl;
+
+    lightingResult.direction = lightVec;
+    lightingResult.atten = ndotl * clamp(0, 1, L.intensity);
+    lightingResult.color = L.strength* L.intensity;
+    lightingResult.intensity = L.intensity;
+}
+
 LightingResult ComputeLightColorForward(float3 worldPos ,float3 WorldNomral)
 {
     float3 lightColor = float3(0, 0, 0);
@@ -104,7 +127,7 @@ LightingResult ComputeLightColorForward(float3 worldPos ,float3 WorldNomral)
         {
 	        if (g_lights[i].mateiral.lightType == 0)
 	        {
-	            ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, worldPos, WorldNomral, toEye, result);
+	            ComputeForwardDirectionalLight(g_lights[i], g_lights[i].mateiral, worldPos, WorldNomral, toEye, result);
 	        }
 	        else if (g_lights[i].mateiral.lightType == 1)
 	        {
@@ -120,13 +143,14 @@ LightingResult ComputeLightColorForward(float3 worldPos ,float3 WorldNomral)
     return result;
 }
 
-float Sobel(float4 positionCS)
+
+float Sobel(float4 positionCS, float scale)
 {
     float2 uv = positionCS.xy / positionCS.w;
     uv.y *= -1;
     uv = uv * 0.5 + 0.5;
 
-	float2 texelSize = 2.0f / g_window_size;
+	float2 texelSize = scale / g_window_size;
 
 	// ÁÖº¯ 9°³ ÇÈ¼¿ÀÇ ±íÀÌ¸¦ »ùÇÃ¸µ
 	float d0 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_lerp, uv + float2(-texelSize.x, -texelSize.y)).r);
@@ -150,6 +174,7 @@ float Sobel(float4 positionCS)
     return edgeStrength; //  > threshold ? 1.0f : 0.0f
 }
 
+
 [earlydepthstencil]
 float4 PS_Main(VS_OUT input) : SV_Target
 {
@@ -162,9 +187,18 @@ float4 PS_Main(VS_OUT input) : SV_Target
 
     float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, lightColor.atten) + float4(lightColor.subColor, 0)).xyz;
 
-    float3 viewDir = normalize(cameraPos - input.positionWS.xyz);
-    float3 H = normalize(lightColor.direction + N * 0.4f);
-    return float4(pow(saturate(dot(viewDir, -H)), 3) * float3(1, 0, 0) * _Thinkness.Sample(sampler_lerp, input.uv).r, 1); // SSS
+    float SSSDistorion = 0.3f;
+	float SSSScale = 0.3f;
+    float SSSPow = 2.5f;
 
-    return float4(finalColor, 1) + Sobel(input.positionCS);
+    // SSS ÆÄÆ®.
+    float3 viewDir = normalize(cameraPos - input.positionWS.xyz);
+    float3 H = normalize(lightColor.direction + N * SSSDistorion);
+    float SSS = pow(saturate(dot(viewDir, -H)), SSSPow) * _Thinkness.Sample(sampler_lerp, input.uv).r;
+    //float3 SSSFinal = lerp(float3(1,1,1), float3(1, 0, 0) * SSSScale, SSS);
+    float3 SSSFinal =  float3(1, 0.2, 0.1) * SSSScale * SSS;
+
+    //Sobel(input.positionCS, 3/input.positionCS.w)
+
+    return float4(finalColor, 1) + float4(SSSFinal, 0);
 }

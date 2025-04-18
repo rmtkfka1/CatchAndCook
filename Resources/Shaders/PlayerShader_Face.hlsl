@@ -44,13 +44,16 @@ struct VS_OUT
     float3 tangentOS : TangentOS;
     float3 tangentWS : TangentWS;
     float2 uv : TEXCOORD0;
-    
+
+    float3 rightWS : NORMAL2;
+    float3 forwardWS : NORMAL3;
 };
 
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 
 Texture2D _Thinkness : register(t2);
+Texture2D _SDFMap : register(t3);
 
 Texture2D _BakedGIMap : register(t8);
 
@@ -84,6 +87,9 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix);
 
     output.uv = input.uv;
+
+    output.rightWS = mul(float3(1,0,0), (float3x3)(l2wMatrix));
+    output.forwardWS = mul(float3(0,0,1), (float3x3)(l2wMatrix));
 
     return output;
 }
@@ -121,13 +127,13 @@ LightingResult ComputeLightColorForward(float3 worldPos ,float3 WorldNomral)
     return result;
 }
 
-float Sobel(float4 positionCS)
+float Sobel(float4 positionCS, float scale)
 {
     float2 uv = positionCS.xy / positionCS.w;
     uv.y *= -1;
     uv = uv * 0.5 + 0.5;
 
-	float2 texelSize = 2.0f / g_window_size;
+	float2 texelSize = scale / g_window_size;
 
 	// ¡÷∫Ø 9∞≥ «»ºø¿« ±Ì¿Ã∏¶ ª˘«√∏µ
 	float d0 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_lerp, uv + float2(-texelSize.x, -texelSize.y)).r);
@@ -161,12 +167,38 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float4 BaseColor = _BaseMap.Sample(sampler_lerp, input.uv * _baseMapST.xy + _baseMapST.zw) * color;
     float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
 
-    float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, lightColor.atten) + float4(lightColor.subColor, 0)).xyz;
 
 
+
+    //SDF
+    float2 l = normalize(lightColor.direction.xz);
+    float2 f = normalize(input.forwardWS.xz);
+    float2 r = normalize(input.rightWS.xz);
+
+    float angle  = clamp(0, 1, dot(l, f) * 0.5 + 0.5);
+    float sdf = dot(l, r) <= 0 ? _SDFMap.Sample(sampler_lerp_clamp, input.uv) : _SDFMap.Sample(sampler_lerp_clamp, float2(1 - input.uv.x, input.uv.y));
+
+    float atten2 = clamp(0, 1, saturate(angle - sdf) * 20) * lightColor.intensity;
+
+
+    float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, atten2) + float4(lightColor.subColor, 0)).xyz;
+
+
+    float SSSDistorion = 0.3f;
+	float SSSScale = 0.3f;
+    float SSSPow = 2.5f;
+
+    // SSS ∆ƒ∆Æ.
     float3 viewDir = normalize(cameraPos - input.positionWS.xyz);
-    float3 H = normalize(lightColor.direction + N * 0.4f);
-    return float4(pow(saturate(dot(viewDir, -H)), 3) * float3(1, 0, 0) * _Thinkness.Sample(sampler_lerp, input.uv).r, 1); // SSS
+    float3 H = normalize(lightColor.direction + N * SSSDistorion);
+    float SSS = pow(saturate(dot(viewDir, -H)), SSSPow) * _Thinkness.Sample(sampler_lerp, input.uv).r;
+    //float3 SSSFinal = lerp(float3(1,1,1), float3(1, 0, 0) * SSSScale, SSS);
+    float3 SSSFinal =  float3(1, 0.2, 0.1) * SSSScale * SSS;
 
-    return float4(finalColor, 1) + Sobel(input.positionCS);
+
+    //transform
+
+    // + Sobel(input.positionCS, 3 / input.positionCS.w)
+    
+    return float4(finalColor, 1) + float4(SSSFinal, 0);
 }
