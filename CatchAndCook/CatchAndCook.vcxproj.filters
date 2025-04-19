@@ -786,10 +786,10 @@
     <FxCompile Include="..\Resources\Shaders\TestForward_Total.hlsl">
       <Filter>998.HLSL\Graphics\JIN</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Plant.hlsl">
+    <FxCompile Include="..\Resources\Shaders\seatest.hlsl">
       <Filter>998.HLSL\Graphics\KSH</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\seatest.hlsl">
+    <FxCompile Include="..\Resources\Shaders\DeferredSeaPlant.hlsl">
       <Filter>998.HLSL\Graphics\KSH</Filter>
     </FxCompile>
   </ItemGroup>

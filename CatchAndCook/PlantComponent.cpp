@@ -18,10 +18,10 @@ void PlantComponent::Init()
 
 void PlantComponent::Start()
 {
-	if (GetOwner()->GetRenderer())
-	{
-		GetOwner()->GetRenderer()->AddCbufferSetter(static_pointer_cast<PlantComponent>(shared_from_this()));
-	}
+	//if (GetOwner()->GetRenderer())
+	//{
+	//	GetOwner()->GetRenderer()->AddCbufferSetter(static_pointer_cast<PlantComponent>(shared_from_this()));
+	//}
 }
 
 void PlantComponent::Update()
@@ -66,10 +66,11 @@ void PlantComponent::SetDestroy()
 
 }
 
-void PlantComponent::SetData(Material* material)
+void PlantComponent::SetData(StructuredBuffer* buffer)
 {
-	//auto& cmdList =  Core::main->GetCmdList();
-	//auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::PlantInfo)->Alloc(1);
-	//memcpy(CbufferContainer->ptr, (void*)&_plantInfo, sizeof(PlantInfo));
-	//cmdList->SetGraphicsRootConstantBufferView(8, CbufferContainer->GPUAdress);
+	//PlantInfo info;
+	//info.amplitude
+
+
 }
+

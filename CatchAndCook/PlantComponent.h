@@ -4,13 +4,14 @@
 
 struct PlantInfo
 {
-	float amplitude;   // 흔들림의 강도
-	float frequency;   // 흔들림의 빈도
-	float padding;
-	float padding2;
+	vec4 color = vec4(1, 1, 1, 1);
+	float amplitude = 0.2f;
+	float frequency = 0.5f;
+	float boundsCenterY;
+	float boundsSizeY;
 };
 
-class PlantComponent :public Component, public RenderCBufferSetter
+class PlantComponent :public Component, public RenderStructuredSetter
 {
 public:
 	PlantComponent();
@@ -26,7 +27,8 @@ public:
 	void CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
 	bool IsExecuteAble() override;
 	void SetDestroy() override;
-	virtual void SetData(Material* material = nullptr);
+
+	virtual void SetData(StructuredBuffer* buffer = nullptr) = 0;
 private:
 
 public:

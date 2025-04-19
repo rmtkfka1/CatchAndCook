@@ -37,11 +37,10 @@ cbuffer DefaultMaterialParam : register(b7)
 //cbuffer PlantMaterialParam : register(b8)
 //{
 //    float4 color = float4(1, 1, 1, 1);
-//    float amplitude =0.2f;
-//    float frequency =0.5f;
-//    float centerY;
-//    float 
-   
+//    float amplitude = 0.2f;
+//    float frequency = 0.5f;
+//    float boundsCenterY;
+//    float boundsSizeY;
 //}
 
 float NormalizeY(float y, float minY, float maxY)

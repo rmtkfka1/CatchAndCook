@@ -39,6 +39,7 @@ void BufferManager::Init()
 		CreateBufferPool(i,BufferType::FogParam, sizeof(FogParam), 5);
 		CreateBufferPool(i,BufferType::UnderWaterParam, sizeof(UnderWaterParam), 5);
 		CreateBufferPool(i,BufferType::InstanceOffsetParam, sizeof(InstanceOffsetParam), 10000);
+
 	}
 	for (int i = 0; i < MAX_FRAME_COUNT; ++i)
 	{

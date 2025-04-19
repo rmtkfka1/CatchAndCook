@@ -86,7 +86,6 @@ void InstancingManager::Render()
 			int ROOT_OFFSET = infos.registerIndex - SRV_STRUCTURED_TABLE_REGISTER_OFFSET;
 			assert(ROOT_OFFSET >= 0);
 			cmdList->SetGraphicsRootDescriptorTable(SRV_STRUCTURED_TABLE_INDEX + ROOT_OFFSET, table.GPUHandle);
-
 			param.offset[ROOT_OFFSET].x = offset;
 		}
 

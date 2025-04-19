@@ -7,7 +7,6 @@ public:
 	
 	void Init(uint32 size, uint32 elementCount);
 
-
 	template<class T>
 	void AddData(const T& data)
 	{
