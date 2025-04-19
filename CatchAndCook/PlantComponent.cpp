@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "PlantComponent.h"
 
+COMPONENT(PlantComponent)
+
 PlantComponent::PlantComponent()
 {
 }
@@ -12,16 +14,16 @@ PlantComponent::~PlantComponent()
 
 void PlantComponent::Init()
 {
-	/*_plantInfo.amplitude = 0.5f;
-	_plantInfo.frequency = 0.8f;*/
+	cout << "붙음" << endl;
 }
 
 void PlantComponent::Start()
 {
-	//if (GetOwner()->GetRenderer())
-	//{
-	//	GetOwner()->GetRenderer()->AddCbufferSetter(static_pointer_cast<PlantComponent>(shared_from_this()));
-	//}
+	if (auto renderer =GetOwner()->GetRenderer())
+	{
+		renderer->AddStructuredSetter(static_pointer_cast<PlantComponent>(shared_from_this()), BufferType::SeaPlantParam);
+		_renderBase = renderer;
+	}
 }
 
 void PlantComponent::Update()
@@ -66,11 +68,27 @@ void PlantComponent::SetDestroy()
 
 }
 
-void PlantComponent::SetData(StructuredBuffer* buffer)
+void PlantComponent::SetData(StructuredBuffer* buffer, Material* material)
 {
-	//PlantInfo info;
-	//info.amplitude
+	PlantInfo info;
+	info.amplitude;
+	info.color = material->GetPropertyVector("_Color");
+	info.amplitude = 0.2f;
+	info.frequency = 0.5f;
 
+	BoundingBox& box = _renderBase.lock()->GetOriginBound();
+	info.boundsSizeY =box.Extents.y*2;
+	info.boundsCenterY = box.Center.y;
 
+	/*cout << "호우" << endl;
+	cout << "boundsCenterY : " << info.boundsCenterY << endl;
+	cout << "boundsSizeY : " << info.boundsSizeY << endl;
+	cout << "color : " << info.color.x << " " << info.color.y << " " << info.color.z << endl;
+	cout << "amplitude : " << info.amplitude << endl;
+	cout << "frequency : " << info.frequency << endl;*/
+
+	buffer->AddData(info);
 }
+
+
 

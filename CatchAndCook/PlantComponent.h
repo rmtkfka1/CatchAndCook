@@ -28,9 +28,9 @@ public:
 	bool IsExecuteAble() override;
 	void SetDestroy() override;
 
-	virtual void SetData(StructuredBuffer* buffer = nullptr) = 0;
+	virtual void SetData(StructuredBuffer* buffer = nullptr ,Material* material=nullptr);
 private:
-
+	weak_ptr<RendererBase> _renderBase;
 public:
 	PlantInfo _plantInfo;
 

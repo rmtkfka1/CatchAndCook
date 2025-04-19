@@ -44,6 +44,7 @@ void BufferManager::Init()
 	for (int i = 0; i < MAX_FRAME_COUNT; ++i)
 	{
 		CreateStructuredBufferPool(i,BufferType::TransformParam,"TransformDatas",sizeof(Instance_Transform),20000);
+		CreateStructuredBufferPool(i, BufferType::SeaPlantParam, "PlantInfos", sizeof(PlantInfo), 20000);
 	/*	CreateStructuredBufferPool(BufferType::ForwardLightParam, "ForwardLightDatas", sizeof(ForwardLightParams), 10000);*/
 	}
 

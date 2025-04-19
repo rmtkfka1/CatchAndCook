@@ -61,6 +61,11 @@ public:
 
 	};
 
+	BoundingBox& GetOriginBound()
+	{
+		return _orginBound;
+	}
+
 	void SetCulling(bool isCulling) {
 		_isCulling = isCulling;
 	};
