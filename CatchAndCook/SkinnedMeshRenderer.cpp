@@ -61,7 +61,6 @@ void SkinnedMeshRenderer::Start()
 		}
 		SetBound(totalBox);
 	}
-
 	else
 	{
 		BoundingBox localBox;
@@ -74,6 +73,21 @@ void SkinnedMeshRenderer::Start()
 		}
 		SetOriginBound(localBox);
 	}
+
+
+	for (int i = 0; i < _mesh.size(); i++)
+	{
+		auto currentMaterial = _uniqueMaterials[i % std::min(_mesh.size(), _uniqueMaterials.size())];
+
+		if (RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward) && currentMaterial->GetPreDepthNormal()) {
+			auto depthNormalMaterial = currentMaterial->Clone();
+			depthNormalMaterial->SetShader(ResourceManager::main->_depthNormal_Skinned->GetShader());
+			depthNormalMaterial->SetPass(RENDER_PASS::Deferred);
+			_depthNormalMaterials.push_back(make_pair(i, depthNormalMaterial));
+		}
+	}
+
+
 }
 
 void SkinnedMeshRenderer::Update()
@@ -126,13 +140,17 @@ void SkinnedMeshRenderer::RenderBegin()
 	{
 		auto a = GetOwner();
 		auto currentMesh = _mesh[i];
-		auto currentMaterial = _uniqueMaterials[i % _uniqueMaterials.size()];
+		auto currentMaterial = _uniqueMaterials[i % std::min(_mesh.size(), _uniqueMaterials.size())];
 
 		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(),currentMesh.get(),this);
 
-		if (RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward)) {
+		/*if (RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward) && currentMaterial->GetPreDepthNormal()) {
 			SceneManager::main->GetCurrentScene()->AddRenderer(ResourceManager::main->_depthNormal_Skinned.get(), currentMesh.get(), this);
-		}
+		}*/
+	}
+	for (auto& ele : _depthNormalMaterials) {
+		auto currentMesh = _mesh[ele.first];
+		SceneManager::main->GetCurrentScene()->AddRenderer(ele.second.get(), currentMesh.get(), this);
 	}
 
 	for(int j = 0; j < _sharedMaterials.size(); j++)

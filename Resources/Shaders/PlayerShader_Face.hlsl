@@ -159,7 +159,6 @@ float Sobel(float4 positionCS, float scale)
     return edgeStrength; //  > threshold ? 1.0f : 0.0f
 }
 
-[earlydepthstencil]
 float4 PS_Main(VS_OUT input) : SV_Target
 {
     float3 N = ComputeNormalMapping(input.normalWS, input.tangentWS, _BumpMap.Sample(sampler_lerp, input.uv));
@@ -201,6 +200,9 @@ float4 PS_Main(VS_OUT input) : SV_Target
 
 
     // + Sobel(input.positionCS, 3 / input.positionCS.w)
+
+    if (BaseColor.a <= 0.1f)
+		discard;
     
     return float4(finalColor, 1) + float4(SSSFinal, 0);
 }

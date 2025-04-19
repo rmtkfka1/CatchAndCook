@@ -43,6 +43,7 @@ private:
 	std::vector<std::shared_ptr<Mesh>> _mesh;
 	std::vector<std::shared_ptr<Material>> _uniqueMaterials;
 	std::vector<std::shared_ptr<Material>> _sharedMaterials;
+	std::vector<std::pair<int, std::shared_ptr<Material>>> _depthNormalMaterials;
 
 	shared_ptr<Shader> _normalDebugShader;
 

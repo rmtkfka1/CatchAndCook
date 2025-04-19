@@ -103,7 +103,7 @@ void ComputeForwardDirectionalLight(Light L, LightMateiral mat, float3 worldPos,
 {
     //float3 lightVec = normalize(L.position - worldPos);
     float3 lightVec = normalize(-L.direction);
-    float ndotl = max(dot(normal, lightVec), 0.0f);
+    float ndotl = dot(normal, lightVec);
     //ndotl = 1-pow(1-ndotl, 20);
     ndotl = saturate(ndotl * 0.5 + 0.5);
     //float3 LightStrength = L.strength * L.intensity * ndotl;
@@ -177,7 +177,6 @@ float Sobel(float4 positionCS, float scale)
 }
 
 
-[earlydepthstencil]
 float4 PS_Main(VS_OUT input) : SV_Target
 {
     float3 N = ComputeNormalMapping(input.normalWS, input.tangentWS, _BumpMap.Sample(sampler_lerp, input.uv));
@@ -208,6 +207,11 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float outline = step(0.1f, Sobel(input.positionCS, 0.6f / input.positionCS.w)); //  / (outline * 2 + 1)
     float3 outlineColor = (finalColor / float3((outline * 1 + 1), (outline * 1.5 + 1), (outline * 1.1 + 1)));
     finalColor = lerp(finalColor, outlineColor, outline);
+
+
+
+    if (BaseColor.a <= 0.1f)
+		discard;
 
     return float4(finalColor, 1) + float4(SSSFinal, 0);
 }

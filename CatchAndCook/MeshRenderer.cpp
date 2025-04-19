@@ -66,6 +66,22 @@ void MeshRenderer::Start()
 		SetOriginBound(localBox);
 	}
 
+
+	for (int i = 0; i < _mesh.size(); i++)
+	{
+		auto currentMaterial = _uniqueMaterials[i % std::min(_mesh.size(), _uniqueMaterials.size())];
+
+		if (RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward) && currentMaterial->GetPreDepthNormal())
+		{
+			auto depthNormalMaterial = currentMaterial->Clone();
+			if (HasInstanceBuffer())
+				depthNormalMaterial->SetShader(ResourceManager::main->_depthNormal_Instanced->GetShader());
+			else
+				depthNormalMaterial->SetShader(ResourceManager::main->_depthNormal->GetShader());
+			depthNormalMaterial->SetPass(RENDER_PASS::Deferred);
+			_depthNormalMaterials.push_back(make_pair(i, depthNormalMaterial));
+		}
+	}
 };
 
 void MeshRenderer::Update()
@@ -119,17 +135,21 @@ void MeshRenderer::RenderBegin()
 	for (int i = 0; i < _mesh.size(); i++)
 	{
 		auto currentMesh = _mesh[i];
-		auto currentMaterial = _uniqueMaterials[i % _uniqueMaterials.size()];
+		auto currentMaterial = _uniqueMaterials[i % std::min(_mesh.size(), _uniqueMaterials.size())];
 
 		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(), currentMesh.get(), this);
 
-		if (RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward) && currentMaterial->GetPreDepthNormal())
+		/*if (RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward) && currentMaterial->GetPreDepthNormal())
 		{
 			if (HasInstanceBuffer())
 				SceneManager::main->GetCurrentScene()->AddRenderer(ResourceManager::main->_depthNormal_Instanced.get(), currentMesh.get(), this);
 			else
 				SceneManager::main->GetCurrentScene()->AddRenderer(ResourceManager::main->_depthNormal.get(), currentMesh.get(), this);
-		}
+		}*/
+	}
+	for (auto& ele : _depthNormalMaterials) {
+		auto currentMesh = _mesh[ele.first];
+		SceneManager::main->GetCurrentScene()->AddRenderer(ele.second.get(), currentMesh.get(), this);
 	}
 
 	for (int j = 0; j < _sharedMaterials.size(); j++)

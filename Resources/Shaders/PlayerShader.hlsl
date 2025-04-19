@@ -49,6 +49,7 @@ struct VS_OUT
 
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
+Texture2D _RampShadowMap : register(t2);
 
 Texture2D _BakedGIMap : register(t8);
 
@@ -92,8 +93,9 @@ void ComputeForwardDirectionalLight(Light L, LightMateiral mat, float3 worldPos,
 {
     //float3 lightVec = normalize(L.position - worldPos);
     float3 lightVec = normalize(-L.direction);
-    float ndotl = max(dot(normal, lightVec), 0.0f);
-    ndotl = 1-pow(1-ndotl, 20);
+    float ndotl = dot(normal, lightVec);
+    ndotl = saturate(ndotl * 0.5 + 0.5);
+    //ndotl = 1-pow(1-ndotl, 20);
     //float3 LightStrength = L.strength * L.intensity * ndotl;
 
     lightingResult.direction = lightVec;
@@ -163,7 +165,7 @@ float Sobel(float4 positionCS, float scale)
     return edgeStrength; //  > threshold ? 1.0f : 0.0f
 }
 
-[earlydepthstencil]
+
 float4 PS_Main(VS_OUT input) : SV_Target
 {
     float3 N = ComputeNormalMapping(input.normalWS, input.tangentWS, _BumpMap.Sample(sampler_lerp, input.uv));
@@ -173,8 +175,10 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float4 BaseColor = _BaseMap.Sample(sampler_lerp, input.uv * _baseMapST.xy + _baseMapST.zw) * color;
     float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
 
-    float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, lightColor.atten) + float4(lightColor.subColor, 0)).xyz;
+    //float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, lightColor.atten) + float4(lightColor.subColor, 0)).xyz;
+    float3 finalColor = (BaseColor * _RampShadowMap.Sample(sampler_lerp_clamp, float2(lightColor.atten, 0)) + float4(lightColor.subColor, 0)).xyz;
 
+    //_RampShadowMap
 
     float3 viewDir = normalize(cameraPos - input.positionWS.xyz);
     // * pow(max(dot(viewDir, reflect(-lightColor.direction, N)), 0), 3)
@@ -186,6 +190,9 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float outline = step(0.1f, Sobel(input.positionCS, 0.85f / input.positionCS.w));
     float3 outlineColor = (finalColor / float3((outline * 1 + 1), (outline * 1.5 + 1), (outline * 1.1 + 1)));
     finalColor = lerp(finalColor, outlineColor, outline);
+
+    if (BaseColor.a <= 0.1)
+		discard;
 
     return float4(finalColor, 1) + sobel; // * dot(N, viewDir)
 }

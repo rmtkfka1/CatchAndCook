@@ -31,8 +31,10 @@ struct VS_OUT
     float4 pos : SV_Position;
     float3 worldPos : Position;
     float3 worldNormal : NORMAL;
-    
+    float2 uv : TEXCOORD;
 };
+
+Texture2D _BaseMap : register(t0);
 
 VS_OUT VS_Main(VS_IN input , uint id : SV_InstanceID)
 {
@@ -73,6 +75,7 @@ VS_OUT VS_Main(VS_IN input , uint id : SV_InstanceID)
     output.worldNormal = TransformNormalLocalToWorld(normalOS, boneIds, boneWs, w2lMatrix);
 #endif
 
+	output.uv = input.uv;
     
     return output;
 }
@@ -91,6 +94,10 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     
     output.position = float4(input.worldPos, 1.0f);
     output.normal = float4(input.worldNormal, 1.0f);
-    output.color = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    output.color = float4(1.0f, 1.0f, 1.0f, 0.0f);
+
+    if(_BaseMap.Sample(sampler_point, input.uv).w <= 0.1f)
+		discard;
+
     return output;
 }
