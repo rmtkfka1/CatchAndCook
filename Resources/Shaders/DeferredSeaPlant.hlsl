@@ -26,8 +26,7 @@ struct VS_OUT
     
 };
 
-static float amplitude = 0.5;
-static float frequency = 1.0;
+
 
 cbuffer DefaultMaterialParam : register(b7)
 {
@@ -35,19 +34,40 @@ cbuffer DefaultMaterialParam : register(b7)
     float4 _baseMapST = float4(1, 1, 1, 1);
 };
 
+//cbuffer PlantMaterialParam : register(b8)
+//{
+//    float4 color = float4(1, 1, 1, 1);
+//    float amplitude =0.2f;
+//    float frequency =0.5f;
+//    float centerY;
+//    float 
+   
+//}
+
+float NormalizeY(float y, float minY, float maxY)
+{
+    return saturate((y - minY) / (maxY - minY));
+}
+
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
-
+    float amplitude = 0.2f;
+    float frequency = 0.5f;
 
     Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
     row_major float4x4 l2wMatrix = data.localToWorld;
     row_major float4x4 w2lMatrix = data.worldToLocal;
     
-    float angle = g_Time * frequency + id * 0.37; 
-    float swayX = sin(angle) * input.pos.y * amplitude;
-    //float swayZ = cos(angle * 1.3) * input.pos.y * amplitude * 0.5;
-
+    float waveOffset = input.pos.y * 1.5f;
+    float angle = g_Time * frequency + id * 0.37 + waveOffset;
+    float boundsCenterY = 0.0;
+    float boundsSizeY = 2.0;
+    float minY = boundsCenterY - boundsSizeY * 0.5;
+    float maxY = boundsCenterY + boundsSizeY * 0.5;
+    float influence = NormalizeY(input.pos.y, minY, maxY);
+    float swayX = sin(angle) * amplitude * influence;
+    
     float3 animatedPos = input.pos;
     animatedPos.x += swayX;
 
