@@ -498,8 +498,12 @@ void Model::LoadRootBone(aiScene* scene)
 		return;
 
 	auto& boneName = _modelBoneList[0]->GetName();
-	
 
+	for (auto& ele : _modelBoneList)
+	{
+		cout << ele->GetName() << endl;
+	}
+	
 	aiNode* node = scene->mRootNode->FindNode(boneName.c_str());
 	if (!node)
 	{
@@ -514,6 +518,7 @@ void Model::LoadRootBone(aiScene* scene)
 		std::string parentName = convert_assimp::Format(rootBoneNode->mParent->mName);
 
 		bool parentIsBone = false;
+
 		for (auto& bone : _modelBoneList)
 		{
 			if (bone->GetName() == parentName)
@@ -532,6 +537,7 @@ void Model::LoadRootBone(aiScene* scene)
 
 	std::string rootBoneName = convert_assimp::Format(rootBoneNode->mName);
 	auto it = _nameToNodeTable.find(rootBoneName);
+
 	if (it != _nameToNodeTable.end())
 	{
 		_rootBoneNode = it->second;
