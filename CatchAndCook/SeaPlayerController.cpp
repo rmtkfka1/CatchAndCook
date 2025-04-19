@@ -18,7 +18,7 @@ void SeaPlayerController::Init()
 {
 	ImguiManager::main->playerHeightOffset = &_cameraHeightOffset;
 	ImguiManager::main->playerForwardOffset = &_cameraForwardOffset;
-	
+	ImguiManager::main->cameraPitchOffset = &_cameraPitchOffset;
 }
 
 void SeaPlayerController::Start()
@@ -44,26 +44,26 @@ void SeaPlayerController::Update()
 {
   
     float dt = Time::main->GetDeltaTime();
-    Quaternion rotation = CalCulateYawPitchRoll();
+    Quaternion playerRotation = CalCulateYawPitchRoll();
 
-	_transform->SetWorldRotation(rotation);
-    _camera->SetCameraRotation(rotation);
+    _transform->SetWorldRotation(playerRotation);
+
+    Quaternion cameraRotation = Quaternion::CreateFromYawPitchRoll(_yaw*D2R, _cameraPitchOffset * D2R + _pitch * D2R, 0);
+    //Quaternion cameraRotation = pitchQuat * playerRotation;
+    _camera->SetCameraRotation(cameraRotation);
 
     vec3 inputDir = vec3::Zero;
-
-	KeyUpdate(inputDir, rotation, dt);
-
+    KeyUpdate(inputDir, cameraRotation, dt);
     UpdateState(dt);
-
-	UpdatePlayerAndCamera(dt, rotation);
+    UpdatePlayerAndCamera(dt, playerRotation, cameraRotation);
 }
 
-void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
+void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& playerRotation, Quaternion& cameraRotation)
 {
     vec3 currentPos = _transform->GetWorldPosition();
     vec3 nextPos = currentPos + _velocity * dt;
     vec3 headOffset = vec3(0, _cameraHeightOffset, 0);
-    vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);
+    vec3 rotatedHeadOffset = vec3::Transform(headOffset, playerRotation);
     vec3 nextHeadPos = nextPos + rotatedHeadOffset + _transform->GetForward() * _cameraForwardOffset;
 
     vec3 dir = _velocity;

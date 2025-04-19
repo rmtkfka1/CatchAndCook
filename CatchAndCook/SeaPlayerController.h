@@ -25,7 +25,7 @@ public:
 	virtual void Init();
 	virtual void Start();
 	virtual void Update();
-	void UpdatePlayerAndCamera(float dt, Quaternion& rotation);
+	void UpdatePlayerAndCamera(float dt, Quaternion& playerRotation, Quaternion& cameraRotation);
 	void KeyUpdate(vec3& inputDir, Quaternion& rotation, float dt);
 	virtual void Update2();
 	virtual void Enable();
@@ -62,6 +62,7 @@ private:
 	SeaPlayerState _state = SeaPlayerState::Idle;
 	vec3 _velocity = vec3::Zero;
 
+	float _cameraPitchOffset = 30.0f;
 	float _cameraForwardOffset = 0.2f;
 	float _cameraHeightOffset = 1.2f;
 	float  _yaw = 0;
