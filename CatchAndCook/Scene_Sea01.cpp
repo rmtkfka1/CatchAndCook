@@ -11,6 +11,7 @@
 #include "SeaPlayerController.h"
 #include "FishMonster.h"
 #include "PlantComponent.h"
+#include "SkinnedMeshRenderer.h"
 void Scene_Sea01::Init()
 {
 	Scene::Init();
@@ -129,6 +130,18 @@ void Scene_Sea01::Init()
 	{
 		//player->_transform->SetPivotOffset(vec3(0, 1.0f, 0));
 		player->AddComponent<SeaPlayerController>();
+
+		vector<shared_ptr<GameObject>> childs;
+		player->GetChildsAll(childs);
+
+		for (auto& child : childs)
+		{
+			auto skinnedMeshRenderer = child->GetComponent<SkinnedMeshRenderer>();
+			if (skinnedMeshRenderer)
+			{
+				skinnedMeshRenderer->SetCulling(false);
+			}
+		}
 	
 	}
 

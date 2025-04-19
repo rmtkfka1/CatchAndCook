@@ -51,6 +51,12 @@ void ImguiManager::Render()
 	Debug();
 	DebugJin();
 
+    if (playerHeightOffset)
+    {
+        ImGui::SliderFloat("playerHeightOffset", playerHeightOffset, 0.0f, 2.0f);
+        ImGui::SliderFloat("playerForwardOffset", playerForwardOffset, 0.0f, 2.0f);
+    }
+
 	ImGui::Render();
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), Core::main->GetCmdList().Get());
 }

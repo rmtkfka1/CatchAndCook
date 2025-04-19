@@ -16,6 +16,8 @@ SeaPlayerController::~SeaPlayerController()
 }
 void SeaPlayerController::Init()
 {
+	ImguiManager::main->playerHeightOffset = &_cameraHeightOffset;
+	ImguiManager::main->playerForwardOffset = &_cameraForwardOffset;
 	
 }
 
@@ -62,7 +64,7 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
     vec3 nextPos = currentPos + _velocity * dt;
     vec3 headOffset = vec3(0, _cameraHeightOffset, 0);
     vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);
-    vec3 nextHeadPos = nextPos + rotatedHeadOffset + _transform->GetForward() * 0.2f;
+    vec3 nextHeadPos = nextPos + rotatedHeadOffset + _transform->GetForward() * _cameraForwardOffset;
 
     vec3 dir = _velocity;
     dir.Normalize();
@@ -93,7 +95,7 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
         nextPos.y += deltaY;
     }
 
-    /* Gizmo::Width(0.02f);
+     Gizmo::Width(0.02f);
      auto o = _camera->GetCameraPos();
      auto f = _camera->GetCameraLook();
      auto u = _camera->GetCameraUp();
@@ -101,7 +103,7 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
 
      Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
      Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
-     Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));*/
+     Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));
 
 
      // 최종 위치 적용
