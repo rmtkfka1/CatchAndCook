@@ -7,6 +7,12 @@
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 
+cbuffer DefaultMaterialParam : register(b7)
+{
+    float4 color = float4(1, 1, 1, 1);
+    float4 _baseMapST = float4(1, 1, 1, 1);
+};
+
 struct VS_IN
 {
     float3 pos : POSITION;
@@ -33,9 +39,9 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    //Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
-    //row_major float4x4 l2wMatrix = data.localToWorld;
-    //row_major float4x4 w2lMatrix = data.worldToLocal;
+    Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
+    row_major float4x4 l2wMatrix = data.localToWorld;
+    row_major float4x4 w2lMatrix = data.worldToLocal;
 
     float4 boneIds = input.boneIds;
     float4 boneWs = input.boneWs;
@@ -69,7 +75,7 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     float3 normalMapped = ComputeNormalMapping(input.worldNormal, input.worldTangent, _BumpMap.Sample(sampler_lerp, input.uv));
     output.normal = float4(normalMapped, 1.0f);
 
-    output.color = _BaseMap.Sample(sampler_lerp, input.uv);
+    output.color = _BaseMap.Sample(sampler_lerp, input.uv) * color;
 
     //output.maoe = float4(0, 0, 0, 0);
 

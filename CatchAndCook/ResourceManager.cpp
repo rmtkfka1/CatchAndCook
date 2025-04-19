@@ -60,6 +60,7 @@ void ResourceManager::CreateDefaultShaderKSH()
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"DeferredSea", L"DeferredSea.hlsl", StaticProp,
 			ShaderArg{}, info);
 
+		shader->SetInjector({ BufferType::DefaultMaterialParam });
 		//shader->SetInjector({ BufferType::DefaultMaterialParam });
 		shader->SetPass(RENDER_PASS::Deferred);
 	}
@@ -75,7 +76,7 @@ void ResourceManager::CreateDefaultShaderKSH()
 
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"DeferredSeaSkinned", L"DeferredSeaSkinned.hlsl", SkinProp,
 			ShaderArg{}, info);
-
+		shader->SetInjector({ BufferType::DefaultMaterialParam });
 		//shader->SetInjector({ BufferType::DefaultMaterialParam });
 		shader->SetPass(RENDER_PASS::Deferred);
 	}
@@ -89,8 +90,10 @@ void ResourceManager::CreateDefaultShaderKSH()
 		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"Plant", L"Plant.hlsl", StaticProp,
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"DeferredSeaPlant", L"DeferredSeaPlant.hlsl", StaticProp,
 			ShaderArg{}, info);
+
+		shader->SetInjector({ BufferType::DefaultMaterialParam });
 		shader->SetPass(RENDER_PASS::Deferred);
 	}
 

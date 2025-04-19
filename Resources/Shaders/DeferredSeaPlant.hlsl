@@ -7,13 +7,6 @@
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 
-//cbuffer PlantInfo : register(b8)
-//{
-//    float amplitude;
-//    float frequency;
-//    float padding;
-//    float padding2;
-//}
 
 struct VS_IN
 {
@@ -35,6 +28,12 @@ struct VS_OUT
 
 static float amplitude = 0.5;
 static float frequency = 1.0;
+
+cbuffer DefaultMaterialParam : register(b7)
+{
+    float4 color = float4(1, 1, 1, 1);
+    float4 _baseMapST = float4(1, 1, 1, 1);
+};
 
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
@@ -79,7 +78,7 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     
     output.position = float4(input.worldPos, 1.0f);
     float3 N= ComputeNormalMapping(input.worldNormal, input.worldTangent, _BumpMap.Sample(sampler_lerp, input.uv));
-    output.color = _BaseMap.Sample(sampler_lerp, input.uv);
+    output.color = _BaseMap.Sample(sampler_lerp, input.uv) * color;
     output.normal = float4(N, 1.0f);
     return output;
 }

@@ -389,7 +389,7 @@ void SceneLoader::LinkComponent(json& jsonData)
                 {
                     if (shader == nullptr)
                     {
-                        cout << "호잇" << endl;
+           
                         shader = ResourceManager::main->Get<Shader>(L"DeferredSeaSkinned");
                         material->SetShader(shader);
                         material->SetPass(shader->GetPass());
