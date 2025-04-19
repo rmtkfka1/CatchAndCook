@@ -58,6 +58,7 @@ struct VS_OUT
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 Texture2D _Thinkness : register(t2);
+Texture2D _RampSkinMap : register(t3);
 
 Texture2D _BakedGIMap : register(t8);
 
@@ -103,7 +104,8 @@ void ComputeForwardDirectionalLight(Light L, LightMateiral mat, float3 worldPos,
     //float3 lightVec = normalize(L.position - worldPos);
     float3 lightVec = normalize(-L.direction);
     float ndotl = max(dot(normal, lightVec), 0.0f);
-    ndotl = 1-pow(1-ndotl, 20);
+    //ndotl = 1-pow(1-ndotl, 20);
+    ndotl = saturate(ndotl * 0.5 + 0.5);
     //float3 LightStrength = L.strength * L.intensity * ndotl;
 
     lightingResult.direction = lightVec;
@@ -184,8 +186,10 @@ float4 PS_Main(VS_OUT input) : SV_Target
     
     float4 BaseColor = _BaseMap.Sample(sampler_lerp, input.uv * _baseMapST.xy + _baseMapST.zw) * color;
     float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
-
-    float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, lightColor.atten) + float4(lightColor.subColor, 0)).xyz;
+    //float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, lightColor.atten) + float4(lightColor.subColor, 0)).xyz;
+    //ShadowColor
+    float3 finalColor = (BaseColor * _RampSkinMap.Sample(sampler_lerp_clamp, float2(lightColor.atten, 0)) + float4(lightColor.subColor, 0)).xyz;
+    
 
     float SSSDistorion = 0.3f;
 	float SSSScale = 0.3f;
@@ -199,6 +203,11 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float3 SSSFinal =  float3(1, 0.2, 0.1) * SSSScale * SSS;
 
     //Sobel(input.positionCS, 3/input.positionCS.w)
+
+	//outline
+    float outline = step(0.1f, Sobel(input.positionCS, 0.6f / input.positionCS.w)); //  / (outline * 2 + 1)
+    float3 outlineColor = (finalColor / float3((outline * 1 + 1), (outline * 1.5 + 1), (outline * 1.1 + 1)));
+    finalColor = lerp(finalColor, outlineColor, outline);
 
     return float4(finalColor, 1) + float4(SSSFinal, 0);
 }

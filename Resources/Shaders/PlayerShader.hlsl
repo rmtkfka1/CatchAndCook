@@ -146,7 +146,7 @@ float Sobel(float4 positionCS, float scale)
 	float d1 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_lerp, uv + float2( 0.0f,       -texelSize.y)).r);
 	float d2 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_lerp, uv + float2( texelSize.x, -texelSize.y)).r);
 	float d3 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_lerp, uv + float2(-texelSize.x,  0.0f       )).r);
-	//float d4 = DepthTexture.Sample(sampler_lerp, uv).r;  // 센터 픽셀 (필요시 사용)
+	
 	float d5 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_lerp, uv + float2( texelSize.x,  0.0f       )).r);
 	float d6 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_lerp, uv + float2(-texelSize.x,  texelSize.y )).r);
 	float d7 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_lerp, uv + float2( 0.0f,        texelSize.y )).r);
@@ -179,10 +179,13 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float3 viewDir = normalize(cameraPos - input.positionWS.xyz);
     // * pow(max(dot(viewDir, reflect(-lightColor.direction, N)), 0), 3)
     float N2L = 1 - pow(1 - saturate(dot(lightColor.direction, N)), 1);
-    float sobelW = 6;
+    float sobelW = 5;
     float sobel = clamp(0, 1, Sobel(input.positionCS, sobelW / input.positionCS.w)) * 0.6 * N2L;
 
-    return float4(finalColor, 1) + sobel; // * dot(N, viewDir)
+    //outline
+    float outline = step(0.1f, Sobel(input.positionCS, 0.85f / input.positionCS.w));
+    float3 outlineColor = (finalColor / float3((outline * 1 + 1), (outline * 1.5 + 1), (outline * 1.1 + 1)));
+    finalColor = lerp(finalColor, outlineColor, outline);
 
-	return float4(finalColor, 1);
+    return float4(finalColor, 1) + sobel; // * dot(N, viewDir)
 }

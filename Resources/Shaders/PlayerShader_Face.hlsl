@@ -54,6 +54,8 @@ Texture2D _BumpMap : register(t1);
 
 Texture2D _Thinkness : register(t2);
 Texture2D _SDFMap : register(t3);
+Texture2D _RampSkinMap : register(t4);
+
 
 Texture2D _BakedGIMap : register(t8);
 
@@ -178,10 +180,11 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float angle  = clamp(0, 1, dot(l, f) * 0.5 + 0.5);
     float sdf = dot(l, r) <= 0 ? _SDFMap.Sample(sampler_lerp_clamp, input.uv) : _SDFMap.Sample(sampler_lerp_clamp, float2(1 - input.uv.x, input.uv.y));
 
-    float atten2 = clamp(0, 1, saturate(angle - sdf) * 20) * lightColor.intensity;
+    float atten2 = clamp(-1, 1, (angle - sdf) * 2) * lightColor.intensity;
+    atten2 = atten2 * 0.5 + 0.5;
 
-
-    float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, atten2) + float4(lightColor.subColor, 0)).xyz;
+    //float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, atten2) + float4(lightColor.subColor, 0)).xyz;
+    float3 finalColor = (BaseColor * _RampSkinMap.Sample(sampler_lerp_clamp, float2(atten2, 0)) + float4(lightColor.subColor, 0)).xyz;
 
 
     float SSSDistorion = 0.3f;
@@ -196,7 +199,6 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float3 SSSFinal =  float3(1, 0.2, 0.1) * SSSScale * SSS;
 
 
-    //transform
 
     // + Sobel(input.positionCS, 3 / input.positionCS.w)
     
