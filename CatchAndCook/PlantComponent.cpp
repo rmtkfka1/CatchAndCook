@@ -14,7 +14,7 @@ PlantComponent::~PlantComponent()
 
 void PlantComponent::Init()
 {
-	cout << "붙음" << endl;
+	
 }
 
 void PlantComponent::Start()
@@ -73,19 +73,14 @@ void PlantComponent::SetData(StructuredBuffer* buffer, Material* material)
 	PlantInfo info;
 	info.amplitude;
 	info.color = material->GetPropertyVector("_Color");
-	info.amplitude = 0.2f;
-	info.frequency = 0.5f;
+	info.amplitude = material->GetPropertyFloat("_Amplitude");
+	info.frequency = material->GetPropertyFloat("_frequency");
 
 	BoundingBox& box = _renderBase.lock()->GetOriginBound();
 	info.boundsSizeY =box.Extents.y*2;
 	info.boundsCenterY = box.Center.y;
 
-	/*cout << "호우" << endl;
-	cout << "boundsCenterY : " << info.boundsCenterY << endl;
-	cout << "boundsSizeY : " << info.boundsSizeY << endl;
-	cout << "color : " << info.color.x << " " << info.color.y << " " << info.color.z << endl;
-	cout << "amplitude : " << info.amplitude << endl;
-	cout << "frequency : " << info.frequency << endl;*/
+
 
 	buffer->AddData(info);
 }

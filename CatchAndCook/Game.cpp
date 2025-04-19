@@ -27,6 +27,7 @@
 #include "GameObject.h"
 #include "Terrain.h"
 #include "PathStamp.h"
+
 void Game::Init(HWND hwnd)
 {
 	IGuid::StaticInit();

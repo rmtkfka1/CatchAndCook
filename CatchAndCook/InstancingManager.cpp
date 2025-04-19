@@ -67,7 +67,6 @@ void InstancingManager::Render()
 
 		for (const auto& infos : structuredInfo)
 		{
-	
 
 			const std::string& name = infos.name;
 			auto& bufferType = bufferManager->GetStructuredNameToBufferType(name);
@@ -78,7 +77,6 @@ void InstancingManager::Render()
 
 			for (auto& renderobjectStruture : RenderObjectStrutures)
 			{
-			
 				auto& setter = renderobjectStruture.renderer->FindStructuredSetter(bufferType);
 				assert(setter != nullptr);
 				setter->SetData(struturedBufferPool.get(),renderobjectStruture.material);

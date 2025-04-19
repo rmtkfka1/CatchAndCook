@@ -10,6 +10,7 @@
 #include "CameraComponent.h"
 #include "SeaPlayerController.h"
 #include "FishMonster.h"
+#include "PlantComponent.h"
 void Scene_Sea01::Init()
 {
 	Scene::Init();
@@ -97,12 +98,32 @@ void Scene_Sea01::Init()
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(0, 0, 1, 0)));
 	}
 #pragma endregion
-
 	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/sea.json");
 	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
 	sceneLoader->Load(GetCast<Scene>());
 
 	auto player = Find(L"seaPlayer");
+
+
+	/*for (auto& gameobject : _gameObjects)
+	{
+		auto& meshRenderer = gameobject->GetComponent<MeshRenderer>();
+
+		if (meshRenderer)
+		{
+			auto& materials = meshRenderer->GetMaterials();
+
+			for (auto& material : materials)
+			{
+				if (material->GetShader()->_name == "DeferredSeaPlant.hlsl")
+				{
+					gameobject->AddComponent<PlantComponent>();
+				}
+			}
+		}
+
+	}*/
+
 
 	if (player)
 	{
