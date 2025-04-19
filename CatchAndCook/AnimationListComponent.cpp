@@ -30,7 +30,7 @@ void AnimationListComponent::Start()
 	{
 		if (!_animations.empty())
 		{
-			auto& firstAnimation = _animations.begin()->second;
+			auto& firstAnimation = _animations.begin()->second; 
 
 			if (firstAnimation)
 			{

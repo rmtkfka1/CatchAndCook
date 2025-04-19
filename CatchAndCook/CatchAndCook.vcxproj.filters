@@ -65,6 +65,12 @@
     <Filter Include="999.pch\IMGUI">
       <UniqueIdentifier>{2b0cd8bf-d41a-4b98-97db-f0ad0e096202}</UniqueIdentifier>
     </Filter>
+    <Filter Include="998.HLSL\Graphics\KSH">
+      <UniqueIdentifier>{1934d2e2-6f46-492c-885c-ed0d57c2303d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="998.HLSL\Graphics\JIN">
+      <UniqueIdentifier>{2ef74114-fef0-4fc3-a635-60fe40bc6fc8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -340,12 +346,18 @@
     <ClCompile Include="IUnit.cpp">
       <Filter>997.Utils</Filter>
     </ClCompile>
-    <ClCompile Include="FishMonster.cpp" />
     <ClCompile Include="InitComponent.cpp">
       <Filter>03.Component</Filter>
     </ClCompile>
-    <ClCompile Include="IComponentFactory.cpp" />
-    <ClCompile Include="AnimationListComponent.cpp" />
+    <ClCompile Include="AnimationListComponent.cpp">
+      <Filter>03.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="IComponentFactory.cpp">
+      <Filter>03.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="FishMonster.cpp">
+      <Filter>03.Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -637,19 +649,27 @@
     <ClInclude Include="PathFinder.h">
       <Filter>03.Component</Filter>
     </ClInclude>
-    <ClInclude Include="GameObjectSetting.h" />
     <ClInclude Include="LightComponent.h">
       <Filter>03.Component</Filter>
     </ClInclude>
     <ClInclude Include="IUnit.h">
       <Filter>997.Utils</Filter>
     </ClInclude>
-    <ClInclude Include="FishMonster.h" />
     <ClInclude Include="InitComponent.h">
       <Filter>03.Component</Filter>
     </ClInclude>
-    <ClInclude Include="IComponentFactory.h" />
-    <ClInclude Include="AnimationListComponent.h" />
+    <ClInclude Include="GameObjectSetting.h">
+      <Filter>01.GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationListComponent.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="IComponentFactory.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="FishMonster.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -700,9 +720,6 @@
     <FxCompile Include="..\Resources\Shaders\sea.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\seatest.hlsl">
-      <Filter>998.HLSL\Graphics</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\SpriteShader.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
@@ -736,37 +753,44 @@
     <FxCompile Include="..\Resources\Shaders\UiForward.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Plant.hlsl">
-      <Filter>998.HLSL\Graphics</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\PlayerShader.hlsl">
-      <Filter>998.HLSL\Graphics</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\final_MainField.hlsl">
-      <Filter>998.HLSL\Graphics</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Light_Forward_t31.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\vignette.hlsl">
       <Filter>998.HLSL\Compute</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\TestForward_Total.hlsl">
-      <Filter>998.HLSL\Graphics</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\TestDeferred_Total.hlsl">
-      <Filter>998.HLSL\Graphics</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\SSAO.hlsl">
       <Filter>998.HLSL\Compute</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\ForwardPreDepthNormal.hlsl">
-      <Filter>998.HLSL\Graphics</Filter>
+    <FxCompile Include="..\Resources\Shaders\DeferredSea.hlsl">
+      <Filter>998.HLSL\Graphics\KSH</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\DeferredSeaSkinned.hlsl">
+      <Filter>998.HLSL\Graphics\KSH</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Environment.hlsl">
-      <Filter>998.HLSL\Graphics</Filter>
+      <Filter>998.HLSL\Graphics\JIN</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\DeferredSea.hlsl" />
-    <FxCompile Include="..\Resources\Shaders\DeferredSeaSkinned.hlsl" />
+    <FxCompile Include="..\Resources\Shaders\ForwardPreDepthNormal.hlsl">
+      <Filter>998.HLSL\Graphics\JIN</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\final_MainField.hlsl">
+      <Filter>998.HLSL\Graphics\JIN</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\PlayerShader.hlsl">
+      <Filter>998.HLSL\Graphics\JIN</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\TestDeferred_Total.hlsl">
+      <Filter>998.HLSL\Graphics\JIN</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\TestForward_Total.hlsl">
+      <Filter>998.HLSL\Graphics\JIN</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Plant.hlsl">
+      <Filter>998.HLSL\Graphics\KSH</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\seatest.hlsl">
+      <Filter>998.HLSL\Graphics\KSH</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
