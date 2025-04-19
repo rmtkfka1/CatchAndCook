@@ -40,8 +40,7 @@ void SeaPlayerController::Start()
 
 void SeaPlayerController::Update()
 {
-   
-
+  
     float dt = Time::main->GetDeltaTime();
     Quaternion rotation = CalCulateYawPitchRoll();
 
@@ -109,6 +108,8 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
     _transform->SetWorldPosition(nextPos);
     _camera->SetCameraPos(nextHeadPos);
     _velocity *= (1 - (_resistance * dt));
+
+    CameraManager::main->Setting();
 }
 
 void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float dt)
