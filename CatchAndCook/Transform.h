@@ -2,6 +2,7 @@
 #include "Component.h"
 
 struct CBufferContainer;
+class Material;
 
 class Transform : public Component, public RenderStructuredSetter
 {
@@ -22,7 +23,7 @@ public:
     void CollisionEnd(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other) override;
 
     bool IsExecuteAble() override;
-	virtual void SetData(StructuredBuffer* buffer = nullptr) override;
+	virtual void SetData(StructuredBuffer* buffer = nullptr ,Material* material=nullptr) override;
 
 public:
     vec3 SetForward(const vec3& dir );

@@ -54,13 +54,13 @@ void InstancingManager::Render()
 	auto& bufferManager = Core::main->GetBufferManager();
 	auto& tableManager = bufferManager->GetTable();
 
-	for (auto& [id, objects] : _objectMap)
+	for (auto& [id, RenderObjectStrutures] : _objectMap)
 	{
-		if (objects.empty()) continue;
+		if (RenderObjectStrutures.empty()) continue;
 
-		auto& material = objects[0].material;
-		auto& renderer = objects[0].renderer;
-		auto& mesh = objects[0].mesh;
+		auto& material = RenderObjectStrutures[0].material;
+		auto& renderer = RenderObjectStrutures[0].renderer;
+		auto& mesh = RenderObjectStrutures[0].mesh;
 		auto& shader = material->GetShader();
 		auto& structuredInfo = shader->GetTRegisterStructured();
 		InstanceOffsetParam param = {};
@@ -74,11 +74,11 @@ void InstancingManager::Render()
 
 			auto table = tableManager->Alloc(1);
 
-			for (auto& object : objects)
+			for (auto& renderobjectStruture : RenderObjectStrutures)
 			{
-				auto& setter = object.renderer->FindStructuredSetter(bufferType);
+				auto& setter = renderobjectStruture.renderer->FindStructuredSetter(bufferType);
 				assert(setter != nullptr);
-				setter->SetData(pool.get());
+				setter->SetData(pool.get(),renderobjectStruture.material);
 			}
 
 			tableManager->CopyHandle(table.CPUHandle, pool->GetSRVHandle(), 0);
@@ -94,7 +94,7 @@ void InstancingManager::Render()
 		cmdList->SetGraphicsRootConstantBufferView(4, cbufferContainer->GPUAdress);
 
 		g_debug_draw_call++;
-		renderer->Rendering(material, mesh, objects.size());
+		renderer->Rendering(material, mesh, RenderObjectStrutures.size());
 	}
 
 	_objectMap.clear();

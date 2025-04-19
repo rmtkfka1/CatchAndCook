@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+class Material;
+
 enum class LIGHT_TYPE
 {
 	DIRECTIONAL_LIGHT,
@@ -89,6 +91,6 @@ public:
 
 	GameObject* object;
 	void Init(GameObject* object);
-	void SetData(StructuredBuffer* buffer) override;
+	void SetData(StructuredBuffer* buffer, Material* material) override;
 
 };
