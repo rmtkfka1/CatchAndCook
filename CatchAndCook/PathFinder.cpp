@@ -16,6 +16,7 @@ PathFinder::~PathFinder()
 
 void PathFinder::Init()
 {
+	_pathOffset = GenerateRandomPointInSphere(500.0f);
 }
 
 void PathFinder::Start()
@@ -46,7 +47,9 @@ void PathFinder::Update()
 
 	float t = std::clamp(_distanceMoved / _segmentLength, 0.0f, 1.0f);
 	vec3 pos = vec3::Lerp(start, end, t);
-	vec3 currentPos = GetOwner()->_transform->SetWorldPosition(pos);
+	vec3 finalPos = pos + _pathOffset;
+
+	vec3 currentPos = GetOwner()->_transform->SetWorldPosition(finalPos);
 
 	vec3 dir = end - start;
 
@@ -152,6 +155,25 @@ void PathFinder::ReadPathFile(const std::wstring& fileName)
 
     file.close();
      cout << "라인 데이터: " << _pathList[fileName].path.size() << "개 읽음." << std::endl;
+}
+
+vec3 PathFinder::GenerateRandomPointInSphere(float radius)
+{
+	float u = Range(0.0f, 1.0f);
+	float theta = Range(0.0f, 2.0f *3.14f);
+	float phi = acos(2.0f * u - 1.0f);
+	float r = radius * cbrt(Range(0.0f, 1.0f));
+
+	float x = r * sin(phi) * cos(theta);
+	float y = r * sin(phi) * sin(theta);
+	float z = r * cos(phi);
+
+	return vec3(x, y, z);
+}
+
+float PathFinder::Range(float min, float max)
+{
+	return min + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (max - min);
 }
 
 void PathFinder::ClearDebugDraw()

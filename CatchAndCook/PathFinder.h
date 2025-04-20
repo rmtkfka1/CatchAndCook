@@ -44,11 +44,13 @@ public:
 	static void ClearDebugDraw();
 private:
 	void ReadPathFile(const std::wstring& fileName);
+	vec3 GenerateRandomPointInSphere(float radius);
+	float Range(float min, float max);
 
 private:
 	static unordered_map<wstring, FishPath> _pathList;
 	weak_ptr<RendererBase> _renderBase;
-
+	vec3 _pathOffset = vec3(0.0f);
 	bool _forward = true;
 	int _currentIndex = 0;
 	float _moveSpeed = 50.0f; 
