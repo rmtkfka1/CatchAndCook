@@ -37,6 +37,7 @@ public:
 
 	void AddStructuredSetter(const std::shared_ptr<RenderStructuredSetter>& setter, BufferType type);
 	void RemoveStructuredSetter(const shared_ptr<RenderStructuredSetter>& object);
+	void RemoveStructuredSetter(const BufferType& type);
 
 	void AddCbufferSetter(const std::shared_ptr<RenderCBufferSetter> setter);
 	void RemoveCbufferSetter(const shared_ptr<RenderCBufferSetter> object);
@@ -94,7 +95,7 @@ public:
 	bool HasInstanceBuffer();
 
 private:
-	std::unordered_map<BufferType,std::shared_ptr<RenderStructuredSetter>> _structuredSetters;
+	std::unordered_map<BufferType, std::shared_ptr<RenderStructuredSetter>> _structuredSetters;
 };
 
 

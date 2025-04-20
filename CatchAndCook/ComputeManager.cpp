@@ -715,6 +715,21 @@ void ComputeManager::Init()
 	_vignetteRender->Init();
 }
 
+void ComputeManager::DispatchAfterDeferred(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	const int threadGroupSizeX = 16;
+	const int threadGroupSizeY = 16;
+
+	int dispatchX = static_cast<int>(std::ceil(static_cast<float>(WINDOW_WIDTH) / threadGroupSizeX));
+	int dispatchY = static_cast<int>(std::ceil(static_cast<float>(WINDOW_HEIGHT) / threadGroupSizeY));
+
+	int32 dispath[3] = { dispatchX,dispatchY,1 };
+
+	_ssaoRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+
+	Core::main->GetRenderTarget()->GetRenderTarget()->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
+}
+
 void ComputeManager::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
 	const int threadGroupSizeX = 16;
@@ -732,7 +747,7 @@ void ComputeManager::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
 	_vignetteRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
-	_ssaoRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+	//_ssaoRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
 	_bloom->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 

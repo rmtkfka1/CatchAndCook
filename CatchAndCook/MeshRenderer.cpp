@@ -11,6 +11,7 @@
 #include "Texture.h"
 #include "Transform.h"
 #include "LightManager.h"
+#include "ObjectSettingComponent.h"
 
 MeshRenderer::~MeshRenderer()
 {
@@ -36,6 +37,10 @@ void MeshRenderer::Start()
 {
 	Component::Start();
 	//AddStructuredSetter(_setter_ForwardLight, BufferType::ForwardLightParam);
+
+	if (auto objectSettingComponent = GetOwner()->GetComponentWithParents<ObjectSettingComponent>())
+		AddStructuredSetter(objectSettingComponent, BufferType::ObjectSettingParam);
+
 	auto owner = GetOwner();
 
 	if (owner && owner->GetType() == GameObjectType::Static)
@@ -93,9 +98,10 @@ void MeshRenderer::Start()
 			else
 				depthNormalMaterial->SetShader(ResourceManager::main->_depthNormal->GetShader());
 			depthNormalMaterial->SetPass(RENDER_PASS::Deferred);
-			//_depthNormalMaterials.push_back(make_pair(i, depthNormalMaterial));
+			_depthNormalMaterials.push_back(make_pair(i, depthNormalMaterial));
 		}
 	}
+
 };
 
 void MeshRenderer::Update()
@@ -125,6 +131,8 @@ void MeshRenderer::Destroy()
 	Component::Destroy();
 
 	//RemoveStructuredSetter(_setter_ForwardLight);
+	RemoveStructuredSetter(BufferType::ForwardLightParam);
+	RemoveStructuredSetter(BufferType::ObjectSettingParam);
 }
 
 void MeshRenderer::RenderBegin()

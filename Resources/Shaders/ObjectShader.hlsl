@@ -9,21 +9,12 @@
 
 #include "ForwardFunction.hlsl"
 
+
 cbuffer DefaultMaterialParam : register(b7)
 {
     float4 color = float4(1, 1, 1, 1);
     float4 _baseMapST = float4(1, 1, 1, 1);
 };
-
-cbuffer PlayerMaterialParam : register(b8)
-{
-    float4 temp = float4(1, 1, 1, 1);
-};
-
-//cbuffer PlayerFaceMaterialParam : register(b10)
-//{
-//    float4 temp3 = float4(1, 1, 1, 1);
-//};
 
 
 struct VS_IN
@@ -55,18 +46,12 @@ struct VS_OUT
     float3 tangentOS : TangentOS;
     float3 tangentWS : TangentWS;
     float2 uv : TEXCOORD0;
-
-    float3 rightWS : NORMAL2;
-    float3 forwardWS : NORMAL3;
+    
 };
 
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
-
-Texture2D _Thinkness : register(t2);
-Texture2D _SDFMap : register(t3);
-Texture2D _RampSkinMap : register(t4);
-
+Texture2D _RampShadowMap : register(t2);
 
 Texture2D _BakedGIMap : register(t8);
 
@@ -75,15 +60,13 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     VS_OUT output = (VS_OUT) 0;
 
     Instance_Transform transformData = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
-    ObjectSettingParam objectData = ObjectSettingDatas[offset[STRUCTURED_OFFSET(31)].r + id];
     //LightForwardParams lightingData = ForwardLightDatas[offset[STRUCTURED_OFFSET(31)].r + id];
 
     row_major float4x4 l2wMatrix = transformData.localToWorld;
     row_major float4x4 w2lMatrix = transformData.worldToLocal;
     float4 boneIds = 0;
     float4 boneWs = 0;
-
-    output.id = (float)id;
+    
     
 #ifdef SKINNED
 	    boneIds = input.boneIds;
@@ -103,12 +86,8 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 
     output.uv = input.uv;
 
-    output.rightWS = mul(float3(1,0,0), (float3x3)(l2wMatrix));
-    output.forwardWS = mul(float3(0,0,1), (float3x3)(l2wMatrix));
-
     return output;
 }
-
 
 
 
@@ -118,63 +97,35 @@ float4 PS_Main(VS_OUT input) : SV_Target
     uint id = (uint)input.id;
     float3 N = ComputeNormalMapping(input.normalWS, input.tangentWS, _BumpMap.Sample(sampler_lerp, input.uv));
 
-	ObjectSettingParam objectData = ObjectSettingDatas[offset[STRUCTURED_OFFSET(31)].r + id];
+    ObjectSettingParam objectData = ObjectSettingDatas[offset[STRUCTURED_OFFSET(31)].r + id];
 
-    
     LightingResult lightColor = ComputeLightColorForward(input.positionWS.xyz, N);
     
     float4 BaseColor = _BaseMap.Sample(sampler_lerp, input.uv * _baseMapST.xy + _baseMapST.zw) * color;
     float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
 
+	float atten2 = saturate(lightColor.atten * 2 - 1);
+    float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, atten2) + float4(lightColor.subColor, 0)).xyz;
 
+    //_RampShadowMap
 
-
-
-
-    // ==========================
-    //      Player Only Setting
-    // ==========================
-
-    //SDF
-    float2 l = normalize(lightColor.direction.xz);
-    float2 f = normalize(input.forwardWS.xz);
-    float2 r = normalize(input.rightWS.xz);
-
-    float angle  = clamp(0, 1, dot(l, f) * 0.5 + 0.5);
-    float sdf = dot(l, r) <= 0 ? _SDFMap.Sample(sampler_lerp_clamp, input.uv) : _SDFMap.Sample(sampler_lerp_clamp, float2(1 - input.uv.x, input.uv.y));
-
-    float atten2 = clamp(-1, 1, (angle - sdf) * 2) * lightColor.intensity;
-    atten2 = atten2 * 0.5 + 0.5;
-    //float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, atten2) + float4(lightColor.subColor, 0)).xyz;
-    float3 finalColor = (BaseColor * _RampSkinMap.Sample(sampler_lerp_clamp, float2(atten2, 0)) + float4(lightColor.subColor, 0)).xyz;
-    //finalColor = lerp(ShadowColor * finalColor, finalColor, clamp(0, 1, lightColor.intensity));
-
-
-    float SSSDistorion = 0.3f;
-	float SSSScale = 0.3f;
-    float SSSPow = 2.5f;
-
-    // SSS ÆÄÆ®.
     float3 viewDir = normalize(cameraPos - input.positionWS.xyz);
-    float3 H = normalize(lightColor.direction + N * SSSDistorion);
-    float SSS = pow(saturate(dot(viewDir, -H)), SSSPow) * _Thinkness.Sample(sampler_lerp, input.uv).r;
-    //float3 SSSFinal = lerp(float3(1,1,1), float3(1, 0, 0) * SSSScale, SSS);
-    float3 SSSFinal =  float3(1, 0.2, 0.1) * SSSScale * SSS;
 
 
     //Sobel Spec
     float N2L = saturate(dot(lightColor.direction, N));
-    float sobelW = 2.5;
+    float sobelW = 6;
     float sobel = clamp(0, 1, Sobel(input.positionCS, sobelW / input.positionCS.w));
     sobel = lerp(0, sobel, (1 - saturate(dot(viewDir, N))) * N2L) * 0.6;
 
     // Rim
     float MinusN2L = saturate(dot(-lightColor.direction, N));
     float fresnel = (1 - saturate(dot(viewDir, N)));
-    float3 rim = pow(fresnel, exp2(2)) * MinusN2L * float3(0.6, 0.6, 0.8) * 0.8;
+    float3 rim = pow(fresnel, exp2(2)) * MinusN2L * float3(0.6, 0.6, 0.8);
 
     //outline
-    float outline = step(0.1f, Sobel(input.positionCS, 0.4f / input.positionCS.w)); //  / (outline * 2 + 1)
+    float outline = step(0.1f, Sobel(input.positionCS, 0.85f / input.positionCS.w));
+    float rimRatio = 1 - saturate(dot(viewDir, N));
     float3 outlineColor = (finalColor / float3((outline * 1 + 1), (outline * 1.5 + 1), (outline * 1.1 + 1)));
     finalColor = lerp(finalColor, outlineColor, outline);
 
@@ -185,10 +136,10 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float3 hitFresnel = objectData.o_hit * objectData.o_hitValue * objectData.o_hitColor.xyz * fresnel;
     float3 selectLine = objectData.o_select * clamp(0, 1, Sobel(input.positionCS, 2)) * objectData.o_selectColor.xyz;
 
-    // + Sobel(input.positionCS, 3 / input.positionCS.w)
 
-    if (BaseColor.a <= 0.1f)
+    if (BaseColor.a <= 0.1)
 		discard;
+    //return float4((input.positionWS.xyz - worldPosition) * 0.001f, 1);
 
-    return float4(finalColor, 1) + float4(SSSFinal + rim + sobel + hitFresnel + selectLine, 0);
+    return float4(finalColor, 1) + float4(rim + sobel + hitFresnel + selectLine, 0); // * dot(N, viewDir)
 }

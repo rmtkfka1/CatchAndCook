@@ -16,8 +16,9 @@ public:
     }
 
     static std::shared_ptr<Component> Create(const std::string& name) {
-        auto it = GetRegistry().find(name);
-        if (it != GetRegistry().end()) {
+        auto& registers = GetRegistry();
+        auto it = registers.find(name);
+        if (it != registers.end()) {
             return it->second();
         }
         return nullptr;

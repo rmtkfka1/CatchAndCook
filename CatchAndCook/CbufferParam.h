@@ -70,6 +70,39 @@ CBUFFER_INJECTOR("PlayerMaterialParam", PlayerMaterialParam, 256, BufferType::Pl
 	//data._baseMapST = Vector4(source->GetPropertyVector("_BaseMap_ST"));
 )
 
+struct alignas(16) PlayerSkinMaterialParam
+{
+	Vector4 temp;
+};
+
+
+CBUFFER_INJECTOR("PlayerMaterialParam", PlayerSkinMaterialParam, 256, BufferType::PlayerMaterialParam, std::shared_ptr<Material>,
+	data.temp = Vector4(1, 0, 0, 1);
+// data <- source
+//data.color = Vector4(source->GetPropertyVector("_Color"));
+//data._baseMapST = Vector4(source->GetPropertyVector("_BaseMap_ST"));
+)
+
+
+
+struct ObjectMaterialParam
+{
+	unsigned int o_select = 0;
+	Vector3 o_selectColor;
+	unsigned int o_hit = 0;
+	unsigned int o_hitValue = 0;
+	Vector2 padding;
+	Vector3 o_hitColor;
+};
+
+CBUFFER_INJECTOR("ObjectMaterialParam ", ObjectMaterialParam, 1024, BufferType::ObjectMaterialParam, std::shared_ptr<Material>,
+	//data.temp = Vector4(1, 0, 0, 1);
+	// data <- source
+	//data.color = Vector4(source->GetPropertyVector("_Color"));
+	//data._baseMapST = Vector4(source->GetPropertyVector("_BaseMap_ST"));
+)
+
+
 struct alignas(16) TerrainDetailsParam
 {
 	Vector3 fieldSize; p1(0);

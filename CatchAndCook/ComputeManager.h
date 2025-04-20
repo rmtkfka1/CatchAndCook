@@ -282,10 +282,11 @@ public:
 
 public:
 	void Init();
+	void DispatchAfterDeferred(ComPtr<ID3D12GraphicsCommandList>& cmdList);
 	void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList);
 public:
 	void Resize();
-private:
+public:
 	shared_ptr<Blur> _blur;
 	shared_ptr<Bloom> _bloom;
 	shared_ptr<DepthRender> _depthRender;

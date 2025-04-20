@@ -113,6 +113,7 @@ void ComputeDirectionalLight(Light L, LightMateiral mat, float3 worldPos, float3
     lightingResult.intensity = L.intensity;
 }
 
+
 void ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout LightingResult lightingResult)
 {
     float3 lightVec = L.position - pos;

@@ -300,8 +300,6 @@ void SceneLoader::LinkComponent(json& jsonData)
                 {
                     if (shader == nullptr)
                     {
-                      
-
                         shader = ResourceManager::main->Get<Shader>(L"DefaultDeferred");// Deferred DefaultForward_Skinned DefaultForward
                         material->SetShader(shader);
                         material->SetPass(shader->GetPass());
