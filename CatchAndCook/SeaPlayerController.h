@@ -74,7 +74,7 @@ private:
 	const float _moveForce = 150.0f;
 	const float _maxSpeed = 600.0f;
 	const float _resistance = 2.5f;
-	const float _playerRadius = 4.0f;
+	const float _playerRadius = 10.0f;
 
 private:
 

@@ -244,7 +244,9 @@ Quaternion SeaPlayerController::CalCulateYawPitchRoll()
 
 		_yaw += delta.x;
 		_pitch += delta.y;
-		_pitch = std::clamp(_pitch, -89.0f, 89.0f);
+        float minPitch = -90.0f - _cameraPitchOffset;
+        float maxPitch = 90.0f - _cameraPitchOffset;
+        _pitch = std::clamp(_pitch, minPitch, maxPitch);
 		_roll = 0;
 
 		lastMousePos = currentMousePos;
@@ -258,7 +260,9 @@ Quaternion SeaPlayerController::CalCulateYawPitchRoll()
 
 		_yaw += delta.x;
 		_pitch += delta.y;
-		_pitch = std::clamp(_pitch, -89.0f, 89.0f);
+        float minPitch = -90.0f - _cameraPitchOffset;
+        float maxPitch = 90.0f - _cameraPitchOffset;
+        _pitch = std::clamp(_pitch, minPitch, maxPitch);
 		_roll = 0;
 
 		POINT center;
