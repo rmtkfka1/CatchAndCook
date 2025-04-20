@@ -26,9 +26,6 @@ void PathFinder::Start()
 void PathFinder::Update()
 {
 
-	//if (_fishPath.size() < 2 && _pathName == L"Null")
-//	assert(false);
-
 	const vector<vec3>& myPath = _pathList[_pathName].path;
 
 	int nextIndex = _forward ? _currentIndex + 1 : _currentIndex - 1;
@@ -122,7 +119,9 @@ void PathFinder::CollisionEnd(const std::shared_ptr<Collider>& collider, const s
 
 void PathFinder::ReadPathFile(const std::wstring& fileName)
 {
-    std::ifstream file(fileName);
+	const wstring path = L"../Resources/Graph/";;
+
+    std::ifstream file(path + fileName);
     if (!file.is_open())
     {
         std::wcout << L"Failed to open file: " << fileName << std::endl;
@@ -159,6 +158,7 @@ void PathFinder::SetPass(const wstring& path)
 {
     if (_pathList.find(path) == _pathList.end())
     {
+		cout << "read" << endl;
         ReadPathFile(path);
     }
 

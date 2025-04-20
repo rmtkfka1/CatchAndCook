@@ -105,15 +105,15 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& playerRota
         nextPos.y += deltaY;
     }
 
-     //Gizmo::Width(0.02f);
-     //auto o = _camera->GetCameraPos();
-     //auto f = _camera->GetCameraLook();
-     //auto u = _camera->GetCameraUp();
-     //auto r = _camera->GetCameraRight();
+     Gizmo::Width(0.02f);
+     auto o = _camera->GetCameraPos();
+     auto f = _camera->GetCameraLook();
+     auto u = _camera->GetCameraUp();
+     auto r = _camera->GetCameraRight();
 
-     //Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
-     //Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
-     //Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));
+     Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
+     Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
+     Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));
 
 
      // 최종 위치 적용

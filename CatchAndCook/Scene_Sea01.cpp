@@ -165,6 +165,18 @@ void Scene_Sea01::Init()
 		}
 	}
 
+
+	{
+		auto plant = Find(L"Fish_1");
+
+		if (plant)
+		{
+			cout << "fish_1" << endl;
+			auto finder = plant->AddComponent<PathFinder>();
+			finder->SetPass(L"Fish_1");
+		}
+	}
+
 	
 }
 

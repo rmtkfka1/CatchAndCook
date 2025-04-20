@@ -361,7 +361,7 @@ void SceneLoader::LinkComponent(json& jsonData)
         {
             std::vector<std::shared_ptr<ModelMesh>> meshes = model->FindMeshsByName(meshInfo["meshName"].get<std::string>());
             std::vector<std::shared_ptr<Material>> materials;
-            for(auto& materialGuidJson : jsonData["materials"])
+            for (auto& materialGuidJson : jsonData["materials"])
             {
                 auto materialGuid = std::to_wstring(materialGuidJson.get<std::string>());
                 auto material = IGuid::FindObjectByGuid<Material>(materialGuid);
@@ -387,28 +387,18 @@ void SceneLoader::LinkComponent(json& jsonData)
                 }
                 else
                 {
-                    if (shader == nullptr)
-                    {
-           
-                        shader = ResourceManager::main->Get<Shader>(L"DeferredSeaSkinned");
-                        material->SetShader(shader);
-                        material->SetPass(shader->GetPass());
-                    }
-                    else
-                    {
-       
-                        if (shaderName == L"PlayerShader")
-                        {
-                            shader = ResourceManager::main->Get<Shader>(L"DeferredSeaSkinned");
-                        }
 
-                        material->SetShader(shader);
-                        material->SetPass(shader->GetPass());
-                    }
+                    shader = ResourceManager::main->Get<Shader>(L"DeferredSeaSkinned");
+                    material->SetShader(shader);
+                    material->SetPass(shader->GetPass());
+
+                    material->SetShader(shader);
+                    material->SetPass(shader->GetPass());
+
                 }
-     
+
                 materials.push_back(material);
-            }
+            };
 
             skinnedmeshRenderer->AddMaterials(materials);
             for(auto& mesh : meshes)
