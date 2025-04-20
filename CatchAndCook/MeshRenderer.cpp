@@ -80,6 +80,7 @@ void MeshRenderer::Start()
 	}
 
 
+	_depthNormalMaterials.clear();
 	for (int i = 0; i < _mesh.size(); i++)
 	{
 		auto currentMaterial = _uniqueMaterials[i % std::min(_mesh.size(), _uniqueMaterials.size())];
@@ -92,7 +93,7 @@ void MeshRenderer::Start()
 			else
 				depthNormalMaterial->SetShader(ResourceManager::main->_depthNormal->GetShader());
 			depthNormalMaterial->SetPass(RENDER_PASS::Deferred);
-			_depthNormalMaterials.push_back(make_pair(i, depthNormalMaterial));
+			//_depthNormalMaterials.push_back(make_pair(i, depthNormalMaterial));
 		}
 	}
 };

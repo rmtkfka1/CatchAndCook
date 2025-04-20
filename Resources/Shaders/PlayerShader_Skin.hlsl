@@ -17,11 +17,11 @@ cbuffer PlayerMaterialParam : register(b8)
     float4 temp = float4(1, 1, 1, 1);
 };
 
-cbuffer PlayerSkinMaterialParam : register(b8)
+cbuffer PlayerSkinMaterialParam : register(b9)
 {
     float4 temp2 = float4(1, 1, 1, 1);
 };
-cbuffer PlayerFaceMaterialParam : register(b8)
+cbuffer PlayerFaceMaterialParam : register(b10)
 {
     float4 temp3 = float4(1, 1, 1, 1);
 };
@@ -53,6 +53,7 @@ struct VS_OUT
     float3 tangentWS : TangentWS;
     float2 uv : TEXCOORD0;
 
+    float4 positionOS : PositionOS;
 };
 
 Texture2D _BaseMap : register(t0);
@@ -84,7 +85,9 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     output.tangentOS = input.tangent;
 
 
+    output.positionOS = float4(input.pos, 1.0f);
     output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f), boneIds, boneWs, l2wMatrix);
+    //output.positionWS.w = 1;
     output.positionCS = TransformWorldToClip(output.positionWS);
     output.position = output.positionCS;
 

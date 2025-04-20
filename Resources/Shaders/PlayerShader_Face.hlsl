@@ -181,9 +181,9 @@ float4 PS_Main(VS_OUT input) : SV_Target
 
     float atten2 = clamp(-1, 1, (angle - sdf) * 2) * lightColor.intensity;
     atten2 = atten2 * 0.5 + 0.5;
-
     //float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, atten2) + float4(lightColor.subColor, 0)).xyz;
     float3 finalColor = (BaseColor * _RampSkinMap.Sample(sampler_lerp_clamp, float2(atten2, 0)) + float4(lightColor.subColor, 0)).xyz;
+    finalColor = lerp(ShadowColor * finalColor, finalColor, clamp(0, 1, lightColor.intensity));
 
 
     float SSSDistorion = 0.3f;

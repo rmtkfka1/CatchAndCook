@@ -74,7 +74,7 @@ void SkinnedMeshRenderer::Start()
 		SetOriginBound(localBox);
 	}
 
-
+	_depthNormalMaterials.clear();
 	for (int i = 0; i < _mesh.size(); i++)
 	{
 		auto currentMaterial = _uniqueMaterials[i % std::min(_mesh.size(), _uniqueMaterials.size())];

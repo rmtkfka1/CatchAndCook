@@ -2,6 +2,7 @@
 #include "SkinnedHierarchy.h"
 
 #include "Animation.h"
+#include "AnimationListComponent.h"
 #include "AnimationNode.h"
 #include "Bone.h"
 #include "Gizmo.h"
@@ -64,24 +65,26 @@ void SkinnedHierarchy::Update2()
 {
 	Component::Update2();
 	auto a = ResourceManager::main->GetResourceMap<Animation>();
-	//std::vector<std::shared_ptr<Animation>> animations;
-	/*for (auto& b : a) {
-		wcout << b.first << endl;
-	}*/
+
+	auto b = GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations();
+	std::vector<std::shared_ptr<Animation>> animations;
+	for (auto& c : b)
+		animations.push_back(c.second);
+	
 
 
-	/*if (Input::main->GetKeyDown(KeyCode::Num1))
-		SetAnimation(a[L"shark|Shark_Armature|Swim2"]);
+	if (Input::main->GetKeyDown(KeyCode::Num1))
+		Play(animations[0], 0.25);
 	if (Input::main->GetKeyDown(KeyCode::Num2))
-		SetAnimation(a[L"shark|Shark_Armature|Bite"]);
+		Play(animations[1], 0.25);
 	if (Input::main->GetKeyDown(KeyCode::Num3))
-		SetAnimation(a[L"shark|Shark_Armature|Swim"]);
+		Play(animations[2], 0.25);
 	if (Input::main->GetKeyDown(KeyCode::Num4))
 		Pause();
 	if (Input::main->GetKeyDown(KeyCode::Num5))
 		Play();
 	if (Input::main->GetKeyDown(KeyCode::Num6))
-		Stop();*/
+		Stop();
 
 	if (IsPlay())
 	{
