@@ -1,4 +1,5 @@
 #include "Global_b0.hlsl"
+#include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
 
 //[���̴�����][�ø�ó��]
@@ -31,16 +32,26 @@ VS_OUT VS_Main(VS_IN input)
 float4 PS_Main(VS_OUT input) : SV_Target
 {
     float4 worldPos = PositionTexture.Sample(sampler_point, input.uv);
-    float3 WolrdNormal = normalize(NormalTexture.Sample(sampler_point, input.uv).xyz);
-    float4 AlbedoColor = AlbedoTexture.Sample(sampler_lerp, input.uv);
+    float3 worldNormal = normalize(NormalTexture.Sample(sampler_point, input.uv).xyz);
+    float4 albedoColor = AlbedoTexture.Sample(sampler_lerp, input.uv);
     float4 MAOEColor = MAOTexture.Sample(sampler_point, input.uv);
 
-    LightingResult lightColor = ComputeLightColor(worldPos.xyz, WolrdNormal.xyz);
-    float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), WolrdNormal) * 0.5 + 0.5));
+    LightingResult lightColor = ComputeLightColor(worldPos.xyz, worldNormal.xyz);
+    float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), worldNormal) * 0.5 + 0.5));
 
-    float3 finalColor = (lerp(ShadowColor * AlbedoColor, AlbedoColor, lightColor.atten) + float4(lightColor.subColor, 0)).xyz;
+    float3 finalColor = (lerp(ShadowColor * albedoColor, albedoColor, lightColor.atten) + float4(lightColor.subColor, 0)).xyz;
+
+
+    float3 viewDir = normalize(cameraPos - worldPos.xyz);
+
+    // Rim
+    float MinusN2L = saturate(dot(-lightColor.direction, worldNormal));
+    float fresnel = (1 - saturate(dot(viewDir, worldNormal)));
+    float3 rim = pow(fresnel, exp2(2)) * MinusN2L * float3(0.6, 0.6, 0.8);
+
+
     if (MAOEColor.a == 1)
-		finalColor = AlbedoColor;
+		finalColor = albedoColor;
     
-    return float4(finalColor, 1.0f);
+    return float4(finalColor + rim, 1.0f);
 };
