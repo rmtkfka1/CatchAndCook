@@ -2,6 +2,8 @@
 #include "Component.h"
 class Camera;
 class Terrain;
+class AnimationListComponent;
+class SkinnedHierarchy;
 
 enum class SeaPlayerState
 {
@@ -14,7 +16,6 @@ enum class SeaPlayerState
 	Hit,
 };
 
-class Animator;
 
 class SeaPlayerController :public Component
 {
@@ -56,15 +57,16 @@ private:
 	shared_ptr<Camera> _camera;
 	shared_ptr<Collider> _collider;
 	shared_ptr<Terrain> _terrian;
-
+	shared_ptr<SkinnedHierarchy> _skined;
+	std::unordered_map<string, std::shared_ptr<Animation>> _animations;
 private:
 	weak_ptr<GameObject> _other;
 	SeaPlayerState _state = SeaPlayerState::Idle;
 	vec3 _velocity = vec3::Zero;
 
-	float _cameraPitchOffset = 30.0f;
-	float _cameraForwardOffset = 0.2f;
-	float _cameraHeightOffset = 1.2f;
+	float _cameraPitchOffset = 11.066f;
+	float _cameraForwardOffset = 0.262f;
+	float _cameraHeightOffset = 1.598f;
 	float  _yaw = 0;
 	float _pitch = 0;
 	float _roll = 0;
@@ -72,7 +74,7 @@ private:
 	const float _moveForce = 150.0f;
 	const float _maxSpeed = 600.0f;
 	const float _resistance = 2.5f;
-	const float _playerRadius = 2.5f;
+	const float _playerRadius = 4.0f;
 
 private:
 

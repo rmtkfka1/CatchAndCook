@@ -7,6 +7,9 @@
 #include "TerrainManager.h"
 #include "Terrain.h"
 #include "Gizmo.h"
+#include "AnimationListComponent.h"
+#include "SkinnedHierarchy.h"
+#include "Animation.h"
 SeaPlayerController::SeaPlayerController()
 {
 }
@@ -38,6 +41,14 @@ void SeaPlayerController::Start()
 	GetOwner()->_transform->SetRight(vec3(1, 0, 0));
 	GetOwner()->_transform->SetUp(vec3(0, 1, 0));
 	//GetOwner()->_transform->SetWorldPosition(vec3(0, 1000.0f, 1.0f));
+
+    _animations = GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations();
+    _skined  =GetOwner()->GetComponent<SkinnedHierarchy>();
+
+	for (auto& animation : _animations)
+	{
+		cout << animation.first << endl;
+	}
 }
 
 void SeaPlayerController::Update()
@@ -68,7 +79,7 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& playerRota
 
     vec3 dir = _velocity;
     dir.Normalize();
-    float maxDist = _playerRadius;
+    float maxDist = _playerRadius; 
     auto ray = ColliderManager::main->RayCastForMyCell({ nextHeadPos, dir }, maxDist, GetOwner());
 
     if (ray.isHit)
@@ -95,15 +106,15 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& playerRota
         nextPos.y += deltaY;
     }
 
-     Gizmo::Width(0.02f);
-     auto o = _camera->GetCameraPos();
-     auto f = _camera->GetCameraLook();
-     auto u = _camera->GetCameraUp();
-     auto r = _camera->GetCameraRight();
+     //Gizmo::Width(0.02f);
+     //auto o = _camera->GetCameraPos();
+     //auto f = _camera->GetCameraLook();
+     //auto u = _camera->GetCameraUp();
+     //auto r = _camera->GetCameraRight();
 
-     Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
-     Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
-     Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));
+     //Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
+     //Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
+     //Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));
 
 
      // 최종 위치 적용
@@ -259,11 +270,35 @@ Quaternion SeaPlayerController::CalCulateYawPitchRoll()
 
 void SeaPlayerController::UpdateState(float dt)
 {
+
+ /*   if (_velocity.Length() < 0.01f)
+    {
+		SetState(SeaPlayerState::Idle);
+    }
+    else
+    {
+        SetState(SeaPlayerState::Move);
+    }*/
+
+    if (Input::main->GetKeyDown(KeyCode::I))
+    {
+        SetState(SeaPlayerState::Idle);
+    }
+
+    if (Input::main->GetKeyDown(KeyCode::O))
+    {
+        SetState(SeaPlayerState::Move);
+    }
+
     switch (_state)
     {
     case SeaPlayerState::Idle:
+        cout << _animations["Player_Idle"]->GetModelName() << endl;;
+        _skined->Play(_animations["Player_Idle"],0.5f);
         break;
     case SeaPlayerState::Move:
+        cout << _animations["Player_Swim"]->GetModelName() << endl;;
+		_skined->Play(_animations["Player_Swim"],0.5f);
         break;
     case SeaPlayerState::Attack:
         break;

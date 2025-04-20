@@ -63,7 +63,7 @@ void SkinnedHierarchy::Update()
 void SkinnedHierarchy::Update2()
 {
 	Component::Update2();
-	auto a = ResourceManager::main->GetResourceMap<Animation>();
+	/*auto a = ResourceManager::main->GetResourceMap<Animation>();
 	std::vector<std::shared_ptr<Animation>> animations;
 	for (auto& b : a) {
 		animations.push_back(b.second);
@@ -81,7 +81,7 @@ void SkinnedHierarchy::Update2()
 	if (Input::main->GetKeyDown(KeyCode::Num5))
 		Play();
 	if (Input::main->GetKeyDown(KeyCode::Num6))
-		Stop();
+		Stop();*/
 
 	if (IsPlay())
 	{
@@ -325,11 +325,12 @@ void SkinnedHierarchy::Play(const std::shared_ptr<Animation>& animation, const d
 	{
 		if (_animation == animation)
 			return;
-
-		_nextAnimation = animation;
-		_animationBlendTime = 0;
-		_prevAnimationBlendTime = 0;
 	}
+
+	_nextAnimation = animation;
+	_animationBlendTime = 0;
+	_prevAnimationBlendTime = 0;
+
 	_duration = std::max(duration, 0.001);
 	_isPlaying = true;
 }
