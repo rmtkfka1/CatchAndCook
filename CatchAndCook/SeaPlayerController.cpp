@@ -52,6 +52,21 @@ void SeaPlayerController::Start()
 
 void SeaPlayerController::Update()
 {
+
+    if (CameraManager::main->GetCameraType() == CameraType::DebugCamera)
+    {
+        Gizmo::Width(0.02f);
+        auto o = _camera->GetCameraPos() + _camera->GetCameraLook() * _camera->GetNear();
+        auto f = _camera->GetCameraLook();
+        auto u = _camera->GetCameraUp();
+        auto r = _camera->GetCameraRight();
+
+        Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
+        Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
+        Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));
+
+    }
+
   
     float dt = Time::main->GetDeltaTime();
     Quaternion playerRotation = CalCulateYawPitchRoll();
@@ -87,7 +102,7 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& playerRota
 
         _velocity = _velocity - _velocity.Dot(normal) * normal;
 
-        float penetrationBuffer = 0.01f;
+        float penetrationBuffer = 0.05f;
         nextPos += normal * penetrationBuffer;
         nextHeadPos += normal * penetrationBuffer;
     }
@@ -105,16 +120,7 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& playerRota
         nextPos.y += deltaY;
     }
 
-     Gizmo::Width(0.02f);
-     auto o = _camera->GetCameraPos();
-     auto f = _camera->GetCameraLook();
-     auto u = _camera->GetCameraUp();
-     auto r = _camera->GetCameraRight();
-
-     Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
-     Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
-     Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));
-
+  
 
      // 최종 위치 적용
     _transform->SetWorldPosition(nextPos);
