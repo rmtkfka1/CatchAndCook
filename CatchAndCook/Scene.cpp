@@ -71,7 +71,7 @@ void Scene::Update()
             gameObject->Update2();
     Profiler::Fin();
 
-    Profiler::Set("Logic_ColliderManager");
+    Profiler::Set("Logic_CollisionCheck");
     ColliderManager::main->Update();
     Profiler::Fin();
 }
@@ -81,11 +81,11 @@ void Scene::RenderBegin()
     for (auto& ele : _passObjects)
         ele.clear();
 
-    Profiler::Set("Render_RenderBegin");
+    Profiler::Set("Logic_RenderBegin");
     for (auto& gameObject : _gameObjects)
     	gameObject->RenderBegin();
-
     Profiler::Fin();
+
     Gizmo::main->RenderBegin();
 }
 
@@ -98,8 +98,11 @@ void Scene::Rendering()
 
     ShadowPass(cmdList);
     Profiler::Set("PASS : Deferred", BlockTag::GPU);
-    DeferredPass(cmdList);
-    FinalRender(cmdList);
+        DeferredPass(cmdList);
+    Profiler::Fin();
+
+    Profiler::Set("PASS : FinalPass", BlockTag::GPU);
+        FinalRender(cmdList);
     Profiler::Fin();
 
     Core::main->CopyDepthTexture(Core::main->GetDSReadTexture(), Core::main->GetRenderTarget()->GetDSTexture());
@@ -355,8 +358,6 @@ void Scene::DebugRendering()
 {
 
     auto& cmdList = Core::main->GetCmdList();
-
-
 
     { // forward
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Debug)];

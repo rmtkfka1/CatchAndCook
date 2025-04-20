@@ -13,6 +13,7 @@ public:
 
 	void AddCamera(CameraType type, shared_ptr<Camera> camera) { _cameras[type] = camera; }
 	void Setting(CameraType type);
+	void Setting();
 	void SetActiveCamera(CameraType type);
 
 	shared_ptr<Camera> GetActiveCamera() { return _activeCamera; }

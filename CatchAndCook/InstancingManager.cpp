@@ -16,6 +16,7 @@ void InstancingManager::RenderNoInstancing(RenderObjectStrucutre& RoS)
 	auto& mesh = RoS.mesh;
 	auto& shader = material->GetShader();
 	auto& structuredInfo = shader->GetTRegisterStructured();
+
 	InstanceOffsetParam param = {};
 
 	for (const auto& infos : structuredInfo)
@@ -34,11 +35,7 @@ void InstancingManager::RenderNoInstancing(RenderObjectStrucutre& RoS)
 
 		int ROOT_OFFSET = infos.registerIndex - SRV_STRUCTURED_TABLE_REGISTER_OFFSET;
 		assert(ROOT_OFFSET >= 0);
-		if (ROOT_OFFSET == 1)
-		{
-			int a = 0;
-			auto& bufferType = bufferManager->GetStructuredNameToBufferType(name);
-		}
+
 		cmdList->SetGraphicsRootDescriptorTable(SRV_STRUCTURED_TABLE_INDEX + ROOT_OFFSET, table.GPUHandle);
 		param.offset[ROOT_OFFSET].x = offset;
 	}
@@ -57,39 +54,39 @@ void InstancingManager::Render()
 	auto& bufferManager = Core::main->GetBufferManager();
 	auto& tableManager = bufferManager->GetTable();
 
-	for (auto& [id, objects] : _objectMap)
+	for (auto& [id, RenderObjectStrutures] : _objectMap)
 	{
-		if (objects.empty()) continue;
+		if (RenderObjectStrutures.empty()) continue;
 
-		auto& material = objects[0].material;
-		auto& renderer = objects[0].renderer;
-		auto& mesh = objects[0].mesh;
+		auto& material = RenderObjectStrutures[0].material;
+		auto& renderer = RenderObjectStrutures[0].renderer;
+		auto& mesh = RenderObjectStrutures[0].mesh;
 		auto& shader = material->GetShader();
 		auto& structuredInfo = shader->GetTRegisterStructured();
 		InstanceOffsetParam param = {};
 
 		for (const auto& infos : structuredInfo)
 		{
+
 			const std::string& name = infos.name;
 			auto& bufferType = bufferManager->GetStructuredNameToBufferType(name);
-			auto& pool = bufferManager->GetStructuredBufferPool(bufferType);
-			int offset = pool->GetOffset();
+			auto& struturedBufferPool = bufferManager->GetStructuredBufferPool(bufferType);
+			int offset = struturedBufferPool->GetOffset();
 
 			auto table = tableManager->Alloc(1);
 
-			for (auto& object : objects)
+			for (auto& renderobjectStruture : RenderObjectStrutures)
 			{
-				auto& setter = object.renderer->FindStructuredSetter(bufferType);
+				auto& setter = renderobjectStruture.renderer->FindStructuredSetter(bufferType);
 				assert(setter != nullptr);
-				setter->SetData(pool.get());
+				setter->SetData(struturedBufferPool.get(),renderobjectStruture.material);
 			}
 
-			tableManager->CopyHandle(table.CPUHandle, pool->GetSRVHandle(), 0);
+			tableManager->CopyHandle(table.CPUHandle, struturedBufferPool->GetSRVHandle(), 0);
 
 			int ROOT_OFFSET = infos.registerIndex - SRV_STRUCTURED_TABLE_REGISTER_OFFSET;
 			assert(ROOT_OFFSET >= 0);
 			cmdList->SetGraphicsRootDescriptorTable(SRV_STRUCTURED_TABLE_INDEX + ROOT_OFFSET, table.GPUHandle);
-
 			param.offset[ROOT_OFFSET].x = offset;
 		}
 
@@ -98,7 +95,7 @@ void InstancingManager::Render()
 		cmdList->SetGraphicsRootConstantBufferView(4, cbufferContainer->GPUAdress);
 
 		g_debug_draw_call++;
-		renderer->Rendering(material, mesh, objects.size());
+		renderer->Rendering(material, mesh, RenderObjectStrutures.size());
 	}
 
 	_objectMap.clear();

@@ -52,6 +52,9 @@ public:
 	float* alignmentWeight;
 	float* cohesionWeight;
 
+	float* playerHeightOffset;
+	float* playerForwardOffset;
+	float* cameraPitchOffset;
 private:
 	bool show_window = true;
 	bool show_another_window = false;

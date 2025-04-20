@@ -250,6 +250,8 @@ void SceneLoader::LinkGameObject(json& jsonData)
 
 void SceneLoader::LinkComponent(json& jsonData)
 {
+
+
     std::wstring guid = std::to_wstring(jsonData["guid"].get<std::string>());
     std::wstring type = std::to_wstring(jsonData["type"].get<std::string>());
 
@@ -293,18 +295,47 @@ void SceneLoader::LinkComponent(json& jsonData)
                 auto& materialData = (*refJson_MaterialTable[materialGuid]);
                 auto shaderName = std::to_wstring(materialData["shaderName"].get<std::string>());
                 auto shader = ResourceManager::main->Get<Shader>(shaderName);
-                if (shader == nullptr)
+
+                if (_scene->GetSceneType() != SceneType::Sea01)
                 {
-                    shader = ResourceManager::main->Get<Shader>(L"DefaultDeferred");// Deferred DefaultForward_Skinned DefaultForward
-                    material->SetShader(shader);
-                    material->SetPass(shader->GetPass());
+                    if (shader == nullptr)
+                    {
+                      
+
+                        shader = ResourceManager::main->Get<Shader>(L"DefaultDeferred");// Deferred DefaultForward_Skinned DefaultForward
+                        material->SetShader(shader);
+                        material->SetPass(shader->GetPass());
+                    }
+                    else
+                    {
+                        material->SetShader(shader);
+                        material->SetPass(shader->GetPass());
+                    }
+                    material->SetPreDepthNormal(true);
                 }
+
                 else
                 {
-                    material->SetShader(shader);
-                    material->SetPass(shader->GetPass());
+                    if (shader == nullptr)
+                    {
+                 
+                        shader = ResourceManager::main->Get<Shader>(L"DeferredSea");
+                        material->SetShader(shader);
+                        material->SetPass(shader->GetPass());
+                    }
+                    else
+                    {
+                    
+                        if (shaderName==L"Environment")
+                        {
+                            shader = ResourceManager::main->Get<Shader>(L"DeferredSea");
+                        }
+
+                        material->SetShader(shader);
+                        material->SetPass(shader->GetPass());
+                    }
                 }
-                material->SetPreDepthNormal(true);
+
                 materials.push_back(material);
             }
 
@@ -337,18 +368,45 @@ void SceneLoader::LinkComponent(json& jsonData)
                 auto& materialData = (*refJson_MaterialTable[materialGuid]);
                 auto shaderName = std::to_wstring(materialData["shaderName"].get<std::string>());
                 auto shader = ResourceManager::main->Get<Shader>(shaderName);
-                if (shader == nullptr)
+
+                if (_scene->GetSceneType() != SceneType::Sea01)
                 {
-                    shader = ResourceManager::main->Get<Shader>(L"DefaultForward_Skinned");
-                    material->SetShader(shader);
-                    material->SetPass(shader->GetPass());
+                    if (shader == nullptr)
+                    {
+                        shader = ResourceManager::main->Get<Shader>(L"DefaultForward_Skinned");
+                        material->SetShader(shader);
+                        material->SetPass(shader->GetPass());
+                    }
+                    else
+                    {
+                        material->SetShader(shader);
+                        material->SetPass(shader->GetPass());
+                    }
+
+                    material->SetPreDepthNormal(true);
                 }
                 else
                 {
-                    material->SetShader(shader);
-                    material->SetPass(shader->GetPass());
+                    if (shader == nullptr)
+                    {
+           
+                        shader = ResourceManager::main->Get<Shader>(L"DeferredSeaSkinned");
+                        material->SetShader(shader);
+                        material->SetPass(shader->GetPass());
+                    }
+                    else
+                    {
+       
+                        if (shaderName == L"PlayerShader")
+                        {
+                            shader = ResourceManager::main->Get<Shader>(L"DeferredSeaSkinned");
+                        }
+
+                        material->SetShader(shader);
+                        material->SetPass(shader->GetPass());
+                    }
                 }
-                material->SetPreDepthNormal(true);
+     
                 materials.push_back(material);
             }
 

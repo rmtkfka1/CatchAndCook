@@ -2,6 +2,8 @@
 #include "FishMonster.h"
 #include "Transform.h"
 #include "Gizmo.h"
+#include "AnimationListComponent.h"
+#include "SkinnedHierarchy.h"
 
 FishMonster::FishMonster()
 {
@@ -18,6 +20,11 @@ void FishMonster::Init()
 void FishMonster::Start()
 {
 	_firstQuat = GetOwner()->_transform->GetWorldRotation();
+
+	std::unordered_map<string, std::shared_ptr<Animation>> aniList;
+
+
+
 }
 
 void FishMonster::Update()

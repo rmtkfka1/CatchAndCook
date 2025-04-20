@@ -18,7 +18,7 @@ class RenderStructuredSetter
 {
 public:
 	virtual ~RenderStructuredSetter();
-	virtual void SetData(StructuredBuffer* buffer = nullptr) = 0;
+	virtual void SetData(StructuredBuffer* buffer = nullptr, Material* material = nullptr) = 0;
 };
 
 class RenderCBufferSetter
@@ -60,6 +60,11 @@ public:
 		_orginBound = bound;
 
 	};
+
+	BoundingBox& GetOriginBound()
+	{
+		return _orginBound;
+	}
 
 	void SetCulling(bool isCulling) {
 		_isCulling = isCulling;

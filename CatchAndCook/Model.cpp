@@ -494,80 +494,57 @@ void Model::LoadAnimation(aiAnimation* aiAnim, aiNode* root)
 
 void Model::LoadRootBone(aiScene* scene)
 {
-	if (!_modelBoneList.empty())
+	if (_modelBoneList.empty())
+		return;
+
+	auto& boneName = _modelBoneList[0]->GetName();
+
+	//for (auto& ele : _modelBoneList)
+	//{
+	//	cout << ele->GetName() << endl;
+	//}
+	
+	aiNode* node = scene->mRootNode->FindNode(boneName.c_str());
+	if (!node)
 	{
-		shared_ptr<ModelNode> findMeshNode;
-		for (auto& node : _modelOriginalNodeList)
+		cout << "씬에 본없음: " << boneName << endl;
+		return;
+	}
+
+
+	aiNode* rootBoneNode = node;
+	while (rootBoneNode->mParent)
+	{
+		std::string parentName = convert_assimp::Format(rootBoneNode->mParent->mName);
+
+		bool parentIsBone = false;
+
+		for (auto& bone : _modelBoneList)
 		{
-			if (node->IsMesh())
+			if (bone->GetName() == parentName)
 			{
-				findMeshNode = node;
+				parentIsBone = true;
 				break;
 			}
 		}
-		if (findMeshNode != nullptr)
-			findMeshNode = findMeshNode->GetParent();
-		if (findMeshNode != nullptr)
-		{
-			shared_ptr<ModelNode> findBoneNode;
-			for (auto& node : _modelOriginalNodeList) {
-				if (node->IsBone()) {
-					findBoneNode = node;
-					break;
-				}
-			}
-			while (findBoneNode != nullptr && findBoneNode->GetParent() != findMeshNode)
-			{
-				if (findBoneNode != nullptr)
-				{
-					if (findBoneNode->IsBone())
-						_rootBoneNode = findBoneNode;
-					findBoneNode = findBoneNode->GetParent();
-				}
-				else
-					break;
-			}
-		}
-		else
-		{
-			std::set<std::string> animatedNodeNames;
-			for (unsigned int i = 0; i < scene->mNumAnimations; ++i) {
-				aiAnimation* anim = scene->mAnimations[i];
-				for (unsigned int j = 0; j < anim->mNumChannels; ++j) {
-					auto name = convert_assimp::Format(anim->mChannels[j]->mNodeName);
-					animatedNodeNames.insert(name);
-					if (name.find("$AssimpFbx$") != std::string::npos)
-					{
-						vector<string> originalList = str::split(name, "_$AssimpFbx$");
-						name = originalList[0];
-					}
-					animatedNodeNames.insert(name);
-				}
-			}
 
-			aiNode* rootBoneNode = nullptr;
-			for (const auto& name : animatedNodeNames)
-			{
-				aiNode* node = scene->mRootNode->FindNode(name.c_str());
-				if (node) {
-					// 부모가 애니메이션에 사용된 노드 집합에 없으면 최상위 본으로 판단
-					auto parentName = convert_assimp::Format(node->mParent->mName);
-					if (name.find("$AssimpFbx$") != std::string::npos)
-					{
-						vector<string> originalList = str::split(parentName, "_$AssimpFbx$");
-						parentName = originalList[0];
-					}
-					if (!node->mParent || animatedNodeNames.find(parentName) == animatedNodeNames.end()) {
-						rootBoneNode = node;
-						break;
-					}
-				}
-			}
-			if (rootBoneNode) {
-				if (auto node = _nameToNodeTable[convert_assimp::Format(rootBoneNode->mName)])
-					_rootBoneNode = node;
-			}
-		}
+		if (!parentIsBone)
+			break;
+
+		rootBoneNode = rootBoneNode->mParent;
+	}
+
+
+	std::string rootBoneName = convert_assimp::Format(rootBoneNode->mName);
+	auto it = _nameToNodeTable.find(rootBoneName);
+
+	if (it != _nameToNodeTable.end())
+	{
+		_rootBoneNode = it->second;
+	}
+	else
+	{
+		std::cout << "_nameToNodeTable 에 루트본없음: " << rootBoneName << std::endl;
 	}
 }
 

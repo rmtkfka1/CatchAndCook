@@ -26,9 +26,6 @@ struct alignas(16) TestSubMaterialParam
 	p2(0);
 };
 
-CBUFFER_INJECTOR("popo", TestSubMaterialParam, 256, BufferType::MateriaSubParam, std::shared_ptr<Material>,
-	data.uv = Vector2(source->GetPropertyVector("uv"));
-)
 
 struct alignas(16) DefaultMaterialParam
 {
@@ -36,7 +33,7 @@ struct alignas(16) DefaultMaterialParam
 	Vector4 _baseMapST;
 };
 
-CBUFFER_INJECTOR("DefaultMaterialParam", DefaultMaterialParam, 256, BufferType::DefaultMaterialParam, std::shared_ptr<Material>,
+CBUFFER_INJECTOR("DefaultMaterialParam", DefaultMaterialParam, 1000, BufferType::DefaultMaterialParam, std::shared_ptr<Material>,
 	// data <- source
 	data.color = Vector4(source->GetPropertyVector("_Color"));
 	data._baseMapST = Vector4(source->GetPropertyVector("_BaseMap_ST"));
@@ -94,3 +91,20 @@ CBUFFER_INJECTOR("TerrainDetailsParam", TerrainDetailsParam, 256, BufferType::Te
 	/*data.tileOffset = Vector2(source->GetPropertyVector("tileOffset"));
 	data.color = Vector4(source->GetPropertyVector("_Color"));*/
 )
+
+////////////////////////////////////////////////////////////////////////////
+
+//struct alignas(16) SeaPlantParam
+//{
+//
+//	vec4 color = vec4(1, 1, 1, 1);
+//	float amplitude = 0.2f;
+//	float frequency = 0.5f;
+//	float boundsCenterY;
+//	float boundsSizeY;
+//	
+//};
+//
+//CBUFFER_INJECTOR("SeaPlantParam", SeaPlantParam, 256, BufferType::SeaPlantParam, std::shared_ptr<Material>,
+//	data.color = Vector4(source->GetPropertyVector("_Color"));
+//)

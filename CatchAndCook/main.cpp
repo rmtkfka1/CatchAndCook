@@ -49,8 +49,6 @@ int main()
 		wr.bottom - wr.top, // 윈도우 세로 방향 해상도
 		NULL, NULL, wc.hInstance, NULL);
 
-
-
 	ShowWindow(hwnd, SW_SHOWDEFAULT);
 	UpdateWindow(hwnd);
 
@@ -102,7 +100,6 @@ int main()
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
 		return true;
 
@@ -121,6 +118,10 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				GetClientRect(hWnd, &rect);
 				WINDOW_WIDTH = rect.right - rect.left;
 				WINDOW_HEIGHT = rect.bottom - rect.top;
+
+				if (WINDOW_WIDTH <= 0 || WINDOW_HEIGHT <= 0)
+					break;
+
 				Core::main->ResizeWindowSize();
 			}
 			break;

@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "PlantComponent.h"
 
+COMPONENT(PlantComponent)
+
 PlantComponent::PlantComponent()
 {
 }
@@ -12,15 +14,15 @@ PlantComponent::~PlantComponent()
 
 void PlantComponent::Init()
 {
-	/*_plantInfo.amplitude = 0.5f;
-	_plantInfo.frequency = 0.8f;*/
+	
 }
 
 void PlantComponent::Start()
 {
-	if (GetOwner()->GetRenderer())
+	if (auto renderer =GetOwner()->GetRenderer())
 	{
-		GetOwner()->GetRenderer()->AddCbufferSetter(static_pointer_cast<PlantComponent>(shared_from_this()));
+		renderer->AddStructuredSetter(static_pointer_cast<PlantComponent>(shared_from_this()), BufferType::SeaPlantParam);
+		_renderBase = renderer;
 	}
 }
 
@@ -66,10 +68,22 @@ void PlantComponent::SetDestroy()
 
 }
 
-void PlantComponent::SetData(Material* material)
+void PlantComponent::SetData(StructuredBuffer* buffer, Material* material)
 {
-	//auto& cmdList =  Core::main->GetCmdList();
-	//auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::PlantInfo)->Alloc(1);
-	//memcpy(CbufferContainer->ptr, (void*)&_plantInfo, sizeof(PlantInfo));
-	//cmdList->SetGraphicsRootConstantBufferView(8, CbufferContainer->GPUAdress);
+	PlantInfo info;
+	info.amplitude;
+	info.color = material->GetPropertyVector("_Color");
+	info.amplitude = material->GetPropertyFloat("_Amplitude");
+	info.frequency = material->GetPropertyFloat("_frequency");
+
+	BoundingBox& box = _renderBase.lock()->GetOriginBound();
+	info.boundsSizeY =box.Extents.y*2;
+	info.boundsCenterY = box.Center.y;
+
+
+
+	buffer->AddData(info);
 }
+
+
+

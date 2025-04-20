@@ -127,6 +127,7 @@ void Texture::Init(const wstring& path, TextureType type, bool relativePath, boo
 
     switch (type)
     {
+
     case TextureType::Texture2D:
         srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
         break;
@@ -135,6 +136,7 @@ void Texture::Init(const wstring& path, TextureType type, bool relativePath, boo
         break;
     default:
         break;
+
     }
 
     SetFormat(_image.GetMetadata().format);
@@ -146,8 +148,8 @@ void Texture::Init(const wstring& path, TextureType type, bool relativePath, boo
 void Texture::Init(vector<wstring>& paths)
 {
     HRESULT hr = S_OK;
-    auto device = Core::main->GetDevice(); // 엔진의 ID3D12Device 포인터 가져오기
-    auto cmdList = Core::main->GetResCmdList(); // 리소스(업로드용) 명령 리스트
+    auto device = Core::main->GetDevice(); 
+    auto cmdList = Core::main->GetResCmdList(); 
 
     // 1) 여러 이미지 로드
     // ------------------------------------

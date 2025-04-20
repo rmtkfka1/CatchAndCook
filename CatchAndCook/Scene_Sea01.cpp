@@ -10,11 +10,13 @@
 #include "CameraComponent.h"
 #include "SeaPlayerController.h"
 #include "FishMonster.h"
+#include "PlantComponent.h"
+#include "SkinnedMeshRenderer.h"
 void Scene_Sea01::Init()
 {
 	Scene::Init();
-	_finalShader->SetShader(ResourceManager::main->Get<Shader>(L"finalShader_MainField"));
-	_finalShader->SetPass(RENDER_PASS::Forward);
+	//_finalShader->SetShader(ResourceManager::main->Get<Shader>(L"finalShader_MainField"));
+	//_finalShader->SetPass(RENDER_PASS::Forward);
 
 #pragma region DebugXYZ
 	{
@@ -97,17 +99,49 @@ void Scene_Sea01::Init()
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(0, 0, 1, 0)));
 	}
 #pragma endregion
-
 	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/sea.json");
 	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
 	sceneLoader->Load(GetCast<Scene>());
 
 	auto player = Find(L"seaPlayer");
 
+
+	/*for (auto& gameobject : _gameObjects)
+	{
+		auto& meshRenderer = gameobject->GetComponent<MeshRenderer>();
+
+		if (meshRenderer)
+		{
+			auto& materials = meshRenderer->GetMaterials();
+
+			for (auto& material : materials)
+			{
+				if (material->GetShader()->_name == "DeferredSeaPlant.hlsl")
+				{
+					gameobject->AddComponent<PlantComponent>();
+				}
+			}
+		}
+
+	}*/
+
+
 	if (player)
 	{
 		//player->_transform->SetPivotOffset(vec3(0, 1.0f, 0));
 		player->AddComponent<SeaPlayerController>();
+
+		vector<shared_ptr<GameObject>> childs;
+		player->GetChildsAll(childs);
+
+		for (auto& child : childs)
+		{
+			auto skinnedMeshRenderer = child->GetComponent<SkinnedMeshRenderer>();
+			if (skinnedMeshRenderer)
+			{
+				skinnedMeshRenderer->SetCulling(false);
+			}
+		}
 	
 	}
 
@@ -118,6 +152,16 @@ void Scene_Sea01::Init()
 		{
 			auto finder = plant->AddComponent<FishMonster>();
 			finder->ReadPathFile(L"TutleMove");
+		}
+	}
+
+	{
+		auto plant = Find(L"shark");
+
+		if (plant)
+		{
+			auto finder = plant->AddComponent<FishMonster>();
+			finder->ReadPathFile(L"SharkMove");
 		}
 	}
 

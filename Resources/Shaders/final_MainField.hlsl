@@ -1,7 +1,7 @@
 #include "Global_b0.hlsl"
 #include "Light_b3.hlsl"
 
-//[½¦ÀÌ´õÁ¤¸®][ÄÃ¸µÃ³¸®]
+//[ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ï¿½ï¿½][ï¿½Ã¸ï¿½Ã³ï¿½ï¿½]
 
 struct VS_IN
 {

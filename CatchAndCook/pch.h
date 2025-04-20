@@ -144,6 +144,7 @@ namespace fs = std::filesystem;
 #include "Imgui/imgui_impl_win32.h"
 
 #include "ImguiManager.h"
+#include "IComponentFactory.h"
 #define IMGUI_ON
 
 

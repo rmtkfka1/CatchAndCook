@@ -7,6 +7,9 @@
 #include "TerrainManager.h"
 #include "Terrain.h"
 #include "Gizmo.h"
+#include "AnimationListComponent.h"
+#include "SkinnedHierarchy.h"
+#include "Animation.h"
 SeaPlayerController::SeaPlayerController()
 {
 }
@@ -16,7 +19,9 @@ SeaPlayerController::~SeaPlayerController()
 }
 void SeaPlayerController::Init()
 {
-	
+	ImguiManager::main->playerHeightOffset = &_cameraHeightOffset;
+	ImguiManager::main->playerForwardOffset = &_cameraForwardOffset;
+	ImguiManager::main->cameraPitchOffset = &_cameraPitchOffset;
 }
 
 void SeaPlayerController::Start()
@@ -27,7 +32,6 @@ void SeaPlayerController::Start()
 
 	if (auto terrian = SceneManager::main->GetCurrentScene()->Find(L"Terrain"))
 	{
-		cout << "찾음" << endl;
 		_terrian = terrian->GetComponent<Terrain>();
 	}
 
@@ -36,38 +40,45 @@ void SeaPlayerController::Start()
 	GetOwner()->_transform->SetRight(vec3(1, 0, 0));
 	GetOwner()->_transform->SetUp(vec3(0, 1, 0));
 	//GetOwner()->_transform->SetWorldPosition(vec3(0, 1000.0f, 1.0f));
+
+    _animations = GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations();
+    _skined  =GetOwner()->GetComponent<SkinnedHierarchy>();
+
+	for (auto& animation : _animations)
+	{
+		cout << animation.first << endl;
+	}
 }
 
 void SeaPlayerController::Update()
 {
-   
-
+  
     float dt = Time::main->GetDeltaTime();
-    Quaternion rotation = CalCulateYawPitchRoll();
+    Quaternion playerRotation = CalCulateYawPitchRoll();
 
-	_transform->SetWorldRotation(rotation);
-    _camera->SetCameraRotation(rotation);
+    _transform->SetWorldRotation(playerRotation);
+
+    Quaternion cameraRotation = Quaternion::CreateFromYawPitchRoll(_yaw*D2R, _cameraPitchOffset * D2R + _pitch * D2R, 0);
+    //Quaternion cameraRotation = pitchQuat * playerRotation;
+    _camera->SetCameraRotation(cameraRotation);
 
     vec3 inputDir = vec3::Zero;
-
-	KeyUpdate(inputDir, rotation, dt);
-
+    KeyUpdate(inputDir, cameraRotation, dt);
     UpdateState(dt);
-
-	UpdatePlayerAndCamera(dt, rotation);
+    UpdatePlayerAndCamera(dt, playerRotation, cameraRotation);
 }
 
-void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
+void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& playerRotation, Quaternion& cameraRotation)
 {
     vec3 currentPos = _transform->GetWorldPosition();
     vec3 nextPos = currentPos + _velocity * dt;
     vec3 headOffset = vec3(0, _cameraHeightOffset, 0);
-    vec3 rotatedHeadOffset = vec3::Transform(headOffset, rotation);
-    vec3 nextHeadPos = nextPos + rotatedHeadOffset + _transform->GetForward() * 0.2f;
+    vec3 rotatedHeadOffset = vec3::Transform(headOffset, playerRotation);
+    vec3 nextHeadPos = nextPos + rotatedHeadOffset + _transform->GetForward() * _cameraForwardOffset;
 
     vec3 dir = _velocity;
     dir.Normalize();
-    float maxDist = _playerRadius;
+    float maxDist = _playerRadius; 
     auto ray = ColliderManager::main->RayCastForMyCell({ nextHeadPos, dir }, maxDist, GetOwner());
 
     if (ray.isHit)
@@ -94,21 +105,23 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& rotation)
         nextPos.y += deltaY;
     }
 
-    /* Gizmo::Width(0.02f);
-     auto o = _camera->GetCameraPos();
-     auto f = _camera->GetCameraLook();
-     auto u = _camera->GetCameraUp();
-     auto r = _camera->GetCameraRight();
+     //Gizmo::Width(0.02f);
+     //auto o = _camera->GetCameraPos();
+     //auto f = _camera->GetCameraLook();
+     //auto u = _camera->GetCameraUp();
+     //auto r = _camera->GetCameraRight();
 
-     Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
-     Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
-     Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));*/
+     //Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
+     //Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
+     //Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));
 
 
      // 최종 위치 적용
     _transform->SetWorldPosition(nextPos);
     _camera->SetCameraPos(nextHeadPos);
     _velocity *= (1 - (_resistance * dt));
+
+    CameraManager::main->Setting();
 }
 
 void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float dt)
@@ -256,13 +269,39 @@ Quaternion SeaPlayerController::CalCulateYawPitchRoll()
 
 void SeaPlayerController::UpdateState(float dt)
 {
+
+    if (Input::main->GetKeyDown(KeyCode::Num1))
+    {
+        _state = SeaPlayerState::Idle;
+  
+    }
+
+    if (Input::main->GetKeyDown(KeyCode::Num2))
+    {
+        _state = SeaPlayerState::Move;
+   
+    }
+
+    if (Input::main->GetKeyDown(KeyCode::Num3))
+    {
+		_state = SeaPlayerState::Attack;
+       
+    }
+
     switch (_state)
     {
     case SeaPlayerState::Idle:
+        _skined->Play(GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations()["sea_idle"], 0.5f);
+ /*       cout << _animations["sea_idle"]->GetModelName() << endl;;*/
+     
         break;
     case SeaPlayerState::Move:
+        //cout << _animations["sea_swim"]->GetModelName() << endl;;
+        _skined->Play(GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations()["sea_swim"], 0.5f);
         break;
     case SeaPlayerState::Attack:
+   /*     cout << _animations["sea_jump"]->GetModelName() << endl;;*/
+        _skined->Play(GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations()["sea_jump"], 0.5f);
         break;
     case SeaPlayerState::Skill:
         break;

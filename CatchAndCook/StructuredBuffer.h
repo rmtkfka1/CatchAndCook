@@ -10,24 +10,15 @@ public:
 	template<class T>
 	void AddData(const T& data)
 	{
-		memcpy(static_cast<uint8*>(_mappedData) + _writeByteOffset, &data, sizeof(T));
+		memcpy(static_cast<uint8*>(_mappedData) + _writeOffsetIndex * sizeof(T), &data, sizeof(T));
 		_writeOffsetIndex++;
-		_writeByteOffset += sizeof(T);
-	}
-
-	void* AllocPtr(int byteSize) 
-	{
-		auto resultPtr = static_cast<uint8*>(_mappedData) + _writeByteOffset;
-		_writeOffsetIndex++;
-		_writeByteOffset += byteSize;
-		return resultPtr;
 	}
 
 	void Clear()
 	{
 		_writeOffsetIndex = 0;
-		_writeByteOffset = 0;
 	}
+
 	int GetOffset() const
 	{
 		return _writeOffsetIndex;
@@ -45,5 +36,4 @@ private:
 
 	void* _mappedData = nullptr;
 	int _writeOffsetIndex = 0;
-	int _writeByteOffset = 0;
 };

@@ -1,8 +1,6 @@
 #include "Global_b0.hlsl"
 #include "Light_b3.hlsl"
 
-//[쉐이더정리][컬링처리]
-
 struct VS_IN
 {
     float3 pos : POSITION;
@@ -24,6 +22,8 @@ VS_OUT VS_Main(VS_IN input)
     
     return output;
 }
+
+Texture2D _BakedGIMap : register(t8);
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {

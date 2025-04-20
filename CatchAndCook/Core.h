@@ -28,13 +28,16 @@ public:
 	void RenderEnd();
 
 	void Fence();
+	void FenceCurrentFrame();
+	//void FenceAll();
+
 	void FlushResCMDQueue();
 	void ResizeWindowSize();
 	HWND GetHandle() { return _hwnd; }
 
 public:
 	ComPtr<ID3D12Device5>& GetDevice() { return _device; }
-	ComPtr<ID3D12GraphicsCommandList>& GetCmdList() { return _cmdList; }
+	ComPtr<ID3D12GraphicsCommandList>& GetCmdList() { return _cmdList[CURRENT_CONTEXT_INDEX]; }
 	ComPtr<ID3D12GraphicsCommandList>& GetResCmdList() { return _resCmdList; }
 	ComPtr<ID3D12CommandQueue>& GetCmdQueue() { return _cmdQueue; }
 	shared_ptr<RenderTarget>& GetRenderTarget() { return _renderTarget; }
@@ -72,22 +75,22 @@ private:
 
 	ComPtr<ID3D12CommandQueue> _cmdQueue = nullptr;
 
-	ComPtr<ID3D12CommandAllocator> _cmdMemory = {};
-	ComPtr<ID3D12GraphicsCommandList> _cmdList = {};
+	array<ComPtr<ID3D12CommandAllocator>,MAX_FRAME_COUNT> _cmdMemory = {};
+	array<ComPtr<ID3D12GraphicsCommandList>,MAX_FRAME_COUNT> _cmdList = {};
 	ComPtr<IDXGISwapChain3> _swapChain = nullptr;
 	uint32 _swapChainFlags;
 
 	ComPtr<ID3D12CommandAllocator> _resCmdMemory{};
 	ComPtr<ID3D12GraphicsCommandList> _resCmdList{};
 
-
 	ComPtr<ID3D12DescriptorHeap> _imguiHeap;
-
-
 
 	ComPtr<ID3D12Fence> _fence = nullptr;
 	HANDLE _fenceEvent = nullptr;
 	uint64 _fenceValue = 0;
+	uint64 _lastFenceValue[MAX_FRAME_COUNT] = { 0 };
+
+
 
 	HWND _hwnd{0};
 

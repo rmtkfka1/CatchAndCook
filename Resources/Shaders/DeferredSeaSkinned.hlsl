@@ -7,20 +7,23 @@
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 
-//cbuffer PlantInfo : register(b8)
-//{
-//    float amplitude;
-//    float frequency;
-//    float padding;
-//    float padding2;
-//}
+cbuffer DefaultMaterialParam : register(b7)
+{
+    float4 color = float4(1, 1, 1, 1);
+    float4 _baseMapST = float4(1, 1, 1, 1);
+};
 
 struct VS_IN
 {
     float3 pos : POSITION;
     float3 normal : NORMAL;
-    float2 uv : TEXCOORD;
     float3 tangent : TANGENT;
+    float2 uv : TEXCOORD0;
+    //float2 uv1 : TEXCOORD1;
+    //float2 uv2 : TEXCOORD2;
+    float4 color : COLOR;
+    float4 boneIds : BONEIDs;
+    float4 boneWs : BONEWs;
 };
 
 struct VS_OUT
@@ -30,56 +33,51 @@ struct VS_OUT
     float3 worldNormal : NORMAL;
     float2 uv : TEXCOORD;
     float3 worldTangent : TANGENT;
-    
 };
-
-static float amplitude = 0.5;
-static float frequency = 1.0;
 
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
 
-
     Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
     row_major float4x4 l2wMatrix = data.localToWorld;
     row_major float4x4 w2lMatrix = data.worldToLocal;
-    
-    float angle = g_Time * frequency + id * 0.37; 
-    float swayX = sin(angle) * input.pos.y * amplitude;
-    //float swayZ = cos(angle * 1.3) * input.pos.y * amplitude * 0.5;
 
-    float3 animatedPos = input.pos;
-    animatedPos.x += swayX;
-
-    float4 worldPos = mul(float4(animatedPos, 1.0f), l2wMatrix);
-    output.pos = worldPos;
+    float4 boneIds = input.boneIds;
+    float4 boneWs = input.boneWs;
+   
+    float4 worldPos = CalculateBone((float4(input.pos, 1.0f)), boneIds, boneWs);
     output.worldPos = worldPos.xyz;
+    output.pos = TransformWorldToClip(worldPos);
 
-    float4 clipPos = mul(worldPos, VPMatrix);
-    output.pos = clipPos;
+    output.worldNormal = CalculateBoneNormal(input.normal, boneIds, boneWs);
+    output.worldTangent = CalculateBoneNormal(input.tangent, boneIds, boneWs);
 
     output.uv = input.uv;
-    output.worldNormal = mul(float4(input.normal, 0.0f), l2wMatrix).xyz;
-    output.worldTangent = mul(float4(input.tangent, 0.0f), l2wMatrix).xyz;
 
     return output;
 }
+
 struct PS_OUT
 {
     float4 position : SV_Target0;
     float4 normal : SV_Target1;
     float4 color : SV_Target2;
-    float4 maoe : SV_Target3;
+    //float4 maoe : SV_Target3; 
 };
 
 PS_OUT PS_Main(VS_OUT input) : SV_Target
 {
     PS_OUT output = (PS_OUT) 0;
-    
+
     output.position = float4(input.worldPos, 1.0f);
-    float3 N= ComputeNormalMapping(input.worldNormal, input.worldTangent, _BumpMap.Sample(sampler_lerp, input.uv));
-    output.color = _BaseMap.Sample(sampler_lerp, input.uv);
-    output.normal = float4(N, 1.0f);
+
+    float3 normalMapped = ComputeNormalMapping(input.worldNormal, input.worldTangent, _BumpMap.Sample(sampler_lerp, input.uv));
+    output.normal = float4(normalMapped, 1.0f);
+
+    output.color = _BaseMap.Sample(sampler_lerp, input.uv) * color;
+
+    //output.maoe = float4(0, 0, 0, 0);
+
     return output;
 }

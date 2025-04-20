@@ -44,13 +44,26 @@ void MeshRenderer::Start()
 		Matrix matrix;
 		owner->_transform->GetLocalToWorldMatrix_BottomUp(matrix);
 		BoundingBox totalBox;
-		for (int i = 0; i < _mesh.size(); i++) {
+		for (int i = 0; i < _mesh.size(); i++) 
+		{
 			auto currentMesh = _mesh[i];
 			auto bound = currentMesh->CalculateBound(matrix);
 			if (i == 0) totalBox = bound;
 			else  BoundingBox::CreateMerged(totalBox, totalBox, bound);
 		}
+
 		SetBound(totalBox);
+
+		BoundingBox localBox;
+		for (int i = 0; i < _mesh.size(); i++)
+		{
+			auto currentMesh = _mesh[i];
+			auto bound = currentMesh->CalculateBound(Matrix::Identity);
+			if (i == 0) localBox = bound;
+			else BoundingBox::CreateMerged(localBox, localBox, bound);
+		}
+
+		SetOriginBound(localBox);
 	}
 
 	else

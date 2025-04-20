@@ -21,6 +21,8 @@ public:
 	void CreateDefaultMesh();
     void CreateDefaultShader();
     void CreateDefaultMaterial();
+    void CreateDefaultShaderKSH();
+    void CreateDefaultShaderlJHS();
     void CreateDefaultTexture();
     void CreateDefaultAnimation();
 

@@ -109,15 +109,17 @@ bool Transform::IsExecuteAble()
 	return Component::IsExecuteAble();
 }
 
-
-void Transform::SetData(StructuredBuffer* buffer)
+void Transform::SetData(StructuredBuffer* buffer, Material* material)
 {
     TransformParam transParam;
     transParam.localToWorld = _localToWorldMatrix;
-	transParam.localToWorld.Invert(transParam.worldToLocal);
+    transParam.localToWorld.Invert(transParam.worldToLocal);
     transParam.worldPos = transParam.localToWorld.Translation();
     buffer->AddData(transParam);
 }
+
+
+
 
 vec3 Transform::SetForward(const vec3& dir)
 {

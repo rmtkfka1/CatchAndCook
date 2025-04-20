@@ -2,6 +2,9 @@
 #include "Component.h"
 #include "PathFinder.h"
 
+
+class AnimationListComponent;
+
 enum class FishMonsterState
 {
 	Idle,
@@ -53,6 +56,7 @@ private:
 	Quaternion _firstQuat;
 
 private:
+	shared_ptr<AnimationListComponent> _animList;
 	FishMonsterState _state = FishMonsterState::Move;
 };
 
