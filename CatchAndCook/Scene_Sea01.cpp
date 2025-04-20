@@ -171,7 +171,7 @@ void Scene_Sea01::Init()
 
 		if (plant)
 		{
-			cout << "fish_1" << endl;
+			cout << "Fish_1" << endl;
 			auto finder = plant->AddComponent<PathFinder>();
 			finder->SetPass(L"Fish_1");
 		}

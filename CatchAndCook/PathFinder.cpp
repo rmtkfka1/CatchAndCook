@@ -21,6 +21,12 @@ void PathFinder::Init()
 void PathFinder::Start()
 {
     _firstQuat = GetOwner()->_transform->GetWorldRotation();
+
+	if (auto renderer = GetOwner()->GetRenderer())
+	{
+		renderer->AddStructuredSetter(static_pointer_cast<PathFinder>(shared_from_this()), BufferType::SeaFIshParam);
+		_renderBase = renderer;
+	}
 }
 
 void PathFinder::Update()
@@ -117,6 +123,8 @@ void PathFinder::CollisionEnd(const std::shared_ptr<Collider>& collider, const s
 {
 }
 
+
+
 void PathFinder::ReadPathFile(const std::wstring& fileName)
 {
 	const wstring path = L"../Resources/Graph/";;
@@ -163,4 +171,18 @@ void PathFinder::SetPass(const wstring& path)
     }
 
     _pathName = path;
+}
+
+void PathFinder::SetData(StructuredBuffer* buffer, Material* material)
+{
+
+	FishInfo info;
+	info.fishSpeed = 4.0f;
+	info.fishWaveAmount = 0.5f;
+
+	BoundingBox& box = _renderBase.lock()->GetOriginBound();
+	info.boundsSizeZ = box.Extents.z;
+	info.boundsCenterZ = box.Center.z;
+
+	buffer->AddData(info);
 }

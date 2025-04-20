@@ -23,6 +23,7 @@ enum class BufferType
 	FogParam,
 	UnderWaterParam,
 	SeaPlantParam,
+	SeaFIshParam,
 
 	PlayerMaterialParam,
 	InstanceOffsetParam,

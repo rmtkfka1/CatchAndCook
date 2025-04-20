@@ -26,7 +26,17 @@ struct VS_OUT
 };
 
 
+struct FishInfo
+{
+    float fishWaveAmount;
+    float fishSpeed;
+    float boundsCenterZ;
+    float boundsSizeZ;
+};
 
+
+
+StructuredBuffer<FishInfo> FIshInfos : register(t32);
 
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
@@ -36,19 +46,31 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     row_major float4x4 l2wMatrix = data.localToWorld;
     row_major float4x4 w2lMatrix = data.worldToLocal;
     
- 
-    float4 worldPos = mul(float4(input.pos, 1.0f), l2wMatrix);
-    output.pos = worldPos;
-    output.worldPos = worldPos.xyz;
+    FishInfo fishinfo = FIshInfos[offset[STRUCTURED_OFFSET(32)].r + id];
 
-    float4 clipPos = mul(worldPos, VPMatrix);
-    output.pos = clipPos;
+    float localZ = input.pos.z; 
+    float minZ = fishinfo.boundsCenterZ - fishinfo.boundsSizeZ;
+    float maxZ = fishinfo.boundsCenterZ + fishinfo.boundsSizeZ;
+    float weight = saturate((localZ - minZ) / (maxZ - minZ));
+
+    float phaseOffset = localZ * 0.5f + id * 0.37f;
+
+    float wave = sin(g_Time * fishinfo.fishSpeed + phaseOffset)
+           * fishinfo.fishWaveAmount * weight;
+
+    float3 animatedPos = input.pos;
+    animatedPos.x += wave;
+
+    float4 worldPos = mul(float4(animatedPos, 1.0f), l2wMatrix);
+    output.pos = mul(worldPos, VPMatrix);
+    output.worldPos = worldPos.xyz;
 
     output.uv = input.uv;
     output.worldNormal = mul(float4(input.normal, 0.0f), l2wMatrix).xyz;
     output.worldTangent = mul(float4(input.tangent, 0.0f), l2wMatrix).xyz;
-  
+
     return output;
+  
 }
 struct PS_OUT
 {

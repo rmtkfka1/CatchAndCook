@@ -77,10 +77,8 @@ void PlantComponent::SetData(StructuredBuffer* buffer, Material* material)
 	info.frequency = material->GetPropertyFloat("_frequency");
 
 	BoundingBox& box = _renderBase.lock()->GetOriginBound();
-	info.boundsSizeY =box.Extents.y*2;
+	info.boundsSizeY =box.Extents.y;
 	info.boundsCenterY = box.Center.y;
-
-
 
 	buffer->AddData(info);
 }

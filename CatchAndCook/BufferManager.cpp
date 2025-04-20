@@ -12,6 +12,7 @@
 #include "WaterController.h"
 #include "ComputeManager.h"
 #include "PlantComponent.h"
+#include "PathFinder.h"
 void BufferManager::Init()
 {
 
@@ -45,6 +46,7 @@ void BufferManager::Init()
 	{
 		CreateStructuredBufferPool(i,BufferType::TransformParam,"TransformDatas",sizeof(Instance_Transform),20000);
 		CreateStructuredBufferPool(i, BufferType::SeaPlantParam, "PlantInfos", sizeof(PlantInfo), 20000);
+		CreateStructuredBufferPool(i, BufferType::SeaFIshParam, "FIshInfos", sizeof(FishInfo), 20000);
 	/*	CreateStructuredBufferPool(BufferType::ForwardLightParam, "ForwardLightDatas", sizeof(ForwardLightParams), 10000);*/
 	}
 
