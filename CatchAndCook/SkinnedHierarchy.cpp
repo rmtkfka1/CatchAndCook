@@ -325,6 +325,8 @@ void SkinnedHierarchy::Play(const std::shared_ptr<Animation>& animation, const d
 	{
 		if (_animation == animation)
 			return;
+		if (_nextAnimation == animation)
+			return;
 
 		_nextAnimation = animation;
 		_animationBlendTime = 0;

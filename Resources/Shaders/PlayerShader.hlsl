@@ -188,11 +188,13 @@ float4 PS_Main(VS_OUT input) : SV_Target
 
     //outline
     float outline = step(0.1f, Sobel(input.positionCS, 0.85f / input.positionCS.w));
+    float rimRatio = 1 - saturate(dot(viewDir, N));
     float3 outlineColor = (finalColor / float3((outline * 1 + 1), (outline * 1.5 + 1), (outline * 1.1 + 1)));
     finalColor = lerp(finalColor, outlineColor, outline);
 
     if (BaseColor.a <= 0.1)
 		discard;
+    //return float4((input.positionWS.xyz - worldPosition) * 0.001f, 1);
 
     return float4(finalColor, 1) + sobel; // * dot(N, viewDir)
 }
