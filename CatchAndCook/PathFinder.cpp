@@ -3,8 +3,13 @@
 #include "Transform.h"
 #include "Gizmo.h"
 #include "simple_mesh_ext.h"
+#include <random>
 
 unordered_map<wstring, FishPath> PathFinder::_pathList;
+
+static random_device dre;
+static mt19937 gen(dre());
+static uniform_real_distribution<float> randomSpeed(30.0f, 50.0f);
 
 PathFinder::PathFinder()
 {
@@ -16,7 +21,10 @@ PathFinder::~PathFinder()
 
 void PathFinder::Init()
 {
-	_pathOffset = GenerateRandomPointInSphere(500.0f);
+
+
+	_pathOffset = GenerateRandomPointInSphere(100.0f);
+	_moveSpeed = randomSpeed(gen);
 }
 
 void PathFinder::Start()
@@ -199,7 +207,7 @@ void PathFinder::SetData(StructuredBuffer* buffer, Material* material)
 {
 
 	FishInfo info;
-	info.fishSpeed = 4.0f;
+	info.fishSpeed = _moveSpeed/10.0f;
 	info.fishWaveAmount = 0.5f;
 
 	BoundingBox& box = _renderBase.lock()->GetOriginBound();
