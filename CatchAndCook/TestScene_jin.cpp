@@ -10,6 +10,7 @@
 #include "Mesh.h"
 #include "WaterController.h"
 #include "Collider.h"
+#include "ComputeManager.h"
 #include "PlayerController.h"
 #include "testComponent.h"
 
@@ -143,4 +144,9 @@ void TestScene_jin::Finish()
 
 TestScene_jin::~TestScene_jin()
 {
+}
+
+void TestScene_jin::ComputePass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	ComputeManager::main->DispatchMainField(cmdList);
 }

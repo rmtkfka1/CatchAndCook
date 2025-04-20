@@ -45,13 +45,24 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float3 viewDir = normalize(cameraPos - worldPos.xyz);
 
     // Rim
+    float N2L = saturate(dot(lightColor.direction, worldNormal));
     float MinusN2L = saturate(dot(-lightColor.direction, worldNormal));
     float fresnel = (1 - saturate(dot(viewDir, worldNormal)));
-    float3 rim = pow(fresnel, exp2(2)) * MinusN2L * float3(0.6, 0.6, 0.8);
+    float3 rim = pow(fresnel, exp2(2)) * pow(MinusN2L, 3) * float3(0.6, 0.6, 0.8);
+
+    float roughness = 0.7f;
+
+    float3 V = viewDir;
+    float3 L = lightColor.direction;
+    float3 H = normalize(V + L);
+    float NdotH = pow(saturate(dot(worldNormal, H)), 12);
+    float invDenom = 1.0 / max(1.0 - roughness, 0.001);
+    float spec     = saturate((NdotH - roughness) * invDenom) * 0.15f * lightColor.intensity;
+    // 최종 스펙큘러
 
 
     if (MAOEColor.a == 1)
 		finalColor = albedoColor;
     
-    return float4(finalColor + rim, 1.0f);
+    return float4(finalColor + rim + spec, 1.0f);
 };

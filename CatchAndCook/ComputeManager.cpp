@@ -397,9 +397,93 @@ void DepthRender::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
 void DepthRender::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
+
 }
 
 void DepthRender::Resize()
+{
+	auto& textureBufferPool = Core::main->GetBufferManager()->GetTextureBufferPool();
+	textureBufferPool->FreeSRVHandle(_pingTexture->GetUAVCpuHandle());
+
+	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+
+}
+
+FieldFogRender::FieldFogRender()
+{
+}
+
+FieldFogRender::~FieldFogRender()
+{
+}
+
+void FieldFogRender::Init()
+{
+	_pingTexture = make_shared<Texture>();
+	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+
+	_shader = make_shared<Shader>();
+	ShaderInfo info;
+	info._computeShader = true;
+	_shader->Init(L"depthRender_fieldFog.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
+
+	_fogParam.g_fogColor = vec3(0.58f, 0.66f, 0.84f);
+	_fogParam.power = 0.45f;
+	_fogParam.g_fogMin = 40.0f;
+	_fogParam.g_fogMax = 400;
+}
+
+void FieldFogRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	cmdList->SetPipelineState(_shader->_pipelineState.Get());
+	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	_tableContainer = table->Alloc(8);
+
+	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
+	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	auto& PositionTexture = Core::main->GetGBuffer()->GetTexture(0);
+	PositionTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 0);
+	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
+	table->CopyHandle(_tableContainer.CPUHandle, PositionTexture->GetSRVCpuHandle(), 2);
+	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 5);
+
+	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+
+
+	auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::FogParam)->Alloc(1);
+	memcpy(CbufferContainer->ptr, (void*)&_fogParam, sizeof(FogParam));
+	cmdList->SetComputeRootConstantBufferView(1, CbufferContainer->GPUAdress);
+
+
+	cmdList->Dispatch(x, y, z);
+
+
+	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
+	cmdList->CopyResource(renderTarget->GetResource().Get(), _pingTexture->GetResource().Get());
+
+	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_DEPTH_WRITE);
+}
+
+void FieldFogRender::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+
+}
+
+void FieldFogRender::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+
+}
+
+void FieldFogRender::Resize()
 {
 	auto& textureBufferPool = Core::main->GetBufferManager()->GetTextureBufferPool();
 	textureBufferPool->FreeSRVHandle(_pingTexture->GetUAVCpuHandle());
@@ -713,6 +797,9 @@ void ComputeManager::Init()
 
 	_vignetteRender = make_shared<VignetteRender>();
 	_vignetteRender->Init();
+
+	_fieldFogRender = make_shared<FieldFogRender>();
+	_fieldFogRender->Init();
 }
 
 void ComputeManager::DispatchAfterDeferred(ComPtr<ID3D12GraphicsCommandList>& cmdList)
@@ -726,6 +813,34 @@ void ComputeManager::DispatchAfterDeferred(ComPtr<ID3D12GraphicsCommandList>& cm
 	int32 dispath[3] = { dispatchX,dispatchY,1 };
 
 	_ssaoRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+
+	Core::main->GetRenderTarget()->GetRenderTarget()->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
+}
+
+void ComputeManager::DispatchMainField(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	const int threadGroupSizeX = 16;
+	const int threadGroupSizeY = 16;
+
+	int dispatchX = static_cast<int>(std::ceil(static_cast<float>(WINDOW_WIDTH) / threadGroupSizeX));
+	int dispatchY = static_cast<int>(std::ceil(static_cast<float>(WINDOW_HEIGHT) / threadGroupSizeY));
+
+	int32 dispath[3] = { dispatchX,dispatchY,1 };
+
+
+	_bloom->_on = true;
+
+
+	_depthRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+
+	_vignetteRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+
+	_fieldFogRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+
+	_bloom->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+
+	_blur->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+
 
 	Core::main->GetRenderTarget()->GetRenderTarget()->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
@@ -765,6 +880,7 @@ void ComputeManager::Resize()
 	_underWaterEffect->Resize();
 	_vignetteRender->Resize();
 	_ssaoRender->Resize();
+	_fieldFogRender->Resize();
 }
 
 
