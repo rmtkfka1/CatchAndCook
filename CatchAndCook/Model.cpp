@@ -499,10 +499,10 @@ void Model::LoadRootBone(aiScene* scene)
 
 	auto& boneName = _modelBoneList[0]->GetName();
 
-	for (auto& ele : _modelBoneList)
-	{
-		cout << ele->GetName() << endl;
-	}
+	//for (auto& ele : _modelBoneList)
+	//{
+	//	cout << ele->GetName() << endl;
+	//}
 	
 	aiNode* node = scene->mRootNode->FindNode(boneName.c_str());
 	if (!node)

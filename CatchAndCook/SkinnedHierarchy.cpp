@@ -63,19 +63,19 @@ void SkinnedHierarchy::Update()
 void SkinnedHierarchy::Update2()
 {
 	Component::Update2();
-	/*auto a = ResourceManager::main->GetResourceMap<Animation>();
-	std::vector<std::shared_ptr<Animation>> animations;
-	for (auto& b : a) {
-		animations.push_back(b.second);
-	}
+	auto a = ResourceManager::main->GetResourceMap<Animation>();
+	//std::vector<std::shared_ptr<Animation>> animations;
+	/*for (auto& b : a) {
+		wcout << b.first << endl;
+	}*/
 
 
-	if (Input::main->GetKeyDown(KeyCode::Num1))
-		Play(animations[2], 0.25);
+	/*if (Input::main->GetKeyDown(KeyCode::Num1))
+		SetAnimation(a[L"shark|Shark_Armature|Swim2"]);
 	if (Input::main->GetKeyDown(KeyCode::Num2))
-		Play(animations[4], 0.25);
+		SetAnimation(a[L"shark|Shark_Armature|Bite"]);
 	if (Input::main->GetKeyDown(KeyCode::Num3))
-		Play(animations[1], 0.25);
+		SetAnimation(a[L"shark|Shark_Armature|Swim"]);
 	if (Input::main->GetKeyDown(KeyCode::Num4))
 		Pause();
 	if (Input::main->GetKeyDown(KeyCode::Num5))
@@ -321,11 +321,11 @@ void SkinnedHierarchy::Play(const std::shared_ptr<Animation>& animation, const d
 		_animation = animation;
 	}
 
-	else
-	{
-		if (_animation == animation)
-			return;
-	}
+	if (_animation == animation)
+		return;
+
+	if (_nextAnimation == animation)
+		return;
 
 	_nextAnimation = animation;
 	_animationBlendTime = 0;
@@ -465,7 +465,6 @@ void SkinnedHierarchy::SetData(Material* material)
 	if(index != -1)
 		Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(index, _boneCBuffer->GPUAdress);
 }
-
 
 void SkinnedHierarchy::SetAnimation(const std::shared_ptr<Animation>& animation)
 {

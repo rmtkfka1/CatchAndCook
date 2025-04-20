@@ -260,6 +260,8 @@ void PlayerController::Update2()
 		}
 	}
 	*/
+
+	CameraManager::main->Setting();
 }
 
 void PlayerController::Enable()

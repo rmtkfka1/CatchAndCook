@@ -26,7 +26,7 @@ void AnimationListComponent::Start()
 {
 	Component::Start();
 
-	/*if (auto& hieracy = GetOwner()->GetComponent<SkinnedHierarchy>())
+	if (auto& hieracy = GetOwner()->GetComponent<SkinnedHierarchy>())
 	{
 		if (!_animations.empty())
 		{
@@ -38,7 +38,7 @@ void AnimationListComponent::Start()
 				hieracy->SetAnimation(firstAnimation);
 			}
 		}
-	}*/
+	}
 }
 
 void AnimationListComponent::Update()

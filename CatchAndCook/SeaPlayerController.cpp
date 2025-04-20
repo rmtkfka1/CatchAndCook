@@ -32,7 +32,6 @@ void SeaPlayerController::Start()
 
 	if (auto terrian = SceneManager::main->GetCurrentScene()->Find(L"Terrain"))
 	{
-		cout << "찾음" << endl;
 		_terrian = terrian->GetComponent<Terrain>();
 	}
 
@@ -271,36 +270,38 @@ Quaternion SeaPlayerController::CalCulateYawPitchRoll()
 void SeaPlayerController::UpdateState(float dt)
 {
 
- /*   if (_velocity.Length() < 0.01f)
+    if (Input::main->GetKeyDown(KeyCode::Num1))
     {
-		SetState(SeaPlayerState::Idle);
-    }
-    else
-    {
-        SetState(SeaPlayerState::Move);
-    }*/
-
-    if (Input::main->GetKeyDown(KeyCode::I))
-    {
-        SetState(SeaPlayerState::Idle);
+        _state = SeaPlayerState::Idle;
+  
     }
 
-    if (Input::main->GetKeyDown(KeyCode::O))
+    if (Input::main->GetKeyDown(KeyCode::Num2))
     {
-        SetState(SeaPlayerState::Move);
+        _state = SeaPlayerState::Move;
+   
+    }
+
+    if (Input::main->GetKeyDown(KeyCode::Num3))
+    {
+		_state = SeaPlayerState::Attack;
+       
     }
 
     switch (_state)
     {
     case SeaPlayerState::Idle:
-        cout << _animations["Player_Idle"]->GetModelName() << endl;;
-        _skined->Play(_animations["Player_Idle"],0.5f);
+        _skined->Play(GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations()["sea_idle"], 0.5f);
+ /*       cout << _animations["sea_idle"]->GetModelName() << endl;;*/
+     
         break;
     case SeaPlayerState::Move:
-        cout << _animations["Player_Swim"]->GetModelName() << endl;;
-		_skined->Play(_animations["Player_Swim"],0.5f);
+        //cout << _animations["sea_swim"]->GetModelName() << endl;;
+        _skined->Play(GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations()["sea_swim"], 0.5f);
         break;
     case SeaPlayerState::Attack:
+   /*     cout << _animations["sea_jump"]->GetModelName() << endl;;*/
+        _skined->Play(GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations()["sea_jump"], 0.5f);
         break;
     case SeaPlayerState::Skill:
         break;
