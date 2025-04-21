@@ -191,8 +191,6 @@ void Bloom::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, i
 	if (_on == false)
 		return;
 
-	cout << _on << endl;
-
 	Black(cmdList, x, y, z);
 
 	for (int i = 0; i < _blurCount; ++i)
