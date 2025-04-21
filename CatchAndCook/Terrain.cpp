@@ -70,6 +70,7 @@ void Terrain::Start()
             renderer->SetCulling(false);
             renderer->SetInstanceBuffer(instanceBuffer);
             renderer->SetInstancing(false);
+
             for (auto& material : renderer->GetMaterials())
             {
                 auto newMaterial = std::make_shared<Material>();
