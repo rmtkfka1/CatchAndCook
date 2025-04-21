@@ -47,6 +47,7 @@ public:
 	UnderWaterParam* _underWaterParam;
 	SeaParam* _seaParam;
 	bool* _ssaoOnOff;
+	bool* _colorGradingOnOff;
 
 	float* separationWeight;
 	float* alignmentWeight;

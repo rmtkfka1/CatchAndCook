@@ -121,7 +121,7 @@ float4 PS_Main(VS_OUT input) : SV_Target
     // Rim
     float MinusN2L = saturate(dot(-lightColor.direction, N));
     float fresnel = (1 - saturate(dot(viewDir, N)));
-    float3 rim = pow(fresnel, exp2(2)) * MinusN2L * float3(0.6, 0.6, 0.8);
+    float3 rim = pow(fresnel, exp2(2)) * MinusN2L * float3(0.6, 0.6, 0.8) * 0.5;
 
     //outline
     float outline = step(0.1f, Sobel(input.positionCS, 0.85f / input.positionCS.w));

@@ -428,9 +428,9 @@ void FieldFogRender::Init()
 	_shader->Init(L"depthRender_fieldFog.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
 
 	_fogParam.g_fogColor = vec3(0.58f, 0.66f, 0.84f);
-	_fogParam.power = 0.45f;
+	_fogParam.power = 0.38f;
 	_fogParam.g_fogMin = 40.0f;
-	_fogParam.g_fogMax = 400;
+	_fogParam.g_fogMax = 350;
 }
 
 void FieldFogRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
@@ -745,32 +745,75 @@ void SSAORender::Resize()
 
 }
 
-ColorGrading::ColorGrading()
+ColorGradingRender::ColorGradingRender()
 {
 }
 
-ColorGrading::~ColorGrading()
+ColorGradingRender::~ColorGradingRender()
 {
 }
 
-void ColorGrading::Init()
+void ColorGradingRender::Init()
+{
+	_pingTexture = make_shared<Texture>();
+	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+
+	_shader = make_shared<Shader>();
+	ShaderInfo info;
+	info._computeShader = true;
+	_shader->Init(L"colorGrading.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
+
+#ifdef IMGUI_ON
+	ImguiManager::main->_colorGradingOnOff = &colorGradingOnOff;
+#endif // IMGUI_ON
+}
+
+void ColorGradingRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+	if(!colorGradingOnOff)
+		return;
+
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	cmdList->SetPipelineState(_shader->_pipelineState.Get());
+	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	_tableContainer = table->Alloc(8);
+
+	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
+	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 5);
+
+	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+
+
+	/*auto CbufferContainer = Core::main->GetBufferManager()->CreateAndGetBufferPool(BufferType::VignetteParam, sizeof(VignetteParam), 1)->Alloc(1);
+	memcpy(CbufferContainer->ptr, (void*)&_vignetteParam, sizeof(VignetteParam));
+	cmdList->SetComputeRootConstantBufferView(1, CbufferContainer->GPUAdress);*/
+
+	cmdList->Dispatch(x, y, z);
+
+
+	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
+	cmdList->CopyResource(renderTarget->GetResource().Get(), _pingTexture->GetResource().Get());
+}
+
+void ColorGradingRender::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
 }
 
-void ColorGrading::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+void ColorGradingRender::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
 }
 
-void ColorGrading::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+void ColorGradingRender::Resize()
 {
-}
+	auto& textureBufferPool = Core::main->GetBufferManager()->GetTextureBufferPool();
+	textureBufferPool->FreeSRVHandle(_pingTexture->GetUAVCpuHandle());
 
-void ColorGrading::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
-{
-}
+	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
 
-void ColorGrading::Resize()
-{
 }
 
 
@@ -800,6 +843,9 @@ void ComputeManager::Init()
 
 	_fieldFogRender = make_shared<FieldFogRender>();
 	_fieldFogRender->Init();
+
+	_colorGradingRender = make_shared<ColorGradingRender>();
+	_colorGradingRender->Init();
 }
 
 void ComputeManager::DispatchAfterDeferred(ComPtr<ID3D12GraphicsCommandList>& cmdList)
@@ -838,6 +884,8 @@ void ComputeManager::DispatchMainField(ComPtr<ID3D12GraphicsCommandList>& cmdLis
 	_fieldFogRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
 	_bloom->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+
+	_colorGradingRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
 	_blur->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
@@ -881,6 +929,7 @@ void ComputeManager::Resize()
 	_vignetteRender->Resize();
 	_ssaoRender->Resize();
 	_fieldFogRender->Resize();
+	_colorGradingRender->Resize();
 }
 
 

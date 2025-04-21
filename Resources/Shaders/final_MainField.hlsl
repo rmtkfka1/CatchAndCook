@@ -48,7 +48,7 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float N2L = saturate(dot(lightColor.direction, worldNormal));
     float MinusN2L = saturate(dot(-lightColor.direction, worldNormal));
     float fresnel = (1 - saturate(dot(viewDir, worldNormal)));
-    float3 rim = pow(fresnel, exp2(2)) * pow(MinusN2L, 3) * float3(0.6, 0.6, 0.8);
+    float3 rim = pow(fresnel, exp2(2)) * pow(MinusN2L, 3) * float3(0.6, 0.6, 0.8) * 0.5;
 
     float roughness = 0.7f;
 
