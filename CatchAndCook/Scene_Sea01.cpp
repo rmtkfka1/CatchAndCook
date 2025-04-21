@@ -150,8 +150,10 @@ void Scene_Sea01::Init()
 
 			for (auto& material : materials)
 			{
-				if (material->GetShader()->_name == "D_SeaPlantClip.hlsl" || material->GetShader()->_name == "D_SeaPlant.hlsl")
+				cout << material->GetShader()->_name << endl;
+				if (material->GetShader()->_name == "DeferredSeaPlantClip.hlsl" || "DeferredSeaPlant.hlsl")
 				{
+			
 					gameobject->AddComponent<PlantComponent>();
 				}
 			}
