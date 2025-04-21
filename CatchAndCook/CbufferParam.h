@@ -94,17 +94,5 @@ CBUFFER_INJECTOR("TerrainDetailsParam", TerrainDetailsParam, 256, BufferType::Te
 
 ////////////////////////////////////////////////////////////////////////////
 
-//struct alignas(16) SeaPlantParam
-//{
-//
-//	vec4 color = vec4(1, 1, 1, 1);
-//	float amplitude = 0.2f;
-//	float frequency = 0.5f;
-//	float boundsCenterY;
-//	float boundsSizeY;
-//	
-//};
-//
-//CBUFFER_INJECTOR("SeaPlantParam", SeaPlantParam, 256, BufferType::SeaPlantParam, std::shared_ptr<Material>,
-//	data.color = Vector4(source->GetPropertyVector("_Color"));
-//)
+
+

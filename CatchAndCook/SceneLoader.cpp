@@ -319,7 +319,7 @@ void SceneLoader::LinkComponent(json& jsonData)
                     if (shader == nullptr)
                     {
                  
-                        shader = ResourceManager::main->Get<Shader>(L"DeferredSea");
+                        shader = ResourceManager::main->Get<Shader>(L"D_SeaEnv");
                         material->SetShader(shader);
                         material->SetPass(shader->GetPass());
                     }
@@ -328,7 +328,7 @@ void SceneLoader::LinkComponent(json& jsonData)
                     
                         if (shaderName==L"Environment")
                         {
-                            shader = ResourceManager::main->Get<Shader>(L"DeferredSea");
+                            shader = ResourceManager::main->Get<Shader>(L"D_SeaEnv");
                         }
 
                         material->SetShader(shader);
