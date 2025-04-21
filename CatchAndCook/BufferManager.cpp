@@ -43,6 +43,7 @@ void BufferManager::Init()
 		CreateBufferPool(i,BufferType::InstanceOffsetParam, sizeof(InstanceOffsetParam), 10000);
 
 	}
+
 	for (int i = 0; i < MAX_FRAME_COUNT; ++i)
 	{
 		CreateStructuredBufferPool(i, BufferType::TransformParam,"TransformDatas",sizeof(Instance_Transform),20000);
