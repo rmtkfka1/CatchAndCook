@@ -39,6 +39,11 @@ struct PlantInfo
     float frequency;
     float boundsCenterY;
     float boundsSizeY;
+    
+    int id;
+    float p1;
+    float p2;
+    float p3;
 };
 
 StructuredBuffer<PlantInfo> PlantInfos : register(t31);
@@ -59,7 +64,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     PlantInfo plantInfo = PlantInfos[offset[STRUCTURED_OFFSET(31)].r + id];
     
     float waveOffset = input.pos.y * 1.5f;
-    float angle = g_Time * plantInfo.frequency + id * 0.37 + waveOffset;
+    float angle = g_Time * plantInfo.frequency + plantInfo.id * 0.37 + waveOffset;
     float boundsCenterY = plantInfo.boundsCenterY;
     float boundsSizeY = plantInfo.boundsSizeY;
     float minY = boundsCenterY - boundsSizeY ;
@@ -69,7 +74,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     
     float3 animatedPos = input.pos;
     animatedPos.x += swayX;
-    animatedPos.z += swayX;
+
 
     float4 worldPos = mul(float4(animatedPos, 1.0f), l2wMatrix);
     output.pos = worldPos;
