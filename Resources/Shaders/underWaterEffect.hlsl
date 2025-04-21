@@ -95,13 +95,6 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
  
     float3 underWaterColor = lerp(g_underWaterColor * albedoColor, albedoColor, lightColor.atten);
     
-    if (EmissionColor.r != 1.0f && depth.r != 1.0f)
-    {
-        float3 TempColor = (EmissionColor + underWaterColor);
-        float3 finalColor = lerp(g_fogColor, TempColor, 0.6f) + lightColor.subColor;
-        resultTexture[texCoord] = float4(finalColor, 1.0f);
-        return;
-    }
     
    //fogFactor = saturate(fogFactor + saturate(lightColor.subWaterAtten));
 
