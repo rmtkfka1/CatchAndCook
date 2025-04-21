@@ -62,8 +62,8 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     float angle = g_Time * plantInfo.frequency + id * 0.37 + waveOffset;
     float boundsCenterY = plantInfo.boundsCenterY;
     float boundsSizeY = plantInfo.boundsSizeY;
-    float minY = boundsCenterY - boundsSizeY * 0.5;
-    float maxY = boundsCenterY + boundsSizeY * 0.5;
+    float minY = boundsCenterY - boundsSizeY ;
+    float maxY = boundsCenterY + boundsSizeY ;
     float influence = NormalizeY(input.pos.y, minY, maxY);
     float swayX = sin(angle) * plantInfo.amplitude * influence;
     
@@ -96,13 +96,13 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     PS_OUT output = (PS_OUT) 0;
     
     output.position = float4(input.worldPos, 1.0f);
-    float3 N= ComputeNormalMapping(input.worldNormal, input.worldTangent, _BumpMap.Sample(sampler_lerp, input.uv));
-    output.color = _BaseMap.Sample(sampler_lerp, input.uv) *color;
+    float3 N = ComputeNormalMapping(input.worldNormal, input.worldTangent, _BumpMap.Sample(sampler_lerp, input.uv));
+    output.color = _BaseMap.Sample(sampler_lerp, input.uv) * color;
     output.normal = float4(N, 1.0f);
     
     float3 diff = abs(output.color.rgb - ClipingColor.rgb);
     
-    if (all(diff < 0.01f)) 
+    if (all(diff < 0.01f))
     {
         discard;
     }

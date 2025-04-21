@@ -131,19 +131,19 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& playerRota
 
 void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float dt)
 {
-    if (Input::main->GetKey(KeyCode::UpArrow))
+    if (Input::main->GetKey(KeyCode::W))
     {
         inputDir += vec3::Forward;
     }
-    if (Input::main->GetKey(KeyCode::DownArrow))
+    if (Input::main->GetKey(KeyCode::S))
     {
         inputDir += vec3::Backward;
     }
-    if (Input::main->GetKey(KeyCode::LeftArrow))
+    if (Input::main->GetKey(KeyCode::A))
     {
         inputDir += vec3::Left;
     }
-    if (Input::main->GetKey(KeyCode::RightArrow))
+    if (Input::main->GetKey(KeyCode::D))
     {
         inputDir += vec3::Right;
     }

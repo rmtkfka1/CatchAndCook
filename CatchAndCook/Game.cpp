@@ -279,28 +279,28 @@ void Game::CameraUpdate()
 
 
 
-	if (Input::main->GetKey(KeyCode::W))
+	if (Input::main->GetKey(KeyCode::UpArrow))
 	{
 		auto prevPos = camera->GetCameraPos();
 		auto direction = camera->GetCameraLook();
 		camera->SetCameraPos(direction * dt + prevPos);
 	}
 
-	if (Input::main->GetKey(KeyCode::S))
+	if (Input::main->GetKey(KeyCode::DownArrow))
 	{
 		auto prevPos = camera->GetCameraPos();
 		auto direction = camera->GetCameraLook();
 		camera->SetCameraPos(-direction * dt + prevPos);
 	}
 
-	if (Input::main->GetKey(KeyCode::D))
+	if (Input::main->GetKey(KeyCode::RightArrow))
 	{
 		auto prevPos = camera->GetCameraPos();
 		auto direction = camera->GetCameraRight();
 		camera->SetCameraPos(direction * dt + prevPos);
 	}
 
-	if (Input::main->GetKey(KeyCode::A))
+	if (Input::main->GetKey(KeyCode::LeftArrow))
 	{
 		auto prevPos = camera->GetCameraPos();
 		auto direction = camera->GetCameraRight();
