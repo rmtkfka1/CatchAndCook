@@ -83,9 +83,10 @@ private:
 	void YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 	void Blooming(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 
+	bool _on = false;
+
 private:
 	int32 _blurCount = 10;
-	bool _on = false;
 	shared_ptr<Texture> _bloomTexture;
 	shared_ptr<Texture> _pingtexture;
 	shared_ptr<Texture> _pongtexture;
@@ -119,6 +120,34 @@ class DepthRender : public ComputeBase
 public:
 	DepthRender();
 	virtual ~DepthRender();
+
+public:
+	virtual void Init();
+	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+
+private:
+	virtual void Resize();
+
+private:
+	shared_ptr<Texture> _pingTexture;
+	shared_ptr<Shader> _shader;
+	FogParam _fogParam;
+
+	friend class ComputeManager;
+};
+
+class FieldFogRender : public ComputeBase
+{
+
+
+
+public:
+	FieldFogRender();
+	virtual ~FieldFogRender();
 
 public:
 	virtual void Init();
@@ -245,12 +274,12 @@ private:
 	friend class ComputeManager;
 };
 
-class ColorGrading : public ComputeBase
+class ColorGradingRender : public ComputeBase
 {
 
 public:
-	ColorGrading();
-	virtual ~ColorGrading();
+	ColorGradingRender();
+	virtual ~ColorGradingRender();
 
 public:
 	virtual void Init();
@@ -268,7 +297,7 @@ private:
 	std::shared_ptr<Texture> _ssaoTexture;
 	shared_ptr<Shader> _shader;
 
-	bool ssaoOnOff = true;
+	bool colorGradingOnOff = true;
 
 	friend class ComputeManager;
 };
@@ -282,10 +311,12 @@ public:
 
 public:
 	void Init();
+	void DispatchAfterDeferred(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+	void DispatchMainField(ComPtr<ID3D12GraphicsCommandList>& cmdList);
 	void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList);
 public:
 	void Resize();
-private:
+public:
 	shared_ptr<Blur> _blur;
 	shared_ptr<Bloom> _bloom;
 	shared_ptr<DepthRender> _depthRender;
@@ -293,6 +324,8 @@ private:
 
 	shared_ptr<VignetteRender> _vignetteRender;
 	shared_ptr<SSAORender> _ssaoRender;
+	shared_ptr<FieldFogRender> _fieldFogRender;
+	shared_ptr<ColorGradingRender> _colorGradingRender;
 	// color grading
 };
 

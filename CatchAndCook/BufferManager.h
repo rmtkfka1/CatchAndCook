@@ -35,6 +35,10 @@ enum class BufferType
 	GizmoTextInstanceParam,
 	ForwardLightParam,
 	VignetteParam,
+
+
+	ObjectMaterialParam,
+	ObjectSettingParam,
 };
 
 class CBufferPool;

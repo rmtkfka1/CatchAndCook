@@ -191,6 +191,10 @@ void ImguiManager::ComputeController()
     {
         *_ssaoOnOff = !(*_ssaoOnOff);
     }
+    if (ImGui::Button("ColorGrading ON/OFF"))
+    {
+        *_colorGradingOnOff = !(*_colorGradingOnOff);
+    }
 }
 
 void ImguiManager::LightController()

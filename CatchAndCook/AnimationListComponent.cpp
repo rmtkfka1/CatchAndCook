@@ -25,20 +25,6 @@ void AnimationListComponent::Init()
 void AnimationListComponent::Start()
 {
 	Component::Start();
-
-	if (auto& hieracy = GetOwner()->GetComponent<SkinnedHierarchy>())
-	{
-		if (!_animations.empty())
-		{
-			auto& firstAnimation = _animations.begin()->second; 
-
-			if (firstAnimation)
-			{
-				cout << _animations.begin()->first << endl;
-				hieracy->SetAnimation(firstAnimation);
-			}
-		}
-	}
 }
 
 void AnimationListComponent::Update()

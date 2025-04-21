@@ -61,7 +61,7 @@ Texture2D<float4> NormalT : register(t3);
 #define SAMPLE_COUNT 16
 #define RADIUS 0.3
 #define BIAS 0.05
-#define INTENSITY 1.0
+#define INTENSITY 1.15
 #define POWER 3
 
 static const float3 samples[SAMPLE_COUNT] = 
@@ -184,7 +184,7 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
         return;
     }
 
-    const float MaxDepth = 100;
+    const float MaxDepth = 150;
     
     float2 uv = (float2(texCoord) + 0.5) / cameraScreenData.xy;
 

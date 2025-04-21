@@ -6,11 +6,13 @@
 #include "BufferPool.h"
 #include "GameObject.h"
 #include "Gizmo.h"
+#include "InitComponent.h"
 #include "SceneManager.h"
 #include "Shader.h"
 #include "Texture.h"
 #include "Transform.h"
 #include "LightManager.h"
+#include "ObjectSettingComponent.h"
 
 MeshRenderer::~MeshRenderer()
 {
@@ -36,6 +38,18 @@ void MeshRenderer::Start()
 {
 	Component::Start();
 	//AddStructuredSetter(_setter_ForwardLight, BufferType::ForwardLightParam);
+
+	if (auto objectSettingComponent = GetOwner()->GetComponentWithParents<ObjectSettingComponent>())
+		AddStructuredSetter(objectSettingComponent, BufferType::ObjectSettingParam);
+	if (auto tagsComponent = GetOwner()->GetComponentWithParents<TagsComponent>())
+	{
+		auto tag = tagsComponent->GetOwner()->GetTag();
+		if (HasTag(tagsComponent->GetOwner()->GetTag(), GameObjectTag::NonInstancing))
+			SetInstancing(false);
+		if (HasTag(tagsComponent->GetOwner()->GetTag(), GameObjectTag::NonCulling))
+			SetCulling(false);
+	}
+
 	auto owner = GetOwner();
 
 	if (owner && owner->GetType() == GameObjectType::Static)
@@ -80,6 +94,7 @@ void MeshRenderer::Start()
 	}
 
 
+	_depthNormalMaterials.clear();
 	for (int i = 0; i < _mesh.size(); i++)
 	{
 		auto currentMaterial = _uniqueMaterials[i % std::min(_mesh.size(), _uniqueMaterials.size())];
@@ -95,6 +110,7 @@ void MeshRenderer::Start()
 			_depthNormalMaterials.push_back(make_pair(i, depthNormalMaterial));
 		}
 	}
+
 };
 
 void MeshRenderer::Update()
@@ -124,6 +140,8 @@ void MeshRenderer::Destroy()
 	Component::Destroy();
 
 	//RemoveStructuredSetter(_setter_ForwardLight);
+	RemoveStructuredSetter(BufferType::ForwardLightParam);
+	RemoveStructuredSetter(BufferType::ObjectSettingParam);
 }
 
 void MeshRenderer::RenderBegin()

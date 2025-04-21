@@ -11,6 +11,7 @@
 #include "LightManager.h"
 #include "WaterController.h"
 #include "ComputeManager.h"
+#include "ObjectSettingComponent.h"
 #include "PlantComponent.h"
 #include "PathFinder.h"
 void BufferManager::Init()
@@ -44,16 +45,18 @@ void BufferManager::Init()
 	}
 	for (int i = 0; i < MAX_FRAME_COUNT; ++i)
 	{
-		CreateStructuredBufferPool(i,BufferType::TransformParam,"TransformDatas",sizeof(Instance_Transform),20000);
+		CreateStructuredBufferPool(i, BufferType::TransformParam,"TransformDatas",sizeof(Instance_Transform),20000);
 		CreateStructuredBufferPool(i, BufferType::SeaPlantParam, "PlantInfos", sizeof(PlantInfo), 20000);
+	/*	CreateStructuredBufferPool(i, BufferType::ForwardLightParam, "ForwardLightDatas", sizeof(ForwardLightParams), 10000);*/
+		CreateStructuredBufferPool(i, BufferType::ObjectSettingParam, "ObjectSettingDatas", sizeof(ObjectSettingParam), 5000);
 		CreateStructuredBufferPool(i, BufferType::SeaFIshParam, "FIshInfos", sizeof(FishInfo), 20000);
 	/*	CreateStructuredBufferPool(BufferType::ForwardLightParam, "ForwardLightDatas", sizeof(ForwardLightParams), 10000);*/
 	}
 
-	for(int i=0; i<MAX_FRAME_COUNT; ++i)
+	for(int i=0; i < MAX_FRAME_COUNT; ++i)
 	{
-		CreateInstanceBufferPool(i,BufferType::TransformInstanceParam, sizeof(Instance_Transform), 10000, 128);
-		CreateInstanceBufferPool(i,BufferType::GizmoInstanceParam, sizeof(Instance_Gizmo), 100000, 1);
+		CreateInstanceBufferPool(i, BufferType::TransformInstanceParam, sizeof(Instance_Transform), 10000, 128);
+		CreateInstanceBufferPool(i, BufferType::GizmoInstanceParam, sizeof(Instance_Gizmo), 100000, 1);
 	}
 	
 

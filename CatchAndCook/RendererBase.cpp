@@ -32,6 +32,17 @@ void RendererBase::RemoveStructuredSetter(const shared_ptr<RenderStructuredSette
 	}
 }
 
+void RendererBase::RemoveStructuredSetter(const BufferType& type)
+{
+	for (auto it = _structuredSetters.begin(); it != _structuredSetters.end(); )
+	{
+		if (it->first == type)
+			it = _structuredSetters.erase(it); // 삭제 후 iterator를 반환받음
+		else
+			++it;
+	}
+}
+
 void RendererBase::AddCbufferSetter(const std::shared_ptr<RenderCBufferSetter> setter)
 {
 	auto it = ranges::find(_cbufferSetters, setter);

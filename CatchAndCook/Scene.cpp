@@ -117,6 +117,8 @@ void Scene::Rendering()
     Core::main->CopyDepthTexture(Core::main->GetDSReadTexture(), Core::main->GetRenderTarget()->GetDSTexture());
     Core::main->GetDSReadTexture()->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
+    ComputeManager::main->DispatchAfterDeferred(cmdList);
+
     Profiler::Set("PASS : Forward", BlockTag::GPU);
     ForwardPass(cmdList);
     Profiler::Fin();

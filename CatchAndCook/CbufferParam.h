@@ -47,7 +47,9 @@ struct alignas(16) EnvMaterialParam
 	Vector4 _baseMapST;
 	Vector4 emissionColor = Vector4(0, 0, 0, 0);
 	float emission = 0;
-	Vector3 padding;
+	float _smoothness = 0.2;
+	float _metallic = 0.1;
+	float padding;
 };
 
 CBUFFER_INJECTOR("EnvMaterialParam", EnvMaterialParam, 1024, BufferType::EnvMaterialParam, std::shared_ptr<Material>,
@@ -56,6 +58,8 @@ CBUFFER_INJECTOR("EnvMaterialParam", EnvMaterialParam, 1024, BufferType::EnvMate
 	data._baseMapST = Vector4(source->GetPropertyVector("_BaseMap_ST"));
 	data.emissionColor = Vector4(source->GetPropertyVector("_EmissionColor"));
 	data.emission = source->GetPropertyFloat("_Emission");
+	data._metallic = source->GetPropertyFloat("_Metallic");
+	data._smoothness = source->GetPropertyFloat("_Smoothness");
 )
 
 struct alignas(16) PlayerMaterialParam
@@ -69,6 +73,39 @@ CBUFFER_INJECTOR("PlayerMaterialParam", PlayerMaterialParam, 256, BufferType::Pl
 	//data.color = Vector4(source->GetPropertyVector("_Color"));
 	//data._baseMapST = Vector4(source->GetPropertyVector("_BaseMap_ST"));
 )
+
+struct alignas(16) PlayerSkinMaterialParam
+{
+	Vector4 temp;
+};
+
+
+CBUFFER_INJECTOR("PlayerMaterialParam", PlayerSkinMaterialParam, 256, BufferType::PlayerMaterialParam, std::shared_ptr<Material>,
+	data.temp = Vector4(1, 0, 0, 1);
+// data <- source
+//data.color = Vector4(source->GetPropertyVector("_Color"));
+//data._baseMapST = Vector4(source->GetPropertyVector("_BaseMap_ST"));
+)
+
+
+
+struct ObjectMaterialParam
+{
+	unsigned int o_select = 0;
+	Vector3 o_selectColor;
+	unsigned int o_hit = 0;
+	unsigned int o_hitValue = 0;
+	Vector2 padding;
+	Vector3 o_hitColor;
+};
+
+CBUFFER_INJECTOR("ObjectMaterialParam ", ObjectMaterialParam, 1024, BufferType::ObjectMaterialParam, std::shared_ptr<Material>,
+	//data.temp = Vector4(1, 0, 0, 1);
+	// data <- source
+	//data.color = Vector4(source->GetPropertyVector("_Color"));
+	//data._baseMapST = Vector4(source->GetPropertyVector("_BaseMap_ST"));
+)
+
 
 struct alignas(16) TerrainDetailsParam
 {

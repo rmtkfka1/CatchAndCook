@@ -1,9 +1,23 @@
 ﻿#pragma once
 
-class InitComponent : public Component
+
+struct ObjectSettingParam
+{
+	unsigned int o_select = 0; // bool
+	Vector4 o_selectColor = Vector4::One;
+
+	unsigned int o_hit = 0; // bool
+	float o_hitValue = 0; // value
+
+	Vector4 o_hitColor = Vector4::UnitX;
+};
+
+class ObjectSettingComponent : public Component, public RenderStructuredSetter
 {
 public:
-	~InitComponent() override;
+	ObjectSettingParam _objectSettingParam;
+
+	~ObjectSettingComponent() override;
 	bool IsExecuteAble() override;
 	void Init() override;
 	void Start() override;
@@ -17,20 +31,6 @@ public:
 	void ChangeParent(const std::shared_ptr<GameObject>& prev, const std::shared_ptr<GameObject>& current) override;
 	void SetDestroy() override;
 	void Destroy() override;
+	void SetData(StructuredBuffer* buffer, Material* material) override;
 };
 
-class TagsComponent : public InitComponent
-{
-public:
-	std::vector<std::string> _tagNames;
-
-	void Init() override;
-	void Start() override;
-};
-
-class ScriptsComponent : public InitComponent
-{
-public:
-	std::vector<std::string> _scriptNames;
-	void Init() override;
-};

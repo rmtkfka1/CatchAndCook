@@ -6,6 +6,8 @@
 #include "Mesh.h"
 #include "SkinnedHierarchy.h"
 #include "Gizmo.h"
+#include "InitComponent.h"
+#include "ObjectSettingComponent.h"
 
 SkinnedMeshRenderer::~SkinnedMeshRenderer()
 {
@@ -31,6 +33,16 @@ void SkinnedMeshRenderer::Start()
 	Component::Start();
 
 	//AddStructuredSetter(_setter_ForwardLight, BufferType::ForwardLightParam);
+	if (auto objectSettingComponent = GetOwner()->GetComponentWithParents<ObjectSettingComponent>())
+		AddStructuredSetter(objectSettingComponent, BufferType::ObjectSettingParam);
+
+	if (auto tagsComponent = GetOwner()->GetComponentWithParents<TagsComponent>())
+	{
+		if (HasTag(tagsComponent->GetOwner()->GetTag(), GameObjectTag::NonInstancing))
+			SetInstancing(false);
+		if (HasTag(tagsComponent->GetOwner()->GetTag(), GameObjectTag::NonCulling))
+			SetCulling(false);
+	}
 
 	auto root = GetOwner()->GetParent();
 	if (root != nullptr)
@@ -74,7 +86,7 @@ void SkinnedMeshRenderer::Start()
 		SetOriginBound(localBox);
 	}
 
-
+	_depthNormalMaterials.clear();
 	for (int i = 0; i < _mesh.size(); i++)
 	{
 		auto currentMaterial = _uniqueMaterials[i % std::min(_mesh.size(), _uniqueMaterials.size())];
@@ -115,6 +127,8 @@ void SkinnedMeshRenderer::Destroy()
 	Component::Destroy();
 
 	//RemoveStructuredSetter(_setter_ForwardLight);
+	RemoveStructuredSetter(BufferType::ForwardLightParam);
+	RemoveStructuredSetter(BufferType::ObjectSettingParam);
 }
 
 void SkinnedMeshRenderer::RenderBegin()

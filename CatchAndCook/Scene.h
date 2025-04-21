@@ -36,7 +36,7 @@ private:
 	void DeferredPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
 	void ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
 	void FinalRender(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
-	void ComputePass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
+	virtual void ComputePass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
 
 private:
 	virtual void SettingPrevData(RenderObjectStrucutre& data, const RENDER_PASS::PASS& pass);

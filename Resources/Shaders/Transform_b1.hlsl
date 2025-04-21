@@ -11,6 +11,7 @@ cbuffer Transform : register(b1)
     row_major matrix LocalToWorldMatrix;
 	row_major matrix WorldToLocalMatrix;
     float3 worldPosition;
+    float padding1234;
 }
 
 struct Instance_Transform

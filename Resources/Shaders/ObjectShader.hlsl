@@ -16,10 +16,6 @@ cbuffer DefaultMaterialParam : register(b7)
     float4 _baseMapST = float4(1, 1, 1, 1);
 };
 
-cbuffer PlayerMaterialParam : register(b8)
-{
-    float4 temp = float4(1, 1, 1, 1);
-};
 
 struct VS_IN
 {
@@ -56,6 +52,7 @@ struct VS_OUT
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 Texture2D _RampShadowMap : register(t2);
+
 Texture2D _BakedGIMap : register(t8);
 
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
@@ -107,9 +104,9 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float4 BaseColor = _BaseMap.Sample(sampler_lerp, input.uv * _baseMapST.xy + _baseMapST.zw) * color;
     float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
 
-    //float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, lightColor.atten) + float4(lightColor.subColor, 0)).xyz;
+	float atten2 = saturate(lightColor.atten * 2 - 1);
     float subIntensity =  lerp(1, 0.3, clamp(0, 1, lightColor.intensity));
-    float3 finalColor = (BaseColor * _RampShadowMap.Sample(sampler_lerp_clamp, float2(lightColor.atten, 0)) + float4(lightColor.subColor * subIntensity, 0)).xyz;
+    float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, atten2) + float4(lightColor.subColor * subIntensity, 0)).xyz;
 
     //_RampShadowMap
 
@@ -125,7 +122,7 @@ float4 PS_Main(VS_OUT input) : SV_Target
     // Rim
     float MinusN2L = saturate(dot(-lightColor.direction, N));
     float fresnel = (1 - saturate(dot(viewDir, N)));
-    float3 rim = pow(fresnel, exp2(2)) * MinusN2L * float3(0.6, 0.6, 0.8);
+    float3 rim = pow(fresnel, exp2(2)) * MinusN2L * float3(0.6, 0.6, 0.8) * 0.5;
 
     //outline
     float outline = step(0.1f, Sobel(input.positionCS, 0.85f / input.positionCS.w));

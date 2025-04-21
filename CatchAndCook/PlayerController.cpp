@@ -45,7 +45,6 @@ void PlayerController::Update()
 	CameraControl();
 	MoveControl();
 
-	currentCameraDistance += ((Input::main->GetMouseDown(KeyCode::WheelDownMouse) ? 1 : 0) - (Input::main->GetMouseDown(KeyCode::WheelUpMouse) ? 1 : 0)) * 0.5f;
 	//GetOwner()->_transform->SetWorldPosition(GetOwner()->_transform->GetWorldPosition() + Vector3::Forward * 10.0f * Time::main->GetDeltaTime());
 }
 
@@ -83,6 +82,10 @@ void PlayerController::CameraControl()
 	finalRotation = Quaternion::CreateFromYawPitchRoll(_currentEuler);
 	_currentNextDirection = Vector3::Transform(Vector3::Forward, finalRotation);
 
+
+
+
+	currentCameraDistance += ((Input::main->GetMouseDown(KeyCode::WheelDownMouse) ? 1 : 0) - (Input::main->GetMouseDown(KeyCode::WheelUpMouse) ? 1 : 0)) * 0.5f;
 
 	currentCameraDistance = std::clamp(currentCameraDistance, minCameraDistance, maxCameraDistance);
 	double finalCameraDistance = currentCameraDistance;

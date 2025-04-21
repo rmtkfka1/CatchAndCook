@@ -12,7 +12,9 @@ cbuffer EnvMaterialParam : register(b7)
     float4 _baseMapST = float4(1, 1, 1, 1);
     float4 emissionColor = float4(0, 0, 0, 0);
     float emission = 0;
-    float3 padding;
+	float _smoothness = 0.2;
+	float _metallic = 0.1;
+	float padding;
 };
 
 struct VS_IN
@@ -64,8 +66,10 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     
    
 #ifdef INSTANCED
-		l2wMatrix = MATRIX(input.instance_trs);
-		w2lMatrix = MATRIX(input.instance_invert_trs);
+	data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r];
+	l2wMatrix = mul(data.localToWorld, MATRIX(input.instance_trs));
+	w2lMatrix = mul(MATRIX(input.instance_invert_trs), data.worldToLocal);
+
 #endif
     
     
@@ -119,7 +123,9 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     output.position = input.positionWS;
     output.color = BaseColor;
     output.normal = float4(N, 1.0f);
-    output.maoe = float4(0,0,0,emission);
+    output.maoe = float4(_metallic, _smoothness, 0, emission);
+
+    
     
     if (emission == 1)
 		output.color = emissionColor;

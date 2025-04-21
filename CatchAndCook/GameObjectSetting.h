@@ -1,11 +1,14 @@
 ﻿#pragma once
 //[wall] <-> [player][molgogi]
-enum class GameObjectTag : uint32
+enum class GameObjectTag : uint64
 {
 	Defualt = 1 << 0,
 	Player = 1 << 1,
 	Monster = 1 << 2,
 	Wall = 1 << 3,
+
+	NonCulling = 1 << 25,
+	NonInstancing = 1 << 26,
 };
 
 static unordered_map<string, GameObjectTag> GameObjectTagMap =
@@ -14,22 +17,24 @@ static unordered_map<string, GameObjectTag> GameObjectTagMap =
 	{ "Player", GameObjectTag::Player },
 	{ "Monster", GameObjectTag::Monster },
 	{ "Wall", GameObjectTag::Wall },
+	{ "NonCulling", GameObjectTag::NonCulling },
+	{ "NonInstancing", GameObjectTag::NonInstancing },
 };
 
 
 inline GameObjectTag& operator|=(GameObjectTag& a, GameObjectTag b) {
 	a = static_cast<GameObjectTag>(
-		static_cast<std::uint32_t>(a) | static_cast<std::uint32_t>(b));
+		static_cast<std::uint64_t>(a) | static_cast<std::uint64_t>(b));
 	return a;
 }
 
 inline GameObjectTag operator&(GameObjectTag& a, GameObjectTag b) {
 	return static_cast<GameObjectTag>(
-		static_cast<uint32>(a) & static_cast<uint32>(b));
+		static_cast<uint64>(a) & static_cast<uint64>(b));
 }
 
 inline bool HasTag(GameObjectTag tag, GameObjectTag flag) {
-	return (static_cast<uint32>(tag) & static_cast<uint32>(flag)) != 0;
+	return (static_cast<uint64>(tag) & static_cast<uint64>(flag)) != 0;
 }
 
 

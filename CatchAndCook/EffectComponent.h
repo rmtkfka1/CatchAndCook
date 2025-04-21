@@ -1,9 +1,13 @@
 ﻿#pragma once
+class ObjectSettingComponent;
 
-class InitComponent : public Component
+class EffectComponent : public Component
 {
 public:
-	~InitComponent() override;
+	std::weak_ptr<ObjectSettingComponent> _objectSettingComponent;
+
+
+	~EffectComponent() override;
 	bool IsExecuteAble() override;
 	void Init() override;
 	void Start() override;
@@ -19,18 +23,3 @@ public:
 	void Destroy() override;
 };
 
-class TagsComponent : public InitComponent
-{
-public:
-	std::vector<std::string> _tagNames;
-
-	void Init() override;
-	void Start() override;
-};
-
-class ScriptsComponent : public InitComponent
-{
-public:
-	std::vector<std::string> _scriptNames;
-	void Init() override;
-};
