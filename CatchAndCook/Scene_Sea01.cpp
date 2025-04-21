@@ -140,7 +140,7 @@ void Scene_Sea01::Init()
 	}
 
 
-	/*for (auto& gameobject : _gameObjects)
+	for (auto& gameobject : _gameObjects)
 	{
 		auto& meshRenderer = gameobject->GetComponent<MeshRenderer>();
 
@@ -150,14 +150,14 @@ void Scene_Sea01::Init()
 
 			for (auto& material : materials)
 			{
-				if (material->GetShader()->_name == "DeferredSeaPlant.hlsl")
+				if (material->GetShader()->_name == "D_SeaPlantClip.hlsl" || material->GetShader()->_name == "D_SeaPlant.hlsl")
 				{
 					gameobject->AddComponent<PlantComponent>();
 				}
 			}
 		}
 
-	}*/
+	}
 
 
 	
