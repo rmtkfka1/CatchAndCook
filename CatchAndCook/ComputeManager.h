@@ -11,7 +11,7 @@ public:
 	virtual ~ComputeBase();
 
 public:
-	virtual void Init()=0;
+	virtual void Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture) = 0;
 	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList) = 0;
 	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList , int x, int y ,int z)=0;
 	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList) = 0;
@@ -34,7 +34,7 @@ public:
 	virtual ~Blur();
 
 public:
-	virtual void Init();
+	virtual void Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture);
 	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 
 private:
@@ -68,7 +68,7 @@ public:
 	virtual ~Bloom();
 
 public:
-	virtual void Init();
+	virtual void Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture);
 	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 
 private:
@@ -122,7 +122,7 @@ public:
 	virtual ~DepthRender();
 
 public:
-	virtual void Init();
+	virtual void Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture);
 	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 
 private:
@@ -148,7 +148,7 @@ public:
 	virtual ~FieldFogRender();
 
 public:
-	virtual void Init();
+	virtual void Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture);
 	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 
 private:
@@ -187,7 +187,7 @@ public:
 	virtual ~UnderWaterEffect();
 
 public:
-	virtual void Init();
+	virtual void Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture);
 	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 
 private:
@@ -225,7 +225,7 @@ public:
 	virtual ~VignetteRender();
 
 public:
-	virtual void Init();
+	virtual void Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture);
 	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 
 private:
@@ -252,7 +252,7 @@ public:
 	virtual ~SSAORender();
 
 public:
-	virtual void Init();
+	virtual void Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture);
 	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 
 private:
@@ -280,7 +280,7 @@ public:
 	virtual ~ColorGradingRender();
 
 public:
-	virtual void Init();
+	virtual void Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture);
 	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 
 private:
@@ -315,6 +315,10 @@ public:
 public:
 	void Resize();
 public:
+
+	shared_ptr<Texture> _pingTexture;
+	shared_ptr<Texture> _pongTexture;
+
 	shared_ptr<Blur> _blur;
 	shared_ptr<Bloom> _bloom;
 	shared_ptr<DepthRender> _depthRender;

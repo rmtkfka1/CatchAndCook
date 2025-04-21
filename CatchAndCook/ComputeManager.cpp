@@ -29,15 +29,10 @@ Blur::~Blur()
 {
 }
 
-void Blur::Init()
+void Blur::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture)
 {
-	_pingtexture = make_shared<Texture>();
-	_pingtexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
-		| TextureUsageFlags::SRV, false, false);
-
-	_pongtexture = make_shared<Texture>();
-	_pongtexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
-		| TextureUsageFlags::SRV, false, false);
+	_pingtexture = pingTexture;
+	_pongtexture = pongTexture;
 
 
 	{
@@ -136,17 +131,7 @@ void Blur::YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z
 
 void Blur::Resize()
 {
-	auto& textureBufferPool =Core::main->GetBufferManager()->GetTextureBufferPool();
-	textureBufferPool->FreeSRVHandle(_pingtexture->GetSRVCpuHandle());
-	textureBufferPool->FreeSRVHandle(_pingtexture->GetUAVCpuHandle());
-	textureBufferPool->FreeSRVHandle(_pongtexture->GetSRVCpuHandle());
-	textureBufferPool->FreeSRVHandle(_pongtexture->GetUAVCpuHandle());
-
-	_pingtexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
-		| TextureUsageFlags::SRV, false, false);
-
-	_pongtexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
-		| TextureUsageFlags::SRV, false, false);
+	
 }
 
 /*************************
@@ -160,15 +145,10 @@ Bloom::~Bloom()
 {
 }
 
-void Bloom::Init()
+void Bloom::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture)
 {
-	_pingtexture = make_shared<Texture>();
-	_pingtexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
-		| TextureUsageFlags::SRV, false, false);
-
-	_pongtexture = make_shared<Texture>();
-	_pongtexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
-		| TextureUsageFlags::SRV, false, false);
+	_pingtexture = pingTexture;
+	_pongtexture = pongTexture;
 
 	_bloomTexture = make_shared<Texture>();
 	_bloomTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV 
@@ -238,18 +218,9 @@ void Bloom::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 void Bloom::Resize()
 {
 	auto& textureBufferPool = Core::main->GetBufferManager()->GetTextureBufferPool();
-	textureBufferPool->FreeSRVHandle(_pingtexture->GetSRVCpuHandle());
-	textureBufferPool->FreeSRVHandle(_pingtexture->GetUAVCpuHandle());
-	textureBufferPool->FreeSRVHandle(_pongtexture->GetSRVCpuHandle());
-	textureBufferPool->FreeSRVHandle(_pongtexture->GetUAVCpuHandle());
-
 	textureBufferPool->FreeSRVHandle(_bloomTexture->GetUAVCpuHandle());
 
-	_pingtexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
-		| TextureUsageFlags::SRV, false, false);
 
-	_pongtexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
-		| TextureUsageFlags::SRV, false, false);
 
 	_bloomTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
 		, false, false);
@@ -333,10 +304,10 @@ DepthRender::~DepthRender()
 {
 }
 
-void DepthRender::Init()
+void DepthRender::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture)
 {
-	_pingTexture = make_shared<Texture>();
-	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+	_pingTexture = pingTexture;
+	
 
 	_shader = make_shared<Shader>();
 	ShaderInfo info;
@@ -404,10 +375,6 @@ void DepthRender::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
 void DepthRender::Resize()
 {
-	auto& textureBufferPool = Core::main->GetBufferManager()->GetTextureBufferPool();
-	textureBufferPool->FreeSRVHandle(_pingTexture->GetUAVCpuHandle());
-
-	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
 
 }
 
@@ -419,10 +386,9 @@ FieldFogRender::~FieldFogRender()
 {
 }
 
-void FieldFogRender::Init()
+void FieldFogRender::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture)
 {
-	_pingTexture = make_shared<Texture>();
-	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+	_pingTexture = pingTexture;
 
 	_shader = make_shared<Shader>();
 	ShaderInfo info;
@@ -486,10 +452,7 @@ void FieldFogRender::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
 void FieldFogRender::Resize()
 {
-	auto& textureBufferPool = Core::main->GetBufferManager()->GetTextureBufferPool();
-	textureBufferPool->FreeSRVHandle(_pingTexture->GetUAVCpuHandle());
-
-	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+	
 
 }
 
@@ -505,10 +468,9 @@ UnderWaterEffect::~UnderWaterEffect()
 {
 }
 
-void UnderWaterEffect::Init()
+void UnderWaterEffect::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture)
 {
-	_pingTexture = make_shared<Texture>();
-	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+	_pingTexture = pingTexture;
 
 	_shader = make_shared<Shader>();
 	ShaderInfo info;
@@ -526,7 +488,6 @@ void UnderWaterEffect::Init()
 
 void UnderWaterEffect::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
 {
-	
 	if (_underWaterParam.g_on == -1)
 		return;
 
@@ -583,11 +544,7 @@ void UnderWaterEffect::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
 void UnderWaterEffect::Resize()
 {
-	auto& textureBufferPool = Core::main->GetBufferManager()->GetTextureBufferPool();
-	textureBufferPool->FreeSRVHandle(_pingTexture->GetUAVCpuHandle());
-
-	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
-
+	
 
 }
 
@@ -599,10 +556,9 @@ VignetteRender::~VignetteRender()
 {
 }
 
-void VignetteRender::Init()
+void VignetteRender::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture)
 {
-	_pingTexture = make_shared<Texture>();
-	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+	_pingTexture = pingTexture;
 
 	_shader = make_shared<Shader>();
 	ShaderInfo info;
@@ -650,10 +606,6 @@ void VignetteRender::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
 void VignetteRender::Resize()
 {
-	auto& textureBufferPool = Core::main->GetBufferManager()->GetTextureBufferPool();
-	textureBufferPool->FreeSRVHandle(_pingTexture->GetUAVCpuHandle());
-
-	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
 
 }
 
@@ -665,10 +617,9 @@ SSAORender::~SSAORender()
 {
 }
 
-void SSAORender::Init()
+void SSAORender::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture)
 {
-	_pingTexture = make_shared<Texture>();
-	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+	_pingTexture = pingTexture;
 
 	_ssaoTexture = make_shared<Texture>();
 	_ssaoTexture->CreateStaticTexture(DXGI_FORMAT_R32_FLOAT, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
@@ -721,7 +672,6 @@ void SSAORender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int
 
 	cmdList->Dispatch(x, y, z);
 
-
 	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
 	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
 	cmdList->CopyResource(renderTarget->GetResource().Get(), _pingTexture->GetResource().Get());
@@ -742,10 +692,7 @@ void SSAORender::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 void SSAORender::Resize()
 {
 	auto& textureBufferPool = Core::main->GetBufferManager()->GetTextureBufferPool();
-	textureBufferPool->FreeSRVHandle(_pingTexture->GetUAVCpuHandle());
 	textureBufferPool->FreeSRVHandle(_ssaoTexture->GetUAVCpuHandle());
-
-	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
 	_ssaoTexture->CreateStaticTexture(DXGI_FORMAT_R32_FLOAT, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
 
 }
@@ -758,10 +705,9 @@ ColorGradingRender::~ColorGradingRender()
 {
 }
 
-void ColorGradingRender::Init()
+void ColorGradingRender::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture)
 {
-	_pingTexture = make_shared<Texture>();
-	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+	_pingTexture = pingTexture;
 
 	_shader = make_shared<Shader>();
 	ShaderInfo info;
@@ -814,10 +760,6 @@ void ColorGradingRender::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
 void ColorGradingRender::Resize()
 {
-	auto& textureBufferPool = Core::main->GetBufferManager()->GetTextureBufferPool();
-	textureBufferPool->FreeSRVHandle(_pingTexture->GetUAVCpuHandle());
-
-	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
 
 }
 
@@ -828,29 +770,38 @@ void ColorGradingRender::Resize()
 
 void ComputeManager::Init()
 {
+
+	_pingTexture = make_shared<Texture>();
+	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
+		| TextureUsageFlags::SRV, false, false);
+
+	_pongTexture = make_shared<Texture>();
+	_pongTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
+		| TextureUsageFlags::SRV, false, false);
+
 	_blur = make_shared<Blur>();
-	_blur->Init();
+	_blur->Init(_pingTexture,_pongTexture);
 
 	_bloom = make_shared<Bloom>();
-	_bloom->Init();
+	_bloom->Init(_pingTexture, _pongTexture);
 
 	_depthRender = make_shared<DepthRender>();
-	_depthRender->Init();
+	_depthRender->Init(_pingTexture, _pongTexture);
 
 	_underWaterEffect = make_shared<UnderWaterEffect>();
-	_underWaterEffect->Init();
+	_underWaterEffect->Init(_pingTexture, _pongTexture);
 
 	_ssaoRender = make_shared<SSAORender>();
-	_ssaoRender->Init();
+	_ssaoRender->Init(_pingTexture, _pongTexture);
 
 	_vignetteRender = make_shared<VignetteRender>();
-	_vignetteRender->Init();
+	_vignetteRender->Init(_pingTexture, _pongTexture);
 
 	_fieldFogRender = make_shared<FieldFogRender>();
-	_fieldFogRender->Init();
+	_fieldFogRender->Init(_pingTexture, _pongTexture);
 
 	_colorGradingRender = make_shared<ColorGradingRender>();
-	_colorGradingRender->Init();
+	_colorGradingRender->Init(_pingTexture, _pongTexture);
 }
 
 void ComputeManager::DispatchAfterDeferred(ComPtr<ID3D12GraphicsCommandList>& cmdList)
@@ -923,6 +874,18 @@ void ComputeManager::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
 void ComputeManager::Resize()
 {
+
+	auto& textureBufferPool = Core::main->GetBufferManager()->GetTextureBufferPool();
+	textureBufferPool->FreeSRVHandle(_pingTexture->GetSRVCpuHandle());
+	textureBufferPool->FreeSRVHandle(_pingTexture->GetUAVCpuHandle());
+	textureBufferPool->FreeSRVHandle(_pongTexture->GetSRVCpuHandle());
+	textureBufferPool->FreeSRVHandle(_pongTexture->GetUAVCpuHandle());
+
+	_pingTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::SRV|TextureUsageFlags::UAV
+		, false, false);
+	_pongTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::SRV | TextureUsageFlags::UAV
+		, false, false);
+
 	_blur->Resize();
 	_bloom->Resize();
 	_depthRender->Resize();
