@@ -795,8 +795,13 @@
     <FxCompile Include="..\Resources\Shaders\PlayerShader_Face.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\DeferredSeaFish.hlsl" />
     <FxCompile Include="..\Resources\Shaders\final.hlsl">
+      <Filter>998.HLSL\Graphics\KSH</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\DeferredSeaFish.hlsl">
+      <Filter>998.HLSL\Graphics\KSH</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\DeferredSeaPlantClip.hlsl">
       <Filter>998.HLSL\Graphics\KSH</Filter>
     </FxCompile>
   </ItemGroup>
