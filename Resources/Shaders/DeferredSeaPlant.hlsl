@@ -8,6 +8,11 @@ Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 
 
+cbuffer SeaDefaultMaterialParam : register(b7)
+{
+    float4 color;
+    float4 ClipingColor;
+};
 
 struct VS_IN
 {
@@ -24,13 +29,11 @@ struct VS_OUT
     float3 worldNormal : NORMAL;
     float2 uv : TEXCOORD;
     float3 worldTangent : TANGENT;
-    float4 color : COLOR;
 };
 
 
 struct PlantInfo
 {
-    float4 color;
     float amplitude;
     float frequency;
     float boundsCenterY;
@@ -76,7 +79,6 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     output.uv = input.uv;
     output.worldNormal = mul(float4(input.normal, 0.0f), l2wMatrix).xyz;
     output.worldTangent = mul(float4(input.tangent, 0.0f), l2wMatrix).xyz;
-    output.color = plantInfo.color;
     return output;
 }
 struct PS_OUT
@@ -93,7 +95,7 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     
     output.position = float4(input.worldPos, 1.0f);
     float3 N= ComputeNormalMapping(input.worldNormal, input.worldTangent, _BumpMap.Sample(sampler_lerp, input.uv));
-    output.color = _BaseMap.Sample(sampler_lerp, input.uv) * input.color;
+    output.color = _BaseMap.Sample(sampler_lerp, input.uv) * color;
     output.normal = float4(N, 1.0f);
 
 

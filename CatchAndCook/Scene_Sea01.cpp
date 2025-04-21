@@ -105,6 +105,40 @@ void Scene_Sea01::Init()
 
 	auto player = Find(L"seaPlayer");
 
+	//vector<shared_ptr<GameObject>> gameObjects;
+
+	//player->GetChildsAll(gameObjects);
+
+	//for (auto& ele : gameObjects)
+	//{
+	//	Scene::RemoveGameObject(ele);
+	//}
+
+	//for (auto& ele : gameObjects)
+	//{
+	//	Scene::AddFrontGameObject(ele);
+	//}
+
+
+	if (player)
+	{
+		//player->_transform->SetPivotOffset(vec3(0, 1.0f, 0));
+		player->AddComponent<SeaPlayerController>();
+
+		vector<shared_ptr<GameObject>> childs;
+		player->GetChildsAll(childs);
+
+		for (auto& child : childs)
+		{
+			auto skinnedMeshRenderer = child->GetComponent<SkinnedMeshRenderer>();
+			if (skinnedMeshRenderer)
+			{
+				skinnedMeshRenderer->SetCulling(false);
+			}
+		}
+
+	}
+
 
 	/*for (auto& gameobject : _gameObjects)
 	{
@@ -126,24 +160,7 @@ void Scene_Sea01::Init()
 	}*/
 
 
-	if (player)
-	{
-		//player->_transform->SetPivotOffset(vec3(0, 1.0f, 0));
-		player->AddComponent<SeaPlayerController>();
-
-		vector<shared_ptr<GameObject>> childs;
-		player->GetChildsAll(childs);
-
-		for (auto& child : childs)
-		{
-			auto skinnedMeshRenderer = child->GetComponent<SkinnedMeshRenderer>();
-			if (skinnedMeshRenderer)
-			{
-				skinnedMeshRenderer->SetCulling(false);
-			}
-		}
 	
-	}
 
 	{
 		auto plant = Find(L"2");

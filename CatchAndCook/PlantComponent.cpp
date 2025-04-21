@@ -71,8 +71,6 @@ void PlantComponent::SetDestroy()
 void PlantComponent::SetData(StructuredBuffer* buffer, Material* material)
 {
 	PlantInfo info;
-	info.amplitude;
-	info.color = material->GetPropertyVector("_Color");
 	info.amplitude = material->GetPropertyFloat("_Amplitude");
 	info.frequency = material->GetPropertyFloat("_frequency");
 

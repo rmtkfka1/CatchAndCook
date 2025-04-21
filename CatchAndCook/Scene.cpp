@@ -17,6 +17,15 @@
 #include "GameObject.h"
 #include "MeshRenderer.h"
 #include "PathFinder.h"
+void Scene::AddFrontGameObject(const std::shared_ptr<GameObject>& gameObject)
+{
+    gameObject->SetScene(GetCast<Scene>());
+
+    if (gameObject->GetType() == GameObjectType::Deactivate)
+        _gameObjects_deactivate.insert(_gameObjects_deactivate.begin(), gameObject);
+    else
+        _gameObjects.insert(_gameObjects.begin(),gameObject);
+}
 void Scene::AddGameObject(const std::shared_ptr<GameObject>& gameObject)
 {
 	gameObject->SetScene(GetCast<Scene>());
@@ -36,7 +45,7 @@ void Scene::Init()
 
 void Scene::Update()
 {
-    
+    GlobalSetting();
 
 
     Profiler::Set("Logic_Start");
@@ -91,7 +100,7 @@ void Scene::RenderBegin()
 
 void Scene::Rendering()
 {
-    GlobalSetting();
+ 
 
     auto& cmdList = Core::main->GetCmdList();
     Core::main->GetRenderTarget()->ClearDepth();
@@ -333,6 +342,7 @@ void Scene::GlobalSetting()
 
     CameraControll();
     //cout << CameraManager::main->GetActiveCamera()->GetCameraPos().y << endl;
+
 
     _globalParam.window_size = vec2(WINDOW_WIDTH,WINDOW_HEIGHT);
     _globalParam.Time = Time::main->GetTime();

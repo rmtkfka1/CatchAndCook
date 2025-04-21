@@ -127,7 +127,7 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& playerRota
     _camera->SetCameraPos(nextHeadPos);
     _velocity *= (1 - (_resistance * dt));
 
-    CameraManager::main->Setting();
+ /*   CameraManager::main->Setting();*/
 }
 
 void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float dt)

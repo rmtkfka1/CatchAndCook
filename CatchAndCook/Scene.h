@@ -19,6 +19,7 @@ class Scene : public IGuid
 {
 
 public:
+	void AddFrontGameObject(const std::shared_ptr<GameObject>& gameObject);
 	void AddGameObject(const std::shared_ptr<GameObject>& gameObject);
 	bool RemoveGameObject(const std::shared_ptr<GameObject>& gameObject);
 	bool RemoveAtGameObject(int index);

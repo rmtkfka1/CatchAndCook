@@ -30,13 +30,11 @@ struct VS_OUT
     float3 worldNormal : NORMAL;
     float2 uv : TEXCOORD;
     float3 worldTangent : TANGENT;
-    float4 color : COLOR;
 };
 
 
 struct PlantInfo
 {
-    float4 color;
     float amplitude;
     float frequency;
     float boundsCenterY;
@@ -82,7 +80,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     output.uv = input.uv;
     output.worldNormal = mul(float4(input.normal, 0.0f), l2wMatrix).xyz;
     output.worldTangent = mul(float4(input.tangent, 0.0f), l2wMatrix).xyz;
-    output.color = plantInfo.color;
+
     return output;
 }
 struct PS_OUT

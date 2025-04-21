@@ -4,7 +4,6 @@
 
 struct PlantInfo
 {
-	vec4 color = vec4(1, 1, 1, 1);
 	float amplitude = 0.2f;
 	float frequency = 0.5f;
 	float boundsCenterY;
