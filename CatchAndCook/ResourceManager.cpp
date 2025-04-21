@@ -60,7 +60,7 @@ void ResourceManager::CreateDefaultShaderKSH()
 
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"D_SeaFish", L"DeferredSeaFish.hlsl", StaticProp,
 			ShaderArg{}, info);
-
+		shader->SetInjector({ BufferType::SeaDefaultMaterialParam });
 		shader->SetPass(RENDER_PASS::Deferred);
 	}
 
@@ -77,7 +77,7 @@ void ResourceManager::CreateDefaultShaderKSH()
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"D_SeaEnv", L"DeferredSea.hlsl", StaticProp,
 			ShaderArg{}, info);
 
-		shader->SetInjector({ BufferType::DefaultMaterialParam });
+		shader->SetInjector({ BufferType::SeaDefaultMaterialParam });
 		//shader->SetInjector({ BufferType::DefaultMaterialParam });
 		shader->SetPass(RENDER_PASS::Deferred);
 	}
@@ -93,8 +93,7 @@ void ResourceManager::CreateDefaultShaderKSH()
 
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"DeferredSeaSkinned", L"DeferredSeaSkinned.hlsl", SkinProp,
 			ShaderArg{}, info);
-		shader->SetInjector({ BufferType::DefaultMaterialParam });
-		//shader->SetInjector({ BufferType::DefaultMaterialParam });
+		shader->SetInjector({ BufferType::SeaDefaultMaterialParam });
 		shader->SetPass(RENDER_PASS::Deferred);
 	}
 
@@ -110,8 +109,8 @@ void ResourceManager::CreateDefaultShaderKSH()
 
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"SeaPlayer", L"DeferredSeaSkinned.hlsl", SkinProp,
 			ShaderArg{}, info);
-		shader->SetInjector({ BufferType::DefaultMaterialParam });
-		//shader->SetInjector({ BufferType::DefaultMaterialParam });
+
+		shader->SetInjector({ BufferType::SeaDefaultMaterialParam });
 		shader->SetPass(RENDER_PASS::Deferred);
 	}
 
@@ -145,7 +144,7 @@ void ResourceManager::CreateDefaultShaderKSH()
 		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"D_SeaPlant", L"DeferredSeaPlant.hlsl", StaticProp,
 			ShaderArg{}, info);
 
-		shader->SetInjector({ BufferType::DefaultMaterialParam });
+		shader->SetInjector({ BufferType::SeaDefaultMaterialParam });
 		shader->SetPass(RENDER_PASS::Deferred);
 	}
 

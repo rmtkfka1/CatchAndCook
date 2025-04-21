@@ -7,10 +7,10 @@
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 
-cbuffer DefaultMaterialParam : register(b7)
+cbuffer SeaDefaultMaterialParam : register(b7)
 {
-    float4 color = float4(1, 1, 1, 1);
-    float4 _baseMapST = float4(1, 1, 1, 1);
+    float4 color;
+    float4 ClipingColor;
 };
 
 struct VS_IN

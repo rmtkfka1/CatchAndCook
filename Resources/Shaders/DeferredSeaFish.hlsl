@@ -25,7 +25,6 @@ struct VS_OUT
     float3 worldTangent : TANGENT;
 };
 
-
 struct FishInfo
 {
     float fishWaveAmount;
