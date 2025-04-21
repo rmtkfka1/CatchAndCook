@@ -69,6 +69,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     
     float3 animatedPos = input.pos;
     animatedPos.x += swayX;
+    animatedPos.z += swayX*0.6f;
 
     float4 worldPos = mul(float4(animatedPos, 1.0f), l2wMatrix);
     output.pos = worldPos;
