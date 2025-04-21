@@ -39,7 +39,8 @@ float4 PS_Main(VS_OUT input) : SV_Target
     LightingResult lightColor = ComputeLightColor(worldPos.xyz, worldNormal.xyz);
     float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), worldNormal) * 0.5 + 0.5));
 
-    float3 finalColor = (lerp(ShadowColor * albedoColor, albedoColor, lightColor.atten) + float4(lightColor.subColor, 0)).xyz;
+    float subIntensity =  lerp(1, 0.3, clamp(0, 1, lightColor.intensity));
+    float3 finalColor = (lerp(ShadowColor * albedoColor, albedoColor, lightColor.atten) + float4(lightColor.subColor * subIntensity, 0)).xyz;
 
 
     float3 viewDir = normalize(cameraPos - worldPos.xyz);
@@ -50,16 +51,19 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float fresnel = (1 - saturate(dot(viewDir, worldNormal)));
     float3 rim = pow(fresnel, exp2(2)) * pow(MinusN2L, 3) * float3(0.6, 0.6, 0.8) * 0.5;
 
-    float roughness = 0.7f;
+    float smoothness = MAOEColor.g;
+    float roughness = 1 - smoothness;
 
     float3 V = viewDir;
     float3 L = lightColor.direction;
     float3 H = normalize(V + L);
-    float NdotH = pow(saturate(dot(worldNormal, H)), 12);
-    float invDenom = 1.0 / max(1.0 - roughness, 0.001);
-    float spec     = saturate((NdotH - roughness) * invDenom) * 0.15f * lightColor.intensity;
-    // 최종 스펙큘러
+    float NdotH = pow(saturate(dot(worldNormal, H)), exp2(smoothness * 9));
+    float invDenom = 1.0 / max(1 - roughness, 0.001);
+    float spec = saturate((NdotH - roughness) * invDenom) * smoothness * lightColor.intensity;
+    finalColor = lerp(finalColor, pow(finalColor, 2), MAOEColor.r);
 
+
+	// 최종 스펙큘러
 
     if (MAOEColor.a == 1)
 		finalColor = albedoColor;

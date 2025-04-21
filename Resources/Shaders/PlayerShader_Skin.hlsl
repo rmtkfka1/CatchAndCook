@@ -122,7 +122,8 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
     //float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, lightColor.atten) + float4(lightColor.subColor, 0)).xyz;
     //ShadowColor
-    float3 finalColor = (BaseColor * _RampSkinMap.Sample(sampler_lerp_clamp, float2(lightColor.atten, 0)) + float4(lightColor.subColor, 0)).xyz;
+    float subIntensity =  lerp(1, 0.3, clamp(0, 1, lightColor.intensity));
+    float3 finalColor = (BaseColor * _RampSkinMap.Sample(sampler_lerp_clamp, float2(lightColor.atten, 0)) + float4(lightColor.subColor * subIntensity, 0)).xyz;
     
 
     float SSSDistorion = 0.3f;

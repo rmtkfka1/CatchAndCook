@@ -105,7 +105,8 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
 
 	float atten2 = saturate(lightColor.atten * 2 - 1);
-    float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, atten2) + float4(lightColor.subColor, 0)).xyz;
+    float subIntensity =  lerp(1, 0.3, clamp(0, 1, lightColor.intensity));
+    float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, atten2) + float4(lightColor.subColor * subIntensity, 0)).xyz;
 
     //_RampShadowMap
 
