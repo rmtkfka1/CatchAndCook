@@ -45,7 +45,7 @@ void Scene::Init()
 
 void Scene::Update()
 {
-    GlobalSetting();
+ 
 
 
     Profiler::Set("Logic_Start");
@@ -100,7 +100,7 @@ void Scene::RenderBegin()
 
 void Scene::Rendering()
 {
- 
+    GlobalSetting();
 
     auto& cmdList = Core::main->GetCmdList();
     Core::main->GetRenderTarget()->ClearDepth();
@@ -342,7 +342,6 @@ void Scene::GlobalSetting()
 
     CameraControll();
     //cout << CameraManager::main->GetActiveCamera()->GetCameraPos().y << endl;
-
 
     _globalParam.window_size = vec2(WINDOW_WIDTH,WINDOW_HEIGHT);
     _globalParam.Time = Time::main->GetTime();
