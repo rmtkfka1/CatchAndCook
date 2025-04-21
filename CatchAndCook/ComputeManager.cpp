@@ -211,6 +211,8 @@ void Bloom::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, i
 	if (_on == false)
 		return;
 
+	cout << _on << endl;
+
 	Black(cmdList, x, y, z);
 
 	for (int i = 0; i < _blurCount; ++i)
@@ -435,7 +437,6 @@ void FieldFogRender::Init()
 
 void FieldFogRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
 {
-
 	auto& table = Core::main->GetBufferManager()->GetTable();
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
 	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
@@ -876,10 +877,6 @@ void ComputeManager::DispatchMainField(ComPtr<ID3D12GraphicsCommandList>& cmdLis
 	int dispatchY = static_cast<int>(std::ceil(static_cast<float>(WINDOW_HEIGHT) / threadGroupSizeY));
 
 	int32 dispath[3] = { dispatchX,dispatchY,1 };
-
-
-	_bloom->_on = true;
-
 
 	_depthRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 

@@ -143,8 +143,6 @@ private:
 class FieldFogRender : public ComputeBase
 {
 
-
-
 public:
 	FieldFogRender();
 	virtual ~FieldFogRender();
