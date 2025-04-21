@@ -38,14 +38,11 @@ void Time::Update()
 			_fps = static_cast<uint32>(std::round(_frameCount[i] / _frameTime[i]));
 			_frameCount[i] -= _frameCount[i] / _frameTime[i];
 			_frameTime[i] -= delta;
-
-			WCHAR wchTxt[64];
-			swprintf_s(wchTxt, 64, L"FPS: %u", _fps);
-			SetWindowText(Core::main->GetHandle(), wchTxt);
 		}
 	}
 
     _time += _deltaTime;
+
 
 
 }

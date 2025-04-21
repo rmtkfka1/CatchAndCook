@@ -520,6 +520,7 @@ void SceneLoader::LinkComponent(json& jsonData)
         }
 
         instancesDatas.resize(instanceTableCount);
+
         int instanceCount = jsonData["instanceCount"].get<float>();
         for(int i = 0; i < instanceCount; i++)
         {
@@ -548,7 +549,6 @@ void SceneLoader::LinkComponent(json& jsonData)
         
         material->SetPropertyInt("detailsCount",diffuseCount);
         material->SetPropertyInt("blendCount", blendCount);
-
         terrain->SetMaterial(material);
         terrain->SetInstances(instances);
 		terrain->SetInstanceDatas(instancesDatas);

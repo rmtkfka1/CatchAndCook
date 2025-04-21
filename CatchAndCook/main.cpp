@@ -65,6 +65,11 @@ int main()
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+
+			if (Time::main)
+			{
+				Time::main->Update();
+			}
 		}
 
 		else
