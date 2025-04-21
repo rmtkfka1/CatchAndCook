@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "SceneLoader.h"
 #include "SceneLoader.h"
-
 #include <nlohmann/json_fwd.hpp>
 
 #include "AnimationListComponent.h"
@@ -537,12 +536,21 @@ void SceneLoader::LinkComponent(json& jsonData)
                 currentInst["position"][0].get<float>(),
                 currentInst["position"][1].get<float>(),
                 currentInst["position"][2].get<float>());
-            auto rot = Quaternion::CreateFromAxisAngle(Vector3::Up,currentInst["rotation"].get<float>());
+			float angle = currentInst["rotation"].get<float>();
             auto scale = Vector3(
                 currentInst["scale"][0].get<float>(),
                 currentInst["scale"][1].get<float>(),
                 currentInst["scale"][2].get<float>());
             Matrix InvertTRS;
+
+            std::random_device rd;
+            std::uniform_real_distribution<float> distReal(-0.1f, 1.0f);
+            std::uniform_real_distribution<float> distReal2(0, 360 * D2R);
+            scale.y *= 1 + distReal(rd) * 0.3f;
+            angle += distReal2(rd);
+
+            auto rot = Quaternion::CreateFromAxisAngle(Vector3::Up, angle);
+
         	auto trs = Matrix::CreateScale(scale) *
                 Matrix::CreateFromQuaternion(rot) *
                 Matrix::CreateTranslation(pos);

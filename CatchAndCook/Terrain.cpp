@@ -70,14 +70,17 @@ void Terrain::Start()
             renderer->SetCulling(false);
             renderer->SetInstanceBuffer(instanceBuffer);
             renderer->SetInstancing(false);
+
+            std::vector<std::shared_ptr<Material>> newMaterials;
             for (auto& material : renderer->GetMaterials())
             {
                 auto newMaterial = std::make_shared<Material>();
                 newMaterial = material->Clone();
-                renderer->SetMaterials({ newMaterial });
                 newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Instanced"));
                 newMaterial->SetPass(RENDER_PASS::Deferred);
+                newMaterials.push_back(newMaterial);
             }
+            renderer->SetMaterials(newMaterials);
         }
     }
 

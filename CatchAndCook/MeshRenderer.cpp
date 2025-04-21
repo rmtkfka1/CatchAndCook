@@ -6,6 +6,7 @@
 #include "BufferPool.h"
 #include "GameObject.h"
 #include "Gizmo.h"
+#include "InitComponent.h"
 #include "SceneManager.h"
 #include "Shader.h"
 #include "Texture.h"
@@ -40,6 +41,14 @@ void MeshRenderer::Start()
 
 	if (auto objectSettingComponent = GetOwner()->GetComponentWithParents<ObjectSettingComponent>())
 		AddStructuredSetter(objectSettingComponent, BufferType::ObjectSettingParam);
+	if (auto tagsComponent = GetOwner()->GetComponentWithParents<TagsComponent>())
+	{
+		auto tag = tagsComponent->GetOwner()->GetTag();
+		if (HasTag(tagsComponent->GetOwner()->GetTag(), GameObjectTag::NonInstancing))
+			SetInstancing(false);
+		if (HasTag(tagsComponent->GetOwner()->GetTag(), GameObjectTag::NonCulling))
+			SetCulling(false);
+	}
 
 	auto owner = GetOwner();
 

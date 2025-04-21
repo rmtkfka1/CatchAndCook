@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "SkinnedHierarchy.h"
 #include "Gizmo.h"
+#include "InitComponent.h"
 #include "ObjectSettingComponent.h"
 
 SkinnedMeshRenderer::~SkinnedMeshRenderer()
@@ -34,6 +35,14 @@ void SkinnedMeshRenderer::Start()
 	//AddStructuredSetter(_setter_ForwardLight, BufferType::ForwardLightParam);
 	if (auto objectSettingComponent = GetOwner()->GetComponentWithParents<ObjectSettingComponent>())
 		AddStructuredSetter(objectSettingComponent, BufferType::ObjectSettingParam);
+
+	if (auto tagsComponent = GetOwner()->GetComponentWithParents<TagsComponent>())
+	{
+		if (HasTag(tagsComponent->GetOwner()->GetTag(), GameObjectTag::NonInstancing))
+			SetInstancing(false);
+		if (HasTag(tagsComponent->GetOwner()->GetTag(), GameObjectTag::NonCulling))
+			SetCulling(false);
+	}
 
 	auto root = GetOwner()->GetParent();
 	if (root != nullptr)

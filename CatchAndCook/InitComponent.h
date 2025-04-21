@@ -25,6 +25,7 @@ public:
 	std::vector<std::string> _tagNames;
 
 	void Init() override;
+	void Start() override;
 };
 
 class ScriptsComponent : public InitComponent

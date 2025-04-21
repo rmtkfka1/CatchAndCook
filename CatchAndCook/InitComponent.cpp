@@ -89,6 +89,11 @@ void TagsComponent::Init()
 	}
 }
 
+void TagsComponent::Start()
+{
+	InitComponent::Start();
+}
+
 void ScriptsComponent::Init()
 {
 	InitComponent::Init();
