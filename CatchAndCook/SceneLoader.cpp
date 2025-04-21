@@ -546,7 +546,7 @@ void SceneLoader::LinkComponent(json& jsonData)
             std::random_device rd;
             std::uniform_real_distribution<float> distReal(-0.1f, 1.0f);
             std::uniform_real_distribution<float> distReal2(0, 360 * D2R);
-            scale.y *= 1 + distReal(rd) * 0.3f;
+            scale.y *= 1 + distReal(rd) * 0.2f;
             angle += distReal2(rd);
 
             auto rot = Quaternion::CreateFromAxisAngle(Vector3::Up, angle);
