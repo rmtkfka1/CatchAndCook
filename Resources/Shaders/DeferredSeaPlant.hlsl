@@ -6,6 +6,7 @@
 
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
+Texture2D _EmissionMap : register(t8);
 
 
 struct VS_IN
@@ -94,5 +95,7 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     float3 N= ComputeNormalMapping(input.worldNormal, input.worldTangent, _BumpMap.Sample(sampler_lerp, input.uv));
     output.color = _BaseMap.Sample(sampler_lerp, input.uv) * input.color;
     output.normal = float4(N, 1.0f);
+    output.maoe = _EmissionMap.Sample(sampler_lerp, input.uv);
+
     return output;
 }

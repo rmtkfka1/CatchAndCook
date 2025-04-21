@@ -78,7 +78,6 @@ void PathFinder::Update()
 
 			if (_currentIndex >= myPath.size() - 1)
 			{
-				cout << "forward false " << endl;
 				_forward = false;
 				return;
 			}
