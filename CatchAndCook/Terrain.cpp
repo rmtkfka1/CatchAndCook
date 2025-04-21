@@ -68,8 +68,8 @@ void Terrain::Start()
         for (auto& renderer : renderers)
         {
             renderer->SetCulling(false);
-            renderer->SetInstanceBuffer(instanceBuffer);
             renderer->SetInstancing(false);
+            renderer->SetInstanceBuffer(instanceBuffer);
 
             std::vector<std::shared_ptr<Material>> newMaterials;
             for (auto& material : renderer->GetMaterials())

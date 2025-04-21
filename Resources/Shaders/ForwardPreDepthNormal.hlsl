@@ -48,8 +48,9 @@ VS_OUT VS_Main(VS_IN input , uint id : SV_InstanceID)
     float4 boneWs = 0;
    
 #ifdef INSTANCED
-	l2wMatrix = MATRIX(input.instance_trs);
-	w2lMatrix = MATRIX(input.instance_invert_trs);
+	data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r];
+	l2wMatrix = mul(data.localToWorld, MATRIX(input.instance_trs));
+	w2lMatrix = mul(MATRIX(input.instance_invert_trs), data.worldToLocal);
 #endif
     
     
