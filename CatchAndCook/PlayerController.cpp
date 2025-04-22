@@ -36,7 +36,7 @@ void PlayerController::Init()
 void PlayerController::Start()
 {
 	Component::Start();
-	camera = GetOwner()->GetComponentWithChilds<CameraComponent>();
+	camera = FindObjectByType<CameraComponent>();
 	_animationList = GetOwner()->GetComponentWithChilds<AnimationListComponent>();
 	_skinnedHierarchy = GetOwner()->GetComponentWithChilds<SkinnedHierarchy>();
 }
@@ -124,12 +124,17 @@ void PlayerController::MoveControl()
 	{
 		if (auto skinnedHierarchy = _skinnedHierarchy.lock())
 		{
+			skinnedHierarchy->_speedMultiple = 1.4f;
 			auto walk = animationList->GetAnimations()["walk"];
 			auto idle = animationList->GetAnimations()["idle"];
+			auto run = animationList->GetAnimations()["run"];
 			if (targetLookWorldDirection == Vector3::Zero)
 				skinnedHierarchy->Play(idle, 0.25);
 			else
-				skinnedHierarchy->Play(walk, 0.25);
+				if (Input::main->GetKey(KeyCode::Shift))
+					skinnedHierarchy->Play(run, 0.25);
+				else
+					skinnedHierarchy->Play(walk, 0.25);
 		}
 	}
 
@@ -178,7 +183,7 @@ void PlayerController::MoveControl()
 	Vector3 currentPos = GetOwner()->_transform->GetWorldPosition();
 	Vector3 nextPos = currentPos;
 
-	Vector3 velocityDirectionXZ = velocity * Time::main->GetDeltaTime();
+	Vector3 velocityDirectionXZ = velocity; //  * Time::main->GetDeltaTime()
 	velocityDirectionXZ.y = 0;
 
 	//if (velocityDirectionXZ != Vector3::Zero)
@@ -233,16 +238,16 @@ void PlayerController::MoveControl()
 
 	RayHit foundGround;
 	std::vector<RayHit> hitList;
-	if (auto isHit = ColliderManager::main->RayCastAll({ upRayOffset, Vector3::Down }, upDistance + gitMargin * 2, hitList))
+	if (auto isHit = ColliderManager::main->RayCastAll({ upRayOffset, Vector3::Down }, upDistance + gitMargin, hitList))
 	{
 		for (auto& hit : hitList)
 		{
 			if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
 			{
-				if (upDistance + gitMargin >= hit.distance) {
+				if (hit.distance <= upDistance + gitMargin) {
 					foundGround = hit;
+					break;
 				}
-				break;
 			}
 		}
 	}
@@ -255,7 +260,7 @@ void PlayerController::MoveControl()
 	else
 	{
 		isGround = false;
-		velocity.y -= 0.981;
+		//velocity.y -= 0.981;
 	}
 
 	// ------------- 공통 로직 ------------- 
