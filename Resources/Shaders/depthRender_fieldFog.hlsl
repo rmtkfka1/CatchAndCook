@@ -77,6 +77,7 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     //float distFog = smoothstep(g_fogMin, g_fogMax, dist);
     
     float fogFactor = clamp(0, 1, exp(-distFog * power));
+    fogFactor = smoothstep(0.0, 1.0, fogFactor);
     
     float3 color = lerp(g_fogColor, color2, fogFactor);
     

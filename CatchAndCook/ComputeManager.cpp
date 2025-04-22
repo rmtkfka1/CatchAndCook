@@ -427,10 +427,10 @@ void FieldFogRender::Init()
 	info._computeShader = true;
 	_shader->Init(L"depthRender_fieldFog.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
 
-	_fogParam.g_fogColor = vec3(0.58f, 0.66f, 0.84f);
-	_fogParam.power = 0.38f;
-	_fogParam.g_fogMin = 40.0f;
-	_fogParam.g_fogMax = 350;
+	_fogParam.g_fogColor = vec3(0.48f, 0.56f, 0.72f) * 0.8;
+	_fogParam.power = 1.2f;
+	_fogParam.g_fogMin = 50.0f;
+	_fogParam.g_fogMax = 400;
 }
 
 void FieldFogRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)

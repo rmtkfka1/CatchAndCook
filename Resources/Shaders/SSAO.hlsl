@@ -61,7 +61,7 @@ Texture2D<float4> NormalT : register(t3);
 #define SAMPLE_COUNT 16
 #define RADIUS 0.3
 #define BIAS 0.05
-#define INTENSITY 1.15
+#define INTENSITY 1.25
 #define POWER 3
 
 static const float3 samples[SAMPLE_COUNT] = 
@@ -170,7 +170,7 @@ void CS_Blur(uint3 dispatchThreadID : SV_DispatchThreadID)
     float aoFinal = lerp(ssaoResultTexture[texCoord], aoBlurred, 0.8);
 
     float4 originalColor = RenderT.Load(int3(texCoord, 0));
-    float4 finalColor = originalColor * aoFinal;
+    float4 finalColor = lerp(originalColor*float4(0.1,0.07,0.12,1), originalColor, saturate(aoFinal));
 
     resultTexture[texCoord] = finalColor;
 }

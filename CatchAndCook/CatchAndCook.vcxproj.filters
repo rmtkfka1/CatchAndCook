@@ -358,6 +358,8 @@
     <ClCompile Include="FishMonster.cpp">
       <Filter>03.Component</Filter>
     </ClCompile>
+    <ClCompile Include="EffectComponent.cpp" />
+    <ClCompile Include="ObjectSettingComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -670,6 +672,8 @@
     <ClInclude Include="FishMonster.h">
       <Filter>03.Component</Filter>
     </ClInclude>
+    <ClInclude Include="EffectComponent.h" />
+    <ClInclude Include="ObjectSettingComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -797,6 +801,19 @@
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\PlayerShader_Face.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\ObjectShader.hlsl" />
+    <FxCompile Include="..\Resources\Shaders\ObjectSetting_t31.hlsl">
+      <Filter>998.HLSL\Module</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\depthRender_fieldFog.hlsl">
+      <Filter>998.HLSL\Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\colorGrading.hlsl">
+      <Filter>998.HLSL\Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\ForwardFunction.hlsl">
+      <Filter>998.HLSL\Module</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

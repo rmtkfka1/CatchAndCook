@@ -37,9 +37,9 @@ Texture2D<float4> RenderT : register(t1);
 
 static const float3 LumaCoeffs = float3(0.2126, 0.7152, 0.0722);
 
-static const float3 lift     = float3(-0.02,  0.01,  0.04) * 1.35;
+static const float3 lift     = float3(-0.02,  0.01,  0.04) * 1.4;
 static const float3 gamma    = float3(1.0f,  1.0f,  1.0f);
-static const float3 gain     = float3( 1 + 0.1 * 0.8,  1 + 0.02 * 0.8,  1 -0.1 * 0.8);
+static const float3 gain     = float3( 1 + 0.1 * 0.9,  1 + 0.02 * 0.9,  1 -0.1 * 0.9);
 
 
 float3 ApplyLiftGammaGain(float3 c)
