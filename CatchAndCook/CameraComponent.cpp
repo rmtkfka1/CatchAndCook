@@ -5,6 +5,7 @@
 #include "Transform.h"
 
 
+COMPONENT(CameraComponent)
 CameraComponent::CameraComponent()
 {
 	_type = CameraType::ComponentCamera;

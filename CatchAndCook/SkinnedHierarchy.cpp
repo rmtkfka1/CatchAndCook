@@ -47,17 +47,7 @@ void SkinnedHierarchy::Start()
 void SkinnedHierarchy::Update()
 {
 	Component::Update();
-	//auto name = GetOwner()->GetComponentWithChilds<SkinnedMeshRenderer>()->_model->_rootBoneNode->GetOriginalName();
 
-	if (IsPlay())
-	{
-
-		auto name = _model->_rootBoneNode->GetOriginalName();
-		auto pos = BlendDeltaPosition(name, _animation, _nextAnimation, _duration);
-		pos *= Vector3::One - rootMoveLock;
-		pos = Vector3::Transform(pos, GetOwner()->_transform->GetWorldRotation());
-		GetOwner()->_transform->SetWorldPosition(GetOwner()->_transform->GetWorldPosition() + pos);
-	}
 }
 
 
@@ -71,20 +61,6 @@ void SkinnedHierarchy::Update2()
 	for (auto& c : b)
 		animations.push_back(c.second);
 	
-
-
-	if (Input::main->GetKeyDown(KeyCode::Num1))
-		Play(animations[0], 0.25);
-	if (Input::main->GetKeyDown(KeyCode::Num2))
-		Play(animations[1], 0.25);
-	if (Input::main->GetKeyDown(KeyCode::Num3))
-		Play(animations[2], 0.25);
-	if (Input::main->GetKeyDown(KeyCode::Num4))
-		Pause();
-	if (Input::main->GetKeyDown(KeyCode::Num5))
-		Play();
-	if (Input::main->GetKeyDown(KeyCode::Num6))
-		Stop();
 
 	if (IsPlay())
 	{
@@ -408,6 +384,19 @@ void SkinnedHierarchy::Destroy()
 	Component::Destroy();
 	for (auto& renderer : GetOwner()->GetComponentsWithChilds<SkinnedMeshRenderer>())
 		renderer->RemoveCbufferSetter(GetCast<SkinnedHierarchy>());
+}
+
+Vector3 SkinnedHierarchy::GetDeltaPosition()
+{
+	if (IsPlay())
+	{
+		auto name = _model->_rootBoneNode->GetOriginalName();
+		auto pos = BlendDeltaPosition(name, _animation, _nextAnimation, _duration);
+		pos *= Vector3::One - rootMoveLock;
+		pos = Vector3::Transform(pos, GetOwner()->_transform->GetWorldRotation());
+		return pos;
+	}
+	return Vector3::Zero;
 }
 
 void SkinnedHierarchy::SetBoneList(const std::vector<std::shared_ptr<Bone>>& bones)

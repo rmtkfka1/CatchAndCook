@@ -12,6 +12,7 @@
 #include "Terrain.h"
 #include "TerrainManager.h"
 #include "Transform.h"
+#include "AnimationListComponent.h"
 
 
 COMPONENT(PlayerController)
@@ -35,7 +36,9 @@ void PlayerController::Init()
 void PlayerController::Start()
 {
 	Component::Start();
-	camera = FindObjectByType<CameraComponent>();
+	camera = GetOwner()->GetComponentWithChilds<CameraComponent>();
+	_animationList = GetOwner()->GetComponentWithChilds<AnimationListComponent>();
+	_skinnedHierarchy = GetOwner()->GetComponentWithChilds<SkinnedHierarchy>();
 }
 
 void PlayerController::Update()
@@ -116,6 +119,22 @@ void PlayerController::MoveControl()
 	moveDirection.Normalize();
 	targetLookWorldDirection = Vector3::Transform(moveDirection, lookRotation);
 
+
+	if (auto animationList = _animationList.lock())
+	{
+		if (auto skinnedHierarchy = _skinnedHierarchy.lock())
+		{
+			auto walk = animationList->GetAnimations()["walk"];
+			auto idle = animationList->GetAnimations()["idle"];
+			if (targetLookWorldDirection == Vector3::Zero)
+				skinnedHierarchy->Play(idle, 0.25);
+			else
+				skinnedHierarchy->Play(walk, 0.25);
+		}
+	}
+
+
+
 	if (targetLookWorldDirection != Vector3::Zero)
 	{
 		currentLookWorldRotation = Quaternion::Slerp(currentLookWorldRotation, Quaternion::LookRotation(targetLookWorldDirection, Vector3::Transform(Vector3::Up, lookRotation)),
@@ -123,15 +142,21 @@ void PlayerController::MoveControl()
 
 		// 등속 운동 로직
 		Vector3 prevVelocity = velocity;
-		prevVelocity += targetLookWorldDirection * controlInfo.moveForce * Time::main->GetDeltaTime() * 60;
-		prevVelocity.y = 0;
-		if (prevVelocity.Length() > controlInfo.maxSpeed) {
-			prevVelocity.Normalize();
-			prevVelocity *= controlInfo.maxSpeed;
+
+		//_skinnedHierarchy
+		//velocity += targetLookWorldDirection * controlInfo.moveForce * Time::main->GetDeltaTime() * 60;
+		//velocity.y = 0;
+		//if (velocity.Length() > controlInfo.maxSpeed) {
+		//	velocity.Normalize();
+		//	velocity *= controlInfo.maxSpeed;
+		//}
+		if (auto skinnedHierarchy = _skinnedHierarchy.lock())
+		{
+			velocity = skinnedHierarchy->GetDeltaPosition();
 		}
 
 		// 이동
-		velocity = Vector3(prevVelocity.x, velocity.y, prevVelocity.z);
+		velocity = Vector3(velocity.x, prevVelocity.y, velocity.z);
 	}
 	GetOwner()->_transform->SetWorldRotation(currentLookWorldRotation);
 

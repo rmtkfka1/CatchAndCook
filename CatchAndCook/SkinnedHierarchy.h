@@ -21,6 +21,9 @@ public:
 	void SetDestroy() override;
 	void Destroy() override;
 
+
+	Vector3 GetDeltaPosition();
+
 	void SetBoneList(const std::vector<std::shared_ptr<Bone>>& bones);
 	void SetNodeList(const std::vector<std::shared_ptr<ModelNode>>& nodes);
 	void SetModel(const std::shared_ptr<Model>& model);

@@ -3,6 +3,8 @@
 #include "IComponentFactory.h"
 
 
+class AnimationListComponent;
+class SkinnedHierarchy;
 class CameraComponent;
 
 enum class MoveType
@@ -32,6 +34,8 @@ class PlayerController : public Component
 {
 public:
 	std::weak_ptr<CameraComponent> camera;
+	std::weak_ptr<SkinnedHierarchy> _skinnedHierarchy;
+	std::weak_ptr<AnimationListComponent> _animationList;
 
 	~PlayerController() override;
 	bool IsExecuteAble() override;
