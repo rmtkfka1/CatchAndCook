@@ -689,7 +689,7 @@ void SSAORender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int
 	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 	_ssaoTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
-	_tableContainer = table->Alloc(8);
+	_tableContainer = table->Alloc(10);
 
 	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
 	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
@@ -703,10 +703,14 @@ void SSAORender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int
 	auto& PositionTexture = Core::main->GetGBuffer()->GetTexture(0);
 	PositionTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
+	auto& MAOETexture = Core::main->GetGBuffer()->GetTexture(3);
+	MAOETexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
 	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 0);
 	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
 	table->CopyHandle(_tableContainer.CPUHandle, PositionTexture->GetSRVCpuHandle(), 2);
 	table->CopyHandle(_tableContainer.CPUHandle, NormalTexture->GetSRVCpuHandle(), 3);
+	table->CopyHandle(_tableContainer.CPUHandle, MAOETexture->GetSRVCpuHandle(), 4);
 
 	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 5);
 	table->CopyHandle(_tableContainer.CPUHandle, _ssaoTexture->GetUAVCpuHandle(), 6);

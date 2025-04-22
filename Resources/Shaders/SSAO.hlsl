@@ -56,6 +56,7 @@ Texture2D depthT : register(t0);
 Texture2D<float4> RenderT : register(t1);
 Texture2D<float4> PositionT : register(t2);
 Texture2D<float4> NormalT : register(t3);
+Texture2D<float4> MAOET : register(t4);
 
 
 #define SAMPLE_COUNT 16
@@ -192,7 +193,7 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     float3 worldNormal = normalize(NormalT.Load(int3(texCoord, 0)).xyz);
     float depth = depthT.Load(int3(texCoord, 0));
 
-    if (depth >= 0.9999) { // 뎁스 없음.
+    if (depth >= 0.9999 || MAOET.Load(int3(texCoord, 0)).z == -1) { // 뎁스 없음.
         resultTexture[texCoord] = RenderT.Load(int3(texCoord, 0));
         ssaoResultTexture[texCoord] = 1;
         return;

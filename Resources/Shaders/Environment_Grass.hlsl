@@ -121,19 +121,17 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
 
     output.position = input.positionWS;
     output.color = BaseColor;
-    output.normal = float4(N, 0.0f);
+    output.normal = float4(0, 1, 0, 0.0f);
     output.maoe = float4(_metallic, _smoothness, 0, emission);
 
     
     
     if (emission == 1)
 		output.color = emissionColor;
-    #ifdef _NO_AO
-		output.maoe.z = -1;
-	#endif
 
 
-    if (output.color.a <= 0.1f)
+
+    if (output.color.a <= 0.3f)
         discard;
     return output;
 }

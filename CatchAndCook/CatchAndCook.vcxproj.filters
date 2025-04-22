@@ -815,5 +815,8 @@
     <FxCompile Include="..\Resources\Shaders\ForwardFunction.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Environment_Grass.hlsl">
+      <Filter>998.HLSL\Graphics\JIN</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

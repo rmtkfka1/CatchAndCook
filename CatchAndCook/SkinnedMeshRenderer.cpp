@@ -35,6 +35,9 @@ void SkinnedMeshRenderer::Start()
 	//AddStructuredSetter(_setter_ForwardLight, BufferType::ForwardLightParam);
 	if (auto objectSettingComponent = GetOwner()->GetComponentWithParents<ObjectSettingComponent>())
 		AddStructuredSetter(objectSettingComponent, BufferType::ObjectSettingParam);
+	else
+		AddStructuredSetter(make_shared<ObjectSettingComponent>(), BufferType::ObjectSettingParam);
+	
 
 	if (auto tagsComponent = GetOwner()->GetComponentWithParents<TagsComponent>())
 	{

@@ -221,7 +221,6 @@ void ResourceManager::CreateDefaultShaderlJHS()
 	}
 
 	{
-
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
@@ -234,6 +233,20 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		shader->SetInstanceProp(TransformInstanceProp);
 		shader->Init(L"TestForward_Total.hlsl", SkinProp, ShaderArg{}, info);
 		Add<Shader>(L"DefaultForward_Instanced", shader);
+	}
+	{
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetInjector({ BufferType::DefaultMaterialParam });
+		shader->SetPass(RENDER_PASS::Forward);
+		shader->SetMacro({ {"INSTANCED",nullptr} });
+		shader->SetInstanceProp(TransformInstanceProp);
+		shader->Init(L"TestForward_Total.hlsl", SkinProp, ShaderArg{}, info);
+		Add<Shader>(L"DefaultForward_NOAO_Instanced", shader);
 	}
 	//Deferred
 	{
@@ -367,6 +380,51 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		shader->SetPass(RENDER_PASS::Deferred);
 		shader->Init(L"Environment.hlsl", SkinProp, ShaderArg{}, info);
 		Add<Shader>(L"Environment_Instanced", shader);
+	}
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+
+		info.renderTargetCount = 4;
+
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetInjector({ BufferType::EnvMaterialParam });
+		shader->SetMacro({ {"INSTANCED",nullptr}, {"_NO_AO",nullptr} });
+		shader->SetInstanceProp(TransformInstanceProp);
+		shader->SetPass(RENDER_PASS::Deferred);
+		shader->Init(L"Environment.hlsl", SkinProp, ShaderArg{}, info);
+		Add<Shader>(L"Environment_NOAO_Instanced", shader);
+	}
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+
+		info.renderTargetCount = 4;
+
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetInjector({ BufferType::EnvMaterialParam });
+		shader->SetMacro({ {"INSTANCED",nullptr}, {"_NO_AO",nullptr} });
+		shader->SetInstanceProp(TransformInstanceProp);
+		shader->SetPass(RENDER_PASS::Deferred);
+		shader->Init(L"Environment_Grass.hlsl", SkinProp, ShaderArg{}, info);
+		Add<Shader>(L"Environment_Grass", shader);
 	}
 
 	{

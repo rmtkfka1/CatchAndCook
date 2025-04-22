@@ -39,6 +39,9 @@ public:
     shared_ptr<T> Get(const wstring& key);
 
     template<typename T>
+    const std::wstring& GetKey(const std::shared_ptr<T>& value);
+
+    template<typename T>
     void Add(const wstring& key, shared_ptr<T> object);
 
     std::shared_ptr<Texture> GetNoneTexture() { return _noneTexture; };
@@ -104,6 +107,24 @@ inline shared_ptr<T> ResourceManager::LoadAlway(const wstring& key,const wstring
     object->Init(path, std::forward<Args>(args)...);
     Map[key] = object;
     return object;
+}
+
+template<typename T>
+inline const wstring& ResourceManager::GetKey(const std::shared_ptr<T>& value)
+{
+    static const std::wstring nullKey{ L"null" };
+    auto& Map = GetResourceMap<T>();
+
+    auto it = Map.cbegin();
+    auto end = Map.cend();
+
+    // value와 일치하는 shared_ptr 찾기
+    for (; it != end; ++it) {
+        if (it->second == value) {
+            return it->first;  // 맵에 있는 키(참조) 반환
+        }
+    }
+    return nullKey;
 }
 
 template<typename T>

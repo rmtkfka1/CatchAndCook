@@ -41,6 +41,12 @@ void MeshRenderer::Start()
 
 	if (auto objectSettingComponent = GetOwner()->GetComponentWithParents<ObjectSettingComponent>())
 		AddStructuredSetter(objectSettingComponent, BufferType::ObjectSettingParam);
+	else
+	{
+		//AddStructuredSetter(GetOwner()->AddComponent<ObjectSettingComponent>(), BufferType::ObjectSettingParam);
+		AddStructuredSetter(make_shared<ObjectSettingComponent>(), BufferType::ObjectSettingParam);
+	}
+
 	if (auto tagsComponent = GetOwner()->GetComponentWithParents<TagsComponent>())
 	{
 		auto tag = tagsComponent->GetOwner()->GetTag();

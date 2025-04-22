@@ -56,6 +56,7 @@ void Terrain::Start()
     _instanceBuffers.resize(_instances.size());
     for (int i = 0; i < _instances.size(); i++)
     {
+		std::cout << "Instance Count (" << to_string(_instances[i].lock()->GetName()) << ") : " << _instanceDatas[i].size() << std::endl;
         auto instanceBuffer = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::TransformInstanceParam)->Alloc();
         memcpy(instanceBuffer->ptr, _instanceDatas[i].data(), _instanceDatas[i].size() * sizeof(Instance_Transform));
         instanceBuffer->SetIndex(_instanceDatas[i].size(), sizeof(Instance_Transform));
@@ -76,7 +77,10 @@ void Terrain::Start()
             {
                 auto newMaterial = std::make_shared<Material>();
                 newMaterial = material->Clone();
-                newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Instanced"));
+                if (wstr::contains(ResourceManager::main->GetKey(material->GetShader()), L"Grass"))
+					newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Grass"));
+                else
+					newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Instanced"));
                 newMaterial->SetPass(RENDER_PASS::Deferred);
                 newMaterials.push_back(newMaterial);
             }

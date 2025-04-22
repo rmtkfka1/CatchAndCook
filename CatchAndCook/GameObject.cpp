@@ -40,10 +40,9 @@ void GameObject::Start()
 {
     if (_active_total)
     {
-        for (auto& component : _components)
-        {
-            if (component->_first)
-            {
+        for (size_t i = 0; i < _components.size(); ++i) {
+            auto component = _components[i];
+            if (component->_first) {
                 component->Start();
                 component->_first = false;
             }
