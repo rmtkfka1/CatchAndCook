@@ -125,7 +125,7 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float3 rim = pow(fresnel, exp2(2)) * MinusN2L * float3(0.6, 0.6, 0.8) * 0.5;
 
     //outline
-    float outline = step(0.1f, Sobel(input.positionCS, 0.85f / input.positionCS.w));
+    float outline = step(0.05f, Sobel(input.positionCS, 1.0f / input.positionCS.w));
     float rimRatio = 1 - saturate(dot(viewDir, N));
     float3 outlineColor = (finalColor / float3((outline * 1 + 1), (outline * 1.5 + 1), (outline * 1.1 + 1)));
     finalColor = lerp(finalColor, outlineColor, outline);

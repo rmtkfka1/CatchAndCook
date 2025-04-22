@@ -96,8 +96,27 @@ void Terrain::Update()
     Vector3 cameraPos = CameraManager::main->GetActiveCamera()->GetCameraPos();
     Vector3 cameraLook = CameraManager::main->GetActiveCamera()->GetCameraLook();
 
-    float maxAngle = ((WINDOW_WIDTH / (float)WINDOW_HEIGHT) * (60 + 3) * D2R) / 2;
-    float maxDistance = 10;
+    float maxAngle = ((WINDOW_WIDTH / (float)WINDOW_HEIGHT) * (100) * D2R) / 2;
+    float cosMaxAngle = std::cos(maxAngle);
+    float maxDistance = 30;
+
+    for (int i = 0; i < _instanceBuffers.size(); i++)
+        _instanceBuffers[i]->Free();
+	_instanceBuffers.clear();
+
+
+    _instanceBuffers.resize(_instances.size());
+    for (int i = 0; i < _instances.size(); i++)
+    {
+        auto instanceBuffer = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::TransformInstanceParam)->Alloc();
+        _instanceBuffers[i] = instanceBuffer;
+
+        std::vector<std::shared_ptr<MeshRenderer>> renderers;
+        _instances[i].lock()->GetComponentsWithChilds<MeshRenderer>(renderers);
+        for (auto& renderer : renderers)
+            renderer->SetInstanceBuffer(instanceBuffer);
+    }
+
 
     for (int i = 0; i < _instanceDatas.size(); ++i)
     {
@@ -107,7 +126,7 @@ void Terrain::Update()
             Vector3 targetDirection = _instanceDatas[i][j].worldPosition - cameraPos;
             bool distanceBool = targetDirection.LengthSquared() < (maxDistance * maxDistance);
             targetDirection.Normalize();
-            bool angleBool = std::acos(targetDirection.Dot(cameraLook)) < maxAngle;
+            bool angleBool = targetDirection.Dot(cameraLook) > cosMaxAngle;
             if (angleBool || distanceBool)
             {
                 _instanceBuffers[i]->AddData(_instanceDatas[i][j]);

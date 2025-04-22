@@ -79,7 +79,8 @@ void InstancingManager::Render()
 			{
 				auto& setter = renderobjectStruture.renderer->FindStructuredSetter(bufferType);
 				assert(setter != nullptr);
-				setter->SetData(struturedBufferPool.get(),renderobjectStruture.material);
+				if (setter != nullptr)
+					setter->SetData(struturedBufferPool.get(),renderobjectStruture.material);
 			}
 
 			tableManager->CopyHandle(table.CPUHandle, struturedBufferPool->GetSRVHandle(), 0);
