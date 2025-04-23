@@ -78,6 +78,8 @@ void Game::Init(HWND hwnd)
 	CameraManager::main->SetActiveCamera(CameraType::DebugCamera);
 
 	LightManager::main = make_unique<LightManager>();
+	LightManager::main->Init();
+
 	InstancingManager::main = make_unique<InstancingManager>();
 
 	PathStamp::main = make_unique<PathStamp>();

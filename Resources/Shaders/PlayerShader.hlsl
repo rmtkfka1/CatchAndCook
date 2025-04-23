@@ -113,7 +113,7 @@ float4 PS_Main(VS_OUT input) : SV_Target
 
     //_RampShadowMap
 
-    float3 viewDir = normalize(cameraPos - input.positionWS.xyz);
+    float3 viewDir = normalize(cameraPos.xyz - input.positionWS.xyz);
 
 
     //Sobel Spec

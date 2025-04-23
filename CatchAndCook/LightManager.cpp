@@ -9,6 +9,12 @@
 
 unique_ptr<LightManager> LightManager::main ;
 
+void LightManager::Init()
+{
+	_strBuffer = make_shared<StructuredBuffer>();
+	_strBuffer->Init(sizeof(Light), _maxLight);
+}
+
 void LightManager::PushLight(const std::shared_ptr<Light>& light)
 {
 	if (std::ranges::find(_lights, light) == _lights.end())
@@ -24,24 +30,30 @@ void LightManager::RemoveLight(const std::shared_ptr<Light>& light)
 
 void LightManager::SetData()
 {
+	_strBuffer->Clear();
+
 	Update();
 
-	CBufferContainer* container = Core::main->GetBufferManager()->GetBufferPool(BufferType::LightParam)->Alloc(1);
-	memcpy(container->ptr,(void*)&_lightParmas,sizeof(LightParams));
+	CBufferContainer* container = Core::main->GetBufferManager()->GetBufferPool(BufferType::LightHelperParam)->Alloc(1);
+	memcpy(container->ptr, (void*)&_lightParmas, sizeof(LightHelperParams));
+
 	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(3, container->GPUAdress);
 	Core::main->GetCmdList()->SetComputeRootConstantBufferView(3, container->GPUAdress);
+
+	tableContainer tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
+	Core::main->GetBufferManager()->GetTable()->CopyHandle(tableContainer.CPUHandle, _strBuffer->GetSRVHandle(), 0);
+
+	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_LIGHTPARM_TABLE_INDEX, tableContainer.GPUHandle);
+	Core::main->GetCmdList()->SetComputeRootDescriptorTable(11, tableContainer.GPUHandle);
 }
 
-void LightManager::SetDataForward(void* addr, const std::shared_ptr<GameObject>& obj)
-{
-
-}
 
 void LightManager::Update()
 {
 	_lightParmas.eyeWorldPos = CameraManager::main->GetActiveCamera()->GetCameraPos();
+	_lightParmas.lightCount = _lights.size();
 
-	_lightParmas.lightCount = 0;
+	/*_lightParmas.lightCount = 0;
 	for (auto& light : _lights)
 		if (light->onOff == 1 && light->material.lightType == 0)
 		{
@@ -63,49 +75,48 @@ void LightManager::Update()
 			_lightParmas.light[_lightParmas.lightCount] = *light.get();
 			_lightParmas.lightCount++;
 		}
-	}
-
-#ifdef IMGUI_ON
-	for (int i = 0; i < _lightParmas.lightCount; ++i)
+	}*/
+	for (auto& ele : _lights)
 	{
-		if (ImguiManager::main->_light)
-			_lightParmas.light[i].position = ImguiManager::main->_light->_transform->GetWorldPosition();
+		if (ele) 
+		{
+			if(ele->onOff==1)
+				_strBuffer->AddData(*ele); 
+		}
 	}
-#endif 
-
 }
 
-
-void ForwardLightSetter::Init(GameObject* object)
-{
-	this->object = object;
-}
-
-void ForwardLightSetter::SetData(StructuredBuffer* buffer, Material* material)
-{
-	std::vector<std::shared_ptr<Light>> _lightForwards;
-	ForwardLightParams params;
-	Vector3 worldPos = this->object->_transform->GetWorldPosition();
-
-	_lightForwards.reserve(LightManager::main->_lights.size());
-	_lightForwards.insert(_lightForwards.end(), LightManager::main->_lights.begin(), LightManager::main->_lights.end());
-	std::ranges::sort(_lightForwards, [&](const std::shared_ptr<Light>& light1, const std::shared_ptr<Light>& light2) {
-		return (light1->position - worldPos).LengthSquared() < (light2->position - worldPos).LengthSquared();
-		});
-
-	for (int i = 0; i < std::min(5, static_cast<int>(_lightForwards.size())); i++)
-	{
-		auto& light = _lightForwards[i];
-		params.lights[params.lightCount] = *light.get();
-		params.lightCount++;
-	}
-
-	buffer->AddData(params);
-}
-
-
-
-ForwardLightSetter::~ForwardLightSetter()
-{
-
-}
+//
+//void ForwardLightSetter::Init(GameObject* object)
+//{
+//	this->object = object;
+//}
+//
+//void ForwardLightSetter::SetData(StructuredBuffer* buffer, Material* material)
+//{
+//	std::vector<std::shared_ptr<Light>> _lightForwards;
+//	ForwardLightParams params;
+//	Vector3 worldPos = this->object->_transform->GetWorldPosition();
+//
+//	_lightForwards.reserve(LightManager::main->_lights.size());
+//	_lightForwards.insert(_lightForwards.end(), LightManager::main->_lights.begin(), LightManager::main->_lights.end());
+//	std::ranges::sort(_lightForwards, [&](const std::shared_ptr<Light>& light1, const std::shared_ptr<Light>& light2) {
+//		return (light1->position - worldPos).LengthSquared() < (light2->position - worldPos).LengthSquared();
+//		});
+//
+//	for (int i = 0; i < std::min(5, static_cast<int>(_lightForwards.size())); i++)
+//	{
+//		auto& light = _lightForwards[i];
+//		params.lights[params.lightCount] = *light.get();
+//		params.lightCount++;
+//	}
+//
+//	buffer->AddData(params);
+//}
+//
+//
+//
+//ForwardLightSetter::~ForwardLightSetter()
+//{
+//
+//}

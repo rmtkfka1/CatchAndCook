@@ -35,7 +35,7 @@ void BufferManager::Init()
 		CreateBufferPool(i,BufferType::CameraParam,sizeof(CameraParams),128);
 		CreateBufferPool(i,BufferType::SpriteTextureParam,sizeof(SprtieTextureParam),255);
 		CreateBufferPool(i,BufferType::SpriteWorldParam,sizeof(SpriteWorldParam),255);
-		CreateBufferPool(i,BufferType::LightParam,sizeof(LightParams),1);
+		CreateBufferPool(i,BufferType::LightHelperParam,sizeof(LightHelperParams),1);
 		CreateBufferPool(i,BufferType::BoneParam,sizeof(BoneParam),256);
 		CreateBufferPool(i,BufferType::SeaParam, sizeof(TerrainDetailsParam), 5);
 		CreateBufferPool(i,BufferType::FogParam, sizeof(FogParam), 5);

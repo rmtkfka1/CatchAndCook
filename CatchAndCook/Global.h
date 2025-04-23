@@ -46,6 +46,7 @@ extern size_t GLOBAL_SRV_NORAML_INDEX;
 extern size_t GLOBAL_SRV_COLOR_INDEX;
 extern size_t GLOBAL_SRV_MAO_INDEX;
 extern size_t GLOBAL_SRV_DEPTH_INDEX;
+extern size_t SRV_LIGHTPARM_TABLE_INDEX;
 
 
 extern size_t g_debug_forward_count;

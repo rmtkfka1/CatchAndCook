@@ -22,6 +22,10 @@ void InstancingManager::RenderNoInstancing(RenderObjectStrucutre& RoS)
 	for (const auto& infos : structuredInfo)
 	{
 		const std::string& name = infos.name;
+
+		if (name == "g_lights")
+			continue;
+
 		auto& bufferType = bufferManager->GetStructuredNameToBufferType(name);
 		auto& pool = bufferManager->GetStructuredBufferPool(bufferType);
 		int offset = pool->GetOffset();
@@ -58,6 +62,7 @@ void InstancingManager::Render()
 	{
 		if (RenderObjectStrutures.empty()) continue;
 
+
 		auto& material = RenderObjectStrutures[0].material;
 		auto& renderer = RenderObjectStrutures[0].renderer;
 		auto& mesh = RenderObjectStrutures[0].mesh;
@@ -67,8 +72,11 @@ void InstancingManager::Render()
 
 		for (const auto& infos : structuredInfo)
 		{
-
 			const std::string& name = infos.name;
+
+			if (name == "g_lights")
+				continue;
+
 			auto& bufferType = bufferManager->GetStructuredNameToBufferType(name);
 			auto& struturedBufferPool = bufferManager->GetStructuredBufferPool(bufferType);
 			int offset = struturedBufferPool->GetOffset();
