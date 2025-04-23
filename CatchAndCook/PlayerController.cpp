@@ -39,6 +39,11 @@ void PlayerController::Start()
 	camera = FindObjectByType<CameraComponent>();
 	_animationList = GetOwner()->GetComponentWithChilds<AnimationListComponent>();
 	_skinnedHierarchy = GetOwner()->GetComponentWithChilds<SkinnedHierarchy>();
+
+	if (auto skinnedHierarchy = _skinnedHierarchy.lock())
+	{
+		skinnedHierarchy->_speedMultiple = 1.4f;
+	}
 }
 
 void PlayerController::Update()
@@ -118,17 +123,16 @@ void PlayerController::MoveControl()
 		(Input::main->GetKey(KeyCode::W) ? 1 : 0) - (Input::main->GetKey(KeyCode::S) ? 1 : 0));
 	moveDirection.Normalize();
 	targetLookWorldDirection = Vector3::Transform(moveDirection, lookRotation);
-
+	targetLookWorldDirectionDelayed += (targetLookWorldDirection - targetLookWorldDirectionDelayed) * Time::main->GetDeltaTime() * 10;
 
 	if (auto animationList = _animationList.lock())
 	{
 		if (auto skinnedHierarchy = _skinnedHierarchy.lock())
 		{
-			skinnedHierarchy->_speedMultiple = 1.4f;
 			auto walk = animationList->GetAnimations()["walk"];
 			auto idle = animationList->GetAnimations()["idle"];
 			auto run = animationList->GetAnimations()["run"];
-			if (targetLookWorldDirection == Vector3::Zero)
+			if (targetLookWorldDirectionDelayed.Length() < 0.15 && targetLookWorldDirection == Vector3::Zero)
 				skinnedHierarchy->Play(idle, 0.25);
 			else
 				if (Input::main->GetKey(KeyCode::Shift))
@@ -139,30 +143,30 @@ void PlayerController::MoveControl()
 	}
 
 
-
 	if (targetLookWorldDirection != Vector3::Zero)
 	{
-		currentLookWorldRotation = Quaternion::Slerp(currentLookWorldRotation, Quaternion::LookRotation(targetLookWorldDirection, Vector3::Transform(Vector3::Up, lookRotation)),
-			Time::main->GetDeltaTime() * 30);
-
-		// 등속 운동 로직
-		Vector3 prevVelocity = velocity;
-
-		//_skinnedHierarchy
-		//velocity += targetLookWorldDirection * controlInfo.moveForce * Time::main->GetDeltaTime() * 60;
-		//velocity.y = 0;
-		//if (velocity.Length() > controlInfo.maxSpeed) {
-		//	velocity.Normalize();
-		//	velocity *= controlInfo.maxSpeed;
-		//}
-		if (auto skinnedHierarchy = _skinnedHierarchy.lock())
-		{
-			velocity = skinnedHierarchy->GetDeltaPosition();
-		}
-
-		// 이동
-		velocity = Vector3(velocity.x, prevVelocity.y, velocity.z);
+		currentLookWorldRotation = Quaternion::Slerp(currentLookWorldRotation, 
+			Quaternion::LookRotation(targetLookWorldDirection, Vector3::Transform(Vector3::Up, lookRotation)),
+			Time::main->GetDeltaTime() * 15);
 	}
+	//if (!(targetLookWorldDirectionDelayed.Length() < 0.1 && targetLookWorldDirection == Vector3::Zero))
+	//{
+	//	// 등속 운동 로직
+	//	Vector3 prevVelocity = velocity;
+	//	velocity += targetLookWorldDirection * controlInfo.moveForce * Time::main->GetDeltaTime() * 60;
+	//	velocity.y = 0;
+	//	if (velocity.Length() > controlInfo.maxSpeed) {
+	//		velocity.Normalize();
+	//		velocity *= controlInfo.maxSpeed;
+	//	}
+	//	// 이동
+	//	velocity = Vector3(velocity.x, prevVelocity.y, velocity.z);
+	//}
+	Vector3 prevVelocity = velocity;
+	if (auto skinnedHierarchy = _skinnedHierarchy.lock())
+		velocity = skinnedHierarchy->GetDeltaPosition();
+	velocity = Vector3(velocity.x, prevVelocity.y, velocity.z);
+
 	GetOwner()->_transform->SetWorldRotation(currentLookWorldRotation);
 
 	

@@ -65,6 +65,8 @@ private: // Camera Control
 	Vector3 _currentEuler;
 
 	Vector3 targetLookWorldDirection;
+	Vector3 targetLookWorldDirectionDelayed;
+
 	Quaternion currentLookWorldRotation;
 
 	double currentCameraDistance = 3.6;
