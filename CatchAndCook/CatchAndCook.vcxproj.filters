@@ -358,8 +358,12 @@
     <ClCompile Include="FishMonster.cpp">
       <Filter>03.Component</Filter>
     </ClCompile>
-    <ClCompile Include="EffectComponent.cpp" />
-    <ClCompile Include="ObjectSettingComponent.cpp" />
+    <ClCompile Include="ObjectSettingComponent.cpp">
+      <Filter>03.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectComponent.cpp">
+      <Filter>03.Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -672,8 +676,12 @@
     <ClInclude Include="FishMonster.h">
       <Filter>03.Component</Filter>
     </ClInclude>
-    <ClInclude Include="EffectComponent.h" />
-    <ClInclude Include="ObjectSettingComponent.h" />
+    <ClInclude Include="ObjectSettingComponent.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectComponent.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
