@@ -56,11 +56,6 @@ void SkinnedHierarchy::Update2()
 	Component::Update2();
 	auto a = ResourceManager::main->GetResourceMap<Animation>();
 
-	auto b = GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations();
-	std::vector<std::shared_ptr<Animation>> animations;
-	for (auto& c : b)
-		animations.push_back(c.second);
-	
 
 	if (IsPlay())
 	{

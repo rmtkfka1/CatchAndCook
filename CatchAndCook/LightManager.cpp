@@ -48,16 +48,16 @@ void LightManager::Update()
 			_lightParmas.light[_lightParmas.lightCount++] = *light.get();
 			break;
 		}
-
-	for (auto& light : _lights)
+	std::vector<std::shared_ptr<Light>> _lightSorts;
+	_lightSorts.reserve(LightManager::main->_lights.size());
+	_lightSorts.insert(_lightSorts.end(), LightManager::main->_lights.begin(), LightManager::main->_lights.end());
+	std::ranges::sort(_lightSorts, [&](const std::shared_ptr<Light>& light1, const std::shared_ptr<Light>& light2) {
+		return (light1->position - _lightParmas.eyeWorldPos).LengthSquared() < (light2->position - _lightParmas.eyeWorldPos).LengthSquared();
+		});
+	for (auto& light : _lightSorts)
 	{
-		if (light->onOff == 1)
+		if (light->onOff == 1 && light->material.lightType != 0)
 		{
-		/*	if (light->material.lightType == static_cast<int>(LIGHT_TYPE::SPOT_LIGHT))
-			{
-				light->direction = CameraManager::main->GetActiveCamera()->GetCameraLook();
-				light->position = CameraManager::main->GetActiveCamera()->GetCameraPos();
-			}*/
 			if (_lightParmas.light.size() <= _lightParmas.lightCount)
 				break;
 			_lightParmas.light[_lightParmas.lightCount] = *light.get();

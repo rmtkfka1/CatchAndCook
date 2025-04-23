@@ -264,7 +264,7 @@ void PlayerController::MoveControl()
 	else
 	{
 		isGround = false;
-		//velocity.y -= 0.981;
+		velocity.y -= 0.981;
 	}
 
 	// ------------- 공통 로직 ------------- 

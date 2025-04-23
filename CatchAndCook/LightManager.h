@@ -45,7 +45,7 @@ struct LightParams
 	vec3 eyeWorldPos{};
 	int lightCount = 0;
 
-	std::array<Light, 50> light;
+	std::array<Light, 32> light;
 
 	int useRim = 1;
 	vec3 rimColor = vec3(0,1.0f,0);
@@ -60,7 +60,7 @@ struct ForwardLightParams
 {
 	int lightCount = 0;
 	p3(0);
-	std::array<Light, 5> lights;
+	std::array<Light, 32> lights;
 };
 
 class LightManager
@@ -81,7 +81,6 @@ private:
 public:
 	LightParams _lightParmas;
 	std::vector<std::shared_ptr<Light>> _lights;
-	std::vector<std::shared_ptr<Light>> _lightForwards;
 };
 
 class ForwardLightSetter : public RenderStructuredSetter

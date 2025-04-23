@@ -21,13 +21,13 @@ cbuffer PlayerMaterialParam : register(b8)
     float4 temp = float4(1, 1, 1, 1);
 };
 
-cbuffer PlayerSkinMaterialParam : register(b9)
-{
-    float SSSDistorion = 0.3f;
-	float SSSScale = 0.3f;
-    float SSSPow = 2.5f;
-    float padding_p0;
-};
+//cbuffer PlayerSkinMaterialParam : register(b9)
+//{
+//    float SSSDistorion = 0.3f;
+//	float SSSScale = 0.3f;
+//    float SSSPow = 2.5f;
+//    float padding_p0;
+//};
 
 struct VS_IN
 {
