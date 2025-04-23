@@ -10,6 +10,7 @@
 #include "CameraComponent.h"
 #include "SeaPlayerController.h"
 #include "FishMonster.h"
+#include "LightManager.h"
 #include "PlantComponent.h"
 #include "SkinnedMeshRenderer.h"
 void Scene_Sea01::Init()
@@ -17,6 +18,20 @@ void Scene_Sea01::Init()
 	Scene::Init();
 	//_finalShader->SetShader(ResourceManager::main->Get<Shader>(L"finalShader_MainField"));
 	//_finalShader->SetPass(RENDER_PASS::Forward);
+
+	std::shared_ptr<Light> light = std::make_shared<Light>();
+	light->onOff = 1;
+	light->direction = vec3(-1.0f, -1.0f, 1.0f);
+	light->position = vec3(0, 1000.0f, 0);
+	light->direction.Normalize();
+
+	light->material.ambient = vec3(0.4f, 0.4f, 0.4f);
+	light->material.diffuse = vec3(1.0f, 1.0f, 1.0f);
+	light->material.specular = vec3(0, 0, 0);
+	light->material.shininess = 32.0f;
+	light->material.lightType = static_cast<int32>(LIGHT_TYPE::DIRECTIONAL_LIGHT);
+	light->strength = vec3(1.0f, 1.0f, 1.0f);
+	LightManager::main->PushLight(light);
 
 #pragma region DebugXYZ
 	{

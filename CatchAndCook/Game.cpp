@@ -105,21 +105,7 @@ void Game::Init(HWND hwnd)
 	//}
 
 
-	std::shared_ptr<Light> light = std::make_shared<Light>();
-	light->onOff = 1;
-	light->direction = vec3(-1.0f, -1.0f, 1.0f);
-	light->position = vec3(0, 1000.0f, 0);
-	light->direction.Normalize();
-
-	light->material.ambient = vec3(0.4f, 0.4f, 0.4f);
-	light->material.diffuse = vec3(1.0f, 1.0f, 1.0f);
-	light->material.specular = vec3(0, 0, 0);
-	light->material.shininess = 32.0f;
-	light->material.lightType = static_cast<int32>(LIGHT_TYPE::DIRECTIONAL_LIGHT);
-	light->strength = vec3(1.0f, 1.0f, 1.0f);
-	LightManager::main->PushLight(light);
-
-	auto scene = SceneManager::main->AddScene(SceneType::Sea01);
+	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
 };
 
 void Game::PrevUpdate()
