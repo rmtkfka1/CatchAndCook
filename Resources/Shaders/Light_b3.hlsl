@@ -57,6 +57,8 @@ cbuffer LightParams : register(b3)
     float dummy2 = 0;
 };
 
+
+
 float CalcAttenuation(float d, float falloffStart, float falloffEnd)
 {
     // 1
