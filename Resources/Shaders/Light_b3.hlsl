@@ -2,7 +2,7 @@
 #define _LIGHTING_HLSL_
 
 
-#define MAX_LIGHTS 30
+#define MAX_LIGHTS 5
 
 
 
@@ -189,11 +189,11 @@ LightingResult ComputeLightColor(float3 worldPos, float3 WorldNomral)
 	        {
 	            ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, worldPos, WorldNomral, toEye, result);
 	        }
-	        else if (g_lights[i].mateiral.lightType == 1)
+	        if (g_lights[i].mateiral.lightType == 1)
 	        {
 	            ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, result);
 	        }
-	        else if (g_lights[i].mateiral.lightType == 2)
+	        if (g_lights[i].mateiral.lightType == 2)
 	        {
 	           ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, result);
 	        }

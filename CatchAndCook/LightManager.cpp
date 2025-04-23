@@ -42,6 +42,12 @@ void LightManager::Update()
 	_lightParmas.eyeWorldPos = CameraManager::main->GetActiveCamera()->GetCameraPos();
 
 	_lightParmas.lightCount = 0;
+	for (auto& light : _lights)
+		if (light->onOff == 1 && light->material.lightType == 0)
+		{
+			_lightParmas.light[_lightParmas.lightCount++] = *light.get();
+			break;
+		}
 
 	for (auto& light : _lights)
 	{
