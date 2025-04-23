@@ -11,8 +11,7 @@ unique_ptr<LightManager> LightManager::main ;
 
 void LightManager::Init()
 {
-	_strBuffer = make_shared<StructuredBuffer>();
-	_strBuffer->Init(sizeof(Light), _maxLight);
+
 }
 
 void LightManager::PushLight(const std::shared_ptr<Light>& light)
@@ -30,8 +29,8 @@ void LightManager::RemoveLight(const std::shared_ptr<Light>& light)
 
 void LightManager::SetData()
 {
+	_strBuffer = Core::main->GetBufferManager()->GetStructuredBufferPool(BufferType::LightDataParam);
 	_strBuffer->Clear();
-
 	Update();
 
 	CBufferContainer* container = Core::main->GetBufferManager()->GetBufferPool(BufferType::LightHelperParam)->Alloc(1);
