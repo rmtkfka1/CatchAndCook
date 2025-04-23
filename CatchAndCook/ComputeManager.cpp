@@ -831,6 +831,9 @@ void ComputeManager::DispatchMainField(ComPtr<ID3D12GraphicsCommandList>& cmdLis
 
 	int32 dispath[3] = { dispatchX,dispatchY,1 };
 
+	_bloom->_on = true;
+
+
 	_depthRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
 	_vignetteRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);

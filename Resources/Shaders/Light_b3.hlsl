@@ -2,7 +2,7 @@
 #define _LIGHTING_HLSL_
 
 
-#define MAX_LIGHTS 32
+#define MAX_LIGHTS 16
 
 
 

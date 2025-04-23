@@ -45,7 +45,7 @@ struct LightParams
 	vec3 eyeWorldPos{};
 	int lightCount = 0;
 
-	std::array<Light, 32> light;
+	std::array<Light, 16> light;
 
 	int useRim = 1;
 	vec3 rimColor = vec3(0,1.0f,0);
