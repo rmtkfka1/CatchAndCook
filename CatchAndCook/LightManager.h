@@ -21,7 +21,8 @@ struct LightMaterial
 
 struct Light
 {
-	LightMaterial material;
+	//48 + 16 + 16 +16 16 +16
+	LightMaterial material; 
 	vec3 strength = vec3(1.0f,1.0f,1.0f);
 	float fallOffStart = 0;
 
@@ -40,12 +41,11 @@ struct Light
 	vec3 dummy1;
 };
 
-struct LightParams
+struct LightHelperParams
 {
 	vec3 eyeWorldPos{};
 	int lightCount = 0;
-
-	std::array<Light, 60> light;
+	/*std::array<Light, 60> light;
 
 	int useRim = 1;
 	vec3 rimColor = vec3(0,1.0f,0);
@@ -53,15 +53,15 @@ struct LightParams
 	float rimPower = 23.0f;
 	float rimStrength = 500.0f;
 	float dummy1 = 0;
-	float dummy2 = 0;
+	float dummy2 = 0;*/
 };
 
-struct ForwardLightParams
-{
-	int lightCount = 0;
-	p3(0);
-	std::array<Light, 5> lights;
-};
+//struct ForwardLightParams
+//{
+//	int lightCount = 0;
+//	p3(0);
+//	std::array<Light, 5> lights;
+//};
 
 class LightManager
 {
@@ -69,28 +69,29 @@ class LightManager
 public:
 	static unique_ptr<LightManager> main;
 
+	void Init();
 	void PushLight(const std::shared_ptr<Light>& light);
 	void RemoveLight(const std::shared_ptr<Light>& light);
 	void SetData();
-
-	void SetDataForward(void* addr, const std::shared_ptr<GameObject>& obj);
 
 private:
 	void Update();
 
 public:
-	LightParams _lightParmas;
+	const int _maxLight = 30;
+	LightHelperParams _lightParmas;
 	std::vector<std::shared_ptr<Light>> _lights;
-	std::vector<std::shared_ptr<Light>> _lightForwards;
+	shared_ptr<StructuredBuffer> _strBuffer;
+	//std::vector<std::shared_ptr<Light>> _lightForwards;
 };
 
-class ForwardLightSetter : public RenderStructuredSetter
-{
-public:
-	~ForwardLightSetter() override;
-
-	GameObject* object;
-	void Init(GameObject* object);
-	void SetData(StructuredBuffer* buffer, Material* material) override;
-
-};
+//class ForwardLightSetter : public RenderStructuredSetter
+//{
+//public:
+//	~ForwardLightSetter() override;
+//
+//	GameObject* object;
+//	void Init(GameObject* object);
+//	void SetData(StructuredBuffer* buffer, Material* material) override;
+//
+//};

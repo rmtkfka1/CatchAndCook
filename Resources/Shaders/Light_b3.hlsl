@@ -1,11 +1,6 @@
 #ifndef _LIGHTING_HLSL_
 #define _LIGHTING_HLSL_
 
-
-#define MAX_LIGHTS 30
-
-
-
 struct LightMateiral
 {
     float3 ambient;
@@ -41,31 +36,20 @@ struct Light
 };
 
 
-cbuffer LightParams : register(b3)
+
+cbuffer LightHelperParams : register(b3)
 {
     float3 g_eyeWorld;
     int g_lightCount;
-
-    Light g_lights[MAX_LIGHTS];
-
-    int useRim = 1;
-    float3 rimColor;
-
-    float rimPower = 23.0f;
-    float rimStrength = 500.0f;
-    float dummy1 = 0;
-    float dummy2 = 0;
 };
 
 
+StructuredBuffer<Light> g_lights : register(t16);
 
 float CalcAttenuation(float d, float falloffStart, float falloffEnd)
 {
-    // 1
     return 1.0 - clamp((d - falloffStart) / (falloffEnd - falloffStart), 0, 1);
 }
-
-
 
 float3 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 toEye, LightMateiral mat)
 {
@@ -181,30 +165,30 @@ LightingResult ComputeLightColor(float3 worldPos, float3 WorldNomral)
    
     float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
 
-    LightingResult result = (LightingResult)0;
+    LightingResult result = (LightingResult) 0;
     //[unroll]
     for (int i = 0; i < g_lightCount; ++i)
     {
         if (g_lights[i].onOff == 1)
         {
-	        if (g_lights[i].mateiral.lightType == 0)
-	        {
-	            ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, worldPos, WorldNomral, toEye, result);
-	        }
-	        else if (g_lights[i].mateiral.lightType == 1)
-	        {
-	            ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, result);
-	        }
-	        else if (g_lights[i].mateiral.lightType == 2)
-	        {
-	           ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, result);
-	        }
-		}
-    }
+            if (g_lights[i].mateiral.lightType == 0)
+            {
+                ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, worldPos, WorldNomral, toEye, result);
+            }
+            else if (g_lights[i].mateiral.lightType == 1)
+            {
+                ComputePointLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, result);
+            }
+            else if (g_lights[i].mateiral.lightType == 2)
+            {
+                ComputeSpotLight(g_lights[i], g_lights[i].mateiral, worldPos.xyz, WorldNomral, toEye, result);
+            }
+        }
+    };
     
     return result;
 
-}
+};
 
 
 

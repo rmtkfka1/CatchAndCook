@@ -18,7 +18,7 @@ enum class BufferType
 	DefaultMaterialParam,
 	SeaDefaultMaterialParam,
 	EnvMaterialParam,
-	LightParam,
+	LightHelperParam,
 	TerrainDetailsParam,
 	SeaParam,
 	FogParam,

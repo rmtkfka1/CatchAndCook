@@ -278,7 +278,7 @@ void RootSignature::InitComputeRootSignature()
 	samplerDesc[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 
-	array<CD3DX12_ROOT_PARAMETER,11> param;
+	array<CD3DX12_ROOT_PARAMETER,12> param;
 
 	for(int i=0; i< 10; i++)
 	{
@@ -291,7 +291,10 @@ void RootSignature::InitComputeRootSignature()
 		CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_UAV,5,0),
 	};
 
+	auto G_LIGHT_RANGE = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 16);
+
 	param[10].InitAsDescriptorTable(_countof(ranges),ranges);
+	param[11].InitAsDescriptorTable(1,&G_LIGHT_RANGE);
 	
 	// 루트 서명 설정
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};

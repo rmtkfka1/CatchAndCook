@@ -4,12 +4,13 @@
 class StructuredBuffer
 {
 public:
-	
 	void Init(uint32 size, uint32 elementCount);
 
 	template<class T>
 	void AddData(const T& data)
 	{
+		assert(_writeOffsetIndex < _elementCount);
+
 		memcpy(static_cast<uint8*>(_mappedData) + _writeOffsetIndex * sizeof(T), &data, sizeof(T));
 		_writeOffsetIndex++;
 	}

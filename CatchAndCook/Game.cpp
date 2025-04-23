@@ -78,6 +78,7 @@ void Game::Init(HWND hwnd)
 	CameraManager::main->SetActiveCamera(CameraType::DebugCamera);
 
 	LightManager::main = make_unique<LightManager>();
+	LightManager::main->Init();
 	InstancingManager::main = make_unique<InstancingManager>();
 
 	PathStamp::main = make_unique<PathStamp>();
@@ -119,7 +120,7 @@ void Game::Init(HWND hwnd)
 	light->strength = vec3(1.0f, 1.0f, 1.0f);
 	LightManager::main->PushLight(light);
 
-	auto scene = SceneManager::main->AddScene(SceneType::Sea01);
+	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
 };
 
 void Game::PrevUpdate()
