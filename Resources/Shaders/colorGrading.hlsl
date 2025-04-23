@@ -39,7 +39,7 @@ static const float3 LumaCoeffs = float3(0.2126, 0.7152, 0.0722);
 
 static const float3 lift     = float3(-0.02,  0.01,  0.04) * 1.35;
 static const float3 gamma    = float3(1.0f,  1.0f,  1.0f);
-static const float3 gain     = float3( 1 + 0.1 * 0.9,  1 + 0.02 * 0.9,  1 -0.1 * 0.75);
+static const float3 gain     = float3( 1 + 0.1 * 0.9,  1 + 0.02 * 0.9,  1 -0.1 * 0.85);
 
 
 float3 ApplyLiftGammaGain(float3 c)

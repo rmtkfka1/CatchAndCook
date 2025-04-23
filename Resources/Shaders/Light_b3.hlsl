@@ -118,23 +118,20 @@ void ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, fl
 {
     float3 lightVec = L.position - pos;
     float d = length(lightVec);
-    if (d > L.fallOffEnd)
-    {
+    if (dot(lightVec, lightVec) > L.fallOffEnd * L.fallOffEnd)
         return;
-    }
-    else
-    {
-        lightVec /= d;
-        float ndotl = saturate(dot(normal, lightVec));
-        float3 LightStrength = L.strength * ndotl * sqrt(L.intensity) / d; // * ndotl   *  sqrt(L.intensity / (d * d))
-        float att = CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
-        LightStrength *= att;
-        lightingResult.subColor += LightStrength;
-        lightingResult.subAtten += att * ndotl;
-        lightingResult.subWaterAtten = max(lightingResult.subWaterAtten, att);
-        //return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
-        //return mat.diffuse * LightStrength;
-    }
+
+    lightVec /= d;
+    float ndotl = saturate(dot(normal, lightVec));
+    float3 LightStrength = L.strength * ndotl * sqrt(L.intensity) / d; // * ndotl   *  sqrt(L.intensity / (d * d))
+    float att = CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
+    LightStrength *= att;
+    lightingResult.subColor += LightStrength;
+    lightingResult.subAtten += att * ndotl;
+    lightingResult.subWaterAtten = max(lightingResult.subWaterAtten, att);
+    //return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
+    //return mat.diffuse * LightStrength;
+    
 }
 
 void ComputeSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal, float3 toEye, inout LightingResult lightingResult)
@@ -143,35 +140,32 @@ void ComputeSpotLight(Light L, LightMateiral mat, float3 pos, float3 normal, flo
 
     float d = length(lightVec);
 
-    if (d > L.fallOffEnd)
-    {
+    if (dot(lightVec, lightVec) > L.fallOffEnd * L.fallOffEnd)
         return;
-    }
-    else
-    {
-        lightVec /= d;
-        
-        float ndotl = saturate(dot(normal, lightVec));
-        
-        float3 LightStrength = L.strength * ndotl * sqrt(L.intensity) / d; // * ndotl   *  sqrt(L.intensity / (d * d))
-        
-        float att = CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
-        LightStrength *= att;
-        
-        //float spotFactor = pow(saturate(dot(-lightVec, L.direction)), L.spotPower);
-        //LightStrength *= spotFactor;
 
-        float cosThreshold = cos(L.spotAngle/2);
-        float cosInnerThreshold = cos(L.innerSpotAngle/2);
-		float spotFactor = saturate((dot(-lightVec, L.direction) - cosThreshold) / (cosInnerThreshold - cosThreshold) );
-        LightStrength *= spotFactor;
+    lightVec /= d;
+    
+    float ndotl = saturate(dot(normal, lightVec));
+    
+    float3 LightStrength = L.strength * ndotl * sqrt(L.intensity) / d; // * ndotl   *  sqrt(L.intensity / (d * d))
+    
+    float att = CalcAttenuation(d, L.fallOffStart, L.fallOffEnd);
+    LightStrength *= att;
+    
+    //float spotFactor = pow(saturate(dot(-lightVec, L.direction)), L.spotPower);
+    //LightStrength *= spotFactor;
 
-        lightingResult.subColor += LightStrength;
-        lightingResult.subAtten += spotFactor * ndotl * att;
-        lightingResult.subWaterAtten = max(lightingResult.subWaterAtten, att);
-        //return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
-        //return mat.diffuse * LightStrength;
-    }
+    float cosThreshold = cos(L.spotAngle/2);
+    float cosInnerThreshold = cos(L.innerSpotAngle/2);
+	float spotFactor = saturate((dot(-lightVec, L.direction) - cosThreshold) / (cosInnerThreshold - cosThreshold) );
+    LightStrength *= spotFactor;
+
+    lightingResult.subColor += LightStrength;
+    lightingResult.subAtten += spotFactor * ndotl * att;
+    lightingResult.subWaterAtten = max(lightingResult.subWaterAtten, att);
+    //return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
+    //return mat.diffuse * LightStrength;
+    
 }
 
 LightingResult ComputeLightColor(float3 worldPos, float3 WorldNomral)
@@ -181,6 +175,7 @@ LightingResult ComputeLightColor(float3 worldPos, float3 WorldNomral)
 
     LightingResult result = (LightingResult)0;
     //[unroll]
+    [loop]
     for (int i = 0; i < g_lightCount; ++i)
     {
         if (g_lights[i].onOff == 1)

@@ -29,6 +29,7 @@ LightingResult ComputeLightColorForward(float3 worldPos ,float3 WorldNomral)
     LightingResult result = (LightingResult)0;
 
     //[unroll]
+    [loop]
     for (int i = 0; i < g_lightCount; ++i)
     {
         if (g_lights[i].onOff == 1)
