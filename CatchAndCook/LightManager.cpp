@@ -55,8 +55,10 @@ void LightManager::Update()
 
 	for (auto& ele : _lights)
 	{
-		if (ele) {
-			_strBuffer->AddData(*ele); 
+		if (ele) 
+		{
+			if(ele->onOff==1)
+				_strBuffer->AddData(*ele); 
 		}
 	}
 }

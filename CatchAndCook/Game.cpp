@@ -79,6 +79,7 @@ void Game::Init(HWND hwnd)
 
 	LightManager::main = make_unique<LightManager>();
 	LightManager::main->Init();
+
 	InstancingManager::main = make_unique<InstancingManager>();
 
 	PathStamp::main = make_unique<PathStamp>();

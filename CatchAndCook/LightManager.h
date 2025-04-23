@@ -78,7 +78,7 @@ private:
 	void Update();
 
 public:
-	const int _maxLight = 30;
+	const int _maxLight = 300;
 	LightHelperParams _lightParmas;
 	std::vector<std::shared_ptr<Light>> _lights;
 	shared_ptr<StructuredBuffer> _strBuffer;
