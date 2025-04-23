@@ -4,11 +4,15 @@
 
 struct PlantInfo
 {
-	vec4 color = vec4(1, 1, 1, 1);
 	float amplitude = 0.2f;
 	float frequency = 0.5f;
 	float boundsCenterY;
 	float boundsSizeY;
+
+	int id;
+	float p1;
+	float p2;
+	float p3;
 };
 
 class PlantComponent :public Component, public RenderStructuredSetter
@@ -31,8 +35,7 @@ public:
 	virtual void SetData(StructuredBuffer* buffer = nullptr ,Material* material=nullptr);
 private:
 	weak_ptr<RendererBase> _renderBase;
-public:
 	PlantInfo _plantInfo;
-
+	static int idGenator;
 };
 

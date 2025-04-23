@@ -2,6 +2,7 @@
 #include "PlantComponent.h"
 
 COMPONENT(PlantComponent)
+int PlantComponent::idGenator=1;
 
 PlantComponent::PlantComponent()
 {
@@ -11,10 +12,10 @@ PlantComponent::~PlantComponent()
 {
 }
 
-
 void PlantComponent::Init()
 {
-	
+	cout << " PlantComponent Init" << endl;
+	_plantInfo.id = idGenator++;
 }
 
 void PlantComponent::Start()
@@ -70,19 +71,16 @@ void PlantComponent::SetDestroy()
 
 void PlantComponent::SetData(StructuredBuffer* buffer, Material* material)
 {
-	PlantInfo info;
-	info.amplitude;
-	info.color = material->GetPropertyVector("_Color");
-	info.amplitude = material->GetPropertyFloat("_Amplitude");
-	info.frequency = material->GetPropertyFloat("_frequency");
+
+
+	_plantInfo.amplitude = material->GetPropertyFloat("_Amplitude");
+	_plantInfo.frequency = material->GetPropertyFloat("_frequency");
 
 	BoundingBox& box = _renderBase.lock()->GetOriginBound();
-	info.boundsSizeY =box.Extents.y*2;
-	info.boundsCenterY = box.Center.y;
+	_plantInfo.boundsSizeY =box.Extents.y;
+	_plantInfo.boundsCenterY = box.Center.y;
 
-
-
-	buffer->AddData(info);
+	buffer->AddData(_plantInfo);
 }
 
 

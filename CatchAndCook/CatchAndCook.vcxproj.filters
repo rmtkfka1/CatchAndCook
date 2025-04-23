@@ -712,9 +712,6 @@
     <FxCompile Include="..\Resources\Shaders\cubemap.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\final.hlsl">
-      <Filter>998.HLSL\Graphics</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Gizmo.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
@@ -803,6 +800,8 @@
       <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\ObjectShader.hlsl" />
+      <Filter>998.HLSL\Graphics</Filter>
+    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\ObjectSetting_t31.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
@@ -817,6 +816,15 @@
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Environment_Grass.hlsl">
       <Filter>998.HLSL\Graphics\JIN</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\final.hlsl">
+      <Filter>998.HLSL\Graphics\KSH</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\DeferredSeaFish.hlsl">
+      <Filter>998.HLSL\Graphics\KSH</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\DeferredSeaPlantClip.hlsl">
+      <Filter>998.HLSL\Graphics\KSH</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

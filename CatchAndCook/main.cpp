@@ -59,12 +59,16 @@ int main()
 	MSG msg = {};
 
 
-	while (WM_QUIT != msg.message) {
+	while (WM_QUIT != msg.message) 
+	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+
+	
 		}
+
 		else
 		{
 		/*	 auto frameStart = std::chrono::high_resolution_clock::now();*/

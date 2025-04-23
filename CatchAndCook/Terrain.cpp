@@ -95,8 +95,6 @@ void Terrain::Start()
 
 void Terrain::Update()
 {
-
-
     Vector3 cameraPos = CameraManager::main->GetActiveCamera()->GetCameraPos();
     Vector3 cameraLook = CameraManager::main->GetActiveCamera()->GetCameraLook();
 
@@ -125,6 +123,7 @@ void Terrain::Update()
     for (int i = 0; i < _instanceDatas.size(); ++i)
     {
         _instanceBuffers[i]->Clear();
+
         for (int j = 0; j < _instanceDatas[i].size(); j++)
         {
             Vector3 targetDirection = _instanceDatas[i][j].worldPosition - cameraPos;

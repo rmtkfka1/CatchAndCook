@@ -105,25 +105,19 @@ void Scene_Sea01::Init()
 
 	auto player = Find(L"seaPlayer");
 
+	//vector<shared_ptr<GameObject>> gameObjects;
 
-	/*for (auto& gameobject : _gameObjects)
-	{
-		auto& meshRenderer = gameobject->GetComponent<MeshRenderer>();
+	//player->GetChildsAll(gameObjects);
 
-		if (meshRenderer)
-		{
-			auto& materials = meshRenderer->GetMaterials();
+	//for (auto& ele : gameObjects)
+	//{
+	//	Scene::RemoveGameObject(ele);
+	//}
 
-			for (auto& material : materials)
-			{
-				if (material->GetShader()->_name == "DeferredSeaPlant.hlsl")
-				{
-					gameobject->AddComponent<PlantComponent>();
-				}
-			}
-		}
-
-	}*/
+	//for (auto& ele : gameObjects)
+	//{
+	//	Scene::AddFrontGameObject(ele);
+	//}
 
 
 	if (player)
@@ -142,8 +136,32 @@ void Scene_Sea01::Init()
 				skinnedMeshRenderer->SetCulling(false);
 			}
 		}
-	
+
 	}
+
+
+	for (auto& gameobject : _gameObjects)
+	{
+		auto& meshRenderer = gameobject->GetComponent<MeshRenderer>();
+
+		if (meshRenderer)
+		{
+			auto& materials = meshRenderer->GetMaterials();
+
+			for (auto& material : materials)
+			{
+				cout << material->GetShader()->_name << endl;
+				if (material->GetShader()->_name == "DeferredSeaPlantClip.hlsl" || "DeferredSeaPlant.hlsl")
+				{
+					gameobject->AddComponent<PlantComponent>();
+				}
+			}
+		}
+
+	}
+
+
+	
 
 	{
 		auto plant = Find(L"2");
@@ -162,6 +180,40 @@ void Scene_Sea01::Init()
 		{
 			auto finder = plant->AddComponent<FishMonster>();
 			finder->ReadPathFile(L"SharkMove");
+		}
+	}
+
+
+	{
+		auto plant = Find(L"Fish_1");
+
+		if (plant)
+		{
+			cout << "Fish_1" << endl;
+			auto finder = plant->AddComponent<PathFinder>();
+			finder->SetPass(L"Fish_1");
+		}
+	}
+
+	{
+		auto plant = Find(L"Fish_1 (1)");
+
+		if (plant)
+		{
+			cout << "Fish_2" << endl;
+			auto finder = plant->AddComponent<PathFinder>();
+			finder->SetPass(L"Fish_1");
+		}
+	}
+
+	{
+		auto plant = Find(L"Fish_1 (2)");
+
+		if (plant)
+		{
+			cout << "Fish_3" << endl;
+			auto finder = plant->AddComponent<PathFinder>();
+			finder->SetPass(L"Fish_1");
 		}
 	}
 

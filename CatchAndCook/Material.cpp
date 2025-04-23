@@ -71,8 +71,8 @@ void Material::SetData()
 		Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_LONG_TABLE_INDEX, _tableLongContainer.GPUHandle);
 	}
 
-	if (_useMaterialParams)
-		Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(6, _cbufferContainer->GPUAdress);
+	//if (_useMaterialParams)
+	//	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(6, _cbufferContainer->GPUAdress);
 
 	for (auto& injector : _shaderInjectors)
 		injector->SetData(_shader);

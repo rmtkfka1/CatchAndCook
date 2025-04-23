@@ -34,6 +34,8 @@ public:
 	template <class T, class = std::enable_if_t<std::is_base_of_v<Component, T>>>
 	std::shared_ptr<T> AddComponent()
 	{
+		
+
 		std::shared_ptr<T> component = std::make_shared<T>();
 		component->InitGuid();
 		component->SetOwner(GetCast<GameObject>());

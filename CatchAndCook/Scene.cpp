@@ -17,6 +17,15 @@
 #include "GameObject.h"
 #include "MeshRenderer.h"
 #include "PathFinder.h"
+void Scene::AddFrontGameObject(const std::shared_ptr<GameObject>& gameObject)
+{
+    gameObject->SetScene(GetCast<Scene>());
+
+    if (gameObject->GetType() == GameObjectType::Deactivate)
+        _gameObjects_deactivate.insert(_gameObjects_deactivate.begin(), gameObject);
+    else
+        _gameObjects.insert(_gameObjects.begin(),gameObject);
+}
 void Scene::AddGameObject(const std::shared_ptr<GameObject>& gameObject)
 {
 	gameObject->SetScene(GetCast<Scene>());
@@ -36,7 +45,7 @@ void Scene::Init()
 
 void Scene::Update()
 {
-    
+ 
 
 
     Profiler::Set("Logic_Start");

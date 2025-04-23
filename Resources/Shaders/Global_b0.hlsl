@@ -26,7 +26,6 @@ Texture2D AlbedoTexture : register(t23);
 Texture2D MAOTexture : register(t25);
 Texture2D DepthTexture : register(t24);
 
-
 SamplerState sampler_lerp : register(s0);
 SamplerState sampler_point : register(s1);
 SamplerState sampler_aniso4 : register(s2);

@@ -127,9 +127,6 @@ void FishMonster::Idle(float dt)
 void FishMonster::Move(float dt)
 {
 
-	//if (_fishPath.size() < 2 && _pathName == L"Null")
-	//	assert(false);
-
 	const vector<vec3>& myPath = _fishPath;
 
 	int nextIndex = _forward ? _currentIndex + 1 : _currentIndex - 1;

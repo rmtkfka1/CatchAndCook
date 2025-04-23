@@ -16,6 +16,7 @@ enum class BufferType
 	SpriteTextureParam,
 	TestParam,
 	DefaultMaterialParam,
+	SeaDefaultMaterialParam,
 	EnvMaterialParam,
 	LightParam,
 	TerrainDetailsParam,
@@ -23,6 +24,8 @@ enum class BufferType
 	FogParam,
 	UnderWaterParam,
 	SeaPlantParam,
+	SeaFIshParam,
+	SeaClipingParam,
 
 	PlayerMaterialParam,
 	InstanceOffsetParam,

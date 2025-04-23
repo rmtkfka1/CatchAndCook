@@ -7,6 +7,13 @@
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 
+cbuffer SeaDefaultMaterialParam : register(b7)
+{
+    float4 color;
+    float4 ClipingColor;
+};
+
+
 
 struct VS_IN
 {
@@ -23,17 +30,20 @@ struct VS_OUT
     float3 worldNormal : NORMAL;
     float2 uv : TEXCOORD;
     float3 worldTangent : TANGENT;
-    float4 color : COLOR;
 };
 
 
 struct PlantInfo
 {
-    float4 color;
     float amplitude;
     float frequency;
     float boundsCenterY;
     float boundsSizeY;
+    
+    int id;
+    float p1;
+    float p2;
+    float p3;
 };
 
 StructuredBuffer<PlantInfo> PlantInfos : register(t31);
@@ -51,19 +61,20 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     row_major float4x4 l2wMatrix = data.localToWorld;
     row_major float4x4 w2lMatrix = data.worldToLocal;
     
-    PlantInfo plantInfo =  PlantInfos[offset[STRUCTURED_OFFSET(31)].r + id];
+    PlantInfo plantInfo = PlantInfos[offset[STRUCTURED_OFFSET(31)].r + id];
     
     float waveOffset = input.pos.y * 1.5f;
-    float angle = g_Time * plantInfo.frequency + id * 0.37 + waveOffset;
+    float angle = g_Time * plantInfo.frequency + plantInfo.id * 0.37 + waveOffset;
     float boundsCenterY = plantInfo.boundsCenterY;
     float boundsSizeY = plantInfo.boundsSizeY;
-    float minY = boundsCenterY - boundsSizeY * 0.5;
-    float maxY = boundsCenterY + boundsSizeY * 0.5;
+    float minY = boundsCenterY - boundsSizeY ;
+    float maxY = boundsCenterY + boundsSizeY ;
     float influence = NormalizeY(input.pos.y, minY, maxY);
     float swayX = sin(angle) * plantInfo.amplitude * influence;
     
     float3 animatedPos = input.pos;
     animatedPos.x += swayX;
+
 
     float4 worldPos = mul(float4(animatedPos, 1.0f), l2wMatrix);
     output.pos = worldPos;
@@ -75,7 +86,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     output.uv = input.uv;
     output.worldNormal = mul(float4(input.normal, 0.0f), l2wMatrix).xyz;
     output.worldTangent = mul(float4(input.tangent, 0.0f), l2wMatrix).xyz;
-    output.color = plantInfo.color;
+
     return output;
 }
 struct PS_OUT
@@ -91,8 +102,16 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     PS_OUT output = (PS_OUT) 0;
     
     output.position = float4(input.worldPos, 1.0f);
-    float3 N= ComputeNormalMapping(input.worldNormal, input.worldTangent, _BumpMap.Sample(sampler_lerp, input.uv));
-    output.color = _BaseMap.Sample(sampler_lerp, input.uv) * input.color;
+    float3 N = ComputeNormalMapping(input.worldNormal, input.worldTangent, _BumpMap.Sample(sampler_lerp, input.uv));
+    output.color = _BaseMap.Sample(sampler_lerp, input.uv) * color;
     output.normal = float4(N, 1.0f);
+    
+    float3 diff = abs(output.color.rgb - ClipingColor.rgb);
+    
+    if (all(diff < 0.01f))
+    {
+        discard;
+    }
+    
     return output;
 }

@@ -3,8 +3,13 @@
 #include "Transform.h"
 #include "Gizmo.h"
 #include "simple_mesh_ext.h"
+#include <random>
 
 unordered_map<wstring, FishPath> PathFinder::_pathList;
+
+static random_device dre;
+static mt19937 gen(dre());
+static uniform_real_distribution<float> randomSpeed(30.0f, 50.0f);
 
 PathFinder::PathFinder()
 {
@@ -16,18 +21,25 @@ PathFinder::~PathFinder()
 
 void PathFinder::Init()
 {
+
+
+	_pathOffset = GenerateRandomPointInSphere(100.0f);
+	_moveSpeed = randomSpeed(gen);
 }
 
 void PathFinder::Start()
 {
     _firstQuat = GetOwner()->_transform->GetWorldRotation();
+
+	if (auto renderer = GetOwner()->GetRenderer())
+	{
+		renderer->AddStructuredSetter(static_pointer_cast<PathFinder>(shared_from_this()), BufferType::SeaFIshParam);
+		_renderBase = renderer;
+	}
 }
 
 void PathFinder::Update()
 {
-
-	//if (_fishPath.size() < 2 && _pathName == L"Null")
-//	assert(false);
 
 	const vector<vec3>& myPath = _pathList[_pathName].path;
 
@@ -43,7 +55,9 @@ void PathFinder::Update()
 
 	float t = std::clamp(_distanceMoved / _segmentLength, 0.0f, 1.0f);
 	vec3 pos = vec3::Lerp(start, end, t);
-	vec3 currentPos = GetOwner()->_transform->SetWorldPosition(pos);
+	vec3 finalPos = pos + _pathOffset;
+
+	vec3 currentPos = GetOwner()->_transform->SetWorldPosition(finalPos);
 
 	vec3 dir = end - start;
 
@@ -64,7 +78,6 @@ void PathFinder::Update()
 
 			if (_currentIndex >= myPath.size() - 1)
 			{
-				cout << "forward false " << endl;
 				_forward = false;
 				return;
 			}
@@ -120,9 +133,13 @@ void PathFinder::CollisionEnd(const std::shared_ptr<Collider>& collider, const s
 {
 }
 
+
+
 void PathFinder::ReadPathFile(const std::wstring& fileName)
 {
-    std::ifstream file(fileName);
+	const wstring path = L"../Resources/Graph/";;
+
+    std::ifstream file(path + fileName);
     if (!file.is_open())
     {
         std::wcout << L"Failed to open file: " << fileName << std::endl;
@@ -147,6 +164,25 @@ void PathFinder::ReadPathFile(const std::wstring& fileName)
      cout << "라인 데이터: " << _pathList[fileName].path.size() << "개 읽음." << std::endl;
 }
 
+vec3 PathFinder::GenerateRandomPointInSphere(float radius)
+{
+	float u = Range(0.0f, 1.0f);
+	float theta = Range(0.0f, 2.0f *3.14f);
+	float phi = acos(2.0f * u - 1.0f);
+	float r = radius * cbrt(Range(0.0f, 1.0f));
+
+	float x = r * sin(phi) * cos(theta);
+	float y = r * sin(phi) * sin(theta);
+	float z = r * cos(phi);
+
+	return vec3(x, y, z);
+}
+
+float PathFinder::Range(float min, float max)
+{
+	return min + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (max - min);
+}
+
 void PathFinder::ClearDebugDraw()
 {
 	for (auto& path : _pathList)
@@ -159,8 +195,23 @@ void PathFinder::SetPass(const wstring& path)
 {
     if (_pathList.find(path) == _pathList.end())
     {
+		cout << "read" << endl;
         ReadPathFile(path);
     }
 
     _pathName = path;
+}
+
+void PathFinder::SetData(StructuredBuffer* buffer, Material* material)
+{
+
+	FishInfo info;
+	info.fishSpeed = _moveSpeed/10.0f;
+	info.fishWaveAmount = 0.5f;
+
+	BoundingBox& box = _renderBase.lock()->GetOriginBound();
+	info.boundsSizeZ = box.Extents.z;
+	info.boundsCenterZ = box.Center.z;
+
+	buffer->AddData(info);
 }

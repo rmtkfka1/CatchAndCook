@@ -13,6 +13,7 @@
 #include "ComputeManager.h"
 #include "ObjectSettingComponent.h"
 #include "PlantComponent.h"
+#include "PathFinder.h"
 void BufferManager::Init()
 {
 
@@ -42,12 +43,15 @@ void BufferManager::Init()
 		CreateBufferPool(i,BufferType::InstanceOffsetParam, sizeof(InstanceOffsetParam), 10000);
 
 	}
+
 	for (int i = 0; i < MAX_FRAME_COUNT; ++i)
 	{
 		CreateStructuredBufferPool(i, BufferType::TransformParam,"TransformDatas",sizeof(Instance_Transform),20000);
 		CreateStructuredBufferPool(i, BufferType::SeaPlantParam, "PlantInfos", sizeof(PlantInfo), 20000);
 	/*	CreateStructuredBufferPool(i, BufferType::ForwardLightParam, "ForwardLightDatas", sizeof(ForwardLightParams), 10000);*/
 		CreateStructuredBufferPool(i, BufferType::ObjectSettingParam, "ObjectSettingDatas", sizeof(ObjectSettingParam), 5000);
+		CreateStructuredBufferPool(i, BufferType::SeaFIshParam, "FIshInfos", sizeof(FishInfo), 20000);
+	/*	CreateStructuredBufferPool(BufferType::ForwardLightParam, "ForwardLightDatas", sizeof(ForwardLightParams), 10000);*/
 	}
 
 	for(int i=0; i < MAX_FRAME_COUNT; ++i)

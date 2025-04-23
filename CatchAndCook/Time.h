@@ -5,7 +5,6 @@ class Time
 public:
 	static unique_ptr<Time> main;
 
-
 	void Init();
 	void Update();
 

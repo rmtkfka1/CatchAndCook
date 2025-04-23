@@ -8,11 +8,12 @@
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 
-cbuffer DefaultMaterialParam : register(b7)
+cbuffer SeaDefaultMaterialParam : register(b7)
 {
-    float4 color = float4(1, 1, 1, 1);
-    float4 _baseMapST = float4(1, 1, 1, 1);
+    float4 color;
+    float4 ClipingColor;
 };
+
 struct VS_IN
 {
     float3 pos : POSITION;
@@ -59,7 +60,7 @@ struct PS_OUT
     float4 position : SV_Target0;
     float4 normal : SV_Target1;
     float4 color : SV_Target2;
-    //float4 maoe : SV_Target3;
+
 };
 
 PS_OUT PS_Main(VS_OUT input) : SV_Target

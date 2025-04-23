@@ -52,6 +52,21 @@ void SeaPlayerController::Start()
 
 void SeaPlayerController::Update()
 {
+
+    if (CameraManager::main->GetCameraType() == CameraType::DebugCamera)
+    {
+        Gizmo::Width(0.02f);
+        auto o = _camera->GetCameraPos() + _camera->GetCameraLook() * _camera->GetNear();
+        auto f = _camera->GetCameraLook();
+        auto u = _camera->GetCameraUp();
+        auto r = _camera->GetCameraRight();
+
+        Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
+        Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
+        Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));
+
+    }
+
   
     float dt = Time::main->GetDeltaTime();
     Quaternion playerRotation = CalCulateYawPitchRoll();
@@ -87,7 +102,7 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& playerRota
 
         _velocity = _velocity - _velocity.Dot(normal) * normal;
 
-        float penetrationBuffer = 0.01f;
+        float penetrationBuffer = 0.05f;
         nextPos += normal * penetrationBuffer;
         nextHeadPos += normal * penetrationBuffer;
     }
@@ -105,40 +120,30 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& playerRota
         nextPos.y += deltaY;
     }
 
-     //Gizmo::Width(0.02f);
-     //auto o = _camera->GetCameraPos();
-     //auto f = _camera->GetCameraLook();
-     //auto u = _camera->GetCameraUp();
-     //auto r = _camera->GetCameraRight();
-
-     //Gizmo::Line(o, o + f, Vector4(0, 0, 1, 1));
-     //Gizmo::Line(o, o + u, Vector4(0, 1, 0, 1));
-     //Gizmo::Line(o, o + r, Vector4(1, 0, 0, 1));
-
+  
 
      // 최종 위치 적용
     _transform->SetWorldPosition(nextPos);
     _camera->SetCameraPos(nextHeadPos);
     _velocity *= (1 - (_resistance * dt));
 
-    CameraManager::main->Setting();
 }
 
 void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float dt)
 {
-    if (Input::main->GetKey(KeyCode::UpArrow))
+    if (Input::main->GetKey(KeyCode::W))
     {
         inputDir += vec3::Forward;
     }
-    if (Input::main->GetKey(KeyCode::DownArrow))
+    if (Input::main->GetKey(KeyCode::S))
     {
         inputDir += vec3::Backward;
     }
-    if (Input::main->GetKey(KeyCode::LeftArrow))
+    if (Input::main->GetKey(KeyCode::A))
     {
         inputDir += vec3::Left;
     }
-    if (Input::main->GetKey(KeyCode::RightArrow))
+    if (Input::main->GetKey(KeyCode::D))
     {
         inputDir += vec3::Right;
     }
@@ -238,7 +243,9 @@ Quaternion SeaPlayerController::CalCulateYawPitchRoll()
 
 		_yaw += delta.x;
 		_pitch += delta.y;
-		_pitch = std::clamp(_pitch, -89.0f, 89.0f);
+        float minPitch = -90.0f - _cameraPitchOffset;
+        float maxPitch = 90.0f - _cameraPitchOffset;
+        _pitch = std::clamp(_pitch, minPitch, maxPitch);
 		_roll = 0;
 
 		lastMousePos = currentMousePos;
@@ -252,7 +259,9 @@ Quaternion SeaPlayerController::CalCulateYawPitchRoll()
 
 		_yaw += delta.x;
 		_pitch += delta.y;
-		_pitch = std::clamp(_pitch, -89.0f, 89.0f);
+        float minPitch = -90.0f - _cameraPitchOffset;
+        float maxPitch = 90.0f - _cameraPitchOffset;
+        _pitch = std::clamp(_pitch, minPitch, maxPitch);
 		_roll = 0;
 
 		POINT center;

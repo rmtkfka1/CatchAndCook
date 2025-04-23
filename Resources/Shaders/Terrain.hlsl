@@ -335,6 +335,6 @@ PS_OUT PS_Main(DS_OUT input)
     output.color = finalColor;
     output.normal = float4(normalize(input.normal), 1.0f);
     output.position = input.worldPos;
-    
+
     return output;
 }

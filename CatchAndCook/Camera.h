@@ -84,19 +84,19 @@ private:
 
 public:
 	const CameraParams& GetCameraParams() { return _params; }
-
+	float GetNear() { return _near; }
 protected:
     vec3 _cameraPos = vec3(0, -300.0f, 0);
     vec3 _cameraLook = vec3(0, 0, 1.0f);
     vec3 _cameraUp = vec3(0, 1.0f, 0);
     vec3 _cameraRight = vec3(1.0f, 0, 0);
 
-    float _yaw=0;
-    float _pitch=0;
-    float _roll=0;
+    float _yaw = 0;
+    float _pitch = 0;
+    float _roll = 0;
 
-    float _near = 0.2f;
-    float _far = 1500.f;
+    float _near = 0.3f;
+    float _far = 5000.f;
     float _fov = XM_PI / 3.f;
 
     vec2 _orthoSize = { 100.0f,100.0f };
