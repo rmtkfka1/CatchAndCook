@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "PlayerController.h"
 
+#include "Animation.h"
 #include "Camera.h"
 #include "CameraComponent.h"
 #include "CameraManager.h"
@@ -42,7 +43,14 @@ void PlayerController::Start()
 
 	if (auto skinnedHierarchy = _skinnedHierarchy.lock())
 	{
-		skinnedHierarchy->_speedMultiple = 1.4f;
+		skinnedHierarchy->_speedMultiple = 1.2f;
+	}
+	if (auto animationList = _animationList.lock())
+	{
+		auto walk = animationList->GetAnimations()["walk"];
+		auto idle = animationList->GetAnimations()["idle"];
+		auto run = animationList->GetAnimations()["run"];
+		run->_speedMultiplier = 1.1f;
 	}
 }
 

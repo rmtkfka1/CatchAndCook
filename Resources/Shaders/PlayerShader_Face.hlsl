@@ -152,7 +152,7 @@ float4 PS_Main(VS_OUT input) : SV_Target
 
 
     float SSSDistorion = 0.3f;
-	float SSSScale = 0.3f;
+	float SSSScale = 0.6f;
     float SSSPow = 2.5f;
 
     // SSS ÆÄÆ®.
