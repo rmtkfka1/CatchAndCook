@@ -42,13 +42,13 @@ struct VS_IN
 struct VS_OUT
 {
     float4 position : SV_Position;
-    float4 positionCS : PositionCS;
+    //float4 positionCS : PositionCS;
     float4 positionWS : PositionWS;
-    float3 normalOS : NormalOS;
-    float3 normalWS : NormalWS;
-    float3 tangentOS : TangentOS;
-    float3 tangentWS : TangentWS;
-    float2 uv : TEXCOORD0;
+    //float3 normalOS : NormalOS;
+    //float3 normalWS : NormalWS;
+    //float3 tangentOS : TangentOS;
+    //float3 tangentWS : TangentWS;
+    //float2 uv : TEXCOORD0;
 };
 
 Texture2D _BaseMap : register(t0);
@@ -78,28 +78,29 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 	    boneWs = input.boneWs;
 #endif
     
-    output.normalOS = input.normal;
-    output.tangentOS = input.tangent;
+    //output.normalOS = input.normal;
+    //output.tangentOS = input.tangent;
 
 #ifdef INSTANCED
 		output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f),  boneIds, boneWs, l2wMatrix);
 #else
     output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f), boneIds, boneWs, l2wMatrix);
 #endif
-    output.positionCS = TransformWorldToClip(output.positionWS);
+    //output.positionCS = TransformWorldToClip(output.positionWS);
 
-    output.position = output.positionCS;
+    //output.position = output.positionCS;
+    output.position = TransformWorldToClip(output.positionWS);
 
 #ifdef INSTANCED
-		output.normalWS = TransformNormalLocalToWorld(output.normalOS, boneIds, boneWs, w2lMatrix);
-		output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix);
+		//output.normalWS = TransformNormalLocalToWorld(output.normalOS, boneIds, boneWs, w2lMatrix);
+		//output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix);
 #else
-    output.normalWS = TransformNormalLocalToWorld(input.normal, boneIds, boneWs, w2lMatrix);
-    output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix);
+    //output.normalWS = TransformNormalLocalToWorld(input.normal, boneIds, boneWs, w2lMatrix);
+    //output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix);
 #endif
 
 
-    output.uv = input.uv;
+    //output.uv = input.uv;
 
     return output;
 }
@@ -112,15 +113,16 @@ struct PS_OUT
     float4 maoe : SV_Target3;
 };
 
+[earlydepthstencil]
 PS_OUT PS_Main(VS_OUT input) : SV_Target
 {
     PS_OUT output = (PS_OUT) 0;
 
-    float3 N = ComputeNormalMapping(input.normalWS, input.tangentWS, _BumpMap.Sample(sampler_lerp, input.uv));
-    float4 BaseColor = _BaseMap.Sample(sampler_lerp, input.uv * _baseMapST.xy + _baseMapST.zw) * color;
+    //float3 N = ComputeNormalMapping(input.normalWS, input.tangentWS, _BumpMap.Sample(sampler_lerp, input.uv));
+    //float4 BaseColor = _BaseMap.Sample(sampler_lerp, input.uv * _baseMapST.xy + _baseMapST.zw) * color;
 
     output.position = input.positionWS;
-    output.color = BaseColor;
+    output.color = color;//BaseColor;
     output.normal = float4(0, 1, 0, 0.0f);
     output.maoe = float4(_metallic, _smoothness, 0, emission);
 
