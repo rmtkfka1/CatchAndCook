@@ -11,18 +11,34 @@ public:
 	{
 		assert(_writeOffsetIndex < _elementCount);
 
-		memcpy(static_cast<uint8*>(_mappedData) + _writeOffsetIndex * sizeof(T), &data, sizeof(T));
+		memcpy(static_cast<uint8*>(_mappedData) + _writeByteSizeIndex, &data, sizeof(T));
 		_writeOffsetIndex++;
+		_writeByteSizeIndex += sizeof(T);
+	}
+	template<class T>
+	T* GetDataAddress(int count)
+	{
+		assert(_writeOffsetIndex + count < _elementCount);
+
+		T* addr = reinterpret_cast<T*>(static_cast<uint8*>(_mappedData) + _writeByteSizeIndex);
+		_writeOffsetIndex += count;
+		_writeByteSizeIndex += sizeof(T) * count;
+		return addr;
 	}
 
 	void Clear()
 	{
 		_writeOffsetIndex = 0;
+		_writeByteSizeIndex = 0;
 	}
 
 	int GetOffset() const
 	{
 		return _writeOffsetIndex;
+	}
+	int GetByteSize() const
+	{
+		return _writeByteSizeIndex;
 	}
 
 public:
@@ -37,4 +53,5 @@ private:
 
 	void* _mappedData = nullptr;
 	int _writeOffsetIndex = 0;
+	int _writeByteSizeIndex = 0;
 };

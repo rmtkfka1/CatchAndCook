@@ -2,7 +2,7 @@
 #include "Transform_b1.hlsl"
 #include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
-#include "Skinned_b5.hlsl"
+#include "Skinned_t32.hlsl"
 
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
@@ -46,12 +46,12 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     float4 boneIds = input.boneIds;
     float4 boneWs = input.boneWs;
    
-    float4 worldPos = CalculateBone((float4(input.pos, 1.0f)), boneIds, boneWs);
+    float4 worldPos = CalculateBone((float4(input.pos, 1.0f)), boneIds, boneWs, id);
     output.worldPos = worldPos.xyz;
     output.pos = TransformWorldToClip(worldPos);
 
-    output.worldNormal = CalculateBoneNormal(input.normal, boneIds, boneWs);
-    output.worldTangent = CalculateBoneNormal(input.tangent, boneIds, boneWs);
+    output.worldNormal = CalculateBoneNormal(input.normal, boneIds, boneWs, id);
+    output.worldTangent = CalculateBoneNormal(input.tangent, boneIds, boneWs, id);
 
     output.uv = input.uv;
 

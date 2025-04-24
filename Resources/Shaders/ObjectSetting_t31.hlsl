@@ -3,7 +3,7 @@
 #define INCLUDE_OBJECT_SETTING
 
 #include "Camera_b2.hlsl"
-#include "Skinned_b5.hlsl"
+#include "Skinned_t32.hlsl"
 #include "Global_b0.hlsl"
 
 

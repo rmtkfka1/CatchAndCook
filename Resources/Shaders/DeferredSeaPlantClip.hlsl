@@ -2,7 +2,7 @@
 #include "Transform_b1.hlsl"
 #include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
-#include "Skinned_b5.hlsl"
+
 
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);

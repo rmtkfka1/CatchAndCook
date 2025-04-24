@@ -2,7 +2,7 @@
 #include "Component.h"
 
 
-class SkinnedHierarchy : public Component, public RenderCBufferSetter
+class SkinnedHierarchy : public Component, public RenderCBufferSetter, public RenderStructuredSetter
 {
 public:
 	static std::unordered_map<std::string, std::string> _boneNameToHumanMappingTable;
@@ -84,8 +84,9 @@ public:
 	bool IsPlay() { return _isPlaying; }
 	void Stop();
 	void Pause();
+	void SetData(StructuredBuffer* buffer, Material* material) override;
 
-public: // Animation Control
+	// Animation Control
 	std::shared_ptr<Model> _model;
 	std::shared_ptr<Animation> _animation;
 	std::shared_ptr<Animation> _nextAnimation;

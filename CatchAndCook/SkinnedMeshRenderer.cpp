@@ -50,13 +50,11 @@ void SkinnedMeshRenderer::Start()
 	auto root = GetOwner()->GetParent();
 	if (root != nullptr)
 	{
-		auto hierarchys = GetOwner()->GetComponentsWithParents<SkinnedHierarchy>();
-		if (!hierarchys.empty())
-			_hierarchy = hierarchys[0];
+		auto hierarchys = GetOwner()->GetComponentWithParents<SkinnedHierarchy>();
+		if (hierarchys)
+			_hierarchy = hierarchys;
 		else
-		{
 			_hierarchy = root->AddComponent<SkinnedHierarchy>();
-		}
 		_hierarchy.lock()->SetModel(_model);
 	}
 

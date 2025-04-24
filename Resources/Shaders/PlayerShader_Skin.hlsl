@@ -3,7 +3,7 @@
 #include "Transform_b1.hlsl"
 #include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
-#include "Skinned_b5.hlsl"
+#include "Skinned_t32.hlsl"
 
 #include "ObjectSetting_t31.hlsl"
 
@@ -91,13 +91,13 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 
 
     output.positionOS = float4(input.pos, 1.0f);
-    output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f), boneIds, boneWs, l2wMatrix);
+    output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f), boneIds, boneWs, l2wMatrix, id);
     //output.positionWS.w = 1;
     output.positionCS = TransformWorldToClip(output.positionWS);
     output.position = output.positionCS;
 
-    output.normalWS = TransformNormalLocalToWorld(input.normal, boneIds, boneWs, w2lMatrix);
-    output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix);
+    output.normalWS = TransformNormalLocalToWorld(input.normal, boneIds, boneWs, w2lMatrix, id);
+    output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix, id);
 
     output.uv = input.uv;
 

@@ -2,7 +2,7 @@
 #include "Transform_b1.hlsl"
 #include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
-#include "Skinned_b5.hlsl"
+#include "Skinned_t32.hlsl"
 
 struct VS_IN
 {
@@ -62,18 +62,18 @@ VS_OUT VS_Main(VS_IN input , uint id : SV_InstanceID)
     float3 normalOS = input.normal;
 
 #ifdef INSTANCED
-	float4 positionWS = TransformLocalToWorld(float4(input.pos, 1.0f),  boneIds, boneWs, l2wMatrix);
+	float4 positionWS = TransformLocalToWorld(float4(input.pos, 1.0f),  boneIds, boneWs, l2wMatrix, id);
 #else
-    float4 positionWS = TransformLocalToWorld(float4(input.pos, 1.0f), boneIds, boneWs, l2wMatrix);
+    float4 positionWS = TransformLocalToWorld(float4(input.pos, 1.0f), boneIds, boneWs, l2wMatrix, id);
 #endif
 
 	output.worldPos = positionWS;
     output.pos = TransformWorldToClip(positionWS);
 
 #ifdef INSTANCED
-	output.worldNormal = TransformNormalLocalToWorld(normalOS, boneIds, boneWs, w2lMatrix);
+	output.worldNormal = TransformNormalLocalToWorld(normalOS, boneIds, boneWs, w2lMatrix, id);
 #else
-    output.worldNormal = TransformNormalLocalToWorld(normalOS, boneIds, boneWs, w2lMatrix);
+    output.worldNormal = TransformNormalLocalToWorld(normalOS, boneIds, boneWs, w2lMatrix, id);
 #endif
 
 	output.uv = input.uv;

@@ -3,7 +3,7 @@
 #define INCLUDE_TRANSFORM
 
 #include "Camera_b2.hlsl"
-#include "Skinned_b5.hlsl"
+#include "Skinned_t32.hlsl"
 #include "Global_b0.hlsl"
 
 cbuffer Transform : register(b1)
@@ -104,10 +104,10 @@ float4 TransformLocalToWorld(float4 localPos)
 	return mul(localPos, LocalToWorldMatrix);
 }
 
-float4 TransformLocalToWorld(float4 localPos, float4 boneIds, float4 boneWs)
+float4 TransformLocalToWorld(float4 localPos, float4 boneIds, float4 boneWs, uint id)
 {
 	#ifdef SKINNED
-	return CalculateBone(localPos, boneIds, boneWs);
+	return CalculateBone(localPos, boneIds, boneWs, id);
 	#endif
 	return TransformLocalToWorld(localPos);
 }
@@ -118,10 +118,10 @@ float3 TransformNormalLocalToWorld(float3 normal)
 	return normalize(mul(normal, (float3x3)worldIT));
 }
 
-float3 TransformNormalLocalToWorld(float3 normal, float4 boneIds, float4 boneWs)
+float3 TransformNormalLocalToWorld(float3 normal, float4 boneIds, float4 boneWs, uint id)
 {
 	#ifdef SKINNED
-	return CalculateBoneNormal(normal, boneIds, boneWs);
+	return CalculateBoneNormal(normal, boneIds, boneWs, id);
 	#endif
 	return TransformNormalLocalToWorld(normal);
 }
@@ -132,10 +132,10 @@ float4 TransformWorldToLocal(float4 worldPos)
 	return mul(worldPos, WorldToLocalMatrix);
 }
 
-float4 TransformWorldToLocal(float4 worldPos, float4 boneIds, float4 boneWs)
+float4 TransformWorldToLocal(float4 worldPos, float4 boneIds, float4 boneWs, uint id)
 {
 	#ifdef SKINNED
-	return CalculateBoneInvert(worldPos, boneIds, boneWs);
+	return CalculateBoneInvert(worldPos, boneIds, boneWs, id);
 	#endif
 	return TransformWorldToLocal(worldPos);
 }
@@ -146,10 +146,10 @@ float4 TransformLocalToWorld(float4 localPos, float4x4 l2w)
 	return mul(localPos, l2w);
 }
 
-float4 TransformLocalToWorld(float4 localPos, float4 boneIds, float4 boneWs, float4x4 l2w)
+float4 TransformLocalToWorld(float4 localPos, float4 boneIds, float4 boneWs, float4x4 l2w, uint id)
 {
 	#ifdef SKINNED
-	return CalculateBone(localPos, boneIds, boneWs);
+	return CalculateBone(localPos, boneIds, boneWs, id);
 	#endif
 	
 	return TransformLocalToWorld(localPos, l2w);
@@ -161,10 +161,10 @@ float3 TransformNormalLocalToWorld(float3 normal, float4x4 w2l)
 	return normalize(mul(normal, (float3x3)worldIT));
 }
 
-float3 TransformNormalLocalToWorld(float3 normal, float4 boneIds, float4 boneWs, float4x4 w2l)
+float3 TransformNormalLocalToWorld(float3 normal, float4 boneIds, float4 boneWs, float4x4 w2l, uint id)
 {
 	#ifdef SKINNED
-	return CalculateBoneNormal(normal, boneIds, boneWs);
+	return CalculateBoneNormal(normal, boneIds, boneWs, id);
 	#endif
 	return TransformNormalLocalToWorld(normal, w2l);
 }
@@ -174,10 +174,10 @@ float4 TransformWorldToLocal(float4 worldPos, float4x4 w2l)
 	return mul(worldPos, w2l);
 }
 
-float4 TransformWorldToLocal(float4 worldPos, float4 boneIds, float4 boneWs, float4x4 w2l)
+float4 TransformWorldToLocal(float4 worldPos, float4 boneIds, float4 boneWs, float4x4 w2l, uint id)
 {
 	#ifdef SKINNED
-	return CalculateBoneInvert(worldPos, boneIds, boneWs);
+	return CalculateBoneInvert(worldPos, boneIds, boneWs, id);
 	#endif
 	return TransformWorldToLocal(worldPos, w2l);
 }
