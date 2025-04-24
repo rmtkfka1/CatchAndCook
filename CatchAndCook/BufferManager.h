@@ -40,6 +40,7 @@ enum class BufferType
 	ObjectMaterialParam,
 	ObjectSettingParam,
 	LightDataParam,
+	GrassParam,
 };
 
 class CBufferPool;

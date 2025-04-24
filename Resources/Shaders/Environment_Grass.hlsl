@@ -16,6 +16,14 @@ cbuffer EnvMaterialParam : register(b7)
 	float padding;
 };
 
+cbuffer GrassParam : register(b8)
+{
+	float3 playerPosition;
+	float objectCount = 0;
+	float4 objectPos[16];
+};
+
+
 struct VS_IN
 {
     float3 pos : POSITION;
@@ -53,6 +61,8 @@ struct VS_OUT
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 
+
+
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
@@ -88,6 +98,17 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     //output.positionCS = TransformWorldToClip(output.positionWS);
 
     //output.position = output.positionCS;
+    float2 dir = 0;
+    [unroll]
+    for (int i=0;i < objectCount; i++) {
+        float2 delta   = output.positionWS.xz - objectPos[i].xz;
+		float distSq = dot(delta, delta);
+    	dir = mad(delta, saturate(1.0 - distSq) * rsqrt(distSq + 1e-6), dir);
+    }
+    dir += float2(1,1) * simple_noise(output.positionWS.xz * 0.05 + g_Time * 0.32) * 0.43; // 이거 텍스쳐 샘플링보다 가벼움
+    dir *= sin(saturate(input.pos.y)) * 1.25;
+    output.positionWS += float4(dir.x,0,dir.y, 0);
+    //
     output.position = TransformWorldToClip(output.positionWS);
 
 #ifdef INSTANCED

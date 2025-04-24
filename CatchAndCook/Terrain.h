@@ -5,6 +5,13 @@
 
 struct RayHit;
 
+struct GrassParam
+{
+	Vector3 playerPosition;
+	float objectCount = 0;
+	std::array<Vector4, 16> objectPos;
+};
+
 class Terrain : public Component, public RenderCBufferSetter
 {
 
@@ -52,6 +59,11 @@ private:
 public:
 	void SetData(Material* material) override;
 
+
+
+public:
+	vector<Vector3> _objectPositions;
+
 private:
 	static const int CellsPerPatch = 128;
 
@@ -63,9 +75,12 @@ private:
 
 	shared_ptr<Material> _material;
 	vector<weak_ptr<GameObject>> _instances;
+	vector<weak_ptr<MeshRenderer>> _Grasses;
 	vector<vector<Instance_Transform>> _instanceDatas;
 	vector<InstanceBufferContainer*> _instanceBuffers;
 
 	vector<vector<float>> _heightRawMapData;
+
+	CBufferContainer* _grassCBuffer;
 };
 

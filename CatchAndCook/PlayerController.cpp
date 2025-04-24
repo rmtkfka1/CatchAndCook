@@ -53,6 +53,8 @@ void PlayerController::Update()
 	CameraControl();
 	MoveControl();
 
+	for (auto& terrain : TerrainManager::main->GetTerrains())
+		terrain->_objectPositions.push_back(GetOwner()->_transform->GetWorldPosition());
 	//GetOwner()->_transform->SetWorldPosition(GetOwner()->_transform->GetWorldPosition() + Vector3::Forward * 10.0f * Time::main->GetDeltaTime());
 }
 
@@ -97,12 +99,13 @@ void PlayerController::CameraControl()
 
 	currentCameraDistance = std::clamp(currentCameraDistance, minCameraDistance, maxCameraDistance);
 	double finalCameraDistance = currentCameraDistance;
+	double bias = 0.05f;
 	std::vector<RayHit> hitList;
-	if (auto isHit = ColliderManager::main->RayCastAll({ _currentOffset, -_currentNextDirection }, finalCameraDistance * 2, hitList))
+	if (auto isHit = ColliderManager::main->RayCastAll({ _currentOffset, -_currentNextDirection }, finalCameraDistance + bias, hitList))
 		for (auto& hit : hitList)
 			if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
 			{
-				finalCameraDistance = std::min((double)hit.distance, finalCameraDistance) - 0.05f;
+				finalCameraDistance = std::min((double)hit.distance, finalCameraDistance) - bias;
 				break;
 			}
 

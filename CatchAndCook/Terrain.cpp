@@ -78,13 +78,14 @@ void Terrain::Start()
                 auto newMaterial = std::make_shared<Material>();
                 newMaterial = material->Clone();
                 if (wstr::contains(ResourceManager::main->GetKey(material->GetShader()), L"Grass"))
-					newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Grass"));
+                    newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Grass"));
                 else
 					newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Instanced"));
                 newMaterial->SetPass(RENDER_PASS::Deferred);
                 newMaterials.push_back(newMaterial);
             }
             renderer->SetMaterials(newMaterials);
+            renderer->AddCbufferSetter(GetCast<Terrain>());
         }
     }
 
@@ -155,7 +156,16 @@ void Terrain::Disable()
 
 void Terrain::RenderBegin()
 {
+	_grassCBuffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::GrassParam)->Alloc(1);
 
+    GrassParam grass_param;
+    grass_param.objectCount = _objectPositions.size();
+    for (int i=0;i< std::min(_objectPositions.size(), grass_param.objectPos.size());i++)
+    {
+		grass_param.objectPos[i] = Vector4(_objectPositions[i].x, _objectPositions[i].y, _objectPositions[i].z, 1);
+    }
+	memcpy(_grassCBuffer->ptr, &grass_param, sizeof(GrassParam));
+    _objectPositions.clear();
 }
 
 void Terrain::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
@@ -191,6 +201,10 @@ void Terrain::Destroy()
 void Terrain::SetData(Material* material)
 {
     material->SetTexture("heightMap", _heightTexture);
+
+    int index = material->GetShader()->GetRegisterIndex("GrassParam");
+    if (index != -1)
+        Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(index, _grassCBuffer->GPUAdress);
 }
 
 

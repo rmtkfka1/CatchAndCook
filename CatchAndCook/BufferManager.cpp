@@ -14,6 +14,8 @@
 #include "ObjectSettingComponent.h"
 #include "PlantComponent.h"
 #include "PathFinder.h"
+#include "Terrain.h"
+
 void BufferManager::Init()
 {
 
@@ -28,19 +30,20 @@ void BufferManager::Init()
 
 	for(int i=0; i<MAX_FRAME_COUNT; ++i)
 	{
-		CreateBufferPool(i,BufferType::GlobalParam,sizeof(GlobalParam),1);
-		CreateBufferPool(i,BufferType::TransformParam,sizeof(TransformParam),1000);
-		CreateBufferPool(i,BufferType::MateriaParam,sizeof(MaterialParams),1000);
-		CreateBufferPool(i,BufferType::MateriaSubParam,sizeof(TestSubMaterialParam),1000);
-		CreateBufferPool(i,BufferType::CameraParam,sizeof(CameraParams),128);
-		CreateBufferPool(i,BufferType::SpriteTextureParam,sizeof(SprtieTextureParam),255);
-		CreateBufferPool(i,BufferType::SpriteWorldParam,sizeof(SpriteWorldParam),255);
-		CreateBufferPool(i,BufferType::LightHelperParam,sizeof(LightHelperParams),1);
-		CreateBufferPool(i,BufferType::BoneParam,sizeof(BoneParam),1000);
-		CreateBufferPool(i,BufferType::SeaParam, sizeof(TerrainDetailsParam), 5);
-		CreateBufferPool(i,BufferType::FogParam, sizeof(FogParam), 5);
-		CreateBufferPool(i,BufferType::UnderWaterParam, sizeof(UnderWaterParam), 5);
-		CreateBufferPool(i,BufferType::InstanceOffsetParam, sizeof(InstanceOffsetParam), 10000);
+		CreateBufferPool(i, BufferType::GlobalParam,sizeof(GlobalParam),1);
+		CreateBufferPool(i, BufferType::TransformParam,sizeof(TransformParam),1000);
+		CreateBufferPool(i, BufferType::MateriaParam,sizeof(MaterialParams),1000);
+		CreateBufferPool(i, BufferType::MateriaSubParam,sizeof(TestSubMaterialParam),1000);
+		CreateBufferPool(i, BufferType::CameraParam,sizeof(CameraParams),128);
+		CreateBufferPool(i, BufferType::SpriteTextureParam,sizeof(SprtieTextureParam),255);
+		CreateBufferPool(i, BufferType::SpriteWorldParam,sizeof(SpriteWorldParam),255);
+		CreateBufferPool(i, BufferType::LightHelperParam,sizeof(LightHelperParams),1);
+		CreateBufferPool(i, BufferType::BoneParam,sizeof(BoneParam),1000);
+		CreateBufferPool(i, BufferType::SeaParam, sizeof(TerrainDetailsParam), 5);
+		CreateBufferPool(i, BufferType::FogParam, sizeof(FogParam), 5);
+		CreateBufferPool(i, BufferType::UnderWaterParam, sizeof(UnderWaterParam), 5);
+		CreateBufferPool(i, BufferType::InstanceOffsetParam, sizeof(InstanceOffsetParam), 10000);
+		CreateBufferPool(i, BufferType::GrassParam, sizeof(GrassParam), 32);
 
 	}
 

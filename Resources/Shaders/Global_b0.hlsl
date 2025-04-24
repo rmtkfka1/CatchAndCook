@@ -101,6 +101,55 @@ float4x4 Inverse(float4x4 m)
 
 #define MATRIX(mat) float4x4( mat##_r0, mat##_r1, mat##_r2, mat##_r3 )
 
+
+
+
+#define MOD289(x) ((x) - floor((x) * (1.0 / 289.0)) * 289.0)
+#define PERMUTE(x) MOD289(((x) * 34.0 + 1.0) * (x))
+
+static const float F2 = 0.3660254038;
+static const float G2 = 0.2113248654;
+
+float simple_noise(float2 v)
+{
+    float2 i = floor(v + dot(v, float2(F2, F2)));
+    float2 x0 = v - i + dot(i, float2(G2, G2));
+
+    float2 i1 = float2(
+        step(x0.y, x0.x),    // x0.x >= x0.y ? 1 : 0
+        step(x0.x, x0.y)     // x0.y >  x0.x ? 1 : 0
+    );
+    float2 x1 = x0 - i1 + float2(G2, G2);
+    float2 x2 = x0 - 1.0 + 2.0 * float2(G2, G2);
+
+    i = MOD289(i);
+
+    float3 p = PERMUTE(
+                   PERMUTE(i.y + float3(0.0, i1.y, 1.0))
+                 + i.x + float3(0.0, i1.x, 1.0)
+               );
+
+    float3 d0 = float3(dot(x0, x0), dot(x1, x1), dot(x2, x2));
+    float3 m  = max(0.5 - d0, 0.0);
+    m = m * m;    // m^2
+    m = m * m;    // m^4
+
+    float3 x = 2.0 * frac(p * float3(0.0243902439, 0.0243902439, 0.0243902439)) - 1.0;
+    float3 h = abs(x) - 0.5;
+    float3 ox = floor(x + 0.5);
+    float3 a0 = x - ox;
+
+    m *= 1.7928429 - 0.8537347 * (a0 * a0 + h * h);
+
+    float3 g;
+    g.x = a0.x * x0.x + h.x * x0.y;
+    g.y = a0.y * x1.x + h.y * x1.y;
+    g.z = a0.z * x2.x + h.z * x2.y;
+
+    return 130.0 * dot(m, g);
+}
+
+
 #endif
 
 
