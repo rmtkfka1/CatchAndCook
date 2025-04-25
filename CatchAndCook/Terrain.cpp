@@ -53,18 +53,18 @@ void Terrain::Start()
         renderer->SetCulling(false);
     }
 
-    _instanceBuffers.resize(_instances.size());
-    for (int i = 0; i < _instances.size(); i++)
+    _instanceBuffers.resize(_instancesObject.size());
+
+    for (int i = 0; i < _instancesObject.size(); i++)
     {
-		std::cout << "Instance Count (" << to_string(_instances[i].lock()->GetName()) << ") : " << _instanceDatas[i].size() << std::endl;
+		std::cout << "Instance Count (" << to_string(_instancesObject[i].lock()->GetName()) << ") : " << _instanceDatas[i].size() << std::endl;
         auto instanceBuffer = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::TransformInstanceParam)->Alloc();
         memcpy(instanceBuffer->ptr, _instanceDatas[i].data(), _instanceDatas[i].size() * sizeof(Instance_Transform));
         instanceBuffer->SetIndex(_instanceDatas[i].size(), sizeof(Instance_Transform));
-        instanceBuffer->writeOffset = _instanceDatas[i].size() * sizeof(Instance_Transform);
         _instanceBuffers[i] = instanceBuffer;
 
         std::vector<std::shared_ptr<MeshRenderer>> renderers;
-        _instances[i].lock()->GetComponentsWithChilds<MeshRenderer>(renderers);
+        _instancesObject[i].lock()->GetComponentsWithChilds<MeshRenderer>(renderers);
 
         for (auto& renderer : renderers)
         {
@@ -126,14 +126,14 @@ void Terrain::Update()
 	_instanceBuffers.clear();
 
 
-    _instanceBuffers.resize(_instances.size());
-    for (int i = 0; i < _instances.size(); i++)
+    _instanceBuffers.resize(_instancesObject.size());
+    for (int i = 0; i < _instancesObject.size(); i++)
     {
         auto instanceBuffer = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::TransformInstanceParam)->Alloc();
         _instanceBuffers[i] = instanceBuffer;
 
         std::vector<std::shared_ptr<MeshRenderer>> renderers;
-        _instances[i].lock()->GetComponentsWithChilds<MeshRenderer>(renderers);
+        _instancesObject[i].lock()->GetComponentsWithChilds<MeshRenderer>(renderers);
         for (auto& renderer : renderers)
             renderer->SetInstanceBuffer(instanceBuffer);
     }
