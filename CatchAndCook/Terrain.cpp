@@ -75,14 +75,32 @@ void Terrain::Start()
             std::vector<std::shared_ptr<Material>> newMaterials;
             for (auto& material : renderer->GetMaterials())
             {
-                auto newMaterial = std::make_shared<Material>();
-                newMaterial = material->Clone();
-                if (wstr::contains(ResourceManager::main->GetKey(material->GetShader()), L"Grass"))
-                    newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Grass"));
+                if (SceneManager::main->GetCurrentScene()->GetSceneType() != SceneType::Sea01)
+                {
+                    auto newMaterial = std::make_shared<Material>();
+                    newMaterial = material->Clone();
+                    if (wstr::contains(ResourceManager::main->GetKey(material->GetShader()), L"Grass"))
+                        newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Grass"));
+                    else
+                        newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Instanced"));
+                    newMaterial->SetPass(RENDER_PASS::Deferred);
+                    newMaterials.push_back(newMaterial);
+                }
                 else
-					newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Instanced"));
-                newMaterial->SetPass(RENDER_PASS::Deferred);
-                newMaterials.push_back(newMaterial);
+                {
+                    auto newMaterial = std::make_shared<Material>();
+                    newMaterial = material->Clone();
+          
+                    if (material->GetShader()->_name == "DeferredSeaGrass.hlsl")
+                    {
+                        cout <<"걸릿나"<<endl;
+                        newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"DeferredSeaGrass"));
+                    }
+                    else
+                        newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Instanced"));
+                    newMaterial->SetPass(RENDER_PASS::Deferred);
+                    newMaterials.push_back(newMaterial);
+                }
             }
             renderer->SetMaterials(newMaterials);
             renderer->AddCbufferSetter(GetCast<Terrain>());

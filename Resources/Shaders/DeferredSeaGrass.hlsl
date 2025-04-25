@@ -20,6 +20,9 @@ struct VS_IN
     float2 uv : TEXCOORD;
     float3 tangent : TANGENT;
 
+    MATRIX_DEFINE(instance_trs, 0);
+    MATRIX_DEFINE(instance_invert_trs, 1);
+    float3 instance_worldPos : FLOAT3_0;
 };
 
 struct VS_OUT
@@ -31,54 +34,30 @@ struct VS_OUT
     float3 worldTangent : TANGENT;
 };
 
-struct PlantInfo
-{
-    float amplitude;
-    float frequency;
-    float boundsCenterY;
-    float boundsSizeY;
-    
-    //int id;
-    //float p1;
-    //float p2;
-    //float p3;
-};
 
-StructuredBuffer<PlantInfo> PlantInfos : register(t31);
-
-float NormalizeY(float y, float minY, float maxY)
-{
-    return saturate((y - minY) / (maxY - minY));
-}
-
-static float amplitude = 4.7f;
-static float frequency = 0.25f;
+static float amplitude = 3.5f;
+static float frequency = 0.35f;
 
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
 
-    Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r + id];
-    row_major float4x4 l2wMatrix = data.localToWorld;
-
-    PlantInfo plantInfo = PlantInfos[offset[STRUCTURED_OFFSET(31)].r + id];
+    Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r];
     
+    row_major float4x4 l2wMatrix = mul(data.localToWorld, MATRIX(input.instance_trs));
+    row_major float4x4 w2lMatrix =mul(MATRIX(input.instance_invert_trs), data.worldToLocal);
+
     float4 worldPos = mul(float4(input.pos, 1.0f), l2wMatrix);
 
     float2 noiseCoord = worldPos.xz * 0.07f + g_Time * frequency;
     float2 dir = float2(1, 1) * simple_noise(noiseCoord) * amplitude;
 
-    float boundsCenterY = plantInfo.boundsCenterY;
-    float boundsSizeY = plantInfo.boundsSizeY;
-    float minY = boundsCenterY - boundsSizeY;
-    float maxY = boundsCenterY + boundsSizeY;
-    float influence = NormalizeY(input.pos.y, minY, maxY);
-    
-    dir *= influence;
+    float swayFactor = saturate(input.pos.y);
+    dir *= swayFactor;
 
-    float4 animatedWorldPos = worldPos + float4(dir.x, 0, dir.y, 0);
+    float3 animatedWorldPos = worldPos.xyz + float3(dir.x, 0, dir.y);
     output.worldPos = animatedWorldPos.xyz;
-    output.pos = mul(animatedWorldPos, VPMatrix);
+    output.pos = mul(float4(output.worldPos, 1.0f), VPMatrix);
 
     output.uv = input.uv;
     output.worldNormal = mul(float4(input.normal, 0.0f), l2wMatrix).xyz;
