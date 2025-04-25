@@ -6,7 +6,7 @@
 #include "Mesh.h"
 #include "MeshRenderer.h"
 #include <algorithm>
-
+#include "SeaGrassComponent.h"
 #include "Camera.h"
 #include "CameraManager.h"
 #include "ColliderManager.h"
@@ -29,8 +29,6 @@ void Terrain::Init()
     GetOwner()->AddComponent<MeshRenderer>();
 }
 
-
-
 void Terrain::Start()
 {
     Component::Start();
@@ -46,49 +44,98 @@ void Terrain::Start()
     if (auto renderer = GetOwner()->GetRenderer())
     {
         renderer->AddCbufferSetter(static_pointer_cast<Terrain>(shared_from_this()));
-
-        if (_gridMesh == nullptr)
-            assert(false);
         dynamic_pointer_cast<MeshRenderer>(renderer)->AddMesh(_gridMesh);
         renderer->SetCulling(false);
     }
 
-    _instanceBuffers.resize(_instances.size());
-    for (int i = 0; i < _instances.size(); i++)
+
+    if (SceneManager::main->GetCurrentScene()->GetSceneType() != SceneType::Sea01)
     {
-		std::cout << "Instance Count (" << to_string(_instances[i].lock()->GetName()) << ") : " << _instanceDatas[i].size() << std::endl;
-        auto instanceBuffer = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::TransformInstanceParam)->Alloc();
-        memcpy(instanceBuffer->ptr, _instanceDatas[i].data(), _instanceDatas[i].size() * sizeof(Instance_Transform));
-        instanceBuffer->SetIndex(_instanceDatas[i].size(), sizeof(Instance_Transform));
-        instanceBuffer->writeOffset = _instanceDatas[i].size() * sizeof(Instance_Transform);
-        _instanceBuffers[i] = instanceBuffer;
+        _instanceBuffers.resize(_instancesObject.size());
 
-        std::vector<std::shared_ptr<MeshRenderer>> renderers;
-        _instances[i].lock()->GetComponentsWithChilds<MeshRenderer>(renderers);
-
-        for (auto& renderer : renderers)
+        for (int i = 0; i < _instancesObject.size(); i++)
         {
-            renderer->SetCulling(false);
-            renderer->SetInstancing(false);
-            renderer->SetInstanceBuffer(instanceBuffer);
+            std::cout << "Instance Count (" << to_string(_instancesObject[i].lock()->GetName()) << ") : " << _instanceDatas[i].size() << std::endl;
+            auto instanceBuffer = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::TransformInstanceParam)->Alloc();
+            memcpy(instanceBuffer->ptr, _instanceDatas[i].data(), _instanceDatas[i].size() * sizeof(Instance_Transform));
+            instanceBuffer->SetIndex(_instanceDatas[i].size(), sizeof(Instance_Transform));
+            _instanceBuffers[i] = instanceBuffer;
 
-            std::vector<std::shared_ptr<Material>> newMaterials;
-            for (auto& material : renderer->GetMaterials())
+            std::vector<std::shared_ptr<MeshRenderer>> renderers;
+            _instancesObject[i].lock()->GetComponentsWithChilds<MeshRenderer>(renderers);
+
+            for (auto& renderer : renderers)
             {
-                auto newMaterial = std::make_shared<Material>();
-                newMaterial = material->Clone();
-                if (wstr::contains(ResourceManager::main->GetKey(material->GetShader()), L"Grass"))
-                    newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Grass"));
-                else
-					newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Instanced"));
-                newMaterial->SetPass(RENDER_PASS::Deferred);
-                newMaterials.push_back(newMaterial);
+                renderer->SetCulling(false);
+                renderer->SetInstancing(false);
+                renderer->SetInstanceBuffer(instanceBuffer);
+
+                std::vector<std::shared_ptr<Material>> newMaterials;
+                for (auto& material : renderer->GetMaterials())
+                {
+
+                    auto newMaterial = std::make_shared<Material>();
+                    newMaterial = material->Clone();
+                    if (wstr::contains(ResourceManager::main->GetKey(material->GetShader()), L"Grass"))
+                        newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Grass"));
+                    else
+                        newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Instanced"));
+                    newMaterial->SetPass(RENDER_PASS::Deferred);
+                    newMaterials.push_back(newMaterial);
+
+                };
+                renderer->SetMaterials(newMaterials);
+                renderer->AddCbufferSetter(GetCast<Terrain>());
             }
-            renderer->SetMaterials(newMaterials);
-            renderer->AddCbufferSetter(GetCast<Terrain>());
         }
     }
+    else
+    {
+        _instanceBuffers.resize(_instancesObject.size());
 
+        for (int i = 0; i < _instancesObject.size(); i++)
+        {
+            std::cout << "Instance Count (" << to_string(_instancesObject[i].lock()->GetName()) << ") : " << _instanceDatas[i].size() << std::endl;
+            auto instanceBuffer = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::TransformInstanceParam)->Alloc();
+            memcpy(instanceBuffer->ptr, _instanceDatas[i].data(), _instanceDatas[i].size() * sizeof(Instance_Transform));
+            instanceBuffer->SetIndex(_instanceDatas[i].size(), sizeof(Instance_Transform));
+            _instanceBuffers[i] = instanceBuffer;
+
+            std::vector<std::shared_ptr<MeshRenderer>> renderers;
+            _instancesObject[i].lock()->GetComponentsWithChilds<MeshRenderer>(renderers);
+
+            for (auto& renderer : renderers)
+            {
+                renderer->SetCulling(false);
+                renderer->SetInstancing(false);
+                renderer->SetInstanceBuffer(instanceBuffer);
+
+                std::vector<std::shared_ptr<Material>> newMaterials;
+                for (auto& material : renderer->GetMaterials())
+                {
+                    auto newMaterial = std::make_shared<Material>();
+                    newMaterial = material->Clone();
+
+                    if (material->GetShader()->_name == "DeferredSeaGrass.hlsl")
+                    {
+                        newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"DeferredSeaGrass"));
+                        _instancesObject[i].lock()->AddComponent<SeaGrassComponent>();
+                        _instancesObject[i].lock()->SetType(GameObjectType::Dynamic);
+                    }
+
+                    else
+                    {
+                        newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Instanced"));
+                    }
+                    newMaterial->SetPass(RENDER_PASS::Deferred);
+                    newMaterials.push_back(newMaterial);
+                };
+
+                renderer->SetMaterials(newMaterials);
+                
+            }
+        }
+    }
 
     TerrainManager::main->PushTerrain(static_pointer_cast<Terrain>(shared_from_this()));
 
@@ -107,19 +154,17 @@ void Terrain::Update()
         _instanceBuffers[i]->Free();
 	_instanceBuffers.clear();
 
-
-    _instanceBuffers.resize(_instances.size());
-    for (int i = 0; i < _instances.size(); i++)
+    _instanceBuffers.resize(_instancesObject.size());
+    for (int i = 0; i < _instancesObject.size(); i++)
     {
         auto instanceBuffer = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::TransformInstanceParam)->Alloc();
         _instanceBuffers[i] = instanceBuffer;
 
         std::vector<std::shared_ptr<MeshRenderer>> renderers;
-        _instances[i].lock()->GetComponentsWithChilds<MeshRenderer>(renderers);
+        _instancesObject[i].lock()->GetComponentsWithChilds<MeshRenderer>(renderers);
         for (auto& renderer : renderers)
             renderer->SetInstanceBuffer(instanceBuffer);
     }
-
 
     for (int i = 0; i < _instanceDatas.size(); ++i)
     {
@@ -156,16 +201,19 @@ void Terrain::Disable()
 
 void Terrain::RenderBegin()
 {
-	_grassCBuffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::GrassParam)->Alloc(1);
-
-    GrassParam grass_param;
-    grass_param.objectCount = _objectPositions.size();
-    for (int i=0;i< std::min(_objectPositions.size(), grass_param.objectPos.size());i++)
+    if (SceneManager::main->GetCurrentScene()->GetSceneType() != SceneType::Sea01)
     {
-		grass_param.objectPos[i] = Vector4(_objectPositions[i].x, _objectPositions[i].y, _objectPositions[i].z, 1);
+        _grassCBuffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::GrassParam)->Alloc(1);
+
+        GrassParam grass_param;
+        grass_param.objectCount = _objectPositions.size();
+        for (int i = 0; i < std::min(_objectPositions.size(), grass_param.objectPos.size()); i++)
+        {
+            grass_param.objectPos[i] = Vector4(_objectPositions[i].x, _objectPositions[i].y, _objectPositions[i].z, 1);
+        }
+        memcpy(_grassCBuffer->ptr, &grass_param, sizeof(GrassParam));
+        _objectPositions.clear();
     }
-	memcpy(_grassCBuffer->ptr, &grass_param, sizeof(GrassParam));
-    _objectPositions.clear();
 }
 
 void Terrain::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
@@ -202,11 +250,13 @@ void Terrain::SetData(Material* material)
 {
     material->SetTexture("heightMap", _heightTexture);
 
-    int index = material->GetShader()->GetRegisterIndex("GrassParam");
-    if (index != -1)
-        Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(index, _grassCBuffer->GPUAdress);
+    if (SceneManager::main->GetCurrentScene()->GetSceneType() != SceneType::Sea01)
+    {
+        int index = material->GetShader()->GetRegisterIndex("GrassParam");
+        if (index != -1)
+            Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(index, _grassCBuffer->GPUAdress);
+    }
 }
-
 
 void Terrain::SetHeightMap(const std::wstring& rawPath, const std::wstring& pngPath, const vec2& rawSize, const vec3& fieldSize)
 {

@@ -39,7 +39,7 @@ public:
 	}
 	void SetInstances(const vector<shared_ptr<GameObject>>& instances){
 		for(auto& instance : instances)
-			_instances.push_back(instance);
+			_instancesObject.push_back(instance);
 	}
 	void SetInstanceDatas(const vector<vector<Instance_Transform>>& instancesDatas){
 		_instanceDatas = instancesDatas;
@@ -74,7 +74,7 @@ private:
 	Vector2 _heightTextureSize;
 
 	shared_ptr<Material> _material;
-	vector<weak_ptr<GameObject>> _instances;
+	vector<weak_ptr<GameObject>> _instancesObject;
 	vector<weak_ptr<MeshRenderer>> _Grasses;
 	vector<vector<Instance_Transform>> _instanceDatas;
 	vector<InstanceBufferContainer*> _instanceBuffers;

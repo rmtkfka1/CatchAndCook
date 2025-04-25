@@ -65,8 +65,8 @@ private:
 	vec3 _velocity = vec3::Zero;
 
 	float _cameraPitchOffset = 11.066f;
-	float _cameraForwardOffset = 0.262f;
-	float _cameraHeightOffset = 1.598f;
+	float _cameraForwardOffset = 0.262f*3;
+	float _cameraHeightOffset = 1.598f*3;
 	float  _yaw = 0;
 	float _pitch = 0;
 	float _roll = 0;

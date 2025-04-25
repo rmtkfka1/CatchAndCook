@@ -25,7 +25,7 @@ enum class BufferType
 	UnderWaterParam,
 	SeaPlantParam,
 	SeaFIshParam,
-	SeaClipingParam,
+	SeaGrassParam,
 
 	PlayerMaterialParam,
 	InstanceOffsetParam,
