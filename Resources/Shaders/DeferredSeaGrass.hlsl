@@ -14,6 +14,15 @@ cbuffer SeaDefaultMaterialParam : register(b7)
     float4 ClipingColor;
 };
 
+cbuffer SeaGrassParam:register(b8)
+{
+    float amplitude;
+    float frequency;
+    float boundsCenterY;
+    float boundsSizeY;
+    float4 test;
+};
+
 struct VS_IN
 {
     float3 pos : POSITION;
@@ -35,9 +44,11 @@ struct VS_OUT
     float3 worldTangent : TANGENT;
 };
 
+float NormalizeY(float y, float minY, float maxY)
+{
+    return saturate((y - minY) / (maxY - minY));
+}
 
-static float amplitude = 1.5f;
-static float frequency = 0.35f;
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
@@ -66,8 +77,11 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     float repelP = rsqrt(distSqP + 1e-6);
     dir += deltaP * (falloffP * repelP * PLAYER_REPEL_STR);
       
-    float swayFactor = smoothstep(0.0f, 1.0f, input.pos.y);
-    dir *= swayFactor;
+    float minY = boundsCenterY - boundsSizeY;
+    float maxY = boundsCenterY + boundsSizeY;
+    
+    float influence = NormalizeY(input.pos.y, minY, maxY);
+    dir *= influence;
 
     float3 animatedWorldPos = worldPos.xyz + float3(dir.x, 0, dir.y);
     output.worldPos = animatedWorldPos;
@@ -93,15 +107,15 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     
     output.position = float4(input.worldPos, 1.0f);
     float3 N = ComputeNormalMapping(input.worldNormal, input.worldTangent, _BumpMap.Sample(sampler_lerp, input.uv));
-    output.color = _BaseMap.Sample(sampler_lerp, input.uv) * color;
+    output.color = test;
     output.normal = float4(N, 1.0f);
     
-    float3 diff = abs(output.color.rgb - ClipingColor.rgb);
+    //float3 diff = abs(output.color.rgb - ClipingColor.rgb);
     
-    if (all(diff < 0.01f))
-    {
-        discard;
-    }
+    //if (all(diff < 0.01f))
+    //{
+    //    discard;
+    //}
     
     return output;
 }
