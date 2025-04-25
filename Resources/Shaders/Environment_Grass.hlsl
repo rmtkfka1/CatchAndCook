@@ -105,8 +105,10 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 		float distSq = dot(delta, delta);
     	dir = mad(delta, saturate(1.0 - distSq) * rsqrt(distSq + 1e-6), dir);
     }
+    
     dir += float2(1,1) * simple_noise(output.positionWS.xz * 0.05 + g_Time * 0.32) * 0.43; // 이거 텍스쳐 샘플링보다 가벼움
     dir *= sin(saturate(input.pos.y)) * 1.25;
+    
     output.positionWS += float4(dir.x,0,dir.y, 0);
     //
     output.position = TransformWorldToClip(output.positionWS);
