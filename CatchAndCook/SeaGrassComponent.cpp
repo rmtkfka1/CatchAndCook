@@ -78,8 +78,6 @@ void SeaGrassComponent::SetData(Material* material)
 	_param.boundsSizeY = box.Extents.y;
 	_param.boundsCenterY = box.Center.y;
 
-	_param.test=vec4(1,1,0,0);
-
 	auto buffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SeaGrassParam)->Alloc(1);
 	memcpy(buffer->ptr, &_param, sizeof(SeaGrassParam));
 	int index = material->GetShader()->GetRegisterIndex("SeaGrassParam");

@@ -7,7 +7,7 @@ struct SeaGrassParam
 	float frequency = 0.5f;
 	float boundsCenterY;
 	float boundsSizeY;
-	vec4 test;
+
 };
 
 class SeaGrassComponent : public Component , public RenderCBufferSetter

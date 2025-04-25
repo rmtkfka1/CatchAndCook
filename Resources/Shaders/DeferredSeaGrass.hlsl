@@ -20,7 +20,6 @@ cbuffer SeaGrassParam:register(b8)
     float frequency;
     float boundsCenterY;
     float boundsSizeY;
-    float4 test;
 };
 
 struct VS_IN
@@ -65,21 +64,20 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     float2 noiseCoord = worldPos.xz * 0.07f + g_Time * frequency;
     float2 dir = float2(1, 1) * simple_noise(noiseCoord) * amplitude;
 
-    const float PLAYER_RADIUS = 30.0f; 
-    const float PLAYER_REPEL_STR = 10.0f; 
+    //const float PLAYER_RADIUS = 30.0f; 
+    //const float PLAYER_REPEL_STR = 50.0f; 
         
-    float2 deltaP = worldPos.xz - playerPos.xz;
+    //float2 deltaP = worldPos.xz - playerPos.xz;
         
-    float distSqP = dot(deltaP, deltaP);
+    //float distSqP = dot(deltaP, deltaP);
         
-    float falloffP = saturate(1.0f - distSqP / (PLAYER_RADIUS * PLAYER_RADIUS));
+    //float falloffP = saturate(1.0f - distSqP / (PLAYER_RADIUS * PLAYER_RADIUS));
         
-    float repelP = rsqrt(distSqP + 1e-6);
-    dir += deltaP * (falloffP * repelP * PLAYER_REPEL_STR);
+    //float repelP = rsqrt(distSqP + 1e-6);
+    //dir += deltaP * (falloffP * repelP * PLAYER_REPEL_STR);
       
     float minY = boundsCenterY - boundsSizeY;
     float maxY = boundsCenterY + boundsSizeY;
-    
     float influence = NormalizeY(input.pos.y, minY, maxY);
     dir *= influence;
 
@@ -107,15 +105,15 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     
     output.position = float4(input.worldPos, 1.0f);
     float3 N = ComputeNormalMapping(input.worldNormal, input.worldTangent, _BumpMap.Sample(sampler_lerp, input.uv));
-    output.color = test;
+    output.color = _BaseMap.Sample(sampler_lerp, input.uv)*color;
     output.normal = float4(N, 1.0f);
     
-    //float3 diff = abs(output.color.rgb - ClipingColor.rgb);
+    float3 diff = abs(output.color.rgb - ClipingColor.rgb);
     
-    //if (all(diff < 0.01f))
-    //{
-    //    discard;
-    //}
+    if (all(diff < 0.01f))
+    {
+        discard;
+    }
     
     return output;
 }
