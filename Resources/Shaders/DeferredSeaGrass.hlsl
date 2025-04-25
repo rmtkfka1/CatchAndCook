@@ -44,8 +44,8 @@ struct VS_OUT
 
 };
 
-static float PLAYER_RADIUS = 30.0f; 
-static float PLAYER_STR = 25.0f; 
+static float PLAYER_RADIUS = 40.0f; 
+static float PLAYER_STR = 20.0f; 
 
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
@@ -58,20 +58,20 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     row_major float4x4 l2wMatrix = mul(data.localToWorld, MATRIX(input.instance_trs));
  
     float4 worldPos = mul(float4(input.pos, 1.0f), l2wMatrix);
-
     float2 noiseCoord = worldPos.xz * 0.07f + g_Time * frequency;
     float2 dir = float2(1, 1) * simple_noise(noiseCoord) * amplitude;
 
     float2 toGrass = worldPos.xz - playerPos.xz;
-    float dist = length(toGrass); // 실제 거리
-    float falloff = saturate(1.0 - dist / PLAYER_RADIUS); 
-    float2 normDir = toGrass / (dist + 1e-6); 
-    dir += normDir * falloff * PLAYER_STR; 
-       
- 
+    float distSq = dot(toGrass, toGrass);
+    float radiusSq = PLAYER_RADIUS * PLAYER_RADIUS;
+    float falloff = saturate(1.0 - distSq / radiusSq);
+    float2 normDir = toGrass / sqrt(distSq + 1e-6);
+    dir += normDir * falloff * PLAYER_STR;
+    
     float minY = boundsCenterY - boundsSizeY;
     float maxY = boundsCenterY + boundsSizeY;
     float influence = smoothstep(minY, maxY, input.pos.y);
+
     dir *= influence;
 
     float3 animatedWorldPos = worldPos.xyz + float3(dir.x, 0, dir.y);
