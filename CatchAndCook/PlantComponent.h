@@ -9,10 +9,10 @@ struct PlantInfo
 	float boundsCenterY;
 	float boundsSizeY;
 
-	//int id;
-	//float p1;
-	//float p2;
-	//float p3;
+	int id;
+	float p1;
+	float p2;
+	float p3;
 };
 
 class PlantComponent :public Component, public RenderStructuredSetter

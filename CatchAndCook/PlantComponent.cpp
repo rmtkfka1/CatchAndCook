@@ -14,8 +14,8 @@ PlantComponent::~PlantComponent()
 
 void PlantComponent::Init()
 {
-	//cout << " PlantComponent Init" << endl;
-	//_plantInfo.id = idGenator++;
+	cout << " PlantComponent Init" << endl;
+	_plantInfo.id = idGenator++;
 }
 
 void PlantComponent::Start()
