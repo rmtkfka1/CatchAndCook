@@ -7,6 +7,7 @@
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
 
+
 cbuffer SeaDefaultMaterialParam : register(b7)
 {
     float4 color;
@@ -35,28 +36,41 @@ struct VS_OUT
 };
 
 
-static float amplitude = 3.5f;
+static float amplitude = 1.5f;
 static float frequency = 0.35f;
-
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
+     
+    
+    float3 playerPos = g_eyeWorld;
+
 
     Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r];
-    
     row_major float4x4 l2wMatrix = mul(data.localToWorld, MATRIX(input.instance_trs));
-    row_major float4x4 w2lMatrix =mul(MATRIX(input.instance_invert_trs), data.worldToLocal);
-
+ 
     float4 worldPos = mul(float4(input.pos, 1.0f), l2wMatrix);
 
     float2 noiseCoord = worldPos.xz * 0.07f + g_Time * frequency;
     float2 dir = float2(1, 1) * simple_noise(noiseCoord) * amplitude;
 
-    float swayFactor = saturate(input.pos.y);
+    const float PLAYER_RADIUS = 30.0f; 
+    const float PLAYER_REPEL_STR = 10.0f; 
+        
+    float2 deltaP = worldPos.xz - playerPos.xz;
+        
+    float distSqP = dot(deltaP, deltaP);
+        
+    float falloffP = saturate(1.0f - distSqP / (PLAYER_RADIUS * PLAYER_RADIUS));
+        
+    float repelP = rsqrt(distSqP + 1e-6);
+    dir += deltaP * (falloffP * repelP * PLAYER_REPEL_STR);
+      
+    float swayFactor = smoothstep(0.0f, 1.0f, input.pos.y);
     dir *= swayFactor;
 
     float3 animatedWorldPos = worldPos.xyz + float3(dir.x, 0, dir.y);
-    output.worldPos = animatedWorldPos.xyz;
+    output.worldPos = animatedWorldPos;
     output.pos = mul(float4(output.worldPos, 1.0f), VPMatrix);
 
     output.uv = input.uv;
@@ -64,7 +78,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     output.worldTangent = mul(float4(input.tangent, 0.0f), l2wMatrix).xyz;
 
     return output;
-}
+};
 struct PS_OUT
 {
     float4 position : SV_Target0;
