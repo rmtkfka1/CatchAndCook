@@ -73,6 +73,8 @@ void SeaGrassComponent::SetData(Material* material)
 {
 	_param.amplitude = material->GetPropertyFloat("_Amplitude");
 	_param.frequency = material->GetPropertyFloat("_frequency");
+	_param.PushPower = material->GetPropertyFloat("_pushPower");
+
 
 	BoundingBox& box = _renderBase.lock()->GetOriginBound();
 	_param.boundsSizeY = box.Extents.y;

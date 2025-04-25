@@ -20,6 +20,10 @@ cbuffer SeaGrassParam:register(b8)
     float frequency;
     float boundsCenterY;
     float boundsSizeY;
+    float PushPower;
+    float padding1;
+    float padding2;
+    float padding3;
 };
 
 struct VS_IN
@@ -45,13 +49,11 @@ struct VS_OUT
 };
 
 static float PLAYER_RADIUS = 40.0f; 
-static float PLAYER_STR = 20.0f; 
 
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
     VS_OUT output = (VS_OUT) 0;
      
-    
     float3 playerPos = g_eyeWorld;
 
     Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r];
@@ -61,12 +63,13 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     float2 noiseCoord = worldPos.xz * 0.07f + g_Time * frequency;
     float2 dir = float2(1, 1) * simple_noise(noiseCoord) * amplitude;
 
-    float2 toGrass = worldPos.xz - playerPos.xz;
-    float distSq = dot(toGrass, toGrass);
-    float radiusSq = PLAYER_RADIUS * PLAYER_RADIUS;
-    float falloff = saturate(1.0 - distSq / radiusSq);
-    float2 normDir = toGrass / sqrt(distSq + 1e-6);
-    dir += normDir * falloff * PLAYER_STR;
+    float3 toGrass = worldPos.xyz - playerPos; 
+    float distSq3 = dot(toGrass, toGrass); 
+    float falloff = saturate(1.0f - distSq3 / (PLAYER_RADIUS * PLAYER_RADIUS));
+    float invSqrt = rsqrt(distSq3 + 1e-6f); 
+    float2 normXZ = toGrass.xz * invSqrt;
+
+    dir += normXZ * falloff * PushPower;
     
     float minY = boundsCenterY - boundsSizeY;
     float maxY = boundsCenterY + boundsSizeY;

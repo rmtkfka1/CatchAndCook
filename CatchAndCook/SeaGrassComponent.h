@@ -3,10 +3,14 @@
 
 struct SeaGrassParam
 {
-	float amplitude = 0.2f;
-	float frequency = 0.5f;
+	float amplitude;
+	float frequency;
 	float boundsCenterY;
 	float boundsSizeY;
+	float PushPower;
+	float padding1;
+	float padding2;
+	float padding3;
 
 };
 
