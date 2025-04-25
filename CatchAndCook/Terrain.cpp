@@ -174,16 +174,19 @@ void Terrain::Disable()
 
 void Terrain::RenderBegin()
 {
-	_grassCBuffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::GrassParam)->Alloc(1);
-
-    GrassParam grass_param;
-    grass_param.objectCount = _objectPositions.size();
-    for (int i=0;i< std::min(_objectPositions.size(), grass_param.objectPos.size());i++)
+    if (SceneManager::main->GetCurrentScene()->GetSceneType() != SceneType::Sea01)
     {
-		grass_param.objectPos[i] = Vector4(_objectPositions[i].x, _objectPositions[i].y, _objectPositions[i].z, 1);
+        _grassCBuffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::GrassParam)->Alloc(1);
+
+        GrassParam grass_param;
+        grass_param.objectCount = _objectPositions.size();
+        for (int i = 0; i < std::min(_objectPositions.size(), grass_param.objectPos.size()); i++)
+        {
+            grass_param.objectPos[i] = Vector4(_objectPositions[i].x, _objectPositions[i].y, _objectPositions[i].z, 1);
+        }
+        memcpy(_grassCBuffer->ptr, &grass_param, sizeof(GrassParam));
+        _objectPositions.clear();
     }
-	memcpy(_grassCBuffer->ptr, &grass_param, sizeof(GrassParam));
-    _objectPositions.clear();
 }
 
 void Terrain::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
@@ -220,11 +223,13 @@ void Terrain::SetData(Material* material)
 {
     material->SetTexture("heightMap", _heightTexture);
 
-    int index = material->GetShader()->GetRegisterIndex("GrassParam");
-    if (index != -1)
-        Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(index, _grassCBuffer->GPUAdress);
+    if (SceneManager::main->GetCurrentScene()->GetSceneType() != SceneType::Sea01)
+    {
+        int index = material->GetShader()->GetRegisterIndex("GrassParam");
+        if (index != -1)
+            Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(index, _grassCBuffer->GPUAdress);
+    }
 }
-
 
 void Terrain::SetHeightMap(const std::wstring& rawPath, const std::wstring& pngPath, const vec2& rawSize, const vec3& fieldSize)
 {
