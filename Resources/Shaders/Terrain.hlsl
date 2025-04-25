@@ -44,6 +44,7 @@ struct DS_OUT
     float2 uv : TEXCOORD;
     float2 uvTile : TEXCOORD1;
     float3 normal : NORMAL;
+    //float3 tangent : TANGENT;
 };
 
 struct HS_OUT
@@ -221,7 +222,7 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 3> quad, PatchConstOutput patchConst, float3 
     dout.uv = uv;
     dout.uvTile = uvTile;
     dout.normal = normal;
-
+    //dout.tangent = normalize(cross(float3(1,0,0), normal));
     return dout;
 }
 
@@ -240,6 +241,7 @@ PS_OUT PS_Main(DS_OUT input)
     
     float4 finalColor = float4(0, 0, 0, 0);
     float4 blend;
+    //float3 normal = 0;
 
     if (blendCount >= 1)
     {
@@ -249,24 +251,29 @@ PS_OUT PS_Main(DS_OUT input)
         {
             float2 tileUV0 = input.uvTile / tileST[0].xy + tileST[0].zw;
             float4 mask0 = (textureActive[0].g == 0) ? 1 : (_maskMap0.Sample(sampler_lerp, tileUV0));
+            //normal += (textureActive[0].r == 0) ? 0 : (_normalMap0.Sample(sampler_lerp, tileUV0).xyz * 2 - 1) * blend.x;
+
 			finalColor = _detailMap0.Sample(sampler_aniso8, tileUV0) * mask0.g * blend.x;
         }
         if (blend.y != 0)
         {
             float2 tileUV1 = input.uvTile / tileST[1].xy + tileST[1].zw;
             float4 mask1 = (textureActive[1].g == 0) ? 1 : (_maskMap1.Sample(sampler_lerp, tileUV1));
+            //normal += (textureActive[1].r == 0) ? 0 : (_normalMap1.Sample(sampler_lerp, tileUV1).xyz * 2 - 1) * blend.y;
 			finalColor += _detailMap1.Sample(sampler_aniso8, tileUV1) * mask1.g * blend.y;
         }
         if (blend.z != 0)
         {
             float2 tileUV2 = input.uvTile / tileST[2].xy + tileST[2].zw;
             float4 mask2 = (textureActive[2].g == 0) ? 1 : (_maskMap2.Sample(sampler_lerp, tileUV2));
+            //normal += (textureActive[2].r == 0) ? 0 : (_normalMap2.Sample(sampler_lerp, tileUV2).xyz * 2 - 1) * blend.z;
 			finalColor += _detailMap2.Sample(sampler_aniso8, tileUV2) * mask2.g * blend.z;
         }
         if (blend.w != 0)
         {
             float2 tileUV3 = input.uvTile / tileST[3].xy + tileST[3].zw;
 			float4 mask3 = (textureActive[3].g == 0) ? 1 : (_maskMap3.Sample(sampler_lerp, tileUV3));
+            //normal += (textureActive[3].r == 0) ? 0 : (_normalMap3.Sample(sampler_lerp, tileUV3).xyz * 2 - 1) * blend.w;
 			finalColor += _detailMap3.Sample(sampler_aniso8, tileUV3) * mask3.g * blend.w;
         }
     }
@@ -278,24 +285,28 @@ PS_OUT PS_Main(DS_OUT input)
         {
             float2 tileUV0 = input.uvTile / tileST[4].xy + tileST[4].zw;
             float4 mask0 = (textureActive[4].g == 0) ? 1 : (_maskMap4.Sample(sampler_lerp, tileUV0));
+            //normal += (textureActive[4].r == 0) ? 0 : (_normalMap4.Sample(sampler_lerp, tileUV0).xyz * 2 - 1) * blend.x;
 	        finalColor += _detailMap4.Sample(sampler_aniso8, tileUV0) * mask0.g * blend.x;
         }
         if (blend.y != 0)
         {
             float2 tileUV1 = input.uvTile / tileST[5].xy + tileST[5].zw;
             float4 mask1 = (textureActive[5].g == 0) ? 1 : (_maskMap5.Sample(sampler_lerp, tileUV1));
+            //normal += (textureActive[5].r == 0) ? 0 : (_normalMap5.Sample(sampler_lerp, tileUV1).xyz * 2 - 1) * blend.y;
             finalColor += _detailMap5.Sample(sampler_aniso8, tileUV1) * mask1.g * blend.y;
         }
         if (blend.z != 0)
         {
             float2 tileUV2 = input.uvTile / tileST[6].xy + tileST[6].zw;
             float4 mask2 = (textureActive[6].g == 0) ? 1 : (_maskMap6.Sample(sampler_lerp, tileUV2));
+            //normal += (textureActive[6].r == 0) ? 0 : (_normalMap6.Sample(sampler_lerp, tileUV2).xyz * 2 - 1) * blend.z;
             finalColor += _detailMap6.Sample(sampler_aniso8, tileUV2) * mask2.g * blend.z;
         }
         if (blend.w != 0)
         {
             float2 tileUV3 = input.uvTile / tileST[7].xy + tileST[7].zw;
 			float4 mask3 = (textureActive[7].g == 0) ? 1 : (_maskMap7.Sample(sampler_lerp, tileUV3));
+            //normal += (textureActive[7].r == 0) ? 0 : (_normalMap7.Sample(sampler_lerp, tileUV3).xyz * 2 - 1) * blend.w;
             finalColor += _detailMap7.Sample(sampler_aniso8, tileUV3) * mask3.g * blend.w;
         }
     }
@@ -308,6 +319,7 @@ PS_OUT PS_Main(DS_OUT input)
         {
             float2 tileUV0 = input.uvTile / tileST[8].xy + tileST[8].zw;
             float4 mask0 = (textureActive[8].g == 0) ? 1 : _maskMap8.Sample(sampler_lerp, tileUV0);
+            //normal += (textureActive[8].r == 0) ? 0 : (_normalMap8.Sample(sampler_lerp, tileUV0).xyz * 2 - 1) * blend.x;
 	        finalColor += _detailMap8.Sample(sampler_aniso8, tileUV0) * mask0.g * blend.x;
         }
 
@@ -315,26 +327,32 @@ PS_OUT PS_Main(DS_OUT input)
         {
             float2 tileUV1 = input.uvTile / tileST[9].xy + tileST[9].zw;
             float4 mask1 = (textureActive[9].g == 0) ? 1 : _maskMap9.Sample(sampler_lerp, tileUV1);
+            //normal += (textureActive[9].r == 0) ? 0 : (_normalMap9.Sample(sampler_lerp, tileUV1).xyz * 2 - 1) * blend.y;
 			finalColor += _detailMap9.Sample(sampler_aniso8, tileUV1) * mask1.g * blend.y;
         }
         if (blend.z != 0)
         {
             float2 tileUV2 = input.uvTile / tileST[10].xy + tileST[10].zw;
             float4 mask2 = (textureActive[10].g == 0) ? 1 : _maskMap10.Sample(sampler_lerp, tileUV2);
+            //normal += (textureActive[10].r == 0) ? 0 : (_normalMap10.Sample(sampler_lerp, tileUV2).xyz * 2 - 1) * blend.z;
             finalColor += _detailMap10.Sample(sampler_aniso8, tileUV2) * mask2.g * blend.z;
         }
         if (blend.w != 0)
         {
             float2 tileUV3 = input.uvTile / tileST[11].xy + tileST[11].zw;
 			float4 mask3 = (textureActive[11].g == 0) ? 1 : _maskMap11.Sample(sampler_lerp, tileUV3);
+            //normal += (textureActive[11].r == 0) ? 0 : (_normalMap11.Sample(sampler_lerp, tileUV3).xyz * 2 - 1) * blend.w;
             finalColor += _detailMap11.Sample(sampler_aniso8, tileUV3) * mask3.g * blend.w;
         }
     }
 
    
     output.color = finalColor;
-    output.normal = float4(normalize(input.normal), 1.0f);
-    output.position = input.worldPos;
+    //normal
 
+    //normal = normalize(float3(normal.xy * 0.08f, 1));
+    output.normal = float4(normalize(input.normal), 1.0f);
+    //output.normal = float4(ComputeNormalMapping(input.normal, input.tangent, float4(normal * 0.5 + 0.5, 0)), 1);
+    output.position = input.worldPos;
     return output;
 }

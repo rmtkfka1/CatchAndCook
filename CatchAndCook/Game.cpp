@@ -107,7 +107,7 @@ void Game::Init(HWND hwnd)
 	//}
 
 
-	auto scene = SceneManager::main->AddScene(SceneType::Sea01);
+	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
 };
 
 void Game::PrevUpdate()

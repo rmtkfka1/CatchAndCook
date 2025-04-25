@@ -704,9 +704,6 @@
     <FxCompile Include="..\Resources\Shaders\Global_b0.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Skinned_b5.hlsl">
-      <Filter>998.HLSL\Module</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Transform_b1.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
@@ -797,15 +794,6 @@
     <FxCompile Include="..\Resources\Shaders\DeferredSeaPlant.hlsl">
       <Filter>998.HLSL\Graphics\KSH</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\PlayerShader_Skin.hlsl">
-      <Filter>998.HLSL\Graphics</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\PlayerShader_Face.hlsl">
-      <Filter>998.HLSL\Graphics</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\ObjectShader.hlsl">
-      <Filter>998.HLSL\Graphics</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\ObjectSetting_t31.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
@@ -843,6 +831,19 @@
       <Filter>998.HLSL\Graphics\JIN</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\ForwardFunction.hlsl">
+      <Filter>998.HLSL\Graphics\JIN</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Skinned_t32.hlsl" />
+    <FxCompile Include="..\Resources\Shaders\WaterShader.hlsl">
+      <Filter>998.HLSL\Graphics\JIN</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\PlayerShader_Skin.hlsl">
+      <Filter>998.HLSL\Graphics\JIN</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\ObjectShader.hlsl">
+      <Filter>998.HLSL\Graphics\JIN</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\PlayerShader_Face.hlsl">
       <Filter>998.HLSL\Graphics\JIN</Filter>
     </FxCompile>
   </ItemGroup>
