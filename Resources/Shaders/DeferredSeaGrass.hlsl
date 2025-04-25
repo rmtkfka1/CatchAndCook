@@ -41,12 +41,11 @@ struct VS_OUT
     float3 worldNormal : NORMAL;
     float2 uv : TEXCOORD;
     float3 worldTangent : TANGENT;
+
 };
 
-float NormalizeY(float y, float minY, float maxY)
-{
-    return saturate((y - minY) / (maxY - minY));
-}
+static float PLAYER_RADIUS = 30.0f; 
+static float PLAYER_STR = 25.0f; 
 
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
@@ -54,7 +53,6 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
      
     
     float3 playerPos = g_eyeWorld;
-
 
     Instance_Transform data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r];
     row_major float4x4 l2wMatrix = mul(data.localToWorld, MATRIX(input.instance_trs));
@@ -64,21 +62,16 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     float2 noiseCoord = worldPos.xz * 0.07f + g_Time * frequency;
     float2 dir = float2(1, 1) * simple_noise(noiseCoord) * amplitude;
 
-    //const float PLAYER_RADIUS = 30.0f; 
-    //const float PLAYER_REPEL_STR = 50.0f; 
-        
-    //float2 deltaP = worldPos.xz - playerPos.xz;
-        
-    //float distSqP = dot(deltaP, deltaP);
-        
-    //float falloffP = saturate(1.0f - distSqP / (PLAYER_RADIUS * PLAYER_RADIUS));
-        
-    //float repelP = rsqrt(distSqP + 1e-6);
-    //dir += deltaP * (falloffP * repelP * PLAYER_REPEL_STR);
-      
+    float2 toGrass = worldPos.xz - playerPos.xz;
+    float dist = length(toGrass); // 실제 거리
+    float falloff = saturate(1.0 - dist / PLAYER_RADIUS); 
+    float2 normDir = toGrass / (dist + 1e-6); 
+    dir += normDir * falloff * PLAYER_STR; 
+       
+ 
     float minY = boundsCenterY - boundsSizeY;
     float maxY = boundsCenterY + boundsSizeY;
-    float influence = NormalizeY(input.pos.y, minY, maxY);
+    float influence = smoothstep(minY, maxY, input.pos.y);
     dir *= influence;
 
     float3 animatedWorldPos = worldPos.xyz + float3(dir.x, 0, dir.y);
@@ -105,7 +98,8 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     
     output.position = float4(input.worldPos, 1.0f);
     float3 N = ComputeNormalMapping(input.worldNormal, input.worldTangent, _BumpMap.Sample(sampler_lerp, input.uv));
-    output.color = _BaseMap.Sample(sampler_lerp, input.uv)*color;
+    output.color = _BaseMap.Sample(sampler_lerp, input.uv) * color;
+    //output.color = float4(input.inf, input.inf, input.inf, input.inf);
     output.normal = float4(N, 1.0f);
     
     float3 diff = abs(output.color.rgb - ClipingColor.rgb);
