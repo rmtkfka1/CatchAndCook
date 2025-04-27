@@ -396,7 +396,7 @@ void FieldFogRender::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>&
 	_fogParam.g_fogColor = vec3(0.48f, 0.56f, 0.72f) * 0.8;
 	_fogParam.power = 1.2f;
 	_fogParam.g_fogMin = 50.0f;
-	_fogParam.g_fogMax = 400;
+	_fogParam.g_fogMax = 350;
 }
 
 void FieldFogRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)

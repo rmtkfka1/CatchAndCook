@@ -106,7 +106,7 @@ float4 PS_Main(VS_OUT input) : SV_Target
 
     ObjectSettingParam objectData = ObjectSettingDatas[offset[STRUCTURED_OFFSET(31)].r + id];
 
-    LightingResult lightColor = ComputeLightColorForward(input.positionWS.xyz, N);
+    LightingResult lightColor = ComputeLightColorForward(input.positionWS.xyz, input.normalWS);
     
     float4 BaseColor = _BaseMap.Sample(sampler_lerp, input.uv * _baseMapST.xy + _baseMapST.zw) * color;
     float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
@@ -156,21 +156,24 @@ float4 PS_Main(VS_OUT input) : SV_Target
     //return step(0,1 - clamp(0, 0.01, DepthTexture.Sample(sampler_lerp_clamp, uv).r - v1) / 0.01);
     //dir += float2(1,1) * simple_noise(output.positionWS.xz * 0.05 + g_Time * 0.4) * 0.46;
     //return simple_noise(input.positionWS.xz * 2);
-    float2 normalVal = (_WaterNormal.Sample(sampler_lerp, input.uv * waterScale.xz * 2 + g_Time * 0.05).xy * 2 - 1) * 0.03;
-    float2 normalVal2 = (_WaterNormal.Sample(sampler_lerp, input.uv * waterScale.xz * 2 + float2(-g_Time * 0.06, g_Time * 0.06)).xy * 2 - 1) * 0.03;
+
+    float normalPower = saturate((v0 - v1) / 4);
+
+    float2 normalVal = (_WaterNormal.Sample(sampler_lerp, input.uv * waterScale.xz * 1.2 + g_Time * 0.05).xy * 2 - 1) * 0.03 * normalPower;
+    float2 normalVal2 = (_WaterNormal.Sample(sampler_lerp, input.uv * waterScale.xz * 1.2 + float2(-g_Time * 0.06, g_Time * 0.06)).xy * 2 - 1) * 0.03 * normalPower;
     float2 sampleUV = uv + normalVal + normalVal2;
     float v2 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_point, sampleUV).r);
 
     float foam = (1 - step(saturate((1 - saturate((v0 - v1) / 2)) - 0.1), simple_noise(input.positionWS.xz * 2 + float2(-1,-1) * g_Time * 0.2) * 0.5 + 0.5));
 
-    float depthRamp = saturate((input.positionWS.y - PositionTexture.Sample(sampler_point, uv).y)/8);
+    float depthRamp = saturate((input.positionWS.y - PositionTexture.Sample(sampler_point, uv).y)/6);
     float4 screenColor = _ColorTexture.Sample(sampler_point, ((v0 - v2) < 0) ? sampleUV : uv);
     float3 waterColor = screenColor;
     float3 rampColor = _Ramp_Water.Sample(sampler_lerp_clamp, float2(1 - depthRamp, 0)).xyz;
     
     waterColor = lerp(screenColor * rampColor, rampColor, lerp(0.15, 0.9,depthRamp));
     //PositionTexture
-    return lerp(float4(waterColor, 1), foam * 0.97, foam);
+    return lerp(float4(waterColor, 1), foam * 0.97, foam) * lerp(0.6, 1,lightColor.intensity);
 
     //return input.positionWS.y - v0;
     // 4°³ »ùÇÃ
