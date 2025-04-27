@@ -141,7 +141,8 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float2 r = normalize(input.rightWS.xz);
 
     float angle  = clamp(0, 1, dot(l, f) * 0.5 + 0.5);
-    float sdf = dot(l, r) <= 0 ? _SDFMap.Sample(sampler_lerp_clamp, input.uv) : _SDFMap.Sample(sampler_lerp_clamp, float2(1 - input.uv.x, input.uv.y));
+    float sdf = dot(l, r) <= 0 ? _SDFMap.Sample(sampler_lerp_clamp, input.uv).r : _SDFMap.Sample(sampler_lerp_clamp, float2(1 - input.uv.x, input.uv.y)).r;
+    //float sdf = 1 - (dot(l, r) <= 0 ? _SDFMap.Sample(sampler_lerp_clamp, input.uv).r : _SDFMap.Sample(sampler_lerp_clamp, float2(1 - input.uv.x, input.uv.y)).r);
 
     float atten2 = clamp(-1, 1, (angle - sdf) * 2);
     atten2 = (atten2 * 0.5 + 0.5) * lightColor.intensity;

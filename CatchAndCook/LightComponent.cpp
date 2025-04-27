@@ -47,6 +47,11 @@ void LightComponent::Update()
 	Component::Update();
 	light->direction = GetOwner()->_transform->GetForward();
 	light->position = GetOwner()->_transform->GetWorldPosition();
+
+	if (Input::main->GetKey(KeyCode::LeftArrow))
+	{
+		GetOwner()->_transform->SetLocalRotation(GetOwner()->_transform->GetLocalRotation() * Quaternion::CreateFromAxisAngle(Vector3::Up, 1 * Time::main->GetDeltaTime()));
+	}
 }
 
 void LightComponent::Update2()

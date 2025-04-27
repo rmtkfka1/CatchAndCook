@@ -149,6 +149,19 @@ float simple_noise(float2 v)
     return 130.0 * dot(m, g);
 }
 
+float3 NormalFromHeight(Texture2D heightSampler, SamplerState samplerState, float2 uv, float2 texelSize, float strength)
+{
+    float center = heightSampler.Sample(samplerState, uv).r;
+    float right  = heightSampler.Sample(samplerState, uv + float2(texelSize.x, 0)).r;
+    float up     = heightSampler.Sample(samplerState, uv + float2(0, texelSize.y)).r;
+
+    float dx = (center - right) * strength;
+    float dy = (center - up) * strength;
+
+    float3 n = float3(dx, dy, 1.0f);
+    return normalize(n);
+}
+
 
 #endif
 

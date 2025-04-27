@@ -57,6 +57,9 @@ void Core::Init(HWND hwnd)
 	_dsReadTexture = make_shared<Texture>();
 	_dsReadTexture->CreateStaticTexture(DXGI_FORMAT_R32_TYPELESS, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::SRV, false, true);
 
+    _rtReadTexture = make_shared<Texture>();
+    _rtReadTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::SRV, false, true);
+
     _rootSignature = make_shared<RootSignature>();
     _rootSignature->Init();
 
@@ -141,6 +144,7 @@ void Core::ResizeWindowSize()
     _renderTarget->ResizeWindowSize(_swapChain,_swapChainFlags);
     _gBuffer->Init();
     ResizeTexture(_dsReadTexture, WINDOW_WIDTH, WINDOW_HEIGHT);
+    ResizeTexture(_rtReadTexture, WINDOW_WIDTH, WINDOW_HEIGHT);
 	ComputeManager::main->Resize();
 
 }
@@ -196,20 +200,20 @@ void Core::FenceCurrentFrame()
 //}
 
 
-void Core::CopyDepthTexture(const std::shared_ptr<Texture>& destDSTexture, const std::shared_ptr<Texture>& sourceDSTexture)
+void Core::CopyTexture(const std::shared_ptr<Texture>& destTexture, const std::shared_ptr<Texture>& sourceTexture)
 {
     ComPtr<ID3D12GraphicsCommandList> cmdList = Core::main->GetCmdList();
 
-    auto prevDestState = destDSTexture->_state;
-    auto prevSourceState = sourceDSTexture->_state;
+    auto prevDestState = destTexture->_state;
+    auto prevSourceState = sourceTexture->_state;
 
-    sourceDSTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
-    destDSTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
+    sourceTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
+    destTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
 
-    cmdList->CopyResource(destDSTexture->GetResource().Get(), sourceDSTexture->GetResource().Get());
+    cmdList->CopyResource(destTexture->GetResource().Get(), sourceTexture->GetResource().Get());
 
-    sourceDSTexture->ResourceBarrier(prevSourceState);
-    destDSTexture->ResourceBarrier(prevDestState);
+    sourceTexture->ResourceBarrier(prevSourceState);
+    destTexture->ResourceBarrier(prevDestState);
 }
 
 void Core::ResizeTexture(std::shared_ptr<Texture>& texture, int w, int h)
@@ -234,7 +238,7 @@ void Core::ResizeTexture(std::shared_ptr<Texture>& texture, int w, int h)
 void Core::InitDirectX12()
 {
 
-    CreateDevice(true, true);
+    CreateDevice(true, true); // 최적화 할 부분
     CreateCmdQueue();
     CreateSwapChain();
 

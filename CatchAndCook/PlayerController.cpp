@@ -50,7 +50,7 @@ void PlayerController::Start()
 		auto walk = animationList->GetAnimations()["walk"];
 		auto idle = animationList->GetAnimations()["idle"];
 		auto run = animationList->GetAnimations()["run"];
-		run->_speedMultiplier = 1.1f;
+		run->_speedMultiplier = 1.15f;
 	}
 }
 

@@ -133,7 +133,7 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
 	#endif
 
 
-    if (output.color.a <= 0.1f)
+    if (output.color.a <= 0.5f)
         discard;
     return output;
 }

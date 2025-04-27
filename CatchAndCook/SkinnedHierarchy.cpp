@@ -169,6 +169,13 @@ double SkinnedHierarchy::AnimateBlend(const std::shared_ptr<Animation>& currentA
 		blendInterpolValue = std::clamp(_animationBlendTime / duration, 0.0, 1.0);
 	}
 
+	auto rootBoneName = _model->_rootBoneNode->GetOriginalName();
+	string nextRootBoneName;
+	if (_animation != nullptr && _animation->_rootBoneNode)
+		rootBoneName = _animation->_rootBoneNode->GetNodeName();
+	if (_nextAnimation != nullptr && _nextAnimation->_rootBoneNode)
+		nextRootBoneName = _nextAnimation->_rootBoneNode->GetNodeName();
+
 	for (auto& animNode : currentAnim->_nodeLists)
 	{
 		auto it = FindByName(animNode->GetNodeName(), nodeObjectTable);
@@ -205,7 +212,7 @@ double SkinnedHierarchy::AnimateBlend(const std::shared_ptr<Animation>& currentA
 		}
 		
 		bool finalRoot = animNode->IsRoot();
-		if (currentAnim->_isApplyTransform && ((animNode->GetNodeName() == _model->_rootBoneNode->GetOriginalName())))
+		if (currentAnim->_isApplyTransform && ((animNode->GetNodeName() == rootBoneName) || (animNode->GetNodeName() == nextRootBoneName)))
 		{
 			finalAnim_interpolatedPosition = finalAnim_interpolatedPosition * rootMoveLock;
 		}
@@ -247,6 +254,14 @@ Vector3 SkinnedHierarchy::BlendDeltaPosition(const std::string& name,const std::
 
 	auto blendInterpolValue = 0.0;
 
+	string rootBoneName = name;
+	string nextRootBoneName = name;
+
+	if (currentAnim != nullptr && currentAnim->_rootBoneNode)
+		rootBoneName = currentAnim->_rootBoneNode->GetNodeName();
+	if (nextAnim != nullptr && nextAnim->_rootBoneNode)
+		nextRootBoneName = nextAnim->_rootBoneNode->GetNodeName();
+
 
 	if (currentAnim) {
 		currentAnimTime = currentAnim->CalculateTime(_animationTime);
@@ -259,29 +274,29 @@ Vector3 SkinnedHierarchy::BlendDeltaPosition(const std::string& name,const std::
 	}
 	//std::cout << blendInterpolValue << "\n";
 
-	auto animNodeIter = FindByName(name, currentAnim->_nodeTables);
-	auto it = FindByName(name, nodeObjectTable);
-
+	auto animNodeIter = FindByName(rootBoneName, currentAnim->_nodeTables);
+	auto it = FindByName(rootBoneName, nodeObjectTable);
+	
 	if (animNodeIter != currentAnim->_nodeTables.end())
 	{
 		auto animNode = animNodeIter->second;
 		if (it != nodeObjectTable.end())
 		{
-			auto obj = it->second.lock();
-
 			finalAnim_interpolatedPosition = animNode->CalculateDeltaPosition(currentAnimPrevTime, currentAnimTime);
 		}
 
 		if (nextAnim)
 		{
-			auto nextAnimNodeIter = FindByName(name, nextAnim->_nodeTables);
+			std::unordered_map<std::string, shared_ptr<AnimationNode>>::iterator nextAnimNodeIter;
+
+			nextAnimNodeIter = FindByName(nextRootBoneName, nextAnim->_nodeTables);
+			
 			if (nextAnimNodeIter != nextAnim->_nodeTables.end())
 			{
 				auto nextAnimNode = nextAnimNodeIter->second;
 				auto obj = it->second.lock();
-
+				
 				Vector3 nextAnim_interpolatedPosition = nextAnimNode->CalculateDeltaPosition(nextAnimPrevTime, nextAnimTime);
-
 				Vector3::Lerp(finalAnim_interpolatedPosition, nextAnim_interpolatedPosition, blendInterpolValue, finalAnim_interpolatedPosition);
 			}
 		}
@@ -408,6 +423,9 @@ Vector3 SkinnedHierarchy::GetDeltaPosition()
 	if (IsPlay())
 	{
 		auto name = _model->_rootBoneNode->GetOriginalName();
+		if (_animation != nullptr && _animation->_rootBoneNode != nullptr)
+			name = _animation->_rootBoneNode->GetNodeName();
+
 		auto pos = BlendDeltaPosition(name, _animation, _nextAnimation, _duration);
 		pos *= Vector3::One - rootMoveLock;
 		pos = Vector3::Transform(pos, GetOwner()->_transform->GetWorldRotation());
