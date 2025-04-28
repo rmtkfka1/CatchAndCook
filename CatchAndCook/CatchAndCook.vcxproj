@@ -254,6 +254,7 @@
     <ClCompile Include="SeaGrassComponent.cpp" />
     <ClCompile Include="SeaPlayerController.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="ShadowManager.cpp" />
     <ClCompile Include="simple_mesh_ext.cpp" />
     <ClCompile Include="simple_mesh_LH.cpp" />
     <ClCompile Include="SkinnedHierarchy.cpp" />
@@ -374,6 +375,7 @@
     <ClInclude Include="SeaGrassComponent.h" />
     <ClInclude Include="SeaPlayerController.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="ShadowManager.h" />
     <ClInclude Include="simple_mesh_ext.h" />
     <ClInclude Include="simple_mesh_LH.h" />
     <ClInclude Include="SkinnedHierarchy.h" />
@@ -578,6 +580,10 @@
     <FxCompile Include="..\Resources\Shaders\seatest.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\ShadowCaster.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>

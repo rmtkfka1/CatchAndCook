@@ -27,6 +27,7 @@
 #include "GameObject.h"
 #include "Terrain.h"
 #include "PathStamp.h"
+#include "ShadowManager.h"
 
 void Game::Init(HWND hwnd)
 {
@@ -59,6 +60,9 @@ void Game::Init(HWND hwnd)
 
 	TextManager::main = make_unique<TextManager>();
 	TextManager::main->Init();
+
+	ShadowManager::main = make_unique<ShadowManager>();
+	ShadowManager::main->Init();
 
 #ifdef IMGUI_ON
 	ImguiManager::main = make_unique<ImguiManager>();

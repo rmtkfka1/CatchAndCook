@@ -99,3 +99,33 @@ private:
 	D3D12_RECT _scissorRect;
 };
 
+
+/*************************
+*                        *
+*         Shadow         *
+*                        *
+**************************/
+
+class ShadowBuffer
+{
+public:
+	static const uint32 _count = 4;
+
+	int currentIndex = 0;
+	D3D12_VIEWPORT	_viewport = {};
+	D3D12_RECT		_scissorRect = {};
+
+	ShadowBuffer();
+	~ShadowBuffer();
+
+	void Init();
+	void RenderBegin(int index);
+	void RenderEnd();
+
+	shared_ptr<Texture>& GetReadTexture(int32 index);
+	shared_ptr<Texture>& GetDSTexture() { return _shadowDSTextures; };
+private:
+	array<shared_ptr<Texture>, _count> _DSTextures = { nullptr, };
+	shared_ptr<Texture> _shadowDSTextures = { nullptr, };
+};
+

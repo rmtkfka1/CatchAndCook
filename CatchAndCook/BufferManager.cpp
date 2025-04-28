@@ -16,6 +16,7 @@
 #include "PathFinder.h"
 #include "Terrain.h"
 #include "SeaGrassComponent.h"
+#include "ShadowManager.h"
 
 void BufferManager::Init()
 {
@@ -46,12 +47,13 @@ void BufferManager::Init()
 		CreateBufferPool(i, BufferType::InstanceOffsetParam, sizeof(InstanceOffsetParam), 10000);
 		CreateBufferPool(i, BufferType::GrassParam, sizeof(GrassParam), 32);
 		CreateBufferPool(i, BufferType::SeaGrassParam, sizeof(SeaGrassParam), 50);
+		CreateBufferPool(i, BufferType::ShadowCasterParams, sizeof(ShadowCasterParams), 5);
 
 	}
 
 	for (int i = 0; i < MAX_FRAME_COUNT; ++i)
 	{
-		CreateStructuredBufferPool(i, BufferType::TransformParam,"TransformDatas",sizeof(Instance_Transform),20000);
+		CreateStructuredBufferPool(i, BufferType::TransformParam,"TransformDatas",sizeof(Instance_Transform),100000);
 		CreateStructuredBufferPool(i, BufferType::SeaPlantParam, "PlantInfos", sizeof(PlantInfo), 20000);
 	/*	CreateStructuredBufferPool(i, BufferType::ForwardLightParam, "ForwardLightDatas", sizeof(ForwardLightParams), 10000);*/
 		CreateStructuredBufferPool(i, BufferType::ObjectSettingParam, "ObjectSettingDatas", sizeof(ObjectSettingParam), 5000);

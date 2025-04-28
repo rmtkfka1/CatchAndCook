@@ -204,3 +204,53 @@ shared_ptr<Texture>& GBuffer::GetTexture(int32 index)
 
 	return _textures[index];
 }
+
+ShadowBuffer::ShadowBuffer()
+{
+}
+
+ShadowBuffer::~ShadowBuffer()
+{
+}
+
+void ShadowBuffer::Init()
+{
+	for (int i = 0; i < _count; ++i)
+	{
+		if (_DSTextures[i])
+		{
+			Core::main->GetBufferManager()->GetTextureBufferPool()->FreeSRVHandle(_DSTextures[i]->GetSRVCpuHandle());
+		}
+	}
+	unsigned int WIDTH = 2048;
+	_viewport = D3D12_VIEWPORT{ 0.0f,0.0f,static_cast<float>(WIDTH),static_cast<float>(WIDTH),0,1.0f };
+	_scissorRect = D3D12_RECT{ 0,0,static_cast<LONG>(WIDTH),static_cast<LONG>(WIDTH) };
+
+	for (int i = 0; i < _count; ++i)
+	{
+		_DSTextures[i] = make_shared<Texture>();
+		_DSTextures[i]->CreateStaticTexture(DXGI_FORMAT_R32_TYPELESS, D3D12_RESOURCE_STATE_COMMON, WIDTH, WIDTH, TextureUsageFlags::DSV | TextureUsageFlags::SRV, false, false);
+	}
+}
+
+void ShadowBuffer::RenderBegin(int index)
+{
+	auto& list = Core::main->GetCmdList();
+
+	currentIndex = index;
+	_DSTextures[currentIndex]->ResourceBarrier(D3D12_RESOURCE_STATE_DEPTH_WRITE);
+
+	list->RSSetViewports(1, &_viewport);
+	list->RSSetScissorRects(1, &_scissorRect);
+	
+	list->OMSetRenderTargets(_count, nullptr, TRUE, &_DSTextures[0]->GetSharedDSVHandle());
+}
+
+void ShadowBuffer::RenderEnd()
+{
+	_DSTextures[currentIndex]->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+}
+
+shared_ptr<Texture>& ShadowBuffer::GetReadTexture(int32 index)
+{
+}

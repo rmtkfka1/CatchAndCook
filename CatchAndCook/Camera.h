@@ -85,6 +85,9 @@ private:
 public:
 	const CameraParams& GetCameraParams() { return _params; }
 	float GetNear() { return _near; }
+
+    BoundingFrustum _boundingFrsutum;
+
 protected:
     vec3 _cameraPos = vec3(0, -300.0f, 0);
     vec3 _cameraLook = vec3(0, 0, 1.0f);
@@ -105,7 +108,6 @@ protected:
     CameraParams _params;
     CameraType _type =CameraType::DebugCamera;
     CBufferContainer* _cbufferContainer;
-    BoundingFrustum _boundingFrsutum;
 };
 
 

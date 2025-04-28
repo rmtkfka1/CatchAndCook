@@ -132,8 +132,8 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
 		output.maoe.z = -1;
 	#endif
 
-
     if (output.color.a <= 0.5f)
         discard;
+
     return output;
 }

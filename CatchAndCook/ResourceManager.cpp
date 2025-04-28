@@ -622,6 +622,53 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+		info._depthOnly = true;
+		info.renderTargetCount = 0;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Shadow);
+		shader->Init(L"ShadowCaster.hlsl", StaticProp, ShaderArg{}, info);
+		Add<Shader>(L"ShadowCaster", shader);
+	}
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+		info._depthOnly = true;
+		info.renderTargetCount = 0;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Shadow);
+		shader->SetMacro({ {"SKINNED",nullptr} });
+		shader->Init(L"ShadowCaster.hlsl", SkinProp, ShaderArg{}, info);
+		Add<Shader>(L"ShadowCaster_Skinned", shader);
+	}
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+		info._depthOnly = true;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Shadow);
+		shader->SetMacro({ {"INSTANCED",nullptr} });
+		shader->SetInstanceProp(TransformInstanceProp);
+		shader->Init(L"ShadowCaster.hlsl", StaticProp, ShaderArg{}, info);
+		Add<Shader>(L"ShadowCaster_Instanced", shader);
+	}
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
 		info._zWrite = false;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();

@@ -90,7 +90,19 @@ CBufferContainer* CBufferPool::Alloc(uint32 count)
 *  TextureBuffer Pool    *
 *                        *
 **************************/
+D3D12_CPU_DESCRIPTOR_HANDLE CBufferPool::cbufferTableHandle = {0};
 
+void CBufferPool::SetCBufferTable(CBufferContainer* cbuffer, int registerIndex)
+{
+	int index = registerIndex - CBV_ROOT_INDEX_COUNT;
+	assert(index >= 0);
+	tableContainer table = Core::main->GetBufferManager()->GetTable()->Alloc(CBV_TABLE_COUNT);
+	if (cbufferTableHandle.ptr != NULL)
+		Core::main->GetBufferManager()->GetTable()->CopyHandles(table.CPUHandle, cbufferTableHandle, CBV_TABLE_COUNT);
+	cbufferTableHandle = table.CPUHandle;
+	Core::main->GetBufferManager()->GetTable()->CopyHandle(cbufferTableHandle, cbuffer->CPUHandle, index);
+	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(CBV_TABLE_INDEX, table.GPUHandle);
+}
 
 void TextureBufferPool::Init(int32 SrvUavCount, int32 RTVCount ,int32 DSVCount)
 {
@@ -314,6 +326,13 @@ void DescritporTable::CopyHandle(D3D12_CPU_DESCRIPTOR_HANDLE& destHandle, D3D12_
 {
 	CD3DX12_CPU_DESCRIPTOR_HANDLE dest(destHandle, index, _size);
 	Core::main->GetDevice()->CopyDescriptorsSimple(1, dest, sourceHandle, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
+void DescritporTable::CopyHandles(D3D12_CPU_DESCRIPTOR_HANDLE& destHandle, D3D12_CPU_DESCRIPTOR_HANDLE& sourceHandle,
+	uint32 size)
+{
+	CD3DX12_CPU_DESCRIPTOR_HANDLE dest(destHandle, 0, _size);
+	Core::main->GetDevice()->CopyDescriptorsSimple(size, dest, sourceHandle, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
 void DescritporTable::Reset()

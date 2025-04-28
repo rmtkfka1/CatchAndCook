@@ -4,8 +4,6 @@
 #include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
 #include "Skinned_t32.hlsl"
-#include "ObjectSetting_t31.hlsl"
-
 #include "ForwardFunction.hlsl"
 
 
@@ -99,88 +97,49 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 
 
 
-float4 PS_Main(VS_OUT input) : SV_Target
+#define FOAM_NOISE_FREQ   2.0
+#define FOAM_EDGE_SCALE   2.0             // (v0-v1) 스케일
+#define FOAM_EDGE_BIAS    0.10
+#define NORMAL_STRENGTH   0.02
+#define NORMAL_SCROLL1    0.05
+#define NORMAL_SCROLL2    0.06
+
+float4 PS_Main (VS_OUT IN) : SV_Target
 {
-    uint id = (uint)input.id;
-    float3 N = ComputeNormalMapping(input.normalWS, input.tangentWS, _BumpMap.Sample(sampler_lerp, input.uv));
+    const float2  projUV     = IN.positionCS.xy / IN.positionCS.w;
+    const float2  screenUV   = projUV * float2( 0.5, -0.5 ) + 0.5;
 
-    ObjectSettingParam objectData = ObjectSettingDatas[offset[STRUCTURED_OFFSET(31)].r + id];
-
-    LightingResult lightColor = ComputeLightColorForward(input.positionWS.xyz, input.normalWS);
-    
-    float4 BaseColor = _BaseMap.Sample(sampler_lerp, input.uv * _baseMapST.xy + _baseMapST.zw) * color;
-    float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
-
-	//float atten2 = saturate(lightColor.atten * 2 - 1);
- //   float subIntensity =  lerp(1, 0.3, clamp(0, 1, lightColor.intensity));
-    //float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, atten2) + float4(lightColor.subColor * subIntensity, 0)).xyz;
-
-    //_RampShadowMap
-    
-    float3 viewDir = normalize(cameraPos - input.positionWS.xyz);
+    const float  v0 = NdcDepthToViewDepth(DepthTexture.SampleLevel(sampler_point, screenUV, 0).r);
+    const float  v1 = NdcDepthToViewDepth(IN.positionCS.z / IN.positionCS.w);
+    const float  edgeTerm = saturate((v0 - v1) * (1.0 / FOAM_EDGE_SCALE));
 
 
-    //Sobel Spec
-    float N2L = saturate(dot(lightColor.direction, N));
-    //float sobelW = 6;
-    //float sobel = clamp(0, 1, Sobel(input.positionCS, sobelW / input.positionCS.w));
-    //sobel = lerp(0, sobel, (1 - saturate(dot(viewDir, N))) * N2L) * 0.6;
+    const float2 scrollT = g_Time.xx * float2(NORMAL_SCROLL1, -NORMAL_SCROLL2);
+    const float2 nmUV    = IN.uv * waterScale.xz * 1.2 + scrollT;
+    float2 nSample = _WaterNormal.Sample(sampler_lerp, nmUV).rg * 2.0 - 1.0;
 
-    //// Rim
-    //float MinusN2L = saturate(dot(-lightColor.direction, N));
-    //float fresnel = (1 - saturate(dot(viewDir, N)));
-    //float3 rim = pow(fresnel, exp2(2)) * MinusN2L * float3(0.6, 0.6, 0.8) * 0.5;
-
-    ////outline
-    //float outline = step(0.05f, Sobel(input.positionCS, 1.0f / input.positionCS.w));
-    //float rimRatio = 1 - saturate(dot(viewDir, N));
-    //float3 outlineColor = (finalColor / float3((outline * 1 + 1), (outline * 1.5 + 1), (outline * 1.1 + 1)));
-    //finalColor = lerp(finalColor, outlineColor, outline);
+    // 간단한 회전으로 두 장 섞는 효과
+    const float2 rotated  = float2(nSample.x - nSample.y, nSample.x + nSample.y);
+    const float2 ripple   = rotated * NORMAL_STRENGTH;
 
 
-    //// ==========================
-    ////      Object Setting
-    //// ==========================
-    //float3 hitFresnel = objectData.o_hit * objectData.o_hitValue * objectData.o_hitColor.xyz * fresnel;
-    //float3 selectLine = objectData.o_select * clamp(0, 1, Sobel(input.positionCS, 2)) * objectData.o_selectColor.xyz;
+    float foamNoise = simple_noise(IN.positionWS.xz * FOAM_NOISE_FREQ + (-1).xx * g_Time * 0.2) * 0.5 + 0.5;
+    float foam      = 1.0 - step(saturate(1.0 - edgeTerm - FOAM_EDGE_BIAS), foamNoise);
 
-    float2 uv = input.positionCS.xy / input.positionCS.w;
-    uv = uv * float2(0.5, -0.5) + 0.5;
-    float v0 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_point, uv).r);
-    float v1 = NdcDepthToViewDepth(input.positionCS.z / input.positionCS.w);
+    // 화면 색 & 수심 Ramp
+    const float2 distortUV = screenUV + ripple;
+    const float  v2        = NdcDepthToViewDepth(DepthTexture.SampleLevel(sampler_point, distortUV, 0).r);
 
-    //return PositionTexture.Sample(sampler_lerp_clamp, uv).y;
+    float depthRamp = saturate((IN.positionWS.y - PositionTexture.SampleLevel(sampler_point, screenUV, 0).y) / 6.0);
+    float4 sceneCol = _ColorTexture.Sample(sampler_point, (v2 - v1 < 0) ? screenUV : distortUV);
 
-	//return 1 - saturate((input.positionWS.y - PositionTexture.Sample(sampler_lerp_clamp, uv).y)/3);
+    float3 rampCol  = _Ramp_Water.Sample(sampler_lerp_clamp, float2(1.0 - depthRamp, 0)).rgb;
+    float3 waterCol = lerp(sceneCol.rgb * rampCol, rampCol, lerp(0.15, 0.90, depthRamp));
 
-    //return step(0,1 - clamp(0, 0.01, DepthTexture.Sample(sampler_lerp_clamp, uv).r - v1) / 0.01);
-    //dir += float2(1,1) * simple_noise(output.positionWS.xz * 0.05 + g_Time * 0.4) * 0.46;
-    //return simple_noise(input.positionWS.xz * 2);
+    // 조명 & 최종 합성
+    //float3 N = ComputeNormalMapping(IN.normalWS, IN.tangentWS, _BumpMap.Sample(sampler_lerp, IN.uv));
+    LightingResult L = ComputeLightColorForward(IN.positionWS.xyz, IN.normalWS);
 
-    float normalPower = saturate((v0 - v1) / 4);
-
-    float2 normalVal = (_WaterNormal.Sample(sampler_lerp, input.uv * waterScale.xz * 1.2 + g_Time * 0.05).xy * 2 - 1) * 0.03 * normalPower;
-    float2 normalVal2 = (_WaterNormal.Sample(sampler_lerp, input.uv * waterScale.xz * 1.2 + float2(-g_Time * 0.06, g_Time * 0.06)).xy * 2 - 1) * 0.03 * normalPower;
-    float2 sampleUV = uv + normalVal + normalVal2;
-    float v2 = NdcDepthToViewDepth(DepthTexture.Sample(sampler_point, sampleUV).r);
-
-    float foam = (1 - step(saturate((1 - saturate((v0 - v1) / 2)) - 0.1), simple_noise(input.positionWS.xz * 2 + float2(-1,-1) * g_Time * 0.2) * 0.5 + 0.5));
-
-    float depthRamp = saturate((input.positionWS.y - PositionTexture.Sample(sampler_point, uv).y)/6);
-    float4 screenColor = _ColorTexture.Sample(sampler_point, ((v0 - v2) < 0) ? sampleUV : uv);
-    float3 waterColor = screenColor;
-    float3 rampColor = _Ramp_Water.Sample(sampler_lerp_clamp, float2(1 - depthRamp, 0)).xyz;
-    
-    waterColor = lerp(screenColor * rampColor, rampColor, lerp(0.15, 0.9,depthRamp));
-    //PositionTexture
-    return lerp(float4(waterColor, 1), foam * 0.97, foam) * lerp(0.6, 1,lightColor.intensity);
-
-    //return input.positionWS.y - v0;
-    // 4�� ����
-
-    //if (BaseColor.a <= 0.1)
-		//discard;
-    //return float4((input.positionWS.xyz - worldPosition) * 0.001f, 1);
-
-    //return float4(finalColor, 1) + float4(rim + sobel + hitFresnel + selectLine, 0); // * dot(N, viewDir)
+    float3 finalCol = lerp(waterCol * lerp(0.6, 1.0, L.intensity), (foam * 0.97).xxx * lerp(0.8, 1.0, L.intensity), foam);
+    return float4(finalCol, 1.0);
 }

@@ -15,8 +15,11 @@
 #include "ComputeManager.h"
 #include "Transform.h"
 #include "GameObject.h"
+#include "LightManager.h"
 #include "MeshRenderer.h"
 #include "PathFinder.h"
+#include "ShadowManager.h"
+
 void Scene::AddFrontGameObject(const std::shared_ptr<GameObject>& gameObject)
 {
     gameObject->SetScene(GetCast<Scene>());
@@ -102,10 +105,38 @@ void Scene::Rendering()
 {
     GlobalSetting();
 
+#ifdef _DEBUG
+    //Gizmo::Width(0.5);
+    //Gizmo::Frustum(CameraManager::main->GetCamera(CameraType::ComponentCamera)->_boundingFrsutum);
+    //Gizmo::WidthRollBack();
+    Light l;
+    l.direction = Vector3(1, -1, 1);
+    l.direction.Normalize();
+
+    auto a2 = ShadowManager::main->GetFrustums(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), &l, { 8,30,75,200 });
+    for (auto b2 : a2)
+    {
+        Gizmo::Width(0.1);
+        Gizmo::Frustum(b2, Vector4(1, 0, 0, 1));
+        Gizmo::WidthRollBack();
+    }
+
+    auto a = ShadowManager::main->GetBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), &l, { 8,30,75,200 });
+    for (auto b : a)
+    {
+        Gizmo::Width(0.5);
+        Gizmo::Box(b, Vector4(0,1,0,1));
+        Gizmo::WidthRollBack();
+    }
+#endif
+
     auto& cmdList = Core::main->GetCmdList();
     Core::main->GetRenderTarget()->ClearDepth();
 
-    ShadowPass(cmdList);
+    Profiler::Set("PASS : Shadow", BlockTag::GPU);
+		ShadowPass(cmdList);
+    Profiler::Fin();
+
     Profiler::Set("PASS : Deferred", BlockTag::GPU);
         DeferredPass(cmdList);
     Profiler::Fin();
@@ -150,7 +181,7 @@ void Scene::TransparentPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
     { // Forward
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Transparent)];
 
-	std::vector<RenderObjectStrucutre> vec;
+		std::vector<RenderObjectStrucutre> vec;
         vec.reserve(2048);
         for (auto& [shader, vec2] : targets)
             vec.insert(vec.end(), vec2.begin(), vec2.end());
@@ -270,7 +301,6 @@ void Scene::DeferredPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                        InstancingManager::main->AddObject(ele);
                    }           
             }
-
         
            InstancingManager::main->Render();
 
@@ -283,18 +313,46 @@ void Scene::DeferredPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 {
     { // Shadow
+        auto light = LightManager::main->GetMainLight();
+		if (light == nullptr)
+			return;
+
+        auto boundings = ShadowManager::main->GetBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), light.get(), { 8,30,75,200 });
+
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
 
-        for(auto& [shader,vec] : targets)
-        {
-            cmdList->SetPipelineState(ResourceManager::main->Get<Shader>(L"Shadow")->_pipelineState.Get());
+        cmdList->SetPipelineState(ResourceManager::main->Get<Shader>(L"ShadowCaster")->_pipelineState.Get());
+        //cmdList->SetPipelineState(ResourceManager::main->Get<Shader>(L"ShadowCaster_Skinned")->_pipelineState.Get());
+        //cmdList->SetPipelineState(ResourceManager::main->Get<Shader>(L"ShadowCaster_Instanced")->_pipelineState.Get());
 
-            for(auto& renderStructure : vec)
+
+		ShadowManager::main->SetData(nullptr);
+
+
+
+        std::vector<RenderObjectStrucutre> vec;
+        vec.reserve(2048);
+        for (auto& [shader, vec2] : targets)
+            vec.insert(vec.end(), vec2.begin(), vec2.end());
+
+        for (auto bounding : boundings)
+        {
+            for (auto& renderStructure : vec)
             {
                 auto& [material, mesh, target] = renderStructure;
+
+                if (renderStructure.renderer->IsCulling() == true)
+                    if (bounding.Intersects(renderStructure.renderer->GetBound()) == false)
+                        continue;
+
                 SettingPrevData(renderStructure, RENDER_PASS::PASS::Shadow);
-                target->Rendering(nullptr,mesh);
+                if (renderStructure.renderer->isInstancing() == false)
+                    InstancingManager::main->RenderNoInstancing(renderStructure);
+                else
+                    InstancingManager::main->AddObject(renderStructure);
             }
+            
+            InstancingManager::main->Render();
         }
     }
 }
