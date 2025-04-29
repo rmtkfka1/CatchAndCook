@@ -63,41 +63,45 @@ float3 ProjToView(float2 texCoord)
     posProj.w = 1.0f;
     
     float4 posView = mul(posProj, InvertProjectionMatrix);
-    return posView.xyz / posView.w;
+    return posView.xyz/posView.w;
 }
 
 float CalculateFogFactor(float3 posView)
 {
-    float dist = posView.z;
+    float dist = length(posView.xyz);
     float distFog = saturate((dist - g_fogMin) / (g_fogMax - g_fogMin));
     float fogFactor = exp(-distFog * g_fog_power);
-    return fogFactor;
+    return 1-fogFactor;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 [numthreads(16, 16, 1)]
-void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
+void CS_Main(uint3 id : SV_DispatchThreadID)
 {
-    int2 texCoord = dispatchThreadID.xy;
-    float2 uv = (float2(texCoord) + 0.5f) / cameraScreenData.xy;
+    int2 tex = id.xy;
+    float2 uv = (float2(tex) + 0.5) / cameraScreenData.xy;
 
-    float3 albedoColor = RenderT.SampleLevel(sampler_lerp, uv, 0).xyz;
-    float3 worldNormal = normalize(NormalTexture.SampleLevel(sampler_point, uv, 0).xyz);
-    float4 worldPos = PositionTexture.SampleLevel(sampler_point, uv, 0);
-    float3 EmissionColor = MAOTexture.SampleLevel(sampler_point, uv, 0).xyz;
+    // 기본 G-buffer 샘플링
+    float3 albedo = RenderT.SampleLevel(sampler_lerp, uv, 0).xyz;
+    float3 normal = normalize(NormalTexture.SampleLevel(sampler_point, uv, 0).xyz);
+    float3 worldPos = PositionTexture.SampleLevel(sampler_point, uv, 0).xyz;
+    float3 viewPos = ProjToView(tex);
 
-    float3 viewPos = ProjToView(texCoord);
+    // 1) 거리 기반 fogFactor (멀수록 1)
     float fogFactor = CalculateFogFactor(viewPos);
-    
-    LightingResult lightColor = ComputeLightColor(worldPos.xyz, worldNormal.xyz);
-    
-    float depth = depthT.Load(int3(texCoord, 0));
- 
-    float3 underWaterColor = lerp(g_underWaterColor * albedoColor, albedoColor, lightColor.atten);
-    
-    
-   //fogFactor = saturate(fogFactor + saturate(lightColor.subWaterAtten));
 
-    float3 finalColor = lerp(g_fogColor, underWaterColor, fogFactor) + lightColor.subColor;
-    resultTexture[texCoord] = float4(finalColor, 1.0f);
+    // 2) 라이트 계산 & 뎁스 노멀라이즈
+    LightingResult light = ComputeLightColor(worldPos, normal);
+    float distFogNorm = saturate((viewPos.z - g_fogMin) / (g_fogMax - g_fogMin));
+
+    float swAtten = lerp(light.subWaterAtten, 1.0f, distFogNorm);
+    
+    float3 underCol = lerp(g_underWaterColor * albedo, albedo, light.atten);
+
+    float3 litColor = underCol + light.subColor;
+
+    float adjustedFog = saturate(fogFactor * swAtten);
+    float3 finalColor = lerp(litColor, g_fogColor, adjustedFog);
+
+    resultTexture[tex] = float4(finalColor, 1.0f);
 }
