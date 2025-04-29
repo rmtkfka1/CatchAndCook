@@ -43,6 +43,7 @@ enum class BufferType
 	GrassParam,
 	WaterParam,
 	ShadowCasterParams,
+	ShadowCascadeIndexParams,
 };
 
 class CBufferPool;

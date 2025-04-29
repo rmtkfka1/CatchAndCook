@@ -68,6 +68,8 @@ private:
 
 	static D3D12_CPU_DESCRIPTOR_HANDLE _SharedDSVHandle;
 	D3D12_CPU_DESCRIPTOR_HANDLE _dsvHandle;
+
+
 	DXGI_FORMAT _format;
 	TextureUsageFlags _usageFlags;
 	bool _jump = false;

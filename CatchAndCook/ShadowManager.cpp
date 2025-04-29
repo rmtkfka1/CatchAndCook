@@ -99,7 +99,7 @@ std::vector<BoundingOrientedBox> ShadowManager::GetBounds(Camera* camera, Light*
         Vector3 lightDir = light->direction;
         lightDir.Normalize();
         Vector3 lightUp = Vector3::UnitY; // 필요하면 카메라 상향으로 조정
-        Vector3 lightPos = -lightDir * 1000.0f;
+        Vector3 lightPos = -lightDir * 500.0f;
         Matrix lightView = Matrix::CreateLookAt(lightPos, Vector3::Zero, lightUp);
         Matrix invLightView = lightView.Invert();
 
@@ -122,7 +122,14 @@ std::vector<BoundingOrientedBox> ShadowManager::GetBounds(Camera* camera, Light*
         BoundingOrientedBox obb(centerLS, extentsLS, Quaternion::Identity);
         obb.Transform(obb, invLightView);
 
-        auto projMat = Matrix::CreateOrthographic(extentsLS.x * 2, extentsLS.y * 2,0.5, 2000);
+
+        Vector3 centerWS = Vector3::Transform(centerLS, invLightView);
+        Vector3 lightPosWS = centerWS - lightDir * 1000;
+        lightView = Matrix::CreateLookAt(lightPosWS, centerWS, lightUp);
+        invLightView = lightView.Invert();
+
+        
+        auto projMat = Matrix::CreateOrthographic(extentsLS.x * 2, extentsLS.y * 2, 0.5, 2000);
         Matrix invProjMat = projMat.Invert();
         
         this->_shadowCasterParams.lightViewMatrix[i] = lightView;
@@ -144,5 +151,5 @@ void ShadowManager::SetData(Material* material)
 {
     auto* cbuffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::ShadowCasterParams)->Alloc(1);
     memcpy(cbuffer->ptr, &this->_shadowCasterParams, sizeof(ShadowCasterParams));
-    Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(6, cbuffer->GPUAdress);
+    Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(8, cbuffer->GPUAdress);
 }

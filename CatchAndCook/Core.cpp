@@ -54,6 +54,9 @@ void Core::Init(HWND hwnd)
 	_gBuffer = make_shared<GBuffer>();
 	_gBuffer->Init();
 
+    _shadowBuffer = make_shared<ShadowBuffer>();
+    _shadowBuffer->Init();
+
 	_dsReadTexture = make_shared<Texture>();
 	_dsReadTexture->CreateStaticTexture(DXGI_FORMAT_R32_TYPELESS, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::SRV, false, true);
 
@@ -140,7 +143,7 @@ void Core::FlushResCMDQueue()
 
 void Core::ResizeWindowSize()
 {
-    Fence();
+    FenceCurrentFrame();
     _renderTarget->ResizeWindowSize(_swapChain,_swapChainFlags);
     _gBuffer->Init();
     ResizeTexture(_dsReadTexture, WINDOW_WIDTH, WINDOW_HEIGHT);

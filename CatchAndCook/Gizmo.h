@@ -34,6 +34,7 @@ enum class GizmoFlags : uint32_t
 	Collision = 1 << 3,   
 	WorldPivot = 1 << 4,
 	Custom = 1 << 5,
+	RenderPreview = 1 << 6,
 };
 
 inline GizmoFlags operator|(GizmoFlags a, GizmoFlags b) {
@@ -60,7 +61,8 @@ public:
 	static void Frustum(const BoundingFrustum& frustum, const Vector4& Color = Vector4(1,0,0,1));
 	static void Sphere(const BoundingSphere& sphere, const Vector4& Color = Vector4(1, 0, 0, 1));
 	static void Text(const wstring& text, int fontSize, const Vector3& worldPos, const Vector3& worldDir,const Vector3& Up, const Vector4& Color = Vector4(1,0,0,1));
-	static void Image(const std::shared_ptr<Texture>& texture,const Vector3& worldPos,const Vector3& worldDir,const Vector3& Up,const Vector4& Color = Vector4(1,0,0,1));
+	static void Image(const std::shared_ptr<Texture>& texture, const Vector3& worldPos, const Vector3& worldDir, const Vector3& Up, const
+	                  Vector3& size = Vector3::One, const Vector4& Color = Vector4(1, 0, 0, 1));
 
 	void RenderBegin();
 public:

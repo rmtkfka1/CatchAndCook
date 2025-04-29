@@ -42,6 +42,7 @@ public:
 	ComPtr<ID3D12CommandQueue>& GetCmdQueue() { return _cmdQueue; }
 	shared_ptr<RenderTarget>& GetRenderTarget() { return _renderTarget; }
 	shared_ptr<GBuffer>& GetGBuffer() {return _gBuffer;}
+	shared_ptr<ShadowBuffer>& GetShadowBuffer() { return _shadowBuffer; }
 	shared_ptr<Texture>& GetDSReadTexture() { return _dsReadTexture; }
 	shared_ptr<Texture>& GetRTReadTexture() { return _rtReadTexture; }
 	shared_ptr<RootSignature>& GetRootSignature() { return _rootSignature; }
@@ -63,6 +64,8 @@ private:
 private:
 	shared_ptr<GBuffer> _gBuffer;
 	shared_ptr<RenderTarget> _renderTarget;
+	shared_ptr<ShadowBuffer> _shadowBuffer;
+
 	shared_ptr<Texture> _dsReadTexture;
 	shared_ptr<Texture> _rtReadTexture;
 

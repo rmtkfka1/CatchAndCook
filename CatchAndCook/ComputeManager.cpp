@@ -620,7 +620,7 @@ void SSAORender::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pon
 	_pingTexture = pingTexture;
 
 	_ssaoTexture = make_shared<Texture>();
-	_ssaoTexture->CreateStaticTexture(DXGI_FORMAT_R32_FLOAT, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+	_ssaoTexture->CreateStaticTexture(DXGI_FORMAT_R32_FLOAT, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV | TextureUsageFlags::SRV, false, false);
 
 	_shader = make_shared<Shader>();
 	ShaderInfo info;
@@ -695,7 +695,7 @@ void SSAORender::Resize()
 {
 	auto& textureBufferPool = Core::main->GetBufferManager()->GetTextureBufferPool();
 	textureBufferPool->FreeSRVHandle(_ssaoTexture->GetUAVCpuHandle());
-	_ssaoTexture->CreateStaticTexture(DXGI_FORMAT_R32_FLOAT, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV, false, false);
+	_ssaoTexture->CreateStaticTexture(DXGI_FORMAT_R32_FLOAT, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV | TextureUsageFlags::SRV, false, false);
 
 }
 

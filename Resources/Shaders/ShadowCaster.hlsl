@@ -11,7 +11,7 @@
 //    float4 _baseMapST = float4(1, 1, 1, 1);
 //};
 
-cbuffer ShadowCasterParams : register(b6) {
+cbuffer ShadowCasterParams : register(b8) {
     row_major matrix shadowViewMatrix[4];
 	row_major matrix shadowProjectionMatrix[4];
 	row_major matrix shadowVPMatrix[4];
@@ -22,16 +22,10 @@ cbuffer ShadowCasterParams : register(b6) {
 	unsigned int cascadeCount = 1;
 	float3 padding;
 };
-cbuffer ShadowParams : register(b6) {
-    row_major matrix shadowViewMatrix[4];
-	row_major matrix shadowProjectionMatrix[4];
-	row_major matrix shadowVPMatrix[4];
-	row_major matrix shadowInvertViewMatrix[4];
-	row_major matrix shadowInvertProjectionMatrix[4];
-	row_major matrix shadowInvertVPMatrix[4];
 
-	unsigned int cascadeCount = 1;
-	float3 padding;
+cbuffer ShadowCascadeIndexParams : register(b7) {
+	unsigned int cascadeIndex = 1;
+	float3 padding2;
 };
 
 
@@ -76,8 +70,11 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     float4 boneWs = 0;
 
 #ifdef INSTANCED
-	l2wMatrix = mul(data.localToWorld, MATRIX(input.instance_trs));
-	w2lMatrix = mul(MATRIX(input.instance_invert_trs), data.worldToLocal);
+    data = TransformDatas[offset[STRUCTURED_OFFSET(30)].r];
+    row_major float4x4 trs  = MATRIX(input.instance_trs);
+    row_major float4x4 itrs = MATRIX(input.instance_invert_trs);
+	l2wMatrix = mul(data.localToWorld, trs);
+	w2lMatrix = mul(itrs, data.worldToLocal);
 #endif
     
     
@@ -87,7 +84,11 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 #endif
 
 
-    output.position = TransformWorldToClip(TransformLocalToWorld(float4(input.pos, 1.0f), boneIds, boneWs, l2wMatrix, id));
+    //output.position = mul(TransformLocalToWorld(float4(input.pos, 1.0f), boneIds, boneWs, l2wMatrix, id), shadowVPMatrix[0]);
+    output.position = mul(TransformLocalToWorld(float4(input.pos, 1.0f), boneIds, boneWs, l2wMatrix, id), shadowVPMatrix[cascadeIndex]);
+    //output.position.w = 1;
+    //output.position = mul(output.position, shadowProjectionMatrix[0]);
+    //output.position = mul(TransformLocalToWorld(float4(input.pos, 1.0f), boneIds, boneWs, l2wMatrix, id), VPMatrix);
 
     output.uv = input.uv;
 
@@ -100,6 +101,6 @@ float PS_Main(VS_OUT input) : SV_Depth
 {
     if (_BaseMap.Sample(sampler_point, input.uv).a < 0.5)
 		discard;
-
-	return input.position.z / input.position.w;
+    
+    return input.position.z;
 }

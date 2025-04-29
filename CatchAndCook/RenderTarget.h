@@ -122,10 +122,8 @@ public:
 	void RenderBegin(int index);
 	void RenderEnd();
 
-	shared_ptr<Texture>& GetReadTexture(int32 index);
-	shared_ptr<Texture>& GetDSTexture() { return _shadowDSTextures; };
+	shared_ptr<Texture>& GetDSTexture(int32 index) { return _DSTextures[index]; };
 private:
 	array<shared_ptr<Texture>, _count> _DSTextures = { nullptr, };
-	shared_ptr<Texture> _shadowDSTextures = { nullptr, };
 };
 

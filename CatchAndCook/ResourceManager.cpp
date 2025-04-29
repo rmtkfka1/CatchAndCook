@@ -624,7 +624,6 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		info._stencilTest = false;
 		info.cullingType = CullingType::NONE;
 		info._depthOnly = true;
-		info.renderTargetCount = 0;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetPass(RENDER_PASS::Shadow);
@@ -639,7 +638,6 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		info._stencilTest = false;
 		info.cullingType = CullingType::NONE;
 		info._depthOnly = true;
-		info.renderTargetCount = 0;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetPass(RENDER_PASS::Shadow);
@@ -722,6 +720,18 @@ void ResourceManager::CreateDefaultMaterial()
 	_depthNormal_Instanced = std::make_shared<Material>();
 	_depthNormal_Instanced->SetShader(ResourceManager::main->Get<Shader>(L"DepthNormal_Instanced"));
 	_depthNormal_Instanced->SetPass(RENDER_PASS::Deferred);
+
+	_shadowCaster = std::make_shared<Material>();
+	_shadowCaster->SetShader(ResourceManager::main->Get<Shader>(L"ShadowCaster"));
+	_shadowCaster->SetPass(RENDER_PASS::Shadow);
+
+	_shadowCaster_Skinned = std::make_shared<Material>();
+	_shadowCaster_Skinned->SetShader(ResourceManager::main->Get<Shader>(L"ShadowCaster_Skinned"));
+	_shadowCaster_Skinned->SetPass(RENDER_PASS::Shadow);
+
+	_shadowCaster_Instanced = std::make_shared<Material>();
+	_shadowCaster_Instanced->SetShader(ResourceManager::main->Get<Shader>(L"ShadowCaster_Instanced"));
+	_shadowCaster_Instanced->SetPass(RENDER_PASS::Shadow);
 }
 
 

@@ -85,7 +85,6 @@ private:
 	HeapStructure _srvHeap;
 	HeapStructure _rtvHeap;
 	HeapStructure _dsvHeap;
-
 };
 
 

@@ -242,8 +242,8 @@ void ShadowBuffer::RenderBegin(int index)
 
 	list->RSSetViewports(1, &_viewport);
 	list->RSSetScissorRects(1, &_scissorRect);
-	
-	list->OMSetRenderTargets(_count, nullptr, TRUE, &_DSTextures[0]->GetSharedDSVHandle());
+	list->ClearDepthStencilView(_DSTextures[currentIndex]->GetDSVCpuHandle(), D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	list->OMSetRenderTargets(0, nullptr, TRUE, &_DSTextures[currentIndex]->GetDSVCpuHandle());
 }
 
 void ShadowBuffer::RenderEnd()
@@ -251,6 +251,3 @@ void ShadowBuffer::RenderEnd()
 	_DSTextures[currentIndex]->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 }
 
-shared_ptr<Texture>& ShadowBuffer::GetReadTexture(int32 index)
-{
-}

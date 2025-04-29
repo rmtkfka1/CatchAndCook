@@ -58,6 +58,8 @@ public:
 	void SetInjector(const std::vector<std::shared_ptr<ICBufferInjector>>& injectors) { _customInjectors = injectors; }
 	void SetPreDepthNormal(bool preDepthNormal) { _preDepthNormal = preDepthNormal; }
 	bool GetPreDepthNormal() const { return _preDepthNormal; }
+	void SetShadowCasting(bool shadowCasting) { _shadowCasting = shadowCasting; }
+	bool GetShadowCasting() const { return _shadowCasting; }
 
 	int GetPropertyInt(const std::string& name) { return _propertyInts[name]; };
 	void SetPropertyInt(const std::string& name, int data) { _propertyInts[name] = data; };
@@ -100,6 +102,7 @@ private:
 	bool _useMaterialParams = false;
 	RENDER_PASS::PASS _pass = RENDER_PASS::Forward;
 	bool _preDepthNormal = false;
+	bool _shadowCasting = true;
 	int _stencilIndex = 0;
 
 	uint32 _instanceID=0;

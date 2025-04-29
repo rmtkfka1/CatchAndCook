@@ -18,11 +18,6 @@ void LightManager::PushLight(const std::shared_ptr<Light>& light)
 {
 	if (std::ranges::find(_lights, light) == _lights.end())
 		_lights.push_back(light);
-
-	if (_mainLights == nullptr && light->material.lightType == 0)
-	{
-		_mainLights = light;
-	}
 }
 
 void LightManager::RemoveLight(const std::shared_ptr<Light>& light)
@@ -49,6 +44,18 @@ void LightManager::SetData()
 
 	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_LIGHTPARM_TABLE_INDEX, tableContainer.GPUHandle);
 	Core::main->GetCmdList()->SetComputeRootDescriptorTable(11, tableContainer.GPUHandle);
+}
+
+std::shared_ptr<Light> LightManager::GetMainLight()
+{
+	for (auto& light : _lights)
+	{
+		if (_mainLights == nullptr && light->material.lightType == 0)
+		{
+			_mainLights = light;
+		}
+	}
+	return _mainLights;
 }
 
 

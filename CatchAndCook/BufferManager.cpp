@@ -48,6 +48,7 @@ void BufferManager::Init()
 		CreateBufferPool(i, BufferType::GrassParam, sizeof(GrassParam), 32);
 		CreateBufferPool(i, BufferType::SeaGrassParam, sizeof(SeaGrassParam), 50);
 		CreateBufferPool(i, BufferType::ShadowCasterParams, sizeof(ShadowCasterParams), 5);
+		CreateBufferPool(i, BufferType::ShadowCascadeIndexParams, sizeof(ShadowCascadeIndexParams), 10);
 
 	}
 

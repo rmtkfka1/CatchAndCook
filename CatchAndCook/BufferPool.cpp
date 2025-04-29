@@ -230,12 +230,11 @@ void TextureBufferPool::AllocDSVDescriptorHandle(D3D12_CPU_DESCRIPTOR_HANDLE* ha
 	}
 
 	CD3DX12_CPU_DESCRIPTOR_HANDLE DescriptorHandle(_dsvHeap.heap->GetCPUDescriptorHandleForHeapStart(), index, _dsvHeap.handleIncrementSize);
+	//_dsvHeap.heap->GetGPUDescriptorHandleForHeapStart()
 	*handle = DescriptorHandle;
 	_dsvHeap.currentIndex++;
 
 }
-
-
 
 int32 TextureBufferPool::AllocSRV()
 {

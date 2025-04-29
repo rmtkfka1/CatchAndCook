@@ -159,9 +159,12 @@ void SkinnedMeshRenderer::RenderBegin()
 
 		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(),currentMesh.get(),this);
 
-		/*if (RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward) && currentMaterial->GetPreDepthNormal()) {
-			SceneManager::main->GetCurrentScene()->AddRenderer(ResourceManager::main->_depthNormal_Skinned.get(), currentMesh.get(), this);
-		}*/
+		if ((RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward)
+			|| RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Deferred))
+			&& currentMaterial->GetShadowCasting())
+		{
+			SceneManager::main->GetCurrentScene()->AddRenderer(ResourceManager::main->_shadowCaster_Skinned.get(), currentMesh.get(), this);
+		}
 	}
 	for (auto& ele : _depthNormalMaterials) {
 		auto currentMesh = _mesh[ele.first];

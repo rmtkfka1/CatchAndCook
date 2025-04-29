@@ -14,7 +14,7 @@ struct ShadowCasterParams
 	unsigned int cascadeCount = 1;
 	Vector3 padding;
 };
-struct ShadowParams
+struct ShadowCascadeIndexParams
 {
 	unsigned int cascadeIndex = 1;
 	Vector3 padding;
@@ -25,6 +25,8 @@ class ShadowManager : public RenderCBufferSetter
 {
 public:
 	ShadowCasterParams _shadowCasterParams;
+	ShadowCascadeIndexParams _shadowCascadeIndexParams;
+
 	static unique_ptr<ShadowManager> main;
 	ShadowManager();
 	~ShadowManager();

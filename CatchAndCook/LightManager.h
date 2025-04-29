@@ -74,7 +74,7 @@ public:
 	void RemoveLight(const std::shared_ptr<Light>& light);
 	void SetData();
 
-	std::shared_ptr<Light> GetMainLight() { return _mainLights; }
+	std::shared_ptr<Light> GetMainLight();
 
 private:
 	void Update();

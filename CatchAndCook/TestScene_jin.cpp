@@ -48,6 +48,7 @@ void TestScene_jin::Init()
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
 		material->SetTexture("g_tex_0", texture);
+		material->SetShadowCasting(false);
 
 		meshRenderer->AddMaterials({ material });
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
@@ -79,6 +80,7 @@ void TestScene_jin::Init()
 		material->SetPass(RENDER_PASS::Forward);
 		material->SetTexture("_cubeMap", ResourceManager::main->Get<Texture>(L"cubemap"));
 		material->SetUseMaterialParams(true);
+		material->SetShadowCasting(false);
 		meshRenderer->AddMaterials({ material });
 
 		auto mesh = GeoMetryHelper::LoadGripMeshControlPoints(20000.0f, 20000.0f, 1000, 1000, false);

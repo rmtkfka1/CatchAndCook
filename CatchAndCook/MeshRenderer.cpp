@@ -176,13 +176,14 @@ void MeshRenderer::RenderBegin()
 
 		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(), currentMesh.get(), this);
 
-		/*if (RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward) && currentMaterial->GetPreDepthNormal())
+		if ((RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward)
+			|| RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Deferred))
+			&& currentMaterial->GetShadowCasting())
 		{
-			if (HasInstanceBuffer())
-				SceneManager::main->GetCurrentScene()->AddRenderer(ResourceManager::main->_depthNormal_Instanced.get(), currentMesh.get(), this);
-			else
-				SceneManager::main->GetCurrentScene()->AddRenderer(ResourceManager::main->_depthNormal.get(), currentMesh.get(), this);
-		}*/
+			SceneManager::main->GetCurrentScene()->AddRenderer(
+				(HasInstanceBuffer() ? ResourceManager::main->_shadowCaster_Instanced : ResourceManager::main->_shadowCaster).get(), 
+				currentMesh.get(), this);
+		}
 	}
 	for (auto& ele : _depthNormalMaterials) {
 		auto currentMesh = _mesh[ele.first];

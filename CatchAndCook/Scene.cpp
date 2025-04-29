@@ -48,8 +48,6 @@ void Scene::Init()
 
 void Scene::Update()
 {
- 
-
 
     Profiler::Set("Logic_Start");
     while (!_changeTypeQueue.empty()) 
@@ -112,16 +110,16 @@ void Scene::Rendering()
     Light l;
     l.direction = Vector3(1, -1, 1);
     l.direction.Normalize();
-
-    auto a2 = ShadowManager::main->GetFrustums(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), &l, { 8,30,75,200 });
-    for (auto b2 : a2)
-    {
-        Gizmo::Width(0.1);
-        Gizmo::Frustum(b2, Vector4(1, 0, 0, 1));
-        Gizmo::WidthRollBack();
-    }
-
-    auto a = ShadowManager::main->GetBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), &l, { 8,30,75,200 });
+    
+    //auto a2 = ShadowManager::main->GetFrustums(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), &l, { 8,30,75,200 });
+    //for (auto b2 : a2)
+    //{
+    //    Gizmo::Width(0.1);
+    //    Gizmo::Frustum(b2, Vector4(1, 0, 0, 1));
+    //    Gizmo::WidthRollBack();
+    //}
+    auto light = LightManager::main->GetMainLight();
+    auto a = ShadowManager::main->GetBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), light.get(), { 8,30,75,200 });
     for (auto b : a)
     {
         Gizmo::Width(0.5);
@@ -321,7 +319,7 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
 
-        cmdList->SetPipelineState(ResourceManager::main->Get<Shader>(L"ShadowCaster")->_pipelineState.Get());
+        //cmdList->SetPipelineState(ResourceManager::main->Get<Shader>(L"ShadowCaster")->_pipelineState.Get());
         //cmdList->SetPipelineState(ResourceManager::main->Get<Shader>(L"ShadowCaster_Skinned")->_pipelineState.Get());
         //cmdList->SetPipelineState(ResourceManager::main->Get<Shader>(L"ShadowCaster_Instanced")->_pipelineState.Get());
 
@@ -335,26 +333,44 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
         for (auto& [shader, vec2] : targets)
             vec.insert(vec.end(), vec2.begin(), vec2.end());
 
+        int i = 0;
         for (auto bounding : boundings)
         {
-            for (auto& renderStructure : vec)
+            ShadowCascadeIndexParams shadowCasterParams;
+            auto* cbuffer2 = Core::main->GetBufferManager()->GetBufferPool(BufferType::ShadowCascadeIndexParams)->Alloc(1);
+            shadowCasterParams.cascadeIndex = i;
+            memcpy(cbuffer2->ptr, &shadowCasterParams, sizeof(ShadowCascadeIndexParams));
+            Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(7, cbuffer2->GPUAdress);
+
+            Core::main->GetShadowBuffer()->RenderBegin(i);
+
+            for (auto& [shader, vec2] : targets)
             {
-                auto& [material, mesh, target] = renderStructure;
+                auto n = ResourceManager::main->GetKey(shader);
+                cmdList->SetPipelineState(shader->_pipelineState.Get());
+                for (auto& renderStructure : vec2)
+                {
+                    auto& [material, mesh, target] = renderStructure;
 
-                if (renderStructure.renderer->IsCulling() == true)
-                    if (bounding.Intersects(renderStructure.renderer->GetBound()) == false)
-                        continue;
+                    if (renderStructure.renderer->IsCulling() == true)
+                        if (bounding.Intersects(renderStructure.renderer->GetBound()) == false)
+                            continue;
 
-                SettingPrevData(renderStructure, RENDER_PASS::PASS::Shadow);
-                if (renderStructure.renderer->isInstancing() == false)
-                    InstancingManager::main->RenderNoInstancing(renderStructure);
-                else
-                    InstancingManager::main->AddObject(renderStructure);
+                    SettingPrevData(renderStructure, RENDER_PASS::PASS::Shadow);
+                    if (renderStructure.renderer->isInstancing() == false)
+                        InstancingManager::main->RenderNoInstancing(renderStructure);
+                    else
+                        InstancingManager::main->AddObject(renderStructure);
+                }
+                InstancingManager::main->Render();
             }
-            
-            InstancingManager::main->Render();
+            Core::main->GetShadowBuffer()->RenderEnd();
+            i++;
         }
+
     }
+
+
 }
 
 void Scene::UiPass(ComPtr<ID3D12GraphicsCommandList>& cmdList)
@@ -423,12 +439,14 @@ void Scene::GlobalSetting()
 
 void Scene::SettingPrevData(RenderObjectStrucutre& data, const RENDER_PASS::PASS& pass)
 {
-    data.material->SetTexture("_BakedGIMap", ResourceManager::main->_bakedGITexture);
+    if (data.material != nullptr)
+		data.material->SetTexture("_BakedGIMap", ResourceManager::main->_bakedGITexture);
     switch (pass)
     {
     case RENDER_PASS::Transparent:
 	    {
-        data.material->SetTexture("_ColorTexture", Core::main->GetRTReadTexture());
+        if (data.material != nullptr)
+			data.material->SetTexture("_ColorTexture", Core::main->GetRTReadTexture());
         break;
 	    }
     }
@@ -436,11 +454,56 @@ void Scene::SettingPrevData(RenderObjectStrucutre& data, const RENDER_PASS::PASS
 
 void Scene::DebugRendering()
 {
+    if (Gizmo::main->_flags == GizmoFlags::RenderPreview)
+    {
+        auto pos = CameraManager::main->GetActiveCamera()->GetCameraPos();
+        auto lock = CameraManager::main->GetActiveCamera()->GetCameraLook();
+        auto right = CameraManager::main->GetActiveCamera()->GetCameraRight();
+        auto up = CameraManager::main->GetActiveCamera()->GetCameraUp();
+        auto size = Vector3::One * 0.2f;
+
+        Gizmo::Image(Core::main->GetGBuffer()->GetTexture(0),
+            pos + lock + right * (-0.8 + (size.x + 0.02) * 0) + up * (0.4 + (size.y + 0.02) * 0),
+            -lock, Vector3::Up, size);
+        Gizmo::Image(Core::main->GetGBuffer()->GetTexture(1),
+            pos + lock + right * (-0.8 + (size.x + 0.02) * 1) + up * (0.4 + (size.y + 0.02) * 0),
+            -lock, Vector3::Up, size);
+        Gizmo::Image(Core::main->GetGBuffer()->GetTexture(2),
+            pos + lock + right * (-0.8 + (size.x + 0.02) * 2) + up * (0.4 + (size.y + 0.02) * 0),
+            -lock, Vector3::Up, size);
+        Gizmo::Image(Core::main->GetGBuffer()->GetTexture(3),
+            pos + lock + right * (-0.8 + (size.x + 0.02) * 3) + up * (0.4 + (size.y + 0.02) * 0),
+            -lock, Vector3::Up, size);
+        Gizmo::Image(Core::main->GetDSReadTexture(),
+            pos + lock + right * (-0.8 + (size.x + 0.02) * 4) + up * (0.4 + (size.y + 0.02) * 0),
+            -lock, Vector3::Up, size);
+        Gizmo::Image(ComputeManager::main->_pongTexture,
+            pos + lock + right * (-0.8 + (size.x + 0.02) * 5) + up * (0.4 + (size.y + 0.02) * 0),
+            -lock, Vector3::Up, size);
+        Gizmo::Image(ComputeManager::main->_ssaoRender->_ssaoTexture,
+            pos + lock + right * (-0.8 + (size.x + 0.02) * 6) + up * (0.4 + (size.y + 0.02) * 0),
+            -lock, Vector3::Up, size);
+        Gizmo::Image(ComputeManager::main->_pingTexture,
+            pos + lock + right * (-0.8 + (size.x + 0.02) * 7) + up * (0.4 + (size.y + 0.02) * 0),
+            -lock, Vector3::Up, size);
+        Gizmo::Image(Core::main->GetShadowBuffer()->GetDSTexture(0),
+            pos + lock + right * (-0.8 + (size.x + 0.02) * 0) + up * (0.4 - (size.y + 0.02) * 1),
+            -lock, Vector3::Up, size);
+        Gizmo::Image(Core::main->GetShadowBuffer()->GetDSTexture(1),
+            pos + lock + right * (-0.8 + (size.x + 0.02) * 1) + up * (0.4 - (size.y + 0.02) * 1),
+            -lock, Vector3::Up, size);
+        Gizmo::Image(Core::main->GetShadowBuffer()->GetDSTexture(2),
+            pos + lock + right * (-0.8 + (size.x + 0.02) * 2) + up * (0.4 - (size.y + 0.02) * 1),
+            -lock, Vector3::Up, size);
+        Gizmo::Image(Core::main->GetShadowBuffer()->GetDSTexture(3),
+            pos + lock + right * (-0.8 + (size.x + 0.02) * 3) + up * (0.4 - (size.y + 0.02) * 1),
+            -lock, Vector3::Up, size);
+    }
 
     auto& cmdList = Core::main->GetCmdList();
 
     { // forward
-        auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Debug)];
+    	auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Debug)];
 
         for(auto& [shader,vec] : targets)
         {
