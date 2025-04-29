@@ -27,6 +27,8 @@ public:
 	ShadowCasterParams _shadowCasterParams;
 	ShadowCascadeIndexParams _shadowCascadeIndexParams;
 
+
+
 	static unique_ptr<ShadowManager> main;
 	ShadowManager();
 	~ShadowManager();

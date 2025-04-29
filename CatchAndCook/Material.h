@@ -81,8 +81,8 @@ public:
 
 	std::shared_ptr<Material> Clone();
 
-	tableContainer _tableContainer;
-	tableContainer _tableLongContainer;
+	TableContainer _tableContainer;
+	TableContainer _tableLongContainer;
 
 	uint32 GetID() {
 		return _instanceID;

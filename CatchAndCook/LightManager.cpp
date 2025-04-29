@@ -39,7 +39,7 @@ void LightManager::SetData()
 	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(3, container->GPUAdress);
 	Core::main->GetCmdList()->SetComputeRootConstantBufferView(3, container->GPUAdress);
 
-	tableContainer tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
+	TableContainer tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
 	Core::main->GetBufferManager()->GetTable()->CopyHandle(tableContainer.CPUHandle, _strBuffer->GetSRVHandle(), 0);
 
 	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_LIGHTPARM_TABLE_INDEX, tableContainer.GPUHandle);

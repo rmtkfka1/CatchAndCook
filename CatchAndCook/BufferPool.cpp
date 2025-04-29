@@ -96,7 +96,7 @@ void CBufferPool::SetCBufferTable(CBufferContainer* cbuffer, int registerIndex)
 {
 	int index = registerIndex - CBV_ROOT_INDEX_COUNT;
 	assert(index >= 0);
-	tableContainer table = Core::main->GetBufferManager()->GetTable()->Alloc(CBV_TABLE_COUNT);
+	TableContainer table = Core::main->GetBufferManager()->GetTable()->Alloc(CBV_TABLE_COUNT);
 	if (cbufferTableHandle.ptr != NULL)
 		Core::main->GetBufferManager()->GetTable()->CopyHandles(table.CPUHandle, cbufferTableHandle, CBV_TABLE_COUNT);
 	cbufferTableHandle = table.CPUHandle;
@@ -307,11 +307,11 @@ void DescritporTable::Init(uint32 count)
 
 }
 
-tableContainer DescritporTable::Alloc(uint32 count)
+TableContainer DescritporTable::Alloc(uint32 count)
 {
 	if (count + _currentIndex >= _count) assert(false);
 
-	tableContainer container;
+	TableContainer container;
 
 	container.CPUHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(_cpuHandle, _currentIndex, _size);
 	container.GPUHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(_gpuHandle, _currentIndex, _size);

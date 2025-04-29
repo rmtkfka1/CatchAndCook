@@ -424,7 +424,7 @@ void Scene::GlobalSetting()
 
 
     auto& table = Core::main->GetBufferManager()->GetTable();
-    tableContainer container = Core::main->GetBufferManager()->GetTable()->Alloc(1);
+    TableContainer container = Core::main->GetBufferManager()->GetTable()->Alloc(1);
     table->CopyHandle(container.CPUHandle, Core::main->GetDSReadTexture()->GetSRVCpuHandle(), 0);
     cmdList->SetGraphicsRootDescriptorTable(GLOBAL_SRV_DEPTH_INDEX, container.GPUHandle);
 }

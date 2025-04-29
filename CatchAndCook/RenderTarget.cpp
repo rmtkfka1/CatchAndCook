@@ -191,7 +191,7 @@ void GBuffer::RenderEnd()
 
 	for(uint32 i = 0; i < _count; i++)
 	{
-		tableContainer container = table->Alloc(1);
+		TableContainer container = table->Alloc(1);
 		table->CopyHandle(container.CPUHandle,_textures[i]->GetSRVCpuHandle(),0);
 		list->SetGraphicsRootDescriptorTable(GLOBAL_SRV_POSITION_INDEX + i, container.GPUHandle);
 	}

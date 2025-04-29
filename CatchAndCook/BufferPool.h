@@ -94,7 +94,7 @@ private:
 *                                *
 **********************************/
 
-struct tableContainer
+struct TableContainer
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE CPUHandle;
 	D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle;
@@ -107,7 +107,7 @@ class DescritporTable
 
 public:
 	void Init(uint32 count);
-	tableContainer Alloc(uint32 count);
+	TableContainer Alloc(uint32 count);
 	void CopyHandle(D3D12_CPU_DESCRIPTOR_HANDLE& destHandle, D3D12_CPU_DESCRIPTOR_HANDLE& sourceHandle, uint32 index);
 	void CopyHandles(D3D12_CPU_DESCRIPTOR_HANDLE& destHandle, D3D12_CPU_DESCRIPTOR_HANDLE& sourceHandle, uint32 size);
 	void Reset();

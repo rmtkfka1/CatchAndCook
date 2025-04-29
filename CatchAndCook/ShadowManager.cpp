@@ -152,4 +152,5 @@ void ShadowManager::SetData(Material* material)
     auto* cbuffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::ShadowCasterParams)->Alloc(1);
     memcpy(cbuffer->ptr, &this->_shadowCasterParams, sizeof(ShadowCasterParams));
     Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(8, cbuffer->GPUAdress);
+    //GLOBAL_SRV_SHADOW_INDEX
 }

@@ -20,7 +20,7 @@ protected:
 	virtual void Resize()=0;
 
 protected:
-	tableContainer _tableContainer{};
+	TableContainer _tableContainer{};
 
 };
 
