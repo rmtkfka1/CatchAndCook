@@ -65,7 +65,7 @@ public:
 	vector<Vector3> _objectPositions;
 
 private:
-	static const int CellsPerPatch = 128;
+	static const int CellsPerPatch = 32;
 
 	shared_ptr<Mesh> _gridMesh{};
 	shared_ptr<Texture> _heightTexture{};

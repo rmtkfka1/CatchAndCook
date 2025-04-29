@@ -3,10 +3,10 @@
 #include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
 
-#define TessFactor 8
+#define TessFactor 18
 #define PI 3.14159f
-#define DIST_MAX 300.0f
-#define DIST_MIN 10.0f
+#define DIST_MAX 100.0f
+#define DIST_MIN 20.0f
 
 
 cbuffer TerrainDetailsParam : register(b10)
@@ -140,13 +140,14 @@ float CalculateTessLevel(float3 cameraWorldPos, float3 patchPos, float minDist, 
     //return 8;
     
     // 수직 거리 무시 (XZ 평면 기준 거리 계산)
-    float distance = length(float3(patchPos.x, 0, patchPos.z) - float3(cameraWorldPos.x, 0, cameraWorldPos.z));
+    float distance = length(float2(patchPos.x, patchPos.z) - float2(cameraWorldPos.x, cameraWorldPos.z));
 
     // 거리를 [minDist, maxDist] 구간으로 정규화
     float t = saturate((distance - minDist) / (maxDist - minDist));
+    float tSmooth = pow(t, 0.4f);
 
     // 거리가 가까울수록 maxLv, 멀수록 1.0
-    float tessLevel = lerp(maxLv, 1.0f, t);
+    float tessLevel = lerp(maxLv, 1.0f, tSmooth);
 
     // 결과를 보정 범위 안에 클램프
     return clamp(tessLevel, 1.0f, maxLv);
@@ -201,7 +202,7 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 3> quad, PatchConstOutput patchConst, float3 
     float2 uv = quad[0].uv * location.x + quad[1].uv * location.y + quad[2].uv * location.z;
     float2 uvTile = quad[0].uvTile * location.x + quad[1].uvTile * location.y + quad[2].uvTile * location.z;
     float3 pos = quad[0].pos * location.x + quad[1].pos * location.y + quad[2].pos * location.z;
-    float height = heightMap.SampleLevel(sampler_point, uv, 0).r;
+    float height = heightMap.SampleLevel(sampler_lerp_clamp, uv, 0).r;
     pos.y += height * fieldSize.y;
 
     //float texelSize = 1.0f / 4096.0f;

@@ -272,14 +272,14 @@ void Terrain::SetHeightMap(const std::wstring& rawPath, const std::wstring& pngP
     _heightRawSize = rawSize;
     _fieldSize = fieldSize;
 
-    cout << _fieldSize.x << " " << _fieldSize.y << " " << _fieldSize.z << endl;
+    cout << "Terrain Size : "<< _fieldSize.x << " " << _fieldSize.y << " " << _fieldSize.z << endl;
 
 #ifdef RECT_TERRAIN
-    _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(_fieldSize.x, _fieldSize.z, CellsPerPatch, CellsPerPatch);
+    _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(_fieldSize.x, _fieldSize.z, _fieldSize.x / 16, _fieldSize.y / 16);
     _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 #else
 
-    _gridMesh = GeoMetryHelper::LoadGripMesh(_fieldSize.x, _fieldSize.z, CellsPerPatch, CellsPerPatch);
+    _gridMesh = GeoMetryHelper::LoadGripMesh(_fieldSize.x, _fieldSize.z, _fieldSize.x / 10, _fieldSize.z / 10);
     _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 #endif // RECT_TERRAIN
 
