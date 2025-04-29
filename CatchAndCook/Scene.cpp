@@ -310,31 +310,21 @@ void Scene::DeferredPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
 void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 {
+
     { // Shadow
         auto light = LightManager::main->GetMainLight();
 		if (light == nullptr)
 			return;
 
-        auto boundings = ShadowManager::main->GetBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), light.get(), { 8,30,75,200 });
+        auto boundings = ShadowManager::main->GetBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), light.get(), { 6 , 20, 50, 120});
 
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
-
-        //cmdList->SetPipelineState(ResourceManager::main->Get<Shader>(L"ShadowCaster")->_pipelineState.Get());
-        //cmdList->SetPipelineState(ResourceManager::main->Get<Shader>(L"ShadowCaster_Skinned")->_pipelineState.Get());
-        //cmdList->SetPipelineState(ResourceManager::main->Get<Shader>(L"ShadowCaster_Instanced")->_pipelineState.Get());
 
 
 		ShadowManager::main->SetData(nullptr);
 
-
-
-        std::vector<RenderObjectStrucutre> vec;
-        vec.reserve(2048);
-        for (auto& [shader, vec2] : targets)
-            vec.insert(vec.end(), vec2.begin(), vec2.end());
-
         int i = 0;
-        for (auto bounding : boundings)
+        for (auto& bounding : boundings)
         {
             ShadowCascadeIndexParams shadowCasterParams;
             auto* cbuffer2 = Core::main->GetBufferManager()->GetBufferPool(BufferType::ShadowCascadeIndexParams)->Alloc(1);
@@ -343,31 +333,33 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
             Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(7, cbuffer2->GPUAdress);
 
             Core::main->GetShadowBuffer()->RenderBegin(i);
-
-            for (auto& [shader, vec2] : targets)
+            for (auto& [shader, vec] : targets)
             {
-                auto n = ResourceManager::main->GetKey(shader);
                 cmdList->SetPipelineState(shader->_pipelineState.Get());
-                for (auto& renderStructure : vec2)
+
+                for (auto& renderStructure : vec)
                 {
-                    auto& [material, mesh, target] = renderStructure;
 
                     if (renderStructure.renderer->IsCulling() == true)
                         if (bounding.Intersects(renderStructure.renderer->GetBound()) == false)
                             continue;
-
                     SettingPrevData(renderStructure, RENDER_PASS::PASS::Shadow);
+
                     if (renderStructure.renderer->isInstancing() == false)
+                    {
                         InstancingManager::main->RenderNoInstancing(renderStructure);
+                    }
                     else
+                    {
                         InstancingManager::main->AddObject(renderStructure);
+                    }
                 }
+
                 InstancingManager::main->Render();
             }
             Core::main->GetShadowBuffer()->RenderEnd();
             i++;
         }
-
     }
 
 

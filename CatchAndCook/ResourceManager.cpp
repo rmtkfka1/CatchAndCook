@@ -724,14 +724,17 @@ void ResourceManager::CreateDefaultMaterial()
 	_shadowCaster = std::make_shared<Material>();
 	_shadowCaster->SetShader(ResourceManager::main->Get<Shader>(L"ShadowCaster"));
 	_shadowCaster->SetPass(RENDER_PASS::Shadow);
+	//_shadowCaster->SetSetDataOff(true);
 
 	_shadowCaster_Skinned = std::make_shared<Material>();
 	_shadowCaster_Skinned->SetShader(ResourceManager::main->Get<Shader>(L"ShadowCaster_Skinned"));
 	_shadowCaster_Skinned->SetPass(RENDER_PASS::Shadow);
+	//_shadowCaster_Skinned->SetSetDataOff(true);
 
 	_shadowCaster_Instanced = std::make_shared<Material>();
 	_shadowCaster_Instanced->SetShader(ResourceManager::main->Get<Shader>(L"ShadowCaster_Instanced"));
 	_shadowCaster_Instanced->SetPass(RENDER_PASS::Shadow);
+	//_shadowCaster_Instanced->SetSetDataOff(true);
 }
 
 

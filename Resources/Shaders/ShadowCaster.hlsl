@@ -96,7 +96,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 }
 
 
-
+//[earlydepthstencil]
 float PS_Main(VS_OUT input) : SV_Depth
 {
     if (_BaseMap.Sample(sampler_point, input.uv).a < 0.5)

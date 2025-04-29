@@ -60,6 +60,8 @@ public:
 	bool GetPreDepthNormal() const { return _preDepthNormal; }
 	void SetShadowCasting(bool shadowCasting) { _shadowCasting = shadowCasting; }
 	bool GetShadowCasting() const { return _shadowCasting; }
+	void SetSetDataOff(bool setDataOff) { _setDataOff = setDataOff; }
+	bool GetSetDataOff() const { return _setDataOff; }
 
 	int GetPropertyInt(const std::string& name) { return _propertyInts[name]; };
 	void SetPropertyInt(const std::string& name, int data) { _propertyInts[name] = data; };
@@ -104,6 +106,8 @@ private:
 	bool _preDepthNormal = false;
 	bool _shadowCasting = true;
 	int _stencilIndex = 0;
+
+	bool _setDataOff = false;
 
 	uint32 _instanceID=0;
 	static uint32 _instanceIDGenator;

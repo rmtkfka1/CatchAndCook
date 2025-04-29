@@ -60,6 +60,8 @@ void Material::PushData()
 
 void Material::SetData()
 {
+	if (_setDataOff)
+		return;
 	//텍스쳐바인딩
 	AllocTextureTable();
 

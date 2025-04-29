@@ -78,7 +78,10 @@ void Terrain::Start()
                     auto newMaterial = std::make_shared<Material>();
                     newMaterial = material->Clone();
                     if (wstr::contains(ResourceManager::main->GetKey(material->GetShader()), L"Grass"))
+                    {
                         newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Grass"));
+                        newMaterial->SetShadowCasting(false);
+                    }
                     else
                         newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Instanced"));
                     newMaterial->SetPass(RENDER_PASS::Deferred);

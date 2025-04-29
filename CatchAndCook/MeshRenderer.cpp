@@ -49,7 +49,6 @@ void MeshRenderer::Start()
 
 	if (auto tagsComponent = GetOwner()->GetComponentWithParents<TagsComponent>())
 	{
-		auto tag = tagsComponent->GetOwner()->GetTag();
 		if (HasTag(tagsComponent->GetOwner()->GetTag(), GameObjectTag::NonInstancing))
 			SetInstancing(false);
 		if (HasTag(tagsComponent->GetOwner()->GetTag(), GameObjectTag::NonCulling))
