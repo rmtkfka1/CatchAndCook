@@ -48,7 +48,7 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float3 finalColor = (lerp(ShadowColor * albedoColor, albedoColor, lightColor.atten) + float4(lightColor.subColor * subIntensity, 0)).xyz;
 
 
-    float3 viewDir = normalize(cameraPos - worldPos.xyz);
+    float3 viewDir = normalize(cameraPos.xyz - worldPos.xyz);
 
     // Rim
     float N2L = saturate(dot(lightColor.direction, worldNormal));
