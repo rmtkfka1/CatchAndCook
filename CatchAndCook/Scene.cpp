@@ -356,10 +356,12 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
                     if (renderStructure.renderer->isInstancing() == false)
                     {
+                        g_debug_shadow_draw_call++;
                         InstancingManager::main->RenderNoInstancing(renderStructure);
                     }
                     else
                     {
+                        g_debug_shadow_draw_call++;
                         InstancingManager::main->AddObject(renderStructure);
                     }
                 }
