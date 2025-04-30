@@ -163,7 +163,9 @@ void MeshRenderer::RenderBegin()
 		auto& currentMesh = _mesh[ele.first];
 		SceneManager::main->GetCurrentScene()->AddRenderer(ele.second.get(), currentMesh.get(), this);
 	}
-	for (auto& ele : _shadowMaterials) {
+
+	for (auto& ele : _shadowMaterials) 
+	{
 		auto& currentMesh = _mesh[ele.first];
 		SceneManager::main->GetCurrentScene()->AddRenderer(ele.second.get(), currentMesh.get(), this);
 	}

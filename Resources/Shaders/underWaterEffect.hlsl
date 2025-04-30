@@ -3,11 +3,81 @@ SamplerState sampler_point : register(s1);
 SamplerState sampler_aniso4 : register(s2);
 SamplerState sampler_aniso8 : register(s3);
 SamplerState sampler_aniso16 : register(s4);
-SamplerState sampler_shadow : register(s5);
+SamplerComparisonState sampler_shadow : register(s5);
 SamplerState sampler_lerp_clamp : register(s6);
 
 #include "Light_b3.hlsl"
 
+cbuffer ShadowCasterParams : register(b9) 
+{
+    row_major matrix shadowViewMatrix[4];
+	row_major matrix shadowProjectionMatrix[4];
+	row_major matrix shadowVPMatrix[4];
+	row_major matrix shadowInvertViewMatrix[4];
+	row_major matrix shadowInvertProjectionMatrix[4];
+	row_major matrix shadowInvertVPMatrix[4];
+
+	unsigned int cascadeCount = 1;
+	float3 padding_shadow0;
+    float4 cascadeDistance;
+};
+
+Texture2D ShadowTexture[4] : register(t100);
+
+static const int shadowTexelSize = 2048;
+
+struct ShadowCascadeIndexParams
+{
+	unsigned int cascadeIndex;
+	float3 padding2;
+};
+
+
+
+void ComputeCascadeShadowUVs(float3 worldPos, out float3 uvOut[4])
+{
+    float4 worldPosH = float4(worldPos, 1.0f);
+    uvOut[0] = float3(0, 0, 1);
+    uvOut[1] = float3(0, 0, 1);
+    uvOut[2] = float3(0, 0, 1);
+    uvOut[3] = float3(0, 0, 1);
+    
+    [unroll]
+    for (uint i = 0; i < cascadeCount; ++i)
+    {
+        // 1) world → 라이트 클립 공간 (NDC)
+        float4 clipPos = mul(worldPosH, shadowVPMatrix[i]);
+        // - bias
+        // 2) 퍼스펙티브 디바이드 (clip → ndc)
+        float invW = 1.0f / clipPos.w;
+        float3 ndc = clipPos.xyz * invW; // ndc.x,y ∈ [-1,1], ndc.z ∈ [0,1]
+
+        // 3) ndc → 텍스처 UV (0..1) + Y축 뒤집기
+        uvOut[i].x = ndc.x * 0.5f + 0.5f;
+        uvOut[i].y = (-ndc.y) * 0.5f + 0.5f;
+        uvOut[i].z = ndc.z;
+    }
+}
+
+float ComputeCascadeShadowAtten(in float3 uvOut[4], float viewDepth)
+{
+    const float bias = 1.0f * (0.005 / shadowTexelSize);
+
+    [unroll]
+    for (uint i = 0; i < cascadeCount; ++i)
+    {
+        float3 uvw = uvOut[i];
+        float2 uv = uvw.xy;
+
+        if (viewDepth <= cascadeDistance[i] && uv.x >= 0.0f && uv.y >= 0.0f && uv.x <= 1.0f && uv.y <= 1.0f)
+        {
+            return ShadowTexture[i].SampleCmpLevelZero(sampler_shadow, uv, uvw.z - bias);
+        }
+        
+    }
+    
+    return 1.0f;
+}
 
 cbuffer GLOBAL_DATA : register(b0)
 {
@@ -52,7 +122,6 @@ Texture2D<float4> PositionTexture : register(t2);
 Texture2D<float4> NormalTexture : register(t3);
 Texture2D<float4> MAOTexture : register(t4);
 
-
 float3 ProjToView(float2 texCoord)
 {
     float4 posProj;
@@ -91,12 +160,12 @@ void CS_Main(uint3 id : SV_DispatchThreadID)
 
     LightingResult light = ComputeLightColor(worldPos, normal);
     float distFogNorm = saturate((viewPos.z - g_fogMin) / (g_fogMax - g_fogMin));
-    
     float swAtten = lerp(light.subWaterAtten, 1.0f, distFogNorm);
     
+    float3 uvz[4];
+    ComputeCascadeShadowUVs(worldPos.xyz, uvz);
+    light.atten *= ComputeCascadeShadowAtten(uvz, mul(float4(worldPos.xyz, 1), ViewMatrix).z);
     
-    //float3 uvz[4];
-    //ComputeCascadeShadowUVs(worldPos.xyz, uvz);
     float3 underCol = lerp(g_underWaterColor * albedo, albedo, light.atten);
 
     float3 litColor = underCol + light.subColor;

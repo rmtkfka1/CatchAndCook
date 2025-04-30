@@ -141,6 +141,8 @@ void Terrain::Start()
                 };
 
                 renderer->SetMaterials(newMaterials);
+                renderer->SetSpecialMaterials();
+                renderer->AddCbufferSetter(GetCast<Terrain>());
             }
         }
     }

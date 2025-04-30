@@ -492,7 +492,7 @@ void UnderWaterEffect::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int 
 	auto& table = Core::main->GetBufferManager()->GetTable();
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
 	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-	_tableContainer = table->Alloc(8);
+	_tableContainer = table->Alloc(10);
 
 	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
 	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
@@ -514,7 +514,6 @@ void UnderWaterEffect::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int 
 	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
 	table->CopyHandle(_tableContainer.CPUHandle, PositionTexture->GetSRVCpuHandle(), 2);
 	table->CopyHandle(_tableContainer.CPUHandle, NormalTexture->GetSRVCpuHandle(), 3);
-
 	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 5);
 
 	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);

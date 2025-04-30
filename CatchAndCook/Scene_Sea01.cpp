@@ -15,6 +15,11 @@
 #include "SkinnedMeshRenderer.h"
 #include "Profiler.h"
 #include "ComputeManager.h"
+#include "ShadowManager.h"
+#include "TerrainManager.h"
+#include "CameraManager.h"
+#include "InstancingManager.h"
+#include "Gizmo.h"
 void Scene_Sea01::Init()
 {
 	Scene::Init();
@@ -254,7 +259,7 @@ void Scene_Sea01::Rendering()
 {
 	GlobalSetting();
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	//Gizmo::Width(0.5);
 	//Gizmo::Frustum(CameraManager::main->GetCamera(CameraType::ComponentCamera)->_boundingFrsutum);
 	//Gizmo::WidthRollBack();
@@ -271,21 +276,22 @@ void Scene_Sea01::Rendering()
 	//}
 
 	auto light = LightManager::main->GetMainLight();
-	auto a = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), light.get(), { 6, 20, 65, 200 });
-	for (auto b : a)
+	//auto a = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::SeaCamera).get(), light.get(), { 6, 20, 65, 200 });
+	auto a = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::SeaCamera).get(), light.get(), { 350,2000 });
+	for (auto& b : a)
 	{
-		Gizmo::Width(0.5);
+		Gizmo::Width(5.0f);
 		Gizmo::Box(b, Vector4(0, 1, 0, 1));
 		Gizmo::WidthRollBack();
 	}
-#endif
+//#endif
 
 	auto& cmdList = Core::main->GetCmdList();
 	Core::main->GetRenderTarget()->ClearDepth();
 
-	//Profiler::Set("PASS : Shadow", BlockTag::CPU);
-	//ShadowPass(cmdList);
-	//Profiler::Fin();
+	Profiler::Set("PASS : Shadow", BlockTag::CPU);
+	ShadowPass(cmdList);
+	Profiler::Fin();
 
 	Profiler::Set("PASS : Deferred", BlockTag::CPU);
 	DeferredPass(cmdList);
@@ -299,9 +305,9 @@ void Scene_Sea01::Rendering()
 	ForwardPass(cmdList);
 	Profiler::Fin();
 
-	Profiler::Set("PASS : Transparent", BlockTag::CPU);
-	TransparentPass(cmdList); // Position,
-	Profiler::Fin();
+	//Profiler::Set("PASS : Transparent", BlockTag::CPU);
+	//TransparentPass(cmdList); // Position,
+	//Profiler::Fin();
 
 	Profiler::Set("PASS : Compute", BlockTag::CPU);
 	ComputePass(cmdList);
@@ -325,4 +331,70 @@ void Scene_Sea01::RenderEnd()
 void Scene_Sea01::Finish()
 {
 	Scene::Finish();
+}
+
+void Scene_Sea01::ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	{
+		auto light = LightManager::main->GetMainLight();
+		if (light == nullptr)
+		{
+			cout << "없음" << endl;
+			return;
+		}
+
+		auto boundings = ShadowManager::main->CalculateBounds(CameraManager::main->GetActiveCamera().get(), light.get(), { 350,2000 });
+
+		auto lastShadowPos = ShadowManager::main->_lightTransform[ShadowManager::main->_lightTransform.size() - 1];
+		TerrainManager::main->CullingInstancing(lastShadowPos.first, lastShadowPos.second);
+
+		auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
+
+		ShadowManager::main->SetData(nullptr);
+		ShadowManager::main->RenderBegin();
+
+		int i = 0;
+
+		for (auto& bounding : boundings)
+		{
+			ShadowCascadeIndexParams shadowCasterParams;
+
+			auto* cbuffer2 = Core::main->GetBufferManager()->GetBufferPool(BufferType::ShadowCascadeIndexParams)->Alloc(1);
+			shadowCasterParams.cascadeIndex = i;
+			memcpy(cbuffer2->ptr, &shadowCasterParams, sizeof(ShadowCascadeIndexParams));
+			Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(7, cbuffer2->GPUAdress);
+			Core::main->GetShadowBuffer()->RenderBegin(i);
+
+			for (auto& [shader, vec] : targets)
+			{
+				cmdList->SetPipelineState(shader->_pipelineState.Get());
+
+				for (auto& renderStructure : vec)
+				{
+
+					if (renderStructure.renderer->IsCulling() == true)
+						if (bounding.Intersects(renderStructure.renderer->GetBound()) == false)
+							continue;
+
+					SettingPrevData(renderStructure, RENDER_PASS::PASS::Shadow);
+
+					if (renderStructure.renderer->isInstancing() == false)
+					{
+						InstancingManager::main->RenderNoInstancing(renderStructure);
+					}
+					else
+					{
+						InstancingManager::main->AddObject(renderStructure);
+					}
+				}
+
+				InstancingManager::main->Render();
+			}
+
+			Core::main->GetShadowBuffer()->RenderEnd();
+			i++;
+		}
+
+		ShadowManager::main->RenderEnd();
+	}
 }

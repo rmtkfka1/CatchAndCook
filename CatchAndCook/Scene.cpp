@@ -334,11 +334,13 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
         for (auto& bounding : boundings)
         {
             ShadowCascadeIndexParams shadowCasterParams;
+
             auto* cbuffer2 = Core::main->GetBufferManager()->GetBufferPool(BufferType::ShadowCascadeIndexParams)->Alloc(1);
             shadowCasterParams.cascadeIndex = i;
             memcpy(cbuffer2->ptr, &shadowCasterParams, sizeof(ShadowCascadeIndexParams));
             Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(7, cbuffer2->GPUAdress);
             Core::main->GetShadowBuffer()->RenderBegin(i);
+
             for (auto& [shader, vec] : targets)
             {
                 cmdList->SetPipelineState(shader->_pipelineState.Get());

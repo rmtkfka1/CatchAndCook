@@ -207,6 +207,21 @@ void RootSignature::InitComputeRootSignature()
 	samplerDesc[1].RegisterSpace = 0;
 	samplerDesc[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
+	samplerDesc[6].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc[6].AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	samplerDesc[6].AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	samplerDesc[6].AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	samplerDesc[6].MipLODBias = 0;
+	samplerDesc[6].MaxAnisotropy = 0;
+	samplerDesc[6].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+	samplerDesc[6].BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
+	samplerDesc[6].MinLOD = 0.0f;
+	samplerDesc[6].MaxLOD = D3D12_FLOAT32_MAX;
+	samplerDesc[6].ShaderRegister = 6;
+	samplerDesc[6].RegisterSpace = 0;
+	samplerDesc[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+
 	samplerDesc[2].Filter = D3D12_FILTER_ANISOTROPIC;
 	samplerDesc[2].MinLOD = 0.0f;
 	samplerDesc[2].MaxLOD = D3D12_FLOAT32_MAX;
@@ -263,27 +278,14 @@ void RootSignature::InitComputeRootSignature()
 	samplerDesc[5].RegisterSpace = 0;
 	samplerDesc[5].ShaderRegister = 5;
 
-	samplerDesc[6].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
-	samplerDesc[6].AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-	samplerDesc[6].AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-	samplerDesc[6].AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-	samplerDesc[6].MipLODBias = 0;
-	samplerDesc[6].MaxAnisotropy = 0;
-	samplerDesc[6].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
-	samplerDesc[6].BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
-	samplerDesc[6].MinLOD = 0.0f;
-	samplerDesc[6].MaxLOD = D3D12_FLOAT32_MAX;
-	samplerDesc[6].ShaderRegister = 6;
-	samplerDesc[6].RegisterSpace = 0;
-	samplerDesc[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
-
-	array<CD3DX12_ROOT_PARAMETER,12> param;
+	array<CD3DX12_ROOT_PARAMETER,13> param;
 
 	for(int i=0; i< 10; i++)
 	{
 		param[i].InitAsConstantBufferView(i);
 	}
+
 
 	CD3DX12_DESCRIPTOR_RANGE ranges[] =
 	{
@@ -292,9 +294,11 @@ void RootSignature::InitComputeRootSignature()
 	};
 
 	auto G_LIGHT_RANGE = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 16);
+	auto G_SHADOW_SRV_RANGE = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 4, 100);
 
 	param[10].InitAsDescriptorTable(_countof(ranges),ranges);
 	param[11].InitAsDescriptorTable(1,&G_LIGHT_RANGE);
+	param[12].InitAsDescriptorTable(1, &G_SHADOW_SRV_RANGE);
 	
 	// 루트 서명 설정
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
