@@ -71,8 +71,8 @@ private:
 	float _pitch = 0;
 	float _roll = 0;
 
-	const float _moveForce = 150.0f;
-	const float _maxSpeed = 300.0f;
+	const float _moveForce = 300.0f;
+	const float _maxSpeed = 900.0f;
 	const float _resistance = 2.5f;
 	const float _playerRadius = 10.0f;
 

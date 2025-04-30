@@ -87,13 +87,11 @@ void CS_Main(uint3 id : SV_DispatchThreadID)
     float3 worldPos = PositionTexture.SampleLevel(sampler_point, uv, 0).xyz;
     float3 viewPos = ProjToView(tex);
 
-    // 1) 거리 기반 fogFactor (멀수록 1)
     float fogFactor = CalculateFogFactor(viewPos);
 
-    // 2) 라이트 계산 & 뎁스 노멀라이즈
     LightingResult light = ComputeLightColor(worldPos, normal);
     float distFogNorm = saturate((viewPos.z - g_fogMin) / (g_fogMax - g_fogMin));
-
+    
     float swAtten = lerp(light.subWaterAtten, 1.0f, distFogNorm);
     
     float3 underCol = lerp(g_underWaterColor * albedo, albedo, light.atten);

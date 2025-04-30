@@ -55,7 +55,7 @@ void ResourceManager::CreateDefaultShaderKSH()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 
 		info.renderTargetCount = 4;
 

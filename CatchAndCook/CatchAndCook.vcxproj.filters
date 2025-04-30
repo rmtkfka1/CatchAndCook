@@ -364,6 +364,7 @@
     <ClCompile Include="EffectComponent.cpp">
       <Filter>03.Component</Filter>
     </ClCompile>
+    <ClCompile Include="SeaGrassComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -678,6 +679,7 @@
     </ClInclude>
     <ClInclude Include="EffectComponent.h" />
     <ClInclude Include="ObjectSettingComponent.h" />
+    <ClInclude Include="SeaGrassComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -702,9 +704,6 @@
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Global_b0.hlsl">
-      <Filter>998.HLSL\Module</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\Skinned_b5.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Transform_b1.hlsl">
@@ -845,5 +844,14 @@
     <FxCompile Include="..\Resources\Shaders\ForwardFunction.hlsl">
       <Filter>998.HLSL\Graphics\JIN</Filter>
     </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Skinned_t32.hlsl" />
+    <FxCompile Include="..\Resources\Shaders\DeferredSeaGrass.hlsl">
+      <Filter>998.HLSL\Graphics\KSH</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\Direct12-Project-Scene\Assets\Models\Objects\Sea\Terrian_Seed\New Folder\2023-11-23T113343Z.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>
