@@ -202,10 +202,8 @@ std::vector<BoundingOrientedBox> ShadowManager::CalculateBounds(Camera* camera, 
         auto params = camera->GetCameraParams();
 
         float n = params.cameraFrustumData.z;
-        float f = params.cameraFrustumData.w;
-
+      
         std::vector<float> dis;
-        dis.reserve(distances.size() + 1);
         dis.push_back(n);
         dis.insert(dis.end(), distances.begin(), distances.end());
 

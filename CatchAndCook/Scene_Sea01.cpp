@@ -28,7 +28,7 @@ void Scene_Sea01::Init()
 
 	std::shared_ptr<Light> light = std::make_shared<Light>();
 	light->onOff = 1;
-	light->direction = vec3(-1.0f, -1.0f, 1.0f);
+	light->direction = vec3(-0.122f, -0.732f, 0.299f);
 	light->position = vec3(0, 1000.0f, 0);
 	light->direction.Normalize();
 

@@ -1,3 +1,8 @@
+
+#include "Light_b3.hlsl"
+
+#define SHADOW_ON
+
 SamplerState sampler_lerp : register(s0);
 SamplerState sampler_point : register(s1);
 SamplerState sampler_aniso4 : register(s2);
@@ -6,7 +11,6 @@ SamplerState sampler_aniso16 : register(s4);
 SamplerComparisonState sampler_shadow : register(s5);
 SamplerState sampler_lerp_clamp : register(s6);
 
-#include "Light_b3.hlsl"
 
 cbuffer ShadowCasterParams : register(b9) 
 {
@@ -67,11 +71,10 @@ float ComputeCascadeShadowAtten(in float3 uvOut[4], float viewDepth)
     for (uint i = 0; i < cascadeCount; ++i)
     {
         float3 uvw = uvOut[i];
-        float2 uv = uvw.xy;
 
-        if (viewDepth <= cascadeDistance[i] && uv.x >= 0.0f && uv.y >= 0.0f && uv.x <= 1.0f && uv.y <= 1.0f)
+        if (viewDepth <= cascadeDistance[i] && uvw.x >= 0.0f && uvw.y >= 0.0f && uvw.x <= 1.0f && uvw.y <= 1.0f)
         {
-            return ShadowTexture[i].SampleCmpLevelZero(sampler_shadow, uv, uvw.z - bias);
+            return ShadowTexture[i].SampleCmpLevelZero(sampler_shadow, uvw.xy, uvw.z - bias);
         }
         
     }
@@ -162,9 +165,11 @@ void CS_Main(uint3 id : SV_DispatchThreadID)
     float distFogNorm = saturate((viewPos.z - g_fogMin) / (g_fogMax - g_fogMin));
     float swAtten = lerp(light.subWaterAtten, 1.0f, distFogNorm);
     
+#ifdef SHADOW_ON
     float3 uvz[4];
     ComputeCascadeShadowUVs(worldPos.xyz, uvz);
     light.atten *= ComputeCascadeShadowAtten(uvz, mul(float4(worldPos.xyz, 1), ViewMatrix).z);
+#endif
     
     float3 underCol = lerp(g_underWaterColor * albedo, albedo, light.atten);
 
