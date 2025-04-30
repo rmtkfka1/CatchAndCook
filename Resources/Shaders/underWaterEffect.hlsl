@@ -62,7 +62,7 @@ void ComputeCascadeShadowUVs(float3 worldPos, out float3 uvOut[4])
 float ComputeCascadeShadowAtten(in float3 uvOut[4], float viewDepth)
 {
     const float bias = 1.0f * (0.005 / shadowTexelSize);
-
+    
     [unroll]
     for (uint i = 0; i < cascadeCount; ++i)
     {

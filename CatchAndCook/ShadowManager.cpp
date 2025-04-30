@@ -144,7 +144,7 @@ std::vector<BoundingOrientedBox> ShadowManager::CalculateBounds(Camera* camera, 
             Vector3 lightDir = light->direction;
             lightDir.Normalize();
             Vector3 lightUp = Vector3::UnitY; // 필요하면 카메라 상향으로 조정
-            Vector3 lightPos = -lightDir * 1000.0f;
+            Vector3 lightPos = -lightDir * 500.0f;
             Matrix lightView = Matrix::CreateLookAt(lightPos, Vector3::Zero, lightUp);
             Matrix invLightView = lightView.Invert();
 
@@ -172,12 +172,14 @@ std::vector<BoundingOrientedBox> ShadowManager::CalculateBounds(Camera* camera, 
             BoundingOrientedBox obb(centerLS, extentsLS, Quaternion::Identity);
             obb.Transform(obb, invLightView);
 
+
             Vector3 centerWS = Vector3::Transform(centerLS, invLightView);
-            Vector3 lightPosWS = centerWS - lightDir * 2000;
+            Vector3 lightPosWS = centerWS - lightDir * 1000;
             lightView = Matrix::CreateLookAt(lightPosWS, centerWS, lightUp);
             invLightView = lightView.Invert();
 
-            auto projMat = Matrix::CreateOrthographic(extentsLS.x * 2, extentsLS.y * 2, 0.5, 6000);
+
+            auto projMat = Matrix::CreateOrthographic(extentsLS.x * 2, extentsLS.y * 2, 0.5, 2000);
             Matrix invProjMat = projMat.Invert();
 
             this->_shadowCasterParams.lightViewMatrix[i] = lightView;
@@ -238,7 +240,7 @@ std::vector<BoundingOrientedBox> ShadowManager::CalculateBounds(Camera* camera, 
             Vector3 lightDir = light->direction;
             lightDir.Normalize();
             Vector3 lightUp = Vector3::UnitY; // 필요하면 카메라 상향으로 조정
-            Vector3 lightPos = -lightDir * 500.0f;
+            Vector3 lightPos = -lightDir * 5000.0f;
             Matrix lightView = Matrix::CreateLookAt(lightPos, Vector3::Zero, lightUp);
             Matrix invLightView = lightView.Invert();
 
@@ -260,20 +262,19 @@ std::vector<BoundingOrientedBox> ShadowManager::CalculateBounds(Camera* camera, 
             extentsLS.y = extentsLS.x;
 
             float angle = (1 - std::abs(lightDir.Dot(Vector3::Down)));
-            extentsLS.z += 40 * angle;
-            centerLS.z -= (40 * angle) / 2;
-
+            extentsLS.z += 5000;
+   
             BoundingOrientedBox obb(centerLS, extentsLS, Quaternion::Identity);
             obb.Transform(obb, invLightView);
 
 
             Vector3 centerWS = Vector3::Transform(centerLS, invLightView);
-            Vector3 lightPosWS = centerWS - lightDir * 1000;
+            Vector3 lightPosWS = centerWS - lightDir * 5000;
             lightView = Matrix::CreateLookAt(lightPosWS, centerWS, lightUp);
             invLightView = lightView.Invert();
 
 
-            auto projMat = Matrix::CreateOrthographic(extentsLS.x * 2, extentsLS.y * 2, 0.5, 2000);
+            auto projMat = Matrix::CreateOrthographic(extentsLS.x * 2, extentsLS.y * 2, 0.5, 10000);
             Matrix invProjMat = projMat.Invert();
 
             this->_shadowCasterParams.lightViewMatrix[i] = lightView;

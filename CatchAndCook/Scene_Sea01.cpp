@@ -277,7 +277,7 @@ void Scene_Sea01::Rendering()
 
 	auto light = LightManager::main->GetMainLight();
 	//auto a = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::SeaCamera).get(), light.get(), { 6, 20, 65, 200 });
-	auto a = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::SeaCamera).get(), light.get(), { 350,2000 });
+	auto a = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::SeaCamera).get(), light.get(), { 3000 });
 	for (auto& b : a)
 	{
 		Gizmo::Width(5.0f);
@@ -343,7 +343,7 @@ void Scene_Sea01::ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& 
 			return;
 		}
 
-		auto boundings = ShadowManager::main->CalculateBounds(CameraManager::main->GetActiveCamera().get(), light.get(), { 350,2000 });
+		auto boundings = ShadowManager::main->CalculateBounds(CameraManager::main->GetActiveCamera().get(), light.get(), { 3000 });
 
 		auto lastShadowPos = ShadowManager::main->_lightTransform[ShadowManager::main->_lightTransform.size() - 1];
 		TerrainManager::main->CullingInstancing(lastShadowPos.first, lastShadowPos.second);
