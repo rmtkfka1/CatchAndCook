@@ -114,7 +114,7 @@ void ComputePointLight(Light L, LightMateiral mat, float3 pos, float3 normal, fl
     LightStrength *= att;
     lightingResult.subColor += LightStrength;
     lightingResult.subAtten += att * ndotl;
-    lightingResult.subWaterAtten = max(lightingResult.subWaterAtten, att);
+    lightingResult.subWaterAtten *= (1 - att);
     //return BlinnPhong(LightStrength, lightVec, normal, toEye, mat);
     //return mat.diffuse * LightStrength;
     
@@ -160,6 +160,7 @@ LightingResult ComputeLightColor(float3 worldPos, float3 WorldNomral)
     float3 toEye = normalize(g_eyeWorld - worldPos.xyz);
 
     LightingResult result = (LightingResult) 0;
+    result.subWaterAtten = 1.0f;
     //[unroll]
     [loop]
     for (int i = 0; i < g_lightCount; ++i)
