@@ -124,7 +124,8 @@ std::vector<BoundingOrientedBox> ShadowManager::CalculateBounds(Camera* camera, 
     std::vector<BoundingOrientedBox> bounds;
     frustums.reserve(dis.size());
     bounds.reserve(dis.size());
-    _lightTransform.reserve(dis.size());
+
+    _lightTransform.clear();
 
     for (int i = 0; i < dis.size() - 1; i++)
     {
@@ -220,7 +221,7 @@ std::vector<BoundingOrientedBox> ShadowManager::SeaCalculateBounds(Camera* camer
     std::vector<BoundingOrientedBox> bounds;
     frustums.reserve(dis.size());
     bounds.reserve(dis.size());
-    _lightTransform.reserve(dis.size());
+    _lightTransform.clear();
 
     for (int i = 0; i < dis.size() - 1; i++)
     {
