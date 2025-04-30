@@ -18,7 +18,7 @@ cbuffer ShadowCascadeIndexParams : register(b7) {
 };
 
 
-#define TessFactor 8
+#define TessFactor 18
 #define PI 3.14159f
 #define DIST_MAX 100.0f
 #define DIST_MIN 20.0f

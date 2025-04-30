@@ -40,6 +40,10 @@ float4 PS_Main(VS_OUT input) : SV_Target
     LightingResult lightColor = ComputeLightColor(worldPos.xyz, worldNormal.xyz);
     float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), worldNormal) * 0.5 + 0.5));
 
+    float3 uvz[4];
+	ComputeCascadeShadowUVs(worldPos.xyz, uvz);
+    lightColor.atten *= ComputeCascadeShadowAtten(uvz, mul(float4(worldPos.xyz, 1), ViewMatrix).z).x;
+
     float subIntensity =  lerp(1, 0.3, clamp(0, 1, lightColor.intensity));
     float3 finalColor = (lerp(ShadowColor * albedoColor, albedoColor, lightColor.atten) + float4(lightColor.subColor * subIntensity, 0)).xyz;
 
@@ -63,11 +67,6 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float spec = saturate((NdotH - roughness) * invDenom) * smoothness * lightColor.intensity;
     finalColor = lerp(finalColor, pow(finalColor, 2), MAOEColor.r);
 
-
-
-    float3 uvz[4];
-	ComputeCascadeShadowUVs(worldPos.xyz, uvz);
-    finalColor = float4(ComputeCascadeShadowAtten(uvz, mul(float4(worldPos.xyz, 1), ViewMatrix).z).xxx * 0.9, 1);
 
 	// 최종 스펙큘러
 

@@ -625,6 +625,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		info.cullingType = CullingType::NONE;
 		info._depthOnly = true;
 
+		info.depthBias = 250;
 		info.slopeScaledDepthBias = 2.0;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
@@ -641,6 +642,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		info.cullingType = CullingType::NONE;
 		info._depthOnly = true;
 
+		info.depthBias = 250;
 		info.slopeScaledDepthBias = 2.0;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
@@ -659,6 +661,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		info._depthOnly = true;
 		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
+		info.depthBias = 250;
 		info.slopeScaledDepthBias = 2.0;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
@@ -677,7 +680,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		info.cullingType = CullingType::NONE;
 		info._depthOnly = true;
 
-		info.depthBias = 500;
+		info.depthBias = 250;
 		info.slopeScaledDepthBias = 2.0;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
