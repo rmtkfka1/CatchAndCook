@@ -45,7 +45,7 @@ public:
 
 	std::vector<BoundingFrustum> GetFrustums(Camera* camera, Light* light, const std::vector<float>& distances);
 	std::vector<BoundingOrientedBox> CalculateBounds(Camera* camera, Light* light, const std::vector<float>& distances);
-
+	std::vector<BoundingOrientedBox> SeaCalculateBounds(Camera* camera, Light* light, const std::vector<float>& distances);
 	void SetData(Material* material) override;
 };
 
