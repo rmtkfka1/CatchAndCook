@@ -74,6 +74,8 @@ private:
 	Vector2 _heightTextureSize;
 
 	shared_ptr<Material> _material;
+	shared_ptr<Material> _terrainMaterial;
+
 	vector<weak_ptr<GameObject>> _instancesObject;
 	vector<weak_ptr<MeshRenderer>> _Grasses;
 	vector<vector<Instance_Transform>> _instanceDatas;

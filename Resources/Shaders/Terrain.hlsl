@@ -2,6 +2,7 @@
 #include "Transform_b1.hlsl"
 #include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
+#include "ShadowReceive_b6.hlsl"
 
 #define TessFactor 18
 #define PI 3.14159f
@@ -223,6 +224,8 @@ DS_OUT DS_Main(OutputPatch<HS_OUT, 3> quad, PatchConstOutput patchConst, float3 
     dout.uv = uv;
     dout.uvTile = uvTile;
     dout.normal = normal;
+
+
     //dout.tangent = normalize(cross(float3(1,0,0), normal));
     return dout;
 }
@@ -389,8 +392,10 @@ PS_OUT PS_Main(DS_OUT input)
    //     }
    // }
 
-   
+
+
     output.color = finalColor;
+
     //normal
 
     //normal = normalize(float3(normal.xy * 0.08f, 1));

@@ -24,6 +24,26 @@ void ShadowManager::SetShadowCasterParams()
 	
 }
 
+void ShadowManager::RenderBegin()
+{
+
+}
+
+void ShadowManager::RenderEnd()
+{
+    auto& list = Core::main->GetCmdList();
+    _shadowTable = Core::main->GetBufferManager()->GetTable()->Alloc(4);
+
+    auto& buffer = Core::main->GetShadowBuffer();
+    for (int i=0;i< _cascadeCount;i++)
+    {
+        auto& texture = buffer->GetDSTexture(i);
+        Core::main->GetBufferManager()->GetTable()->CopyHandle(_shadowTable.CPUHandle, texture->GetSRVCpuHandle(), i);
+    }
+
+    list->SetGraphicsRootDescriptorTable(GLOBAL_SRV_SHADOW_INDEX, _shadowTable.GPUHandle);
+}
+
 
 std::vector<BoundingFrustum> ShadowManager::GetFrustums(Camera* camera, Light* light, const std::vector<float>& distances)
 {
@@ -76,6 +96,11 @@ std::vector<BoundingOrientedBox> ShadowManager::GetBounds(Camera* camera, Light*
 
     this->_shadowCasterParams.cascadeCount = distances.size();
 
+    this->_shadowCasterParams.cascadeDistance = Vector4(
+        distances.size() >= 1 ? distances[0] : 0,
+        distances.size() >= 2 ? distances[1] : 0,
+        distances.size() >= 3 ? distances[2] : 0,
+        distances.size() >= 4 ? distances[3] : 0);
 
 	std::vector<BoundingFrustum> frustums;
     std::vector<BoundingOrientedBox> bounds;
@@ -151,6 +176,6 @@ void ShadowManager::SetData(Material* material)
 {
     auto* cbuffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::ShadowCasterParams)->Alloc(1);
     memcpy(cbuffer->ptr, &this->_shadowCasterParams, sizeof(ShadowCasterParams));
-    Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(8, cbuffer->GPUAdress);
+    Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(6, cbuffer->GPUAdress);
     //GLOBAL_SRV_SHADOW_INDEX
 }

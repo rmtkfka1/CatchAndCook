@@ -27,7 +27,7 @@ void BufferManager::Init()
 	for (int i = 0; i < MAX_FRAME_COUNT; ++i)
 	{
 		_table[i] = make_shared<DescritporTable>();
-		_table[i]->Init(60000);
+		_table[i]->Init(100000);
 	}
 
 	for(int i=0; i<MAX_FRAME_COUNT; ++i)

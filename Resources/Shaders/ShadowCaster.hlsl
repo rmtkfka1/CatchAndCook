@@ -4,24 +4,13 @@
 #include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
 #include "Skinned_t32.hlsl"
+#include "ShadowReceive_b6.hlsl"
 
 //cbuffer DefaultMaterialParam : register(b7)
 //{
 //    float4 color = float4(1, 1, 1, 1);
 //    float4 _baseMapST = float4(1, 1, 1, 1);
 //};
-
-cbuffer ShadowCasterParams : register(b8) {
-    row_major matrix shadowViewMatrix[4];
-	row_major matrix shadowProjectionMatrix[4];
-	row_major matrix shadowVPMatrix[4];
-	row_major matrix shadowInvertViewMatrix[4];
-	row_major matrix shadowInvertProjectionMatrix[4];
-	row_major matrix shadowInvertVPMatrix[4];
-
-	unsigned int cascadeCount = 1;
-	float3 padding;
-};
 
 cbuffer ShadowCascadeIndexParams : register(b7) {
 	unsigned int cascadeIndex = 1;
@@ -99,8 +88,8 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 //[earlydepthstencil]
 float PS_Main(VS_OUT input) : SV_Depth
 {
-    if (_BaseMap.Sample(sampler_point, input.uv).a < 0.5)
+    if (_BaseMap.SampleLevel(sampler_lerp, input.uv, 0).a < 0.1)
 		discard;
     
-    return input.position.z;
+    return input.position.z / input.position.w;
 }

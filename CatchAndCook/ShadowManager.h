@@ -13,6 +13,7 @@ struct ShadowCasterParams
 	std::array<Matrix, 4> lightInvertVPMatrix;
 	unsigned int cascadeCount = 1;
 	Vector3 padding;
+	Vector4 cascadeDistance;
 };
 struct ShadowCascadeIndexParams
 {
@@ -24,16 +25,22 @@ struct ShadowCascadeIndexParams
 class ShadowManager : public RenderCBufferSetter
 {
 public:
+	static unique_ptr<ShadowManager> main;
+	static const int _cascadeCount = 4;
+
 	ShadowCasterParams _shadowCasterParams;
 	ShadowCascadeIndexParams _shadowCascadeIndexParams;
 
+	TableContainer _shadowTable;
 
-
-	static unique_ptr<ShadowManager> main;
 	ShadowManager();
 	~ShadowManager();
 	void Init();
 	void SetShadowCasterParams();
+
+	void RenderBegin();
+	void RenderEnd();
+
 	std::vector<BoundingFrustum> GetFrustums(Camera* camera, Light* light, const std::vector<float>& distances);
 
 	std::vector<BoundingOrientedBox> GetBounds(Camera* camera, Light* light, const std::vector<float>& distances);

@@ -99,23 +99,7 @@ void MeshRenderer::Start()
 	}
 
 
-	_depthNormalMaterials.clear();
-	for (int i = 0; i < _mesh.size(); i++)
-	{
-		auto currentMaterial = _uniqueMaterials[i % std::min(_mesh.size(), _uniqueMaterials.size())];
-
-		if (RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward) && currentMaterial->GetPreDepthNormal())
-		{
-			auto depthNormalMaterial = currentMaterial->Clone();
-			if (HasInstanceBuffer())
-				depthNormalMaterial->SetShader(ResourceManager::main->_depthNormal_Instanced->GetShader());
-			else
-				depthNormalMaterial->SetShader(ResourceManager::main->_depthNormal->GetShader());
-			depthNormalMaterial->SetPass(RENDER_PASS::Deferred);
-			_depthNormalMaterials.push_back(make_pair(i, depthNormalMaterial));
-		}
-	}
-
+	SetSpecialMaterials();
 };
 
 void MeshRenderer::Update()
@@ -170,22 +154,17 @@ void MeshRenderer::RenderBegin()
 
 	for (int i = 0; i < _mesh.size(); i++)
 	{
-		auto currentMesh = _mesh[i];
-		auto currentMaterial = _uniqueMaterials[i % std::min(_mesh.size(), _uniqueMaterials.size())];
+		auto& currentMesh = _mesh[i];
+		auto& currentMaterial = _uniqueMaterials[i % std::min(_mesh.size(), _uniqueMaterials.size())];
 
 		SceneManager::main->GetCurrentScene()->AddRenderer(currentMaterial.get(), currentMesh.get(), this);
-
-		if ((RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward)
-			|| RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Deferred))
-			&& currentMaterial->GetShadowCasting())
-		{
-			SceneManager::main->GetCurrentScene()->AddRenderer(
-				(HasInstanceBuffer() ? ResourceManager::main->_shadowCaster_Instanced : ResourceManager::main->_shadowCaster).get(), 
-				currentMesh.get(), this);
-		}
 	}
 	for (auto& ele : _depthNormalMaterials) {
-		auto currentMesh = _mesh[ele.first];
+		auto& currentMesh = _mesh[ele.first];
+		SceneManager::main->GetCurrentScene()->AddRenderer(ele.second.get(), currentMesh.get(), this);
+	}
+	for (auto& ele : _shadowMaterials) {
+		auto& currentMesh = _mesh[ele.first];
 		SceneManager::main->GetCurrentScene()->AddRenderer(ele.second.get(), currentMesh.get(), this);
 	}
 
@@ -275,6 +254,38 @@ void MeshRenderer::AddSharedMaterials(const std::vector<std::shared_ptr<Material
 {
 	for (auto& ele : _materials)
 		this->_sharedMaterials.push_back(ele);
+}
+
+void MeshRenderer::SetSpecialMaterials()
+{
+	_depthNormalMaterials.clear();
+	_shadowMaterials.clear();
+	for (int i = 0; i < _mesh.size(); i++)
+	{
+		auto currentMaterial = _uniqueMaterials[i % std::min(_mesh.size(), _uniqueMaterials.size())];
+
+		if (RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward) && currentMaterial->GetPreDepthNormal())
+		{
+			auto depthNormalMaterial = currentMaterial->Clone();
+			if (HasInstanceBuffer())
+				depthNormalMaterial->SetShader(ResourceManager::main->_depthNormal_Instanced->GetShader());
+			else
+				depthNormalMaterial->SetShader(ResourceManager::main->_depthNormal->GetShader());
+			depthNormalMaterial->SetPass(RENDER_PASS::Deferred);
+			_depthNormalMaterials.push_back(make_pair(i, depthNormalMaterial));
+		}
+
+
+		if ((RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward)
+			|| RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Deferred)) && currentMaterial->GetShadowCasting())
+		{
+			auto shadowMaterial =
+				((HasInstanceBuffer() ? ResourceManager::main->_shadowCaster_Instanced : ResourceManager::main->_shadowCaster));
+			shadowMaterial = shadowMaterial->Clone();
+			currentMaterial->CopyProperties(shadowMaterial);
+			_shadowMaterials.push_back(make_pair(i, shadowMaterial));
+		}
+	}
 }
 
 

@@ -241,7 +241,7 @@ void Core::ResizeTexture(std::shared_ptr<Texture>& texture, int w, int h)
 void Core::InitDirectX12()
 {
 
-    CreateDevice(true, true); // 최적화 할 부분
+    CreateDevice(false, false); // 최적화 할 부분
     CreateCmdQueue();
     CreateSwapChain();
 

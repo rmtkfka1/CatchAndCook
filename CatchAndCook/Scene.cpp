@@ -322,7 +322,7 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
 
 		ShadowManager::main->SetData(nullptr);
-
+        ShadowManager::main->RenderBegin();
         int i = 0;
         for (auto& bounding : boundings)
         {
@@ -360,6 +360,8 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
             Core::main->GetShadowBuffer()->RenderEnd();
             i++;
         }
+        ShadowManager::main->RenderEnd();
+
     }
 
 

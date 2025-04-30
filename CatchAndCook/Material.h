@@ -80,6 +80,7 @@ public:
 	bool HasPropertyMatrix(const std::string& name);
 
 	std::shared_ptr<Material> Clone();
+	void CopyProperties(std::shared_ptr<Material>& dest);
 
 	TableContainer _tableContainer;
 	TableContainer _tableLongContainer;

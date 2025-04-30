@@ -42,6 +42,9 @@ void Terrain::Start()
     auto meshRenderer = GetOwner()->GetComponent<MeshRenderer>();
     meshRenderer->AddMaterials({ _material });
 
+    _terrainMaterial = ResourceManager::main->_shadowCaster_Terrain->Clone();
+    _material->CopyProperties(_terrainMaterial);
+
     if (auto renderer = GetOwner()->GetRenderer())
     {
         renderer->AddCbufferSetter(static_pointer_cast<Terrain>(shared_from_this()));
@@ -89,6 +92,7 @@ void Terrain::Start()
 
                 };
                 renderer->SetMaterials(newMaterials);
+            	renderer->SetSpecialMaterials();
                 renderer->AddCbufferSetter(GetCast<Terrain>());
             }
         }
@@ -136,7 +140,6 @@ void Terrain::Start()
                 };
 
                 renderer->SetMaterials(newMaterials);
-                
             }
         }
     }
@@ -217,6 +220,11 @@ void Terrain::RenderBegin()
         }
         memcpy(_grassCBuffer->ptr, &grass_param, sizeof(GrassParam));
         _objectPositions.clear();
+    }
+
+    if (auto meshRenderer = GetOwner()->GetComponent<MeshRenderer>())
+    {
+        SceneManager::main->GetCurrentScene()->AddRenderer(_terrainMaterial.get(), meshRenderer->_mesh[0].get(), meshRenderer.get());
     }
 }
 

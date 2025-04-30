@@ -76,8 +76,8 @@ void PlayerController::CameraControl()
 	_targetOffset = GetOwner()->_transform->GetWorldPosition() + Vector3::Up * 1.1f;
 
 	_currentOffset = Vector3::Lerp(_currentOffset, _targetOffset,
-		(float)Time::main->GetDeltaTime() * controlInfo.cameraMoveSmooth
-		* std::min(Vector3::Distance(_currentOffset, _targetOffset), 1.0f));
+		std::clamp((float)Time::main->GetDeltaTime() * controlInfo.cameraMoveSmooth
+		* std::min(Vector3::Distance(_currentOffset, _targetOffset), 1.0f), 0.0f, 1.0f));
 
 	// 카메라 방향 계산식
 	Vector2 mouseDelta = currentMousePosition - Input::main->GetMousePrevPosition();
@@ -89,7 +89,7 @@ void PlayerController::CameraControl()
 	if (calculateEuler.x * R2D >= 85) calculateEuler.x = 85 * D2R;
 
 	_targetEuler = calculateEuler;
-	_currentEuler = Vector3::Lerp(_currentEuler, _targetEuler, Time::main->GetDeltaTime() * controlInfo.cameraRotationSmooth);
+	_currentEuler = Vector3::Lerp(_currentEuler, _targetEuler, std::clamp(Time::main->GetDeltaTime() * controlInfo.cameraRotationSmooth, 0.0, 1.0));
 
 
 	Vector3 cameraNextPosition = _currentOffset;
@@ -158,7 +158,7 @@ void PlayerController::MoveControl()
 	{
 		currentLookWorldRotation = Quaternion::Slerp(currentLookWorldRotation, 
 			Quaternion::LookRotation(targetLookWorldDirection, Vector3::Transform(Vector3::Up, lookRotation)),
-			Time::main->GetDeltaTime() * 15);
+			std::clamp(Time::main->GetDeltaTime() * 15, 0.0, 1.0));
 	}
 	//if (!(targetLookWorldDirectionDelayed.Length() < 0.1 && targetLookWorldDirection == Vector3::Zero))
 	//{

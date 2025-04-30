@@ -52,7 +52,7 @@ struct alignas(16) EnvMaterialParam
 	float padding;
 };
 
-CBUFFER_INJECTOR("EnvMaterialParam", EnvMaterialParam, 1024, BufferType::EnvMaterialParam, std::shared_ptr<Material>,
+CBUFFER_INJECTOR("EnvMaterialParam", EnvMaterialParam, 4096, BufferType::EnvMaterialParam, std::shared_ptr<Material>,
 	// data <- source
 	data.color = Vector4(source->GetPropertyVector("_Color"));
 	data._baseMapST = Vector4(source->GetPropertyVector("_BaseMap_ST"));
