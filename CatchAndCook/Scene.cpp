@@ -119,8 +119,9 @@ void Scene::Rendering()
     //    Gizmo::Frustum(b2, Vector4(1, 0, 0, 1));
     //    Gizmo::WidthRollBack();
     //}
+
     auto light = LightManager::main->GetMainLight();
-    auto a = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), light.get(), { 6, 20, 65, 200 });
+    auto a = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::SeaCamera).get(), light.get(), { 6, 20, 65, 200 });
     for (auto b : a)
     {
         Gizmo::Width(0.5);

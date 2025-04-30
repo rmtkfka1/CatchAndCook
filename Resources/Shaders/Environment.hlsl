@@ -104,7 +104,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 
 
 	float3 uvz[4];
-	ComputeCascadeShadowUVs(output.positionWS, uvz);
+	ComputeCascadeShadowUVs(output.positionWS.xyz, uvz);
 
     output.uv = input.uv;
 
