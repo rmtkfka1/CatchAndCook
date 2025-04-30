@@ -326,7 +326,7 @@ void Scene_Sea01::ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& 
 			return;
 		}
 
-		auto boundings = ShadowManager::main->SeaCalculateBounds(CameraManager::main->GetActiveCamera().get(), light.get(), { 500, 1000 ,2000, 3000 });
+		auto boundings = ShadowManager::main->SeaCalculateBounds(CameraManager::main->GetCamera(CameraType::SeaCamera).get(), light.get(), { 500, 1000 ,2000, 3000 });
 		auto lastShadowPos = ShadowManager::main->_lightTransform[ShadowManager::main->_lightTransform.size() - 1];
 		TerrainManager::main->CullingInstancing(lastShadowPos.first, lastShadowPos.second);
 
@@ -363,6 +363,7 @@ void Scene_Sea01::ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& 
 
 					if (renderStructure.renderer->isInstancing() == false)
 					{
+						g_debug_shadow_draw_call++;
 						InstancingManager::main->RenderNoInstancing(renderStructure);
 					}
 					else
@@ -371,6 +372,7 @@ void Scene_Sea01::ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& 
 					}
 				}
 
+				g_debug_shadow_draw_call++;
 				InstancingManager::main->Render();
 			}
 
