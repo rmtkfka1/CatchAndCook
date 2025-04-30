@@ -343,7 +343,7 @@ void Scene_Sea01::ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& 
 			return;
 		}
 
-		auto boundings = ShadowManager::main->CalculateBounds(CameraManager::main->GetActiveCamera().get(), light.get(), { 3000 });
+		auto boundings = ShadowManager::main->CalculateBounds(CameraManager::main->GetActiveCamera().get(), light.get(), { 500, 1000 ,2000, 3000 });
 
 		auto lastShadowPos = ShadowManager::main->_lightTransform[ShadowManager::main->_lightTransform.size() - 1];
 		TerrainManager::main->CullingInstancing(lastShadowPos.first, lastShadowPos.second);
@@ -371,10 +371,9 @@ void Scene_Sea01::ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& 
 
 				for (auto& renderStructure : vec)
 				{
-
-					if (renderStructure.renderer->IsCulling() == true)
+				/*	if (renderStructure.renderer->IsCulling() == true)
 						if (bounding.Intersects(renderStructure.renderer->GetBound()) == false)
-							continue;
+							continue;*/
 
 					SettingPrevData(renderStructure, RENDER_PASS::PASS::Shadow);
 
