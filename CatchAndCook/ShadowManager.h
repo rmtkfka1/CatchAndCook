@@ -31,6 +31,8 @@ public:
 	ShadowCasterParams _shadowCasterParams;
 	ShadowCascadeIndexParams _shadowCascadeIndexParams;
 
+	std::vector<pair<Vector3, Vector3>> _lightTransform; // pos lock
+
 	TableContainer _shadowTable;
 
 	ShadowManager();
@@ -42,8 +44,8 @@ public:
 	void RenderEnd();
 
 	std::vector<BoundingFrustum> GetFrustums(Camera* camera, Light* light, const std::vector<float>& distances);
+	std::vector<BoundingOrientedBox> CalculateBounds(Camera* camera, Light* light, const std::vector<float>& distances);
 
-	std::vector<BoundingOrientedBox> GetBounds(Camera* camera, Light* light, const std::vector<float>& distances);
 	void SetData(Material* material) override;
 };
 

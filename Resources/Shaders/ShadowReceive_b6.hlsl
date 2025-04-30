@@ -63,8 +63,7 @@ float ComputeCascadeShadowAtten(in float3 uvOut[4], float viewDepth)
             float3 uv = uvOut[i];
             if (uv.x < 0 || uv.y < 0 || uv.x > 1 || uv.y > 1)
                 return 1.0f;
-            return ShadowTexture[i]
-                .SampleCmpLevelZero(sampler_shadow, uv.xy, uv.z - bias);
+            return ShadowTexture[i].SampleCmpLevelZero(sampler_shadow, uv.xy, uv.z - bias);
         }
     }
     return 1.0f;

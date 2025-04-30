@@ -27,6 +27,8 @@ public:
 
 	vector<shared_ptr<Terrain>> _terrains;
 
+	void CullingInstancing(Vector3 pos, Vector3 look);
+
 private:
 
 };

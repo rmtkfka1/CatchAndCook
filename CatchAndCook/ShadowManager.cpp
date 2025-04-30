@@ -81,7 +81,7 @@ std::vector<BoundingFrustum> ShadowManager::GetFrustums(Camera* camera, Light* l
 }
 
 
-std::vector<BoundingOrientedBox> ShadowManager::GetBounds(Camera* camera, Light* light, const std::vector<float>& distances)
+std::vector<BoundingOrientedBox> ShadowManager::CalculateBounds(Camera* camera, Light* light, const std::vector<float>& distances)
 {
     camera->Calculate();
     auto params = camera->GetCameraParams();
@@ -106,6 +106,7 @@ std::vector<BoundingOrientedBox> ShadowManager::GetBounds(Camera* camera, Light*
     std::vector<BoundingOrientedBox> bounds;
     frustums.reserve(dis.size());
     bounds.reserve(dis.size());
+    _lightTransform.reserve(dis.size());
 
 	for (int i = 0;i < dis.size() - 1; i++)
 	{
@@ -128,6 +129,7 @@ std::vector<BoundingOrientedBox> ShadowManager::GetBounds(Camera* camera, Light*
         Matrix lightView = Matrix::CreateLookAt(lightPos, Vector3::Zero, lightUp);
         Matrix invLightView = lightView.Invert();
 
+        _lightTransform.push_back(std::make_pair(lightPos, lightDir));
 
         Vector3 minLS(FLT_MAX), maxLS(-FLT_MAX);
         for (auto& p : corners)
@@ -143,6 +145,10 @@ std::vector<BoundingOrientedBox> ShadowManager::GetBounds(Camera* camera, Light*
         //정사각형으로 맞춰주기.
 		extentsLS.x = max(extentsLS.x, extentsLS.y);
         extentsLS.y = extentsLS.x;
+
+        float angle = (1 - std::abs(lightDir.Dot(Vector3::Down)));
+        extentsLS.z += 40 * angle;
+        centerLS.z -= (40 * angle) / 2;
 
         BoundingOrientedBox obb(centerLS, extentsLS, Quaternion::Identity);
         obb.Transform(obb, invLightView);

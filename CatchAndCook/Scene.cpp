@@ -19,6 +19,7 @@
 #include "MeshRenderer.h"
 #include "PathFinder.h"
 #include "ShadowManager.h"
+#include "TerrainManager.h"
 
 void Scene::AddFrontGameObject(const std::shared_ptr<GameObject>& gameObject)
 {
@@ -103,7 +104,7 @@ void Scene::Rendering()
 {
     GlobalSetting();
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
     //Gizmo::Width(0.5);
     //Gizmo::Frustum(CameraManager::main->GetCamera(CameraType::ComponentCamera)->_boundingFrsutum);
     //Gizmo::WidthRollBack();
@@ -119,14 +120,14 @@ void Scene::Rendering()
     //    Gizmo::WidthRollBack();
     //}
     auto light = LightManager::main->GetMainLight();
-    auto a = ShadowManager::main->GetBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), light.get(), { 8,30,75,200 });
+    auto a = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), light.get(), { 8,30,75,200 });
     for (auto b : a)
     {
         Gizmo::Width(0.5);
         Gizmo::Box(b, Vector4(0,1,0,1));
         Gizmo::WidthRollBack();
     }
-#endif
+//#endif
 
     auto& cmdList = Core::main->GetCmdList();
     Core::main->GetRenderTarget()->ClearDepth();
@@ -267,6 +268,8 @@ void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 void Scene::DeferredPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 {
 	Core::main->GetGBuffer()->RenderBegin();
+    auto camera = CameraManager::main->GetActiveCamera();
+    TerrainManager::main->CullingInstancing(camera->GetCameraPos(), camera->GetCameraLook());
 
     { // Deferred
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deferred)];
@@ -316,7 +319,10 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 		if (light == nullptr)
 			return;
 
-        auto boundings = ShadowManager::main->GetBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), light.get(), { 6 , 20, 50, 120});
+        auto boundings = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), light.get(), { 6 , 20, 50, 120});
+
+    	auto lastShadowPos = ShadowManager::main->_lightTransform[ShadowManager::main->_lightTransform.size() - 1];
+    	TerrainManager::main->CullingInstancing(lastShadowPos.first, lastShadowPos.second);
 
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
 

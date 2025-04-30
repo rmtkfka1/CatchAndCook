@@ -30,6 +30,7 @@ public:
 	void SetDestroy() override;
 	void Destroy() override;
 
+	void CullingInstancing(Vector3 worldPos, Vector3 look);
 	
 	bool IsExecuteAble() override;
 
