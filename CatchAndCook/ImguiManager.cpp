@@ -147,6 +147,10 @@ void ImguiManager::GizmoController()
     {
         Gizmo::main->_flags = Gizmo::main->_flags | GizmoFlags::Custom;
     }
+    if (ImGui::Button("RenderPreview"))
+    {
+        Gizmo::main->_flags = Gizmo::main->_flags | GizmoFlags::RenderPreview;
+    }
 }
 
 void ImguiManager::ComputeController()
@@ -517,4 +521,5 @@ void ImguiManager::Test()
 	        ImGui::TreePop();
 	    }
     }
+
 }

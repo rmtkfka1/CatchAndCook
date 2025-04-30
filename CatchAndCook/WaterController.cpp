@@ -165,6 +165,8 @@ void WaterController::SetData(Material* material)
 
 	memcpy(_cbufferContainer->ptr, (void*)&_seaParam, sizeof(SeaParam));
 
-	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(material->GetShader()->GetRegisterIndex("SeaParam"), _cbufferContainer->GPUAdress);
+	auto index = material->GetShader()->GetRegisterIndex("SeaParam");
+	if (index != -1)
+		Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(index, _cbufferContainer->GPUAdress);
 
 }

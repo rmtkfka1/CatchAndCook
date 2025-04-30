@@ -4,6 +4,7 @@
 #include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
 #include "Skinned_t32.hlsl"
+#include "ShadowReceive_b6.hlsl"
 
 
 cbuffer EnvMaterialParam : register(b7)
@@ -14,8 +15,10 @@ cbuffer EnvMaterialParam : register(b7)
     float emission = 0;
 	float _smoothness = 0.2;
 	float _metallic = 0.1;
-	float padding;
+	float padding_env0;
 };
+
+//
 
 struct VS_IN
 {
@@ -49,6 +52,7 @@ struct VS_OUT
     float3 tangentOS : TangentOS;
     float3 tangentWS : TangentWS;
     float2 uv : TEXCOORD0;
+
 };
 
 Texture2D _BaseMap : register(t0);
@@ -99,6 +103,9 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 #endif
 
 
+	float3 uvz[4];
+	ComputeCascadeShadowUVs(output.positionWS, uvz);
+
     output.uv = input.uv;
 
     return output;
@@ -124,16 +131,14 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     output.normal = float4(N, 0.0f);
     output.maoe = float4(_metallic, _smoothness, 0, emission);
 
-    
-    
     if (emission == 1)
 		output.color = emissionColor;
     #ifdef _NO_AO
 		output.maoe.z = -1;
 	#endif
 
-
-    if (output.color.a <= 0.1f)
+    if (output.color.a <= 0.5f)
         discard;
+
     return output;
 }

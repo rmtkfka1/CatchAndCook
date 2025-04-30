@@ -103,12 +103,10 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     for (int i=0;i < objectCount; i++) {
         float2 delta   = output.positionWS.xz - objectPos[i].xz;
 		float distSq = dot(delta, delta);
-    	dir = mad(delta, saturate(1.0 - distSq) * rsqrt(distSq + 1e-6), dir);
+    	dir = mad(delta, saturate(0.75 - distSq) * rsqrt(distSq + 1e-6), dir);
     }
-    
-    dir += float2(1,1) * simple_noise(output.positionWS.xz * 0.05 + g_Time * 0.32) * 0.43; // 이거 텍스쳐 샘플링보다 가벼움
-    dir *= sin(saturate(input.pos.y)) * 1.25;
-    
+    dir += float2(1,1) * simple_noise(output.positionWS.xz * 0.05 + g_Time * 0.4) * 0.46; // 이거 텍스쳐 샘플링보다 가벼움
+    dir *= (1 - cos(saturate(input.pos.y * 2))) * 1.75;
     output.positionWS += float4(dir.x,0,dir.y, 0);
     //
     output.position = TransformWorldToClip(output.positionWS);

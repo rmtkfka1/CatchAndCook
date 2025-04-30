@@ -60,6 +60,8 @@ void Material::PushData()
 
 void Material::SetData()
 {
+	if (_setDataOff)
+		return;
 	//텍스쳐바인딩
 	AllocTextureTable();
 
@@ -156,6 +158,33 @@ std::shared_ptr<Material> Material::Clone()
 	material->_pass = _pass;
 	material->_stencilIndex = _stencilIndex;
 	material->_useMaterialParams = _useMaterialParams;
+	material->_shadowCasting = _shadowCasting;
+	material->_setDataOff = _setDataOff;
+	material->_preDepthNormal = _preDepthNormal;
 	return material;
+
+}
+
+void Material::CopyProperties(std::shared_ptr<Material>& dest)
+{
+	for (auto& property : _propertyInts)
+		dest->_propertyInts.insert_or_assign(property.first, property.second);
+	for (auto& property : _propertyFloats)
+		dest->_propertyFloats.insert_or_assign(property.first, property.second);
+	for (auto& property : _propertyVectors)
+		dest->_propertyVectors.insert_or_assign(property.first, property.second);
+	for (auto& property : _propertyMatrixs)
+		dest->_propertyMatrixs.insert_or_assign(property.first, property.second);
+	for (auto& property : _propertyHandle)
+		dest->_propertyHandle.insert_or_assign(property.first, property.second);
+	for (auto& property : _propertyTexture)
+		dest->_propertyTexture.insert_or_assign(property.first, property.second);
+
+	for (auto& property : _shaderInjectors)
+		if (std::ranges::find(dest->_shaderInjectors, property) == dest->_shaderInjectors.end())
+			dest->_shaderInjectors.push_back(property);
+	for (auto& property : _customInjectors)
+		if (std::ranges::find(dest->_customInjectors, property) == dest->_customInjectors.end())
+			dest->_customInjectors.push_back(property);
 
 }

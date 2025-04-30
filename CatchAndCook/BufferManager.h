@@ -41,6 +41,9 @@ enum class BufferType
 	ObjectSettingParam,
 	LightDataParam,
 	GrassParam,
+	WaterParam,
+	ShadowCasterParams,
+	ShadowCascadeIndexParams,
 };
 
 class CBufferPool;
@@ -89,7 +92,6 @@ private:
 	unordered_map<BufferType, shared_ptr<CBufferPool>> _map_notReset;
 
 	shared_ptr<TextureBufferPool> _textureBufferPool;
-
 
 };
 

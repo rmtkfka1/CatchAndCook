@@ -24,4 +24,16 @@ float NdcDepthToViewDepth(float z_ndc)
     return viewZ;
 }
 
+float3 NdcToViewPosition(float3 positionCS)
+{
+    float4 clip = float4(positionCS, 1.0);
+    float4 viewH = mul(clip, InvertProjectionMatrix);
+    return viewH.xyz / viewH.w;
+}
+float NdcToWorldPosition(float3 positionCS)
+{
+    float4 worldH = mul(float4(NdcToViewPosition(positionCS), 1.0), InvertViewMatrix);
+    return worldH.xyz;  // worldH.w´Â Ç×»ó 1.0
+}
+
 #endif

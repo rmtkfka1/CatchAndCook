@@ -118,7 +118,10 @@ void InstancingManager::Clear()
 
 void InstancingManager::AddObject(RenderObjectStrucutre & obj)
 {
-	InstanceID id = {obj.mesh->GetID(),obj.material->GetID()};
+	unsigned int materialId = 0;
+	if (obj.material != nullptr)
+		materialId = obj.material->GetID();
+	InstanceID id = {obj.mesh->GetID(), obj.material->GetID() };
 	_objectMap[id.id].push_back(obj);
 
 }

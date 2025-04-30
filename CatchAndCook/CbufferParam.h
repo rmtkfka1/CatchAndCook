@@ -52,7 +52,7 @@ struct alignas(16) EnvMaterialParam
 	float padding;
 };
 
-CBUFFER_INJECTOR("EnvMaterialParam", EnvMaterialParam, 1024, BufferType::EnvMaterialParam, std::shared_ptr<Material>,
+CBUFFER_INJECTOR("EnvMaterialParam", EnvMaterialParam, 4096, BufferType::EnvMaterialParam, std::shared_ptr<Material>,
 	// data <- source
 	data.color = Vector4(source->GetPropertyVector("_Color"));
 	data._baseMapST = Vector4(source->GetPropertyVector("_BaseMap_ST"));
@@ -86,13 +86,26 @@ struct ObjectMaterialParam
 	Vector3 o_hitColor;
 };
 
-CBUFFER_INJECTOR("ObjectMaterialParam ", ObjectMaterialParam, 1024, BufferType::ObjectMaterialParam, std::shared_ptr<Material>,
+CBUFFER_INJECTOR("ObjectMaterialParam", ObjectMaterialParam, 1024, BufferType::ObjectMaterialParam, std::shared_ptr<Material>,
 	//data.temp = Vector4(1, 0, 0, 1);
 	// data <- source
 	//data.color = Vector4(source->GetPropertyVector("_Color"));
 	//data._baseMapST = Vector4(source->GetPropertyVector("_BaseMap_ST"));
 )
 
+struct WaterParam
+{
+	Vector3 waterScale = Vector3(1, 1, 1);
+	float padding;
+};
+
+CBUFFER_INJECTOR("WaterParam", WaterParam, 32, BufferType::WaterParam, std::shared_ptr<Material>,
+	//data.temp = Vector4(1, 0, 0, 1);
+	// data <- source
+	data.waterScale = Vector3(source->GetPropertyVector("_waterScale"));
+	//data.color = Vector4(source->GetPropertyVector("_Color"));
+	//data._baseMapST = Vector4(source->GetPropertyVector("_BaseMap_ST"));
+)
 
 struct alignas(16) TerrainDetailsParam
 {

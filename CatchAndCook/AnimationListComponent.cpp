@@ -26,7 +26,8 @@ void AnimationListComponent::Start()
 {
 	Component::Start();
 
-	if (auto& hieracy = GetOwner()->GetComponent<SkinnedHierarchy>())
+	if (SceneManager::main->GetCurrentScene()->GetSceneType() == SceneType::Sea01)
+	if (auto hieracy = GetOwner()->GetComponent<SkinnedHierarchy>())
 	{
 		if (!_animations.empty())
 		{
@@ -34,7 +35,6 @@ void AnimationListComponent::Start()
 
 			if (firstAnimation)
 			{
-				cout << _animations.begin()->first << endl;
 				hieracy->SetAnimation(firstAnimation);
 			}
 		}

@@ -796,15 +796,6 @@
     <FxCompile Include="..\Resources\Shaders\DeferredSeaPlant.hlsl">
       <Filter>998.HLSL\Graphics\KSH</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\PlayerShader_Skin.hlsl">
-      <Filter>998.HLSL\Graphics</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\PlayerShader_Face.hlsl">
-      <Filter>998.HLSL\Graphics</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\ObjectShader.hlsl">
-      <Filter>998.HLSL\Graphics</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\ObjectSetting_t31.hlsl">
       <Filter>998.HLSL\Module</Filter>
     </FxCompile>
@@ -853,5 +844,17 @@
     <Image Include="..\..\Direct12-Project-Scene\Assets\Models\Objects\Sea\Terrian_Seed\New Folder\2023-11-23T113343Z.png">
       <Filter>리소스 파일</Filter>
     </Image>
+    <FxCompile Include="..\Resources\Shaders\WaterShader.hlsl">
+      <Filter>998.HLSL\Graphics\JIN</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\PlayerShader_Skin.hlsl">
+      <Filter>998.HLSL\Graphics\JIN</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\ObjectShader.hlsl">
+      <Filter>998.HLSL\Graphics\JIN</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\PlayerShader_Face.hlsl">
+      <Filter>998.HLSL\Graphics\JIN</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

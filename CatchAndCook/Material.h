@@ -58,6 +58,10 @@ public:
 	void SetInjector(const std::vector<std::shared_ptr<ICBufferInjector>>& injectors) { _customInjectors = injectors; }
 	void SetPreDepthNormal(bool preDepthNormal) { _preDepthNormal = preDepthNormal; }
 	bool GetPreDepthNormal() const { return _preDepthNormal; }
+	void SetShadowCasting(bool shadowCasting) { _shadowCasting = shadowCasting; }
+	bool GetShadowCasting() const { return _shadowCasting; }
+	void SetSetDataOff(bool setDataOff) { _setDataOff = setDataOff; }
+	bool GetSetDataOff() const { return _setDataOff; }
 
 	int GetPropertyInt(const std::string& name) { return _propertyInts[name]; };
 	void SetPropertyInt(const std::string& name, int data) { _propertyInts[name] = data; };
@@ -76,9 +80,10 @@ public:
 	bool HasPropertyMatrix(const std::string& name);
 
 	std::shared_ptr<Material> Clone();
+	void CopyProperties(std::shared_ptr<Material>& dest);
 
-	tableContainer _tableContainer;
-	tableContainer _tableLongContainer;
+	TableContainer _tableContainer;
+	TableContainer _tableLongContainer;
 
 	uint32 GetID() {
 		return _instanceID;
@@ -100,7 +105,10 @@ private:
 	bool _useMaterialParams = false;
 	RENDER_PASS::PASS _pass = RENDER_PASS::Forward;
 	bool _preDepthNormal = false;
+	bool _shadowCasting = true;
 	int _stencilIndex = 0;
+
+	bool _setDataOff = false;
 
 	uint32 _instanceID=0;
 	static uint32 _instanceIDGenator;

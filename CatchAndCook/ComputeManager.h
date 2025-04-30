@@ -20,7 +20,7 @@ protected:
 	virtual void Resize()=0;
 
 protected:
-	tableContainer _tableContainer{};
+	TableContainer _tableContainer{};
 
 };
 
@@ -262,9 +262,12 @@ private:
 private:
 	virtual void Resize();
 
+
+public:
+	std::shared_ptr<Texture> _ssaoTexture;
+
 private:
 	shared_ptr<Texture> _pingTexture;
-	std::shared_ptr<Texture> _ssaoTexture;
 	shared_ptr<Shader> _shader;
 
 	bool ssaoOnOff = true;

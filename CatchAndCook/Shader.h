@@ -160,6 +160,10 @@ public:
     FrontWise _wise = FrontWise::CW;
     D3D12_PRIMITIVE_TOPOLOGY_TYPE _primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
+    float depthBias = 0;
+    float slopeScaledDepthBias = 0.0f;
+    float depthBiasClamp = 0.0f;
+
     //D3D12_PRIMITIVE_TOPOLOGY _topologyType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
     //D3D_PRIMITIVE_TOPOLOGY_POINTLIST
     //D3D_PRIMITIVE_TOPOLOGY_LINELIST

@@ -30,6 +30,7 @@ public:
 	void SetDestroy() override;
 	void Destroy() override;
 
+	void CullingInstancing(Vector3 worldPos, Vector3 look);
 	
 	bool IsExecuteAble() override;
 
@@ -65,7 +66,7 @@ public:
 	vector<Vector3> _objectPositions;
 
 private:
-	static const int CellsPerPatch = 128;
+	static const int CellsPerPatch = 32;
 
 	shared_ptr<Mesh> _gridMesh{};
 	shared_ptr<Texture> _heightTexture{};
@@ -74,6 +75,8 @@ private:
 	Vector2 _heightTextureSize;
 
 	shared_ptr<Material> _material;
+	shared_ptr<Material> _terrainMaterial;
+
 	vector<weak_ptr<GameObject>> _instancesObject;
 	vector<weak_ptr<MeshRenderer>> _Grasses;
 	vector<vector<Instance_Transform>> _instanceDatas;

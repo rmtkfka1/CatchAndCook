@@ -530,3 +530,26 @@ shared_ptr<Mesh> GeoMetryHelper::LoadRectMesh()
     return mesh;
 
 }
+
+shared_ptr<Mesh> GeoMetryHelper::LoadRectCenterMesh()
+{
+    // 이미 생성돼 있으면 반환
+    shared_ptr<Mesh> mesh = ResourceManager::main->Get<Mesh>(L"RectMesh");
+    if (mesh) return mesh;
+
+    // 중앙이 (0,0,0) 이고, 좌표가 -0.5~+0.5 범위
+    vector<Vertex_Static> vec(4);
+    vec[0] = Vertex_Static(vec3(-0.5f, +0.5f, 0.0f), vec3(0, 0, 1), vec3(0, 1, 0), vec2(0.0f, 0.0f));
+    vec[1] = Vertex_Static(vec3(-0.5f, -0.5f, 0.0f), vec3(0, 0, 1), vec3(0, 1, 0), vec2(0.0f, 1.0f));
+    vec[2] = Vertex_Static(vec3(+0.5f, -0.5f, 0.0f), vec3(0, 0, 1), vec3(0, 1, 0), vec2(1.0f, 1.0f));
+    vec[3] = Vertex_Static(vec3(+0.5f, +0.5f, 0.0f), vec3(0, 0, 1), vec3(0, 1, 0), vec2(1.0f, 0.0f));
+
+    // 인덱스는 그대로
+    vector<uint32> idx = { 0, 2, 1, 0, 3, 2 };
+
+    mesh = make_shared<Mesh>();
+    mesh->Init(vec, idx);
+
+    ResourceManager::main->Add(L"RectMesh", mesh);
+    return mesh;
+}

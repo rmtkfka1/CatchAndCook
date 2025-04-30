@@ -40,11 +40,16 @@ public:
 	void AddSharedMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
 	void SetDebugShader(shared_ptr<Shader>& shader) { _normalDebugShader = shader; }
 
-private:
+	void SetSpecialMaterials();
+
+
 	std::vector<std::shared_ptr<Mesh>> _mesh;
 	std::vector<std::shared_ptr<Material>> _uniqueMaterials;
 	std::vector<std::shared_ptr<Material>> _sharedMaterials;
+private:
+
 	std::vector<std::pair<int, std::shared_ptr<Material>>> _depthNormalMaterials;
+	std::vector<std::pair<int, std::shared_ptr<Material>>> _shadowMaterials;
 
 	shared_ptr<Shader> _normalDebugShader;
 	//std::shared_ptr<ForwardLightSetter> _setter_ForwardLight;

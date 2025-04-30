@@ -42,12 +42,14 @@ public:
 	ComPtr<ID3D12CommandQueue>& GetCmdQueue() { return _cmdQueue; }
 	shared_ptr<RenderTarget>& GetRenderTarget() { return _renderTarget; }
 	shared_ptr<GBuffer>& GetGBuffer() {return _gBuffer;}
+	shared_ptr<ShadowBuffer>& GetShadowBuffer() { return _shadowBuffer; }
 	shared_ptr<Texture>& GetDSReadTexture() { return _dsReadTexture; }
+	shared_ptr<Texture>& GetRTReadTexture() { return _rtReadTexture; }
 	shared_ptr<RootSignature>& GetRootSignature() { return _rootSignature; }
 	shared_ptr<BufferManager>& GetBufferManager() { return _bufferManager; }
 	ComPtr<ID3D12DescriptorHeap>& GetImguiHeap() { return _imguiHeap; }
 
-	void CopyDepthTexture(const std::shared_ptr<Texture>& destDSTexture, const std::shared_ptr<Texture>& sourceDSTexture);
+	void CopyTexture(const std::shared_ptr<Texture>& destTexture, const std::shared_ptr<Texture>& sourceTexture);
 	void ResizeTexture(std::shared_ptr<Texture>& texture, int w, int h);
 
 private:
@@ -62,7 +64,10 @@ private:
 private:
 	shared_ptr<GBuffer> _gBuffer;
 	shared_ptr<RenderTarget> _renderTarget;
+	shared_ptr<ShadowBuffer> _shadowBuffer;
+
 	shared_ptr<Texture> _dsReadTexture;
+	shared_ptr<Texture> _rtReadTexture;
 
 	shared_ptr<RootSignature> _rootSignature;
 	shared_ptr<BufferManager> _bufferManager;

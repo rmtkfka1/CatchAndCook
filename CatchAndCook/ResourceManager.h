@@ -50,7 +50,6 @@ public:
     unordered_map<wstring, shared_ptr<T>>& GetResourceMap();
 
 private:
-private:
     unordered_map<wstring, shared_ptr<SceneLoader>> _loaderMap;
     unordered_map<wstring, shared_ptr<Shader>> _shaderMap;
     unordered_map<wstring, shared_ptr<Mesh>> _meshMap;
@@ -67,6 +66,11 @@ public:
     shared_ptr<Material> _depthNormal;
     shared_ptr<Material> _depthNormal_Skinned;
 	shared_ptr<Material> _depthNormal_Instanced;
+
+    shared_ptr<Material> _shadowCaster;
+    shared_ptr<Material> _shadowCaster_Skinned;
+    shared_ptr<Material> _shadowCaster_Instanced;
+    shared_ptr<Material> _shadowCaster_Terrain;
 };
 
 template<typename T>

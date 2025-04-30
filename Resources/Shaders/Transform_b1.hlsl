@@ -16,8 +16,8 @@ cbuffer Transform : register(b1)
 
 struct Instance_Transform
 {
-    row_major Matrix localToWorld;
-    row_major Matrix worldToLocal;
+    row_major matrix localToWorld;
+    row_major matrix worldToLocal;
     float4 worldPosition;
 };
 
@@ -198,6 +198,8 @@ float3 ComputeNormalMapping(float3 normal, float3 tangent, float4 normalMap)
 
 	// [0,1] 범위에서 [-1,1] 범위로 변환
     float3 tangentSpaceNormal = (map.rgb * 2.0f - 1.0f);
+    tangentSpaceNormal.z = 1;
+    tangentSpaceNormal = normalize(tangentSpaceNormal);
     float3 worldNormal = mul(tangentSpaceNormal, TBN);
     
     normal = normalize(worldNormal);

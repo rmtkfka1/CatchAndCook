@@ -18,7 +18,7 @@ void Gizmo::Init()
 	textureGizmo.material = std::make_shared<Material>();
     textureGizmo.material->SetShader(ResourceManager::main->Get<Shader>(L"GizmoTexture"));
     textureGizmo.material->SetPass(RENDER_PASS::Debug);
-    textureGizmo._mesh = GeoMetryHelper::LoadRectMesh();
+    textureGizmo._mesh = GeoMetryHelper::LoadRectCenterMesh();
 
     SetCulling(false);
     SetInstancing(false);
@@ -260,19 +260,18 @@ void Gizmo::Text(const wstring& text, int fontSize, const Vector3& worldPos, con
     TextManager::main->UpdateToSysMemory(text,handle, memory,4);
     main->textureGizmo.textAllocator++;
 
-
     main->textureGizmo.transforms.push_back(param);
     main->textureGizmo.textures.push_back(texture);
 }
 
 void Gizmo::Image(const std::shared_ptr<::Texture>& texture, const Vector3& worldPos,
-	const Vector3& worldDir, const Vector3& Up, const Vector4& Color)
+	const Vector3& worldDir, const Vector3& Up, const Vector3& size, const Vector4& Color)
 {
 	/*if (main->_flags == GizmoFlags::None) return;*/
 
     Vector3 right = Up.Cross(worldDir);
     Vector3 up = worldDir.Cross(right);
-    Matrix trs = Matrix::CreateWorld(worldPos,worldDir,up);
+    Matrix trs = Matrix::CreateScale(size) * Matrix::CreateWorld(worldPos,worldDir, up);
 
     TransformParam param;
     
@@ -280,7 +279,7 @@ void Gizmo::Image(const std::shared_ptr<::Texture>& texture, const Vector3& worl
     param.localToWorld.Invert(param.worldToLocal);
     param.worldPos = worldPos;
 
-    main->textureGizmo.textures.push_back(texture);
+	main->textureGizmo.textures.push_back(texture);
     main->textureGizmo.transforms.push_back(param);
 }
 
@@ -346,6 +345,8 @@ void GizmoTexture::Rendering(Material* material, Mesh* mesh,int instanceCount)
 
         auto& texture = textures[i];
         auto& transform = transforms[i];
+        auto state = texture->_state;
+        texture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
         auto _cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::TransformParam)->Alloc(1);
         memcpy(_cbufferContainer->ptr,(void*)&transform,sizeof(TransformParam));
@@ -358,6 +359,8 @@ void GizmoTexture::Rendering(Material* material, Mesh* mesh,int instanceCount)
         material->SetData();
 
         mesh->Redner();
+
+        texture->ResourceBarrier(state);
     }
 }
 

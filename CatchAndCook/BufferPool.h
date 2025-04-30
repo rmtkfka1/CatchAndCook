@@ -38,6 +38,9 @@ private:
 	uint32 _elementSize = 0;
 	uint32 _count=0;
 
+
+	static D3D12_CPU_DESCRIPTOR_HANDLE cbufferTableHandle;
+	static void SetCBufferTable(CBufferContainer* cbuffer, int registerIndex);
 };
 
 
@@ -82,7 +85,6 @@ private:
 	HeapStructure _srvHeap;
 	HeapStructure _rtvHeap;
 	HeapStructure _dsvHeap;
-
 };
 
 
@@ -92,7 +94,7 @@ private:
 *                                *
 **********************************/
 
-struct tableContainer
+struct TableContainer
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE CPUHandle;
 	D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle;
@@ -105,8 +107,9 @@ class DescritporTable
 
 public:
 	void Init(uint32 count);
-	tableContainer Alloc(uint32 count);
-	void CopyHandle(D3D12_CPU_DESCRIPTOR_HANDLE& destHandle, D3D12_CPU_DESCRIPTOR_HANDLE& sourceHandle ,uint32 index);
+	TableContainer Alloc(uint32 count);
+	void CopyHandle(D3D12_CPU_DESCRIPTOR_HANDLE& destHandle, D3D12_CPU_DESCRIPTOR_HANDLE& sourceHandle, uint32 index);
+	void CopyHandles(D3D12_CPU_DESCRIPTOR_HANDLE& destHandle, D3D12_CPU_DESCRIPTOR_HANDLE& sourceHandle, uint32 size);
 	void Reset();
 
 	ComPtr<ID3D12DescriptorHeap>& GetDescriptorHeap() { return _heap; }

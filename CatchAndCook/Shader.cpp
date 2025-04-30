@@ -134,9 +134,9 @@ void Shader::InitPipeLine(const std::vector<VertexProp>& vertexProp)
     _pipelineDesc.RasterizerState.FrontCounterClockwise = _info._wise == FrontWise::CCW ? TRUE : FALSE;
     _pipelineDesc.RasterizerState.DepthClipEnable = TRUE; // 깊이값 범위 밖 짤라냄.
     _pipelineDesc.RasterizerState.AntialiasedLineEnable = _info.cullingType == CullingType::WIREFRAME ? TRUE : FALSE;
-    _pipelineDesc.RasterizerState.DepthBias = 0;
-    _pipelineDesc.RasterizerState.SlopeScaledDepthBias = 0.0f;
-    _pipelineDesc.RasterizerState.DepthBiasClamp = 0.0f;
+    _pipelineDesc.RasterizerState.DepthBias = _info.depthBias;
+    _pipelineDesc.RasterizerState.SlopeScaledDepthBias = _info.slopeScaledDepthBias;
+    _pipelineDesc.RasterizerState.DepthBiasClamp = _info.depthBiasClamp;
 
     CD3DX12_DEPTH_STENCIL_DESC depthStencilDesc{ D3D12_DEFAULT };
     depthStencilDesc.DepthEnable = _info._zTest ? TRUE : FALSE;

@@ -2,13 +2,13 @@
 //[wall] <-> [player][molgogi]
 enum class GameObjectTag : uint64
 {
-	Defualt = 1 << 0,
-	Player = 1 << 1,
-	Monster = 1 << 2,
-	Wall = 1 << 3,
+	Defualt = 1ull << 0,
+	Player = 1ull << 1,
+	Monster = 1ull << 2,
+	Wall = 1ull << 3,
 
-	NonCulling = 1 << 25,
-	NonInstancing = 1 << 26,
+	NonCulling = 1ull << 25,
+	NonInstancing = 1ull << 26,
 };
 
 static unordered_map<string, GameObjectTag> GameObjectTagMap =

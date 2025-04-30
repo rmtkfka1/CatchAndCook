@@ -38,8 +38,12 @@ void Terrain::Start()
     _material->SetPropertyVector("fieldSize", Vector4(_fieldSize));
     _material->SetShader(shader);
     _material->SetPass(RENDER_PASS::Deferred);
+    _material->SetShadowCasting(false);
     auto meshRenderer = GetOwner()->GetComponent<MeshRenderer>();
     meshRenderer->AddMaterials({ _material });
+
+    _terrainMaterial = ResourceManager::main->_shadowCaster_Terrain->Clone();
+    _material->CopyProperties(_terrainMaterial);
 
     if (auto renderer = GetOwner()->GetRenderer())
     {
@@ -77,7 +81,10 @@ void Terrain::Start()
                     auto newMaterial = std::make_shared<Material>();
                     newMaterial = material->Clone();
                     if (wstr::contains(ResourceManager::main->GetKey(material->GetShader()), L"Grass"))
+                    {
                         newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Grass"));
+                        newMaterial->SetShadowCasting(false);
+                    }
                     else
                         newMaterial->SetShader(ResourceManager::main->Get<Shader>(L"Environment_Instanced"));
                     newMaterial->SetPass(RENDER_PASS::Deferred);
@@ -85,6 +92,7 @@ void Terrain::Start()
 
                 };
                 renderer->SetMaterials(newMaterials);
+            	renderer->SetSpecialMaterials();
                 renderer->AddCbufferSetter(GetCast<Terrain>());
             }
         }
@@ -132,7 +140,6 @@ void Terrain::Start()
                 };
 
                 renderer->SetMaterials(newMaterials);
-                
             }
         }
     }
@@ -143,45 +150,7 @@ void Terrain::Start()
 
 void Terrain::Update()
 {
-    Vector3 cameraPos = CameraManager::main->GetActiveCamera()->GetCameraPos();
-    Vector3 cameraLook = CameraManager::main->GetActiveCamera()->GetCameraLook();
-
-    float maxAngle = ((WINDOW_WIDTH / (float)WINDOW_HEIGHT) * (100) * D2R) / 2;
-    float cosMaxAngle = std::cos(maxAngle);
-    float maxDistance = 30;
-
-    for (int i = 0; i < _instanceBuffers.size(); i++)
-        _instanceBuffers[i]->Free();
-	_instanceBuffers.clear();
-
-    _instanceBuffers.resize(_instancesObject.size());
-    for (int i = 0; i < _instancesObject.size(); i++)
-    {
-        auto instanceBuffer = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::TransformInstanceParam)->Alloc();
-        _instanceBuffers[i] = instanceBuffer;
-
-        std::vector<std::shared_ptr<MeshRenderer>> renderers;
-        _instancesObject[i].lock()->GetComponentsWithChilds<MeshRenderer>(renderers);
-        for (auto& renderer : renderers)
-            renderer->SetInstanceBuffer(instanceBuffer);
-    }
-
-    for (int i = 0; i < _instanceDatas.size(); ++i)
-    {
-        _instanceBuffers[i]->Clear();
-
-        for (int j = 0; j < _instanceDatas[i].size(); j++)
-        {
-            Vector3 targetDirection = _instanceDatas[i][j].worldPosition - cameraPos;
-            bool distanceBool = targetDirection.LengthSquared() < (maxDistance * maxDistance);
-            targetDirection.Normalize();
-            bool angleBool = targetDirection.Dot(cameraLook) > cosMaxAngle;
-            if (angleBool || distanceBool)
-            {
-                _instanceBuffers[i]->AddData(_instanceDatas[i][j]);
-            }
-        }
-    }
+    
 }
 
 void Terrain::Update2()
@@ -213,6 +182,11 @@ void Terrain::RenderBegin()
         }
         memcpy(_grassCBuffer->ptr, &grass_param, sizeof(GrassParam));
         _objectPositions.clear();
+    }
+
+    if (auto meshRenderer = GetOwner()->GetComponent<MeshRenderer>())
+    {
+        SceneManager::main->GetCurrentScene()->AddRenderer(_terrainMaterial.get(), meshRenderer->_mesh[0].get(), meshRenderer.get());
     }
 }
 
@@ -246,6 +220,50 @@ void Terrain::Destroy()
     TerrainManager::main->RemoveTerrain(GetCast<Terrain>());
 }
 
+void Terrain::CullingInstancing(Vector3 worldPos, Vector3 look)
+{
+    Vector3 cameraPos = worldPos;
+    Vector3 cameraLook = look;
+    cameraLook.Normalize();
+
+    float maxAngle = ((WINDOW_WIDTH / (float)WINDOW_HEIGHT) * (100) * D2R) / 2;
+    float cosMaxAngle = std::cos(maxAngle);
+    float maxDistance = 30;
+
+    for (int i = 0; i < _instanceBuffers.size(); i++)
+        _instanceBuffers[i]->Free();
+    _instanceBuffers.clear();
+
+    _instanceBuffers.resize(_instancesObject.size());
+    for (int i = 0; i < _instancesObject.size(); i++)
+    {
+        auto instanceBuffer = Core::main->GetBufferManager()->GetInstanceBufferPool(BufferType::TransformInstanceParam)->Alloc();
+        _instanceBuffers[i] = instanceBuffer;
+
+        std::vector<std::shared_ptr<MeshRenderer>> renderers;
+        _instancesObject[i].lock()->GetComponentsWithChilds<MeshRenderer>(renderers);
+        for (auto& renderer : renderers)
+            renderer->SetInstanceBuffer(instanceBuffer);
+    }
+
+    for (int i = 0; i < _instanceDatas.size(); ++i)
+    {
+        _instanceBuffers[i]->Clear();
+
+        for (int j = 0; j < _instanceDatas[i].size(); j++)
+        {
+            Vector3 targetDirection = _instanceDatas[i][j].worldPosition - cameraPos;
+            bool distanceBool = targetDirection.LengthSquared() < (maxDistance * maxDistance);
+            targetDirection.Normalize();
+            bool angleBool = targetDirection.Dot(cameraLook) > cosMaxAngle;
+            if (angleBool || distanceBool)
+            {
+                _instanceBuffers[i]->AddData(_instanceDatas[i][j]);
+            }
+        }
+    }
+}
+
 void Terrain::SetData(Material* material)
 {
     material->SetTexture("heightMap", _heightTexture);
@@ -268,14 +286,14 @@ void Terrain::SetHeightMap(const std::wstring& rawPath, const std::wstring& pngP
     _heightRawSize = rawSize;
     _fieldSize = fieldSize;
 
-    cout << _fieldSize.x << " " << _fieldSize.y << " " << _fieldSize.z << endl;
+    cout << "Terrain Size : "<< _fieldSize.x << " " << _fieldSize.y << " " << _fieldSize.z << endl;
 
 #ifdef RECT_TERRAIN
-    _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(_fieldSize.x, _fieldSize.z, CellsPerPatch, CellsPerPatch);
+    _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(_fieldSize.x, _fieldSize.z, _fieldSize.x / 16, _fieldSize.y / 16);
     _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 #else
 
-    _gridMesh = GeoMetryHelper::LoadGripMesh(_fieldSize.x, _fieldSize.z, CellsPerPatch, CellsPerPatch);
+    _gridMesh = GeoMetryHelper::LoadGripMesh(_fieldSize.x, _fieldSize.z, _fieldSize.x / 10, _fieldSize.z / 10);
     _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 #endif // RECT_TERRAIN
 

@@ -308,7 +308,8 @@ void SceneLoader::LinkComponent(json& jsonData)
                         material->SetShader(shader);
                         material->SetPass(shader->GetPass());
                     }
-                    material->SetPreDepthNormal(true);
+                    if (material->GetPass() == RENDER_PASS::Forward)
+						material->SetPreDepthNormal(true);
                 }
 
                 else

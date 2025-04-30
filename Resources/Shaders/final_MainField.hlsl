@@ -1,6 +1,7 @@
 #include "Global_b0.hlsl"
 #include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
+#include "ShadowReceive_b6.hlsl"
 
 //[���̴�����][�ø�ó��]
 
@@ -38,6 +39,10 @@ float4 PS_Main(VS_OUT input) : SV_Target
 
     LightingResult lightColor = ComputeLightColor(worldPos.xyz, worldNormal.xyz);
     float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), worldNormal) * 0.5 + 0.5));
+
+    float3 uvz[4];
+	ComputeCascadeShadowUVs(worldPos.xyz, uvz);
+    lightColor.atten *= ComputeCascadeShadowAtten(uvz, mul(float4(worldPos.xyz, 1), ViewMatrix).z).x;
 
     float subIntensity =  lerp(1, 0.3, clamp(0, 1, lightColor.intensity));
     float3 finalColor = (lerp(ShadowColor * albedoColor, albedoColor, lightColor.atten) + float4(lightColor.subColor * subIntensity, 0)).xyz;

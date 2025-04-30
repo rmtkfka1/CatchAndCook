@@ -26,14 +26,16 @@ Texture2D AlbedoTexture : register(t23);
 Texture2D MAOTexture : register(t25);
 Texture2D DepthTexture : register(t24);
 
+Texture2D ShadowTexture[4] : register(t100);
+
 SamplerState sampler_lerp : register(s0);
 SamplerState sampler_point : register(s1);
 SamplerState sampler_aniso4 : register(s2);
 SamplerState sampler_aniso8 : register(s3);
 SamplerState sampler_aniso16 : register(s4);
-SamplerState sampler_shadow : register(s5);
 SamplerState sampler_lerp_clamp : register(s6);
 
+SamplerComparisonState sampler_shadow : register(s5);
 
 
 float4x4 Inverse(float4x4 m)
@@ -147,6 +149,19 @@ float simple_noise(float2 v)
     g.z = a0.z * x2.x + h.z * x2.y;
 
     return 130.0 * dot(m, g);
+}
+
+float3 NormalFromHeight(Texture2D heightSampler, SamplerState samplerState, float2 uv, float2 texelSize, float strength)
+{
+    float center = heightSampler.Sample(samplerState, uv).r;
+    float right  = heightSampler.Sample(samplerState, uv + float2(texelSize.x, 0)).r;
+    float up     = heightSampler.Sample(samplerState, uv + float2(0, texelSize.y)).r;
+
+    float dx = (center - right) * strength;
+    float dy = (center - up) * strength;
+
+    float3 n = float3(dx, dy, 1.0f);
+    return normalize(n);
 }
 
 
