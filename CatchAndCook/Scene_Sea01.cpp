@@ -356,7 +356,9 @@ void Scene_Sea01::ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& 
 					if (renderStructure.renderer->IsCulling() == true)
 					{
 						if (bounding.Intersects(renderStructure.renderer->GetBound()) == false)
+						{
 							continue;
+						}
 					}
 
 					SettingPrevData(renderStructure, RENDER_PASS::PASS::Shadow);
@@ -368,11 +370,12 @@ void Scene_Sea01::ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& 
 					}
 					else
 					{
+						g_debug_shadow_draw_call++;
 						InstancingManager::main->AddObject(renderStructure);
 					}
 				}
 
-				g_debug_shadow_draw_call++;
+
 				InstancingManager::main->Render();
 			}
 
