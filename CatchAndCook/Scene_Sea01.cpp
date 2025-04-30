@@ -259,32 +259,6 @@ void Scene_Sea01::Rendering()
 {
 	GlobalSetting();
 
-//#ifdef _DEBUG
-	//Gizmo::Width(0.5);
-	//Gizmo::Frustum(CameraManager::main->GetCamera(CameraType::ComponentCamera)->_boundingFrsutum);
-	//Gizmo::WidthRollBack();
-	Light l;
-	l.direction = Vector3(1, -1, 1);
-	l.direction.Normalize();
-
-	//auto a2 = ShadowManager::main->GetFrustums(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), &l, { 8,30,75,200 });
-	//for (auto b2 : a2)
-	//{
-	//    Gizmo::Width(0.1);
-	//    Gizmo::Frustum(b2, Vector4(1, 0, 0, 1));
-	//    Gizmo::WidthRollBack();
-	//}
-
-	auto light = LightManager::main->GetMainLight();
-	//auto a = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::SeaCamera).get(), light.get(), { 6, 20, 65, 200 });
-	auto a = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::SeaCamera).get(), light.get(), { 3000 });
-	for (auto& b : a)
-	{
-		Gizmo::Width(5.0f);
-		Gizmo::Box(b, Vector4(0, 1, 0, 1));
-		Gizmo::WidthRollBack();
-	}
-//#endif
 
 	auto& cmdList = Core::main->GetCmdList();
 	Core::main->GetRenderTarget()->ClearDepth();
@@ -335,6 +309,15 @@ void Scene_Sea01::Finish()
 
 void Scene_Sea01::ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
+	auto light = LightManager::main->GetMainLight();
+	auto a = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::SeaCamera).get(), light.get(), { 3000 });
+	for (auto& b : a)
+	{
+		Gizmo::Width(5.0f);
+		Gizmo::Box(b, Vector4(0, 1, 0, 1));
+		Gizmo::WidthRollBack();
+	}
+
 	{
 		auto light = LightManager::main->GetMainLight();
 		if (light == nullptr)
