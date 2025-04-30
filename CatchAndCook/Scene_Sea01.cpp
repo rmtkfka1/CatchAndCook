@@ -309,14 +309,14 @@ void Scene_Sea01::Finish()
 
 void Scene_Sea01::ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
-	auto light = LightManager::main->GetMainLight();
+	/*auto light = LightManager::main->GetMainLight();
 	auto a = ShadowManager::main->SeaCalculateBounds(CameraManager::main->GetCamera(CameraType::SeaCamera).get(), light.get(), { 3000 });
 	for (auto& b : a)
 	{
 		Gizmo::Width(5.0f);
 		Gizmo::Box(b, Vector4(0, 1, 0, 1));
 		Gizmo::WidthRollBack();
-	}
+	}*/
 
 	{
 		auto light = LightManager::main->GetMainLight();
@@ -329,7 +329,6 @@ void Scene_Sea01::ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& 
 		auto boundings = ShadowManager::main->SeaCalculateBounds(CameraManager::main->GetCamera(CameraType::SeaCamera).get(), light.get(), { 500, 1000 ,2000, 3000 });
 		auto lastShadowPos = ShadowManager::main->_lightTransform[ShadowManager::main->_lightTransform.size() - 1];
 		TerrainManager::main->CullingInstancing(lastShadowPos.first, lastShadowPos.second);
-
 		auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
 
 		ShadowManager::main->SetData(nullptr);

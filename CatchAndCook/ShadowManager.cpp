@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #include "ShadowManager.h"
-
+#include "Gizmo.h"
 #include "Camera.h"
 #include "LightManager.h"
 
@@ -97,7 +97,6 @@ std::vector<BoundingFrustum> ShadowManager::GetFrustums(Camera* camera, Light* l
     return frustums;
 }
 
-
 std::vector<BoundingOrientedBox> ShadowManager::CalculateBounds(Camera* camera, Light* light, const std::vector<float>& distances)
 {
 
@@ -120,9 +119,8 @@ std::vector<BoundingOrientedBox> ShadowManager::CalculateBounds(Camera* camera, 
         distances.size() >= 3 ? distances[2] : 0,
         distances.size() >= 4 ? distances[3] : 0);
 
-    std::vector<BoundingFrustum> frustums;
+  
     std::vector<BoundingOrientedBox> bounds;
-    frustums.reserve(dis.size());
     bounds.reserve(dis.size());
 
     _lightTransform.clear();
@@ -190,8 +188,6 @@ std::vector<BoundingOrientedBox> ShadowManager::CalculateBounds(Camera* camera, 
         this->_shadowCasterParams.lightVPMatrix[i] = lightView * projMat;
         this->_shadowCasterParams.lightInvertVPMatrix[i] = this->_shadowCasterParams.lightVPMatrix[i].Invert();
 
-
-        frustums.push_back(frustum);
         bounds.push_back(obb);
     }
     return bounds;
@@ -217,9 +213,7 @@ std::vector<BoundingOrientedBox> ShadowManager::SeaCalculateBounds(Camera* camer
         distances.size() >= 3 ? distances[2] : 0,
         distances.size() >= 4 ? distances[3] : 0);
 
-    std::vector<BoundingFrustum> frustums;
     std::vector<BoundingOrientedBox> bounds;
-    frustums.reserve(dis.size());
     bounds.reserve(dis.size());
     _lightTransform.clear();
 
@@ -235,6 +229,9 @@ std::vector<BoundingOrientedBox> ShadowManager::SeaCalculateBounds(Camera* camer
         BoundingFrustum frustum;
         BoundingFrustum::CreateFromMatrix(frustum, mat);
         frustum.Transform(frustum, params.InvertViewMatrix);
+
+        Gizmo::main->Frustum(frustum);
+
         array<Vector3, 8> corners;
         frustum.GetCorners(corners.data());
         Vector3 lightDir = light->direction;
@@ -281,12 +278,10 @@ std::vector<BoundingOrientedBox> ShadowManager::SeaCalculateBounds(Camera* camer
         this->_shadowCasterParams.lightProjectionMatrix[i] = projMat;
         this->_shadowCasterParams.lightInvertViewMatrix[i] = invLightView;
         this->_shadowCasterParams.lightInvertProjectionMatrix[i] = invProjMat;
-
         this->_shadowCasterParams.lightVPMatrix[i] = lightView * projMat;
-        this->_shadowCasterParams.lightInvertVPMatrix[i] = this->_shadowCasterParams.lightVPMatrix[i].Invert();
+        this->_shadowCasterParams.lightInvertVPMatrix[i] = _shadowCasterParams.lightVPMatrix[i].Invert();
 
 
-        frustums.push_back(frustum);
         bounds.push_back(obb);
     }
     return bounds;
