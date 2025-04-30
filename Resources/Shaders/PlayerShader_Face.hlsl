@@ -116,20 +116,16 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 
 
     float3 uvz[4];
-	ComputeCascadeShadowUVs(output.positionWS, uvz);
+	ComputeCascadeShadowUVs(output.positionWS.xyz, uvz);
 
     output.positionVS = TransformWorldToView(output.positionWS);
     output.shadowCoord0 = uvz[0];
     output.shadowCoord1 = uvz[1];
     output.shadowCoord2 = uvz[2];
     output.shadowCoord3 = uvz[3];
-
+    
     return output;
 }
-
-
-
-
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
@@ -151,8 +147,6 @@ float4 PS_Main(VS_OUT input) : SV_Target
     uvz[2] = input.shadowCoord2;
     uvz[3] = input.shadowCoord3;
     lightColor.atten = lerp(0.5, 1, ComputeCascadeShadowAttenCustomBias(uvz, input.positionVS.z, 0.5/shadowTexelSize).x);
-
-
 
     // ==========================
     //      Player Only Setting

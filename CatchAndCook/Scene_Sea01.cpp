@@ -13,6 +13,8 @@
 #include "LightManager.h"
 #include "PlantComponent.h"
 #include "SkinnedMeshRenderer.h"
+#include "Profiler.h"
+#include "ComputeManager.h"
 void Scene_Sea01::Init()
 {
 	Scene::Init();
@@ -250,7 +252,64 @@ void Scene_Sea01::RenderBegin()
 
 void Scene_Sea01::Rendering()
 {
-	Scene::Rendering();
+	GlobalSetting();
+
+#ifdef _DEBUG
+	//Gizmo::Width(0.5);
+	//Gizmo::Frustum(CameraManager::main->GetCamera(CameraType::ComponentCamera)->_boundingFrsutum);
+	//Gizmo::WidthRollBack();
+	Light l;
+	l.direction = Vector3(1, -1, 1);
+	l.direction.Normalize();
+
+	//auto a2 = ShadowManager::main->GetFrustums(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), &l, { 8,30,75,200 });
+	//for (auto b2 : a2)
+	//{
+	//    Gizmo::Width(0.1);
+	//    Gizmo::Frustum(b2, Vector4(1, 0, 0, 1));
+	//    Gizmo::WidthRollBack();
+	//}
+
+	auto light = LightManager::main->GetMainLight();
+	auto a = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), light.get(), { 6, 20, 65, 200 });
+	for (auto b : a)
+	{
+		Gizmo::Width(0.5);
+		Gizmo::Box(b, Vector4(0, 1, 0, 1));
+		Gizmo::WidthRollBack();
+	}
+#endif
+
+	auto& cmdList = Core::main->GetCmdList();
+	Core::main->GetRenderTarget()->ClearDepth();
+
+	//Profiler::Set("PASS : Shadow", BlockTag::CPU);
+	//ShadowPass(cmdList);
+	//Profiler::Fin();
+
+	Profiler::Set("PASS : Deferred", BlockTag::CPU);
+	DeferredPass(cmdList);
+	Profiler::Fin();
+
+	Profiler::Set("PASS : FinalPass", BlockTag::CPU);
+	FinalRender(cmdList);
+	Profiler::Fin();
+
+	Profiler::Set("PASS : Forward", BlockTag::CPU);
+	ForwardPass(cmdList);
+	Profiler::Fin();
+
+	Profiler::Set("PASS : Transparent", BlockTag::CPU);
+	TransparentPass(cmdList); // Position,
+	Profiler::Fin();
+
+	Profiler::Set("PASS : Compute", BlockTag::CPU);
+	ComputePass(cmdList);
+	Profiler::Fin();
+
+	Profiler::Set("PASS : UI", BlockTag::CPU);
+	UiPass(cmdList);
+	Profiler::Fin();
 }
 
 void Scene_Sea01::DebugRendering()

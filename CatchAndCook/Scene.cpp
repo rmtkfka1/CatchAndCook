@@ -133,15 +133,15 @@ void Scene::Rendering()
     auto& cmdList = Core::main->GetCmdList();
     Core::main->GetRenderTarget()->ClearDepth();
 
-    Profiler::Set("PASS : Shadow", BlockTag::GPU);
+    Profiler::Set("PASS : Shadow", BlockTag::CPU);
 		ShadowPass(cmdList);
     Profiler::Fin();
 
-    Profiler::Set("PASS : Deferred", BlockTag::GPU);
+    Profiler::Set("PASS : Deferred", BlockTag::CPU);
         DeferredPass(cmdList);
     Profiler::Fin();
 
-    Profiler::Set("PASS : FinalPass", BlockTag::GPU);
+    Profiler::Set("PASS : FinalPass", BlockTag::CPU);
         FinalRender(cmdList);
     Profiler::Fin();
 
@@ -150,7 +150,7 @@ void Scene::Rendering()
 
     ComputeManager::main->DispatchAfterDeferred(cmdList);
 
-    Profiler::Set("PASS : Forward", BlockTag::GPU);
+    Profiler::Set("PASS : Forward", BlockTag::CPU);
     ForwardPass(cmdList);
     Profiler::Fin();
 
@@ -161,15 +161,15 @@ void Scene::Rendering()
     Core::main->GetRTReadTexture()->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
 
-    Profiler::Set("PASS : Transparent", BlockTag::GPU);
+    Profiler::Set("PASS : Transparent", BlockTag::CPU);
     TransparentPass(cmdList); // Position,
     Profiler::Fin();
 
-    Profiler::Set("PASS : Compute", BlockTag::GPU);
+    Profiler::Set("PASS : Compute", BlockTag::CPU);
     ComputePass(cmdList);
     Profiler::Fin();
 
-    Profiler::Set("PASS : UI", BlockTag::GPU);
+    Profiler::Set("PASS : UI", BlockTag::CPU);
     UiPass(cmdList);
     Profiler::Fin();
 
@@ -456,7 +456,7 @@ void Scene::SettingPrevData(RenderObjectStrucutre& data, const RENDER_PASS::PASS
 
 void Scene::DebugRendering()
 {
-    if (Gizmo::main->_flags == GizmoFlags::RenderPreview)
+    if (HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::RenderPreview))
     {
         auto pos = CameraManager::main->GetActiveCamera()->GetCameraPos();
         auto lock = CameraManager::main->GetActiveCamera()->GetCameraLook();
@@ -515,6 +515,7 @@ void Scene::DebugRendering()
             }
         }
     }
+
     Gizmo::main->Clear();
 }
 
