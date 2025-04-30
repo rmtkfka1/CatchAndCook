@@ -313,13 +313,12 @@ void Scene::DeferredPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
 void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 {
-    return;
     { // Shadow
         auto light = LightManager::main->GetMainLight();
 		if (light == nullptr)
 			return;
 
-        auto boundings = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), light.get(), { 6, 20, 65, 200 });
+        auto boundings = ShadowManager::main->CalculateBounds(CameraManager::main->GetActiveCamera().get(), light.get(), { 6, 20, 65, 200 });
 
     	auto lastShadowPos = ShadowManager::main->_lightTransform[ShadowManager::main->_lightTransform.size() - 1];
     	TerrainManager::main->CullingInstancing(lastShadowPos.first, lastShadowPos.second);
