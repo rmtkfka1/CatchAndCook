@@ -4,9 +4,10 @@
 
 #include "Camera_b2.hlsl"
 #include "Skinned_t32.hlsl"
-#include "Global_b0.hlsl"
 
-cbuffer ShadowCasterParams : register(b6) {
+
+cbuffer ShadowCasterParams : register(b6) 
+{
     row_major matrix shadowViewMatrix[4];
 	row_major matrix shadowProjectionMatrix[4];
 	row_major matrix shadowVPMatrix[4];
@@ -26,7 +27,6 @@ struct ShadowCascadeIndexParams
 	unsigned int cascadeIndex;
 	float3 padding2;
 };
-
 
 void ComputeCascadeShadowUVs(float3 worldPos, out float3 uvOut[4])
 {
@@ -67,7 +67,9 @@ float ComputeCascadeShadowAtten(in float3 uvOut[4], float viewDepth)
         {
             return ShadowTexture[i].SampleCmpLevelZero(sampler_shadow, uv, uvw.z - bias);
         }
+        
     }
+    
     return 1.0f;
 }
 float ComputeCascadeShadowAttenCustomBias(in float3 uvOut[4], float viewDepth, float customBias)

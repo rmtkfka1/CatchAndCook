@@ -260,6 +260,7 @@ void MeshRenderer::SetSpecialMaterials()
 {
 	_depthNormalMaterials.clear();
 	_shadowMaterials.clear();
+
 	for (int i = 0; i < _mesh.size(); i++)
 	{
 		auto currentMaterial = _uniqueMaterials[i % std::min(_mesh.size(), _uniqueMaterials.size())];
@@ -279,8 +280,7 @@ void MeshRenderer::SetSpecialMaterials()
 		if ((RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward)
 			|| RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Deferred)) && currentMaterial->GetShadowCasting())
 		{
-			auto shadowMaterial =
-				((HasInstanceBuffer() ? ResourceManager::main->_shadowCaster_Instanced : ResourceManager::main->_shadowCaster));
+			auto shadowMaterial =((HasInstanceBuffer() ? ResourceManager::main->_shadowCaster_Instanced : ResourceManager::main->_shadowCaster));
 			shadowMaterial = shadowMaterial->Clone();
 			currentMaterial->CopyProperties(shadowMaterial);
 			_shadowMaterials.push_back(make_pair(i, shadowMaterial));

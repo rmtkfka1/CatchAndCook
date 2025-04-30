@@ -121,7 +121,7 @@ void Scene::Rendering()
     //}
 
     auto light = LightManager::main->GetMainLight();
-    auto a = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::SeaCamera).get(), light.get(), { 6, 20, 65, 200 });
+    auto a = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), light.get(), { 6, 20, 65, 200 });
     for (auto b : a)
     {
         Gizmo::Width(0.5);
@@ -314,7 +314,7 @@ void Scene::DeferredPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
 void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 {
-    { // Shadow
+    { 
         auto light = LightManager::main->GetMainLight();
 		if (light == nullptr)
 			return;
@@ -326,10 +326,11 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
 
-
 		ShadowManager::main->SetData(nullptr);
         ShadowManager::main->RenderBegin();
+
         int i = 0;
+
         for (auto& bounding : boundings)
         {
             ShadowCascadeIndexParams shadowCasterParams;
@@ -337,7 +338,6 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
             shadowCasterParams.cascadeIndex = i;
             memcpy(cbuffer2->ptr, &shadowCasterParams, sizeof(ShadowCascadeIndexParams));
             Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(7, cbuffer2->GPUAdress);
-
             Core::main->GetShadowBuffer()->RenderBegin(i);
             for (auto& [shader, vec] : targets)
             {
@@ -349,6 +349,7 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                     if (renderStructure.renderer->IsCulling() == true)
                         if (bounding.Intersects(renderStructure.renderer->GetBound()) == false)
                             continue;
+
                     SettingPrevData(renderStructure, RENDER_PASS::PASS::Shadow);
 
                     if (renderStructure.renderer->isInstancing() == false)
@@ -363,13 +364,13 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
                 InstancingManager::main->Render();
             }
+
             Core::main->GetShadowBuffer()->RenderEnd();
             i++;
         }
+
         ShadowManager::main->RenderEnd();
-
     }
-
 
 }
 
@@ -441,6 +442,7 @@ void Scene::SettingPrevData(RenderObjectStrucutre& data, const RENDER_PASS::PASS
 {
     if (data.material != nullptr)
 		data.material->SetTexture("_BakedGIMap", ResourceManager::main->_bakedGITexture);
+
     switch (pass)
     {
     case RENDER_PASS::Transparent:

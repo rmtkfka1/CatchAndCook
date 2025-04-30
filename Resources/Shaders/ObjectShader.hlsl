@@ -93,7 +93,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     output.uv = input.uv;
 
     float3 uvz[4];
-	ComputeCascadeShadowUVs(output.positionWS, uvz);
+	ComputeCascadeShadowUVs(output.positionWS.xyz, uvz);
 
     output.positionVS = float4(TransformWorldToView(output.positionWS).xyz, 1);
     output.shadowCoord0 = uvz[0];
@@ -131,9 +131,7 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, atten2) + float4(lightColor.subColor * subIntensity, 0)).xyz;
 
     //_RampShadowMap
-
-    float3 viewDir = normalize(cameraPos - input.positionWS.xyz);
-
+    float3 viewDir = normalize(cameraPos.xyz - input.positionWS.xyz);
 
     //Sobel Spec
     float N2L = saturate(dot(lightColor.direction, N));

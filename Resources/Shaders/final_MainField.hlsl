@@ -42,13 +42,12 @@ float4 PS_Main(VS_OUT input) : SV_Target
 
     float3 uvz[4];
 	ComputeCascadeShadowUVs(worldPos.xyz, uvz);
-    lightColor.atten *= ComputeCascadeShadowAtten(uvz, mul(float4(worldPos.xyz, 1), ViewMatrix).z).x;
+    lightColor.atten *= ComputeCascadeShadowAtten(uvz, mul(float4(worldPos.xyz, 1), ViewMatrix).z);
 
     float subIntensity =  lerp(1, 0.3, clamp(0, 1, lightColor.intensity));
     float3 finalColor = (lerp(ShadowColor * albedoColor, albedoColor, lightColor.atten) + float4(lightColor.subColor * subIntensity, 0)).xyz;
 
-
-    float3 viewDir = normalize(cameraPos - worldPos.xyz);
+    float3 viewDir = normalize(cameraPos.xyz - worldPos.xyz);
 
     // Rim
     float N2L = saturate(dot(lightColor.direction, worldNormal));

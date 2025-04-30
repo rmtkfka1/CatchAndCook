@@ -101,13 +101,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     output.normalWS = TransformNormalLocalToWorld(input.normal, boneIds, boneWs, w2lMatrix, id);
     output.tangentWS = TransformNormalLocalToWorld(input.tangent, boneIds, boneWs, w2lMatrix, id);
 #endif
-
-
-	float3 uvz[4];
-	ComputeCascadeShadowUVs(output.positionWS.xyz, uvz);
-
     output.uv = input.uv;
-
     return output;
 }
 

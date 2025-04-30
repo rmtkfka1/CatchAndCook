@@ -94,6 +94,9 @@ void CS_Main(uint3 id : SV_DispatchThreadID)
     
     float swAtten = lerp(light.subWaterAtten, 1.0f, distFogNorm);
     
+    
+    //float3 uvz[4];
+    //ComputeCascadeShadowUVs(worldPos.xyz, uvz);
     float3 underCol = lerp(g_underWaterColor * albedo, albedo, light.atten);
 
     float3 litColor = underCol + light.subColor;
