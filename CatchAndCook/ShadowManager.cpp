@@ -104,6 +104,7 @@ std::vector<BoundingOrientedBox> ShadowManager::CalculateBounds(Camera* camera, 
 
 	std::vector<BoundingFrustum> frustums;
     std::vector<BoundingOrientedBox> bounds;
+    _lightTransform.clear();
     frustums.reserve(dis.size());
     bounds.reserve(dis.size());
     _lightTransform.reserve(dis.size());
@@ -125,7 +126,7 @@ std::vector<BoundingOrientedBox> ShadowManager::CalculateBounds(Camera* camera, 
         Vector3 lightDir = light->direction;
         lightDir.Normalize();
         Vector3 lightUp = Vector3::UnitY; // 필요하면 카메라 상향으로 조정
-        Vector3 lightPos = -lightDir * 500.0f;
+        Vector3 lightPos = -lightDir * 1000.0f;
         Matrix lightView = Matrix::CreateLookAt(lightPos, Vector3::Zero, lightUp);
         Matrix invLightView = lightView.Invert();
 
@@ -147,8 +148,9 @@ std::vector<BoundingOrientedBox> ShadowManager::CalculateBounds(Camera* camera, 
         extentsLS.y = extentsLS.x;
 
         float angle = (1 - std::abs(lightDir.Dot(Vector3::Down)));
-        extentsLS.z += 40 * angle;
-        centerLS.z -= (40 * angle) / 2;
+        float scale = (40 * angle + 20);
+        extentsLS.z += scale;
+        centerLS.z -= scale / 2;
 
         BoundingOrientedBox obb(centerLS, extentsLS, Quaternion::Identity);
         obb.Transform(obb, invLightView);

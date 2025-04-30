@@ -69,25 +69,61 @@ public:
 	void SetNavMeshData(const std::vector<NavMeshData>& data);
 	static void CalculatePath(const Vector3& startPosition, const Vector3& endPosition, const std::vector<NavMeshData>& datas, const std::vector<std
 	                          ::array<Vector3, 2>>& edges);
+
+
+	enum class Ori { Colinear, Clockwise, CounterClockwise };
+
+	static Ori Orientation(const Vector3& A, const Vector3& B, const Vector3& C) {
+		float v = ccw(A, B, C);
+		if (fabs(v) < 0.001) return Ori::Colinear;
+		return (v > 0 ? Ori::CounterClockwise : Ori::Clockwise);
+	}
+
+	static bool OnSegment(const Vector3& A, const Vector3& B, const Vector3& P) {
+		return P.x >= min(A.x, B.x) - 0.001 && P.x <= max(A.x, B.x) + 0.001 &&
+			P.z >= min(A.z, B.z) - 0.001 && P.z <= max(A.z, B.z) + 0.001;
+	}
+
+	static bool SegmentsIntersect(const Vector3& A, const Vector3& B,
+		const Vector3& C, const Vector3& D)
+	{
+		Ori o1 = Orientation(A, B, C);
+		Ori o2 = Orientation(A, B, D);
+		Ori o3 = Orientation(C, D, A);
+		Ori o4 = Orientation(C, D, B);
+
+		// 일반 내부 교차
+		if (o1 != o2 && o3 != o4) return true;
+
+		// colinear special cases
+		if (o1 == Ori::Colinear && OnSegment(A, B, C)) return true;
+		if (o2 == Ori::Colinear && OnSegment(A, B, D)) return true;
+		if (o3 == Ori::Colinear && OnSegment(C, D, A)) return true;
+		if (o4 == Ori::Colinear && OnSegment(C, D, B)) return true;
+
+		return false;
+	}
+
+	static std::deque<NavMeshPathData> SmoothPath(const std::deque<NavMeshPathData>& rawPath, const std::vector<std::array<Vector3, 2>>& edges);
+
 	static float ccw(const Vector3& A, const Vector3& B, const Vector3& C)
 	{
 		return (B.x - A.x) * (C.z - A.z) - (B.z - A.z) * (C.x - A.x);
 	}
-	static bool IsIntersecting(const std::array<Vector3, 2>& edge1, const std::array<Vector3, 2>& edge2)
+	static bool IsIntersecting(const std::array<Vector3, 2>& e1, const std::array<Vector3, 2>& e2)
 	{
-		float ccw1 = ccw(edge1[0], edge1[1], edge2[0]);
-		float ccw2 = ccw(edge1[0], edge1[1], edge2[1]);
-		float ccw3 = ccw(edge2[0], edge2[1], edge1[0]);
-		float ccw4 = ccw(edge2[0], edge2[1], edge1[1]);
+		float ccw1 = ccw(e1[0], e1[1], e2[0]);
+		float ccw2 = ccw(e1[0], e1[1], e2[1]);
+		float ccw3 = ccw(e2[0], e2[1], e1[0]);
+		float ccw4 = ccw(e2[0], e2[1], e1[1]);
 
-		// 일반적인 내부 교차 체크
-		if ((ccw1 * ccw2 < 0) && (ccw3 * ccw4 < 0))
+		// strict 교차뿐 아니라, ccw == 0 (끝점 접촉 or 공선) 도 막기
+		if ((ccw1 * ccw2 <= 0) && (ccw3 * ccw4 <= 0))
 			return true;
 
-		// 필요하다면, ccw가 0인 경우(접촉)도 교차로 판단하도록 수정할 수 있습니다.
-		// 예를 들어, 동일한게 2개 이상이면 교차로 보고 싶다면 별도의 조건을 추가하세요.
 		return false;
 	}
+
 	static bool IsPointOnSegment(const Vector3& A, const Vector3& B, const Vector3& P)
 	{
 		const float EPSILON = 1e-6f;
@@ -105,6 +141,14 @@ public:
 	static bool HasLineOfSight(const Vector3& start, const Vector3& end,
 		const std::vector<std::array<Vector3, 2>>& edges)
 	{
+		for (const auto& edge : edges)
+		{
+			// 두 선분이 하나라도 교차하면 시야 차단
+			if (SegmentsIntersect(start, end, edge[0], edge[1]))
+				return false;
+		}
+		return true;
+
 		std::array<Vector3, 2> lineSegment = { start, end };
 
 		for (const auto& edge : edges)

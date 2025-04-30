@@ -166,6 +166,8 @@ void NavMeshManager::CalculatePath(const Vector3& startPosition, const Vector3& 
 		resultPath.push_front({ startPoint });
 		resultPath.push_back({ endPoint });
 
+		/*
+
 		std::deque<NavMeshPathData> resultPath2;
 
 		resultPath2.push_back(resultPath.front());
@@ -192,6 +194,8 @@ void NavMeshManager::CalculatePath(const Vector3& startPosition, const Vector3& 
 			resultPath2.push_back(resultPath[nextIndex]);
 			currentIndex = nextIndex;
 		}
+		*/
+		auto resultPath2 = SmoothPath(resultPath, edges);
 
 		Gizmo::Width(0.2f);
 		// 결과 경로 그리기
@@ -206,6 +210,44 @@ void NavMeshManager::CalculatePath(const Vector3& startPosition, const Vector3& 
 	
 	//float a = queue.top().value;
 	//std::cout << queue.top().value << "\n";
+}
+
+std::deque<NavMeshPathData> NavMeshManager::SmoothPath(const std::deque<NavMeshPathData>& rawPath,
+	const std::vector<std::array<Vector3, 2>>& edges)
+{
+	std::deque<NavMeshPathData> out;
+	size_t n = rawPath.size();
+	if (n == 0) return out;
+
+	out.push_back(rawPath.front());  // 시작점
+	size_t current = 0;
+
+	while (current < n - 1)
+	{
+		size_t nextIdx = current;
+
+		// 1) 뒤에서부터 검사: 가장 먼 지점부터
+		for (size_t i = n - 1; i > current; --i)
+		{
+			if (HasLineOfSight(
+				rawPath[current].data->position,
+				rawPath[i].data->position,
+				edges))
+			{
+				nextIdx = i;
+				break;  // farthest reachable point
+			}
+		}
+
+		// 2) 혹시 시야가 전혀 뚫리지 않아서 nextIdx==current이면
+		if (nextIdx == current)
+			nextIdx = current + 1;
+
+		out.push_back(rawPath[nextIdx]);
+		current = nextIdx;
+	}
+
+	return out;
 }
 
 void NavMeshManager::Init()

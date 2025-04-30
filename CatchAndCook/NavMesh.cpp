@@ -28,9 +28,9 @@ void NavMesh::Start()
 void NavMesh::Update()
 {
 	Component::Update();
-	startPos += Vector3((Input::main->GetKey(KeyCode::RightArrow)?1:0) - (Input::main->GetKey(KeyCode::LeftArrow) ? 1 : 0),
+	startPos += Vector3((Input::main->GetKey(KeyCode::L)?1:0) - (Input::main->GetKey(KeyCode::J) ? 1 : 0),
 		0,
-		(Input::main->GetKey(KeyCode::UpArrow) ? 1 : 0) - (Input::main->GetKey(KeyCode::DownArrow) ? 1 : 0)
+		(Input::main->GetKey(KeyCode::I) ? 1 : 0) - (Input::main->GetKey(KeyCode::K) ? 1 : 0)
 		)
 	* Time::main->GetDeltaTime() * 40;
 	NavMeshManager::main->CalculatePath(Vector3(350, 0, 150), startPos,
