@@ -4,6 +4,7 @@
 #include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
 #include "Skinned_t32.hlsl"
+#include "ShadowReceive_b6.hlsl"
 
 #include "ObjectSetting_t31.hlsl"
 
@@ -59,6 +60,11 @@ struct VS_OUT
     float2 uv : TEXCOORD0;
 
     float4 positionOS : PositionOS;
+    float4 positionVS : PositionVS;
+    float3 shadowCoord0 : SHADOW0;
+    float3 shadowCoord1 : SHADOW1;
+    float3 shadowCoord2 : SHADOW2;
+    float3 shadowCoord3 : SHADOW3;
 };
 
 Texture2D _BaseMap : register(t0);
@@ -101,6 +107,16 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 
     output.uv = input.uv;
 
+    float3 uvz[4];
+	ComputeCascadeShadowUVs(output.positionWS, uvz);
+
+    output.positionVS = TransformWorldToView(output.positionWS);
+    output.shadowCoord0 = uvz[0];
+    output.shadowCoord1 = uvz[1];
+    output.shadowCoord2 = uvz[2];
+    output.shadowCoord3 = uvz[3];
+
+
     return output;
 }
 
@@ -120,6 +136,15 @@ float4 PS_Main(VS_OUT input) : SV_Target
     
     float4 BaseColor = _BaseMap.Sample(sampler_lerp, input.uv * _baseMapST.xy + _baseMapST.zw) * color;
     float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
+
+    float3 uvz[4];
+    uvz[0] = input.shadowCoord0;
+    uvz[1] = input.shadowCoord1;
+    uvz[2] = input.shadowCoord2;
+    uvz[3] = input.shadowCoord3;
+
+    lightColor.atten = lerp(min(lightColor.atten, 0.5), lightColor.atten, ComputeCascadeShadowAtten(uvz, input.positionVS.z).x);
+
     //float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, lightColor.atten) + float4(lightColor.subColor, 0)).xyz;
     //ShadowColor
     float subIntensity =  lerp(1, 0.3, clamp(0, 1, lightColor.intensity));

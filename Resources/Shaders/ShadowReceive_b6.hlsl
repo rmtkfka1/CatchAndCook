@@ -19,6 +19,8 @@ cbuffer ShadowCasterParams : register(b6) {
     float4 cascadeDistance;
 };
 
+static const int shadowTexelSize = 2048;
+
 struct ShadowCascadeIndexParams
 {
 	unsigned int cascadeIndex;
@@ -53,17 +55,32 @@ void ComputeCascadeShadowUVs(float3 worldPos, out float3 uvOut[4])
 
 float ComputeCascadeShadowAtten(in float3 uvOut[4], float viewDepth)
 {
-    const float bias = 1.0f * (1/2048);
+    const float bias = 1.0f * (0.005 / shadowTexelSize);
 
     [unroll]
     for (uint i = 0; i < cascadeCount; ++i)
     {
-        if (viewDepth <= cascadeDistance[i])
+        float3 uvw = uvOut[i];
+        float2 uv  = uvw.xy;
+
+        if (viewDepth <= cascadeDistance[i] && uv.x >= 0.0f && uv.y >= 0.0f && uv.x <= 1.0f && uv.y <= 1.0f)
         {
-            float3 uv = uvOut[i];
-            if (uv.x < 0 || uv.y < 0 || uv.x > 1 || uv.y > 1)
-                return 1.0f;
-            return ShadowTexture[i].SampleCmpLevelZero(sampler_shadow, uv.xy, uv.z - bias);
+            return ShadowTexture[i].SampleCmpLevelZero(sampler_shadow, uv, uvw.z - bias);
+        }
+    }
+    return 1.0f;
+}
+float ComputeCascadeShadowAttenCustomBias(in float3 uvOut[4], float viewDepth, float customBias)
+{
+    [unroll]
+    for (uint i = 0; i < cascadeCount; ++i)
+    {
+        float3 uvw = uvOut[i];
+        float2 uv  = uvw.xy;
+
+        if (viewDepth <= cascadeDistance[i] && uv.x >= 0.0f && uv.y >= 0.0f && uv.x <= 1.0f && uv.y <= 1.0f)
+        {
+            return ShadowTexture[i].SampleCmpLevelZero(sampler_shadow, uv, uvw.z - customBias);
         }
     }
     return 1.0f;

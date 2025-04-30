@@ -104,7 +104,7 @@ void Scene::Rendering()
 {
     GlobalSetting();
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
     //Gizmo::Width(0.5);
     //Gizmo::Frustum(CameraManager::main->GetCamera(CameraType::ComponentCamera)->_boundingFrsutum);
     //Gizmo::WidthRollBack();
@@ -120,14 +120,14 @@ void Scene::Rendering()
     //    Gizmo::WidthRollBack();
     //}
     auto light = LightManager::main->GetMainLight();
-    auto a = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), light.get(), { 8,30,75,200 });
+    auto a = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), light.get(), { 6, 20, 65, 200 });
     for (auto b : a)
     {
         Gizmo::Width(0.5);
         Gizmo::Box(b, Vector4(0,1,0,1));
         Gizmo::WidthRollBack();
     }
-//#endif
+#endif
 
     auto& cmdList = Core::main->GetCmdList();
     Core::main->GetRenderTarget()->ClearDepth();
@@ -313,13 +313,13 @@ void Scene::DeferredPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
 void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 {
-
+    return;
     { // Shadow
         auto light = LightManager::main->GetMainLight();
 		if (light == nullptr)
 			return;
 
-        auto boundings = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), light.get(), { 6 , 20, 50, 120});
+        auto boundings = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), light.get(), { 6, 20, 65, 200 });
 
     	auto lastShadowPos = ShadowManager::main->_lightTransform[ShadowManager::main->_lightTransform.size() - 1];
     	TerrainManager::main->CullingInstancing(lastShadowPos.first, lastShadowPos.second);

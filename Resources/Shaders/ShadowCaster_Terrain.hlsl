@@ -105,7 +105,7 @@ float CalculateTessLevel(float3 cameraWorldPos, float3 patchPos, float minDist, 
     float tessLevel = lerp(maxLv, 1.0f, tSmooth);
 
     // 결과를 보정 범위 안에 클램프
-    return clamp(tessLevel, 4.0f, maxLv);
+    return clamp(tessLevel, 1.0f, maxLv);
 }
 
 //패치단위로 호출

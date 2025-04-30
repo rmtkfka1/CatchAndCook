@@ -4,6 +4,7 @@
 #include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
 #include "Skinned_t32.hlsl"
+#include "ShadowReceive_b6.hlsl"
 
 #include "ObjectSetting_t31.hlsl"
 
@@ -58,6 +59,13 @@ struct VS_OUT
 
     float3 rightWS : NORMAL2;
     float3 forwardWS : NORMAL3;
+
+
+    float4 positionVS : PositionVS;
+    float3 shadowCoord0 : SHADOW0;
+    float3 shadowCoord1 : SHADOW1;
+    float3 shadowCoord2 : SHADOW2;
+    float3 shadowCoord3 : SHADOW3;
 };
 
 Texture2D _BaseMap : register(t0);
@@ -106,6 +114,16 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     output.rightWS = mul(float3(1,0,0), (float3x3)(l2wMatrix));
     output.forwardWS = mul(float3(0,0,1), (float3x3)(l2wMatrix));
 
+
+    float3 uvz[4];
+	ComputeCascadeShadowUVs(output.positionWS, uvz);
+
+    output.positionVS = TransformWorldToView(output.positionWS);
+    output.shadowCoord0 = uvz[0];
+    output.shadowCoord1 = uvz[1];
+    output.shadowCoord2 = uvz[2];
+    output.shadowCoord3 = uvz[3];
+
     return output;
 }
 
@@ -127,7 +145,12 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
 
 
-
+    float3 uvz[4];
+    uvz[0] = input.shadowCoord0;
+    uvz[1] = input.shadowCoord1;
+    uvz[2] = input.shadowCoord2;
+    uvz[3] = input.shadowCoord3;
+    lightColor.atten = lerp(0.5, 1, ComputeCascadeShadowAttenCustomBias(uvz, input.positionVS.z, 0.5/shadowTexelSize).x);
 
 
 
@@ -145,7 +168,7 @@ float4 PS_Main(VS_OUT input) : SV_Target
     //float sdf = 1 - (dot(l, r) <= 0 ? _SDFMap.Sample(sampler_lerp_clamp, input.uv).r : _SDFMap.Sample(sampler_lerp_clamp, float2(1 - input.uv.x, input.uv.y)).r);
 
     float atten2 = clamp(-1, 1, (angle - sdf) * 2);
-    atten2 = (atten2 * 0.5 + 0.5) * lightColor.intensity;
+    atten2 = (atten2 * 0.5 + 0.5) * lightColor.intensity * lightColor.atten;
     //float3 finalColor = (lerp(ShadowColor * BaseColor, BaseColor, atten2) + float4(lightColor.subColor, 0)).xyz;
     float subIntensity =  lerp(1, 0.3, clamp(0, 1, lightColor.intensity));
     float3 finalColor = (BaseColor * _RampSkinMap.Sample(sampler_lerp_clamp, float2(atten2, 0)) + float4(lightColor.subColor * subIntensity, 0)).xyz;
