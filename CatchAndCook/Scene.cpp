@@ -119,6 +119,7 @@ void Scene::Rendering()
     //    Gizmo::Frustum(b2, Vector4(1, 0, 0, 1));
     //    Gizmo::WidthRollBack();
     //}
+
     auto light = LightManager::main->GetMainLight();
     auto a = ShadowManager::main->CalculateBounds(CameraManager::main->GetCamera(CameraType::ComponentCamera).get(), light.get(), { 6, 20, 65, 200 });
     for (auto b : a)
@@ -132,15 +133,15 @@ void Scene::Rendering()
     auto& cmdList = Core::main->GetCmdList();
     Core::main->GetRenderTarget()->ClearDepth();
 
-    Profiler::Set("PASS : Shadow", BlockTag::GPU);
+    Profiler::Set("PASS : Shadow", BlockTag::CPU);
 		ShadowPass(cmdList);
     Profiler::Fin();
 
-    Profiler::Set("PASS : Deferred", BlockTag::GPU);
+    Profiler::Set("PASS : Deferred", BlockTag::CPU);
         DeferredPass(cmdList);
     Profiler::Fin();
 
-    Profiler::Set("PASS : FinalPass", BlockTag::GPU);
+    Profiler::Set("PASS : FinalPass", BlockTag::CPU);
         FinalRender(cmdList);
     Profiler::Fin();
 
@@ -149,7 +150,7 @@ void Scene::Rendering()
 
     ComputeManager::main->DispatchAfterDeferred(cmdList);
 
-    Profiler::Set("PASS : Forward", BlockTag::GPU);
+    Profiler::Set("PASS : Forward", BlockTag::CPU);
     ForwardPass(cmdList);
     Profiler::Fin();
 
@@ -160,15 +161,15 @@ void Scene::Rendering()
     Core::main->GetRTReadTexture()->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
 
-    Profiler::Set("PASS : Transparent", BlockTag::GPU);
+    Profiler::Set("PASS : Transparent", BlockTag::CPU);
     TransparentPass(cmdList); // Position,
     Profiler::Fin();
 
-    Profiler::Set("PASS : Compute", BlockTag::GPU);
+    Profiler::Set("PASS : Compute", BlockTag::CPU);
     ComputePass(cmdList);
     Profiler::Fin();
 
-    Profiler::Set("PASS : UI", BlockTag::GPU);
+    Profiler::Set("PASS : UI", BlockTag::CPU);
     UiPass(cmdList);
     Profiler::Fin();
 
@@ -316,7 +317,7 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
     { // Shadow
 
         if (!ShadowManager::main->_onOff)
-            return;;
+            return;
 
         auto light = LightManager::main->GetMainLight();
 		if (light == nullptr)
@@ -329,19 +330,21 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
 
-
 		ShadowManager::main->SetData(nullptr);
         ShadowManager::main->RenderBegin();
+
         int i = 0;
+
         for (auto& bounding : boundings)
         {
             ShadowCascadeIndexParams shadowCasterParams;
+
             auto* cbuffer2 = Core::main->GetBufferManager()->GetBufferPool(BufferType::ShadowCascadeIndexParams)->Alloc(1);
             shadowCasterParams.cascadeIndex = i;
             memcpy(cbuffer2->ptr, &shadowCasterParams, sizeof(ShadowCascadeIndexParams));
             Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(7, cbuffer2->GPUAdress);
-
             Core::main->GetShadowBuffer()->RenderBegin(i);
+
             for (auto& [shader, vec] : targets)
             {
                 cmdList->SetPipelineState(shader->_pipelineState.Get());
@@ -352,27 +355,30 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                     if (renderStructure.renderer->IsCulling() == true)
                         if (bounding.Intersects(renderStructure.renderer->GetBound()) == false)
                             continue;
+
                     SettingPrevData(renderStructure, RENDER_PASS::PASS::Shadow);
 
                     if (renderStructure.renderer->isInstancing() == false)
                     {
+                        g_debug_shadow_draw_call++;
                         InstancingManager::main->RenderNoInstancing(renderStructure);
                     }
                     else
                     {
+                        g_debug_shadow_draw_call++;
                         InstancingManager::main->AddObject(renderStructure);
                     }
                 }
 
                 InstancingManager::main->Render();
             }
+
             Core::main->GetShadowBuffer()->RenderEnd();
             i++;
         }
+
         ShadowManager::main->RenderEnd();
-
     }
-
 
 }
 
@@ -444,6 +450,7 @@ void Scene::SettingPrevData(RenderObjectStrucutre& data, const RENDER_PASS::PASS
 {
     if (data.material != nullptr)
 		data.material->SetTexture("_BakedGIMap", ResourceManager::main->_bakedGITexture);
+
     switch (pass)
     {
     case RENDER_PASS::Transparent:
@@ -516,6 +523,7 @@ void Scene::DebugRendering()
             }
         }
     }
+
     Gizmo::main->Clear();
 }
 

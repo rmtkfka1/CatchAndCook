@@ -104,7 +104,6 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 
 
     output.uv = input.uv;
-
     return output;
 }
 

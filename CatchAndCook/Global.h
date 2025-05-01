@@ -57,5 +57,6 @@ extern size_t g_debug_forward_culling_count;
 extern size_t g_debug_deferred_count;
 extern size_t g_debug_deferred_culling_count;
 extern size_t g_debug_draw_call;
+extern size_t g_debug_shadow_draw_call;
 //extern size_t GLOBAL_SRV_DEPTH_INDEX;
 

@@ -46,7 +46,7 @@ void BufferManager::Init()
 		CreateBufferPool(i, BufferType::UnderWaterParam, sizeof(UnderWaterParam), 5);
 		CreateBufferPool(i, BufferType::InstanceOffsetParam, sizeof(InstanceOffsetParam), 10000);
 		CreateBufferPool(i, BufferType::GrassParam, sizeof(GrassParam), 32);
-		CreateBufferPool(i, BufferType::SeaGrassParam, sizeof(SeaGrassParam), 50);
+		CreateBufferPool(i, BufferType::SeaGrassParam, sizeof(SeaGrassParam), 10000);
 		CreateBufferPool(i, BufferType::ShadowCasterParams, sizeof(ShadowCasterParams), 5);
 		CreateBufferPool(i, BufferType::ShadowCascadeIndexParams, sizeof(ShadowCascadeIndexParams), 10);
 

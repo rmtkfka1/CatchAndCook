@@ -89,7 +89,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 float PS_Main(VS_OUT input) : SV_Depth
 {
     if (_BaseMap.SampleLevel(sampler_lerp, input.uv, 0).a < 0.1)
-		discard;
+        discard;
     
-    return input.position.z / input.position.w;
+    return input.position.z;
 }

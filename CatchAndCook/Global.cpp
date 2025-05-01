@@ -37,6 +37,7 @@ size_t UAV_TABLE_REGISTER_COUNT = 4;
  size_t g_debug_forward_count=0;
  size_t g_debug_deferred_count=0;
  size_t g_debug_draw_call=0;
+ size_t g_debug_shadow_draw_call = 0;
  size_t g_debug_forward_culling_count=0;
  size_t g_debug_deferred_culling_count=0;
 

@@ -85,5 +85,8 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
         discard;
     }
     
+    if (output.color.a == ClipingColor.a)
+        discard;
+    
     return output;
 }

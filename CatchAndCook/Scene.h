@@ -29,16 +29,16 @@ public:
 	void ExecuteDestroyGameObjects();
 	void GlobalSetting();
 
-private:
-	void UiPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
-	void TransparentPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
-	void ForwardPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
-	void DeferredPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
-	void ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
-	void FinalRender(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
+public:
+	virtual void UiPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
+	virtual void TransparentPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
+	virtual void ForwardPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
+	virtual void DeferredPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
+	virtual void ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
+	virtual void FinalRender(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
 	virtual void ComputePass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
 
-private:
+public:
 	virtual void SettingPrevData(RenderObjectStrucutre& data, const RENDER_PASS::PASS& pass);
 
 public:
@@ -67,7 +67,7 @@ public:
 	friend class SceneManager;
 	friend class SceneLoader;
 
-protected:
+public:
 	std::array<unordered_map<shared_ptr<Shader>,std::vector<RenderObjectStrucutre>>, RENDER_PASS::Count> _passObjects;
 	std::vector<std::shared_ptr<GameObject>> _dont_destroy_gameObjects;
 

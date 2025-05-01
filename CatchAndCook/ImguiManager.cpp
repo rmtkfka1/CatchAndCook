@@ -74,6 +74,7 @@ void ImguiManager::Debug()
         ImGui::Text("DeferredCount: %d", g_debug_deferred_count);
 		ImGui::Text("ForwardCullingCount: %d", g_debug_forward_culling_count);
 		ImGui::Text("DeferredCullingCount: %d", g_debug_deferred_culling_count);
+        ImGui::Text("shadowDrawCall: %d", g_debug_shadow_draw_call);
         ImGui::Text("DrawCall: %d", g_debug_draw_call);
     }
 

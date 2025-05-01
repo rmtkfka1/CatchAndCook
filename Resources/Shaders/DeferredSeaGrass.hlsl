@@ -105,12 +105,15 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     //output.color = float4(input.inf, input.inf, input.inf, input.inf);
     output.normal = float4(N, 1.0f);
     
-    float3 diff = abs(output.color.rgb - ClipingColor.rgb);
+    //float3 diff = abs(output.color.rgb - ClipingColor.rgb);
     
-    if (all(diff < 0.01f))
-    {
+    //if (all(diff < 0.01f))
+    //{
+    //    discard;
+    //}
+    
+    if (output.color.a == ClipingColor.a)
         discard;
-    }
     
     return output;
 }
