@@ -393,6 +393,21 @@ bool ColliderManager::CollisionChecksDirect(CollisionType type, BoundingUnion bo
 	return colliders.size() != 0;
 }
 
+bool ColliderManager::CollisionCheckDirect(const BoundingData& bound)
+{
+	return CollisionCheckDirect(bound.type, bound.bound);
+}
+
+bool ColliderManager::CollisionCheckDirect(const BoundingData& bound, std::shared_ptr<Collider>& collider)
+{
+	return CollisionCheckDirect(bound.type, bound.bound, collider);
+}
+
+bool ColliderManager::CollisionChecksDirect(const BoundingData& bound, std::vector<std::shared_ptr<Collider>>& colliders)
+{
+	return CollisionChecksDirect(bound.type, bound.bound, colliders);
+}
+
 //무언가와 충돌하고 있는지 체크
 bool ColliderManager::IsCollision(const std::shared_ptr<Collider>& src)
 {

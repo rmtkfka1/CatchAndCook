@@ -1,4 +1,5 @@
-﻿
+﻿#pragma once
+
 #include "ColliderManager.h"
 #include "Component.h"
 #include "Game.h"
@@ -15,6 +16,18 @@ union BoundingUnion
 	BoundingOrientedBox box;
 	BoundingSphere sphere;
 	BoundingFrustum frustum;
+};
+
+struct BoundingData
+{
+	CollisionType type;
+	BoundingUnion bound;
+	BoundingData();
+	BoundingData(const CollisionType& type, const BoundingUnion& bounding);
+	~BoundingData();
+	Vector3 GetCenter();
+	Vector3 SetCenter(const Vector3& center);
+	float GetRadius();
 };
 
 
@@ -44,6 +57,8 @@ public:
 	vec3 GetCenter();
 	bool CheckCollision(const std::shared_ptr<Collider>& other);
 	bool CheckCollision(const CollisionType& type, const BoundingUnion& bound);
+	bool CheckCollision(const BoundingData& bound);
+
 	bool RayCast(const Ray& ray, const float& dis, RayHit& hit);
 	void SetBoundingBox(vec3 center,vec3 extents);
 	void SetBoundingSphere(vec3 center,float radius);
@@ -52,9 +67,12 @@ public:
 	pair<vec3, vec3> GetMinMax();
 	BoundingUnion& GetBoundUnion() {return _bound;}
 	CollisionType GetBoundType() { return _type; }
+
+	BoundingData GetBoundingData() { return { _type, _bound }; };
+
 	Vector3 GetBoundCenter();
 
-
+	static Vector3 GetContactPoint(const BoundingData& data1, const BoundingData& data2);
 	static Vector3 GetContactPoint(const BoundingOrientedBox& obb, const BoundingSphere& sphere);
 	static Vector3 GetContactPoint(const BoundingSphere& a, const BoundingSphere& b);
 	static Vector3 GetContactPoint(const BoundingOrientedBox& a, const BoundingOrientedBox& b);

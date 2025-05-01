@@ -189,7 +189,7 @@ void PlayerController::MoveControl()
 	isGround = false;
 
 
-	std::vector<std::pair<CollisionType, BoundingUnion>> playerColliderDatas;
+	std::vector<BoundingData> playerColliderDatas;
 	std::vector<std::shared_ptr<Collider>> playerColliders;
 
 	GetOwner()->GetComponentsWithChilds<Collider>(playerColliders);
@@ -197,7 +197,7 @@ void PlayerController::MoveControl()
 	for (auto& collider : playerColliders) {
 		if (playerGroupID == collider->GetGroupID()) {
 			collider->CalculateBounding();
-			playerColliderDatas.push_back(std::make_pair(collider->GetType(), collider->GetBoundUnion()));
+			playerColliderDatas.push_back(collider->GetBoundingData());
 		}
 	}
 
@@ -210,28 +210,21 @@ void PlayerController::MoveControl()
 
 	//if (velocityDirectionXZ != Vector3::Zero)
 	{
-		for (auto [type, bound] : playerColliderDatas)
+		for (auto boundingData : playerColliderDatas)
 		{
 			// 이동할 위치 미리 계산
 			Vector3 currentCenter;
 			Vector3 nextCenter;
 			float currentRadius;
-			if (type == CollisionType::Box)
-			{
-				currentCenter = bound.box.Center;
-				nextCenter = bound.box.Center = bound.box.Center + velocityDirectionXZ;
-				currentRadius = Vector3(bound.box.Extents).Length();
-			}
-			if (type == CollisionType::Sphere)
-			{
-				currentCenter = bound.sphere.Center;
-				nextCenter = bound.sphere.Center = bound.sphere.Center + velocityDirectionXZ;
-				currentRadius = bound.sphere.Radius;
-			}
+
+			currentCenter = boundingData.GetCenter();
+			currentRadius = boundingData.GetRadius();
+			nextCenter = boundingData.SetCenter(boundingData.GetCenter() + velocityDirectionXZ);
+
 
 			// 이동할 곳에서 충돌되는지 보기.
 			std::vector<std::shared_ptr<Collider>> otherColliders;
-			if (ColliderManager::main->CollisionChecksDirect(type, bound, otherColliders))
+			if (ColliderManager::main->CollisionChecksDirect(boundingData, otherColliders))
 			{
 				for (auto& otherCollider : otherColliders)
 				{
@@ -242,17 +235,8 @@ void PlayerController::MoveControl()
 						float rayDis = rayDir.Length();
 						rayDir.Normalize();
 
-						auto otherType = otherCollider->GetBoundType();
-						auto otherBound = otherCollider->GetBoundUnion();
-						Vector3 hitPosition;
-						if (type == CollisionType::Sphere && otherType == CollisionType::Box)
-							hitPosition = Collider::GetContactPoint(otherBound.box, bound.sphere);
-						if (type == CollisionType::Sphere && otherType == CollisionType::Sphere)
-							hitPosition = Collider::GetContactPoint(otherBound.sphere, bound.sphere);
-						if (type == CollisionType::Box && otherType == CollisionType::Box)
-							hitPosition = Collider::GetContactPoint(otherBound.box, bound.box);
-						if (type == CollisionType::Box && otherType == CollisionType::Sphere)
-							hitPosition = Collider::GetContactPoint(bound.box, otherBound.sphere);
+						Vector3 hitPosition = Collider::GetContactPoint(boundingData, otherCollider->GetBoundingData());
+
 						
 						auto pushDir = nextCenter - hitPosition;
 						auto pushNormal = pushDir;

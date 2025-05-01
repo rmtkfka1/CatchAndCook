@@ -2,6 +2,7 @@
 
 enum class CollisionType;
 union BoundingUnion;
+struct BoundingData;
 
 struct RayHit
 {
@@ -43,6 +44,10 @@ public:
 	bool CollisionCheckDirect(CollisionType type, BoundingUnion bound);
 	bool CollisionCheckDirect(CollisionType type, BoundingUnion bound, std::shared_ptr<Collider>& collider);
 	bool CollisionChecksDirect(CollisionType type, BoundingUnion bound, std::vector<std::shared_ptr<Collider>>& colliders);
+
+	bool CollisionCheckDirect(const BoundingData& bound);
+	bool CollisionCheckDirect(const BoundingData& bound, std::shared_ptr<Collider>& collider);
+	bool CollisionChecksDirect(const BoundingData& bound, std::vector<std::shared_ptr<Collider>>& colliders);
 
 	bool IsCollision(const std::shared_ptr<Collider>& src);
 	bool IsCollision(const std::shared_ptr<Collider>& src, const std::shared_ptr<Collider>& dest);

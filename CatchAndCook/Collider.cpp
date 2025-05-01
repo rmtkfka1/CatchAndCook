@@ -7,6 +7,56 @@
 #include "simple_mesh_ext.h"
 #include "Transform.h"
 
+
+BoundingData::BoundingData() : bound(BoundingOrientedBox{})
+{
+
+}
+
+BoundingData::BoundingData(const CollisionType& type, const BoundingUnion& bounding) : type(type), bound(bounding)
+{
+
+}
+
+BoundingData::~BoundingData()
+{
+	if (type == CollisionType::Box)
+		bound.box.~BoundingOrientedBox();
+	if (type == CollisionType::Frustum)
+		bound.frustum.~BoundingFrustum();
+	if (type == CollisionType::Sphere)
+		bound.sphere.~BoundingSphere();
+}
+
+Vector3 BoundingData::GetCenter()
+{
+	Vector3 center;
+	if (type == CollisionType::Box)
+		center = bound.box.Center;
+	if (type == CollisionType::Sphere)
+		center = bound.sphere.Center;
+	return center;
+}
+
+float BoundingData::GetRadius()
+{
+	float radius = 0;
+	if (type == CollisionType::Box)
+		radius = Vector3(bound.box.Extents).Length();
+	if (type == CollisionType::Sphere)
+		radius = bound.sphere.Radius;
+	return radius;
+}
+
+Vector3 BoundingData::SetCenter(const Vector3& center)
+{
+	if (type == CollisionType::Box)
+		bound.box.Center = center;
+	if (type == CollisionType::Sphere)
+		bound.sphere.Center = center;
+	return center;
+}
+
 Collider::Collider() : _orgin(BoundingOrientedBox()), _bound(BoundingOrientedBox())
 {
 
@@ -257,6 +307,11 @@ bool Collider::CheckCollision(const CollisionType& type, const BoundingUnion& bo
 	return false;
 }
 
+bool Collider::CheckCollision(const BoundingData& bound)
+{
+	return CheckCollision(bound.type, bound.bound);
+}
+
 bool Collider::RayCast(const Ray& ray, const float& dis, RayHit& hit)
 {
 	hit.distance = dis;
@@ -463,6 +518,20 @@ Vector3 Collider::GetBoundCenter()
 	return Vector3::Zero;
 }
 
+Vector3 Collider::GetContactPoint(const BoundingData& data1, const BoundingData& data2)
+{
+	Vector3 hitPosition;
+	if (data1.type == CollisionType::Sphere && data2.type == CollisionType::Box)
+		hitPosition = Collider::GetContactPoint(data2.bound.box, data1.bound.sphere);
+	if (data1.type == CollisionType::Sphere && data2.type == CollisionType::Sphere)
+		hitPosition = Collider::GetContactPoint(data2.bound.sphere, data1.bound.sphere);
+	if (data1.type == CollisionType::Box && data2.type == CollisionType::Box)
+		hitPosition = Collider::GetContactPoint(data2.bound.box, data1.bound.box);
+	if (data1.type == CollisionType::Box && data2.type == CollisionType::Sphere)
+		hitPosition = Collider::GetContactPoint(data1.bound.box, data2.bound.sphere);
+	return hitPosition;
+}
+
 Vector3 Collider::GetContactPoint(const BoundingOrientedBox& obb, const BoundingSphere& sphere)
 {
 	// 1) 구 중심을 OBB 로컬 공간으로 변환
@@ -501,6 +570,8 @@ Vector3 Collider::GetContactPoint(const BoundingSphere& a, const BoundingSphere&
 
 Vector3 Collider::GetContactPoint(const BoundingOrientedBox& a, const BoundingOrientedBox& b)
 {
+
+
 	Vector3 ptA = GetContactPoint(a, BoundingSphere(b.Center, 0.0f));
 	// 2) B의 표면에서 A의 중심에 가장 가까운 점
 	Vector3 ptB = GetContactPoint(b, BoundingSphere(a.Center, 0.0f));
