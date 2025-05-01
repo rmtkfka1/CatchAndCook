@@ -34,14 +34,17 @@ void NavMesh::Update()
 		)
 	* Time::main->GetDeltaTime() * 40;
 	//NavMeshManager::main->CalculatePath(Vector3(350, 0, 150), startPos,NavMeshManager::main->GetNavMeshData(), _edges);
-	NavMeshManager::main->CalculatePath_Funnel(Vector3(350, 0, 150), startPos,
-		NavMeshManager::main->GetNavMeshData(), _tris);
-	Gizmo::Width(0.4f);
-	Gizmo::Box(BoundingBox(startPos, Vector3(1, 100, 1)));
+	auto path = NavMeshManager::main->CalculatePath_Funnel(Vector3(350, 0, 150), startPos, NavMeshManager::main->GetNavMeshData(), _tris);
 
-	for (auto edge : _edges)
-		Gizmo::Line(edge[0], edge[1], Vector4(0, 0, 1, 1));
-	Gizmo::WidthRollBack();
+	if (NavMeshManager::main->_gizmoDebug)
+	{
+		Gizmo::Width(0.4f);
+		Gizmo::Box(BoundingBox(startPos, Vector3(1, 100, 1)));
+
+		for (auto edge : _edges)
+			Gizmo::Line(edge[0], edge[1], Vector4(0, 0, 1, 1));
+		Gizmo::WidthRollBack();
+	}
 }
 
 void NavMesh::Update2()

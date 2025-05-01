@@ -374,6 +374,9 @@ public:
 	shared_ptr<SSAORender> _ssaoRender;
 	shared_ptr<FieldFogRender> _fieldFogRender;
 	shared_ptr<ColorGradingRender> _colorGradingRender;
+
+
+	bool _mainFieldTotalOn = true;
 	// color grading
 };
 

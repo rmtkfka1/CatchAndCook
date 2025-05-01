@@ -159,10 +159,7 @@ void ImguiManager::GizmoController()
 
 void ImguiManager::ComputeController()
 {
-    if (ImGui::Button("Shadow ON/OFF"))
-    {
-        *_shadowOnOff = !(*_shadowOnOff);
-    }
+
     if (ImGui::Button("Blur ON/OFF"))
     {
         *_blurPtr = !(*_blurPtr);
@@ -199,7 +196,13 @@ void ImguiManager::ComputeController()
         ImGui::SliderFloat("Underwater Fog Min", &_underWaterParam->g_fogMin, 0.0f, 5000.0f);
         ImGui::SliderFloat3("Underwater Color", &_underWaterParam->g_underWaterColor.x, 0.0f, 1.0f);
     }
-    if (ImGui::Button("SSAO ON/OFF"))
+
+    if (ImGui::Button("Shadow ON/OFF"))
+    {
+        *_shadowOnOff = !(*_shadowOnOff);
+    }
+
+    if (ImGui::Button("MainField SSAO ON/OFF"))
     {
         *_ssaoOnOff = !(*_ssaoOnOff);
     }
@@ -219,6 +222,11 @@ void ImguiManager::ComputeController()
     if (ImGui::Button("MainField Vignette ON/OFF"))
     {
         *mainField_vignette = !(*mainField_vignette);
+    }
+    if (ImGui::Button("MainField Total ON/OFF"))
+    {
+        *mainField_total = !(*mainField_total);
+        *_shadowOnOff = *mainField_total;
     }
 }
 

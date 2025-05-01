@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "ComputeManager.h"
 #include "ShadowManager.h"
 
 
@@ -67,6 +68,7 @@ public:
 	bool* mainField_fog;
 	bool* mainField_vignette;
 	bool* _shadowOnOff;
+	bool* mainField_total;
 
 private:
 	bool show_window = true;

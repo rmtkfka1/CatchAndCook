@@ -546,8 +546,8 @@ void FieldFogRender::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>&
 	_shader->Init(L"depthRender_fieldFog.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
 
 	_fogParam.g_fogColor = vec3(0.48f, 0.56f, 0.72f) * 0.8;
-	_fogParam.power = 1.2f;
-	_fogParam.g_fogMin = 50.0f;
+	_fogParam.power = 1.0f;
+	_fogParam.g_fogMin = 40.0f;
 	_fogParam.g_fogMax = 350;
 
 	ImguiManager::main->mainField_fog = &_onOff;
@@ -555,7 +555,7 @@ void FieldFogRender::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>&
 
 void FieldFogRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
 {
-	if (_onOff)
+	if (!_onOff)
 		return;
 	auto& table = Core::main->GetBufferManager()->GetTable();
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
@@ -724,7 +724,7 @@ void VignetteRender::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>&
 
 void VignetteRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
 {
-	if (_onOff)
+	if (!_onOff)
 		return;
 	auto& table = Core::main->GetBufferManager()->GetTable();
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
@@ -965,10 +965,15 @@ void ComputeManager::Init()
 
 	_colorGradingRender = make_shared<ColorGradingRender>();
 	_colorGradingRender->Init(_pingTexture, _pongTexture);
+
+
+	ImguiManager::main->mainField_total = &_mainFieldTotalOn;
 }
 
 void ComputeManager::DispatchAfterDeferred(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
+	if (!_mainFieldTotalOn)
+		return;
 	const int threadGroupSizeX = 16;
 	const int threadGroupSizeY = 16;
 
@@ -984,6 +989,8 @@ void ComputeManager::DispatchAfterDeferred(ComPtr<ID3D12GraphicsCommandList>& cm
 
 void ComputeManager::DispatchMainField(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
+	if (!_mainFieldTotalOn)
+		return;
 	const int threadGroupSizeX = 16;
 	const int threadGroupSizeY = 16;
 
