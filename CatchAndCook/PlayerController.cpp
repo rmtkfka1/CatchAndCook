@@ -182,7 +182,12 @@ void PlayerController::MoveControl()
 
 	GetOwner()->_transform->LookUp(Vector3::Transform(Vector3::Forward, currentLookWorldRotation), Vector3::Up);
 
-	
+
+
+
+
+	isGround = false;
+
 
 	std::vector<std::pair<CollisionType, BoundingUnion>> playerColliderDatas;
 	std::vector<std::shared_ptr<Collider>> playerColliders;
@@ -253,13 +258,19 @@ void PlayerController::MoveControl()
 						auto pushNormal = pushDir;
 						pushNormal.Normalize();
 
+						if (Vector3::Down.Dot(pushNormal) > 0.7) // ground
+						{
+							isGround = true;
+							velocity.y = 0;
+						}
+
 						velocityDirectionXZ += pushNormal * std::max(currentRadius - pushDir.Length(), 0.0f);
 					}
 				}
 			}
 		}
 	}
-	float velocityDirectionY = velocity.y;
+	float velocityDirectionY = velocity.y * Time::main->GetDeltaTime() * 60;
 	nextPos += Vector3(velocityDirectionXZ.x, velocityDirectionY, velocityDirectionXZ.z); // velocityDirectionXZ.y + velocityDirectionY
 
 
@@ -286,13 +297,16 @@ void PlayerController::MoveControl()
 	if (foundGround)
 	{
 		isGround = true;
-		velocity.y = 0;
 		nextPos.y = upRayOffset.y - foundGround.distance; //upRayOffset.y -
+	}
+
+	if (isGround)
+	{
+		velocity.y = 0;
 	}
 	else
 	{
-		isGround = false;
-		velocity.y -= 9.81 * 0.75 * Time::main->GetDeltaTime();
+		velocity.y -= 9.81 * 0.5 * Time::main->GetDeltaTime();
 	}
 
 	// ------------- 공통 로직 ------------- 
