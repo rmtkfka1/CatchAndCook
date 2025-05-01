@@ -255,7 +255,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetInjector({ BufferType::DefaultMaterialParam });
@@ -269,7 +269,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetInjector({ BufferType::DefaultMaterialParam });
@@ -313,7 +313,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 
 		info.renderTargetCount = 4;
 
@@ -334,7 +334,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 
 		info.renderTargetCount = 4;
 
@@ -380,7 +380,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 
 		info.renderTargetCount = 4;
 
@@ -401,7 +401,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 
 		info.renderTargetCount = 4;
 
@@ -622,7 +622,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 		info._depthOnly = true;
 
 		info.depthBias = 250;
@@ -639,7 +639,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 		info._depthOnly = true;
 
 		info.depthBias = 250;
@@ -676,7 +676,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 		info._depthOnly = true;
 
 		info.depthBias = 250;
@@ -693,7 +693,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 		info._depthOnly = true;
 
 		info.depthBias = 250;
@@ -730,7 +730,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 		info._depthOnly = true;
 		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 

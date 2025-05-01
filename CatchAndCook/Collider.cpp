@@ -462,3 +462,49 @@ Vector3 Collider::GetBoundCenter()
 	}
 	return Vector3::Zero;
 }
+
+Vector3 Collider::GetContactPoint(const BoundingOrientedBox& obb, const BoundingSphere& sphere)
+{
+	// 1) 구 중심을 OBB 로컬 공간으로 변환
+	Quaternion q = obb.Orientation;
+	Quaternion invQ;
+	q.Conjugate(invQ);
+	Vector3   delta = sphere.Center - obb.Center;
+	Vector3   local = Vector3::Transform(delta, invQ);
+
+	// 2) 로컬 축별로 Extents 범위 안에 클램프 → AABB 기준 최단 접점
+	Vector3 e = obb.Extents;
+	Vector3 clamped(
+		std::max(-e.x, std::min(local.x, e.x)),
+		std::max(-e.y, std::min(local.y, e.y)),
+		std::max(-e.z, std::min(local.z, e.z))
+	);
+
+	// 3) 클램프된 로컬 접점을 다시 월드 공간으로 복원
+	Vector3 worldPoint = obb.Center + Vector3::Transform(clamped, q);
+
+	return worldPoint;
+}
+
+Vector3 Collider::GetContactPoint(const BoundingSphere& a, const BoundingSphere& b)
+{
+	Vector3 delta = b.Center - a.Center;
+	float   dist = delta.Length();
+
+	// 중심이 완전히 겹쳐 있으면 a.Center 를 반환
+	if (dist < 1e-6f)
+		return a.Center;
+
+	// a 표면 상 가장 가까운 점
+	return a.Center + (delta / dist) * a.Radius;
+}
+
+Vector3 Collider::GetContactPoint(const BoundingOrientedBox& a, const BoundingOrientedBox& b)
+{
+	Vector3 ptA = GetContactPoint(a, BoundingSphere(b.Center, 0.0f));
+	// 2) B의 표면에서 A의 중심에 가장 가까운 점
+	Vector3 ptB = GetContactPoint(b, BoundingSphere(a.Center, 0.0f));
+	// 3) 두 점의 중간을 접점으로 반환
+	return (ptA + ptB) * 0.5f;
+	
+}

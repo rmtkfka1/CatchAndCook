@@ -51,8 +51,13 @@ public:
 	void CalculateBounding();
 	pair<vec3, vec3> GetMinMax();
 	BoundingUnion& GetBoundUnion() {return _bound;}
+	CollisionType GetBoundType() { return _type; }
 	Vector3 GetBoundCenter();
 
+
+	static Vector3 GetContactPoint(const BoundingOrientedBox& obb, const BoundingSphere& sphere);
+	static Vector3 GetContactPoint(const BoundingSphere& a, const BoundingSphere& b);
+	static Vector3 GetContactPoint(const BoundingOrientedBox& a, const BoundingOrientedBox& b);
 
 private:
 	friend class ColliderManager;

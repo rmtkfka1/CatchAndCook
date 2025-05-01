@@ -180,7 +180,7 @@ void PlayerController::MoveControl()
 		velocity = skinnedHierarchy->GetDeltaPosition();
 	velocity = Vector3(velocity.x, prevVelocity.y, velocity.z);
 
-	GetOwner()->_transform->SetWorldRotation(currentLookWorldRotation);
+	GetOwner()->_transform->LookUp(Vector3::Transform(Vector3::Forward, currentLookWorldRotation), Vector3::Up);
 
 	
 
@@ -209,15 +209,18 @@ void PlayerController::MoveControl()
 		{
 			// 이동할 위치 미리 계산
 			Vector3 currentCenter;
+			Vector3 nextCenter;
 			float currentRadius;
 			if (type == CollisionType::Box)
 			{
-				currentCenter = bound.box.Center = bound.box.Center + velocityDirectionXZ;
+				currentCenter = bound.box.Center;
+				nextCenter = bound.box.Center = bound.box.Center + velocityDirectionXZ;
 				currentRadius = Vector3(bound.box.Extents).Length();
 			}
 			if (type == CollisionType::Sphere)
 			{
-				currentCenter = bound.sphere.Center = bound.sphere.Center + velocityDirectionXZ;
+				currentCenter = bound.sphere.Center;
+				nextCenter = bound.sphere.Center = bound.sphere.Center + velocityDirectionXZ;
 				currentRadius = bound.sphere.Radius;
 			}
 
@@ -230,26 +233,38 @@ void PlayerController::MoveControl()
 					if (otherCollider->GetGroupID() != playerGroupID)
 					{
 						Vector3 otherColliderCenter = otherCollider->GetBoundCenter();
-						Vector3 rayDir = otherColliderCenter - currentCenter;
+						Vector3 rayDir = otherColliderCenter - nextCenter;
 						float rayDis = rayDir.Length();
 						rayDir.Normalize();
 
-						RayHit hitOtherCollider;
-						if (otherCollider->RayCast({ currentCenter, rayDir }, rayDis, hitOtherCollider))
-							if (hitOtherCollider)
-								velocityDirectionXZ += hitOtherCollider.normal *
-								std::max(velocityDirectionXZ.Length(), static_cast<float>(4.0f * Time::main->GetDeltaTime()));
+						auto otherType = otherCollider->GetBoundType();
+						auto otherBound = otherCollider->GetBoundUnion();
+						Vector3 hitPosition;
+						if (type == CollisionType::Sphere && otherType == CollisionType::Box)
+							hitPosition = Collider::GetContactPoint(otherBound.box, bound.sphere);
+						if (type == CollisionType::Sphere && otherType == CollisionType::Sphere)
+							hitPosition = Collider::GetContactPoint(otherBound.sphere, bound.sphere);
+						if (type == CollisionType::Box && otherType == CollisionType::Box)
+							hitPosition = Collider::GetContactPoint(otherBound.box, bound.box);
+						if (type == CollisionType::Box && otherType == CollisionType::Sphere)
+							hitPosition = Collider::GetContactPoint(bound.box, otherBound.sphere);
+						
+						auto pushDir = nextCenter - hitPosition;
+						auto pushNormal = pushDir;
+						pushNormal.Normalize();
+
+						velocityDirectionXZ += pushNormal * std::max(currentRadius - pushDir.Length(), 0.0f);
 					}
 				}
 			}
 		}
 	}
-	float velocityDirectionY = velocity.y * Time::main->GetDeltaTime();
-	nextPos += Vector3(velocityDirectionXZ.x,  velocityDirectionY, velocityDirectionXZ.z); // velocityDirectionXZ.y + velocityDirectionY
+	float velocityDirectionY = velocity.y;
+	nextPos += Vector3(velocityDirectionXZ.x, velocityDirectionY, velocityDirectionXZ.z); // velocityDirectionXZ.y + velocityDirectionY
 
 
 
-	float gitMargin = 0.1f;//오차 범위
+	float gitMargin = 0.15f;//오차 범위
 	float upDistance = 1.0f;
 	Vector3 upRayOffset = nextPos + Vector3::Up * upDistance;
 
@@ -277,7 +292,7 @@ void PlayerController::MoveControl()
 	else
 	{
 		isGround = false;
-		velocity.y -= 0.981;
+		velocity.y -= 9.81 * 0.75 * Time::main->GetDeltaTime();
 	}
 
 	// ------------- 공통 로직 ------------- 

@@ -45,6 +45,7 @@ struct VS_IN
 struct VS_OUT
 {
     float4 position : SV_Position;
+    float4 positionVS : PositionVS;
     float4 positionCS : PositionCS;
     float4 positionWS : PositionWS;
     float3 normalOS : NormalOS;
@@ -90,6 +91,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 #else
     output.positionWS = TransformLocalToWorld(float4(input.pos, 1.0f), boneIds, boneWs, l2wMatrix, id);
 #endif
+    output.positionVS = TransformWorldToView(output.positionWS);
     output.positionCS = TransformWorldToClip(output.positionWS);
 
     output.position = output.positionCS;
@@ -133,7 +135,7 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
 		output.maoe.z = -1;
 	#endif
 
-    if (output.color.a <= 0.5f)
+    if (output.color.a <= 0.5f || Dither(input.position.xyz, input.positionVS.xyz))
         discard;
 
     return output;

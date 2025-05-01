@@ -29,7 +29,8 @@ struct VS_IN
 struct VS_OUT
 {
     float4 pos : SV_Position;
-    float3 worldPos : Position;
+    float3 worldPos : PositionWS;
+    float3 positionVS : PositionVS;
     float3 worldNormal : NORMAL;
     float2 uv : TEXCOORD;
 };
@@ -69,6 +70,7 @@ VS_OUT VS_Main(VS_IN input , uint id : SV_InstanceID)
 
 	output.worldPos = positionWS;
     output.pos = TransformWorldToClip(positionWS);
+    output.positionVS = TransformWorldToView(positionWS);
 
 #ifdef INSTANCED
 	output.worldNormal = TransformNormalLocalToWorld(normalOS, boneIds, boneWs, w2lMatrix, id);

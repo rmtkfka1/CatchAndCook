@@ -36,7 +36,7 @@ void NavMesh::Update()
 	* Time::main->GetDeltaTime() * 20;
 	//NavMeshManager::main->CalculatePath(Vector3(350, 0, 150), startPos,NavMeshManager::main->GetNavMeshData(), _edges);
 	
-	auto path = NavMeshManager::main->CalculatePath(Vector3(350, 0, 150), startPos);
+	//auto path = NavMeshManager::main->CalculatePath(Vector3(350, 0, 150), startPos);
 
 	if (NavMeshManager::main->_gizmoDebug)
 	{
