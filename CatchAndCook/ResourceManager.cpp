@@ -659,17 +659,51 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		info._stencilTest = false;
 		info.cullingType = CullingType::NONE;
 		info._depthOnly = true;
-		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
 		info.depthBias = 250;
 		info.slopeScaledDepthBias = 2.0;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetPass(RENDER_PASS::Shadow);
-		shader->SetInjector({ BufferType::TerrainDetailsParam });
-		shader->Init(L"ShadowCaster_Terrain.hlsl", GeoMetryProp,
-			ShaderArg{ {{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}} }, info);
-		Add<Shader>(L"ShadowCaster_Terrain", shader);
+		shader->SetMacro({ {"INSTANCED",nullptr} });
+		shader->SetInstanceProp(TransformInstanceProp);
+		shader->Init(L"ShadowCaster.hlsl", StaticProp, ShaderArg{}, info);
+		Add<Shader>(L"ShadowCaster_Instanced", shader);
+	}
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+		info._depthOnly = true;
+
+		info.depthBias = 250;
+		info.slopeScaledDepthBias = 2.0;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Shadow);
+		shader->Init(L"ShadowCaster_Early.hlsl", StaticProp, ShaderArg{}, info);
+		Add<Shader>(L"ShadowCaster_Early", shader);
+	}
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+		info._depthOnly = true;
+
+		info.depthBias = 250;
+		info.slopeScaledDepthBias = 2.0;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Shadow);
+		shader->SetMacro({ {"SKINNED",nullptr} });
+		shader->Init(L"ShadowCaster_Early.hlsl", SkinProp, ShaderArg{}, info);
+		Add<Shader>(L"ShadowCaster_Early_Skinned", shader);
 	}
 
 	{
@@ -687,9 +721,30 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		shader->SetPass(RENDER_PASS::Shadow);
 		shader->SetMacro({ {"INSTANCED",nullptr} });
 		shader->SetInstanceProp(TransformInstanceProp);
-		shader->Init(L"ShadowCaster.hlsl", StaticProp, ShaderArg{}, info);
-		Add<Shader>(L"ShadowCaster_Instanced", shader);
+		shader->Init(L"ShadowCaster_Early.hlsl", StaticProp, ShaderArg{}, info);
+		Add<Shader>(L"ShadowCaster_Early_Instanced", shader);
 	}
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+		info._depthOnly = true;
+		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+
+		info.depthBias = 250;
+		info.slopeScaledDepthBias = 2.0;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Shadow);
+		shader->SetInjector({ BufferType::TerrainDetailsParam });
+		shader->Init(L"ShadowCaster_Terrain.hlsl", GeoMetryProp,
+			ShaderArg{ {{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}} }, info);
+		Add<Shader>(L"ShadowCaster_Terrain", shader);
+	}
+
 
 	{
 
@@ -768,6 +823,21 @@ void ResourceManager::CreateDefaultMaterial()
 	_shadowCaster_Terrain->SetShader(ResourceManager::main->Get<Shader>(L"ShadowCaster_Terrain"));
 	_shadowCaster_Terrain->SetPass(RENDER_PASS::Shadow);
 	//_shadowCaster_Instanced->SetSetDataOff(true);
+
+
+	_shadowCaster_Early = std::make_shared<Material>();
+	_shadowCaster_Early->SetShader(ResourceManager::main->Get<Shader>(L"ShadowCaster_Early"));
+	_shadowCaster_Early->SetPass(RENDER_PASS::Shadow);
+	//_shadowCaster->SetSetDataOff(true);
+
+	_shadowCaster_Early_Skinned = std::make_shared<Material>();
+	_shadowCaster_Early_Skinned->SetShader(ResourceManager::main->Get<Shader>(L"ShadowCaster_Early_Skinned"));
+	_shadowCaster_Early_Skinned->SetPass(RENDER_PASS::Shadow);
+	//_shadowCaster_Skinned->SetSetDataOff(true);
+
+	_shadowCaster_Early_Instanced = std::make_shared<Material>();
+	_shadowCaster_Early_Instanced->SetShader(ResourceManager::main->Get<Shader>(L"ShadowCaster_Early_Instanced"));
+	_shadowCaster_Early_Instanced->SetPass(RENDER_PASS::Shadow);
 }
 
 

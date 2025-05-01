@@ -270,6 +270,7 @@ void Scene::DeferredPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 {
 	Core::main->GetGBuffer()->RenderBegin();
     auto camera = CameraManager::main->GetActiveCamera();
+
     TerrainManager::main->CullingInstancing(camera->GetCameraPos(), camera->GetCameraLook());
 
     { // Deferred
@@ -323,10 +324,13 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 		if (light == nullptr)
 			return;
 
-        auto boundings = ShadowManager::main->CalculateBounds(CameraManager::main->GetActiveCamera().get(), light.get(), { 6, 30, 65, 200 });
+        auto boundings = ShadowManager::main->CalculateBounds(CameraManager::main->GetActiveCamera().get(), light.get(), { 6, 20, 65, 200 });
 
     	auto lastShadowPos = ShadowManager::main->_lightTransform[ShadowManager::main->_lightTransform.size() - 1];
-    	TerrainManager::main->CullingInstancing(lastShadowPos.first, lastShadowPos.second);
+
+        Profiler::Set("PASS : ASD", BlockTag::CPU);
+    	//TerrainManager::main->CullingInstancing(lastShadowPos.first, lastShadowPos.second);
+        Profiler::Fin();
 
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
 
@@ -369,10 +373,8 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                         InstancingManager::main->AddObject(renderStructure);
                     }
                 }
-
                 InstancingManager::main->Render();
             }
-
             Core::main->GetShadowBuffer()->RenderEnd();
             i++;
         }

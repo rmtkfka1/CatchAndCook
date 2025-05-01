@@ -71,6 +71,10 @@ public:
     shared_ptr<Material> _shadowCaster_Skinned;
     shared_ptr<Material> _shadowCaster_Instanced;
     shared_ptr<Material> _shadowCaster_Terrain;
+
+    shared_ptr<Material> _shadowCaster_Early;
+    shared_ptr<Material> _shadowCaster_Early_Skinned;
+    shared_ptr<Material> _shadowCaster_Early_Instanced;
 };
 
 template<typename T>

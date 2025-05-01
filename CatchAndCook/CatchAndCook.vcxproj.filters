@@ -679,14 +679,18 @@
     <ClInclude Include="FishMonster.h">
       <Filter>03.Component</Filter>
     </ClInclude>
-    <ClInclude Include="EffectComponent.h" />
-    <ClInclude Include="ObjectSettingComponent.h" />
     <ClInclude Include="GameObjectSetting.h" />
     <ClInclude Include="SeaGrassComponent.h">
       <Filter>07.Manager</Filter>
     </ClInclude>
     <ClInclude Include="ShadowManager.h">
       <Filter>07.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectSettingComponent.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectComponent.h">
+      <Filter>03.Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -856,6 +860,9 @@
       <Filter>998.HLSL\Graphics\JIN</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Skinned_t32.hlsl">
+      <Filter>998.HLSL\Graphics\JIN</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\ShadowCaster_Early.hlsl">
       <Filter>998.HLSL\Graphics\JIN</Filter>
     </FxCompile>
   </ItemGroup>

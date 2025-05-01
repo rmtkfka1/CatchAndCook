@@ -241,11 +241,9 @@ void Core::ResizeTexture(std::shared_ptr<Texture>& texture, int w, int h)
 
 void Core::InitDirectX12()
 {
-
     CreateDevice(false, false); // 최적화 할 부분
     CreateCmdQueue();
     CreateSwapChain();
-
 }
 
 void Core::CreateDevice(bool EnableDebugLayer, bool EnableGBV)

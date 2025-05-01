@@ -124,8 +124,6 @@ std::vector<BoundingOrientedBox> ShadowManager::CalculateBounds(Camera* camera, 
     _lightTransform.clear();
     bounds.reserve(dis.size());
 
-    _lightTransform.clear();
-
     for (int i = 0; i < dis.size() - 1; i++)
     {
         //Vector4(_fov, _params.cameraScreenData.x / _params.cameraScreenData.y, _near, _far);

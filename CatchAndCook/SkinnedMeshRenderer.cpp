@@ -249,6 +249,7 @@ void SkinnedMeshRenderer::SetSpecialMaterials()
 			auto depthNormalMaterial = currentMaterial->Clone();
 			depthNormalMaterial->SetShader(ResourceManager::main->_depthNormal_Skinned->GetShader());
 			depthNormalMaterial->SetPass(RENDER_PASS::Deferred);
+			depthNormalMaterial->_instanceID = currentMaterial->GetID() + 2000000;
 			_depthNormalMaterials.push_back(make_pair(i, depthNormalMaterial));
 		}
 
@@ -256,11 +257,13 @@ void SkinnedMeshRenderer::SetSpecialMaterials()
 		if ((RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward)
 			|| RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Deferred)) && currentMaterial->GetShadowCasting())
 		{
-			auto shadowMaterial = ((HasInstanceBuffer() ? ResourceManager::main->_shadowCaster_Instanced : ResourceManager::main->_shadowCaster));
+			auto shadowMaterial = ResourceManager::main->_shadowCaster_Early_Skinned;
 			if (currentMaterial->GetPropertyTexture("_BaseMap") != nullptr)
 			{
+				shadowMaterial = ResourceManager::main->_shadowCaster_Skinned;
 				shadowMaterial = shadowMaterial->Clone();
 				currentMaterial->CopyProperties(shadowMaterial);
+				shadowMaterial->_instanceID = currentMaterial->GetID() + 1000000;
 			}
 			_shadowMaterials.push_back(make_pair(i, shadowMaterial));
 		}

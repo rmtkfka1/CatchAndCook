@@ -98,6 +98,8 @@ public:
 
 public:
 	MaterialParams _params; // 추가 정보함수 넘겨서 데이터 넣는 셋 작업
+
+	uint32 _instanceID = 0;
 private:
 	shared_ptr<Shader> _shader;
 
@@ -117,7 +119,6 @@ private:
 
 	bool _setDataOff = false;
 
-	uint32 _instanceID=0;
 	static uint32 _instanceIDGenator;
 
 	std::vector<std::shared_ptr<ICBufferInjector>> _customInjectors;
