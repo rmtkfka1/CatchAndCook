@@ -33,8 +33,9 @@ void NavMesh::Update()
 		(Input::main->GetKey(KeyCode::I) ? 1 : 0) - (Input::main->GetKey(KeyCode::K) ? 1 : 0)
 		)
 	* Time::main->GetDeltaTime() * 40;
-	NavMeshManager::main->CalculatePath(Vector3(350, 0, 150), startPos,
-	                                    NavMeshManager::main->GetNavMeshData(), _edges);
+	//NavMeshManager::main->CalculatePath(Vector3(350, 0, 150), startPos,NavMeshManager::main->GetNavMeshData(), _edges);
+	NavMeshManager::main->CalculatePath_Funnel(Vector3(350, 0, 150), startPos,
+		NavMeshManager::main->GetNavMeshData(), _tris);
 	Gizmo::Width(0.4f);
 	Gizmo::Box(BoundingBox(startPos, Vector3(1, 100, 1)));
 
@@ -106,5 +107,10 @@ std::vector< std::array<Vector3, 2>>& NavMesh::GetNavMeshEdgeData()
 void NavMesh::SetNavMeshEdgeData(const std::vector< std::array<Vector3, 2>>& data)
 {
 	_edges = data;
+}
+
+void NavMesh::SetTris(const std::vector<int>& data)
+{
+	_tris = data;
 }
 

@@ -314,6 +314,10 @@ void Scene::DeferredPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 {
     { // Shadow
+
+        if (!ShadowManager::main->_onOff)
+            return;;
+
         auto light = LightManager::main->GetMainLight();
 		if (light == nullptr)
 			return;
@@ -453,7 +457,7 @@ void Scene::SettingPrevData(RenderObjectStrucutre& data, const RENDER_PASS::PASS
 
 void Scene::DebugRendering()
 {
-    if (Gizmo::main->_flags == GizmoFlags::RenderPreview)
+    if (HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::RenderPreview))
     {
         auto pos = CameraManager::main->GetActiveCamera()->GetCameraPos();
         auto lock = CameraManager::main->GetActiveCamera()->GetCameraLook();

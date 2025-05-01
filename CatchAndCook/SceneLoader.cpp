@@ -569,9 +569,10 @@ void SceneLoader::LinkComponent(json& jsonData)
 
         std::vector<NavMeshData> datas;
         std::vector< std::array<Vector3, 2>> edgeDatas;
+        std::vector<int> tris;
 
         auto& vertexs = jsonData["vertexs"];
-        auto& indexs = jsonData["indexs"];
+        auto& indexs = jsonData["tris"];
         auto& adjacency = jsonData["adjacency"];
         auto& edges = jsonData["edge"];
 
@@ -593,6 +594,12 @@ void SceneLoader::LinkComponent(json& jsonData)
             }
             datas.push_back(data);
         }
+        for (int j = 0; j < indexs.size(); j++)
+        {
+            tris.push_back(indexs[j][0].get<int>());
+            tris.push_back(indexs[j][1].get<int>());
+            tris.push_back(indexs[j][2].get<int>());
+        }
         for (int i = 0; i < edgeCount; i++)
         {
             std::array<Vector3, 2> edgePos;
@@ -611,6 +618,7 @@ void SceneLoader::LinkComponent(json& jsonData)
 
 		navMesh->SetNavMeshData(datas);
         navMesh->SetNavMeshEdgeData(edgeDatas);
+        navMesh->SetTris(tris);
     }
     if (type == L"Light")
     {

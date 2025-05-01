@@ -289,6 +289,158 @@ void Bloom::Blooming(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, i
 	cmdList->Dispatch(x, y, z);
 
 }
+FieldBloom::FieldBloom()
+{
+}
+
+FieldBloom::~FieldBloom()
+{
+}
+
+void FieldBloom::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture)
+{
+	_pingtexture = pingTexture;
+	_pongtexture = pongTexture;
+
+	_bloomTexture = make_shared<Texture>();
+	_bloomTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
+		, false, false);
+
+	_XBlurshader = ResourceManager::main->Get<Shader>(L"xblur");
+	_YBlurshader = ResourceManager::main->Get<Shader>(L"yblur");
+
+	{
+		_BlackShader = make_shared<Shader>();
+		ShaderInfo info;
+		info._computeShader = true;
+		_BlackShader->Init(L"blackShader.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
+		ResourceManager::main->Add<Shader>(L"blackShader", _BlackShader);
+	}
+
+	{
+		_Bloomshader = make_shared<Shader>();
+		ShaderInfo info;
+		info._computeShader = true;
+		_Bloomshader->Init(L"bloomShader.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
+		ResourceManager::main->Add<Shader>(L"bloom", _Bloomshader);
+	}
+
+
+#ifdef IMGUI_ON
+	ImguiManager::main->mainField_bloom = &_on;
+#endif 
+
+
+}
+
+void FieldBloom::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+
+}
+
+void FieldBloom::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+	if (_on == false)
+		return;
+
+	Black(cmdList, x, y, z);
+
+	for (int i = 0; i < _blurCount; ++i)
+	{
+		XBlur(cmdList, x, y, z);
+		YBlur(cmdList, x, y, z);
+	}
+
+	Blooming(cmdList, x, y, z);
+
+	DispatchEnd(cmdList);
+
+}
+
+void FieldBloom::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
+	_bloomTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
+	cmdList->CopyResource(renderTarget->GetResource().Get(), _bloomTexture->GetResource().Get());
+}
+
+void FieldBloom::Resize()
+{
+	auto& textureBufferPool = Core::main->GetBufferManager()->GetTextureBufferPool();
+	textureBufferPool->FreeSRVHandle(_bloomTexture->GetUAVCpuHandle());
+
+
+
+	_bloomTexture->CreateStaticTexture(DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::UAV
+		, false, false);
+
+
+}
+
+void FieldBloom::Black(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+	auto& MAOTexture = Core::main->GetGBuffer()->GetTexture(3);
+	MAOTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	cmdList->SetPipelineState(_BlackShader->_pipelineState.Get());
+	_tableContainer = table->Alloc(8);
+	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 0);
+	table->CopyHandle(_tableContainer.CPUHandle, MAOTexture->GetSRVCpuHandle(), 1);
+	table->CopyHandle(_tableContainer.CPUHandle, _pingtexture->GetUAVCpuHandle(), 5);
+	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+	cmdList->Dispatch(x, y, z);
+}
+
+void FieldBloom::XBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	cmdList->SetPipelineState(_XBlurshader->_pipelineState.Get());
+	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+	_pongtexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	_tableContainer = table->Alloc(8);
+	table->CopyHandle(_tableContainer.CPUHandle, _pingtexture->GetSRVCpuHandle(), 0);
+	table->CopyHandle(_tableContainer.CPUHandle, _pongtexture->GetUAVCpuHandle(), 5);
+	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+	cmdList->Dispatch(x, y, z);
+}
+
+void FieldBloom::YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	cmdList->SetPipelineState(_YBlurshader->_pipelineState.Get());
+	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	_pongtexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+	_tableContainer = table->Alloc(8);
+	table->CopyHandle(_tableContainer.CPUHandle, _pingtexture->GetUAVCpuHandle(), 5);
+	table->CopyHandle(_tableContainer.CPUHandle, _pongtexture->GetSRVCpuHandle(), 0);
+	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+	cmdList->Dispatch(x, y, z);
+}
+
+void FieldBloom::Blooming(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	cmdList->SetPipelineState(_Bloomshader->_pipelineState.Get());
+
+	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+	_pongtexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+	_bloomTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
+	_tableContainer = table->Alloc(8);
+
+	table->CopyHandle(_tableContainer.CPUHandle, _pongtexture->GetSRVCpuHandle(), 0);
+	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
+	table->CopyHandle(_tableContainer.CPUHandle, _bloomTexture->GetUAVCpuHandle(), 5);
+	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+	cmdList->Dispatch(x, y, z);
+
+}
 
 /*************************
 *	DepthRender          *
@@ -397,10 +549,14 @@ void FieldFogRender::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>&
 	_fogParam.power = 1.2f;
 	_fogParam.g_fogMin = 50.0f;
 	_fogParam.g_fogMax = 350;
+
+	ImguiManager::main->mainField_fog = &_onOff;
 }
 
 void FieldFogRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
 {
+	if (_onOff)
+		return;
 	auto& table = Core::main->GetBufferManager()->GetTable();
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
 	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
@@ -563,11 +719,13 @@ void VignetteRender::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>&
 	info._computeShader = true;
 	_shader->Init(L"vignette.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
 
+	ImguiManager::main->mainField_vignette = &_onOff;
 }
 
 void VignetteRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
 {
-
+	if (_onOff)
+		return;
 	auto& table = Core::main->GetBufferManager()->GetTable();
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
 	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
@@ -787,6 +945,9 @@ void ComputeManager::Init()
 	_bloom = make_shared<Bloom>();
 	_bloom->Init(_pingTexture, _pongTexture);
 
+	_fieldBloom = make_shared<FieldBloom>();
+	_fieldBloom->Init(_pingTexture, _pongTexture);
+
 	_depthRender = make_shared<DepthRender>();
 	_depthRender->Init(_pingTexture, _pongTexture);
 
@@ -831,8 +992,7 @@ void ComputeManager::DispatchMainField(ComPtr<ID3D12GraphicsCommandList>& cmdLis
 
 	int32 dispath[3] = { dispatchX,dispatchY,1 };
 
-	_bloom->_on = true;
-
+	//bool _onOff = true;
 
 	_depthRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
@@ -840,7 +1000,7 @@ void ComputeManager::DispatchMainField(ComPtr<ID3D12GraphicsCommandList>& cmdLis
 
 	_fieldFogRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
-	_bloom->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+	_fieldBloom->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
 	_colorGradingRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
@@ -899,6 +1059,7 @@ void ComputeManager::Resize()
 	_ssaoRender->Resize();
 	_fieldFogRender->Resize();
 	_colorGradingRender->Resize();
+	_fieldBloom->Resize();
 }
 
 

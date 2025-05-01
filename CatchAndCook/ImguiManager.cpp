@@ -151,10 +151,18 @@ void ImguiManager::GizmoController()
     {
         Gizmo::main->_flags = Gizmo::main->_flags | GizmoFlags::RenderPreview;
     }
+    if (ImGui::Button("NavMesh"))
+    {
+        *navMesh = !(*navMesh);
+    }
 }
 
 void ImguiManager::ComputeController()
 {
+    if (ImGui::Button("Shadow ON/OFF"))
+    {
+        *_shadowOnOff = !(*_shadowOnOff);
+    }
     if (ImGui::Button("Blur ON/OFF"))
     {
         *_blurPtr = !(*_blurPtr);
@@ -195,9 +203,22 @@ void ImguiManager::ComputeController()
     {
         *_ssaoOnOff = !(*_ssaoOnOff);
     }
-    if (ImGui::Button("ColorGrading ON/OFF"))
+    if (ImGui::Button("MainField ColorGrading ON/OFF"))
     {
         *_colorGradingOnOff = !(*_colorGradingOnOff);
+    }
+
+    if (ImGui::Button("MainField Bloom ON/OFF"))
+    {
+        *mainField_bloom = !(*mainField_bloom);
+    }
+    if (ImGui::Button("MainField Fog ON/OFF"))
+    {
+        *mainField_fog = !(*mainField_fog);
+    }
+    if (ImGui::Button("MainField Vignette ON/OFF"))
+    {
+        *mainField_vignette = !(*mainField_vignette);
     }
 }
 

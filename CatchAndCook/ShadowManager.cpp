@@ -16,7 +16,7 @@ ShadowManager::~ShadowManager()
 
 void ShadowManager::Init()
 {
-
+    ImguiManager::main->_shadowOnOff = &_onOff;
 }
 
 void ShadowManager::SetShadowCasterParams()

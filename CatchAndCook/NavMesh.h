@@ -25,9 +25,11 @@ public:
 	void SetNavMeshData(const std::vector<NavMeshData>& data);
 	std::vector< std::array<Vector3, 2>>& GetNavMeshEdgeData();
 	void SetNavMeshEdgeData(const std::vector< std::array<Vector3, 2>>& data);
+	void SetTris(const std::vector<int>& data);
 
 	std::vector<NavMeshData> _datas;
 	std::vector< std::array<Vector3, 2>> _edges;
+	std::vector<int> _tris;
 	Vector3 startPos;
 };
 

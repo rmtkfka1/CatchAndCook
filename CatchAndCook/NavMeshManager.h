@@ -54,7 +54,26 @@ namespace std {
 	};
 }
 
-#define EPS 0.001
+
+struct IndexEdge
+{
+	int u, v;
+	bool operator==(IndexEdge const& o) const noexcept
+	{
+		return u == o.u && v == o.v;
+	}
+};
+struct IndexEdgeHash {
+	size_t operator()(IndexEdge const& e) const noexcept {
+		return (size_t(e.u) << 32) ^ size_t(e.v);
+	}
+};
+struct TriangleNode
+{
+	float g, f;
+	int parentIndex;
+	bool open, closed;
+};
 
 class NavMeshManager
 {
@@ -69,147 +88,105 @@ public:
 
 	std::vector<NavMeshData>& GetNavMeshData();
 	void SetNavMeshData(const std::vector<NavMeshData>& data);
-	static void CalculatePath(const Vector3& startPosition, const Vector3& endPosition, const std::vector<NavMeshData>& datas, const std::vector<std
-	                          ::array<Vector3, 2>>& edges);
 
 
-	enum class Ori { Colinear, Clockwise, CounterClockwise };
 
-	static Ori Orientation(const Vector3& A, const Vector3& B, const Vector3& C) {
-		float v = ccw(A, B, C);
-		if (fabs(v) < 0.001) return Ori::Colinear;
-		return (v > 0 ? Ori::CounterClockwise : Ori::Clockwise);
-	}
-
-	static bool OnSegment(const Vector3& A, const Vector3& B, const Vector3& P) {
-		return P.x >= min(A.x, B.x) - 0.001 && P.x <= max(A.x, B.x) + 0.001 &&
-			P.z >= min(A.z, B.z) - 0.001 && P.z <= max(A.z, B.z) + 0.001;
-	}
-
-	static bool SegmentsIntersect(const Vector3& A, const Vector3& B,
-		const Vector3& C, const Vector3& D)
-	{
-		Ori o1 = Orientation(A, B, C);
-		Ori o2 = Orientation(A, B, D);
-		Ori o3 = Orientation(C, D, A);
-		Ori o4 = Orientation(C, D, B);
-
-		// 일반 내부 교차
-		if (o1 != o2 && o3 != o4) return true;
-
-		// colinear special cases
-		if (o1 == Ori::Colinear && OnSegment(A, B, C)) return true;
-		if (o2 == Ori::Colinear && OnSegment(A, B, D)) return true;
-		if (o3 == Ori::Colinear && OnSegment(C, D, A)) return true;
-		if (o4 == Ori::Colinear && OnSegment(C, D, B)) return true;
-
-		return false;
-	}
-
-	static bool OnSegmentStrict(
-		const Vector3& A, const Vector3& B, const Vector3& P)
-	{
-		// 공선 + 범위 내
-		if (fabs(ccw(A, B, P)) > EPS) return false;
-		float minX = fmin(A.x, B.x), maxX = fmax(A.x, B.x);
-		float minZ = fmin(A.z, B.z), maxZ = fmax(A.z, B.z);
-		if (P.x <= minX + EPS || P.x >= maxX - EPS) return false;
-		if (P.z <= minZ + EPS || P.z >= maxZ - EPS) return false;
-		return true;
-	}
-
-	// A–B 와 C–D 가 교차하는지(끝점 스침 제외) 검사
-	static bool SegmentsIntersect_Optimized(
-		const Vector3& A, const Vector3& B,
-		const Vector3& C, const Vector3& D)
-	{
-		float c1 = ccw(A, B, C), c2 = ccw(A, B, D);
-		float c3 = ccw(C, D, A), c4 = ccw(C, D, B);
-
-		// 1) 일반 내부 교차
-		if (c1 * c2 < 0 && c3 * c4 < 0)
-			return true;
-
-		// 2) colinear 특수: 구간 “안쪽”에서 스칠 때만 차단
-		if (fabs(c1) < EPS && OnSegmentStrict(A, B, C)) return true;
-		if (fabs(c2) < EPS && OnSegmentStrict(A, B, D)) return true;
-		if (fabs(c3) < EPS && OnSegmentStrict(C, D, A)) return true;
-		if (fabs(c4) < EPS && OnSegmentStrict(C, D, B)) return true;
-
-		return false;
-	}
-
-	static std::deque<NavMeshPathData> SmoothPath(const std::deque<NavMeshPathData>& rawPath, const std::vector<std::array<Vector3, 2>>& edges);
-
-	static float ccw(const Vector3& A, const Vector3& B, const Vector3& C)
-	{
+	static float Area2_3D(const Vector3& A, const Vector3& B, const Vector3& C) {
 		return (B.x - A.x) * (C.z - A.z) - (B.z - A.z) * (C.x - A.x);
 	}
-	static bool IsIntersecting(const std::array<Vector3, 2>& e1, const std::array<Vector3, 2>& e2)
+
+	static bool PointInTriangle3D(
+		const Vector3& P,
+		const Vector3& A, const Vector3& B, const Vector3& C)
 	{
-		float ccw1 = ccw(e1[0], e1[1], e2[0]);
-		float ccw2 = ccw(e1[0], e1[1], e2[1]);
-		float ccw3 = ccw(e2[0], e2[1], e1[0]);
-		float ccw4 = ccw(e2[0], e2[1], e1[1]);
-
-		// strict 교차뿐 아니라, ccw == 0 (끝점 접촉 or 공선) 도 막기
-		if ((ccw1 * ccw2 <= 0) && (ccw3 * ccw4 <= 0))
-			return true;
-
-		return false;
+		float w1 = Area2_3D(P, A, B), w2 = Area2_3D(P, B, C), w3 = Area2_3D(P, C, A);
+		return (w1 >= 0 && w2 >= 0 && w3 >= 0)
+			|| (w1 <= 0 && w2 <= 0 && w3 <= 0);
 	}
 
-	static bool IsPointOnSegment(const Vector3& A, const Vector3& B, const Vector3& P)
-	{
-		const float EPSILON = 1e-6f;
-		// P가 A, B와 공선인지 확인
-		if (std::fabs(ccw(A, B, P)) > EPSILON)
-			return false;
-		// P가 A와 B 사이에 있는지 확인 (x, z 좌표 각각에 대해)
-		if (P.x < std::min(A.x, B.x) - EPSILON || P.x > std::max(A.x, B.x) + EPSILON)
-			return false;
-		if (P.z < std::min(A.z, B.z) - EPSILON || P.z > std::max(A.z, B.z) + EPSILON)
-			return false;
-		return true;
+	static float Area2_2D(const Vector2& A, const Vector2& B, const Vector2& C) {
+		return (B.x - A.x) * (C.y - A.y) - (B.y - A.y) * (C.x - A.x);
 	}
 
-	static bool HasLineOfSight(const Vector3& start, const Vector3& end,
-		const std::vector<std::array<Vector3, 2>>& edges)
+	static Vector2 Normalize2D(const Vector2& v) {
+		float l = std::sqrt(v.x * v.x + v.y * v.y);
+		return Vector2(v.x / l, v.y / l);
+	}
+
+	static bool Vec3Equal(const Vector3& a, const Vector3& b, float eps = 1e-6f) {
+		return fabs(a.x - b.x) < eps
+			&& fabs(a.y - b.y) < eps
+			&& fabs(a.z - b.z) < eps;
+	}
+
+	static std::vector<Vector3> StringPull(
+		const Vector3& start,
+		const Vector3& end,
+		const std::vector<std::pair<Vector3, Vector3>>& portals)
 	{
+		std::vector<Vector3> path;
+		path.reserve(portals.size());
 
-		for (const auto& e : edges)
-		{
-			if (SegmentsIntersect_Optimized(start, end, e[0], e[1]))
-				return false;
-		}
-		return true;
-		//-------------
-		for (const auto& edge : edges)
-		{
-			// 두 선분이 하나라도 교차하면 시야 차단
-			if (SegmentsIntersect(start, end, edge[0], edge[1]))
-				return false;
-		}
-		return true;
-		//-------------
-		std::array<Vector3, 2> lineSegment = { start, end };
+		Vector3 apex = start;
+		Vector3 leftPt = portals[0].first;
+		Vector3 rightPt = portals[0].second;
+		int idxApex = 0, idxLeft = 0, idxRight = 0;
 
-		for (const auto& edge : edges)
-		{
-			// (1) 일반적인 선분 교차 검사
-			if (IsIntersecting(lineSegment, edge))
-				return false;
+		path.push_back(apex);
+		for (int i = 1; i < (int)portals.size(); ++i) {
+			auto nl = portals[i].first;
+			auto nr = portals[i].second;
 
-			// (2) 두 점 모두 해당 외각 엣지 위에 있다면, 교차한 것으로 판단합니다.
-			if (IsPointOnSegment(edge[0], edge[1], start) &&
-				IsPointOnSegment(edge[0], edge[1], end))
-			{
-				return false;
+			if (Area2_3D(apex, rightPt, nr) >= 0) {
+				if (Vec3Equal(apex, rightPt)
+					|| Area2_3D(apex, leftPt, nr) < 0)
+				{
+					rightPt = nr; idxRight = i;
+				}
+				else {
+					apex = leftPt;
+					path.push_back(apex);
+					idxApex = idxLeft;
+					leftPt = apex; rightPt = apex;
+					idxLeft = idxApex; idxRight = idxApex;
+					i = idxApex;
+					continue;
+				}
+			}
+
+			if (Area2_3D(apex, leftPt, nl) <= 0) {
+				if (Vec3Equal(apex, leftPt)
+					|| Area2_3D(apex, rightPt, nl) > 0)
+				{
+					leftPt = nl; idxLeft = i;
+				}
+				else {
+					apex = rightPt;
+					path.push_back(apex);
+					idxApex = idxRight;
+					leftPt = apex; rightPt = apex;
+					idxLeft = idxApex; idxRight = idxApex;
+					i = idxApex;
+					continue;
+				}
 			}
 		}
-		return true;
+		path.push_back(end);
+		return path;
 	}
+
+
+	std::vector<Vector3> NavMeshManager::CalculatePath_Funnel(
+		const Vector3& startPos,
+		const Vector3& endPos,
+		const std::vector<NavMeshData>& datas,
+		const std::vector<int>& _tris);
+
+
 	std::vector<NavMeshData> _datas;
+
+
+	bool _gizmoDebug = true;
 };
 
 

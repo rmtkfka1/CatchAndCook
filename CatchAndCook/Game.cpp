@@ -43,6 +43,11 @@ void Game::Init(HWND hwnd)
 	Profiler::main = make_unique<Profiler>();
 	Profiler::main->Init(_hwnd, _hInstance);
 
+#ifdef IMGUI_ON
+	ImguiManager::main = make_unique<ImguiManager>();
+	ImguiManager::main->Init();
+#endif // IMGUI_ON
+
 	ResourceManager::main = make_unique<ResourceManager>();
 	ResourceManager::main->Init();
 
@@ -63,11 +68,6 @@ void Game::Init(HWND hwnd)
 
 	ShadowManager::main = make_unique<ShadowManager>();
 	ShadowManager::main->Init();
-
-#ifdef IMGUI_ON
-	ImguiManager::main = make_unique<ImguiManager>();
-	ImguiManager::main->Init();
-#endif // IMGUI_ON
 
 	ComputeManager::main = make_unique<ComputeManager>();
 	ComputeManager::main->Init();

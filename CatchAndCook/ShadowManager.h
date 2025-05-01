@@ -25,6 +25,7 @@ struct ShadowCascadeIndexParams
 class ShadowManager : public RenderCBufferSetter
 {
 public:
+	bool _onOff = true;
 	static unique_ptr<ShadowManager> main;
 	static const int _cascadeCount = 4;
 

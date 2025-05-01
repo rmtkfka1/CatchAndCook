@@ -58,7 +58,9 @@ void PlayerController::Update()
 {
 	Component::Update();
 	ColliderManager::main->UpdateDynamicCells();
-	CameraControl();
+
+	if (Input::main->IsMouseLock())
+		CameraControl();
 	MoveControl();
 
 	for (auto& terrain : TerrainManager::main->GetTerrains())

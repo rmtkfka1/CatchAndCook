@@ -83,7 +83,7 @@ private:
 	void YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 	void Blooming(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 
-	bool _on = false;
+	bool _on = true;
 
 private:
 	int32 _blurCount = 10;
@@ -97,6 +97,45 @@ private:
 	shared_ptr<Shader> _Bloomshader;
 	friend class ComputeManager;
 };
+
+class FieldBloom : public ComputeBase
+{
+
+public:
+	FieldBloom();
+	virtual ~FieldBloom();
+
+public:
+	virtual void Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture);
+	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+
+private:
+	virtual void Resize();
+private:
+	void Black(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+	void XBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+	void YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+	void Blooming(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+	bool _on = true;
+
+private:
+	int32 _blurCount = 10;
+	shared_ptr<Texture> _bloomTexture;
+	shared_ptr<Texture> _pingtexture;
+	shared_ptr<Texture> _pongtexture;
+
+	shared_ptr<Shader> _XBlurshader;
+	shared_ptr<Shader> _YBlurshader;
+	shared_ptr<Shader> _BlackShader;
+	shared_ptr<Shader> _Bloomshader;
+	friend class ComputeManager;
+};
+
 
 struct FogParam
 {
@@ -162,6 +201,8 @@ private:
 	shared_ptr<Texture> _pingTexture;
 	shared_ptr<Shader> _shader;
 	FogParam _fogParam;
+
+	bool _onOff = true;
 
 	friend class ComputeManager;
 };
@@ -240,6 +281,7 @@ private:
 	shared_ptr<Shader> _shader;
 
 	VignetteParam _vignetteParam;
+	bool _onOff = true;
 
 	friend class ComputeManager;
 };
@@ -324,6 +366,7 @@ public:
 
 	shared_ptr<Blur> _blur;
 	shared_ptr<Bloom> _bloom;
+	shared_ptr<FieldBloom> _fieldBloom;
 	shared_ptr<DepthRender> _depthRender;
 	shared_ptr<UnderWaterEffect> _underWaterEffect;
 

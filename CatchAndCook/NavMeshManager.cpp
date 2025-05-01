@@ -57,212 +57,192 @@ void NavMeshManager::SetNavMeshData(const std::vector<NavMeshData>& data)
 	_datas = data;
 }
 
-void NavMeshManager::CalculatePath(const Vector3& startPosition, const Vector3& endPosition, const std::vector<NavMeshData>& datas, const std::vector<std::array<Vector3, 2>>& edges)
+
+std::vector<Vector3> NavMeshManager::CalculatePath_Funnel(const Vector3& startPos, const Vector3& endPos,
+                                                          const std::vector<NavMeshData>& datas,
+                                                          const std::vector<int>& _tris)
 {
-	std::vector<NavMeshPathData> pathDataList;
-	pathDataList.reserve(datas.size());
-	for (const auto& data : datas)
-		pathDataList.emplace_back(data, 0, 0);
+    // 1) 삼각형 배열 만들기
+    int triangleCount = _tris.size() / 3;
+    std::vector<std::array<int, 3>> tris(triangleCount);
+    for (int i = 0; i < triangleCount; ++i)
+        tris[i] = { _tris[3 * i + 0], _tris[3 * i + 1], _tris[3 * i + 2] };
 
-	// Step 1. Find Near
-	auto distanceSquaredXZ = [](const Vector3& pos, const NavMeshPathData& data) {
-		return Vector3::DistanceSquared(pos, Vector3(data.data->position.x, 0, data.data->position.z));
-		};
+    auto makeIndexEdgeFunc = [&](int a, int b)
+    {
+	    return IndexEdge{ std::min(a,b), std::max(a,b) };
+    };
+    std::unordered_map<IndexEdge, std::vector<int>, IndexEdgeHash> edgeToTriangles;
 
-	NavMeshPathData startNode;
-	NavMeshPathData endNode;
-	float minNearDis = std::numeric_limits<float>::max();
-	float minFarDis = std::numeric_limits<float>::max();
+    for (int t = 0; t < triangleCount; ++t) { // 트라이 앵글의 각 index를 엣지에 추가
+        auto& tr = tris[t];
+        edgeToTriangles[makeIndexEdgeFunc(tr[0], tr[1])].push_back(t);
+        edgeToTriangles[makeIndexEdgeFunc(tr[1], tr[2])].push_back(t);
+        edgeToTriangles[makeIndexEdgeFunc(tr[2], tr[0])].push_back(t);
+    }
 
-	for (const auto& data : pathDataList) {
-		const float currentNearDis = distanceSquaredXZ(startPosition, data);
-		const float currentFarDis = distanceSquaredXZ(endPosition, data);
+    // 3) 삼각형 인접 리스트 (A*)
+    std::vector<std::vector<int>> triangleAdjects(triangleCount);
+    for (auto& triangleIndexToEdges : edgeToTriangles)
+    {
+        if (triangleIndexToEdges.second.size() == 2) {
+            int a = triangleIndexToEdges.second[0], b = triangleIndexToEdges.second[1];
+            triangleAdjects[a].push_back(b);
+            triangleAdjects[b].push_back(a);
+        }
+    }
 
-		if (currentNearDis < minNearDis) {
-			minNearDis = currentNearDis;
-			startNode = data;
-		}
-		if (currentFarDis < minFarDis) {
-			minFarDis = currentFarDis;
-			endNode = data;
-		}
-	}
+    // 4) 시작/끝 삼각형 찾기
+    int startTri = 0, endTri = 0;
+    for (int t = 0; t < triangleCount; ++t) {
+        auto& tr = tris[t];
+        if (PointInTriangle3D(startPos,
+            datas[tr[0]].position,
+            datas[tr[1]].position,
+            datas[tr[2]].position))
+            startTri = t;
+        if (PointInTriangle3D(endPos,
+            datas[tr[0]].position,
+            datas[tr[1]].position,
+            datas[tr[2]].position))
+            endTri = t;
+    }
 
-	Gizmo::Width(0.2f);
-	Gizmo::Box(BoundingBox(startNode.data->position, Vector3(1, 1, 1)));
-	Gizmo::Box(BoundingBox(endNode.data->position, Vector3(1, 1, 1)));
-	Gizmo::WidthRollBack();
+    // 5) 삼각형 A* (centroid 휴리스틱)
+    std::vector<TriangleNode> triangleNodes(triangleCount);
+    auto GetTriangleIdCenterPosition = [&](int ti) {
+        auto& tr = tris[ti];
+        return (datas[tr[0]].position
+            + datas[tr[1]].position
+            + datas[tr[2]].position) / 3.0f;
+        };
+    Vector3 centEnd = GetTriangleIdCenterPosition(endTri);
 
-	Gizmo::Width(0.08f);
-	for (auto& data : datas)
-		for (auto& adj : data.adjectIndexs)
-			Gizmo::Line(data.position, datas[adj].position, Vector4(0,1,0,1));
-	Gizmo::WidthRollBack();
+	for (int i = 0; i < triangleCount; ++i)
+    {
+        triangleNodes[i].g = FLT_MAX;
+        triangleNodes[i].f = FLT_MAX;
+        triangleNodes[i].open = false;
+        triangleNodes[i].closed = false;
+    }
+
+    triangleNodes[startTri].g = 0;
+    triangleNodes[startTri].f = Vector3::Distance(GetTriangleIdCenterPosition(startTri), centEnd);
+    triangleNodes[startTri].parentIndex = startTri;
+    triangleNodes[startTri].open = true;
+
+    using PairFloatIndex = std::pair<float, int>;
+    std::priority_queue<PairFloatIndex, std::vector<PairFloatIndex>, std::greater<PairFloatIndex>> priorityQueue;
+    priorityQueue.push({ triangleNodes[startTri].f, startTri });
+
+    bool isFound = false;
+    while (!priorityQueue.empty())
+    {
+        auto [f, currentIndex] = priorityQueue.top();
+    	priorityQueue.pop();
+
+        if (triangleNodes[currentIndex].closed)
+            continue;
+        triangleNodes[currentIndex].closed = true;
+
+        if (currentIndex == endTri)
+        {
+	        isFound = true;
+        	break;
+        }
+        for (int nextAdjNodeIndex : triangleAdjects[currentIndex])
+        {
+            if (triangleNodes[nextAdjNodeIndex].closed) // 닫혀있으면 캔슬
+                continue;
+
+            float ng = triangleNodes[currentIndex].g + Vector3::Distance(GetTriangleIdCenterPosition(currentIndex), GetTriangleIdCenterPosition(nextAdjNodeIndex)); // 누적 가중치
+            float nh = Vector3::Distance(GetTriangleIdCenterPosition(nextAdjNodeIndex), centEnd);  // 도착점까지 휴리스틱
+            float nf = ng + nh;
+
+            if (!triangleNodes[nextAdjNodeIndex].open || nf < triangleNodes[nextAdjNodeIndex].f) // 아직 openNode가 아니거나 nf가 더 작은거면 값 갱신
+            {
+                triangleNodes[nextAdjNodeIndex].g = ng;
+            	triangleNodes[nextAdjNodeIndex].f = nf;
+            	triangleNodes[nextAdjNodeIndex].parentIndex = currentIndex;
+
+                if (!triangleNodes[nextAdjNodeIndex].open) // 열고 추가
+                {
+                    triangleNodes[nextAdjNodeIndex].open = true;
+                    priorityQueue.push({ nf, nextAdjNodeIndex });
+                }
+            }
+        }
+    }
+    if (!isFound)
+        return { };
+
+    // 6) triPath 복원
+    std::vector<int> triPath;
+    for (int t = endTri;; t = triangleNodes[t].parentIndex) // 부모를 거슬러 올라가며 갱신
+    {
+        triPath.push_back(t);
+        if (t == startTri)
+            break;
+    }
+    ranges::reverse(triPath);
+
+    // 7) 포털 생성 (좌→우)
+    std::vector<std::pair<Vector3, Vector3>> portals;
+    portals.reserve(triPath.size() + 1);
+    portals.emplace_back(startPos, startPos);
+    for (int i = 0; i + 1 < (int)triPath.size(); ++i) {
+        int t0 = triPath[i], t1 = triPath[i + 1];
+        for (auto& kv : edgeToTriangles) {
+            auto& v = kv.second;
+            if (v.size() == 2 && ((v[0] == t0 && v[1] == t1) || (v[0] == t1 && v[1] == t0))) {
+                auto a3 = datas[kv.first.u].position;
+                auto b3 = datas[kv.first.v].position;
+
+                // 이동 방향 기준 왼쪽/오른쪽 판정
+                Vector2 c0 = Vector2(GetTriangleIdCenterPosition(t0).x, GetTriangleIdCenterPosition(t0).z);
+                Vector2 c1 = Vector2(GetTriangleIdCenterPosition(t1).x, GetTriangleIdCenterPosition(t1).z);
+                Vector2 dir = Normalize2D({ c1.x - c0.x,c1.y - c0.y });
+                Vector2 mid = { (a3.x + b3.x) * 0.5f,(a3.z + b3.z) * 0.5f };
+
+                if (Area2_2D(mid, { mid.x + dir.x,mid.y + dir.y }, Vector2(a3.x, a3.z)) >= 0)
+                    portals.emplace_back(a3, b3);
+                else
+                    portals.emplace_back(b3, a3);
+                break;
+            }
+        }
+    }
+    portals.emplace_back(endPos, endPos);
+
+    // 8) Funnel 스무딩
+    auto smooth = StringPull(startPos, endPos, portals);
 
 
+    if (_gizmoDebug)
+    {
+        for (int t : triPath) {
+            Vector3 c = GetTriangleIdCenterPosition(t);
+            Gizmo::Sphere({ c , 0.2 });
+        }
+        for (auto& pp : portals) {
+            Gizmo::Line(pp.first + Vector3::Up * 1, pp.second + Vector3::Up * 1, Vector4(1, 1, 0, 1));
+        }
 
-
-	std::priority_queue<NavMeshPathData> openQueue;
-	openQueue.push(startNode);
-	bool foundPath = false;
-	std::deque<NavMeshPathData> resultPath;
-
-	const Vector3& targetPos = endNode.data->position;
-	while (!openQueue.empty())
-	{
-		if (pathDataList[openQueue.top().id].IsClose())
-		{
-			openQueue.pop();
-			continue;
-		}
-		const auto currentNode = openQueue.top();
-		openQueue.pop();
-
-		if (currentNode == endNode)
-		{
-			foundPath = true;
-			for (NavMeshPathData node = currentNode; node.id != startNode.id; node = pathDataList[node.parentId])
-				resultPath.push_back(node);
-			resultPath.push_back(startNode);
-			break;
-		}
-		pathDataList[currentNode.id].SetClose();
-		
-		
-		for (const auto& adjId : currentNode.data->adjectIndexs)
-		{
-			auto& adjNode = pathDataList[adjId];
-
-			float nextG = pathDataList[currentNode.id].g + Vector3::Distance(currentNode.data->position, adjNode.data->position);
-			float nextH = Vector3::Distance(adjNode.data->position, endNode.data->position);
-			float nextF = nextG + nextH;
-
-			if (adjNode.IsOpen())
-			{
-				if ((nextF + 0.1f) < adjNode.GetF())
-				{
-					adjNode.g = nextG;
-					adjNode.h = nextH;
-					adjNode.parentId = currentNode.id;
-					openQueue.push(pathDataList[adjId]);
-				}
-			}
-			else
-			{
-				adjNode.g = nextG;
-				adjNode.h = nextH;
-				adjNode.parentId = currentNode.id;
-				adjNode.SetOpen();
-				openQueue.push(pathDataList[adjId]);
-			}
-		}
-	}
-	if (foundPath)
-	{
-		std::ranges::reverse(resultPath);
-		NavMeshData startPoint, endPoint;
-		startPoint.position = Vector3(startPosition.x, resultPath[0].data->position.y, startPosition.z);
-		endPoint.position = Vector3(endPosition.x, resultPath[resultPath.size() - 1].data->position.y, endPosition.z);
-		resultPath.push_front({ startPoint });
-		resultPath.push_back({ endPoint });
-
-		/*
-
-		std::deque<NavMeshPathData> resultPath2;
-
-		resultPath2.push_back(resultPath.front());
-		size_t currentIndex = 0;
-		const size_t n = resultPath.size();
-
-		while (currentIndex < n - 1)
-		{
-			size_t nextIndex = currentIndex;
-			// 현재 노드 다음부터 가까운 노드부터 검사
-			for (size_t i = currentIndex + 1; i < n; ++i)
-			{
-				// 현재 노드와 resultPath[i] 사이에 line-of-sight가 있다면 갱신
-				if (HasLineOfSight(resultPath[currentIndex].data->position, resultPath[i].data->position, edges))
-					nextIndex = i;
-				else
-					// 가까운 순서대로 검사하므로, 처음으로 line-of-sight가 깨지는 지점에서 중단
-					break;
-			}
-			// 진전이 없는 경우 강제적으로 다음 노드를 선택
-			if (nextIndex == currentIndex)
-				nextIndex = currentIndex + 1;
-
-			resultPath2.push_back(resultPath[nextIndex]);
-			currentIndex = nextIndex;
-		}
-		*/
-		std::deque<NavMeshPathData> rawPath = resultPath;
-
-		// 1차 Forward 스무딩
-		auto pass1 = SmoothPath(rawPath, edges);
-
-		// 2차 Backward 스무딩
-		// 역순으로 만들고
-		std::deque<NavMeshPathData> rev1(pass1.rbegin(), pass1.rend());
-		auto pass2 = SmoothPath(rev1, edges);
-
-		// 다시 정방향으로 복원
-		std::deque<NavMeshPathData> resultPath2(pass2.rbegin(), pass2.rend());
-
-		Gizmo::Width(0.2f);
-		// 결과 경로 그리기
-		for (std::size_t i = 1; i < resultPath2.size(); ++i)
-		{
-			const auto& currNode = resultPath2[i];
-			const auto& prevNode = resultPath2[i - 1];
-			Gizmo::Line(currNode.data->position + Vector3::Up * 3, prevNode.data->position + Vector3::Up * 3, Vector4(1, 0, 0, 1));
-		}
-		Gizmo::WidthRollBack();
-	}
-	
-	//float a = queue.top().value;
-	//std::cout << queue.top().value << "\n";
-}
-
-std::deque<NavMeshPathData> NavMeshManager::SmoothPath(const std::deque<NavMeshPathData>& rawPath,
-	const std::vector<std::array<Vector3, 2>>& edges)
-{
-	std::deque<NavMeshPathData> out;
-	size_t n = rawPath.size();
-	if (n == 0) return out;
-
-	out.push_back(rawPath.front());  // 시작점
-	size_t current = 0;
-
-	while (current < n - 1)
-	{
-		size_t nextIdx = current;
-
-		// 1) 뒤에서부터 검사: 가장 먼 지점부터
-		for (size_t i = n - 1; i > current; --i)
-		{
-			if (HasLineOfSight(
-				rawPath[current].data->position,
-				rawPath[i].data->position,
-				edges))
-			{
-				nextIdx = i;
-				break;  // farthest reachable point
-			}
-		}
-
-		// 2) 혹시 시야가 전혀 뚫리지 않아서 nextIdx==current이면
-		if (nextIdx == current)
-			nextIdx = current + 1;
-
-		out.push_back(rawPath[nextIdx]);
-		current = nextIdx;
-	}
-
-	return out;
+        // 9) 그리기
+        Gizmo::Width(0.2f);
+        for (int i = 1; i < (int)smooth.size(); ++i) {
+            Gizmo::Line(
+                smooth[i - 1] + Vector3::Up * 10,
+                smooth[i] + Vector3::Up * 10,
+                Vector4(1, 0, 0, 1));
+        }
+        Gizmo::WidthRollBack();
+    }
+    return smooth;
 }
 
 void NavMeshManager::Init()
 {
-
+    ImguiManager::main->navMesh = &_gizmoDebug;
 }
 
