@@ -213,11 +213,9 @@ void PlayerController::MoveControl()
 		for (auto boundingData : playerColliderDatas)
 		{
 			// 이동할 위치 미리 계산
-			Vector3 currentCenter;
 			Vector3 nextCenter;
 			float currentRadius;
 
-			currentCenter = boundingData.GetCenter();
 			currentRadius = boundingData.GetRadius();
 			nextCenter = boundingData.SetCenter(boundingData.GetCenter() + velocityDirectionXZ);
 
@@ -230,23 +228,12 @@ void PlayerController::MoveControl()
 				{
 					if (otherCollider->GetGroupID() != playerGroupID)
 					{
-						Vector3 otherColliderCenter = otherCollider->GetBoundCenter();
-						Vector3 rayDir = otherColliderCenter - nextCenter;
-						float rayDis = rayDir.Length();
-						rayDir.Normalize();
-
-						Vector3 hitPosition = Collider::GetContactPoint(boundingData, otherCollider->GetBoundingData());
-
+						auto otherBoundingData = otherCollider->GetBoundingData();
+						Vector3 hitPosition = Collider::GetContactPoint(boundingData, otherBoundingData);
 						
 						auto pushDir = nextCenter - hitPosition;
 						auto pushNormal = pushDir;
 						pushNormal.Normalize();
-
-						if (Vector3::Down.Dot(pushNormal) > 0.7) // ground
-						{
-							isGround = true;
-							velocity.y = 0;
-						}
 
 						velocityDirectionXZ += pushNormal * std::max(currentRadius - pushDir.Length(), 0.0f);
 					}
