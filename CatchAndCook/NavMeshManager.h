@@ -54,6 +54,8 @@ namespace std {
 	};
 }
 
+#define EPS 0.001
+
 class NavMeshManager
 {
 public:
@@ -104,6 +106,39 @@ public:
 		return false;
 	}
 
+	static bool OnSegmentStrict(
+		const Vector3& A, const Vector3& B, const Vector3& P)
+	{
+		// 공선 + 범위 내
+		if (fabs(ccw(A, B, P)) > EPS) return false;
+		float minX = fmin(A.x, B.x), maxX = fmax(A.x, B.x);
+		float minZ = fmin(A.z, B.z), maxZ = fmax(A.z, B.z);
+		if (P.x <= minX + EPS || P.x >= maxX - EPS) return false;
+		if (P.z <= minZ + EPS || P.z >= maxZ - EPS) return false;
+		return true;
+	}
+
+	// A–B 와 C–D 가 교차하는지(끝점 스침 제외) 검사
+	static bool SegmentsIntersect_Optimized(
+		const Vector3& A, const Vector3& B,
+		const Vector3& C, const Vector3& D)
+	{
+		float c1 = ccw(A, B, C), c2 = ccw(A, B, D);
+		float c3 = ccw(C, D, A), c4 = ccw(C, D, B);
+
+		// 1) 일반 내부 교차
+		if (c1 * c2 < 0 && c3 * c4 < 0)
+			return true;
+
+		// 2) colinear 특수: 구간 “안쪽”에서 스칠 때만 차단
+		if (fabs(c1) < EPS && OnSegmentStrict(A, B, C)) return true;
+		if (fabs(c2) < EPS && OnSegmentStrict(A, B, D)) return true;
+		if (fabs(c3) < EPS && OnSegmentStrict(C, D, A)) return true;
+		if (fabs(c4) < EPS && OnSegmentStrict(C, D, B)) return true;
+
+		return false;
+	}
+
 	static std::deque<NavMeshPathData> SmoothPath(const std::deque<NavMeshPathData>& rawPath, const std::vector<std::array<Vector3, 2>>& edges);
 
 	static float ccw(const Vector3& A, const Vector3& B, const Vector3& C)
@@ -141,6 +176,14 @@ public:
 	static bool HasLineOfSight(const Vector3& start, const Vector3& end,
 		const std::vector<std::array<Vector3, 2>>& edges)
 	{
+
+		for (const auto& e : edges)
+		{
+			if (SegmentsIntersect_Optimized(start, end, e[0], e[1]))
+				return false;
+		}
+		return true;
+		//-------------
 		for (const auto& edge : edges)
 		{
 			// 두 선분이 하나라도 교차하면 시야 차단
@@ -148,7 +191,7 @@ public:
 				return false;
 		}
 		return true;
-
+		//-------------
 		std::array<Vector3, 2> lineSegment = { start, end };
 
 		for (const auto& edge : edges)

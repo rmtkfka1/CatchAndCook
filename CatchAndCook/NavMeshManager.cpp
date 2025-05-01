@@ -195,7 +195,18 @@ void NavMeshManager::CalculatePath(const Vector3& startPosition, const Vector3& 
 			currentIndex = nextIndex;
 		}
 		*/
-		auto resultPath2 = SmoothPath(resultPath, edges);
+		std::deque<NavMeshPathData> rawPath = resultPath;
+
+		// 1차 Forward 스무딩
+		auto pass1 = SmoothPath(rawPath, edges);
+
+		// 2차 Backward 스무딩
+		// 역순으로 만들고
+		std::deque<NavMeshPathData> rev1(pass1.rbegin(), pass1.rend());
+		auto pass2 = SmoothPath(rev1, edges);
+
+		// 다시 정방향으로 복원
+		std::deque<NavMeshPathData> resultPath2(pass2.rbegin(), pass2.rend());
 
 		Gizmo::Width(0.2f);
 		// 결과 경로 그리기
@@ -203,7 +214,7 @@ void NavMeshManager::CalculatePath(const Vector3& startPosition, const Vector3& 
 		{
 			const auto& currNode = resultPath2[i];
 			const auto& prevNode = resultPath2[i - 1];
-			Gizmo::Line(currNode.data->position + Vector3::Up * 10, prevNode.data->position + Vector3::Up * 10, Vector4(1, 0, 0, 1));
+			Gizmo::Line(currNode.data->position + Vector3::Up * 3, prevNode.data->position + Vector3::Up * 3, Vector4(1, 0, 0, 1));
 		}
 		Gizmo::WidthRollBack();
 	}
