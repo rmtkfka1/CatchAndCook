@@ -323,7 +323,7 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 		if (light == nullptr)
 			return;
 
-        auto boundings = ShadowManager::main->CalculateBounds(CameraManager::main->GetActiveCamera().get(), light.get(), { 6, 20, 65, 200 });
+        auto boundings = ShadowManager::main->CalculateBounds(CameraManager::main->GetActiveCamera().get(), light.get(), { 6, 30, 65, 200 });
 
     	auto lastShadowPos = ShadowManager::main->_lightTransform[ShadowManager::main->_lightTransform.size() - 1];
     	TerrainManager::main->CullingInstancing(lastShadowPos.first, lastShadowPos.second);
@@ -444,6 +444,8 @@ void Scene::GlobalSetting()
     TableContainer container = Core::main->GetBufferManager()->GetTable()->Alloc(1);
     table->CopyHandle(container.CPUHandle, Core::main->GetDSReadTexture()->GetSRVCpuHandle(), 0);
     cmdList->SetGraphicsRootDescriptorTable(GLOBAL_SRV_DEPTH_INDEX, container.GPUHandle);
+
+    Material::AllocDefualtTextureHandle();
 }
 
 void Scene::SettingPrevData(RenderObjectStrucutre& data, const RENDER_PASS::PASS& pass)

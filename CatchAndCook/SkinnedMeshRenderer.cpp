@@ -256,9 +256,12 @@ void SkinnedMeshRenderer::SetSpecialMaterials()
 		if ((RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward)
 			|| RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Deferred)) && currentMaterial->GetShadowCasting())
 		{
-			auto shadowMaterial = ResourceManager::main->_shadowCaster_Skinned;
-			shadowMaterial = shadowMaterial->Clone();
-			currentMaterial->CopyProperties(shadowMaterial);
+			auto shadowMaterial = ((HasInstanceBuffer() ? ResourceManager::main->_shadowCaster_Instanced : ResourceManager::main->_shadowCaster));
+			if (currentMaterial->GetPropertyTexture("_BaseMap") != nullptr)
+			{
+				shadowMaterial = shadowMaterial->Clone();
+				currentMaterial->CopyProperties(shadowMaterial);
+			}
 			_shadowMaterials.push_back(make_pair(i, shadowMaterial));
 		}
 	}
