@@ -4,12 +4,14 @@
 #include "Gizmo.h"
 #include "simple_mesh_ext.h"
 #include <random>
-
+#include "MeshRenderer.h"
 unordered_map<wstring, FishPath> PathFinder::_pathList;
 
 static random_device dre;
 static mt19937 gen(dre());
 static uniform_real_distribution<float> randomSpeed(30.0f, 50.0f);
+
+COMPONENT(PathFinder)
 
 PathFinder::PathFinder()
 {
@@ -21,10 +23,8 @@ PathFinder::~PathFinder()
 
 void PathFinder::Init()
 {
-
-
-	_pathOffset = GenerateRandomPointInSphere(100.0f);
-	_moveSpeed = randomSpeed(gen);
+	/*_pathOffset = GenerateRandomPointInSphere(100.0f);
+	_moveSpeed = randomSpeed(gen);*/
 }
 
 void PathFinder::Start()
@@ -35,11 +35,35 @@ void PathFinder::Start()
 	{
 		renderer->AddStructuredSetter(static_pointer_cast<PathFinder>(shared_from_this()), BufferType::SeaFIshParam);
 		_renderBase = renderer;
+
+		if (auto& meshRenderer = dynamic_pointer_cast<MeshRenderer>(renderer))
+		{
+			float pathnum = meshRenderer->GetMaterials()[0]->GetPropertyFloat("_Path");
+			int   idx = static_cast<int>(pathnum);
+			std::wstring fullPath = L"path" + std::to_wstring(idx);
+
+			wcout << fullPath << endl;
+
+			SetPass(fullPath);
+
+		}
+
 	}
 }
 
 void PathFinder::Update()
 {
+	if (_pathList.find(_pathName) == _pathList.end())
+	{
+		wcout << "패스없음 " << _pathName << endl;
+		return;
+	}
+
+	if (_pathList[_pathName].AreyouDraw)
+	{
+		cout << "이미계산된 패스 " << endl;
+		return;
+	}
 
 	const vector<vec3>& myPath = _pathList[_pathName].path;
 
@@ -55,7 +79,7 @@ void PathFinder::Update()
 
 	float t = std::clamp(_distanceMoved / _segmentLength, 0.0f, 1.0f);
 	vec3 pos = vec3::Lerp(start, end, t);
-	vec3 finalPos = pos + _pathOffset;
+	vec3 finalPos = pos;
 
 	vec3 currentPos = GetOwner()->_transform->SetWorldPosition(finalPos);
 
@@ -206,8 +230,8 @@ void PathFinder::SetData(StructuredBuffer* buffer, Material* material)
 {
 
 	FishInfo info;
-	info.fishSpeed = _moveSpeed/10.0f;
-	info.fishWaveAmount = 0.5f;
+	info.fishSpeed = material->GetPropertyFloat("_Speed");
+	info.fishWaveAmount = material->GetPropertyFloat("_Power");
 
 	BoundingBox& box = _renderBase.lock()->GetOriginBound();
 	info.boundsSizeZ = box.Extents.z;
