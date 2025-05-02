@@ -875,13 +875,13 @@ void ComputeManager::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
 	_underWaterEffect->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
-	_vignetteRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+	//_vignetteRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
-	_ssaoRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+	//_ssaoRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
-	_bloom->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+	//_bloom->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
-	_blur->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+	//_blur->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
 	Core::main->GetRenderTarget()->GetRenderTarget()->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
 

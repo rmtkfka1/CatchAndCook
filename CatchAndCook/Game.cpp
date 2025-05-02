@@ -89,10 +89,7 @@ void Game::Init(HWND hwnd)
 	PathStamp::main = make_unique<PathStamp>();
 	PathStamp::main->Init();
 
-	box.Center = vec3(0, 0, 0);
-	box.Extents = vec3(5.0f, 5.0f, 5.0f);
-
-	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
+	auto scene = SceneManager::main->AddScene(SceneType::Sea01);
 };
 
 void Game::PrevUpdate()

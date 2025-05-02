@@ -25,7 +25,7 @@ struct VS_OUT
     float3 worldTangent : TANGENT;
 };
 
-cbuffer FishInfo : register(b10)
+struct FishInfo 
 {
     float fishWaveAmount;
     float fishSpeed;
@@ -35,7 +35,7 @@ cbuffer FishInfo : register(b10)
 
 
 
-//StructuredBuffer<FishInfo> FIshInfos : register(t32);
+StructuredBuffer<FishInfo> FIshInfos : register(t32);
 
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
@@ -45,21 +45,21 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     row_major float4x4 l2wMatrix = data.localToWorld;
     row_major float4x4 w2lMatrix = data.worldToLocal;
     
-    //FishInfo fishinfo = FIshInfos[offset[STRUCTURED_OFFSET(32)].r + id];
+    FishInfo fishinfo = FIshInfos[offset[STRUCTURED_OFFSET(32)].r + id];
 
     float localZ = input.pos.z; 
-    float minZ = boundsCenterZ - boundsSizeZ;
-    float maxZ = boundsCenterZ + boundsSizeZ;
+    float minZ = fishinfo.boundsCenterZ - fishinfo.boundsSizeZ;
+    float maxZ = fishinfo.boundsCenterZ + fishinfo.boundsSizeZ;
     float weight = saturate((localZ - minZ) / (maxZ - minZ));
 
     float phaseOffset = localZ * 0.5f + id * 0.37f;
 
-    float wave = sin(g_Time * fishSpeed + phaseOffset)
-           * fishWaveAmount * weight;
+    float wave = sin(g_Time * fishinfo.fishSpeed + phaseOffset)
+           * fishinfo.fishWaveAmount * weight;
 
     float3 animatedPos = input.pos;
     animatedPos.x += wave;
-
+    
     float4 worldPos = mul(float4(animatedPos, 1.0f), l2wMatrix);
     output.pos = mul(worldPos, VPMatrix);
     output.worldPos = worldPos.xyz;

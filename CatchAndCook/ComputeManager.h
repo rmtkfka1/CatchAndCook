@@ -180,7 +180,7 @@ struct UnderWaterParam
 	float g_fogMin = 0;
 
 	vec2 padding;
-	int g_on = -1;
+	int g_on = 1;
 	float g_fogMax = 1000.0f;
 };
 

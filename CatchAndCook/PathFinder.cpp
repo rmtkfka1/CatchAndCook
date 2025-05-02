@@ -23,8 +23,8 @@ PathFinder::~PathFinder()
 
 void PathFinder::Init()
 {
-	/*_pathOffset = GenerateRandomPointInSphere(100.0f);
-	_moveSpeed = randomSpeed(gen);*/
+	_pathOffset = GenerateRandomPointInSphere(100.0f);
+
 }
 
 void PathFinder::Start()
@@ -33,7 +33,7 @@ void PathFinder::Start()
 
 	if (auto renderer = GetOwner()->GetRenderer())
 	{
-		renderer->AddCbufferSetter(static_pointer_cast<PathFinder>(shared_from_this()));
+		renderer->AddStructuredSetter(static_pointer_cast<PathFinder>(shared_from_this()),BufferType::SeaFIshParam);
 		renderer->SetCulling(false);
 
 		_renderBase = renderer;
@@ -41,15 +41,22 @@ void PathFinder::Start()
 
 		if (auto& meshRenderer = dynamic_pointer_cast<MeshRenderer>(renderer))
 		{
+			cout << "사이즈 "<< meshRenderer->GetMaterials().size() << endl;
 			float pathnum = meshRenderer->GetMaterials()[0]->GetPropertyFloat("_Path");
+
 			int   idx = static_cast<int>(pathnum);
 			std::wstring fullPath = L"path" + std::to_wstring(idx);
 
+
 			wcout << fullPath << endl;
-			_moveSpeed = meshRenderer->GetMaterials()[0]->GetPropertyFloat("_Speed") * 5.0f;
+			_moveSpeed = meshRenderer->GetMaterials()[0]->GetPropertyFloat("_MoveSpeed");
 
 			SetPass(fullPath);
 		
+		}
+		else
+		{
+			cout << "시발" << endl;
 		}
 
 	}
@@ -60,16 +67,11 @@ void PathFinder::Update()
 	
 	if (_pathList.find(_pathName) == _pathList.end())
 	{
-		wcout << "패스없음 " << _pathName << endl;
+		//wcout << "패스없음 " << _pathName << endl;
 		return;
 	}
 
-	if (_pathList[_pathName].AreyouDraw)
-	{
-		cout << "이미계산된 패스 " << endl;
-		return;
-	}
-
+	
 	const vector<vec3>& myPath = _pathList[_pathName].path;
 
 	int nextIndex = _forward ? _currentIndex + 1 : _currentIndex - 1;
@@ -84,7 +86,7 @@ void PathFinder::Update()
 
 	float t = std::clamp(_distanceMoved / _segmentLength, 0.0f, 1.0f);
 	vec3 pos = vec3::Lerp(start, end, t);
-	vec3 finalPos = pos;
+	vec3 finalPos = pos+ _pathOffset;
 
 	vec3 currentPos = GetOwner()->_transform->SetWorldPosition(finalPos);
 
@@ -232,29 +234,8 @@ void PathFinder::SetPass(const wstring& path)
     _pathName = path;
 }
 
-void PathFinder::SetData(Material* material)
-{
-	FishInfo info;
-	info.fishSpeed = material->GetPropertyFloat("_Speed");
-	info.fishWaveAmount = material->GetPropertyFloat("_Power");
-
-	BoundingBox& box = _renderBase.lock()->GetOriginBound();
-	info.boundsSizeZ = box.Extents.z;
-	info.boundsCenterZ = box.Center.z;
-
-	auto buffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SeaFIshParam)->Alloc(1);
-
-	memcpy(buffer->ptr, &info, sizeof(FishInfo));
-	int index = material->GetShader()->GetRegisterIndex("FishInfo");
-
-	if (index != -1)
-		Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(index, buffer->GPUAdress);
-}
-
-
-//void PathFinder::SetData(StructuredBuffer* buffer, Material* material)
+//void PathFinder::SetData(Material* material)
 //{
-//
 //	FishInfo info;
 //	info.fishSpeed = material->GetPropertyFloat("_Speed");
 //	info.fishWaveAmount = material->GetPropertyFloat("_Power");
@@ -263,5 +244,26 @@ void PathFinder::SetData(Material* material)
 //	info.boundsSizeZ = box.Extents.z;
 //	info.boundsCenterZ = box.Center.z;
 //
-//	buffer->AddData(info);
+//	auto buffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SeaFIshParam)->Alloc(1);
+//
+//	memcpy(buffer->ptr, &info, sizeof(FishInfo));
+//	int index = material->GetShader()->GetRegisterIndex("FishInfo");
+//
+//	if (index != -1)
+//		Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(index, buffer->GPUAdress);
 //}
+
+
+void PathFinder::SetData(StructuredBuffer* buffer, Material* material)
+{
+
+	FishInfo info;
+	info.fishSpeed = material->GetPropertyFloat("_Speed");
+	info.fishWaveAmount = material->GetPropertyFloat("_Power");
+
+	BoundingBox& box = _renderBase.lock()->GetOriginBound();
+	info.boundsSizeZ = box.Extents.z;
+	info.boundsCenterZ = box.Center.z;
+
+	buffer->AddData(info);
+}
