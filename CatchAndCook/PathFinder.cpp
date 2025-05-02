@@ -76,89 +76,82 @@ void PathFinder::Start()
 }
 void PathFinder::Update()
 {
+
     if (_pathList.find(_pathName) == _pathList.end()) return;
-
-    const auto& myPath = _pathList[_pathName].path;
+    const vector<vec3>& myPath = _pathList[_pathName].path;
     int nextIndex = _forward ? _currentIndex + 1 : _currentIndex - 1;
-
     vec3 start = myPath[_currentIndex] + _pathOffset;
     vec3 end = myPath[nextIndex] + _pathOffset;
 
     if (_segmentLength < 0.0001f)
         _segmentLength = (end - start).Length();
 
+    _distanceMoved += _moveSpeed * Time::main->GetDeltaTime();
+    float t = std::clamp(_distanceMoved / _segmentLength, 0.0f, 1.0f);
+    vec3 targetPos = vec3::Lerp(start, end, t);
+
     vec3 currentPos = GetOwner()->_transform->GetWorldPosition();
-    vec3 toTarget = end - currentPos;
+
+    vec3 toTarget = targetPos - currentPos;
     toTarget.Normalize();
 
-    float speedMultiplier = 1.0f;
-    vec3 avoidanceVel(0.0f);
+    vec3 desiredVel = toTarget * _moveSpeed;
 
+    vec3 avoidanceVel(0, 0, 0);
     const float detectionRadius = 200.f;
     const float predictTime = 1.0f;
-
     auto player = _player.lock();
+
     if (player)
     {
         vec3 playerPos = player->_transform->GetWorldPosition();
-        vec3 futurePos = currentPos + toTarget * _moveSpeed * predictTime;
+
+        vec3 futurePos = currentPos + desiredVel * predictTime;
         float distFuture = (playerPos - futurePos).Length();
 
         if (distFuture < detectionRadius)
         {
             vec3 away = (currentPos - playerPos);
             away.Normalize();
-
             float strength = (detectionRadius - distFuture) / detectionRadius;
             avoidanceVel = away * detectionRadius * strength;
-
-            speedMultiplier = 1.8f;
         }
+
     }
 
-    float effectiveSpeed = _moveSpeed * speedMultiplier;
-    vec3 desiredVel = toTarget * effectiveSpeed;
-
-    _distanceMoved += effectiveSpeed * Time::main->GetDeltaTime();
-    float t = std::clamp(_distanceMoved / _segmentLength, 0.0f, 1.0f);
-    vec3 targetPos = vec3::Lerp(start, end, t);
 
     vec3 velocity = desiredVel + avoidanceVel;
     vec3 newPos = currentPos + velocity * Time::main->GetDeltaTime();
     GetOwner()->_transform->SetWorldPosition(newPos);
-
     velocity.Normalize();
     GetOwner()->_transform->LookUpSmooth(velocity, vec3::Up, 3.0f, _firstQuat);
+
 
     if (t >= 1.0f)
     {
         _distanceMoved = 0.0f;
         _segmentLength = 0.0f;
-
         if (_forward)
         {
-            if (++_currentIndex >= static_cast<int>(myPath.size()) - 1)
-            {
-                _forward = false;
-                return;
-            }
+            _currentIndex++;
+            if (_currentIndex >= myPath.size() - 1) { _forward = false; return; }
         }
         else
         {
-            if (--_currentIndex <= 0)
-            {
-                _forward = true;
-                return;
-            }
+            _currentIndex--;
+            if (_currentIndex <= 0) { _forward = true; return; }
         }
     }
 
     if (_drawPath && !_pathList[_pathName].AreyouDraw)
     {
-        vec3 c = _pathList[_pathName]._pathColor;
         for (size_t i = 0; i + 1 < myPath.size(); ++i)
         {
-            Gizmo::main->Line(myPath[i], myPath[i + 1], vec4(c.x, c.y, c.z, 1.0f));
+            vec3 c = _pathList[_pathName]._pathColor;
+            Gizmo::main->Line(
+                myPath[i], myPath[i + 1],
+                vec4(c.x, c.y, c.z, 1.0f)
+            );
         }
         _pathList[_pathName].AreyouDraw = true;
     }
