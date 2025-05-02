@@ -71,8 +71,10 @@ void PathFinder::Start()
 	_pathOffset = GenerateRandomPointInSphere(mat->GetPropertyFloat("_Radius"));
 
     _player = SceneManager::main->GetCurrentScene()->Find(L"seaPlayer");
+
     const vector<vec3>& myPath = _pathList[_pathName].path;
-    GetOwner()->_transform->SetWorldPosition(myPath.front());
+    _currentIndex = std::rand() % myPath.size();
+    GetOwner()->_transform->SetWorldPosition(myPath[_currentIndex]);
 }
 void PathFinder::Update()
 {
