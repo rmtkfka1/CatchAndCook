@@ -71,8 +71,8 @@ void PathFinder::Start()
 	_pathOffset = GenerateRandomPointInSphere(mat->GetPropertyFloat("_Radius"));
 
     _player = SceneManager::main->GetCurrentScene()->Find(L"seaPlayer");
-    
-
+    const vector<vec3>& myPath = _pathList[_pathName].path;
+    GetOwner()->_transform->SetWorldPosition(myPath.front());
 }
 
 void PathFinder::Update()
@@ -96,11 +96,11 @@ void PathFinder::Update()
     vec3 toTarget = targetPos - currentPos;
     toTarget.Normalize();
 
-    vec3 desiredVel = toTarget.LengthSquared() > 0.0001f ? toTarget * _moveSpeed : vec3(0, 0, 0);
+    vec3 desiredVel = toTarget * _moveSpeed;
 
     vec3 avoidanceVel(0, 0, 0);
-    const float detectionRadius = 100.f;
-    const float predictTime = 0.5f;
+    const float detectionRadius = 200.f;
+    const float predictTime = 1.0f;
     auto player = _player.lock();
 
     if (player)
@@ -115,20 +115,17 @@ void PathFinder::Update()
             vec3 away = (currentPos - playerPos);
             away.Normalize();
             float strength = (detectionRadius - distFuture) / detectionRadius;
-            avoidanceVel = away * detectionRadius * strength;
+            avoidanceVel = away * detectionRadius * strength *10.0f;
         }
+
     }
 
 
     vec3 velocity = desiredVel + avoidanceVel;
     vec3 newPos = currentPos + velocity * Time::main->GetDeltaTime();
     GetOwner()->_transform->SetWorldPosition(newPos);
-
     velocity.Normalize();
-    vec3 temp = (end - start);
-    temp.Normalize();
-    vec3 forwardDir = velocity.LengthSquared() > 0.0001f ? velocity : temp;
-    GetOwner()->_transform->LookUpSmooth(forwardDir, vec3::Up, 3.0f, _firstQuat);
+    GetOwner()->_transform->LookUpSmooth(velocity, vec3::Up, 3.0f, _firstQuat);
 
 
     if (t >= 1.0f)
