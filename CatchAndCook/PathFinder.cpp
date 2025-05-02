@@ -6,10 +6,12 @@
 #include <random>
 #include "MeshRenderer.h"
 unordered_map<wstring, FishPath> PathFinder::_pathList;
+bool PathFinder::_drawPath = false;
 
 static random_device dre;
 static mt19937 gen(dre());
-static uniform_real_distribution<float> randomSpeed(30.0f, 50.0f);
+static uniform_real_distribution<float> randomMoveSpeed(0.5f, 2.0f);
+static uniform_real_distribution<float> randomSpeed(0.7, 1.3f);
 
 COMPONENT(PathFinder)
 
@@ -23,43 +25,51 @@ PathFinder::~PathFinder()
 
 void PathFinder::Init()
 {
-	_pathOffset = GenerateRandomPointInSphere(100.0f);
-
+	
 }
 
 void PathFinder::Start()
 {
     _firstQuat = GetOwner()->_transform->GetWorldRotation();
 
-	if (auto renderer = GetOwner()->GetRenderer())
-	{
-		renderer->AddStructuredSetter(static_pointer_cast<PathFinder>(shared_from_this()),BufferType::SeaFIshParam);
-		renderer->SetCulling(false);
+	auto renderer = GetOwner()->GetRenderer();
+	if (!renderer)
+		return;
 
-		_renderBase = renderer;
-	
-
-		if (auto& meshRenderer = dynamic_pointer_cast<MeshRenderer>(renderer))
-		{
-			cout << "사이즈 "<< meshRenderer->GetMaterials().size() << endl;
-			float pathnum = meshRenderer->GetMaterials()[0]->GetPropertyFloat("_Path");
-
-			int   idx = static_cast<int>(pathnum);
-			std::wstring fullPath = L"path" + std::to_wstring(idx);
+	renderer->AddStructuredSetter(
+		std::static_pointer_cast<PathFinder>(shared_from_this()),
+		BufferType::SeaFIshParam
+	);
 
 
-			wcout << fullPath << endl;
-			_moveSpeed = meshRenderer->GetMaterials()[0]->GetPropertyFloat("_MoveSpeed");
+	auto meshRdr = std::dynamic_pointer_cast<MeshRenderer>(renderer);
+	if (!meshRdr)
+		return;
 
-			SetPass(fullPath);
-		
-		}
-		else
-		{
-			cout << "시발" << endl;
-		}
+	const auto& materials = meshRdr->GetMaterials();
 
-	}
+	if (materials.empty())
+		return;
+
+	const auto& mat = materials[0];
+
+	int pathIndex = static_cast<int>(mat->GetPropertyFloat("_Path"));
+	std::wstring pathName = L"path" + std::to_wstring(pathIndex);
+	SetPass(pathName);
+
+	_moveSpeed = mat->GetPropertyFloat("_MoveSpeed") * randomMoveSpeed(dre);
+
+
+	_info.fishSpeed = mat->GetPropertyFloat("_Speed");
+	_info.fishWaveAmount = mat->GetPropertyFloat("_Power") * randomSpeed(dre);
+
+
+	const BoundingBox& box = meshRdr->GetOriginBound();
+	_info.boundsSizeZ = box.Extents.z;
+	_info.boundsCenterZ = box.Center.z;
+
+	_pathOffset = GenerateRandomPointInSphere(mat->GetPropertyFloat("_Radius"));
+
 }
 
 void PathFinder::Update()
@@ -76,8 +86,8 @@ void PathFinder::Update()
 
 	int nextIndex = _forward ? _currentIndex + 1 : _currentIndex - 1;
 
-	const vec3& start = myPath[_currentIndex];
-	const vec3& end = myPath[nextIndex];
+	const vec3& start = myPath[_currentIndex] + _pathOffset;
+	const vec3& end = myPath[nextIndex] + _pathOffset;
 
 	if (_segmentLength < 0.0001f)
 		_segmentLength = (end - start).Length();
@@ -128,13 +138,17 @@ void PathFinder::Update()
 	}
 
 
-	if (_pathList[_pathName].AreyouDraw == false)
+	if (_drawPath)
 	{
-		for (size_t i = 0; i < myPath.size() - 1; ++i)
+		if (_pathList[_pathName].AreyouDraw == false)
 		{
-			Gizmo::main->Line(myPath[i], myPath[i + 1], vec4(1, 1, 0, 1));
+			for (size_t i = 0; i < myPath.size() - 1; ++i)
+			{
+				vec3 color = _pathList[_pathName]._pathColor;
+				Gizmo::main->Line(myPath[i], myPath[i + 1], vec4(color.x, color.y, color.z, 1.0f));
+			}
+			_pathList[_pathName].AreyouDraw = true;
 		}
-		_pathList[_pathName].AreyouDraw = true;
 	}
 
 
@@ -193,6 +207,10 @@ void PathFinder::ReadPathFile(const std::wstring& fileName)
     }
 
     file.close();
+
+	size_t h = std::hash<wstring>{}(fileName);
+	float hue = float(h % 360) / 360.f;
+	_pathList[fileName]._pathColor = vec3(hue, hue, hue);
      cout << "라인 데이터: " << _pathList[fileName].path.size() << "개 읽음." << std::endl;
 }
 
@@ -227,7 +245,6 @@ void PathFinder::SetPass(const wstring& path)
 {
     if (_pathList.find(path) == _pathList.end())
     {
-		cout << "read" << endl;
         ReadPathFile(path);
     }
 
@@ -257,13 +274,5 @@ void PathFinder::SetPass(const wstring& path)
 void PathFinder::SetData(StructuredBuffer* buffer, Material* material)
 {
 
-	FishInfo info;
-	info.fishSpeed = material->GetPropertyFloat("_Speed");
-	info.fishWaveAmount = material->GetPropertyFloat("_Power");
-
-	BoundingBox& box = _renderBase.lock()->GetOriginBound();
-	info.boundsSizeZ = box.Extents.z;
-	info.boundsCenterZ = box.Center.z;
-
-	buffer->AddData(info);
+	buffer->AddData(_info);
 }

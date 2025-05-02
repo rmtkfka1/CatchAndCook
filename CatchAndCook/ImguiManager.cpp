@@ -10,6 +10,7 @@
 #include "CameraManager.h"
 #include "Camera.h"
 #include "LightComponent.h"
+#include "PathFinder.h"
 unique_ptr<ImguiManager> ImguiManager::main;
 
 ImguiManager::~ImguiManager()
@@ -155,6 +156,11 @@ void ImguiManager::GizmoController()
     if (ImGui::Button("NavMesh"))
     {
         *navMesh = !(*navMesh);
+    }
+
+    if (ImGui::Button("DrawPath"))
+    {
+        PathFinder::_drawPath = !PathFinder::_drawPath;
     }
 }
 

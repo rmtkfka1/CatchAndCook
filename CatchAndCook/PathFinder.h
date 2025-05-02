@@ -6,6 +6,7 @@ struct FishPath
 {
 	vector<vec3> path;
 	bool AreyouDraw = false;
+	vec3 _pathColor;
 };
 
 struct FishInfo
@@ -14,6 +15,7 @@ struct FishInfo
 	float fishSpeed;
 	float boundsCenterZ;
 	float boundsSizeZ;
+
 };
 
 class RenderBase;
@@ -49,7 +51,7 @@ private:
 
 private:
 	static unordered_map<wstring, FishPath> _pathList;
-	weak_ptr<RendererBase> _renderBase;
+
 	vec3 _pathOffset = vec3(0.0f);
 	bool _forward = true;
 	int _currentIndex = 0;
@@ -57,7 +59,11 @@ private:
 	float _distanceMoved = 0.0f;
 	float _segmentLength = 0.0f;
 	wstring _pathName = L"Null";
-	Quaternion _firstQuat;
+	Quaternion _firstQuat{};
+	FishInfo _info{};
+
+public:
+	static bool _drawPath;
 
 };
 

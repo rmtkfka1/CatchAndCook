@@ -52,9 +52,8 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     float maxZ = fishinfo.boundsCenterZ + fishinfo.boundsSizeZ;
     float weight = saturate((localZ - minZ) / (maxZ - minZ));
 
-    float phaseOffset = localZ * 0.5f + id * 0.37f;
-
-    float wave = sin(g_Time * fishinfo.fishSpeed + phaseOffset)
+ 
+    float wave = sin(g_Time * fishinfo.fishSpeed )
            * fishinfo.fishWaveAmount * weight;
 
     float3 animatedPos = input.pos;

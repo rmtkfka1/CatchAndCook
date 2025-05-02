@@ -174,14 +174,14 @@ private:
 struct UnderWaterParam
 {
 	vec3 g_fogColor = vec3(0.072f, 0.830f, 0.714f);
-	float g_fog_power = 1.0f;
+	float g_fog_power = 7.0f;
 
 	vec3 g_underWaterColor = vec3(0.5f, 0.6f, 0.6f);
 	float g_fogMin = 0;
 
 	vec2 padding;
 	int g_on = 1;
-	float g_fogMax = 1000.0f;
+	float g_fogMax = 2600.0f;
 };
 
 class UnderWaterEffect : public ComputeBase
