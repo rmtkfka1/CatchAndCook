@@ -209,7 +209,7 @@ void Scene_Sea01::Init()
 	std::ranges::sort(_gameObjects, [&](const auto& a, const auto& b) {
 		return a->GetName() < b->GetName();
 		});
-	
+
 }
 
 void Scene_Sea01::Update()

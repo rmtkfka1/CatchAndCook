@@ -60,9 +60,6 @@ public:
 	float* cameraPitchOffset;
 
 
-
-
-
 	bool* navMesh;
 	bool* mainField_bloom;
 	bool* mainField_fog;

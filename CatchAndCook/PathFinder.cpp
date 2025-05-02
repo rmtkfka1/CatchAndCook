@@ -46,9 +46,10 @@ void PathFinder::Start()
 			std::wstring fullPath = L"path" + std::to_wstring(idx);
 
 			wcout << fullPath << endl;
+			_moveSpeed = meshRenderer->GetMaterials()[0]->GetPropertyFloat("_Speed") * 5.0f;
 
 			SetPass(fullPath);
-
+		
 		}
 
 	}
