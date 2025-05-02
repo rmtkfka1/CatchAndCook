@@ -70,89 +70,98 @@ void PathFinder::Start()
 
 	_pathOffset = GenerateRandomPointInSphere(mat->GetPropertyFloat("_Radius"));
 
+    _player = SceneManager::main->GetCurrentScene()->Find(L"seaPlayer");
+    
+
 }
 
 void PathFinder::Update()
 {
 	
-	if (_pathList.find(_pathName) == _pathList.end())
-	{
-		//wcout << "패스없음 " << _pathName << endl;
-		return;
-	}
+    if (_pathList.find(_pathName) == _pathList.end()) return;
+    const vector<vec3>& myPath = _pathList[_pathName].path;
+    int nextIndex = _forward ? _currentIndex + 1 : _currentIndex - 1;
+    vec3 start = myPath[_currentIndex] + _pathOffset;
+    vec3 end = myPath[nextIndex] + _pathOffset;
 
-	
-	const vector<vec3>& myPath = _pathList[_pathName].path;
+    if (_segmentLength < 0.0001f)
+        _segmentLength = (end - start).Length();
 
-	int nextIndex = _forward ? _currentIndex + 1 : _currentIndex - 1;
+    _distanceMoved += _moveSpeed * Time::main->GetDeltaTime();
+    float t = std::clamp(_distanceMoved / _segmentLength, 0.0f, 1.0f);
+    vec3 targetPos = vec3::Lerp(start, end, t);
 
-	const vec3& start = myPath[_currentIndex] + _pathOffset;
-	const vec3& end = myPath[nextIndex] + _pathOffset;
+    vec3 currentPos = GetOwner()->_transform->GetWorldPosition();
 
-	if (_segmentLength < 0.0001f)
-		_segmentLength = (end - start).Length();
+    vec3 toTarget = targetPos - currentPos;
+    toTarget.Normalize();
 
-	_distanceMoved += Time::main->GetDeltaTime() * _moveSpeed;
+    vec3 desiredVel = toTarget.LengthSquared() > 0.0001f ? toTarget * _moveSpeed : vec3(0, 0, 0);
 
-	float t = std::clamp(_distanceMoved / _segmentLength, 0.0f, 1.0f);
-	vec3 pos = vec3::Lerp(start, end, t);
-	vec3 finalPos = pos+ _pathOffset;
+    vec3 avoidanceVel(0, 0, 0);
+    const float detectionRadius = 100.f;
+    const float predictTime = 0.5f;
+    auto player = _player.lock();
 
-	vec3 currentPos = GetOwner()->_transform->SetWorldPosition(finalPos);
+    if (player)
+    {
+        vec3 playerPos = player->_transform->GetWorldPosition();
 
-	vec3 dir = end - start;
+        vec3 futurePos = currentPos + desiredVel * predictTime;
+        float distFuture = (playerPos - futurePos).Length();
 
-	if (dir.LengthSquared() > 0.0001f)
-	{
-		dir.Normalize();
-		GetOwner()->_transform->LookUpSmooth(dir, vec3::Up, 3.0f, _firstQuat);
-	}
-
-	if (t >= 1.0f)
-	{
-		_distanceMoved = 0.0f;
-		_segmentLength = 0.0f;
-
-		if (_forward)
-		{
-			_currentIndex += 1;
-
-			if (_currentIndex >= myPath.size() - 1)
-			{
-				_forward = false;
-				return;
-			}
-		}
-
-		else
-		{
-			_currentIndex -= 1;
-
-			if (_currentIndex <= 0)
-			{
-				_forward = true;
-				return;
-			}
-
-		}
-	}
+        if (distFuture < detectionRadius)
+        {
+            vec3 away = (currentPos - playerPos);
+            away.Normalize();
+            float strength = (detectionRadius - distFuture) / detectionRadius;
+            avoidanceVel = away * detectionRadius * strength;
+        }
+    }
 
 
-	if (_drawPath)
-	{
-		if (_pathList[_pathName].AreyouDraw == false)
-		{
-			for (size_t i = 0; i < myPath.size() - 1; ++i)
-			{
-				vec3 color = _pathList[_pathName]._pathColor;
-				Gizmo::main->Line(myPath[i], myPath[i + 1], vec4(color.x, color.y, color.z, 1.0f));
-			}
-			_pathList[_pathName].AreyouDraw = true;
-		}
-	}
+    vec3 velocity = desiredVel + avoidanceVel;
+    vec3 newPos = currentPos + velocity * Time::main->GetDeltaTime();
+    GetOwner()->_transform->SetWorldPosition(newPos);
+
+    velocity.Normalize();
+    vec3 temp = (end - start);
+    temp.Normalize();
+    vec3 forwardDir = velocity.LengthSquared() > 0.0001f ? velocity : temp;
+    GetOwner()->_transform->LookUpSmooth(forwardDir, vec3::Up, 3.0f, _firstQuat);
 
 
-};
+    if (t >= 1.0f)
+    {
+        _distanceMoved = 0.0f;
+        _segmentLength = 0.0f;
+        if (_forward)
+        {
+            _currentIndex++;
+            if (_currentIndex >= myPath.size() - 1) { _forward = false; return; }
+        }
+        else
+        {
+            _currentIndex--;
+            if (_currentIndex <= 0) { _forward = true; return; }
+        }
+    }
+
+    if (_drawPath && !_pathList[_pathName].AreyouDraw)
+    {
+        for (size_t i = 0; i + 1 < myPath.size(); ++i)
+        {
+            vec3 c = _pathList[_pathName]._pathColor;
+            Gizmo::main->Line(
+                myPath[i], myPath[i + 1],
+                vec4(c.x, c.y, c.z, 1.0f)
+            );
+        }
+        _pathList[_pathName].AreyouDraw = true;
+    }
+}
+
+
 void PathFinder::Update2()
 {
 

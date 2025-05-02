@@ -51,6 +51,7 @@ private:
 
 private:
 	static unordered_map<wstring, FishPath> _pathList;
+	weak_ptr<GameObject> _player;
 
 	vec3 _pathOffset = vec3(0.0f);
 	bool _forward = true;
