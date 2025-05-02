@@ -59,9 +59,7 @@ public:
 	float* playerForwardOffset;
 	float* cameraPitchOffset;
 
-
 	bool* navMesh;
-	bool* mainField_bloom;
 	bool* mainField_fog;
 	bool* mainField_vignette;
 	bool* _shadowOnOff;
