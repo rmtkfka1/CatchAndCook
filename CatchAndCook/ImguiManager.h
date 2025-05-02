@@ -26,6 +26,8 @@ private:
 
 	void BoidMove();
 
+	void Sky();
+
 	void GizmoController();
 
 	void ComputeController();
@@ -68,6 +70,7 @@ public:
 	bool* mainField_fog;
 	bool* mainField_vignette;
 	bool* _shadowOnOff;
+	bool* _bakedGIOnOff;
 	bool* mainField_total;
 
 private:

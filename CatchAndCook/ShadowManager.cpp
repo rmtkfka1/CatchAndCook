@@ -17,6 +17,7 @@ ShadowManager::~ShadowManager()
 void ShadowManager::Init()
 {
     ImguiManager::main->_shadowOnOff = &_onOff;
+    ImguiManager::main->_bakedGIOnOff = &_bakedGIOnOff;
 }
 
 void ShadowManager::SetShadowCasterParams()
@@ -163,7 +164,7 @@ std::vector<BoundingOrientedBox> ShadowManager::CalculateBounds(Camera* camera, 
         extentsLS.y = extentsLS.x;
 
         float angle = (1 - std::abs(lightDir.Dot(Vector3::Down)));
-        float scale = (40 * angle + 20);
+        float scale = (100 * angle + 20);
         extentsLS.z += scale;
         centerLS.z -= scale / 2;
 

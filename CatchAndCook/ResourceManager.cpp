@@ -41,14 +41,13 @@ void ResourceManager::CreateDefaultShader()
 {
 
 	CreateDefaultShaderKSH();
-	CreateDefaultShaderlJHS();
+	CreateDefaultShaderJIN();
 
 
 }
 
 void ResourceManager::CreateDefaultShaderKSH()
 {
-
 
 	{
 
@@ -236,8 +235,18 @@ void ResourceManager::CreateDefaultShaderKSH()
 
 }
 
-void ResourceManager::CreateDefaultShaderlJHS()
+void ResourceManager::CreateDefaultShaderJIN()
 {
+	{
+		ShaderInfo info;
+		info._zTest = true;
+		info._zWrite = false;
+		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"Skybox", L"Skybox_Field.hlsl", GeoMetryProp,
+			ShaderArg{}, info);
+	}
 	{
 		ShaderInfo info;
 		info._zTest = false;
@@ -845,10 +854,20 @@ void ResourceManager::CreateDefaultMaterial()
 void ResourceManager::CreateDefaultTexture()
 {
 	_noneTexture = Load<Texture>(L"none", L"Textures/Configs/noneTexture.png");
+	_noneTexture_Black = Load<Texture>(L"none_black", L"Textures/Configs/noneTexture_Black.png");
 	_noneTexture_debug = Load<Texture>(L"none_debug", L"Textures/Configs/noneTexture_debug.png");
+
 	_bakedGITexture = Load<Texture>(L"BakedGI", L"Textures/Configs/BakedGI.png");
-	_bakedGITexture = Load<Texture>(L"BakedGI_Night", L"Textures/Configs/BakedGI_Night.png");
-	_bakedGITexture = Load<Texture>(L"BakedGI_Evening", L"Textures/Configs/BakedGI_Evening.png");
+	_bakedGINTexture = Load<Texture>(L"BakedGI_Night", L"Textures/Configs/BakedGI_Night.png");
+	_bakedGIETexture = Load<Texture>(L"BakedGI_Evening", L"Textures/Configs/BakedGI_Evening.png");
+
+	_bakedGIFinal1Texture = _bakedGITexture;
+	_bakedGIFinal2Texture = _bakedGITexture;
+
+	_cubemap_skyTexture = Load<Texture>(L"cubemap_sky0", L"Textures/cubemap/Sky_0.png.dds", TextureType::CubeMap);
+	_cubemap_skyNTexture = Load<Texture>(L"cubemap_sky1", L"Textures/cubemap/Sky_1.png.dds", TextureType::CubeMap);
+	_cubemap_skyETexture = Load<Texture>(L"cubemap_sky2", L"Textures/cubemap/Sky_2.png.dds", TextureType::CubeMap);
+	_cubemap_skyMTexture = Load<Texture>(L"cubemap_sky3", L"Textures/cubemap/Sky_3.png.dds", TextureType::CubeMap);
 }
 
 void ResourceManager::CreateDefaultAnimation()

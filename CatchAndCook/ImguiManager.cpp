@@ -9,7 +9,10 @@
 #include "Gizmo.h"
 #include "CameraManager.h"
 #include "Camera.h"
+#include "InGameGlobal.h"
 #include "LightComponent.h"
+
+
 unique_ptr<ImguiManager> ImguiManager::main;
 
 ImguiManager::~ImguiManager()
@@ -88,6 +91,7 @@ void ImguiManager::Debug()
         SeaController();
         LightController();
         BoidMove();
+        Sky();
     };
 
 	if (ImGui::CollapsingHeader("Compute Controller"))
@@ -106,7 +110,7 @@ void ImguiManager::BoidMove()
 
     if (separationWeight)
     {
-        if(ImGui::TreeNode("BoidMove"));
+        if(ImGui::TreeNode("BoidMove"))
         {
             ImGui::SliderFloat("separationWeight", separationWeight, 0, 100.0f);
             ImGui::SliderFloat("alignmentWeight", alignmentWeight, 0, 100.0f);
@@ -115,6 +119,20 @@ void ImguiManager::BoidMove()
         }
     }
 
+}
+
+void ImguiManager::Sky()
+{
+    if (ImGui::TreeNode("Sky"))
+    {
+        ImGui::SliderFloat("time", &InGameGlobal::main->skyTime, 0.0f, 8.0f);
+        int a = (int)InGameGlobal::main->skyTime;
+        if (ImGui::SliderInt("Render Type", &a, 0, 3))
+        {
+            InGameGlobal::main->skyTime = a;
+        }
+        ImGui::TreePop();
+    }
 }
 
 void ImguiManager::GizmoController()
@@ -224,10 +242,15 @@ void ImguiManager::ComputeController()
     {
         *mainField_vignette = !(*mainField_vignette);
     }
+    if (ImGui::Button("MainField BakedGI ON/OFF"))
+    {
+        *_bakedGIOnOff = !(*_bakedGIOnOff);
+    }
     if (ImGui::Button("MainField Total ON/OFF"))
     {
         *mainField_total = !(*mainField_total);
         *_shadowOnOff = *mainField_total;
+        *_bakedGIOnOff = *mainField_total;
     }
 }
 

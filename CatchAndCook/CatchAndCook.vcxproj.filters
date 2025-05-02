@@ -370,6 +370,7 @@
     <ClCompile Include="ShadowManager.cpp">
       <Filter>07.Manager</Filter>
     </ClCompile>
+    <ClCompile Include="InGameGlobal.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -692,6 +693,7 @@
     <ClInclude Include="EffectComponent.h">
       <Filter>03.Component</Filter>
     </ClInclude>
+    <ClInclude Include="InGameGlobal.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -863,6 +865,9 @@
       <Filter>998.HLSL\Graphics\JIN</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\ShadowCaster_Early.hlsl">
+      <Filter>998.HLSL\Graphics\JIN</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Skybox_Field.hlsl">
       <Filter>998.HLSL\Graphics\JIN</Filter>
     </FxCompile>
   </ItemGroup>

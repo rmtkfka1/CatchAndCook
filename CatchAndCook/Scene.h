@@ -12,7 +12,7 @@ struct GlobalParam
 {
 	vec2 window_size;
 	float Time;
-	float padding;
+	float SkyBlend = 0.2;
 };
 
 class Scene : public IGuid
@@ -23,7 +23,7 @@ public:
 	void AddGameObject(const std::shared_ptr<GameObject>& gameObject);
 	bool RemoveGameObject(const std::shared_ptr<GameObject>& gameObject);
 	bool RemoveAtGameObject(int index);
-	void CameraControll();
+	void CameraControl();
 
 
 	void ExecuteDestroyGameObjects();

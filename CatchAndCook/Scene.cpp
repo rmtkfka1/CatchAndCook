@@ -15,6 +15,7 @@
 #include "ComputeManager.h"
 #include "Transform.h"
 #include "GameObject.h"
+#include "InGameGlobal.h"
 #include "LightManager.h"
 #include "MeshRenderer.h"
 #include "PathFinder.h"
@@ -328,8 +329,8 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 
     	auto lastShadowPos = ShadowManager::main->_lightTransform[ShadowManager::main->_lightTransform.size() - 1];
 
-        Profiler::Set("PASS : ASD", BlockTag::CPU);
-    	//TerrainManager::main->CullingInstancing(lastShadowPos.first, lastShadowPos.second);
+        Profiler::Set("PASS : Shadow Culling", BlockTag::CPU);
+    	TerrainManager::main->CullingInstancing(lastShadowPos.first, lastShadowPos.second);
         Profiler::Fin();
 
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
@@ -430,11 +431,14 @@ void Scene::GlobalSetting()
 {
     auto& cmdList = Core::main->GetCmdList();
 
-    CameraControll();
+    CameraControl();
     //cout << CameraManager::main->GetActiveCamera()->GetCameraPos().y << endl;
 
     _globalParam.window_size = vec2(WINDOW_WIDTH,WINDOW_HEIGHT);
     _globalParam.Time = Time::main->GetTime();
+    _globalParam.SkyBlend = InGameGlobal::main->skyTime;
+
+
     auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::GlobalParam)->Alloc(1);
     memcpy(CbufferContainer->ptr,(void*)&_globalParam,sizeof(GlobalParam));
 
@@ -453,7 +457,18 @@ void Scene::GlobalSetting()
 void Scene::SettingPrevData(RenderObjectStrucutre& data, const RENDER_PASS::PASS& pass)
 {
     if (data.material != nullptr)
-		data.material->SetTexture("_BakedGIMap", ResourceManager::main->_bakedGITexture);
+    {
+        if (ShadowManager::main->_bakedGIOnOff)
+        {
+            data.material->SetTexture("_BakedGIMap", ResourceManager::main->_bakedGIFinal1Texture);
+            data.material->SetTexture("_BakedGIMap2", ResourceManager::main->_bakedGIFinal2Texture);
+        }
+        else
+        {
+            data.material->SetTexture("_BakedGIMap", ResourceManager::main->_noneTexture_Black);
+            data.material->SetTexture("_BakedGIMap2", ResourceManager::main->_noneTexture_Black);
+        }
+    }
 
     switch (pass)
     {
@@ -600,7 +615,7 @@ bool Scene::RemoveAtGameObject(int index)
     return false;
 }
 
-void Scene::CameraControll()
+void Scene::CameraControl()
 {
 	static CameraType type = CameraType::DebugCamera;
 

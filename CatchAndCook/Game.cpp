@@ -25,6 +25,7 @@
 #include "NavMeshManager.h"
 #include "Collider.h"
 #include "GameObject.h"
+#include "InGameGlobal.h"
 #include "Terrain.h"
 #include "PathStamp.h"
 #include "ShadowManager.h"
@@ -86,11 +87,11 @@ void Game::Init(HWND hwnd)
 
 	InstancingManager::main = make_unique<InstancingManager>();
 
+	InGameGlobal::main = make_unique<InGameGlobal>();
+	InGameGlobal::main->Init();
+
 	PathStamp::main = make_unique<PathStamp>();
 	PathStamp::main->Init();
-
-	box.Center = vec3(0, 0, 0);
-	box.Extents = vec3(5.0f, 5.0f, 5.0f);
 
 	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
 };

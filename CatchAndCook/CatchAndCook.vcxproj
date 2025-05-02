@@ -201,6 +201,7 @@
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="guid_utility.cpp" />
     <ClCompile Include="ImguiManager.cpp" />
+    <ClCompile Include="InGameGlobal.cpp" />
     <ClCompile Include="InitComponent.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="input_module.cpp" />
@@ -335,6 +336,7 @@
     <ClInclude Include="Global.h" />
     <ClInclude Include="guid_utility.h" />
     <ClInclude Include="ImguiManager.h" />
+    <ClInclude Include="InGameGlobal.h" />
     <ClInclude Include="InitComponent.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="input_module.h" />
@@ -608,6 +610,10 @@
     <FxCompile Include="..\Resources\Shaders\Skinned_t32.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Skybox_Field.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>

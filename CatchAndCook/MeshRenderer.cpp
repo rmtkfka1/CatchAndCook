@@ -247,6 +247,13 @@ std::vector<std::shared_ptr<Material>>& MeshRenderer::GetMaterials()
 	return _uniqueMaterials;
 }
 
+std::shared_ptr<Material> MeshRenderer::GetMaterial(int index)
+{
+	if (index >= _uniqueMaterials.size())
+		return nullptr;
+	return _uniqueMaterials[index];
+}
+
 void MeshRenderer::SetSharedMaterials(const std::vector<std::shared_ptr<Material>>& _materials)
 {
 	this->_sharedMaterials = _materials;

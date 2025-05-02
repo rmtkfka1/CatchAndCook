@@ -138,6 +138,8 @@ namespace fs = std::filesystem;
 #include "SpriteAction.h"
 #include "Vertex.h"
 
+#include "InGameGlobal.h"
+
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "Imgui/imgui.h"

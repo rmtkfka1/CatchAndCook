@@ -22,7 +22,7 @@ public:
     void CreateDefaultShader();
     void CreateDefaultMaterial();
     void CreateDefaultShaderKSH();
-    void CreateDefaultShaderlJHS();
+    void CreateDefaultShaderJIN();
     void CreateDefaultTexture();
     void CreateDefaultAnimation();
 
@@ -58,9 +58,27 @@ private:
     unordered_map<wstring, shared_ptr<Animation>> _animationMap;
 
 public:
-    std::shared_ptr<Texture> _noneTexture;
-    std::shared_ptr<Texture> _noneTexture_debug;
-    std::shared_ptr<Texture> _bakedGITexture;
+    shared_ptr<Texture> _noneTexture;
+    shared_ptr<Texture> _noneTexture_Black;
+
+    shared_ptr<Texture> _bakedGIFinal1Texture;
+    shared_ptr<Texture> _bakedGIFinal2Texture;
+
+    shared_ptr<Texture> _bakedGITexture;
+    shared_ptr<Texture> _bakedGINTexture;
+    shared_ptr<Texture> _bakedGIETexture;
+
+
+    shared_ptr<Texture> _bakedGI_0_Texture;
+    shared_ptr<Texture> _bakedGI_1_Texture;
+    shared_ptr<Texture> _bakedGI_2_Texture;
+
+    shared_ptr<Texture> _noneTexture_debug;
+
+    shared_ptr<Texture> _cubemap_skyTexture;
+    shared_ptr<Texture> _cubemap_skyNTexture;
+    shared_ptr<Texture> _cubemap_skyETexture;
+    shared_ptr<Texture> _cubemap_skyMTexture;
 
 
     shared_ptr<Material> _depthNormal;
