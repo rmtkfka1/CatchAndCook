@@ -33,8 +33,11 @@ void PathFinder::Start()
 
 	if (auto renderer = GetOwner()->GetRenderer())
 	{
-		renderer->AddStructuredSetter(static_pointer_cast<PathFinder>(shared_from_this()), BufferType::SeaFIshParam);
+		renderer->AddCbufferSetter(static_pointer_cast<PathFinder>(shared_from_this()));
+		renderer->SetCulling(false);
+
 		_renderBase = renderer;
+	
 
 		if (auto& meshRenderer = dynamic_pointer_cast<MeshRenderer>(renderer))
 		{
@@ -53,6 +56,7 @@ void PathFinder::Start()
 
 void PathFinder::Update()
 {
+	
 	if (_pathList.find(_pathName) == _pathList.end())
 	{
 		wcout << "패스없음 " << _pathName << endl;
@@ -131,10 +135,10 @@ void PathFinder::Update()
 	}
 
 
-
 };
 void PathFinder::Update2()
 {
+
 }
 
 void PathFinder::RenderBegin()
@@ -156,6 +160,7 @@ void PathFinder::CollisionBegin(const std::shared_ptr<Collider>& collider, const
 void PathFinder::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 }
+
 
 
 
@@ -226,9 +231,8 @@ void PathFinder::SetPass(const wstring& path)
     _pathName = path;
 }
 
-void PathFinder::SetData(StructuredBuffer* buffer, Material* material)
+void PathFinder::SetData(Material* material)
 {
-
 	FishInfo info;
 	info.fishSpeed = material->GetPropertyFloat("_Speed");
 	info.fishWaveAmount = material->GetPropertyFloat("_Power");
@@ -237,5 +241,26 @@ void PathFinder::SetData(StructuredBuffer* buffer, Material* material)
 	info.boundsSizeZ = box.Extents.z;
 	info.boundsCenterZ = box.Center.z;
 
-	buffer->AddData(info);
+	auto buffer = Core::main->GetBufferManager()->GetBufferPool(BufferType::SeaFIshParam)->Alloc(1);
+
+	memcpy(buffer->ptr, &info, sizeof(FishInfo));
+	int index = material->GetShader()->GetRegisterIndex("FishInfo");
+
+	if (index != -1)
+		Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(index, buffer->GPUAdress);
 }
+
+
+//void PathFinder::SetData(StructuredBuffer* buffer, Material* material)
+//{
+//
+//	FishInfo info;
+//	info.fishSpeed = material->GetPropertyFloat("_Speed");
+//	info.fishWaveAmount = material->GetPropertyFloat("_Power");
+//
+//	BoundingBox& box = _renderBase.lock()->GetOriginBound();
+//	info.boundsSizeZ = box.Extents.z;
+//	info.boundsCenterZ = box.Center.z;
+//
+//	buffer->AddData(info);
+//}

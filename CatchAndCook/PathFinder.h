@@ -18,7 +18,7 @@ struct FishInfo
 
 class RenderBase;
 
-class PathFinder :public Component, public RenderStructuredSetter
+class PathFinder :public Component, public RenderCBufferSetter
 {
 
 public:
@@ -35,8 +35,8 @@ public:
 	void CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
 	bool IsExecuteAble() { return true; };
 
-	void SetData(StructuredBuffer* buffer = nullptr, Material* material = nullptr) override;
-
+	//void SetData(StructuredBuffer* buffer = nullptr, Material* material = nullptr) override;
+	virtual void SetData(Material* material = nullptr) override;
 public:
 	void SetMoveSpeed(float speed) { _moveSpeed = speed; }
 	void SetStartIndex(int index) { _currentIndex = index; }
