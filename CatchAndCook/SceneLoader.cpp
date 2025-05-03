@@ -121,7 +121,7 @@ void SceneLoader::PrevProcessingComponent(json& data)
         auto modelName = std::to_wstring(mesh["modelName"].get<std::string>());
         auto path = std::to_wstring(mesh["path"].get<std::string>());
         //auto pack = ResourceManager::main->Load<Model>(modelName, path, VertexType::Vertex_Static);
-        auto pack = ResourceManager::main->Load<Model>(path,path,VertexType::Vertex_Static);
+        auto pack = ResourceManager::main->Load<Model>(path, path, VertexType::Vertex_Static);
     }
     if (type == L"SkinnedMeshRenderer")
     {
@@ -132,9 +132,10 @@ void SceneLoader::PrevProcessingComponent(json& data)
         /*auto pack = ResourceManager::main->Load<Model>(
             std::to_wstring(mesh["modelName"].get<std::string>()),
             std::to_wstring(mesh["path"].get<std::string>()), VertexType::Vertex_Skinned);*/
+        auto path = std::to_wstring(mesh["path"].get<std::string>());
         auto pack = ResourceManager::main->Load<Model>(
-            std::to_wstring(mesh["path"].get<std::string>()),
-            std::to_wstring(mesh["path"].get<std::string>()),VertexType::Vertex_Skinned);
+            path + L"_Skinned",
+            path, VertexType::Vertex_Skinned);
     }
     if (type == L"MeshFilter")
     {
@@ -352,9 +353,10 @@ void SceneLoader::LinkComponent(json& jsonData)
         auto meshInfo = jsonData["mesh"];
         auto modelName = std::to_wstring(meshInfo["modelName"].get<std::string>());
         auto boneName = std::to_wstring(jsonData["boneRoot"].get<std::string>());
+        auto path = std::to_wstring(meshInfo["path"].get<std::string>());
 
         //auto model = ResourceManager::main->Get<Model>(modelName);
-        auto model = ResourceManager::main->Get<Model>(std::to_wstring(meshInfo["path"].get<std::string>()));
+        auto model = ResourceManager::main->Get<Model>(path + L"_Skinned");
         if(model != nullptr)
         {
             std::vector<std::shared_ptr<ModelMesh>> meshes = model->FindMeshsByName(meshInfo["meshName"].get<std::string>());
