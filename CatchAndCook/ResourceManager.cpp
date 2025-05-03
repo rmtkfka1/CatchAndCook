@@ -867,7 +867,6 @@ void ResourceManager::CreateDefaultTexture()
 	_cubemap_skyTexture = Load<Texture>(L"cubemap_sky0", L"Textures/cubemap/Sky_0.png.dds", TextureType::CubeMap);
 	_cubemap_skyNTexture = Load<Texture>(L"cubemap_sky1", L"Textures/cubemap/Sky_1.png.dds", TextureType::CubeMap);
 	_cubemap_skyETexture = Load<Texture>(L"cubemap_sky2", L"Textures/cubemap/Sky_2.png.dds", TextureType::CubeMap);
-	_cubemap_skyMTexture = Load<Texture>(L"cubemap_sky3", L"Textures/cubemap/Sky_3.png.dds", TextureType::CubeMap);
 }
 
 void ResourceManager::CreateDefaultAnimation()

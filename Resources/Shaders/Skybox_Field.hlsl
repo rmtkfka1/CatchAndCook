@@ -37,5 +37,5 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 float4 PS_Main(VS_OUT input) : SV_Target
 {
     float blend = fmod(g_skyBlendTime, 1);
-    return float4(pow(lerp(_BaseMap.Sample(sampler_lerp, input.localPos).xyz, _BaseMap_1.Sample(sampler_lerp, input.localPos).xyz, blend), 0.7) * 0.95, 1.0f);
+    return float4(pow(lerp(_BaseMap.Sample(sampler_lerp, input.localPos).xyz, _BaseMap_1.Sample(sampler_lerp, input.localPos).xyz, blend), 1.1) * 0.95, 1.0f);
 }
