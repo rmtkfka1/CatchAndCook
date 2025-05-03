@@ -206,41 +206,10 @@ void Scene_Sea01::Init()
 		}
 	}
 
+	std::ranges::sort(_gameObjects, [&](const auto& a, const auto& b) {
+		return a->GetName() < b->GetName();
+		});
 
-	{
-		auto plant = Find(L"Fish_1");
-
-		if (plant)
-		{
-			cout << "Fish_1" << endl;
-			auto finder = plant->AddComponent<PathFinder>();
-			finder->SetPass(L"Fish_1");
-		}
-	}
-
-	{
-		auto plant = Find(L"Fish_1 (1)");
-
-		if (plant)
-		{
-			cout << "Fish_2" << endl;
-			auto finder = plant->AddComponent<PathFinder>();
-			finder->SetPass(L"Fish_1");
-		}
-	}
-
-	{
-		auto plant = Find(L"Fish_1 (2)");
-
-		if (plant)
-		{
-			cout << "Fish_3" << endl;
-			auto finder = plant->AddComponent<PathFinder>();
-			finder->SetPass(L"Fish_1");
-		}
-	}
-
-	
 }
 
 void Scene_Sea01::Update()
@@ -263,9 +232,9 @@ void Scene_Sea01::Rendering()
 	auto& cmdList = Core::main->GetCmdList();
 	Core::main->GetRenderTarget()->ClearDepth();
 
-	Profiler::Set("PASS : Shadow", BlockTag::CPU);
-	ShadowPass(cmdList);
-	Profiler::Fin();
+	//Profiler::Set("PASS : Shadow", BlockTag::CPU);
+	//ShadowPass(cmdList);
+	//Profiler::Fin();
 
 	Profiler::Set("PASS : Deferred", BlockTag::CPU);
 	DeferredPass(cmdList);

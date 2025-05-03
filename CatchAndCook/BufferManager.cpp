@@ -49,7 +49,7 @@ void BufferManager::Init()
 		CreateBufferPool(i, BufferType::SeaGrassParam, sizeof(SeaGrassParam), 10000);
 		CreateBufferPool(i, BufferType::ShadowCasterParams, sizeof(ShadowCasterParams), 5);
 		CreateBufferPool(i, BufferType::ShadowCascadeIndexParams, sizeof(ShadowCascadeIndexParams), 10);
-
+	/*	CreateBufferPool(i, BufferType::SeaFIshParam, sizeof(FishInfo), 300);*/
 	}
 
 	for (int i = 0; i < MAX_FRAME_COUNT; ++i)

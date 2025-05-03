@@ -27,6 +27,7 @@ enum class BufferType
 	SeaFIshParam,
 	SeaGrassParam,
 
+
 	PlayerMaterialParam,
 	InstanceOffsetParam,
 	// Instance

@@ -11,8 +11,7 @@
 #include "Camera.h"
 #include "InGameGlobal.h"
 #include "LightComponent.h"
-
-
+#include "PathFinder.h"
 unique_ptr<ImguiManager> ImguiManager::main;
 
 ImguiManager::~ImguiManager()
@@ -179,6 +178,11 @@ void ImguiManager::GizmoController()
     {
         *navMesh = !(*navMesh);
     }
+
+    if (ImGui::Button("DrawPath"))
+    {
+        PathFinder::_drawPath = !PathFinder::_drawPath;
+    }
 }
 
 void ImguiManager::ComputeController()
@@ -192,6 +196,40 @@ void ImguiManager::ComputeController()
     if (ImGui::Button("Bloom ON/OFF"))
     {
         *_bloomPtr = !(*_bloomPtr);
+    }
+
+    if (ImGui::Button("Shadow ON/OFF"))
+    {
+        *_shadowOnOff = !(*_shadowOnOff);
+    }
+
+    if (ImGui::Button("SSAO ON/OFF"))
+    {
+        *_ssaoOnOff = !(*_ssaoOnOff);
+    }
+    if (ImGui::Button("ColorGrading ON/OFF"))
+    {
+        *_colorGradingOnOff = !(*_colorGradingOnOff);
+    }
+
+    if (ImGui::Button("MainField Fog ON/OFF"))
+    {
+        *mainField_fog = !(*mainField_fog);
+    }
+    if (ImGui::Button("Vignette ON/OFF"))
+    {
+        *mainField_vignette = !(*mainField_vignette);
+    }
+    if (ImGui::Button("MainField BakedGI ON/OFF"))
+    {
+        *_bakedGIOnOff = !(*_bakedGIOnOff);
+    }
+
+    if (ImGui::Button("MainField Total ON/OFF"))
+    {
+        *mainField_total = !(*mainField_total);
+        *_shadowOnOff = *mainField_total;
+        *_bakedGIOnOff = *mainField_total;
     }
 
     static bool showDepthRender = false;
@@ -219,43 +257,6 @@ void ImguiManager::ComputeController()
         ImGui::SliderFloat("Underwater Fog Max", &_underWaterParam->g_fogMax, 0.0f, 5000.0f);
         ImGui::SliderFloat("Underwater Fog Min", &_underWaterParam->g_fogMin, 0.0f, 5000.0f);
         ImGui::SliderFloat3("Underwater Color", &_underWaterParam->g_underWaterColor.x, 0.0f, 1.0f);
-    }
-
-    if (ImGui::Button("Shadow ON/OFF"))
-    {
-        *_shadowOnOff = !(*_shadowOnOff);
-    }
-
-    if (ImGui::Button("MainField SSAO ON/OFF"))
-    {
-        *_ssaoOnOff = !(*_ssaoOnOff);
-    }
-    if (ImGui::Button("MainField ColorGrading ON/OFF"))
-    {
-        *_colorGradingOnOff = !(*_colorGradingOnOff);
-    }
-
-    if (ImGui::Button("MainField Bloom ON/OFF"))
-    {
-        *mainField_bloom = !(*mainField_bloom);
-    }
-    if (ImGui::Button("MainField Fog ON/OFF"))
-    {
-        *mainField_fog = !(*mainField_fog);
-    }
-    if (ImGui::Button("MainField Vignette ON/OFF"))
-    {
-        *mainField_vignette = !(*mainField_vignette);
-    }
-    if (ImGui::Button("MainField BakedGI ON/OFF"))
-    {
-        *_bakedGIOnOff = !(*_bakedGIOnOff);
-    }
-    if (ImGui::Button("MainField Total ON/OFF"))
-    {
-        *mainField_total = !(*mainField_total);
-        *_shadowOnOff = *mainField_total;
-        *_bakedGIOnOff = *mainField_total;
     }
 }
 

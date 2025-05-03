@@ -3,7 +3,6 @@
 #include "GameObject.h"
 #include "TestScene.h"
 #include "TestScene_jin.h"
-#include "TestScene_MapEditor.h"
 #include "LightingTest.h"
 #include "Scene_Sea01.h"
 #include "UITestScene.h"
@@ -23,8 +22,6 @@ shared_ptr<Scene> SceneManager::AddScene(SceneType type, bool initExecute)
 	case::SceneType::TestScene2:
 		scene = make_shared<TestScene_jin>();
 		break;
-	case::SceneType::TestSceneMapEditor:
-		scene = make_shared<TestScene_MapEditor>();
 	break;
 	case::SceneType::LightingTest:
 		scene = make_shared<LightingTest>();

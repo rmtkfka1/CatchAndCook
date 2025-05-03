@@ -231,7 +231,6 @@ std::vector<BoundingOrientedBox> ShadowManager::SeaCalculateBounds(Camera* camer
         BoundingFrustum::CreateFromMatrix(frustum, mat);
         frustum.Transform(frustum, params.InvertViewMatrix);
 
-        Gizmo::main->Frustum(frustum);
 
         array<Vector3, 8> corners;
         frustum.GetCorners(corners.data());

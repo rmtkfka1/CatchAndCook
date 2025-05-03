@@ -67,7 +67,8 @@ public:
 		return _orginBound;
 	}
 
-	void SetCulling(bool isCulling) {
+	void SetCulling(bool isCulling) 
+	{
 		_isCulling = isCulling;
 	};
 	bool IsCulling() const
