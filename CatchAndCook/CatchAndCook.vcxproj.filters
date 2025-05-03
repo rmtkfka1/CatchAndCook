@@ -371,6 +371,7 @@
       <Filter>07.Manager</Filter>
     </ClCompile>
     <ClCompile Include="InGameGlobal.cpp" />
+    <ClCompile Include="NPCComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -694,6 +695,7 @@
       <Filter>03.Component</Filter>
     </ClInclude>
     <ClInclude Include="InGameGlobal.h" />
+    <ClInclude Include="NPCComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">

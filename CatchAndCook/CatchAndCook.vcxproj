@@ -227,6 +227,7 @@
     <ClCompile Include="ModelNode.cpp" />
     <ClCompile Include="NavMesh.cpp" />
     <ClCompile Include="NavMeshManager.cpp" />
+    <ClCompile Include="NPCComponent.cpp" />
     <ClCompile Include="ObjectSettingComponent.cpp" />
     <ClCompile Include="PathFinder.cpp" />
     <ClCompile Include="PathStamp.cpp" />
@@ -356,6 +357,7 @@
     <ClInclude Include="ModelNode.h" />
     <ClInclude Include="NavMesh.h" />
     <ClInclude Include="NavMeshManager.h" />
+    <ClInclude Include="NPCComponent.h" />
     <ClInclude Include="ObjectSettingComponent.h" />
     <ClInclude Include="PathFinder.h" />
     <ClInclude Include="PathStamp.h" />

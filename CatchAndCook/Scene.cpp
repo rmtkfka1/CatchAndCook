@@ -436,7 +436,6 @@ void Scene::GlobalSetting()
 
     _globalParam.window_size = vec2(WINDOW_WIDTH,WINDOW_HEIGHT);
     _globalParam.Time = Time::main->GetTime();
-    _globalParam.SkyBlend = InGameGlobal::main->skyTime;
 
 
     auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::GlobalParam)->Alloc(1);

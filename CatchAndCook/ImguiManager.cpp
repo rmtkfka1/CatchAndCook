@@ -125,11 +125,16 @@ void ImguiManager::Sky()
 {
     if (ImGui::TreeNode("Sky"))
     {
-        ImGui::SliderFloat("time", &InGameGlobal::main->skyTime, 0.0f, 8.0f);
+        float b = InGameGlobal::main->skyTime;
+        if (ImGui::SliderFloat("time", &b, 0.0f, 8.0f))
+        {
+            InGameGlobal::main->skyTime = b;
+        }
         int a = (int)InGameGlobal::main->skyTime;
         if (ImGui::SliderInt("Render Type", &a, 0, 3))
         {
-            InGameGlobal::main->skyTime = a;
+            if (auto light = LightComponent::GetMainLight())
+                InGameGlobal::main->skyTime = a;
         }
         ImGui::TreePop();
     }

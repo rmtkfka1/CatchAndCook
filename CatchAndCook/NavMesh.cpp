@@ -34,13 +34,12 @@ void NavMesh::Update()
 		(Input::main->GetKey(KeyCode::I) ? 1 : 0) - (Input::main->GetKey(KeyCode::K) ? 1 : 0)
 		)
 	* Time::main->GetDeltaTime() * 20;
-	//NavMeshManager::main->CalculatePath(Vector3(350, 0, 150), startPos,NavMeshManager::main->GetNavMeshData(), _edges);
 	
-	//auto path = NavMeshManager::main->CalculatePath(Vector3(350, 0, 150), startPos);
+
 
 	if (NavMeshManager::main->_gizmoDebug)
 	{
-
+		auto path = NavMeshManager::main->CalculatePath(Vector3(350, 0, 150), startPos);
 		Gizmo::Width(0.4f);
 		Gizmo::Box(BoundingBox(startPos, Vector3(1, 100, 1)));
 

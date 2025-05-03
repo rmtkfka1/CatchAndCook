@@ -29,6 +29,8 @@ public:
 	void ExecuteDestroyGameObjects();
 	void GlobalSetting();
 
+	GlobalParam& GetGlobalParam() { return _globalParam; }
+
 public:
 	virtual void UiPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
 	virtual void TransparentPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);

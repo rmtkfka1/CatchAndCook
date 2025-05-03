@@ -5,6 +5,9 @@
 #include "Transform.h"
 #include "MeshRenderer.h"
 
+std::weak_ptr<LightComponent> LightComponent::mainLight;
+
+
 LightComponent::~LightComponent()
 {
 }
@@ -41,6 +44,10 @@ void LightComponent::Start()
 	light->innerSpotAngle = innerSpotAngle * D2R;
 	light->direction = GetOwner()->_transform->GetForward();
 	light->position = GetOwner()->_transform->GetWorldPosition();
+
+
+	if (light->material.lightType == 0)
+		mainLight = GetCast<LightComponent>();
 }
 
 void LightComponent::Update()
@@ -53,51 +60,65 @@ void LightComponent::Update2()
 	Component::Update2();
 
 
-	if (light->material.lightType == 0)
-	if (auto sky = SceneManager::main->GetCurrentScene()->Find(L"Skybox"))
+	if (light->material.lightType == 0 && abs(InGameGlobal::main->skyTime - skyTime) > 0.001)
 	{
-		float cycle = InGameGlobal::main->skyTime; 
-		float tY = std::fmod(cycle + 2.0f, 4.0f) / 4.0f;
-		float angleY = std::lerp(70.0f, -70.0f, tY);
+		skyTime += (InGameGlobal::main->skyTime - skyTime) * Time::main->GetDeltaTime() * 5;
+		if (abs(InGameGlobal::main->skyTime - skyTime) <= 0.001)
+			skyTime = InGameGlobal::main->skyTime;
 
-
-		Quaternion qy = Quaternion::CreateFromAxisAngle(Vector3::UnitY, angleY * D2R);
-		GetOwner()->_transform->SetLocalRotation(qy * Quaternion::CreateFromYawPitchRoll(Vector3(50, -90, 0) * D2R));
-		light->intensity = cos((std::fmod(InGameGlobal::main->skyTime, 4)) / 2 * 3.141592f) * 0.5 + 0.5;
-		light->intensity = pow(light->intensity, 0.5);
-		if (auto renderer = sky->GetComponent<MeshRenderer>())
+		if (auto sky = SceneManager::main->GetCurrentScene()->Find(L"Skybox"))
 		{
-			if(auto material = renderer->GetMaterial())
+			SceneManager::main->GetCurrentScene()->GetGlobalParam().SkyBlend = skyTime;
+			float cycle = skyTime;
+			float tY = std::fmod(cycle + 2.0f, 4.0f) / 4.0f;
+			float angleY = std::lerp(80.0f, -80.0f, tY);
+
+
+			Quaternion qy = Quaternion::CreateFromAxisAngle(Vector3::UnitY, angleY * D2R);
+			GetOwner()->_transform->SetLocalRotation(qy * Quaternion::CreateFromYawPitchRoll(Vector3(50, -105, 0) * D2R));
+			light->intensity = cos((std::fmod(skyTime, 4)) / 2 * 3.141592f) * 0.5 + 0.5;
+			light->intensity = pow(light->intensity, 0.5);
+			if (auto renderer = sky->GetComponent<MeshRenderer>())
 			{
-				if ((int)std::fmod(InGameGlobal::main->skyTime, 4) == 0)
+				if (auto material = renderer->GetMaterial())
 				{
-					material->SetTexture("_BaseMap", ResourceManager::main->_cubemap_skyTexture);
-					material->SetTexture("_BaseMap_1", ResourceManager::main->_cubemap_skyETexture);
+					switch ((int)std::fmod(skyTime, 4))
+					{
+						case 0:
+							{
+							material->SetTexture("_BaseMap", ResourceManager::main->_cubemap_skyTexture);
+							material->SetTexture("_BaseMap_1", ResourceManager::main->_cubemap_skyETexture);
 
-					ResourceManager::main->_bakedGIFinal1Texture = ResourceManager::main->_bakedGITexture;
-					ResourceManager::main->_bakedGIFinal2Texture = ResourceManager::main->_bakedGIETexture;
-				}
-				if ((int)std::fmod(InGameGlobal::main->skyTime, 4) == 1)
-				{
-					material->SetTexture("_BaseMap", ResourceManager::main->_cubemap_skyETexture);
-					material->SetTexture("_BaseMap_1", ResourceManager::main->_cubemap_skyNTexture);
+							ResourceManager::main->_bakedGIFinal1Texture = ResourceManager::main->_bakedGITexture;
+							ResourceManager::main->_bakedGIFinal2Texture = ResourceManager::main->_bakedGIETexture;
+							break;
+							}
+						case 1:
+						{
+							material->SetTexture("_BaseMap", ResourceManager::main->_cubemap_skyETexture);
+							material->SetTexture("_BaseMap_1", ResourceManager::main->_cubemap_skyNTexture);
 
-					ResourceManager::main->_bakedGIFinal1Texture = ResourceManager::main->_bakedGIETexture;
-					ResourceManager::main->_bakedGIFinal2Texture = ResourceManager::main->_bakedGINTexture;
-				}
-				if ((int)std::fmod(InGameGlobal::main->skyTime, 4) == 2)
-				{
-					material->SetTexture("_BaseMap", ResourceManager::main->_cubemap_skyNTexture);
-					material->SetTexture("_BaseMap_1", ResourceManager::main->_cubemap_skyTexture);
-					ResourceManager::main->_bakedGIFinal1Texture = ResourceManager::main->_bakedGINTexture;
-					ResourceManager::main->_bakedGIFinal2Texture = ResourceManager::main->_bakedGITexture;
-				}
-				if ((int)std::fmod(InGameGlobal::main->skyTime, 4) == 3)
-				{
-					material->SetTexture("_BaseMap", ResourceManager::main->_cubemap_skyTexture);
-					material->SetTexture("_BaseMap_1", ResourceManager::main->_cubemap_skyTexture);
-					ResourceManager::main->_bakedGIFinal1Texture = ResourceManager::main->_bakedGITexture;
-					ResourceManager::main->_bakedGIFinal2Texture = ResourceManager::main->_bakedGITexture;
+							ResourceManager::main->_bakedGIFinal1Texture = ResourceManager::main->_bakedGIETexture;
+							ResourceManager::main->_bakedGIFinal2Texture = ResourceManager::main->_bakedGINTexture;
+							break;
+						}
+						case 2:
+						{
+							material->SetTexture("_BaseMap", ResourceManager::main->_cubemap_skyNTexture);
+							material->SetTexture("_BaseMap_1", ResourceManager::main->_cubemap_skyTexture);
+							ResourceManager::main->_bakedGIFinal1Texture = ResourceManager::main->_bakedGINTexture;
+							ResourceManager::main->_bakedGIFinal2Texture = ResourceManager::main->_bakedGITexture;
+							break;
+						}
+						case 3:
+						{
+							material->SetTexture("_BaseMap", ResourceManager::main->_cubemap_skyTexture);
+							material->SetTexture("_BaseMap_1", ResourceManager::main->_cubemap_skyTexture);
+							ResourceManager::main->_bakedGIFinal1Texture = ResourceManager::main->_bakedGITexture;
+							ResourceManager::main->_bakedGIFinal2Texture = ResourceManager::main->_bakedGITexture;
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -105,9 +126,11 @@ void LightComponent::Update2()
 	light->direction = GetOwner()->_transform->GetForward();
 	light->position = GetOwner()->_transform->GetWorldPosition();
 
-	if (Input::main->GetKey(KeyCode::LeftBracket))
-	{
-		GetOwner()->_transform->SetLocalRotation(GetOwner()->_transform->GetLocalRotation() * Quaternion::CreateFromAxisAngle(Vector3::Up, 1 * Time::main->GetDeltaTime()));
+	if (Input::main->GetKey(KeyCode::LeftBracket)) {
+		GetOwner()->_transform->SetLocalRotation(GetOwner()->_transform->GetLocalRotation() * Quaternion::CreateFromAxisAngle(Vector3::Up, 1.5 * Time::main->GetDeltaTime()));
+	}
+	if (Input::main->GetKey(KeyCode::RightBracket)) {
+		GetOwner()->_transform->SetLocalRotation(GetOwner()->_transform->GetLocalRotation() * Quaternion::CreateFromAxisAngle(Vector3::Up, -1.5 * Time::main->GetDeltaTime()));
 	}
 }
 

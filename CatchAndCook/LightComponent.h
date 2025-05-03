@@ -20,6 +20,7 @@ public:
 	void SetDestroy() override;
 	void Destroy() override;
 
+	void SetSkyTime(float currentSkyTime){ this->skyTime = currentSkyTime; };
 	void SetLight(const std::shared_ptr<Light>& light) { this->light = light; };
 	std::shared_ptr<Light>& GetLight() { return light; };
 
@@ -34,5 +35,10 @@ public:
 	float innerSpotAngle = 360 * D2R;
 	float spotAngle = 360 * D2R;
 	float shadowAngle = 360 * D2R;
+
+	float skyTime = -1;
+
+	static std::weak_ptr<LightComponent> mainLight;
+	static std::shared_ptr<LightComponent> GetMainLight() { return mainLight.lock(); };
 };
 
