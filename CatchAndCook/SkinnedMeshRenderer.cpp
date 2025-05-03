@@ -84,6 +84,7 @@ void SkinnedMeshRenderer::Start()
 			if (i == 0) localBox = bound;
 			else BoundingBox::CreateMerged(localBox, localBox, bound);
 		}
+		BoundingBox::CreateMerged(localBox, localBox, BoundingBox(Vector3(0, 0, 0), Vector3(3, 3, 3)));
 		SetOriginBound(localBox);
 	}
 

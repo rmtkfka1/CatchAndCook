@@ -169,7 +169,8 @@ double SkinnedHierarchy::AnimateBlend(const std::shared_ptr<Animation>& currentA
 		blendInterpolValue = std::clamp(_animationBlendTime / duration, 0.0, 1.0);
 	}
 
-	auto rootBoneName = _model->_rootBoneNode->GetOriginalName();
+	auto modelRootBoneName = _model->_rootBoneNode->GetOriginalName();
+	auto rootBoneName = modelRootBoneName;
 	string nextRootBoneName;
 	if (_animation != nullptr && _animation->_rootBoneNode)
 		rootBoneName = _animation->_rootBoneNode->GetNodeName();
@@ -184,14 +185,9 @@ double SkinnedHierarchy::AnimateBlend(const std::shared_ptr<Animation>& currentA
 		Vector3 finalAnim_interpolatedPosition;
 		Vector3 finalAnim_interpolatedScale;
 
-		if (it != nodeObjectTable.end())
-		{
-			auto obj = it->second.lock();
-
-			finalAnim_interpolatedRotation = animNode->CalculateRotation(currentAnimTime);
-			finalAnim_interpolatedPosition = animNode->CalculatePosition(currentAnimTime);
-			finalAnim_interpolatedScale = animNode->CalculateScale(currentAnimTime);
-		}
+		finalAnim_interpolatedRotation = animNode->CalculateRotation(currentAnimTime);
+		finalAnim_interpolatedPosition = animNode->CalculatePosition(currentAnimTime);
+		finalAnim_interpolatedScale = animNode->CalculateScale(currentAnimTime);
 
 		if (nextAnim)
 		{
@@ -212,7 +208,8 @@ double SkinnedHierarchy::AnimateBlend(const std::shared_ptr<Animation>& currentA
 		}
 		
 		bool finalRoot = animNode->IsRoot();
-		if (currentAnim->_isApplyTransform && ((animNode->GetNodeName() == rootBoneName) || (animNode->GetNodeName() == nextRootBoneName)))
+		bool isFinalBone = currentAnim->_isApplyTransform && ((animNode->GetNodeName() == rootBoneName) || (animNode->GetNodeName() == nextRootBoneName));
+		if (isFinalBone)
 		{
 			finalAnim_interpolatedPosition = finalAnim_interpolatedPosition * rootMoveLock;
 		}
@@ -220,8 +217,19 @@ double SkinnedHierarchy::AnimateBlend(const std::shared_ptr<Animation>& currentA
 		Matrix finalMatrix = Matrix::CreateScale(finalAnim_interpolatedScale) *
 			Matrix::CreateFromQuaternion(finalAnim_interpolatedRotation * animNode->offsetPreRotation) *
 			Matrix::CreateTranslation(finalAnim_interpolatedPosition);
+
 		if (it != nodeObjectTable.end())
+		{
 			it->second.lock()->_transform->SetLocalSRTMatrix(finalMatrix);
+		}
+		else
+		{
+			auto it2 = FindByName(modelRootBoneName, nodeObjectTable);
+			if (animNode->GetNodeName() == rootBoneName && it2 != nodeObjectTable.end())
+			{
+				it2->second.lock()->_transform->SetLocalSRTMatrix(finalMatrix);
+			}
+		}
 		
 	}
 
@@ -254,6 +262,7 @@ Vector3 SkinnedHierarchy::BlendDeltaPosition(const std::string& name,const std::
 
 	auto blendInterpolValue = 0.0;
 
+	string modelRootBoneName = name;
 	string rootBoneName = name;
 	string nextRootBoneName = name;
 
@@ -280,10 +289,8 @@ Vector3 SkinnedHierarchy::BlendDeltaPosition(const std::string& name,const std::
 	if (animNodeIter != currentAnim->_nodeTables.end())
 	{
 		auto animNode = animNodeIter->second;
-		if (it != nodeObjectTable.end())
-		{
-			finalAnim_interpolatedPosition = animNode->CalculateDeltaPosition(currentAnimPrevTime, currentAnimTime);
-		}
+
+		finalAnim_interpolatedPosition = animNode->CalculateDeltaPosition(currentAnimPrevTime, currentAnimTime);
 
 		if (nextAnim)
 		{

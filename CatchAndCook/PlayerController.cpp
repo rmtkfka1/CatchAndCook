@@ -75,7 +75,7 @@ void PlayerController::CameraControl()
 	auto cameraTransform = camera.lock()->GetOwner()->_transform;
 	auto currentMousePosition = Input::main->GetMousePosition();
 
-	_targetOffset = GetOwner()->_transform->GetWorldPosition() + Vector3::Up * 1.1f;
+	_targetOffset = GetOwner()->_transform->GetWorldPosition() + Vector3::Up * 1.2f;
 
 	_currentOffset = Vector3::Lerp(_currentOffset, _targetOffset,
 		std::clamp((float)Time::main->GetDeltaTime() * controlInfo.cameraMoveSmooth
@@ -177,7 +177,7 @@ void PlayerController::MoveControl()
 	//}
 	Vector3 prevVelocity = velocity;
 	if (auto skinnedHierarchy = _skinnedHierarchy.lock())
-		velocity = skinnedHierarchy->GetDeltaPosition();
+		velocity = skinnedHierarchy->GetDeltaPosition() * GetOwner()->_transform->GetWorldScale().y;
 	velocity = Vector3(velocity.x, prevVelocity.y, velocity.z);
 
 	GetOwner()->_transform->LookUp(Vector3::Transform(Vector3::Forward, currentLookWorldRotation), Vector3::Up);
