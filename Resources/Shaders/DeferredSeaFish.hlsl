@@ -47,18 +47,19 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     
     FishInfo fishinfo = FIshInfos[offset[STRUCTURED_OFFSET(32)].r + id];
 
-    float localZ = input.pos.z; 
+    float localZ = input.pos.z;
     float minZ = fishinfo.boundsCenterZ - fishinfo.boundsSizeZ;
     float maxZ = fishinfo.boundsCenterZ + fishinfo.boundsSizeZ;
     float weight = saturate((localZ - minZ) / (maxZ - minZ));
 
- 
-    float wave = sin(g_Time * fishinfo.fishSpeed )
+    float phaseOffset = localZ * 0.5f;
+
+    float wave = sin(g_Time * fishinfo.fishSpeed + phaseOffset)
            * fishinfo.fishWaveAmount * weight;
 
     float3 animatedPos = input.pos;
     animatedPos.x += wave;
-    
+
     float4 worldPos = mul(float4(animatedPos, 1.0f), l2wMatrix);
     output.pos = mul(worldPos, VPMatrix);
     output.worldPos = worldPos.xyz;
