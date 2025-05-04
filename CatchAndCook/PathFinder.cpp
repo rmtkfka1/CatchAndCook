@@ -6,7 +6,6 @@
 #include <random>
 #include "MeshRenderer.h"
 unordered_map<wstring, FishPath> PathFinder::_pathList;
-bool PathFinder::_drawPath = false;
 
 static random_device dre;
 static mt19937 gen(dre());
@@ -142,18 +141,20 @@ void PathFinder::Update()
         }
     }
 
-    if (_drawPath && !_pathList[_pathName].AreyouDraw)
+    if (HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::DrawPath))
     {
-   
-        for (size_t i = 0; i + 1 < myPath.size(); ++i)
+        if(!_pathList[_pathName].AreyouDraw)
         {
-            vec3 c = _pathList[_pathName]._pathColor;
-            Gizmo::main->Line(
-                myPath[i], myPath[i + 1],
-                vec4(c.x, c.y, c.z, 1.0f)
-            );
+            for (size_t i = 0; i + 1 < myPath.size(); ++i)
+            {
+                vec3 c = _pathList[_pathName]._pathColor;
+                Gizmo::main->Line(
+                    myPath[i], myPath[i + 1],
+                    vec4(c.x, c.y, c.z, 1.0f)
+                );
+            }
+            _pathList[_pathName].AreyouDraw = true;
         }
-        _pathList[_pathName].AreyouDraw = true;
     }
 }
 

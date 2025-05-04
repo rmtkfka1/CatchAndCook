@@ -64,7 +64,6 @@ private:
 	FishInfo _info{};
 
 public:
-	static bool _drawPath;
 
 };
 

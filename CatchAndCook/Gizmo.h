@@ -36,6 +36,7 @@ enum class GizmoFlags : uint32_t
 	Custom = 1 << 5,
 	RenderPreview = 1 << 6,
 	NavMesh = 1 << 7,
+	DrawPath = 1<<8,
 };
 
 inline GizmoFlags operator|(GizmoFlags a, GizmoFlags b) {

@@ -160,7 +160,7 @@ void ImguiManager::GizmoController()
 
     if (ImGui::Button("DrawPath"))
     {
-        PathFinder::_drawPath = !PathFinder::_drawPath;
+        Gizmo::main->_flags = Gizmo::main->_flags | GizmoFlags::DrawPath;
     }
 }
 
