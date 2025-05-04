@@ -34,7 +34,6 @@ struct FishInfo
 };
 
 
-
 StructuredBuffer<FishInfo> FIshInfos : register(t32);
 
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)

@@ -144,6 +144,7 @@ void PathFinder::Update()
 
     if (_drawPath && !_pathList[_pathName].AreyouDraw)
     {
+   
         for (size_t i = 0; i + 1 < myPath.size(); ++i)
         {
             vec3 c = _pathList[_pathName]._pathColor;
@@ -217,7 +218,9 @@ void PathFinder::ReadPathFile(const std::wstring& fileName)
 	size_t h = std::hash<wstring>{}(fileName);
 	float hue = float(h % 360) / 360.f;
 	_pathList[fileName]._pathColor = vec3(hue, hue, hue);
-     cout << "라인 데이터: " << _pathList[fileName].path.size() << "개 읽음." << std::endl;
+
+
+     //cout << "라인 데이터: " << _pathList[fileName].path.size() << "개 읽음." << std::endl;
 }
 
 vec3 PathFinder::GenerateRandomPointInSphere(float radius)

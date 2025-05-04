@@ -172,7 +172,7 @@ void Scene_Sea01::Init()
 
 			for (auto& material : materials)
 			{
-				cout << material->GetShader()->_name << endl;
+				//cout << material->GetShader()->_name << endl;
 				if (material->GetShader()->_name == "DeferredSeaPlantClip.hlsl" || "DeferredSeaPlant.hlsl")
 				{
 					if(gameobject->GetComponent<PlantComponent>()==nullptr)
