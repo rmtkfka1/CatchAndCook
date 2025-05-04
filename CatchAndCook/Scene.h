@@ -57,6 +57,7 @@ public:
 	std::shared_ptr<GameObject> CreateGameObject(const std::wstring& name,GameObjectType type = GameObjectType::Dynamic);
 	std::shared_ptr<GameObject> Find(const std::wstring& name, bool includeDestroy = false);
 	int Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec, bool includeDestroy = false);
+	int FindsInclude(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec, bool includeDestroy = false);
 	void AddChangeTypeQueue(const std::shared_ptr<GameObject>& gmaeObject, GameObjectType type);
 	void AddStartQueue(const std::shared_ptr<GameObject>& gameObject);
 	void AddDestroyQueue(const std::shared_ptr<GameObject>& gameObject);

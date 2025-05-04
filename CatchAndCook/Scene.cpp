@@ -693,6 +693,26 @@ int Scene::Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObjec
     return vec.size() - startSize;
 }
 
+int Scene::FindsInclude(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec, bool includeDestroy)
+{
+    int startSize = vec.size();
+    for (auto& current : _gameObjects)
+    {
+        if ((!includeDestroy && current->IsDestroy()) ||
+            current->GetName().find(name) == std::wstring::npos)
+            continue;
+        vec.push_back(current);
+    }
+    for (auto& current : _gameObjects_deactivate)
+    {
+        if ((!includeDestroy && current->IsDestroy()) ||
+            current->GetName().find(name) == std::wstring::npos)
+            continue;
+        vec.push_back(current);
+    }
+    return static_cast<int>(vec.size() - startSize);
+}
+
 void Scene::AddChangeTypeQueue(const std::shared_ptr<GameObject>& gameObject, GameObjectType type)
 {
     _changeTypeQueue.push(std::make_pair(gameObject, type));
