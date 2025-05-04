@@ -376,6 +376,7 @@ void AnimationSprite::RenderBegin()
 
 void AnimationSprite::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
+
 }
 
 void AnimationSprite::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)

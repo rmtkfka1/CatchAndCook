@@ -58,18 +58,13 @@ void PathFinder::Start()
 	SetPass(pathName);
 
 	_moveSpeed = mat->GetPropertyFloat("_MoveSpeed") * randomMoveSpeed(dre);
-
-
 	_info.fishSpeed = mat->GetPropertyFloat("_Speed");
 	_info.fishWaveAmount = mat->GetPropertyFloat("_Power") * randomSpeed(dre);
-
-
 	const BoundingBox& box = meshRdr->GetOriginBound();
 	_info.boundsSizeZ = box.Extents.z;
 	_info.boundsCenterZ = box.Center.z;
 
 	_pathOffset = GenerateRandomPointInSphere(mat->GetPropertyFloat("_Radius"));
-
     _player = SceneManager::main->GetCurrentScene()->Find(L"seaPlayer");
 
     const vector<vec3>& myPath = _pathList[_pathName].path;
@@ -80,6 +75,7 @@ void PathFinder::Update()
 {
 
     if (_pathList.find(_pathName) == _pathList.end()) return;
+
     const vector<vec3>& myPath = _pathList[_pathName].path;
     int nextIndex = _forward ? _currentIndex + 1 : _currentIndex - 1;
     vec3 start = myPath[_currentIndex] + _pathOffset;
@@ -133,6 +129,7 @@ void PathFinder::Update()
     {
         _distanceMoved = 0.0f;
         _segmentLength = 0.0f;
+
         if (_forward)
         {
             _currentIndex++;
