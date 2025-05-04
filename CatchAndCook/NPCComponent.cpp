@@ -51,9 +51,14 @@ void NPCComponent::Start()
 		auto walk = animationList->GetAnimations()["walk"];
 		auto idle = animationList->GetAnimations()["idle"];
 		auto run = animationList->GetAnimations()["run"];
+		auto sit  = animationList->GetAnimations()["sitting"];
+		auto sitdown  = animationList->GetAnimations()["sitdown"];
+		auto situp  = animationList->GetAnimations()["situp"];
 		run->_speedMultiplier = 1.15f;
 
-		_skinnedHierarchy->Play(walk, 0.25);
+		sitdown->_isLoop = false;
+		situp->_isLoop = false;
+		_skinnedHierarchy->Play(sit, 0.25);
 	}
 
 	std::vector<std::shared_ptr<GameObject>> pathPointObjects;
@@ -77,6 +82,9 @@ void NPCComponent::Update()
 			paths[i - 1], paths[i], Vector4(1, 0, 0, 1));
 	}
 	Gizmo::WidthRollBack();
+
+
+	//AdvanceAlongPath
 
 	//auto skinnedHierarchy = GetOwner()->GetComponentWithChilds<SkinnedHierarchy>();
 	//velocity = skinnedHierarchy->GetDeltaPosition() * GetOwner()->_transform->GetWorldScale().y;
@@ -120,7 +128,7 @@ void NPCComponent::MoveControl()
 	velocityDirectionXZ.y = 0;
 
 	//if (velocityDirectionXZ != Vector3::Zero)
-	if ((CameraManager::main->GetActiveCamera()->GetCameraPos() - GetOwner()->_transform->GetWorldPosition()).Length() <= 20)
+	if ((CameraManager::main->GetActiveCamera()->GetCameraPos() - GetOwner()->_transform->GetWorldPosition()).Length() <= 5)
 	{
 		for (auto boundingData : playerColliderDatas)
 		{
@@ -242,4 +250,59 @@ void NPCComponent::SetDestroy()
 void NPCComponent::Destroy()
 {
 	Component::Destroy();
+}
+
+Vector3 NPCComponent::AdvanceAlongPath(const std::vector<Vector3>& path, const Vector3& worldPos, float t)
+
+{
+	size_t n = path.size();
+	if (n == 0) return Vector3::Zero;
+
+	// 누적 거리 계산
+	std::vector<float> cum(n);
+	cum[0] = 0;
+	for (size_t i = 1; i < n; ++i)
+		cum[i] = cum[i - 1] + (path[i] - path[i - 1]).Length();
+
+	float totalLen = cum[n - 1];
+
+	// 1) P에 가장 가까운 투영점 찾기
+	float bestD2 = FLT_MAX;
+	float startDist = 0;
+
+	for (size_t i = 0; i + 1 < n; ++i)
+	{
+		Vector3 A = path[i], B = path[i + 1], AB = B - A;
+		float ab2 = AB.Dot(AB);
+		float t = (ab2 > 0) ? (worldPos - A).Dot(AB) / ab2 : 0;
+		t = std::clamp(t, 0.0f, 1.0f);
+
+		Vector3 Q = A + AB * t;
+		float d2 = (Q - worldPos).LengthSquared();
+
+		if (d2 < bestD2)
+		{
+			bestD2 = d2;
+			float segLen = std::sqrt(ab2);
+			startDist = cum[i] + t * segLen;
+		}
+	}
+
+	// 2) 목표 거리 계산 및 클램핑
+	float target = startDist + t;
+	if (target <= 0)        return path.front();
+	if (target >= totalLen) return path.back();
+
+	// 3) 목표 지점이 속한 세그먼트 찾아서 보간
+	for (size_t i = 0; i + 1 < n; ++i)
+	{
+		if (cum[i + 1] >= target)
+		{
+			float segLen = cum[i + 1] - cum[i];
+			float u = (target - cum[i]) / segLen;
+			return path[i] + (path[i + 1] - path[i]) * u;
+		}
+	}
+
+	return path.back(); // 안전 장치
 }

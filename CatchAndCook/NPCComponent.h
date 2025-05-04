@@ -28,6 +28,8 @@ public:
 	void SetDestroy() override;
 	void Destroy() override;
 
+	Vector3 AdvanceAlongPath(const std::vector<Vector3>& path, const Vector3& worldPos, float t);
+
 	NPCStateType type = NPCStateType::stay;
 
 	std::vector<Vector3> gotoPoints;

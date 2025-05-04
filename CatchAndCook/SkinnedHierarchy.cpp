@@ -225,7 +225,7 @@ double SkinnedHierarchy::AnimateBlend(const std::shared_ptr<Animation>& currentA
 		else
 		{
 			auto it2 = FindByName(modelRootBoneName, nodeObjectTable);
-			if (animNode->GetNodeName() == rootBoneName && it2 != nodeObjectTable.end())
+			if (it2 != nodeObjectTable.end()) //animNode->GetNodeName() == rootBoneName && 
 			{
 				it2->second.lock()->_transform->SetLocalSRTMatrix(finalMatrix);
 			}
