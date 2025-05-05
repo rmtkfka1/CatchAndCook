@@ -374,6 +374,9 @@
     <ClCompile Include="StatePattern.cpp">
       <Filter>997.Utils</Filter>
     </ClCompile>
+    <ClCompile Include="CableComponent.cpp">
+      <Filter>03.Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -699,6 +702,9 @@
     </ClInclude>
     <ClInclude Include="StatePattern.h">
       <Filter>997.Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CableComponent.h">
+      <Filter>03.Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

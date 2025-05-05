@@ -10,6 +10,7 @@
 #include "AnimationListComponent.h"
 #include "SkinnedHierarchy.h"
 #include "Animation.h"
+#include "CableComponent.h"
 SeaPlayerController::SeaPlayerController()
 {
 }
@@ -22,6 +23,8 @@ void SeaPlayerController::Init()
 	ImguiManager::main->playerHeightOffset = &_cameraHeightOffset;
 	ImguiManager::main->playerForwardOffset = &_cameraForwardOffset;
 	ImguiManager::main->cameraPitchOffset = &_cameraPitchOffset;
+
+    _weapons = GetOwner()->AddComponent<CableComponent>();
 }
 
 void SeaPlayerController::Start()
@@ -48,6 +51,8 @@ void SeaPlayerController::Start()
 	{
 		cout << animation.first << endl;
 	}
+
+    _weapons->AddWeapon(L"hook", L"hookgun");
 }
 
 void SeaPlayerController::Update()
@@ -147,6 +152,12 @@ void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float 
     {
         inputDir += vec3::Right;
     }
+
+    if (Input::main->GetKeyDown(KeyCode::Q))
+    {
+        _weapons->Shooting();
+    }
+
     if (Input::main->GetKey(KeyCode::Space))
     {
         inputDir += vec3(0, 2, 0);
@@ -291,27 +302,22 @@ void SeaPlayerController::UpdateState(float dt)
    
     }
 
-    if (Input::main->GetKeyDown(KeyCode::Num3))
-    {
-		_state = SeaPlayerState::Attack;
-       
-    }
+
 
     switch (_state)
     {
     case SeaPlayerState::Idle:
-        _skined->Play(GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations()["sea_idle"], 0.5f);
+        _skined->Play(GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations()["Swim_Idle"], 0.5f);
  /*       cout << _animations["sea_idle"]->GetModelName() << endl;;*/
-     
         break;
     case SeaPlayerState::Move:
         //cout << _animations["sea_swim"]->GetModelName() << endl;;
-        _skined->Play(GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations()["sea_swim"], 0.5f);
+        _skined->Play(GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations()["Swim_Run"], 0.5f);
         break;
-    case SeaPlayerState::Attack:
-   /*     cout << _animations["sea_jump"]->GetModelName() << endl;;*/
-        _skined->Play(GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations()["sea_jump"], 0.5f);
-        break;
+   // case SeaPlayerState::Attack:
+   ///*     cout << _animations["sea_jump"]->GetModelName() << endl;;*/
+   //     _skined->Play(GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations()["sea_jump"], 0.5f);
+   //     break;
     case SeaPlayerState::Skill:
         break;
     case SeaPlayerState::Die:

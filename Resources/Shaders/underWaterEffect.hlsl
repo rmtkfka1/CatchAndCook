@@ -37,7 +37,6 @@ struct ShadowCascadeIndexParams
 };
 
 
-
 void ComputeCascadeShadowUVs(float3 worldPos, out float3 uvOut[4])
 {
     float4 worldPosH = float4(worldPos, 1.0f);

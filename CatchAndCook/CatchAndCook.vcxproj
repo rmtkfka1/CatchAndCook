@@ -177,6 +177,7 @@
     <ClCompile Include="Bone.cpp" />
     <ClCompile Include="BufferManager.cpp" />
     <ClCompile Include="BufferPool.cpp" />
+    <ClCompile Include="CableComponent.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="CameraManager.cpp" />
@@ -309,6 +310,7 @@
     <ClInclude Include="Bone.h" />
     <ClInclude Include="BufferManager.h" />
     <ClInclude Include="BufferPool.h" />
+    <ClInclude Include="CableComponent.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="CameraManager.h" />

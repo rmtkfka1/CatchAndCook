@@ -665,6 +665,7 @@ std::shared_ptr<GameObject> Scene::Find(const std::wstring& name, bool includeDe
                 return false;
             return element->GetName() == name;
         });
+
     if (iter != this->_gameObjects_deactivate.end())
         return *iter;
 
