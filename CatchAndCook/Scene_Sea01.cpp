@@ -20,6 +20,7 @@
 #include "CameraManager.h"
 #include "InstancingManager.h"
 #include "Gizmo.h"
+#include "Mesh.h"
 void Scene_Sea01::Init()
 {
 	Scene::Init();
@@ -354,4 +355,176 @@ void Scene_Sea01::ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& 
 
 		ShadowManager::main->RenderEnd();
 	}
+}
+
+void Scene_Sea01::FinalRender(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	Core::main->GetRenderTarget()->RenderBegin();
+
+	auto mesh = ResourceManager::main->Get<Mesh>(L"finalMesh");
+	auto shader = _finalShader->GetShader();
+
+	cmdList->SetPipelineState(shader->_pipelineState.Get());
+
+	//RenderObjectStrucutre ROS = { _finalShader.get(), mesh.get(), nullptr };
+	//SettingPrevData(ROS, RENDER_PASS::PASS::Deferred);
+	//_finalShader->SetData();
+
+	mesh->Redner();
+}
+
+void Scene_Sea01::ComputePass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	ComputeManager::main->Dispatch(cmdList);
+}
+
+void Scene_Sea01::UiPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	{
+		auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::UI)];
+
+		for (auto& [shader, vec] : targets)
+		{
+			cmdList->SetPipelineState(shader->_pipelineState.Get());
+
+			for (auto& renderStructure : vec)
+			{
+				auto& [material, mesh, target] = renderStructure;
+				target->Rendering(material, mesh);
+			}
+		}
+	}
+}
+
+void Scene_Sea01::TransparentPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	//{ // Forward
+	//	auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Transparent)];
+
+	//	std::vector<RenderObjectStrucutre> vec;
+	//	vec.reserve(2048);
+	//	for (auto& [shader, vec2] : targets)
+	//		vec.insert(vec.end(), vec2.begin(), vec2.end());
+
+	//	Vector3 cameraPos = CameraManager::main->GetActiveCamera()->GetCameraPos();
+	//	Vector3 cameraDir = CameraManager::main->GetActiveCamera()->GetCameraLook();
+
+	//	auto tangentDistanceSquared = [&](const Vector3& center) -> float {
+	//		Vector3 offset = center - cameraPos;
+	//		float projection = offset.Dot(cameraDir);
+	//		return offset.LengthSquared() - projection * projection;
+	//		};
+
+	//	std::ranges::sort(vec, [&](const RenderObjectStrucutre& a, const RenderObjectStrucutre& b) {
+	//		return tangentDistanceSquared(a.renderer->_bound.Center) < tangentDistanceSquared(b.renderer->_bound.Center);
+	//		});
+
+	//	Shader* prevShader = nullptr;
+	//	for (auto& ele : vec)
+	//	{
+	//		Shader* shader = ele.material->GetShader().get();
+	//		if (shader != nullptr && shader != prevShader)
+	//			cmdList->SetPipelineState(shader->_pipelineState.Get());
+
+	//		g_debug_forward_count++;
+
+	//		if (ele.renderer->IsCulling() == true)
+	//		{
+	//			if (CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound()) == false)
+	//			{
+	//				g_debug_forward_culling_count++;
+	//				continue;
+	//			}
+	//		}
+
+	//		SettingPrevData(ele, RENDER_PASS::PASS::Transparent);
+	//		InstancingManager::main->RenderNoInstancing(ele);
+
+	//		prevShader = shader;
+	//	}
+	//}
+}
+
+void Scene_Sea01::ForwardPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	{ // Forward
+		auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Forward)];
+
+		for (auto& [shader, vec] : targets)
+		{
+			cmdList->SetPipelineState(shader->_pipelineState.Get());
+
+			for (auto& ele : vec)
+			{
+				g_debug_forward_count++;
+
+				if (ele.renderer->IsCulling() == true)
+				{
+					if (CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound()) == false)
+					{
+						g_debug_forward_culling_count++;
+						continue;
+					}
+				}
+
+				if (ele.renderer->isInstancing() == false)
+				{
+					InstancingManager::main->RenderNoInstancing(ele);
+				}
+				else
+				{
+					InstancingManager::main->AddObject(ele);
+				}
+			}
+
+			InstancingManager::main->Render();
+		}
+
+	}
+}
+
+void Scene_Sea01::DeferredPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	Core::main->GetGBuffer()->RenderBegin();
+	auto camera = CameraManager::main->GetActiveCamera();
+
+	TerrainManager::main->CullingInstancing(camera->GetCameraPos(), camera->GetCameraLook());
+
+	{ // Deferred
+		auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Deferred)];
+
+		for (auto& [shader, vec] : targets)
+		{
+			cmdList->SetPipelineState(shader->_pipelineState.Get());
+
+			for (auto& ele : vec)
+			{
+				g_debug_deferred_count++;
+
+				if (ele.renderer->IsCulling() == true)
+				{
+					if (CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound()) == false)
+					{
+						g_debug_deferred_culling_count++;
+						continue;
+					}
+				}
+
+
+				if (ele.renderer->isInstancing() == false)
+				{
+					InstancingManager::main->RenderNoInstancing(ele);
+				}
+				else
+				{
+					InstancingManager::main->AddObject(ele);
+				}
+			}
+
+			InstancingManager::main->Render();
+
+		}
+	}
+
+	Core::main->GetGBuffer()->RenderEnd();
 }

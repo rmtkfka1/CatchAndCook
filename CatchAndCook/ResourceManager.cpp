@@ -854,7 +854,7 @@ void ResourceManager::CreateDefaultMaterial()
 void ResourceManager::CreateDefaultTexture()
 {
 	_noneTexture = Load<Texture>(L"none", L"Textures/Configs/noneTexture.png");
-	_noneTexture_Black = Load<Texture>(L"none_black", L"Textures/Configs/noneTexture_Black.png");
+	/*_noneTexture_Black = Load<Texture>(L"none_black", L"Textures/Configs/noneTexture_Black.png");
 	_noneTexture_debug = Load<Texture>(L"none_debug", L"Textures/Configs/noneTexture_debug.png");
 
 	_bakedGITexture = Load<Texture>(L"BakedGI", L"Textures/Configs/BakedGI.png");
@@ -866,7 +866,7 @@ void ResourceManager::CreateDefaultTexture()
 
 	_cubemap_skyTexture = Load<Texture>(L"cubemap_sky0", L"Textures/cubemap/Sky_0.png.dds", TextureType::CubeMap);
 	_cubemap_skyNTexture = Load<Texture>(L"cubemap_sky1", L"Textures/cubemap/Sky_1.png.dds", TextureType::CubeMap);
-	_cubemap_skyETexture = Load<Texture>(L"cubemap_sky2", L"Textures/cubemap/Sky_2.png.dds", TextureType::CubeMap);
+	_cubemap_skyETexture = Load<Texture>(L"cubemap_sky2", L"Textures/cubemap/Sky_2.png.dds", TextureType::CubeMap);*/
 }
 
 void ResourceManager::CreateDefaultAnimation()
