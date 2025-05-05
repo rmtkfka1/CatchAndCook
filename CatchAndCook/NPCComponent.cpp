@@ -364,14 +364,22 @@ void NPCGotoAny::Update()
 		auto sitdown = animationList->GetAnimations()["sitdown"];
 		auto situp = animationList->GetAnimations()["situp"];
 
-		if ((npc->paths[npc->paths.size() - 1] - currentWorldPos).Length() <= 0.25)
+		if (npc->paths.size() != 0)
 		{
-			skinnedHierarchy->Play(idle, 0.25);
-			GetGroup()->ChangeState(StateType::idle);
+			if ((npc->paths[npc->paths.size() - 1] - currentWorldPos).Length() <= 0.25)
+			{
+				skinnedHierarchy->Play(idle, 0.25);
+				GetGroup()->ChangeState(StateType::idle);
+			}
+			else
+			{
+				skinnedHierarchy->Play(walk, 0.25);
+			}
 		}
 		else
 		{
-			skinnedHierarchy->Play(walk, 0.25);
+			skinnedHierarchy->Play(idle, 0.25);
+			GetGroup()->ChangeState(StateType::idle);
 		}
 	}
 }

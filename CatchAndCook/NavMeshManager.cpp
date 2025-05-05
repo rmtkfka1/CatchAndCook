@@ -101,19 +101,50 @@ std::vector<Vector3> NavMeshManager::CalculatePath(const Vector3& startPos, cons
     Vector3 endPathPos = endPos;
     // 4) 시작/끝 삼각형 찾기
     int startTri = 0, endTri = 0;
+    bool foundStart = false;
+    bool foundEnd = false;
+    float bestStartDist2 = FLT_MAX;
+    float bestEndDist2 = FLT_MAX;
     for (int t = 0; t < triangleCount; ++t) {
         auto& tr = _triangles[t];
+        const Vector3& A = _datas[tr[0]].position;
+        const Vector3& B = _datas[tr[1]].position;
+        const Vector3& C = _datas[tr[2]].position;
 
-        if (PointInTriangle3D(startPos, _datas[tr[0]].position, _datas[tr[1]].position, _datas[tr[2]].position))
-        {
+        // containment 체크
+        if (!foundStart && PointInTriangle3D(startPos, A, B, C)) {
             startTri = t;
-            startPathPos.y = Interpolate(startPos, _datas[tr[0]].position, _datas[tr[1]].position, _datas[tr[2]].position).y;
+            startPathPos.y = Interpolate(startPos, A, B, C).y;
+            foundStart = true;
         }
-        if (PointInTriangle3D(endPos, _datas[tr[0]].position, _datas[tr[1]].position, _datas[tr[2]].position))
-        {
+        if (!foundEnd && PointInTriangle3D(endPos, A, B, C)) {
             endTri = t;
-            endPathPos.y = Interpolate(endPos, _datas[tr[0]].position, _datas[tr[1]].position, _datas[tr[2]].position).y;
+            endPathPos.y = Interpolate(endPos, A, B, C).y;
+            foundEnd = true;
         }
+
+        // containment 못 찾았으면 distance² 계산하여 후보로 등록
+        if (!foundStart) {
+            Vector3 closest = ClosestPointOnTriangle(startPos, A, B, C);
+            float d2 = (startPos - closest).LengthSquared();
+            if (d2 < bestStartDist2) {
+                bestStartDist2 = d2;
+                startTri = t;
+                startPathPos.y = closest.y;
+            }
+        }
+        if (!foundEnd) {
+            Vector3 closest = ClosestPointOnTriangle(endPos, A, B, C);
+            float d2 = (endPos - closest).LengthSquared();
+            if (d2 < bestEndDist2) {
+                bestEndDist2 = d2;
+                endTri = t;
+                endPathPos.y = closest.y;
+            }
+        }
+
+        // 둘 다 찾았으면 빨리 탈출
+        if (foundStart && foundEnd) break;
     }
 
     // 5) 삼각형 A* (centroid 휴리스틱)
