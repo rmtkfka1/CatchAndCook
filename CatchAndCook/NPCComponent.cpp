@@ -37,6 +37,7 @@ void NPCComponent::Init()
 	fsm = make_shared<NPCFSMGroup>();
 	fsm->Init();
 	fsm->AddState(StateType::goto_any, make_shared<NPCGotoAny>());
+	fsm->AddState(StateType::idle, make_shared<NPCIdle>());
 	fsm->SetNPC(GetCast<NPCComponent>());
 }
 
@@ -77,7 +78,7 @@ void NPCComponent::Start()
 void NPCComponent::Update()
 {
 	Component::Update();
-
+	ColliderManager::main->UpdateDynamicCells();
 	fsm->Update();
 	fsm->AnyUpdate();
 
@@ -118,7 +119,7 @@ void NPCComponent::MoveControl()
 	velocityDirectionXZ.y = 0;
 
 	//if (velocityDirectionXZ != Vector3::Zero)
-	if ((CameraManager::main->GetActiveCamera()->GetCameraPos() - GetOwner()->_transform->GetWorldPosition()).Length() <= 5)
+	//if ((CameraManager::main->GetActiveCamera()->GetCameraPos() - GetOwner()->_transform->GetWorldPosition()).Length() <= 50)
 	{
 		for (auto boundingData : playerColliderDatas)
 		{
@@ -156,7 +157,7 @@ void NPCComponent::MoveControl()
 
 
 
-	float gitMargin = 0.15f;//오차 범위
+	float gitMargin = 0.25f;//오차 범위
 	float upDistance = 1.0f;
 	Vector3 upRayOffset = nextPos + Vector3::Up * upDistance;
 
@@ -297,6 +298,9 @@ Vector3 NPCComponent::AdvanceAlongPath(const std::vector<Vector3>& path, const V
 	return path.back(); // 안전 장치
 }
 
+
+// -------- FSM --------
+
 void NPCFSMGroup::AnyUpdate()
 {
 	StatePatternGroup::AnyUpdate();
@@ -321,6 +325,7 @@ void NPCFSMGroup::SetNPC(const std::shared_ptr<NPCComponent>& npc)
 			state2->SetNPC(npc);
 }
 
+// -------- Goto_Any --------
 
 void NPCGotoAny::Init()
 {
@@ -394,4 +399,33 @@ bool NPCGotoAny::TriggerUpdate()
 void NPCGotoAny::End(const std::shared_ptr<StatePattern>& nextState)
 {
 	StatePattern::End(nextState);
+}
+
+
+// -------- IDLE --------
+
+void NPCIdle::Init()
+{
+	NPCState::Init();
+}
+
+void NPCIdle::Update()
+{
+	NPCState::Update();
+}
+
+void NPCIdle::Begin(StateType type, const std::shared_ptr<StatePattern>& prevState)
+{
+	NPCState::Begin(type, prevState);
+	GetGroup()->ChangeState(StateType::goto_any);
+}
+
+bool NPCIdle::TriggerUpdate()
+{
+	return NPCState::TriggerUpdate();
+}
+
+void NPCIdle::End(const std::shared_ptr<StatePattern>& nextState)
+{
+	NPCState::End(nextState);
 }

@@ -252,7 +252,7 @@ void PlayerController::MoveControl()
 
 	RayHit foundGround;
 	std::vector<RayHit> hitList;
-	if (auto isHit = ColliderManager::main->RayCastAll({ upRayOffset, Vector3::Down }, upDistance + gitMargin, hitList))
+	if (auto isHit = ColliderManager::main->RayCastAllForMyCell({ upRayOffset, Vector3::Down }, upDistance + gitMargin, hitList, GetOwner()))
 	{
 		for (auto& hit : hitList)
 		{

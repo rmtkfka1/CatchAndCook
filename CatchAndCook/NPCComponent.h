@@ -42,6 +42,16 @@ public:
 	void End(const std::shared_ptr<StatePattern>& nextState) override;
 };
 
+class NPCIdle : public NPCState
+{
+public:
+	void Init() override;
+	void Update() override;
+	void Begin(StateType type, const std::shared_ptr<StatePattern>& prevState) override;
+	bool TriggerUpdate() override;
+	void End(const std::shared_ptr<StatePattern>& nextState) override;
+};
+
 
 
 class NPCComponent : public Component

@@ -25,6 +25,7 @@ vector<vec3> ColliderManager::GetOccupiedCells(const shared_ptr<Collider>& colli
 	vec3 maxCell = GetGridCell(max);
 
 	vector<vec3> occupiedCells;
+	occupiedCells.reserve(16);
 
 	for (int x = static_cast<int>(minCell.x); x <= static_cast<int>(maxCell.x); ++x)
 	{
@@ -207,6 +208,7 @@ void ColliderManager::RemoveCollider(const std::shared_ptr<Collider>& collider)
 std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialCollisions(std::shared_ptr<Collider>& collider) 
 {
 	std::unordered_set<std::shared_ptr<Collider>> potentialCollisions;
+	potentialCollisions.reserve(32);
 
 	vector<vec3> occupiedCells;
 
@@ -250,6 +252,7 @@ std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialColli
 std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialCollisionsDirect(const vector<vec3>& vec)
 {
 	std::unordered_set<std::shared_ptr<Collider>> potentialCollisions;
+	potentialCollisions.reserve(32);
 	const auto& occupiedCells = vec;
 
 	for (const auto& cell : occupiedCells)

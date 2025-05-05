@@ -43,8 +43,9 @@ void StatePatternGroup::ChangeState(StateType type)
 		currentPattern->End(nextState);
 		if (nextState)
 		{
-			nextState->Begin(type, currentPattern);
+			auto prev = currentPattern;
 			currentPattern = nextState;
+			nextState->Begin(type, prev);
 		}
 	}
 	else
@@ -52,8 +53,9 @@ void StatePatternGroup::ChangeState(StateType type)
 		auto nextState = statePatterns[type];
 		if (nextState)
 		{
-			nextState->Begin(type, currentPattern);
+			auto prev = currentPattern;
 			currentPattern = nextState;
+			nextState->Begin(type, prev);
 		}
 	}
 }

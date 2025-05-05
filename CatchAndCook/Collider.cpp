@@ -449,6 +449,7 @@ pair<vec3, vec3> Collider::GetMinMax()
 {
 	if (_type == CollisionType::Box)
 	{
+		/*
 		Matrix rotMatrix = Matrix::CreateFromQuaternion(_bound.box.Orientation);
 		vec3 center = _bound.box.Center;
 		vec3 extents = _bound.box.Extents;
@@ -490,11 +491,33 @@ pair<vec3, vec3> Collider::GetMinMax()
 
 
 		return std::make_pair(worldMin, worldMax);
+		*/
+		auto rot = Matrix::CreateFromQuaternion(_bound.box.Orientation);
+		vec3 center = _bound.box.Center;
+		vec3 extent = _bound.box.Extents;
+
+		// 2) 행렬 원소의 절댓값을 이용해 새 extents 계산
+		vec3 abs0 = vec3(fabs(rot.m[0][0]), fabs(rot.m[0][1]), fabs(rot.m[0][2]));
+		vec3 abs1 = vec3(fabs(rot.m[1][0]), fabs(rot.m[1][1]), fabs(rot.m[1][2]));
+		vec3 abs2 = vec3(fabs(rot.m[2][0]), fabs(rot.m[2][1]), fabs(rot.m[2][2]));
+
+		vec3 newExtents;
+		newExtents.x = abs0.x * extent.x + abs1.x * extent.y + abs2.x * extent.z;
+		newExtents.y = abs0.y * extent.x + abs1.y * extent.y + abs2.y * extent.z;
+		newExtents.z = abs0.z * extent.x + abs1.z * extent.y + abs2.z * extent.z;
+
+		// 3) AABB 구성
+		vec3 worldMin = center - newExtents;
+		vec3 worldMax = center + newExtents;
+		return { worldMin, worldMax };
 	}
 
 	else if (_type == CollisionType::Sphere)
 	{
-		return std::make_pair(_bound.sphere.Center - vec3(_bound.sphere.Radius), _bound.sphere.Center + vec3(_bound.sphere.Radius));
+		//return std::make_pair(_bound.sphere.Center - vec3(_bound.sphere.Radius), _bound.sphere.Center + vec3(_bound.sphere.Radius));
+		vec3 c = _bound.sphere.Center;
+		vec3 r = vec3(_bound.sphere.Radius);
+		return { c - r, c + r };
 	}
 
 	else if (_type == CollisionType::Frustum)

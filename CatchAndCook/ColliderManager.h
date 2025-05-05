@@ -70,6 +70,7 @@ public:
 
 public:
 	float _cellSize = 100.0f;
+	void SetCellSize(float cellSize) { _cellSize = cellSize; }
 
 	vec3 GetGridCell(const vec3& position) const;
 	vector<vec3> GetOccupiedCells(const shared_ptr<Collider>& collider) const;
