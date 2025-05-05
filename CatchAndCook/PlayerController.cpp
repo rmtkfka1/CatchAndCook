@@ -252,7 +252,8 @@ void PlayerController::MoveControl()
 
 	RayHit foundGround;
 	std::vector<RayHit> hitList;
-	if (auto isHit = ColliderManager::main->RayCastAllForMyCell({ upRayOffset, Vector3::Down }, upDistance + gitMargin, hitList, GetOwner()))
+	if (auto isHit = ColliderManager::main->RayCastAllForMyCellDirect({ upRayOffset, Vector3::Down }, upDistance + gitMargin, hitList, 
+		BoundingData{CollisionType::Box, BoundingUnion(BoundingOrientedBox(GetOwner()->_transform->GetWorldPosition(), Vector3(2,2,2), Quaternion::Identity))}))
 	{
 		for (auto& hit : hitList)
 		{

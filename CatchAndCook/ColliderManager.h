@@ -66,6 +66,7 @@ public:
 	RayHit RayCastForMyCell(const Ray& ray, const float& dis, shared_ptr<GameObject>& owner);
 	bool RayCastAll(const Ray& ray, const float& dis, std::vector<RayHit>& hitList) const;
 	bool RayCastAllForMyCell(const Ray& ray, const float& dis, std::vector<RayHit>& hitList, const shared_ptr<GameObject>& owner);
+	bool RayCastAllForMyCellDirect(const Ray& ray, const float& dis, std::vector<RayHit>& hitList, BoundingData data);
 	static bool RayCastAll(const std::vector<std::shared_ptr<Collider>>& colliders, const Ray& ray, const float& dis, std::vector<RayHit>& hitList);
 
 public:

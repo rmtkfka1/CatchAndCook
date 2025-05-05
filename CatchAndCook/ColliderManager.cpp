@@ -627,6 +627,45 @@ bool ColliderManager::RayCastAllForMyCell(const Ray& ray, const float& dis, std:
 	return hitFound;
 }
 
+bool ColliderManager::RayCastAllForMyCellDirect(const Ray& ray, const float& dis, std::vector<RayHit>& hitList,
+	BoundingData data)
+{
+	auto cells = GetOccupiedCellsDirect(data.type, data.bound);
+	std::unordered_set<std::shared_ptr<Collider>> potencialColliders = GetPotentialCollisionsDirect(cells);
+
+	RayHit closestHit;
+	closestHit.distance = dis;
+	bool hitFound = false;
+
+	for (const auto& collider : potencialColliders)
+	{
+		RayHit currentHit;
+		currentHit.distance = dis;  // 최대 거리로 초기화
+		if (collider->RayCast(ray, dis, currentHit))
+		{
+			hitList.push_back(currentHit);
+			hitFound = true;
+		}
+	}
+
+	for (auto& terrain : TerrainManager::main->_terrains)
+	{
+		RayHit currentHit;
+		if (terrain->RayCast(ray, dis, currentHit))
+		{
+			hitList.push_back(currentHit);
+			hitFound = true;
+		}
+	}
+	std::ranges::sort(hitList, [&](const RayHit& hit, const RayHit& hit2)
+		{
+			return hit.distance < hit2.distance;
+		});
+
+
+	return hitFound;
+}
+
 bool ColliderManager::RayCastAll(const std::vector<std::shared_ptr<Collider>>& colliders, const Ray& ray,
                                  const float& dis, std::vector<RayHit>& hitList)
 {
