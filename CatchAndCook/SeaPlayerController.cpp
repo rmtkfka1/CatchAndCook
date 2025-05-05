@@ -52,7 +52,7 @@ void SeaPlayerController::Start()
 		cout << animation.first << endl;
 	}
 
-    _weapons->AddWeapon(L"hook", L"hookgun");
+    _weapons->AddWeapon(L"hookgun", L"hook");
 }
 
 void SeaPlayerController::Update()
@@ -153,7 +153,7 @@ void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float 
         inputDir += vec3::Right;
     }
 
-    if (Input::main->GetKeyDown(KeyCode::Q))
+    if (Input::main->GetKey(KeyCode::Q))
     {
         _weapons->Shooting();
     }

@@ -62,17 +62,15 @@ void CableComponent::ChangeWeapon(const string& name)
 
 void CableComponent::Shooting()
 {
-	cout << "호출1" << endl;
-	/*auto it = _hooks.find(L"hook");*/
-	auto it = SceneManager::main->GetCurrentScene()->Find(L"hook");
+	if (_currentHook)
+	{
+		wcout << _currentHook->GetName() << endl;
 
-	wcout << it->GetName() << endl;
+		vec3 forward = _currentHook->_transform->GetForward();
+		vec3 worldPos = _currentHook->_transform->GetWorldPosition();
+		_currentHook->_transform->SetWorldPosition(worldPos + forward * 30.0f * Time::main->GetDeltaTime());
 
-	//vec3 forward = it->_transform->GetForward();
-	//vec3 currentPos = it->_transform->GetWorldPosition();
-	//it->_transform->SetWorldPosition(
-	//	currentPos + 30.0f * forward * Time::main->GetDeltaTime()
-	//);
+	}
 	
 }
 
@@ -85,10 +83,11 @@ void CableComponent::AddWeapon(const wstring& bodyName, const wstring& hookName)
 	{
 		wcout << body->GetName() << "찾음" << endl;
 
-	
-		_bodys[bodyName] = body;
-		
-
+		if (_bodys.find(bodyName) == _bodys.end())
+		{
+			_bodys[bodyName] = body;
+			_currentBody = body;
+		}
 	}
 
 	auto hook = SceneManager::main->GetCurrentScene()->Find(hookName);
@@ -96,8 +95,14 @@ void CableComponent::AddWeapon(const wstring& bodyName, const wstring& hookName)
 	if (hook)
 	{
 		wcout << hook->GetName() << "찾음" << endl;
-		_hooks[hookName] = hook;
+		if (_hooks.find(bodyName) == _hooks.end())
+		{
+			_hooks[hookName] = hook;
+			_currentHook = hook;
+		}
 		
 	}
+
+
 
 }

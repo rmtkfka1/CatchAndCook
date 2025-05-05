@@ -104,6 +104,7 @@ void Animation::Init(std::shared_ptr<Model> model, aiAnimation* anim, aiNode* ro
 		if (model->_rootBoneNode != nullptr)
 		{
 			_rootBoneNode = _nodeTables[_model.lock()->_rootBoneNode->GetOriginalName()];
+
 			_rootBoneNode->SetRoot(true);
 		}
 }

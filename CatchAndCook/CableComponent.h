@@ -27,6 +27,8 @@ public:
 
 
 private:
+	shared_ptr<GameObject> _currentBody;
+	shared_ptr<GameObject> _currentHook;
 
 
 private:
