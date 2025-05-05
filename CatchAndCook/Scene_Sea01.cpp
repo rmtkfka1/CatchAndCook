@@ -234,9 +234,9 @@ void Scene_Sea01::Rendering()
 	auto& cmdList = Core::main->GetCmdList();
 	Core::main->GetRenderTarget()->ClearDepth();
 
-	//Profiler::Set("PASS : Shadow", BlockTag::CPU);
-	//ShadowPass(cmdList);
-	//Profiler::Fin();
+	Profiler::Set("PASS : Shadow", BlockTag::CPU);
+	ShadowPass(cmdList);
+	Profiler::Fin();
 
 	Profiler::Set("PASS : Deferred", BlockTag::CPU);
 	DeferredPass(cmdList);
@@ -331,7 +331,7 @@ void Scene_Sea01::ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& 
 						}
 					}
 
-					SettingPrevData(renderStructure, RENDER_PASS::PASS::Shadow);
+		/*			SettingPrevData(renderStructure, RENDER_PASS::PASS::Shadow);*/
 
 					if (renderStructure.renderer->isInstancing() == false)
 					{

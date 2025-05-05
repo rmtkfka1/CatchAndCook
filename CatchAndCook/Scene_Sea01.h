@@ -11,8 +11,6 @@ public:
 	void RenderEnd() override;
 	void Finish() override;
 
-
-
 	virtual void ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
 	virtual void UiPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
 	virtual void TransparentPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
