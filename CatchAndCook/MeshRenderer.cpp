@@ -247,6 +247,13 @@ std::vector<std::shared_ptr<Material>>& MeshRenderer::GetMaterials()
 	return _uniqueMaterials;
 }
 
+std::shared_ptr<Material> MeshRenderer::GetMaterial(int index)
+{
+	if (index >= _uniqueMaterials.size())
+		return nullptr;
+	return _uniqueMaterials[index];
+}
+
 void MeshRenderer::SetSharedMaterials(const std::vector<std::shared_ptr<Material>>& _materials)
 {
 	this->_sharedMaterials = _materials;
@@ -275,6 +282,7 @@ void MeshRenderer::SetSpecialMaterials()
 			else
 				depthNormalMaterial->SetShader(ResourceManager::main->_depthNormal->GetShader());
 			depthNormalMaterial->SetPass(RENDER_PASS::Deferred);
+			depthNormalMaterial->_instanceID = currentMaterial->GetID() + 2000000;
 			_depthNormalMaterials.push_back(make_pair(i, depthNormalMaterial));
 		}
 
@@ -282,9 +290,16 @@ void MeshRenderer::SetSpecialMaterials()
 		if ((RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward)
 			|| RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Deferred)) && currentMaterial->GetShadowCasting())
 		{
-			auto shadowMaterial =((HasInstanceBuffer() ? ResourceManager::main->_shadowCaster_Instanced : ResourceManager::main->_shadowCaster));
-			shadowMaterial = shadowMaterial->Clone();
-			currentMaterial->CopyProperties(shadowMaterial);
+
+			auto shadowMaterial = ((HasInstanceBuffer() ? ResourceManager::main->_shadowCaster_Early_Instanced : ResourceManager::main->_shadowCaster_Early));
+			auto mainTexture = currentMaterial->GetPropertyTexture("_BaseMap");
+			if (mainTexture != nullptr && mainTexture->_isAlpha)
+			{
+				shadowMaterial = ((HasInstanceBuffer() ? ResourceManager::main->_shadowCaster_Instanced : ResourceManager::main->_shadowCaster));
+				shadowMaterial = shadowMaterial->Clone();
+				currentMaterial->CopyProperties(shadowMaterial);
+				shadowMaterial->_instanceID = currentMaterial->GetID() + 1000000;
+			}
 			_shadowMaterials.push_back(make_pair(i, shadowMaterial));
 		}
 	}

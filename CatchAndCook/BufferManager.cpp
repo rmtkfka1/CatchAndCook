@@ -68,7 +68,7 @@ void BufferManager::Init()
 	for(int i=0; i < MAX_FRAME_COUNT; ++i)
 	{
 		CreateInstanceBufferPool(i, BufferType::TransformInstanceParam, sizeof(Instance_Transform), 10000, 128);
-		CreateInstanceBufferPool(i, BufferType::GizmoInstanceParam, sizeof(Instance_Gizmo), 100000, 1);
+		CreateInstanceBufferPool(i, BufferType::GizmoInstanceParam, sizeof(Instance_Gizmo), 250000, 1);
 	}
 	
 

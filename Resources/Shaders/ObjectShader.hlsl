@@ -57,9 +57,9 @@ struct VS_OUT
 
 Texture2D _BaseMap : register(t0);
 Texture2D _BumpMap : register(t1);
-Texture2D _RampShadowMap : register(t2);
 
 Texture2D _BakedGIMap : register(t8);
+Texture2D _BakedGIMap2 : register(t9);
 
 VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 {
@@ -118,6 +118,8 @@ float4 PS_Main(VS_OUT input) : SV_Target
     
     float4 BaseColor = _BaseMap.Sample(sampler_lerp, input.uv * _baseMapST.xy + _baseMapST.zw) * color;
     float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
+    float4 ShadowColor2 = _BakedGIMap2.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), N) * 0.5 + 0.5));
+    ShadowColor = lerp(ShadowColor, ShadowColor2, fmod(g_skyBlendTime, 1));
 
     float3 uvz[4];
     uvz[0] = input.shadowCoord0;

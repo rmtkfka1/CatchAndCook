@@ -25,31 +25,23 @@ void TestScene_jin::Init()
 
 
 	{
-		ShaderInfo info;
-		info._zTest = true;
-		info._zWrite = false;
-		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
-
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"cubemap", L"cubemap.hlsl", GeoMetryProp,
-			ShaderArg{}, info);
-
-		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"cubemap", L"Textures/cubemap/FS000_Day_05_Sunless.dds", TextureType::CubeMap);
+		shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Skybox");
 		shared_ptr<Material> material = make_shared<Material>();
-
-		shared_ptr<GameObject> gameObject = CreateGameObject(L"cubeMap");
+		shared_ptr<GameObject> gameObject = CreateGameObject(L"Skybox");
 
 		gameObject->_transform->SetLocalRotation(vec3(0, 90.0f, 0) * D2R);
-
-		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
-		meshRenderer->SetCulling(false);
 
 		material = make_shared<Material>();
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
-		material->SetTexture("g_tex_0", texture);
 		material->SetShadowCasting(false);
+		material->SetPreDepthNormal(false);
+		material->SetTexture("_BaseMap", ResourceManager::main->_cubemap_skyTexture);
+		material->SetTexture("_BaseMap_1", ResourceManager::main->_cubemap_skyNTexture);
 
+		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+		meshRenderer->SetCulling(false);
+		meshRenderer->SetInstancing(false);
 		meshRenderer->AddMaterials({ material });
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
 	}
@@ -78,7 +70,7 @@ void TestScene_jin::Init()
 		material = make_shared<Material>();
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
-		material->SetTexture("_cubeMap", ResourceManager::main->Get<Texture>(L"cubemap"));
+		material->SetTexture("_cubeMap", ResourceManager::main->_cubemap_skyTexture);
 		material->SetUseMaterialParams(true);
 		material->SetShadowCasting(false);
 		meshRenderer->AddMaterials({ material });
@@ -91,7 +83,7 @@ void TestScene_jin::Init()
 	};
 
 	
-
+	ColliderManager::main->SetCellSize(5);
 	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/MainField2.json");
 	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
 	sceneLoader->Load(GetCast<Scene>());
@@ -101,22 +93,6 @@ void TestScene_jin::Init()
 void TestScene_jin::Update()
 {
 	Scene::Update();
-	//Gizmo::Text(L"1234sadfsdjkaflhsaldkfasdfasdfsadfsdafasdf",10,vec3(1,1,1),vec3(0,0,-1),vec3(0,1,0));
-	//Gizmo::Text(L"안녕하세요",30,vec3(3,1,1),vec3(-0.707,0,-0.707),vec3(0,1,0));
-	//Gizmo::Image(ResourceManager::main->Get<Texture>(L"none"), vec3(-2,0,2),vec3(0,0,-1),vec3(0,1,0));
-	//Gizmo::Image(ResourceManager::main->Get<Texture>(L"none_debug"),vec3(-1,0,2),vec3(0.707,0,-0.707),vec3(0,1,0));
-
-
-	//auto camera = CameraManager::main->GetActiveCamera();
-	//Vector3 worldPos = camera->GetScreenToWorldPosition(Input::main->GetMousePosition());
-	//Vector3 worldDir = (worldPos - camera->GetCameraPos());
-	//worldDir.Normalize();
-	//float dis = 1000;
-	//auto a = ColliderManager::main->RayCast({worldPos,worldDir}, dis);
-	//if(a)
-	//{
-	//	Gizmo::Ray(a.worldPos, a.normal, 1);
-	//}
 }
 
 void TestScene_jin::RenderBegin()

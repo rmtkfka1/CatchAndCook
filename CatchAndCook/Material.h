@@ -50,9 +50,13 @@ public:
 
 public:
 	void AllocTextureTable();
+	void AllocTextureLongTable();
 	void PushData();
 	void SetData();
 	void PushHandle();
+	void PushLongHandle();
+	bool CheckHandle();
+	bool CheckLongHandle();
 	void SetUseMaterialParams(bool use) { _useMaterialParams = use; }
 
 	void SetInjector(const std::vector<std::shared_ptr<ICBufferInjector>>& injectors) { _customInjectors = injectors; }
@@ -79,11 +83,14 @@ public:
 	bool HasPropertyVector(const std::string& name);
 	bool HasPropertyMatrix(const std::string& name);
 
+	static void AllocDefualtTextureHandle();
+
 	std::shared_ptr<Material> Clone();
 	void CopyProperties(std::shared_ptr<Material>& dest);
 
 	TableContainer _tableContainer;
 	TableContainer _tableLongContainer;
+	static TableContainer _defualtTableContainer;
 
 	uint32 GetID() {
 		return _instanceID;
@@ -91,6 +98,8 @@ public:
 
 public:
 	MaterialParams _params; // 추가 정보함수 넘겨서 데이터 넣는 셋 작업
+
+	uint32 _instanceID = 0;
 private:
 	shared_ptr<Shader> _shader;
 
@@ -110,14 +119,11 @@ private:
 
 	bool _setDataOff = false;
 
-	uint32 _instanceID=0;
 	static uint32 _instanceIDGenator;
 
 	std::vector<std::shared_ptr<ICBufferInjector>> _customInjectors;
 	std::vector<std::shared_ptr<ICBufferInjector>> _shaderInjectors;
 };
-
-
 
 //
 //class TestSubMaterialParamInjector : public ICBufferInjector

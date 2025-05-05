@@ -36,7 +36,8 @@ struct VS_IN
 struct VS_OUT
 {
     float4 position : SV_Position;
-    float4 positionCS : PositionCS;
+    float4 positionVS : PositionVS;
+	float4 positionCS : PositionCS;
     float4 positionWS : PositionWS;
     float3 normalOS : NormalOS;
     float3 normalWS : NormalWS;
@@ -117,7 +118,7 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     output.color = BaseColor;
     output.normal = float4(N, 1.0f);
 
-    if (output.color.a <= 0.1f)
+    if (output.color.a <= 0.1f || Dither(input.position.xyz, input.positionVS.xyz))
         discard;
     
     return output;

@@ -7,6 +7,7 @@
 #include "Shader.h"
 
 uint32 Material::_instanceIDGenator =0;
+TableContainer Material::_defualtTableContainer;
 
 Material::Material()
 {
@@ -29,22 +30,27 @@ void Material::SetTexture(std::string name, std::shared_ptr<Texture> texture)
 
 }
 
+void Material::AllocDefualtTextureHandle()
+{
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	_defualtTableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
+	for (int i=0;i< SRV_TABLE_REGISTER_COUNT;i++)
+		table->CopyHandle(_defualtTableContainer.CPUHandle, ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle(), i);
+}
+
 
 void Material::AllocTextureTable()
 {
 	_tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
 }
 
+void Material::AllocTextureLongTable()
+{
+	_tableLongContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_LONG_TABLE_REGISTER_COUNT);
+}
+
 void Material::PushData()
 {
-	////temp
-	//SetPropertyVector("uv", GetPropertyVector("uv") + vec4(0.01, 0, 0, 0));
-
-	if (_shader->_profileInfo.maxTRegister >= SRV_LONG_TABLE_REGISTER_OFFSET) {
-		_tableLongContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_LONG_TABLE_REGISTER_COUNT);
-	}
-
-	PushHandle();
 
 	if (_useMaterialParams)
 	{
@@ -63,15 +69,23 @@ void Material::SetData()
 	if (_setDataOff)
 		return;
 	//텍스쳐바인딩
-	AllocTextureTable();
 
-	PushData();
-
-	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, _tableContainer.GPUHandle);
-
-	if (_shader->_profileInfo.maxTRegister >= SRV_LONG_TABLE_REGISTER_OFFSET) {
+	if (CheckLongHandle())
+	{
+		AllocTextureLongTable();
+		PushLongHandle();
 		Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_LONG_TABLE_INDEX, _tableLongContainer.GPUHandle);
 	}
+	if (CheckHandle())
+	{
+		AllocTextureTable();
+		PushHandle();
+		Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, _tableContainer.GPUHandle);
+	}
+	else
+		Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_TABLE_INDEX, _defualtTableContainer.GPUHandle);
+
+	PushData();
 
 	//if (_useMaterialParams)
 	//	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(6, _cbufferContainer->GPUAdress);
@@ -101,9 +115,6 @@ void Material::PushHandle()
 				copyCheckList[index] = true;
 				table->CopyHandle(_tableContainer.CPUHandle, handle, index);
 			}
-			else if (index >= SRV_LONG_TABLE_REGISTER_OFFSET && (index < (SRV_LONG_TABLE_REGISTER_OFFSET + SRV_LONG_TABLE_REGISTER_COUNT))) {
-				table->CopyHandle(_tableLongContainer.CPUHandle, handle, index - SRV_LONG_TABLE_REGISTER_OFFSET);
-			}
 		}
 	}
 
@@ -113,6 +124,44 @@ void Material::PushHandle()
 			table->CopyHandle(_tableContainer.CPUHandle,
 				ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle(), tIndex);
 
+}
+
+void Material::PushLongHandle()
+{
+	auto& table = Core::main->GetBufferManager()->GetTable();
+
+	for (auto& [name, handle] : _propertyHandle)
+	{
+		int index = _shader->GetRegisterIndex(name);
+
+		if (index != -1)
+		{
+			if (index >= SRV_LONG_TABLE_REGISTER_OFFSET && (index < (SRV_LONG_TABLE_REGISTER_OFFSET + SRV_LONG_TABLE_REGISTER_COUNT))) {
+				table->CopyHandle(_tableLongContainer.CPUHandle, handle, index - SRV_LONG_TABLE_REGISTER_OFFSET);
+			}
+		}
+	}
+}
+
+bool Material::CheckHandle()
+{
+	bool tf = false;
+	for (auto& [name, handle] : _propertyHandle) {
+		int index = _shader->GetRegisterIndex(name);
+
+		if (index != -1) {
+			if (index < SRV_TABLE_REGISTER_COUNT) {
+				tf = true;
+				break;
+			}
+		}
+	}
+	return tf;
+}
+
+bool Material::CheckLongHandle()
+{
+	return _shader->_profileInfo.maxTRegister >= SRV_LONG_TABLE_REGISTER_OFFSET;
 }
 
 vec4 Material::GetPropertyVector(const std::string& name)

@@ -75,7 +75,7 @@ void PlayerController::CameraControl()
 	auto cameraTransform = camera.lock()->GetOwner()->_transform;
 	auto currentMousePosition = Input::main->GetMousePosition();
 
-	_targetOffset = GetOwner()->_transform->GetWorldPosition() + Vector3::Up * 1.1f;
+	_targetOffset = GetOwner()->_transform->GetWorldPosition() + Vector3::Up * 1.2f;
 
 	_currentOffset = Vector3::Lerp(_currentOffset, _targetOffset,
 		std::clamp((float)Time::main->GetDeltaTime() * controlInfo.cameraMoveSmooth
@@ -177,14 +177,19 @@ void PlayerController::MoveControl()
 	//}
 	Vector3 prevVelocity = velocity;
 	if (auto skinnedHierarchy = _skinnedHierarchy.lock())
-		velocity = skinnedHierarchy->GetDeltaPosition();
+		velocity = skinnedHierarchy->GetDeltaPosition() * GetOwner()->_transform->GetWorldScale().y;
 	velocity = Vector3(velocity.x, prevVelocity.y, velocity.z);
 
-	GetOwner()->_transform->SetWorldRotation(currentLookWorldRotation);
+	GetOwner()->_transform->LookUp(Vector3::Transform(Vector3::Forward, currentLookWorldRotation), Vector3::Up);
 
-	
 
-	std::vector<std::pair<CollisionType, BoundingUnion>> playerColliderDatas;
+
+
+
+	isGround = false;
+
+
+	std::vector<BoundingData> playerColliderDatas;
 	std::vector<std::shared_ptr<Collider>> playerColliders;
 
 	GetOwner()->GetComponentsWithChilds<Collider>(playerColliders);
@@ -192,7 +197,7 @@ void PlayerController::MoveControl()
 	for (auto& collider : playerColliders) {
 		if (playerGroupID == collider->GetGroupID()) {
 			collider->CalculateBounding();
-			playerColliderDatas.push_back(std::make_pair(collider->GetType(), collider->GetBoundUnion()));
+			playerColliderDatas.push_back(collider->GetBoundingData());
 		}
 	}
 
@@ -205,57 +210,50 @@ void PlayerController::MoveControl()
 
 	//if (velocityDirectionXZ != Vector3::Zero)
 	{
-		for (auto [type, bound] : playerColliderDatas)
+		for (auto boundingData : playerColliderDatas)
 		{
 			// 이동할 위치 미리 계산
-			Vector3 currentCenter;
+			Vector3 nextCenter;
 			float currentRadius;
-			if (type == CollisionType::Box)
-			{
-				currentCenter = bound.box.Center = bound.box.Center + velocityDirectionXZ;
-				currentRadius = Vector3(bound.box.Extents).Length();
-			}
-			if (type == CollisionType::Sphere)
-			{
-				currentCenter = bound.sphere.Center = bound.sphere.Center + velocityDirectionXZ;
-				currentRadius = bound.sphere.Radius;
-			}
+
+			currentRadius = boundingData.GetRadius();
+			nextCenter = boundingData.SetCenter(boundingData.GetCenter() + velocityDirectionXZ);
+
 
 			// 이동할 곳에서 충돌되는지 보기.
 			std::vector<std::shared_ptr<Collider>> otherColliders;
-			if (ColliderManager::main->CollisionChecksDirect(type, bound, otherColliders))
+			if (ColliderManager::main->CollisionChecksDirect(boundingData, otherColliders))
 			{
 				for (auto& otherCollider : otherColliders)
 				{
 					if (otherCollider->GetGroupID() != playerGroupID)
 					{
-						Vector3 otherColliderCenter = otherCollider->GetBoundCenter();
-						Vector3 rayDir = otherColliderCenter - currentCenter;
-						float rayDis = rayDir.Length();
-						rayDir.Normalize();
+						auto otherBoundingData = otherCollider->GetBoundingData();
+						Vector3 hitPosition = Collider::GetContactPoint(boundingData, otherBoundingData);
+						
+						auto pushDir = nextCenter - hitPosition;
+						auto pushNormal = pushDir;
+						pushNormal.Normalize();
 
-						RayHit hitOtherCollider;
-						if (otherCollider->RayCast({ currentCenter, rayDir }, rayDis, hitOtherCollider))
-							if (hitOtherCollider)
-								velocityDirectionXZ += hitOtherCollider.normal *
-								std::max(velocityDirectionXZ.Length(), static_cast<float>(4.0f * Time::main->GetDeltaTime()));
+						velocityDirectionXZ += pushNormal * std::max(currentRadius - pushDir.Length(), 0.0f);
 					}
 				}
 			}
 		}
 	}
-	float velocityDirectionY = velocity.y * Time::main->GetDeltaTime();
-	nextPos += Vector3(velocityDirectionXZ.x,  velocityDirectionY, velocityDirectionXZ.z); // velocityDirectionXZ.y + velocityDirectionY
+	float velocityDirectionY = velocity.y * Time::main->GetDeltaTime() * 60;
+	nextPos += Vector3(velocityDirectionXZ.x, velocityDirectionY, velocityDirectionXZ.z); // velocityDirectionXZ.y + velocityDirectionY
 
 
 
-	float gitMargin = 0.1f;//오차 범위
+	float gitMargin = 0.15f;//오차 범위
 	float upDistance = 1.0f;
 	Vector3 upRayOffset = nextPos + Vector3::Up * upDistance;
 
 	RayHit foundGround;
 	std::vector<RayHit> hitList;
-	if (auto isHit = ColliderManager::main->RayCastAll({ upRayOffset, Vector3::Down }, upDistance + gitMargin, hitList))
+	if (auto isHit = ColliderManager::main->RayCastAllForMyCellDirect({ upRayOffset, Vector3::Down }, upDistance + gitMargin, hitList, 
+		BoundingData{CollisionType::Box, BoundingUnion(BoundingOrientedBox(GetOwner()->_transform->GetWorldPosition(), Vector3(2,2,2), Quaternion::Identity))}))
 	{
 		for (auto& hit : hitList)
 		{
@@ -271,13 +269,16 @@ void PlayerController::MoveControl()
 	if (foundGround)
 	{
 		isGround = true;
-		velocity.y = 0;
 		nextPos.y = upRayOffset.y - foundGround.distance; //upRayOffset.y -
+	}
+
+	if (isGround)
+	{
+		velocity.y = 0;
 	}
 	else
 	{
-		isGround = false;
-		velocity.y -= 0.981;
+		velocity.y -= 9.81 * 0.5 * Time::main->GetDeltaTime();
 	}
 
 	// ------------- 공통 로직 ------------- 

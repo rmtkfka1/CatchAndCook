@@ -201,6 +201,7 @@
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="guid_utility.cpp" />
     <ClCompile Include="ImguiManager.cpp" />
+    <ClCompile Include="InGameGlobal.cpp" />
     <ClCompile Include="InitComponent.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="input_module.cpp" />
@@ -226,6 +227,7 @@
     <ClCompile Include="ModelNode.cpp" />
     <ClCompile Include="NavMesh.cpp" />
     <ClCompile Include="NavMeshManager.cpp" />
+    <ClCompile Include="NPCComponent.cpp" />
     <ClCompile Include="ObjectSettingComponent.cpp" />
     <ClCompile Include="PathFinder.cpp" />
     <ClCompile Include="PathStamp.cpp" />
@@ -261,6 +263,7 @@
     <ClCompile Include="SkinnedMeshRenderer.cpp" />
     <ClCompile Include="SpriteAction.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="StatePattern.cpp" />
     <ClCompile Include="StructuredBuffer.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainManager.cpp" />
@@ -334,6 +337,7 @@
     <ClInclude Include="Global.h" />
     <ClInclude Include="guid_utility.h" />
     <ClInclude Include="ImguiManager.h" />
+    <ClInclude Include="InGameGlobal.h" />
     <ClInclude Include="InitComponent.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="input_module.h" />
@@ -353,6 +357,7 @@
     <ClInclude Include="ModelNode.h" />
     <ClInclude Include="NavMesh.h" />
     <ClInclude Include="NavMeshManager.h" />
+    <ClInclude Include="NPCComponent.h" />
     <ClInclude Include="ObjectSettingComponent.h" />
     <ClInclude Include="PathFinder.h" />
     <ClInclude Include="PathStamp.h" />
@@ -381,6 +386,7 @@
     <ClInclude Include="SkinnedMeshRenderer.h" />
     <ClInclude Include="SpriteAction.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="StatePattern.h" />
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="strutil.h" />
     <ClInclude Include="Terrain.h" />
@@ -585,6 +591,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\ShadowCaster_Early.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\ShadowCaster_Terrain.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -602,6 +612,10 @@
     <FxCompile Include="..\Resources\Shaders\Skinned_t32.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Skybox_Field.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>

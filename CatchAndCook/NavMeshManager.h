@@ -88,16 +88,14 @@ public:
 
 	std::vector<NavMeshData>& GetNavMeshData();
 	void SetNavMeshData(const std::vector<NavMeshData>& data);
-
+	void SetTriangles(const std::vector<int>& tris);
 
 
 	static float Area2_3D(const Vector3& A, const Vector3& B, const Vector3& C) {
 		return (B.x - A.x) * (C.z - A.z) - (B.z - A.z) * (C.x - A.x);
 	}
 
-	static bool PointInTriangle3D(
-		const Vector3& P,
-		const Vector3& A, const Vector3& B, const Vector3& C)
+	static bool PointInTriangle3D( const Vector3& P, const Vector3& A, const Vector3& B, const Vector3& C)
 	{
 		float w1 = Area2_3D(P, A, B), w2 = Area2_3D(P, B, C), w3 = Area2_3D(P, C, A);
 		return (w1 >= 0 && w2 >= 0 && w3 >= 0)
@@ -117,6 +115,36 @@ public:
 		return fabs(a.x - b.x) < eps
 			&& fabs(a.y - b.y) < eps
 			&& fabs(a.z - b.z) < eps;
+	}
+
+	static Vector3 Interpolate(const Vector3& P, const Vector3& A, const Vector3& B, const Vector3& C)
+	{
+
+		// 1) XZ 평면에서의 벡터
+		Vector3 v0 = B - A;
+		Vector3 v1 = C - A;
+		Vector3 v2 = P - A;
+
+		// 2) 내적 계산
+		float d00 = v0.Dot(v0);
+		float d01 = v0.Dot(v1);
+		float d11 = v1.Dot(v1);
+		float d20 = v2.Dot(v0);
+		float d21 = v2.Dot(v1);
+
+		// 3) 바리센트릭 좌표 (v, w) 구하기
+		float denom = d00 * d11 - d01 * d01;
+		float v = (d11 * d20 - d01 * d21) / denom;
+		float w = (d00 * d21 - d01 * d20) / denom;
+		float u = 1.0f - v - w;
+
+		// 4) y 값 보간
+		float yInterp = u * A.y
+			+ v * B.y
+			+ w * C.y;
+
+		// P 의 높이를 보간된 y 로 설정
+		return Vector3(u * A.x + v * B.x + w * C.x, u * A.y + v * B.y + w * C.y, u * A.z + v * B.z + w * C.z);
 	}
 
 	static std::vector<Vector3> StringPull(
@@ -176,15 +204,15 @@ public:
 	}
 
 
-	std::vector<Vector3> NavMeshManager::CalculatePath_Funnel(
-		const Vector3& startPos,
-		const Vector3& endPos,
-		const std::vector<NavMeshData>& datas,
-		const std::vector<int>& _tris);
+	std::vector<Vector3> NavMeshManager::CalculatePath(const Vector3& startPos, const Vector3& endPos) const;
 
 
 	std::vector<NavMeshData> _datas;
-
+	std::vector<array<int, 3>> _triangles;
+	std::vector<int> _triangleIndexDatas;
+	std::unordered_map<IndexEdge, std::vector<int>, IndexEdgeHash> _edgeToTriangles;
+	std::vector<std::vector<int>> _triangleAdjects;
+	
 
 	bool _gizmoDebug = true;
 };

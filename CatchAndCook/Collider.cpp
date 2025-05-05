@@ -7,6 +7,56 @@
 #include "simple_mesh_ext.h"
 #include "Transform.h"
 
+
+BoundingData::BoundingData() : bound(BoundingOrientedBox{})
+{
+
+}
+
+BoundingData::BoundingData(const CollisionType& type, const BoundingUnion& bounding) : type(type), bound(bounding)
+{
+
+}
+
+BoundingData::~BoundingData()
+{
+	if (type == CollisionType::Box)
+		bound.box.~BoundingOrientedBox();
+	if (type == CollisionType::Frustum)
+		bound.frustum.~BoundingFrustum();
+	if (type == CollisionType::Sphere)
+		bound.sphere.~BoundingSphere();
+}
+
+Vector3 BoundingData::GetCenter()
+{
+	Vector3 center;
+	if (type == CollisionType::Box)
+		center = bound.box.Center;
+	if (type == CollisionType::Sphere)
+		center = bound.sphere.Center;
+	return center;
+}
+
+float BoundingData::GetRadius()
+{
+	float radius = 0;
+	if (type == CollisionType::Box)
+		radius = Vector3(bound.box.Extents).Length();
+	if (type == CollisionType::Sphere)
+		radius = bound.sphere.Radius;
+	return radius;
+}
+
+Vector3 BoundingData::SetCenter(const Vector3& center)
+{
+	if (type == CollisionType::Box)
+		bound.box.Center = center;
+	if (type == CollisionType::Sphere)
+		bound.sphere.Center = center;
+	return center;
+}
+
 Collider::Collider() : _orgin(BoundingOrientedBox()), _bound(BoundingOrientedBox())
 {
 
@@ -257,6 +307,11 @@ bool Collider::CheckCollision(const CollisionType& type, const BoundingUnion& bo
 	return false;
 }
 
+bool Collider::CheckCollision(const BoundingData& bound)
+{
+	return CheckCollision(bound.type, bound.bound);
+}
+
 bool Collider::RayCast(const Ray& ray, const float& dis, RayHit& hit)
 {
 	hit.distance = dis;
@@ -394,6 +449,7 @@ pair<vec3, vec3> Collider::GetMinMax()
 {
 	if (_type == CollisionType::Box)
 	{
+		/*
 		Matrix rotMatrix = Matrix::CreateFromQuaternion(_bound.box.Orientation);
 		vec3 center = _bound.box.Center;
 		vec3 extents = _bound.box.Extents;
@@ -435,11 +491,33 @@ pair<vec3, vec3> Collider::GetMinMax()
 
 
 		return std::make_pair(worldMin, worldMax);
+		*/
+		auto rot = Matrix::CreateFromQuaternion(_bound.box.Orientation);
+		vec3 center = _bound.box.Center;
+		vec3 extent = _bound.box.Extents;
+
+		// 2) 행렬 원소의 절댓값을 이용해 새 extents 계산
+		vec3 abs0 = vec3(fabs(rot.m[0][0]), fabs(rot.m[0][1]), fabs(rot.m[0][2]));
+		vec3 abs1 = vec3(fabs(rot.m[1][0]), fabs(rot.m[1][1]), fabs(rot.m[1][2]));
+		vec3 abs2 = vec3(fabs(rot.m[2][0]), fabs(rot.m[2][1]), fabs(rot.m[2][2]));
+
+		vec3 newExtents;
+		newExtents.x = abs0.x * extent.x + abs1.x * extent.y + abs2.x * extent.z;
+		newExtents.y = abs0.y * extent.x + abs1.y * extent.y + abs2.y * extent.z;
+		newExtents.z = abs0.z * extent.x + abs1.z * extent.y + abs2.z * extent.z;
+
+		// 3) AABB 구성
+		vec3 worldMin = center - newExtents;
+		vec3 worldMax = center + newExtents;
+		return { worldMin, worldMax };
 	}
 
 	else if (_type == CollisionType::Sphere)
 	{
-		return std::make_pair(_bound.sphere.Center - vec3(_bound.sphere.Radius), _bound.sphere.Center + vec3(_bound.sphere.Radius));
+		//return std::make_pair(_bound.sphere.Center - vec3(_bound.sphere.Radius), _bound.sphere.Center + vec3(_bound.sphere.Radius));
+		vec3 c = _bound.sphere.Center;
+		vec3 r = vec3(_bound.sphere.Radius);
+		return { c - r, c + r };
 	}
 
 	else if (_type == CollisionType::Frustum)
@@ -461,4 +539,66 @@ Vector3 Collider::GetBoundCenter()
 		return _bound.sphere.Center;
 	}
 	return Vector3::Zero;
+}
+
+Vector3 Collider::GetContactPoint(const BoundingData& data1, const BoundingData& data2)
+{
+	Vector3 hitPosition;
+	if (data1.type == CollisionType::Sphere && data2.type == CollisionType::Box)
+		hitPosition = Collider::GetContactPoint(data2.bound.box, data1.bound.sphere);
+	if (data1.type == CollisionType::Sphere && data2.type == CollisionType::Sphere)
+		hitPosition = Collider::GetContactPoint(data2.bound.sphere, data1.bound.sphere);
+	if (data1.type == CollisionType::Box && data2.type == CollisionType::Box)
+		hitPosition = Collider::GetContactPoint(data2.bound.box, data1.bound.box);
+	if (data1.type == CollisionType::Box && data2.type == CollisionType::Sphere)
+		hitPosition = Collider::GetContactPoint(data1.bound.box, data2.bound.sphere);
+	return hitPosition;
+}
+
+Vector3 Collider::GetContactPoint(const BoundingOrientedBox& obb, const BoundingSphere& sphere)
+{
+	// 1) 구 중심을 OBB 로컬 공간으로 변환
+	Quaternion q = obb.Orientation;
+	Quaternion invQ;
+	q.Conjugate(invQ);
+	Vector3   delta = sphere.Center - obb.Center;
+	Vector3   local = Vector3::Transform(delta, invQ);
+
+	// 2) 로컬 축별로 Extents 범위 안에 클램프 → AABB 기준 최단 접점
+	Vector3 e = obb.Extents;
+	Vector3 clamped(
+		std::max(-e.x, std::min(local.x, e.x)),
+		std::max(-e.y, std::min(local.y, e.y)),
+		std::max(-e.z, std::min(local.z, e.z))
+	);
+
+	// 3) 클램프된 로컬 접점을 다시 월드 공간으로 복원
+	Vector3 worldPoint = obb.Center + Vector3::Transform(clamped, q);
+
+	return worldPoint;
+}
+
+Vector3 Collider::GetContactPoint(const BoundingSphere& a, const BoundingSphere& b)
+{
+	Vector3 delta = b.Center - a.Center;
+	float   dist = delta.Length();
+
+	// 중심이 완전히 겹쳐 있으면 a.Center 를 반환
+	if (dist < 1e-6f)
+		return a.Center;
+
+	// a 표면 상 가장 가까운 점
+	return a.Center + (delta / dist) * a.Radius;
+}
+
+Vector3 Collider::GetContactPoint(const BoundingOrientedBox& a, const BoundingOrientedBox& b)
+{
+
+
+	Vector3 ptA = GetContactPoint(a, BoundingSphere(b.Center, 0.0f));
+	// 2) B의 표면에서 A의 중심에 가장 가까운 점
+	Vector3 ptB = GetContactPoint(b, BoundingSphere(a.Center, 0.0f));
+	// 3) 두 점의 중간을 접점으로 반환
+	return (ptA + ptB) * 0.5f;
+	
 }

@@ -138,6 +138,8 @@ namespace fs = std::filesystem;
 #include "SpriteAction.h"
 #include "Vertex.h"
 
+#include "InGameGlobal.h"
+
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "Imgui/imgui.h"
@@ -148,6 +150,9 @@ namespace fs = std::filesystem;
 #include "IComponentFactory.h"
 #define IMGUI_ON
 
+inline std::random_device _random;
+inline std::uniform_int_distribution _random_dist(0, std::numeric_limits<int>::max());
+inline std::uniform_real_distribution<float> _random_dist01(0, 1.0f);
 
 inline void ThrowIfFailed(HRESULT hr) {
     if (FAILED(hr)) {

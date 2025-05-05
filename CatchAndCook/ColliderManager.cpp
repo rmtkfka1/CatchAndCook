@@ -25,6 +25,7 @@ vector<vec3> ColliderManager::GetOccupiedCells(const shared_ptr<Collider>& colli
 	vec3 maxCell = GetGridCell(max);
 
 	vector<vec3> occupiedCells;
+	occupiedCells.reserve(16);
 
 	for (int x = static_cast<int>(minCell.x); x <= static_cast<int>(maxCell.x); ++x)
 	{
@@ -207,6 +208,7 @@ void ColliderManager::RemoveCollider(const std::shared_ptr<Collider>& collider)
 std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialCollisions(std::shared_ptr<Collider>& collider) 
 {
 	std::unordered_set<std::shared_ptr<Collider>> potentialCollisions;
+	potentialCollisions.reserve(32);
 
 	vector<vec3> occupiedCells;
 
@@ -250,6 +252,7 @@ std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialColli
 std::unordered_set<std::shared_ptr<Collider>> ColliderManager::GetPotentialCollisionsDirect(const vector<vec3>& vec)
 {
 	std::unordered_set<std::shared_ptr<Collider>> potentialCollisions;
+	potentialCollisions.reserve(32);
 	const auto& occupiedCells = vec;
 
 	for (const auto& cell : occupiedCells)
@@ -393,6 +396,21 @@ bool ColliderManager::CollisionChecksDirect(CollisionType type, BoundingUnion bo
 	return colliders.size() != 0;
 }
 
+bool ColliderManager::CollisionCheckDirect(const BoundingData& bound)
+{
+	return CollisionCheckDirect(bound.type, bound.bound);
+}
+
+bool ColliderManager::CollisionCheckDirect(const BoundingData& bound, std::shared_ptr<Collider>& collider)
+{
+	return CollisionCheckDirect(bound.type, bound.bound, collider);
+}
+
+bool ColliderManager::CollisionChecksDirect(const BoundingData& bound, std::vector<std::shared_ptr<Collider>>& colliders)
+{
+	return CollisionChecksDirect(bound.type, bound.bound, colliders);
+}
+
 //무언가와 충돌하고 있는지 체크
 bool ColliderManager::IsCollision(const std::shared_ptr<Collider>& src)
 {
@@ -503,8 +521,7 @@ RayHit ColliderManager::RayCast(const Ray& ray, const float& dis, shared_ptr<Gam
 RayHit ColliderManager::RayCastForMyCell(const Ray& ray, const float& dis, shared_ptr<GameObject>& owner) 
 {
 
-
-	shared_ptr<Collider> Mycollider = owner->GetComponent<Collider>();
+	shared_ptr<Collider> Mycollider = owner->GetComponentWithChilds<Collider>();
 
 	UpdateDynamicCells();
 
@@ -572,8 +589,85 @@ bool ColliderManager::RayCastAll(const Ray& ray, const float& dis, std::vector<R
 	return hitFound;
 }
 
+bool ColliderManager::RayCastAllForMyCell(const Ray& ray, const float& dis, std::vector<RayHit>& hitList, const shared_ptr<GameObject>& owner)
+{
+	shared_ptr<Collider> Mycollider = owner->GetComponentWithChilds<Collider>();
+	std::unordered_set<std::shared_ptr<Collider>> potencialColliders = GetPotentialCollisions(Mycollider);
+
+	RayHit closestHit;
+	closestHit.distance = dis;
+	bool hitFound = false;
+
+	for (const auto& collider : potencialColliders)
+	{
+		RayHit currentHit;
+		currentHit.distance = dis;  // 최대 거리로 초기화
+		if (collider->RayCast(ray, dis, currentHit))
+		{
+			hitList.push_back(currentHit);
+			hitFound = true;
+		}
+	}
+
+	for (auto& terrain : TerrainManager::main->_terrains)
+	{
+		RayHit currentHit;
+		if (terrain->RayCast(ray, dis, currentHit))
+		{
+			hitList.push_back(currentHit);
+			hitFound = true;
+		}
+	}
+	std::ranges::sort(hitList, [&](const RayHit& hit, const RayHit& hit2)
+		{
+			return hit.distance < hit2.distance;
+		});
+
+
+	return hitFound;
+}
+
+bool ColliderManager::RayCastAllForMyCellDirect(const Ray& ray, const float& dis, std::vector<RayHit>& hitList,
+	BoundingData data)
+{
+	auto cells = GetOccupiedCellsDirect(data.type, data.bound);
+	std::unordered_set<std::shared_ptr<Collider>> potencialColliders = GetPotentialCollisionsDirect(cells);
+
+	RayHit closestHit;
+	closestHit.distance = dis;
+	bool hitFound = false;
+
+	for (const auto& collider : potencialColliders)
+	{
+		RayHit currentHit;
+		currentHit.distance = dis;  // 최대 거리로 초기화
+		if (collider->RayCast(ray, dis, currentHit))
+		{
+			hitList.push_back(currentHit);
+			hitFound = true;
+		}
+	}
+
+	for (auto& terrain : TerrainManager::main->_terrains)
+	{
+		RayHit currentHit;
+		if (terrain->RayCast(ray, dis, currentHit))
+		{
+			hitList.push_back(currentHit);
+			hitFound = true;
+		}
+	}
+	std::ranges::sort(hitList, [&](const RayHit& hit, const RayHit& hit2)
+		{
+			return hit.distance < hit2.distance;
+		});
+
+
+	return hitFound;
+}
+
 bool ColliderManager::RayCastAll(const std::vector<std::shared_ptr<Collider>>& colliders, const Ray& ray,
-	const float& dis, std::vector<RayHit>& hitList)
+                                 const float& dis, std::vector<RayHit>& hitList)
 {
 	RayHit closestHit;
 	closestHit.distance = dis;

@@ -262,9 +262,6 @@
     <ClCompile Include="InstancingManager.cpp">
       <Filter>07.Manager</Filter>
     </ClCompile>
-    <ClCompile Include="TestScene_MapEditor.cpp">
-      <Filter>06.Scene</Filter>
-    </ClCompile>
     <ClCompile Include="ImguiManager.cpp">
       <Filter>07.Manager</Filter>
     </ClCompile>
@@ -369,6 +366,13 @@
     </ClCompile>
     <ClCompile Include="ShadowManager.cpp">
       <Filter>07.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="InGameGlobal.cpp" />
+    <ClCompile Include="NPCComponent.cpp">
+      <Filter>03.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="StatePattern.cpp">
+      <Filter>997.Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -580,9 +584,6 @@
     <ClInclude Include="InstancingManager.h">
       <Filter>07.Manager</Filter>
     </ClInclude>
-    <ClInclude Include="TestScene_MapEditor.h">
-      <Filter>06.Scene</Filter>
-    </ClInclude>
     <ClInclude Include="ImguiManager.h">
       <Filter>07.Manager</Filter>
     </ClInclude>
@@ -679,14 +680,25 @@
     <ClInclude Include="FishMonster.h">
       <Filter>03.Component</Filter>
     </ClInclude>
-    <ClInclude Include="EffectComponent.h" />
-    <ClInclude Include="ObjectSettingComponent.h" />
     <ClInclude Include="GameObjectSetting.h" />
     <ClInclude Include="SeaGrassComponent.h">
       <Filter>07.Manager</Filter>
     </ClInclude>
     <ClInclude Include="ShadowManager.h">
       <Filter>07.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectSettingComponent.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectComponent.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="InGameGlobal.h" />
+    <ClInclude Include="NPCComponent.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="StatePattern.h">
+      <Filter>997.Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -856,6 +868,12 @@
       <Filter>998.HLSL\Graphics\JIN</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\Skinned_t32.hlsl">
+      <Filter>998.HLSL\Graphics\JIN</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\ShadowCaster_Early.hlsl">
+      <Filter>998.HLSL\Graphics\JIN</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\Skybox_Field.hlsl">
       <Filter>998.HLSL\Graphics\JIN</Filter>
     </FxCompile>
   </ItemGroup>

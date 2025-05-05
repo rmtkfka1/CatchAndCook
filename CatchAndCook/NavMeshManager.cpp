@@ -57,65 +57,71 @@ void NavMeshManager::SetNavMeshData(const std::vector<NavMeshData>& data)
 	_datas = data;
 }
 
-
-std::vector<Vector3> NavMeshManager::CalculatePath_Funnel(const Vector3& startPos, const Vector3& endPos,
-                                                          const std::vector<NavMeshData>& datas,
-                                                          const std::vector<int>& _tris)
+void NavMeshManager::SetTriangles(const std::vector<int>& tris)
 {
-    // 1) 삼각형 배열 만들기
-    int triangleCount = _tris.size() / 3;
-    std::vector<std::array<int, 3>> tris(triangleCount);
-    for (int i = 0; i < triangleCount; ++i)
-        tris[i] = { _tris[3 * i + 0], _tris[3 * i + 1], _tris[3 * i + 2] };
+    _triangleIndexDatas = tris;
+    int triangleCount = _triangleIndexDatas.size() / 3;
 
-    auto makeIndexEdgeFunc = [&](int a, int b)
-    {
-	    return IndexEdge{ std::min(a,b), std::max(a,b) };
+	_triangles.resize(triangleCount);
+    _triangleAdjects.resize(triangleCount);
+    _edgeToTriangles.clear();
+
+    auto makeIndexEdgeFunc = [&](int a, int b) {
+        return IndexEdge{ std::min(a,b), std::max(a,b) };
     };
-    std::unordered_map<IndexEdge, std::vector<int>, IndexEdgeHash> edgeToTriangles;
+
+
+    for (int i = 0; i < triangleCount; ++i)
+        _triangles[i] = { _triangleIndexDatas[3 * i + 0],  _triangleIndexDatas[3 * i + 1],  _triangleIndexDatas[3 * i + 2] };
 
     for (int t = 0; t < triangleCount; ++t) { // 트라이 앵글의 각 index를 엣지에 추가
-        auto& tr = tris[t];
-        edgeToTriangles[makeIndexEdgeFunc(tr[0], tr[1])].push_back(t);
-        edgeToTriangles[makeIndexEdgeFunc(tr[1], tr[2])].push_back(t);
-        edgeToTriangles[makeIndexEdgeFunc(tr[2], tr[0])].push_back(t);
+        auto& tr = _triangles[t];
+        _edgeToTriangles[makeIndexEdgeFunc(tr[0], tr[1])].push_back(t);
+        _edgeToTriangles[makeIndexEdgeFunc(tr[1], tr[2])].push_back(t);
+        _edgeToTriangles[makeIndexEdgeFunc(tr[2], tr[0])].push_back(t);
     }
 
-    // 3) 삼각형 인접 리스트 (A*)
-    std::vector<std::vector<int>> triangleAdjects(triangleCount);
-    for (auto& triangleIndexToEdges : edgeToTriangles)
+    for (auto& triangleIndexToEdges : _edgeToTriangles)
     {
         if (triangleIndexToEdges.second.size() == 2) {
             int a = triangleIndexToEdges.second[0], b = triangleIndexToEdges.second[1];
-            triangleAdjects[a].push_back(b);
-            triangleAdjects[b].push_back(a);
+            _triangleAdjects[a].push_back(b);
+            _triangleAdjects[b].push_back(a);
         }
     }
+}
 
+
+std::vector<Vector3> NavMeshManager::CalculatePath(const Vector3& startPos, const Vector3& endPos) const
+{
+    int triangleCount = _triangles.size();
+    // 1) 삼각형 배열 만들기
+
+    Vector3 startPathPos = startPos;
+    Vector3 endPathPos = endPos;
     // 4) 시작/끝 삼각형 찾기
     int startTri = 0, endTri = 0;
     for (int t = 0; t < triangleCount; ++t) {
-        auto& tr = tris[t];
-        if (PointInTriangle3D(startPos,
-            datas[tr[0]].position,
-            datas[tr[1]].position,
-            datas[tr[2]].position))
+        auto& tr = _triangles[t];
+
+        if (PointInTriangle3D(startPos, _datas[tr[0]].position, _datas[tr[1]].position, _datas[tr[2]].position))
+        {
             startTri = t;
-        if (PointInTriangle3D(endPos,
-            datas[tr[0]].position,
-            datas[tr[1]].position,
-            datas[tr[2]].position))
+            startPathPos.y = Interpolate(startPos, _datas[tr[0]].position, _datas[tr[1]].position, _datas[tr[2]].position).y;
+        }
+        if (PointInTriangle3D(endPos, _datas[tr[0]].position, _datas[tr[1]].position, _datas[tr[2]].position))
+        {
             endTri = t;
+            endPathPos.y = Interpolate(endPos, _datas[tr[0]].position, _datas[tr[1]].position, _datas[tr[2]].position).y;
+        }
     }
 
     // 5) 삼각형 A* (centroid 휴리스틱)
     std::vector<TriangleNode> triangleNodes(triangleCount);
     auto GetTriangleIdCenterPosition = [&](int ti) {
-        auto& tr = tris[ti];
-        return (datas[tr[0]].position
-            + datas[tr[1]].position
-            + datas[tr[2]].position) / 3.0f;
-        };
+        auto& tr = _triangles[ti];
+        return (_datas[tr[0]].position + _datas[tr[1]].position + _datas[tr[2]].position) / 3.0f;
+    };
     Vector3 centEnd = GetTriangleIdCenterPosition(endTri);
 
 	for (int i = 0; i < triangleCount; ++i)
@@ -150,25 +156,25 @@ std::vector<Vector3> NavMeshManager::CalculatePath_Funnel(const Vector3& startPo
 	        isFound = true;
         	break;
         }
-        for (int nextAdjNodeIndex : triangleAdjects[currentIndex])
+        for (int nextAdjTriangleIndex : _triangleAdjects[currentIndex])
         {
-            if (triangleNodes[nextAdjNodeIndex].closed) // 닫혀있으면 캔슬
+            if (triangleNodes[nextAdjTriangleIndex].closed) // 닫혀있으면 캔슬
                 continue;
 
-            float ng = triangleNodes[currentIndex].g + Vector3::Distance(GetTriangleIdCenterPosition(currentIndex), GetTriangleIdCenterPosition(nextAdjNodeIndex)); // 누적 가중치
-            float nh = Vector3::Distance(GetTriangleIdCenterPosition(nextAdjNodeIndex), centEnd);  // 도착점까지 휴리스틱
+            float ng = triangleNodes[currentIndex].g + Vector3::Distance(GetTriangleIdCenterPosition(currentIndex), GetTriangleIdCenterPosition(nextAdjTriangleIndex)); // 누적 가중치
+            float nh = Vector3::Distance(GetTriangleIdCenterPosition(nextAdjTriangleIndex), centEnd);  // 도착점까지 휴리스틱
             float nf = ng + nh;
 
-            if (!triangleNodes[nextAdjNodeIndex].open || nf < triangleNodes[nextAdjNodeIndex].f) // 아직 openNode가 아니거나 nf가 더 작은거면 값 갱신
+            if (!triangleNodes[nextAdjTriangleIndex].open || nf < triangleNodes[nextAdjTriangleIndex].f) // 아직 openNode가 아니거나 nf가 더 작은거면 값 갱신
             {
-                triangleNodes[nextAdjNodeIndex].g = ng;
-            	triangleNodes[nextAdjNodeIndex].f = nf;
-            	triangleNodes[nextAdjNodeIndex].parentIndex = currentIndex;
+                triangleNodes[nextAdjTriangleIndex].g = ng;
+            	triangleNodes[nextAdjTriangleIndex].f = nf;
+            	triangleNodes[nextAdjTriangleIndex].parentIndex = currentIndex;
 
-                if (!triangleNodes[nextAdjNodeIndex].open) // 열고 추가
+                if (!triangleNodes[nextAdjTriangleIndex].open) // 열고 추가
                 {
-                    triangleNodes[nextAdjNodeIndex].open = true;
-                    priorityQueue.push({ nf, nextAdjNodeIndex });
+                    triangleNodes[nextAdjTriangleIndex].open = true;
+                    priorityQueue.push({ nf, nextAdjTriangleIndex });
                 }
             }
         }
@@ -189,14 +195,14 @@ std::vector<Vector3> NavMeshManager::CalculatePath_Funnel(const Vector3& startPo
     // 7) 포털 생성 (좌→우)
     std::vector<std::pair<Vector3, Vector3>> portals;
     portals.reserve(triPath.size() + 1);
-    portals.emplace_back(startPos, startPos);
+    portals.emplace_back(startPathPos, startPathPos);
     for (int i = 0; i + 1 < (int)triPath.size(); ++i) {
         int t0 = triPath[i], t1 = triPath[i + 1];
-        for (auto& kv : edgeToTriangles) {
+        for (auto& kv : _edgeToTriangles) {
             auto& v = kv.second;
             if (v.size() == 2 && ((v[0] == t0 && v[1] == t1) || (v[0] == t1 && v[1] == t0))) {
-                auto a3 = datas[kv.first.u].position;
-                auto b3 = datas[kv.first.v].position;
+                auto a3 = _datas[kv.first.u].position;
+                auto b3 = _datas[kv.first.v].position;
 
                 // 이동 방향 기준 왼쪽/오른쪽 판정
                 Vector2 c0 = Vector2(GetTriangleIdCenterPosition(t0).x, GetTriangleIdCenterPosition(t0).z);
@@ -212,29 +218,30 @@ std::vector<Vector3> NavMeshManager::CalculatePath_Funnel(const Vector3& startPo
             }
         }
     }
-    portals.emplace_back(endPos, endPos);
+    portals.emplace_back(startPathPos, endPathPos);
 
     // 8) Funnel 스무딩
-    auto smooth = StringPull(startPos, endPos, portals);
+    auto smooth = StringPull(startPathPos, endPathPos, portals);
 
 
     if (_gizmoDebug)
     {
-        for (int t : triPath) {
-            Vector3 c = GetTriangleIdCenterPosition(t);
-            Gizmo::Sphere({ c , 0.2 });
+        Gizmo::Width(0.1f);
+        for (int i = 1; i < (int)triPath.size(); ++i)
+        {
+            Vector3 c = GetTriangleIdCenterPosition(triPath[i]);
+            Vector3 p = GetTriangleIdCenterPosition(triPath[i-1]);
+            Gizmo::Line( p + Vector3::Up * 0.2, c + Vector3::Up * 0.2, Vector4(1,0.5,0,1));
         }
         for (auto& pp : portals) {
-            Gizmo::Line(pp.first + Vector3::Up * 1, pp.second + Vector3::Up * 1, Vector4(1, 1, 0, 1));
+            Gizmo::Line(pp.first + Vector3::Up * 0.1, pp.second + Vector3::Up * 0.1, Vector4(1, 1, 0, 1));
         }
-
+        Gizmo::WidthRollBack();
         // 9) 그리기
         Gizmo::Width(0.2f);
         for (int i = 1; i < (int)smooth.size(); ++i) {
             Gizmo::Line(
-                smooth[i - 1] + Vector3::Up * 10,
-                smooth[i] + Vector3::Up * 10,
-                Vector4(1, 0, 0, 1));
+                smooth[i - 1] + Vector3::Up * 3, smooth[i] + Vector3::Up * 3, Vector4(1, 0, 0, 1));
         }
         Gizmo::WidthRollBack();
     }

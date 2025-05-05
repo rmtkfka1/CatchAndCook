@@ -53,12 +53,12 @@ void Texture::Init(const wstring& path, TextureType type, bool relativePath, boo
         _image.Release();
         _image = std::move(mipmapImage);
     }
-
     HRESULT hr = ::CreateTexture(Core::main->GetDevice().Get(), _image.GetMetadata(), &_resource);
 
     if (FAILED(hr))
         assert(nullptr);
 
+    _isAlpha = !IsTextureFullyOpaque(_image, _image.GetMetadata());
     vector<D3D12_SUBRESOURCE_DATA> subResources;
 
     hr = ::PrepareUpload(Core::main->GetDevice().Get(),
@@ -204,6 +204,7 @@ void Texture::Init(vector<wstring>& paths)
         // 결과 복사
         scratchImages[i] = std::move(tmpImage);
     }
+    _isAlpha = !IsTextureFullyOpaque(scratchImages, firstMeta);
 
     // 이제 firstMeta에 공통 스펙이 들어있다고 가정
     const UINT texWidth = (UINT)firstMeta.width;
@@ -427,6 +428,91 @@ void Texture::CreateStaticTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES init
     }
 
     _state = initalState;
+}
+
+bool Texture::IsTextureFullyOpaque(const std::vector<ScratchImage>& scratchImages, const TexMetadata& meta)
+{
+
+    if (meta.GetAlphaMode() == TEX_ALPHA_MODE_OPAQUE)
+        return true;
+
+    auto info = DirectX::BitsPerPixel(meta.format);
+    if (info != 32) {
+        return true;
+    }
+
+    // 3) 각 슬라이스별로 MIP0 의 알파만 32픽셀 단위로 샘플링
+
+    const size_t numSlices = scratchImages.size();
+    for (size_t slice = 0; slice < numSlices; ++slice)
+    {
+        const Image* images = scratchImages[slice].GetImages();
+        size_t imgCount = scratchImages[slice].GetImageCount();
+        if (imgCount == 0)
+            continue;
+
+        // MIP 0
+        const Image& img0 = images[0];
+        const uint8_t* basePtr = img0.pixels;
+        size_t rowPitch = img0.rowPitch;
+        size_t width = img0.width;
+        size_t height = img0.height;
+
+        // 32픽셀 단위로 샘플
+        const size_t step = 32;
+        for (size_t y = 0; y < height; y += step)
+        {
+            const uint8_t* row = basePtr + y * rowPitch;
+            for (size_t x = 0; x < width; x += step)
+            {
+                const uint8_t* px = row + x * 4;
+                if (px[3] != 0xFF)
+                    return false;
+            }
+        }
+    }
+    return true;
+
+}
+
+bool Texture::IsTextureFullyOpaque(const ScratchImage& scratchImages, const TexMetadata& meta)
+{
+    if (meta.GetAlphaMode() == TEX_ALPHA_MODE_OPAQUE)
+        return true;
+    
+    auto info = DirectX::BitsPerPixel(meta.format);
+    if (info != 32) {
+        return true;
+    }
+
+    // 3) 각 슬라이스별로 MIP0 의 알파만 32픽셀 단위로 샘플링
+
+    const Image* images = scratchImages.GetImages();
+    size_t imgCount = scratchImages.GetImageCount();
+    if (imgCount == 0)
+        return true;
+
+    // MIP 0
+    const Image& img0 = images[0];
+    const uint8_t* basePtr = img0.pixels;
+    size_t rowPitch = img0.rowPitch;
+    size_t width = img0.width;
+    size_t height = img0.height;
+
+    // 32픽셀 단위로 샘플
+    const size_t step = 32;
+    for (size_t y = 0; y < height; y += step)
+    {
+        const uint8_t* row = basePtr + y * rowPitch;
+        for (size_t x = 0; x < width; x += step)
+        {
+            const uint8_t* px = row + x * 4;
+            if (px[3] != 0xFF)
+                return false;
+        }
+    }
+
+    return true;
 }
 
 void Texture::CreateDynamicTexture(DXGI_FORMAT format, uint32 width, uint32 height)

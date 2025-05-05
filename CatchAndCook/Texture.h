@@ -38,6 +38,8 @@ public:
 	void CreateStaticTexture(DXGI_FORMAT format, D3D12_RESOURCE_STATES initalState ,uint32 width, uint32 height, 
 		TextureUsageFlags usageFlags , bool Jump,bool depthShared, vec4 clearValue=vec4(0,0,0,0));
 
+	static bool IsTextureFullyOpaque(const std::vector<ScratchImage>& scratchImages, const TexMetadata& meta);
+	static bool IsTextureFullyOpaque(const ScratchImage& scratchImages, const TexMetadata& meta);
 
 	//DynamicTexture 용
 	void CreateDynamicTexture(DXGI_FORMAT format ,uint32 width , uint32 height ); //only for srv
@@ -56,6 +58,8 @@ public:
 	DXGI_FORMAT& GetFormat() { return _format; };
 	DXGI_FORMAT& SetFormat(DXGI_FORMAT format) { return _format = format; };
 
+
+	bool _isAlpha = false;
 private:
 	wstring _path = L"../Resources/";
 
@@ -75,6 +79,7 @@ private:
 	bool _jump = false;
 	bool _detphShared = false;
 	vec4 _clearValue = vec4::One;
+
 public:
 	D3D12_RESOURCE_STATES _state; // 추적용
 

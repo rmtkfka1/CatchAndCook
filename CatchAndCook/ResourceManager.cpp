@@ -41,14 +41,13 @@ void ResourceManager::CreateDefaultShader()
 {
 
 	CreateDefaultShaderKSH();
-	CreateDefaultShaderlJHS();
+	CreateDefaultShaderJIN();
 
 
 }
 
 void ResourceManager::CreateDefaultShaderKSH()
 {
-
 
 	{
 
@@ -236,8 +235,18 @@ void ResourceManager::CreateDefaultShaderKSH()
 
 }
 
-void ResourceManager::CreateDefaultShaderlJHS()
+void ResourceManager::CreateDefaultShaderJIN()
 {
+	{
+		ShaderInfo info;
+		info._zTest = true;
+		info._zWrite = false;
+		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"Skybox", L"Skybox_Field.hlsl", GeoMetryProp,
+			ShaderArg{}, info);
+	}
 	{
 		ShaderInfo info;
 		info._zTest = false;
@@ -255,7 +264,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetInjector({ BufferType::DefaultMaterialParam });
@@ -269,7 +278,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->SetInjector({ BufferType::DefaultMaterialParam });
@@ -313,7 +322,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 
 		info.renderTargetCount = 4;
 
@@ -334,7 +343,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 
 		info.renderTargetCount = 4;
 
@@ -380,7 +389,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 
 		info.renderTargetCount = 4;
 
@@ -401,7 +410,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 
 		info.renderTargetCount = 4;
 
@@ -622,7 +631,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 		info._depthOnly = true;
 
 		info.depthBias = 250;
@@ -639,7 +648,7 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
+		info.cullingType = CullingType::BACK;
 		info._depthOnly = true;
 
 		info.depthBias = 250;
@@ -650,26 +659,6 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		shader->SetMacro({ {"SKINNED",nullptr} });
 		shader->Init(L"ShadowCaster.hlsl", SkinProp, ShaderArg{}, info);
 		Add<Shader>(L"ShadowCaster_Skinned", shader);
-	}
-
-	{
-
-		ShaderInfo info;
-		info._zTest = true;
-		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
-		info._depthOnly = true;
-		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
-
-		info.depthBias = 250;
-		info.slopeScaledDepthBias = 2.0;
-
-		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->SetPass(RENDER_PASS::Shadow);
-		shader->SetInjector({ BufferType::TerrainDetailsParam });
-		shader->Init(L"ShadowCaster_Terrain.hlsl", GeoMetryProp,
-			ShaderArg{ {{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}} }, info);
-		Add<Shader>(L"ShadowCaster_Terrain", shader);
 	}
 
 	{
@@ -690,6 +679,81 @@ void ResourceManager::CreateDefaultShaderlJHS()
 		shader->Init(L"ShadowCaster.hlsl", StaticProp, ShaderArg{}, info);
 		Add<Shader>(L"ShadowCaster_Instanced", shader);
 	}
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::BACK;
+		info._depthOnly = true;
+
+		info.depthBias = 250;
+		info.slopeScaledDepthBias = 2.0;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Shadow);
+		shader->Init(L"ShadowCaster_Early.hlsl", StaticProp, ShaderArg{}, info);
+		Add<Shader>(L"ShadowCaster_Early", shader);
+	}
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::BACK;
+		info._depthOnly = true;
+
+		info.depthBias = 250;
+		info.slopeScaledDepthBias = 2.0;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Shadow);
+		shader->SetMacro({ {"SKINNED",nullptr} });
+		shader->Init(L"ShadowCaster_Early.hlsl", SkinProp, ShaderArg{}, info);
+		Add<Shader>(L"ShadowCaster_Early_Skinned", shader);
+	}
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+		info._depthOnly = true;
+
+		info.depthBias = 250;
+		info.slopeScaledDepthBias = 2.0;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Shadow);
+		shader->SetMacro({ {"INSTANCED",nullptr} });
+		shader->SetInstanceProp(TransformInstanceProp);
+		shader->Init(L"ShadowCaster_Early.hlsl", StaticProp, ShaderArg{}, info);
+		Add<Shader>(L"ShadowCaster_Early_Instanced", shader);
+	}
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::BACK;
+		info._depthOnly = true;
+		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+
+		info.depthBias = 250;
+		info.slopeScaledDepthBias = 2.0;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Shadow);
+		shader->SetInjector({ BufferType::TerrainDetailsParam });
+		shader->Init(L"ShadowCaster_Terrain.hlsl", GeoMetryProp,
+			ShaderArg{ {{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}} }, info);
+		Add<Shader>(L"ShadowCaster_Terrain", shader);
+	}
+
 
 	{
 
@@ -768,6 +832,21 @@ void ResourceManager::CreateDefaultMaterial()
 	_shadowCaster_Terrain->SetShader(ResourceManager::main->Get<Shader>(L"ShadowCaster_Terrain"));
 	_shadowCaster_Terrain->SetPass(RENDER_PASS::Shadow);
 	//_shadowCaster_Instanced->SetSetDataOff(true);
+
+
+	_shadowCaster_Early = std::make_shared<Material>();
+	_shadowCaster_Early->SetShader(ResourceManager::main->Get<Shader>(L"ShadowCaster_Early"));
+	_shadowCaster_Early->SetPass(RENDER_PASS::Shadow);
+	//_shadowCaster->SetSetDataOff(true);
+
+	_shadowCaster_Early_Skinned = std::make_shared<Material>();
+	_shadowCaster_Early_Skinned->SetShader(ResourceManager::main->Get<Shader>(L"ShadowCaster_Early_Skinned"));
+	_shadowCaster_Early_Skinned->SetPass(RENDER_PASS::Shadow);
+	//_shadowCaster_Skinned->SetSetDataOff(true);
+
+	_shadowCaster_Early_Instanced = std::make_shared<Material>();
+	_shadowCaster_Early_Instanced->SetShader(ResourceManager::main->Get<Shader>(L"ShadowCaster_Early_Instanced"));
+	_shadowCaster_Early_Instanced->SetPass(RENDER_PASS::Shadow);
 }
 
 
@@ -775,8 +854,19 @@ void ResourceManager::CreateDefaultMaterial()
 void ResourceManager::CreateDefaultTexture()
 {
 	_noneTexture = Load<Texture>(L"none", L"Textures/Configs/noneTexture.png");
+	_noneTexture_Black = Load<Texture>(L"none_black", L"Textures/Configs/noneTexture_Black.png");
 	_noneTexture_debug = Load<Texture>(L"none_debug", L"Textures/Configs/noneTexture_debug.png");
+
 	_bakedGITexture = Load<Texture>(L"BakedGI", L"Textures/Configs/BakedGI.png");
+	_bakedGINTexture = Load<Texture>(L"BakedGI_Night", L"Textures/Configs/BakedGI_Night.png");
+	_bakedGIETexture = Load<Texture>(L"BakedGI_Evening", L"Textures/Configs/BakedGI_Evening.png");
+
+	_bakedGIFinal1Texture = _bakedGITexture;
+	_bakedGIFinal2Texture = _bakedGITexture;
+
+	_cubemap_skyTexture = Load<Texture>(L"cubemap_sky0", L"Textures/cubemap/Sky_0.png.dds", TextureType::CubeMap);
+	_cubemap_skyNTexture = Load<Texture>(L"cubemap_sky1", L"Textures/cubemap/Sky_1.png.dds", TextureType::CubeMap);
+	_cubemap_skyETexture = Load<Texture>(L"cubemap_sky2", L"Textures/cubemap/Sky_2.png.dds", TextureType::CubeMap);
 }
 
 void ResourceManager::CreateDefaultAnimation()

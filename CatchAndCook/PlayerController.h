@@ -71,7 +71,7 @@ private: // Camera Control
 
 	double currentCameraDistance = 3.6;
 	double minCameraDistance = 0.75f;
-	double maxCameraDistance = 3.6;
+	double maxCameraDistance = 3.75;
 
 private:
 	Vector3 velocity = Vector3::Zero;

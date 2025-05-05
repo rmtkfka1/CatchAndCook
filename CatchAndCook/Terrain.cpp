@@ -42,8 +42,8 @@ void Terrain::Start()
     auto meshRenderer = GetOwner()->GetComponent<MeshRenderer>();
     meshRenderer->AddMaterials({ _material });
 
-    _terrainMaterial = ResourceManager::main->_shadowCaster_Terrain->Clone();
-    _material->CopyProperties(_terrainMaterial);
+    _terrainShadowMaterial = ResourceManager::main->_shadowCaster_Terrain->Clone();
+    _material->CopyProperties(_terrainShadowMaterial);
 
     if (auto renderer = GetOwner()->GetRenderer())
     {
@@ -189,7 +189,7 @@ void Terrain::RenderBegin()
 
     if (auto meshRenderer = GetOwner()->GetComponent<MeshRenderer>())
     {
-        SceneManager::main->GetCurrentScene()->AddRenderer(_terrainMaterial.get(), meshRenderer->_mesh[0].get(), meshRenderer.get());
+        SceneManager::main->GetCurrentScene()->AddRenderer(_terrainShadowMaterial.get(), meshRenderer->_mesh[0].get(), meshRenderer.get());
     }
 }
 
@@ -225,6 +225,7 @@ void Terrain::Destroy()
 
 void Terrain::CullingInstancing(Vector3 worldPos, Vector3 look)
 {
+
     Vector3 cameraPos = worldPos;
     Vector3 cameraLook = look;
     cameraLook.Normalize();

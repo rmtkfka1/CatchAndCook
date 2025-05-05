@@ -18,6 +18,7 @@ struct VS_OUT
 };
 
 Texture2D _BakedGIMap : register(t8);
+Texture2D _BakedGIMap2 : register(t9);
 
 
 VS_OUT VS_Main(VS_IN input)
@@ -39,6 +40,8 @@ float4 PS_Main(VS_OUT input) : SV_Target
 
     LightingResult lightColor = ComputeLightColor(worldPos.xyz, worldNormal.xyz);
     float4 ShadowColor = _BakedGIMap.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), worldNormal) * 0.5 + 0.5));
+    float4 ShadowColor2 = _BakedGIMap2.Sample(sampler_lerp_clamp, saturate(dot(float3(0, 1, 0), worldNormal) * 0.5 + 0.5));
+    ShadowColor = lerp(ShadowColor, ShadowColor2, fmod(g_skyBlendTime, 1));
 
     float3 uvz[4];
 	ComputeCascadeShadowUVs(worldPos.xyz, uvz);

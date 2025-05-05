@@ -12,7 +12,7 @@ struct GlobalParam
 {
 	vec2 window_size;
 	float Time;
-	float padding;
+	float SkyBlend = 0.2;
 };
 
 class Scene : public IGuid
@@ -23,11 +23,13 @@ public:
 	void AddGameObject(const std::shared_ptr<GameObject>& gameObject);
 	bool RemoveGameObject(const std::shared_ptr<GameObject>& gameObject);
 	bool RemoveAtGameObject(int index);
-	void CameraControll();
+	void CameraControl();
 
 
 	void ExecuteDestroyGameObjects();
 	void GlobalSetting();
+
+	GlobalParam& GetGlobalParam() { return _globalParam; }
 
 public:
 	virtual void UiPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> & cmdList);
@@ -55,6 +57,7 @@ public:
 	std::shared_ptr<GameObject> CreateGameObject(const std::wstring& name,GameObjectType type = GameObjectType::Dynamic);
 	std::shared_ptr<GameObject> Find(const std::wstring& name, bool includeDestroy = false);
 	int Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec, bool includeDestroy = false);
+	int FindsInclude(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec, bool includeDestroy = false);
 	void AddChangeTypeQueue(const std::shared_ptr<GameObject>& gmaeObject, GameObjectType type);
 	void AddStartQueue(const std::shared_ptr<GameObject>& gameObject);
 	void AddDestroyQueue(const std::shared_ptr<GameObject>& gameObject);

@@ -21,27 +21,15 @@ void NavMesh::Start()
 {
 	Component::Start();
 	NavMeshManager::main->SetNavMeshData(_datas);
-
-	startPos = Vector3(250, 0, 220);
+	NavMeshManager::main->SetTriangles(_tris);
 }
 
 void NavMesh::Update()
 {
 	Component::Update();
-	startPos += Vector3((Input::main->GetKey(KeyCode::L)?1:0) - (Input::main->GetKey(KeyCode::J) ? 1 : 0),
-		0,
-		(Input::main->GetKey(KeyCode::I) ? 1 : 0) - (Input::main->GetKey(KeyCode::K) ? 1 : 0)
-		)
-	* Time::main->GetDeltaTime() * 40;
-	//NavMeshManager::main->CalculatePath(Vector3(350, 0, 150), startPos,NavMeshManager::main->GetNavMeshData(), _edges);
-	if (false)
-	auto path = NavMeshManager::main->CalculatePath_Funnel(Vector3(350, 0, 150), startPos, NavMeshManager::main->GetNavMeshData(), _tris);
 
 	if (NavMeshManager::main->_gizmoDebug)
 	{
-		Gizmo::Width(0.4f);
-		Gizmo::Box(BoundingBox(startPos, Vector3(1, 100, 1)));
-
 		for (auto edge : _edges)
 			Gizmo::Line(edge[0], edge[1], Vector4(0, 0, 1, 1));
 		Gizmo::WidthRollBack();

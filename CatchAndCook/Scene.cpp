@@ -15,6 +15,7 @@
 #include "ComputeManager.h"
 #include "Transform.h"
 #include "GameObject.h"
+#include "InGameGlobal.h"
 #include "LightManager.h"
 #include "MeshRenderer.h"
 #include "PathFinder.h"
@@ -270,6 +271,7 @@ void Scene::DeferredPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 {
 	Core::main->GetGBuffer()->RenderBegin();
     auto camera = CameraManager::main->GetActiveCamera();
+
     TerrainManager::main->CullingInstancing(camera->GetCameraPos(), camera->GetCameraLook());
 
     { // Deferred
@@ -326,7 +328,10 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
         auto boundings = ShadowManager::main->CalculateBounds(CameraManager::main->GetActiveCamera().get(), light.get(), { 6, 20, 65, 200 });
 
     	auto lastShadowPos = ShadowManager::main->_lightTransform[ShadowManager::main->_lightTransform.size() - 1];
+
+        Profiler::Set("PASS : Shadow Culling", BlockTag::CPU);
     	TerrainManager::main->CullingInstancing(lastShadowPos.first, lastShadowPos.second);
+        Profiler::Fin();
 
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Shadow)];
 
@@ -369,10 +374,8 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
                         InstancingManager::main->AddObject(renderStructure);
                     }
                 }
-
                 InstancingManager::main->Render();
             }
-
             Core::main->GetShadowBuffer()->RenderEnd();
             i++;
         }
@@ -428,11 +431,13 @@ void Scene::GlobalSetting()
 {
     auto& cmdList = Core::main->GetCmdList();
 
-    CameraControll();
+    CameraControl();
     //cout << CameraManager::main->GetActiveCamera()->GetCameraPos().y << endl;
 
     _globalParam.window_size = vec2(WINDOW_WIDTH,WINDOW_HEIGHT);
     _globalParam.Time = Time::main->GetTime();
+
+
     auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::GlobalParam)->Alloc(1);
     memcpy(CbufferContainer->ptr,(void*)&_globalParam,sizeof(GlobalParam));
 
@@ -444,12 +449,25 @@ void Scene::GlobalSetting()
     TableContainer container = Core::main->GetBufferManager()->GetTable()->Alloc(1);
     table->CopyHandle(container.CPUHandle, Core::main->GetDSReadTexture()->GetSRVCpuHandle(), 0);
     cmdList->SetGraphicsRootDescriptorTable(GLOBAL_SRV_DEPTH_INDEX, container.GPUHandle);
+
+    Material::AllocDefualtTextureHandle();
 }
 
 void Scene::SettingPrevData(RenderObjectStrucutre& data, const RENDER_PASS::PASS& pass)
 {
     if (data.material != nullptr)
-		data.material->SetTexture("_BakedGIMap", ResourceManager::main->_bakedGITexture);
+    {
+        if (ShadowManager::main->_bakedGIOnOff)
+        {
+            data.material->SetTexture("_BakedGIMap", ResourceManager::main->_bakedGIFinal1Texture);
+            data.material->SetTexture("_BakedGIMap2", ResourceManager::main->_bakedGIFinal2Texture);
+        }
+        else
+        {
+            data.material->SetTexture("_BakedGIMap", ResourceManager::main->_noneTexture_Black);
+            data.material->SetTexture("_BakedGIMap2", ResourceManager::main->_noneTexture_Black);
+        }
+    }
 
     switch (pass)
     {
@@ -596,7 +614,7 @@ bool Scene::RemoveAtGameObject(int index)
     return false;
 }
 
-void Scene::CameraControll()
+void Scene::CameraControl()
 {
 	static CameraType type = CameraType::DebugCamera;
 
@@ -673,6 +691,26 @@ int Scene::Finds(const std::wstring& name, std::vector<std::shared_ptr<GameObjec
             vec.push_back(current);
     }
     return vec.size() - startSize;
+}
+
+int Scene::FindsInclude(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec, bool includeDestroy)
+{
+    int startSize = vec.size();
+    for (auto& current : _gameObjects)
+    {
+        if ((!includeDestroy && current->IsDestroy()) ||
+            current->GetName().find(name) == std::wstring::npos)
+            continue;
+        vec.push_back(current);
+    }
+    for (auto& current : _gameObjects_deactivate)
+    {
+        if ((!includeDestroy && current->IsDestroy()) ||
+            current->GetName().find(name) == std::wstring::npos)
+            continue;
+        vec.push_back(current);
+    }
+    return static_cast<int>(vec.size() - startSize);
 }
 
 void Scene::AddChangeTypeQueue(const std::shared_ptr<GameObject>& gameObject, GameObjectType type)

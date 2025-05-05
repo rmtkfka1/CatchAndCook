@@ -36,6 +36,7 @@ public:
 	void SetMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
 	void AddMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
 	std::vector<std::shared_ptr<Material>>& GetMaterials();
+	std::shared_ptr<Material> GetMaterial(int index = 0);
 	void SetSharedMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
 	void AddSharedMaterials(const std::vector<std::shared_ptr<Material>>& _materials);
 	void SetDebugShader(shared_ptr<Shader>& shader) { _normalDebugShader = shader; }

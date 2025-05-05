@@ -2,6 +2,7 @@
 
 enum class CollisionType;
 union BoundingUnion;
+struct BoundingData;
 
 struct RayHit
 {
@@ -44,6 +45,10 @@ public:
 	bool CollisionCheckDirect(CollisionType type, BoundingUnion bound, std::shared_ptr<Collider>& collider);
 	bool CollisionChecksDirect(CollisionType type, BoundingUnion bound, std::vector<std::shared_ptr<Collider>>& colliders);
 
+	bool CollisionCheckDirect(const BoundingData& bound);
+	bool CollisionCheckDirect(const BoundingData& bound, std::shared_ptr<Collider>& collider);
+	bool CollisionChecksDirect(const BoundingData& bound, std::vector<std::shared_ptr<Collider>>& colliders);
+
 	bool IsCollision(const std::shared_ptr<Collider>& src);
 	bool IsCollision(const std::shared_ptr<Collider>& src, const std::shared_ptr<Collider>& dest);
 	std::unordered_set<std::shared_ptr<Collider>>& GetCollisionList(const std::shared_ptr<Collider>& src);
@@ -58,12 +63,15 @@ private:
 
 public:
 	RayHit RayCast(const Ray& ray, const float& dis, shared_ptr<GameObject>& owner) const;
-	RayHit RayCastForMyCell(const Ray& ray, const float& dis, shared_ptr<GameObject>& owner) ;
+	RayHit RayCastForMyCell(const Ray& ray, const float& dis, shared_ptr<GameObject>& owner);
 	bool RayCastAll(const Ray& ray, const float& dis, std::vector<RayHit>& hitList) const;
+	bool RayCastAllForMyCell(const Ray& ray, const float& dis, std::vector<RayHit>& hitList, const shared_ptr<GameObject>& owner);
+	bool RayCastAllForMyCellDirect(const Ray& ray, const float& dis, std::vector<RayHit>& hitList, BoundingData data);
 	static bool RayCastAll(const std::vector<std::shared_ptr<Collider>>& colliders, const Ray& ray, const float& dis, std::vector<RayHit>& hitList);
 
 public:
 	float _cellSize = 100.0f;
+	void SetCellSize(float cellSize) { _cellSize = cellSize; }
 
 	vec3 GetGridCell(const vec3& position) const;
 	vector<vec3> GetOccupiedCells(const shared_ptr<Collider>& collider) const;

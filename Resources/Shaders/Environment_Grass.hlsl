@@ -49,7 +49,7 @@ struct VS_IN
 struct VS_OUT
 {
     float4 position : SV_Position;
-    //float4 positionCS : PositionCS;
+    float4 positionVS : PositionVS;
     float4 positionWS : PositionWS;
     //float3 normalOS : NormalOS;
     //float3 normalWS : NormalWS;
@@ -110,6 +110,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     output.positionWS += float4(dir.x,0,dir.y, 0);
     //
     output.position = TransformWorldToClip(output.positionWS);
+    output.positionVS = TransformWorldToView(output.positionWS);
 
 #ifdef INSTANCED
 		//output.normalWS = TransformNormalLocalToWorld(output.normalOS, boneIds, boneWs, w2lMatrix);
@@ -152,8 +153,7 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
 		output.color = emissionColor;
 
 
-
-    if (output.color.a <= 0.9f)
+    if (output.color.a <= 0.9f || Dither(input.position.xyz, input.positionVS.xyz))
         discard;
     return output;
 }

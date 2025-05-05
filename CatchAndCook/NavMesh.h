@@ -30,6 +30,5 @@ public:
 	std::vector<NavMeshData> _datas;
 	std::vector< std::array<Vector3, 2>> _edges;
 	std::vector<int> _tris;
-	Vector3 startPos;
 };
 

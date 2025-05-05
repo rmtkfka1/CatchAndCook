@@ -26,6 +26,7 @@ class ShadowManager : public RenderCBufferSetter
 {
 public:
 	bool _onOff = true;
+	bool _bakedGIOnOff = true;
 	static unique_ptr<ShadowManager> main;
 	static const int _cascadeCount = 4;
 

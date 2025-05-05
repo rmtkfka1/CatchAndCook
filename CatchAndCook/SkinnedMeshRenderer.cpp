@@ -84,6 +84,7 @@ void SkinnedMeshRenderer::Start()
 			if (i == 0) localBox = bound;
 			else BoundingBox::CreateMerged(localBox, localBox, bound);
 		}
+		BoundingBox::CreateMerged(localBox, localBox, BoundingBox(Vector3(0, 0, 0), Vector3(3, 3, 3)));
 		SetOriginBound(localBox);
 	}
 
@@ -249,6 +250,7 @@ void SkinnedMeshRenderer::SetSpecialMaterials()
 			auto depthNormalMaterial = currentMaterial->Clone();
 			depthNormalMaterial->SetShader(ResourceManager::main->_depthNormal_Skinned->GetShader());
 			depthNormalMaterial->SetPass(RENDER_PASS::Deferred);
+			depthNormalMaterial->_instanceID = currentMaterial->GetID() + 2000000;
 			_depthNormalMaterials.push_back(make_pair(i, depthNormalMaterial));
 		}
 
@@ -256,9 +258,14 @@ void SkinnedMeshRenderer::SetSpecialMaterials()
 		if ((RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Forward)
 			|| RENDER_PASS::HasFlag(currentMaterial->GetPass(), RENDER_PASS::Deferred)) && currentMaterial->GetShadowCasting())
 		{
-			auto shadowMaterial = ResourceManager::main->_shadowCaster_Skinned;
-			shadowMaterial = shadowMaterial->Clone();
-			currentMaterial->CopyProperties(shadowMaterial);
+			auto shadowMaterial = ResourceManager::main->_shadowCaster_Early_Skinned;
+			if (currentMaterial->GetPropertyTexture("_BaseMap") != nullptr)
+			{
+				shadowMaterial = ResourceManager::main->_shadowCaster_Skinned;
+				shadowMaterial = shadowMaterial->Clone();
+				currentMaterial->CopyProperties(shadowMaterial);
+				shadowMaterial->_instanceID = currentMaterial->GetID() + 1000000;
+			}
 			_shadowMaterials.push_back(make_pair(i, shadowMaterial));
 		}
 	}
