@@ -23,9 +23,12 @@ vector<vec3> ColliderManager::GetOccupiedCells(const shared_ptr<Collider>& colli
 	auto& [min, max] = collider->GetMinMax();
 	vec3 minCell = GetGridCell(min);
 	vec3 maxCell = GetGridCell(max);
-
+	int dx = maxCell.x - minCell.x + 1;
+	int dy = maxCell.y - minCell.y + 1;
+	int dz = maxCell.z - minCell.z + 1;
+	size_t total = size_t(dx) * dy * dz;
 	vector<vec3> occupiedCells;
-	occupiedCells.reserve(16);
+	occupiedCells.reserve(total);
 
 	for (int x = static_cast<int>(minCell.x); x <= static_cast<int>(maxCell.x); ++x)
 	{
@@ -33,7 +36,7 @@ vector<vec3> ColliderManager::GetOccupiedCells(const shared_ptr<Collider>& colli
 		{
 			for (int z = static_cast<int>(minCell.z); z <= static_cast<int>(maxCell.z); ++z)
 			{
-				occupiedCells.push_back(vec3(x, y, z));
+				occupiedCells.emplace_back(x, y, z);
 			}
 		}
 	}
@@ -46,47 +49,24 @@ vector<vec3> ColliderManager::GetOccupiedCellsDirect(CollisionType type, Boundin
 	vec3 min, max;
 	if (type == CollisionType::Box)
 	{
-		Matrix rotMatrix = Matrix::CreateFromQuaternion(bound.box.Orientation);
+		auto rot = Matrix::CreateFromQuaternion(bound.box.Orientation);
 		vec3 center = bound.box.Center;
-		vec3 extents = bound.box.Extents;
+		vec3 extent = bound.box.Extents;
 
-		vec3 localVertices[8] = {
-			vec3(-extents.x, -extents.y, -extents.z),
-			vec3(-extents.x, -extents.y,  extents.z),
-			vec3(-extents.x,  extents.y, -extents.z),
-			vec3(-extents.x,  extents.y,  extents.z),
-			vec3(extents.x, -extents.y, -extents.z),
-			vec3(extents.x, -extents.y,  extents.z),
-			vec3(extents.x,  extents.y, -extents.z),
-			vec3(extents.x,  extents.y,  extents.z)
-		};
 
-		vec3 worldMin = vec3(FLT_MAX, FLT_MAX, FLT_MAX);
-		vec3 worldMax = vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+		// 2) 행렬 원소의 절댓값을 이용해 새 extents 계산
+		vec3 abs0 = vec3(fabs(rot.m[0][0]), fabs(rot.m[0][1]), fabs(rot.m[0][2]));
+		vec3 abs1 = vec3(fabs(rot.m[1][0]), fabs(rot.m[1][1]), fabs(rot.m[1][2]));
+		vec3 abs2 = vec3(fabs(rot.m[2][0]), fabs(rot.m[2][1]), fabs(rot.m[2][2]));
 
-		for (int i = 0; i < 8; i++)
-		{
-			vec3 worldVertex = center + vec3(
-				localVertices[i].x * rotMatrix.m[0][0] + localVertices[i].y * rotMatrix.m[1][0] + localVertices[i].z * rotMatrix.m[2][0],
-				localVertices[i].x * rotMatrix.m[0][1] + localVertices[i].y * rotMatrix.m[1][1] + localVertices[i].z * rotMatrix.m[2][1],
-				localVertices[i].x * rotMatrix.m[0][2] + localVertices[i].y * rotMatrix.m[1][2] + localVertices[i].z * rotMatrix.m[2][2]
-			);
+		vec3 newExtents;
+		newExtents.x = abs0.x * extent.x + abs1.x * extent.y + abs2.x * extent.z;
+		newExtents.y = abs0.y * extent.x + abs1.y * extent.y + abs2.y * extent.z;
+		newExtents.z = abs0.z * extent.x + abs1.z * extent.y + abs2.z * extent.z;
 
-			worldMin = vec3(
-				std::min(worldMin.x, worldVertex.x),
-				std::min(worldMin.y, worldVertex.y),
-				std::min(worldMin.z, worldVertex.z)
-			);
-
-			worldMax = vec3(
-				std::max(worldMax.x, worldVertex.x),
-				std::max(worldMax.y, worldVertex.y),
-				std::max(worldMax.z, worldVertex.z)
-			);
-		}
-
-		min = worldMin;
-		max = worldMax;
+		// 3) AABB 구성
+		min = center - newExtents;
+		max = center + newExtents;
 	}
 
 	else if (type == CollisionType::Sphere)
@@ -98,7 +78,12 @@ vector<vec3> ColliderManager::GetOccupiedCellsDirect(CollisionType type, Boundin
 	vec3 minCell = GetGridCell(min);
 	vec3 maxCell = GetGridCell(max);
 
+	int dx = maxCell.x - minCell.x + 1;
+	int dy = maxCell.y - minCell.y + 1;
+	int dz = maxCell.z - minCell.z + 1;
+	size_t total = size_t(dx) * dy * dz;
 	vector<vec3> occupiedCells;
+	occupiedCells.reserve(total);
 
 	for (int x = static_cast<int>(minCell.x); x <= static_cast<int>(maxCell.x); ++x)
 	{
@@ -106,11 +91,10 @@ vector<vec3> ColliderManager::GetOccupiedCellsDirect(CollisionType type, Boundin
 		{
 			for (int z = static_cast<int>(minCell.z); z <= static_cast<int>(maxCell.z); ++z)
 			{
-				occupiedCells.push_back(vec3(x, y, z));
+				occupiedCells.emplace_back(x, y, z);
 			}
 		}
 	}
-
 	return occupiedCells;
 }
 

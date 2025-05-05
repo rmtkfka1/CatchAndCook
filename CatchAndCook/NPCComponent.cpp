@@ -81,7 +81,6 @@ void NPCComponent::Update()
 	ColliderManager::main->UpdateDynamicCells();
 	fsm->Update();
 	fsm->AnyUpdate();
-
 }
 
 void NPCComponent::MoveControl()
@@ -164,7 +163,8 @@ void NPCComponent::MoveControl()
 	RayHit foundGround;
 	std::vector<RayHit> hitList;
 
-	if (auto isHit = ColliderManager::main->RayCastAllForMyCell({ upRayOffset, Vector3::Down }, upDistance + gitMargin, hitList, GetOwner()))
+	if (auto isHit = ColliderManager::main->RayCastAllForMyCellDirect({ upRayOffset, Vector3::Down }, upDistance + gitMargin, hitList,
+		BoundingData{ CollisionType::Box, BoundingUnion(BoundingOrientedBox(GetOwner()->_transform->GetWorldPosition(), Vector3(2,2,2), Quaternion::Identity)) }))
 	{
 		for (auto& hit : hitList)
 		{
@@ -336,11 +336,15 @@ void NPCGotoAny::Update()
 {
 	StatePattern::Update();
 	auto npc = this->npc.lock();
-	Gizmo::Width(0.2f);
-	for (int i = 1; i < (int)npc->paths.size(); ++i) {
-		Gizmo::Line(npc->paths[i - 1], npc->paths[i], Vector4(1, 0, 0, 1));
+
+	if (NavMeshManager::main->_gizmoDebug)
+	{
+		Gizmo::Width(0.2f);
+		for (int i = 1; i < (int)npc->paths.size(); ++i) {
+			Gizmo::Line(npc->paths[i - 1], npc->paths[i], Vector4(1, 0, 0, 1));
+		}
+		Gizmo::WidthRollBack();
 	}
-	Gizmo::WidthRollBack();
 
 	Vector3 currentWorldPos = npc->GetOwner()->_transform->GetWorldPosition();
 	Vector3 nextPos = npc->AdvanceAlongPath(npc->paths, currentWorldPos, 0.75);

@@ -214,7 +214,7 @@ public:
 	std::vector<std::vector<int>> _triangleAdjects;
 	
 
-	bool _gizmoDebug = true;
+	bool _gizmoDebug = false;
 };
 
 
