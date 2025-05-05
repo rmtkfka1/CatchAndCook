@@ -195,7 +195,6 @@ double SkinnedHierarchy::AnimateBlend(const std::shared_ptr<Animation>& currentA
 			if (nextAnimNodeIter != nextAnim->_nodeTables.end())
 			{
 				auto nextAnimNode = nextAnimNodeIter->second;
-				auto obj = it->second.lock();
 
 				Quaternion nextAnim_interpolatedRotation = nextAnimNode->CalculateRotation(nextAnimTime);
 				Vector3 nextAnim_interpolatedPosition = nextAnimNode->CalculatePosition(nextAnimTime);
@@ -301,8 +300,7 @@ Vector3 SkinnedHierarchy::BlendDeltaPosition(const std::string& name,const std::
 			if (nextAnimNodeIter != nextAnim->_nodeTables.end())
 			{
 				auto nextAnimNode = nextAnimNodeIter->second;
-				auto obj = it->second.lock();
-				
+
 				Vector3 nextAnim_interpolatedPosition = nextAnimNode->CalculateDeltaPosition(nextAnimPrevTime, nextAnimTime);
 				Vector3::Lerp(finalAnim_interpolatedPosition, nextAnim_interpolatedPosition, blendInterpolValue, finalAnim_interpolatedPosition);
 			}
@@ -316,6 +314,12 @@ void SkinnedHierarchy::Play(const std::shared_ptr<Animation>& animation, const d
 	if (!_isPlaying || _animation == nullptr)
 	{
 		_animation = animation;
+		_animationBlendTime = 0;
+		_prevAnimationBlendTime = 0;
+
+		_duration = std::max(duration, 0.001);
+		_isPlaying = true;
+		return;
 	}
 
 	if (_animation == animation)

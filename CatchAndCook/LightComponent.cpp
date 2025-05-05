@@ -75,7 +75,7 @@ void LightComponent::Update2()
 
 
 			Quaternion qy = Quaternion::CreateFromAxisAngle(Vector3::UnitY, angleY * D2R);
-			GetOwner()->_transform->SetLocalRotation(qy * Quaternion::CreateFromYawPitchRoll(Vector3(50, -105, 0) * D2R));
+			GetOwner()->_transform->SetLocalRotation(qy * Quaternion::CreateFromYawPitchRoll(Vector3(50, -115, 0) * D2R));
 			light->intensity = cos((std::fmod(skyTime, 4)) / 2 * 3.141592f) * 0.5 + 0.5;
 			light->intensity = pow(light->intensity, 0.5);
 			if (auto renderer = sky->GetComponent<MeshRenderer>())

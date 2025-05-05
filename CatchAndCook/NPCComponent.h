@@ -1,5 +1,8 @@
 ﻿#pragma once
+#include "StatePattern.h"
 
+
+class NPCComponent;
 
 enum class NPCStateType
 {
@@ -8,6 +11,38 @@ enum class NPCStateType
 	goto_shop_in,
 	goto_shop_out,
 };
+
+class NPCFSMGroup : public StatePatternGroup
+{
+public:
+	void AnyUpdate() override;
+	void Init() override;
+	void Update() override;
+
+
+	void SetNPC(const std::shared_ptr<NPCComponent>& npc);
+	std::weak_ptr<NPCComponent> npc;
+};
+
+class NPCState : public StatePattern
+{
+public:
+
+	void SetNPC(const std::shared_ptr<NPCComponent>& npc) { this->npc = npc; };
+
+	std::weak_ptr<NPCComponent> npc;
+};
+class NPCGotoAny : public NPCState
+{
+public:
+	void Init() override;
+	void Update() override;
+	void Begin(StateType type, const std::shared_ptr<StatePattern>& prevState) override;
+	bool TriggerUpdate() override;
+	void End(const std::shared_ptr<StatePattern>& nextState) override;
+};
+
+
 
 class NPCComponent : public Component
 {
@@ -29,8 +64,8 @@ public:
 	void Destroy() override;
 
 	Vector3 AdvanceAlongPath(const std::vector<Vector3>& path, const Vector3& worldPos, float t);
-
-	NPCStateType type = NPCStateType::stay;
+	
+	std::shared_ptr<NPCFSMGroup> fsm;
 
 	std::vector<Vector3> gotoPoints;
 	std::vector<Vector3> paths;
@@ -38,4 +73,3 @@ public:
 	Vector3 lookDirection = Vector3::Forward;
 	bool isGround = true;
 };
-

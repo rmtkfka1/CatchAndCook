@@ -263,6 +263,7 @@
     <ClCompile Include="SkinnedMeshRenderer.cpp" />
     <ClCompile Include="SpriteAction.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="StatePattern.cpp" />
     <ClCompile Include="StructuredBuffer.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainManager.cpp" />
@@ -385,6 +386,7 @@
     <ClInclude Include="SkinnedMeshRenderer.h" />
     <ClInclude Include="SpriteAction.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="StatePattern.h" />
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="strutil.h" />
     <ClInclude Include="Terrain.h" />

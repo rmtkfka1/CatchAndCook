@@ -621,6 +621,8 @@ void SceneLoader::LinkComponent(json& jsonData)
 		navMesh->SetNavMeshData(datas);
         navMesh->SetNavMeshEdgeData(edgeDatas);
         navMesh->SetTris(tris);
+        NavMeshManager::main->SetTriangles(tris);
+        NavMeshManager::main->SetNavMeshData(datas);
     }
     if (type == L"Light")
     {

@@ -33,6 +33,11 @@ bool NPCComponent::IsExecuteAble()
 void NPCComponent::Init()
 {
 	Component::Init();
+
+	fsm = make_shared<NPCFSMGroup>();
+	fsm->Init();
+	fsm->AddState(StateType::goto_any, make_shared<NPCGotoAny>());
+	fsm->SetNPC(GetCast<NPCComponent>());
 }
 
 void NPCComponent::Start()
@@ -58,7 +63,7 @@ void NPCComponent::Start()
 
 		sitdown->_isLoop = false;
 		situp->_isLoop = false;
-		_skinnedHierarchy->Play(sit, 0.25);
+		_skinnedHierarchy->Play(idle, 0.25);
 	}
 
 	std::vector<std::shared_ptr<GameObject>> pathPointObjects;
@@ -66,31 +71,16 @@ void NPCComponent::Start()
 	for (auto path : pathPointObjects)
 		gotoPoints.push_back(path->_transform->GetWorldPosition());
 
+	fsm->ChangeState(StateType::goto_any);
 }
 
 void NPCComponent::Update()
 {
 	Component::Update();
-	if (type == NPCStateType::stay) {
-		paths = NavMeshManager::main->CalculatePath(GetOwner()->_transform->GetWorldPosition(), gotoPoints[_random_dist(_random) % gotoPoints.size()]);
-		type = NPCStateType::goto_any;
-	}
 
-	Gizmo::Width(0.2f);
-	for (int i = 1; i < (int)paths.size(); ++i) {
-		Gizmo::Line(
-			paths[i - 1], paths[i], Vector4(1, 0, 0, 1));
-	}
-	Gizmo::WidthRollBack();
+	fsm->Update();
+	fsm->AnyUpdate();
 
-
-	//AdvanceAlongPath
-
-	//auto skinnedHierarchy = GetOwner()->GetComponentWithChilds<SkinnedHierarchy>();
-	//velocity = skinnedHierarchy->GetDeltaPosition() * GetOwner()->_transform->GetWorldScale().y;
-	//GetOwner()->_transform->SetWorldPosition(GetOwner()->_transform->GetWorldPosition() + velocity);
-	//velocity
-	
 }
 
 void NPCComponent::MoveControl()
@@ -305,4 +295,103 @@ Vector3 NPCComponent::AdvanceAlongPath(const std::vector<Vector3>& path, const V
 	}
 
 	return path.back(); // 안전 장치
+}
+
+void NPCFSMGroup::AnyUpdate()
+{
+	StatePatternGroup::AnyUpdate();
+
+}
+
+void NPCFSMGroup::Init()
+{
+	StatePatternGroup::Init();
+}
+
+void NPCFSMGroup::Update()
+{
+	StatePatternGroup::Update();
+}
+
+void NPCFSMGroup::SetNPC(const std::shared_ptr<NPCComponent>& npc)
+{
+	this->npc = npc;
+	for (auto state : statePatterns)
+		if (auto state2 = std::dynamic_pointer_cast<NPCState>(state.second))
+			state2->SetNPC(npc);
+}
+
+
+void NPCGotoAny::Init()
+{
+	StatePattern::Init();
+}
+
+void NPCGotoAny::Update()
+{
+	StatePattern::Update();
+	auto npc = this->npc.lock();
+	Gizmo::Width(0.2f);
+	for (int i = 1; i < (int)npc->paths.size(); ++i) {
+		Gizmo::Line(npc->paths[i - 1], npc->paths[i], Vector4(1, 0, 0, 1));
+	}
+	Gizmo::WidthRollBack();
+
+	Vector3 currentWorldPos = npc->GetOwner()->_transform->GetWorldPosition();
+	Vector3 nextPos = npc->AdvanceAlongPath(npc->paths, currentWorldPos, 0.75);
+	Vector3 nextDir = Vector2(nextPos.x, nextPos.z) - Vector2(currentWorldPos.x, currentWorldPos.z);
+	nextDir.Normalize();
+	npc->lookDirection = Vector3(nextDir.x, 0, nextDir.y);
+
+	auto animationList = npc->GetOwner()->GetComponentWithChilds<AnimationListComponent>();
+	auto skinnedHierarchy = npc->GetOwner()->GetComponentWithChilds<SkinnedHierarchy>();
+
+	if (animationList)
+	{
+		auto walk = animationList->GetAnimations()["walk"];
+		auto idle = animationList->GetAnimations()["idle"];
+		auto run = animationList->GetAnimations()["run"];
+		auto sit = animationList->GetAnimations()["sitting"];
+		auto sitdown = animationList->GetAnimations()["sitdown"];
+		auto situp = animationList->GetAnimations()["situp"];
+
+		if ((npc->paths[npc->paths.size() - 1] - currentWorldPos).Length() <= 0.25)
+		{
+			skinnedHierarchy->Play(idle, 0.25);
+			GetGroup()->ChangeState(StateType::idle);
+		}
+		else
+		{
+			skinnedHierarchy->Play(walk, 0.25);
+		}
+	}
+}
+
+void NPCGotoAny::Begin(StateType type, const std::shared_ptr<StatePattern>& prevState)
+{
+	StatePattern::Begin(type, prevState);
+
+	auto npc = this->npc.lock();
+	npc->paths = NavMeshManager::main->CalculatePath(npc->GetOwner()->_transform->GetWorldPosition(), npc->gotoPoints[_random_dist(_random) % npc->gotoPoints.size()]);
+
+	auto animationList = npc->GetOwner()->GetComponentWithChilds<AnimationListComponent>();
+	auto skinnedHierarchy = npc->GetOwner()->GetComponentWithChilds<SkinnedHierarchy>();
+
+	if (animationList)
+	{
+		auto walk = animationList->GetAnimations()["walk"];
+		auto idle = animationList->GetAnimations()["idle"];
+		auto run = animationList->GetAnimations()["run"];
+		skinnedHierarchy->Play(walk, 0.25);
+	}
+}
+
+bool NPCGotoAny::TriggerUpdate()
+{
+	return StatePattern::TriggerUpdate();
+}
+
+void NPCGotoAny::End(const std::shared_ptr<StatePattern>& nextState)
+{
+	StatePattern::End(nextState);
 }
