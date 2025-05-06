@@ -65,11 +65,9 @@ void CableComponent::Shooting()
 	if (_currentHook)
 	{
 		wcout << _currentHook->GetName() << endl;
-
 		vec3 forward = _currentHook->_transform->GetForward();
 		vec3 worldPos = _currentHook->_transform->GetWorldPosition();
 		_currentHook->_transform->SetWorldPosition(worldPos + forward * 30.0f * Time::main->GetDeltaTime());
-
 	}
 	
 }

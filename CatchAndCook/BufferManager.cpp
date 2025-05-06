@@ -61,7 +61,6 @@ void BufferManager::Init()
 		CreateStructuredBufferPool(i, BufferType::SeaFIshParam, "FIshInfos", sizeof(FishInfo), 20000);
 	/*	CreateStructuredBufferPool(BufferType::ForwardLightParam, "ForwardLightDatas", sizeof(ForwardLightParams), 10000);*/
 		CreateStructuredBufferPool(i, BufferType::LightDataParam, "g_lights", sizeof(Light), LightManager::_maxLight);
-
 		CreateStructuredBufferPool(i, BufferType::BoneParam, "BoneDatas", sizeof(Matrix), 2 * 256 * 1024);
 	}
 
