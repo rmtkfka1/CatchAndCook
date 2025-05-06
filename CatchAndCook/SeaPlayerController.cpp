@@ -179,11 +179,11 @@ void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float 
     if (Input::main->GetMouse(KeyCode::RightMouse))
     {
         SetState(SeaPlayerState::Aiming);
-
     }
     else
     {
         SetState(SeaPlayerState::Idle);
+        cout << "호출" << endl;
     }
  
 
@@ -305,9 +305,6 @@ void SeaPlayerController::UpdateState(float dt)
     switch (_state)
     {
     case SeaPlayerState::Idle:
-
-     
-
         break;
     case SeaPlayerState::Aiming:
   
