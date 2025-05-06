@@ -374,6 +374,7 @@
     <ClCompile Include="StatePattern.cpp">
       <Filter>997.Utils</Filter>
     </ClCompile>
+    <ClCompile Include="InGameMainField.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -700,6 +701,7 @@
     <ClInclude Include="StatePattern.h">
       <Filter>997.Utils</Filter>
     </ClInclude>
+    <ClInclude Include="InGameMainField.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">

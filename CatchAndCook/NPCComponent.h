@@ -42,6 +42,36 @@ public:
 	void End(const std::shared_ptr<StatePattern>& nextState) override;
 };
 
+class NPCGotoShop : public NPCState
+{
+public:
+	void Init() override;
+	void Update() override;
+	void Begin(StateType type, const std::shared_ptr<StatePattern>& prevState) override;
+	bool TriggerUpdate() override;
+	void End(const std::shared_ptr<StatePattern>& nextState) override;
+};
+
+class NPCGotoTable : public NPCState
+{
+public:
+	void Init() override;
+	void Update() override;
+	void Begin(StateType type, const std::shared_ptr<StatePattern>& prevState) override;
+	bool TriggerUpdate() override;
+	void End(const std::shared_ptr<StatePattern>& nextState) override;
+};
+
+class NPCEatting : public NPCState
+{
+public:
+	void Init() override;
+	void Update() override;
+	void Begin(StateType type, const std::shared_ptr<StatePattern>& prevState) override;
+	bool TriggerUpdate() override;
+	void End(const std::shared_ptr<StatePattern>& nextState) override;
+};
+
 class NPCIdle : public NPCState
 {
 public:
@@ -50,6 +80,8 @@ public:
 	void Begin(StateType type, const std::shared_ptr<StatePattern>& prevState) override;
 	bool TriggerUpdate() override;
 	void End(const std::shared_ptr<StatePattern>& nextState) override;
+
+	float waitTime = 0;
 };
 
 
@@ -79,6 +111,8 @@ public:
 
 	std::vector<Vector3> gotoPoints;
 	std::vector<Vector3> paths;
+	Vector3 shopEntryPoint;
+
 	Vector3 velocity;
 	Vector3 lookDirection = Vector3::Forward;
 	bool isGround = true;
