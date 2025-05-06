@@ -203,6 +203,7 @@
     <ClCompile Include="guid_utility.cpp" />
     <ClCompile Include="ImguiManager.cpp" />
     <ClCompile Include="InGameGlobal.cpp" />
+    <ClCompile Include="InGameMainField.cpp" />
     <ClCompile Include="InitComponent.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="input_module.cpp" />
@@ -340,6 +341,7 @@
     <ClInclude Include="guid_utility.h" />
     <ClInclude Include="ImguiManager.h" />
     <ClInclude Include="InGameGlobal.h" />
+    <ClInclude Include="InGameMainField.h" />
     <ClInclude Include="InitComponent.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="input_module.h" />

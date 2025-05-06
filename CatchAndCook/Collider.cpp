@@ -424,7 +424,7 @@ void Collider::CalculateBounding()
 		if (onwerTransform->IsLocalToWorldChanged())
 		{
 			_orgin.box.Transform(_bound.box, mat);
-		/*	_bound.box = TransformBoundingOrientedBox(_orgin.box, mat, onwerTransform->GetWorldScale(), onwerTransform->GetWorldRotation());*/
+			//_bound.box = TransformBoundingOrientedBox(_orgin.box, mat, onwerTransform->GetWorldScale(), onwerTransform->GetWorldRotation());
 		}
 	}
 

@@ -11,15 +11,15 @@ void StatePatternGroup::Init()
 
 void StatePatternGroup::Update()
 {
-	if (currentPattern)
-		currentPattern->Update();
+	if (currentState)
+		currentState->Update();
 }
 
 void StatePatternGroup::AnyUpdate()
 {
 	for (auto& state : statePatterns)
 	{
-		if (state.second && state.second->TriggerUpdate())
+		if (state.second && state.second->GetType() != currentState->GetType() && state.second->TriggerUpdate())
 		{
 			ChangeState(state.first);
 		}
@@ -37,14 +37,14 @@ void StatePatternGroup::AddState(StateType type, const std::shared_ptr<StatePatt
 
 void StatePatternGroup::ChangeState(StateType type)
 {
-	if (currentPattern)
+	if (currentState)
 	{
 		auto nextState = statePatterns[type];
-		currentPattern->End(nextState);
+		currentState->End(nextState);
 		if (nextState)
 		{
-			auto prev = currentPattern;
-			currentPattern = nextState;
+			auto prev = currentState;
+			currentState = nextState;
 			nextState->Begin(type, prev);
 		}
 	}
@@ -53,8 +53,8 @@ void StatePatternGroup::ChangeState(StateType type)
 		auto nextState = statePatterns[type];
 		if (nextState)
 		{
-			auto prev = currentPattern;
-			currentPattern = nextState;
+			auto prev = currentState;
+			currentState = nextState;
 			nextState->Begin(type, prev);
 		}
 	}

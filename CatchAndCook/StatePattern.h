@@ -9,13 +9,14 @@ enum class StateType
 	idle,
 	goto_any,
 	goto_shop,
+	goto_table,
 };
 
 class StatePatternGroup : public std::enable_shared_from_this<StatePatternGroup>
 {
 public:
 	std::unordered_map<StateType, std::shared_ptr<StatePattern>> statePatterns;
-	std::shared_ptr<StatePattern> currentPattern;
+	std::shared_ptr<StatePattern> currentState;
 
 	virtual void Init();
 	virtual void Update();

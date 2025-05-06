@@ -324,6 +324,8 @@ void Scene::ShadowPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
         auto light = LightManager::main->GetMainLight();
 		if (light == nullptr)
 			return;
+        if (light->intensity <= 0.05)
+            return;
 
         auto boundings = ShadowManager::main->CalculateBounds(CameraManager::main->GetActiveCamera().get(), light.get(), { 6, 20, 65, 200 });
 

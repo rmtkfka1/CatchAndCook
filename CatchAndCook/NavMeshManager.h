@@ -101,6 +101,53 @@ public:
 		return (w1 >= 0 && w2 >= 0 && w3 >= 0)
 			|| (w1 <= 0 && w2 <= 0 && w3 <= 0);
 	}
+	static Vector3 ClosestPointOnTriangle(const Vector3& P, const Vector3& A, const Vector3& B, const Vector3& C)
+	{
+		// edge 벡터
+		Vector3 AB = B - A;
+		Vector3 AC = C - A;
+		Vector3 AP = P - A;
+
+		// barycentric 좌표 계산
+		float d1 = AB.Dot(AP);
+		float d2 = AC.Dot(AP);
+		if (d1 <= 0 && d2 <= 0) return A; // A vertex
+
+		Vector3 BP = P - B;
+		float d3 = AB.Dot(BP);
+		float d4 = AC.Dot(BP);
+		if (d3 >= 0 && d4 <= d3) return B; // B vertex
+
+		float vc = d1 * d4 - d3 * d2;
+		if (vc <= 0 && d1 >= 0 && d3 <= 0) {
+			float v = d1 / (d1 - d3);
+			return A + AB * v; // AB edge
+		}
+
+		Vector3 CP = P - C;
+		float d5 = AB.Dot(CP);
+		float d6 = AC.Dot(CP);
+		if (d6 >= 0 && d5 <= d6) return C; // C vertex
+
+		float vb = d5 * d2 - d1 * d6;
+		if (vb <= 0 && d2 >= 0 && d6 <= 0) {
+			float w = d2 / (d2 - d6);
+			return A + AC * w; // AC edge
+		}
+
+		float va = d3 * d6 - d5 * d4;
+		if (va <= 0 && (d4 - d3) >= 0 && (d5 - d6) >= 0) {
+			Vector3 BC = C - B;
+			float w = (d4 - d3) / ((d4 - d3) + (d5 - d6));
+			return B + BC * w; // BC edge
+		}
+
+		// face 영역 내부
+		float denom = 1.0f / (va + vb + vc);
+		float v = vb * denom;
+		float w = vc * denom;
+		return A + AB * v + AC * w;
+	}
 
 	static float Area2_2D(const Vector2& A, const Vector2& B, const Vector2& C) {
 		return (B.x - A.x) * (C.y - A.y) - (B.y - A.y) * (C.x - A.x);
@@ -214,7 +261,7 @@ public:
 	std::vector<std::vector<int>> _triangleAdjects;
 	
 
-	bool _gizmoDebug = true;
+	bool _gizmoDebug = false;
 };
 
 
