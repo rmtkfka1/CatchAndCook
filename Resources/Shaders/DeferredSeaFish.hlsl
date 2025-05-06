@@ -25,14 +25,13 @@ struct VS_OUT
     float3 worldTangent : TANGENT;
 };
 
-struct FishInfo 
+struct FishInfo
 {
     float fishWaveAmount;
     float fishSpeed;
     float boundsCenterZ;
     float boundsSizeZ;
 };
-
 
 
 StructuredBuffer<FishInfo> FIshInfos : register(t32);
@@ -47,18 +46,19 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     
     FishInfo fishinfo = FIshInfos[offset[STRUCTURED_OFFSET(32)].r + id];
 
-    float localZ = input.pos.z * 0.3f;  
+    float localZ = input.pos.z;
     float minZ = fishinfo.boundsCenterZ - fishinfo.boundsSizeZ;
     float maxZ = fishinfo.boundsCenterZ + fishinfo.boundsSizeZ;
     float weight = saturate((localZ - minZ) / (maxZ - minZ));
 
- 
-    float wave = sin(g_Time * fishinfo.fishSpeed )
+    float phaseOffset = localZ * 0.5f;
+
+    float wave = sin(g_Time * fishinfo.fishSpeed + phaseOffset)
            * fishinfo.fishWaveAmount * weight;
 
     float3 animatedPos = input.pos;
     animatedPos.x += wave;
-    
+
     float4 worldPos = mul(float4(animatedPos, 1.0f), l2wMatrix);
     output.pos = mul(worldPos, VPMatrix);
     output.worldPos = worldPos.xyz;
@@ -83,7 +83,7 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     PS_OUT output = (PS_OUT) 0;
     
     output.position = float4(input.worldPos, 1.0f);
-    float3 N= ComputeNormalMapping(input.worldNormal, input.worldTangent, _BumpMap.Sample(sampler_lerp, input.uv));
+    float3 N = ComputeNormalMapping(input.worldNormal, input.worldTangent, _BumpMap.Sample(sampler_lerp, input.uv));
     output.color = _BaseMap.Sample(sampler_lerp, input.uv);
     output.normal = float4(N, 1.0f);
     return output;
