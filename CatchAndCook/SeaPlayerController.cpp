@@ -176,16 +176,15 @@ void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float 
         }
     }
 
-    if (Input::main->GetMouse(KeyCode::RightMouse))
+    if (Input::main->GetMouseDown(KeyCode::RightMouse))
     {
         SetState(SeaPlayerState::Aiming);
     }
-    else
+  
+    if (Input::main->GetMouseUp(KeyCode::RightMouse) && _state == SeaPlayerState::Aiming)
     {
         SetState(SeaPlayerState::Idle);
-        cout << "호출" << endl;
     }
- 
 
 
     if (Input::main->GetKey(KeyCode::F1))
