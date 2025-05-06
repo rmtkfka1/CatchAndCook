@@ -9,7 +9,7 @@ class CableComponent;
 enum class SeaPlayerState
 {
 	Idle,
-	Move,
+	Aiming,
 	Attack,
 	Skill,
 	PushBack,
@@ -67,9 +67,9 @@ private:
 	SeaPlayerState _state = SeaPlayerState::Idle;
 	vec3 _velocity = vec3::Zero;
 
-	float _cameraPitchOffset = 11.066f;
-	float _cameraForwardOffset = 0.262f*3;
-	float _cameraHeightOffset = 1.598f*3;
+	float _cameraPitchOffset = 2.212f;
+	float _cameraForwardOffset = 0.541f;
+	float _cameraHeightOffset = 4.130f;
 	float  _yaw = 0;
 	float _pitch = 0;
 	float _roll = 0;

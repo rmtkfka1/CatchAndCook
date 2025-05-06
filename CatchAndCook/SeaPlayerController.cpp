@@ -176,6 +176,18 @@ void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float 
         }
     }
 
+    if (Input::main->GetMouse(KeyCode::RightMouse))
+    {
+        SetState(SeaPlayerState::Aiming);
+
+    }
+    else
+    {
+        SetState(SeaPlayerState::Idle);
+    }
+ 
+
+
     if (Input::main->GetKey(KeyCode::F1))
     {
         auto& camera = CameraManager::main->GetCamera(CameraType::DebugCamera);
@@ -290,34 +302,16 @@ Quaternion SeaPlayerController::CalCulateYawPitchRoll()
 void SeaPlayerController::UpdateState(float dt)
 {
 
-    if (Input::main->GetKeyDown(KeyCode::Num1))
-    {
-        _state = SeaPlayerState::Idle;
-  
-    }
-
-    if (Input::main->GetKeyDown(KeyCode::Num2))
-    {
-        _state = SeaPlayerState::Move;
-   
-    }
-
-
-
     switch (_state)
     {
     case SeaPlayerState::Idle:
-        _skined->Play(GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations()["Swim_Idle"], 0.5f);
- /*       cout << _animations["sea_idle"]->GetModelName() << endl;;*/
+
+     
+
         break;
-    case SeaPlayerState::Move:
-        //cout << _animations["sea_swim"]->GetModelName() << endl;;
-        _skined->Play(GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations()["Swim_Run"], 0.5f);
+    case SeaPlayerState::Aiming:
+  
         break;
-   // case SeaPlayerState::Attack:
-   ///*     cout << _animations["sea_jump"]->GetModelName() << endl;;*/
-   //     _skined->Play(GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations()["sea_jump"], 0.5f);
-   //     break;
     case SeaPlayerState::Skill:
         break;
     case SeaPlayerState::Die:
@@ -356,10 +350,16 @@ void SeaPlayerController::SetState(SeaPlayerState state)
 	switch (_state)
 	{
 	case SeaPlayerState::Idle:
-
+        if (_animations.find("Swim_Idle") != _animations.end())
+        {
+            _skined->Play(_animations["Swim_Idle"], 0.5f);
+        };
 		break;
-	case SeaPlayerState::Move:
-
+	case SeaPlayerState::Aiming:
+        if (_animations.find("Swim_Run") != _animations.end())
+        {
+            _skined->Play(_animations["Swim_Run"], 0.5f);
+        };
 		break;
 	case SeaPlayerState::Attack:
 
@@ -376,6 +376,7 @@ void SeaPlayerController::SetState(SeaPlayerState state)
 	default:
 		break;
 	}
+
 }
 void SeaPlayerController::Idle(float dt)
 {

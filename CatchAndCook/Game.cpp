@@ -311,6 +311,7 @@ void Game::CameraUpdate()
 		sumDelta += delta;
 
 		camera->SetCameraRotation(sumDelta.x, sumDelta.y, 0);
+		
 	}
 	
 	if (Input::main->GetMouseDown(KeyCode::LeftMouse))
