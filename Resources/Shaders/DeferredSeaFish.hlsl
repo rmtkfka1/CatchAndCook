@@ -47,7 +47,7 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     
     FishInfo fishinfo = FIshInfos[offset[STRUCTURED_OFFSET(32)].r + id];
 
-    float localZ = input.pos.z; 
+    float localZ = input.pos.z * 0.3f;  
     float minZ = fishinfo.boundsCenterZ - fishinfo.boundsSizeZ;
     float maxZ = fishinfo.boundsCenterZ + fishinfo.boundsSizeZ;
     float weight = saturate((localZ - minZ) / (maxZ - minZ));

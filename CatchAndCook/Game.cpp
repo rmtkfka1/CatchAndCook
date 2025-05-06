@@ -75,7 +75,6 @@ void Game::Init(HWND hwnd)
 
 	Gizmo::main = std::make_unique<Gizmo>();
 	Gizmo::main->Init();
-
 	CameraManager::main->AddCamera(CameraType::DebugCamera, make_shared<DebugCamera>());
 	CameraManager::main->AddCamera(CameraType::UiCamera, make_shared<UiCamera>());
 	CameraManager::main->AddCamera(CameraType::SeaCamera, make_shared<SeaCamera>());
@@ -93,7 +92,7 @@ void Game::Init(HWND hwnd)
 	PathStamp::main = make_unique<PathStamp>();
 	PathStamp::main->Init();
 
-	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
+	auto scene = SceneManager::main->AddScene(SceneType::Sea01);
 };
 
 void Game::PrevUpdate()
