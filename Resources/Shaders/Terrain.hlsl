@@ -3,6 +3,7 @@
 #include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
 #include "ShadowReceive_b6.hlsl"
+#include "SeaGlobal.hlsl"
 
 #define TessFactor 18
 #define PI 3.14159f
@@ -56,7 +57,7 @@ struct HS_OUT
 };
 
 Texture2D heightMap : register(t0);
-Texture2D _caustics : register(t17);
+
 
 Texture2D _detailMap0 : register(t40);
 Texture2D _detailMap1 : register(t41);
@@ -293,15 +294,7 @@ PS_OUT PS_Main(DS_OUT input)
     
     if(g_castic)
     {        
-        float2 scroll1 = uv * 8.0f + g_Time * float2(0.02f, 0.01f);
-        float2 scroll2 = uv * 8.0f + g_Time * float2(-0.015f, 0.018f);
-       
-        float3 c1 = _caustics.Sample(sampler_lerp, scroll1).rgb;
-        float3 c2 = _caustics.Sample(sampler_lerp, scroll2).rgb;
-
-        float3 caustic = (c1 + c2) * 0.5f;
-
-        output.color += float4(caustic , 0.0f); 
+        output.color += ComputeCaustics(uv, 8, input.worldPos.xyz);
     }
     
     output.position = input.worldPos;

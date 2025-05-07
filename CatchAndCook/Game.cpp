@@ -221,7 +221,11 @@ void Game::CameraUpdate()
 	if (CameraManager::main->GetActiveCamera()->GetCameraType() != CameraType::DebugCamera)
 		return;
 
+
+
 	shared_ptr<Camera> camera = CameraManager::main->GetCamera(CameraType::DebugCamera);
+
+	cout << camera->GetCameraPos().y << endl;
 
 	static float speed = 500.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;
