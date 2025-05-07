@@ -162,7 +162,7 @@ void CS_Main(uint3 id : SV_DispatchThreadID)
     float fogFactor = CalculateFogFactor(viewPos);
 
     LightingResult light = ComputeLightColor(worldPos, normal);
-    float distFogNorm = saturate((viewPos.z - g_fogMin) / (g_fogMax - g_fogMin));
+    float distFogNorm = saturate((length(viewPos.xyz) - g_fogMin) / (g_fogMax - g_fogMin));
     float swAtten = lerp(light.subWaterAtten, 1.0f, distFogNorm);
     
 #ifdef SHADOW_ON
