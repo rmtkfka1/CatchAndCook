@@ -24,6 +24,9 @@
 void Scene_Sea01::Init()
 {
 	Scene::Init();
+
+	caustics = make_shared<Texture>();
+	caustics->Init(L"../Resources/Textures/test.jpg");
 	//_finalShader->SetShader(ResourceManager::main->Get<Shader>(L"finalShader_MainField"));
 	//_finalShader->SetPass(RENDER_PASS::Forward);
 
@@ -216,6 +219,8 @@ void Scene_Sea01::Init()
 
 void Scene_Sea01::Update()
 {
+	
+
 	Scene::Update();
 
 	PathStamp::main->Run();
@@ -230,6 +235,7 @@ void Scene_Sea01::Rendering()
 {
 	GlobalSetting();
 
+	_globalParam.caustics = 1;
 
 	auto& cmdList = Core::main->GetCmdList();
 	Core::main->GetRenderTarget()->ClearDepth();
@@ -378,6 +384,14 @@ void Scene_Sea01::ComputePass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>&
 	ComputeManager::main->Dispatch(cmdList);
 }
 
+void Scene_Sea01::SetMaterialData(RenderObjectStrucutre& data)
+{
+	if (data.material != nullptr)
+	{
+		data.material->SetTexture("_caustics", caustics);
+	}
+}
+
 void Scene_Sea01::UiPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
 	{
@@ -510,6 +524,7 @@ void Scene_Sea01::DeferredPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>
 					}
 				}
 
+				SetMaterialData(ele);
 
 				if (ele.renderer->isInstancing() == false)
 				{

@@ -8,6 +8,10 @@ cbuffer GLOBAL_DATA : register(b0)
     float2 g_window_size;
     float g_Time;
     float g_skyBlendTime;
+    float g_castic;
+    float p1;
+    float p2;
+    float p3;
 };
 
 #define STRUCTURED_BACKOFFSET 30

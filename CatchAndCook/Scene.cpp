@@ -46,11 +46,13 @@ void Scene::Init()
 	_finalShader = std::make_shared<Material>();
 	_finalShader->SetShader(ResourceManager::main->Get<Shader>(L"finalShader"));
     _finalShader->SetPass(RENDER_PASS::Forward);
+
+
 }
 
 void Scene::Update()
 {
-
+   
     Profiler::Set("Logic_Start");
     while (!_changeTypeQueue.empty()) 
     {
@@ -104,6 +106,8 @@ void Scene::RenderBegin()
 void Scene::Rendering()
 {
     GlobalSetting();
+
+    _globalParam.caustics = 0;
 
 #ifdef _DEBUG
     //Gizmo::Width(0.5);

@@ -19,5 +19,9 @@ public:
 	virtual void FinalRender(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
 	virtual void ComputePass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
 
+
+	void SetMaterialData(RenderObjectStrucutre& data);
+
+	shared_ptr<Texture> caustics;
 };
 
