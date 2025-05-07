@@ -31,19 +31,19 @@ void Scene_Sea01::Init()
 	Scene::Init();
 
 
-	vector<wstring> paths;
-	paths.reserve(240);
+	//vector<wstring> paths;
+	//paths.reserve(240);
 
-	std::wstring orginPath = L"../Resources/Textures/Caustics/";
-	std::wstring path = L"../Resources/Textures/Caustics/";
+	//std::wstring orginPath = L"../Resources/Textures/Caustics/";
+	//std::wstring path = L"../Resources/Textures/Caustics/";
 
-	for (const auto& entry : fs::directory_iterator(path))
-	{
-		paths.push_back(orginPath + entry.path().filename().wstring());
-	}
+	//for (const auto& entry : fs::directory_iterator(path))
+	//{
+	//	paths.push_back(orginPath + entry.path().filename().wstring());
+	//}
 
 	caustics = make_shared<Texture>();
-	caustics->Init(paths);
+	caustics->Init(L"../Resources/Textures/test.jpg");
 
 
 

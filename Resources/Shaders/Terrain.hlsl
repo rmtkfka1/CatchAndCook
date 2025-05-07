@@ -56,7 +56,7 @@ struct HS_OUT
 };
 
 Texture2D heightMap : register(t0);
-Texture2DArray _caustics : register(t17);
+Texture2D _caustics : register(t17);
 
 Texture2D _detailMap0 : register(t40);
 Texture2D _detailMap1 : register(t41);
@@ -292,17 +292,16 @@ PS_OUT PS_Main(DS_OUT input)
     output.normal = float4(normalize(input.normal), 1.0f);
     
     if(g_castic)
-    {
-        float frameIndex = fmod(g_Time * 4.0f, 239.0f);
-        float i0 = floor(frameIndex);
-        float i1 = (i0 + 1 >= 239.0f) ? 0.0f : i0 + 1.0f;
-        float alpha = frac(frameIndex);
+    {        
+        float2 scroll1 = uv * 8.0f + g_Time * float2(0.02f, 0.01f);
+        float2 scroll2 = uv * 8.0f + g_Time * float2(-0.015f, 0.018f);
+       
+        float3 c1 = _caustics.Sample(sampler_lerp, scroll1).rgb;
+        float3 c2 = _caustics.Sample(sampler_lerp, scroll2).rgb;
 
-        float4 A = _caustics.Sample(sampler_lerp, float3(input.uv * 20.0f, i0));
-        float4 B = _caustics.Sample(sampler_lerp, float3(input.uv * 20.0f, i1));
-        float4 LERP = lerp(A, B, alpha);
-        
-        output.color += LERP;
+        float3 caustic = (c1 + c2) * 0.5f;
+
+        output.color += float4(caustic , 0.0f); 
     }
     
     output.position = input.worldPos;
