@@ -4,7 +4,7 @@ Texture2D<float4> MAOTexture : register(t1); // 입력 텍스처
 
 
 static float Luminance[3] = { 0.2126f, 0.7152f, 0.0722f };//float3(0.2126, 0.7152, 0.0722);
-static float th = 0.3f;
+static float th = 0.5f;
 
 [numthreads(16, 16, 1)]
 void CS_Main(int3 threadIndex : SV_DispatchThreadID)
@@ -19,7 +19,7 @@ void CS_Main(int3 threadIndex : SV_DispatchThreadID)
 
 	float bloomFactor = saturate((relativeLuminance - th) / (1.0 - th)); // 스무스 하게 처리
 
-	color *= bloomFactor;
+	color *= bloomFactor * 1.2;
 
     
     // 결과 텍스처에 쓰기

@@ -127,14 +127,14 @@ private:
 	virtual void Resize();
 private:
 	void Black(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
-	void Blooming(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+	void Ray(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 
 	bool _on = true;
 
 private:
 	GodRayParam param;
 
-	shared_ptr<Texture> _bloomTexture;
+	shared_ptr<Texture> _rayEmissionTexture;
 	shared_ptr<Texture> _pingtexture;
 	shared_ptr<Texture> _pongtexture;
 
