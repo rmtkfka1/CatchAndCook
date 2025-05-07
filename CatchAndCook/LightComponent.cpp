@@ -71,11 +71,11 @@ void LightComponent::Update2()
 			SceneManager::main->GetCurrentScene()->GetGlobalParam().SkyBlend = skyTime;
 			float cycle = skyTime;
 			float tY = std::fmod(cycle + 2.0f, 4.0f) / 4.0f;
-			float angleY = std::lerp(60.0f, -60.0f, tY);
+			float angleY = std::lerp(67.0f, -67.0f, tY);
 
 
 			Quaternion qy = Quaternion::CreateFromAxisAngle(Vector3::UnitY, angleY * D2R);
-			GetOwner()->_transform->SetLocalRotation(qy * Quaternion::CreateFromYawPitchRoll(Vector3(57, -115, 0) * D2R));
+			GetOwner()->_transform->SetLocalRotation(qy * Quaternion::CreateFromYawPitchRoll(Vector3(55, -115, 0) * D2R));
 			light->intensity = cos((std::fmod(skyTime, 4)) / 2 * 3.141592f) * 0.5 + 0.5;
 			light->intensity = pow(light->intensity, 0.5);
 			if (auto renderer = sky->GetComponent<MeshRenderer>())

@@ -336,10 +336,34 @@ void GodRay::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, 
 	if (_on == false)
 		return;
 
-	Black(cmdList, x, y, z);
-	Ray(cmdList, x, y, z);
-	DispatchEnd(cmdList);
+	if (auto mainLight = LightComponent::GetMainLight()->GetLight())
+	{
+		param.lightWorldPos = Vector4(mainLight->position);
+		param.lightWorldPos.w = 1;
 
+		auto cameraParam = CameraManager::main->GetActiveCamera()->GetCameraParam();
+		Vector4 ndc;
+		Vector4::Transform(cameraParam.cameraPos - mainLight->direction * 100, cameraParam.VPMatrix, ndc);
+
+		ndc /= abs(ndc.w);
+		ndc.y *= -1;
+		ndc.x = ndc.x * 0.5 + 0.5;
+		ndc.y = ndc.y * 0.5 + 0.5;
+		param.lightScreenUV = Vector2(ndc.x, ndc.y);
+
+		param.sampleCount = 50;
+		param.decay = 0.95;
+		param.exposure = 0.235 * std::clamp((mainLight->direction.Dot(-Vector3(cameraParam.cameraLook)) * 0.5 + 0.5) * 1.5, 0.0, 1.0)
+			* std::clamp((1 - mainLight->intensity) * 1.5f, 0.0f, 1.0f);
+		param.exposure = std::max(param.exposure, 0.0f);
+
+		if (param.exposure <= 0.01)
+			return;
+
+		Black(cmdList, x, y, z);
+		Ray(cmdList, x, y, z);
+		DispatchEnd(cmdList);
+	}
 }
 
 
@@ -386,65 +410,39 @@ void GodRay::Black(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int
 
 void GodRay::Ray(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
 {
+	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
+	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
-	if (auto mainLight = LightComponent::GetMainLight()->GetLight())
-	{
+	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
-		auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
-		depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
-		auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
-		renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+	_rayEmissionTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
-		_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	cmdList->SetPipelineState(_RayShader->_pipelineState.Get());
 
-		_rayEmissionTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-
-		auto& table = Core::main->GetBufferManager()->GetTable();
-		cmdList->SetPipelineState(_RayShader->_pipelineState.Get());
-
-		_tableContainer = table->Alloc(10);
+	_tableContainer = table->Alloc(10);
 
 
 
-		table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 0);
+	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 0);
 
-		table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
+	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
 
-		table->CopyHandle(_tableContainer.CPUHandle, _pingtexture->GetSRVCpuHandle(), 2);
+	table->CopyHandle(_tableContainer.CPUHandle, _pingtexture->GetSRVCpuHandle(), 2);
 
-		table->CopyHandle(_tableContainer.CPUHandle, _rayEmissionTexture->GetUAVCpuHandle(), 5);
-
-
-		auto CbufferContainer = Core::main->GetBufferManager()->CreateAndGetBufferPool(BufferType::GodRayParam, sizeof(GodRayParam), 1)->Alloc(1);
+	table->CopyHandle(_tableContainer.CPUHandle, _rayEmissionTexture->GetUAVCpuHandle(), 5);
 
 
-		param.lightWorldPos = Vector4(mainLight->position);
-		param.lightWorldPos.w = 1;
+	auto CbufferContainer = Core::main->GetBufferManager()->CreateAndGetBufferPool(BufferType::GodRayParam, sizeof(GodRayParam), 1)->Alloc(1);
+	memcpy(CbufferContainer->ptr, (void*)&param, sizeof(GodRayParam));
+	cmdList->SetComputeRootConstantBufferView(1, CbufferContainer->GPUAdress);
 
-		auto cameraParam = CameraManager::main->GetActiveCamera()->GetCameraParam();
-		Vector4 ndc;
-		Vector4::Transform(cameraParam.cameraPos - mainLight->direction * 100, cameraParam.VPMatrix, ndc);
-
-		ndc /= abs(ndc.w);
-		ndc.y *= -1;
-		ndc.x = ndc.x * 0.5 + 0.5;
-		ndc.y = ndc.y * 0.5 + 0.5;
-		param.lightScreenUV = Vector2(ndc.x, ndc.y);
-
-		param.sampleCount = 50;
-		param.decay = 0.95;
-		param.exposure = 0.235 * std::clamp((mainLight->direction.Dot(-Vector3(cameraParam.cameraLook)) * 0.5 + 0.5) * 1.5, 0.0, 1.0)
-			* std::clamp((1 - mainLight->intensity) * 1.5f, 0.0f, 1.0f);
-		param.exposure = std::max(param.exposure, 0.0f);
-		memcpy(CbufferContainer->ptr, (void*)&param, sizeof(GodRayParam));
-		cmdList->SetComputeRootConstantBufferView(1, CbufferContainer->GPUAdress);
-
-
-
-		cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
-		cmdList->Dispatch(x, y, z);
-	}
+	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+	cmdList->Dispatch(x, y, z);
+	
 }
 
 
