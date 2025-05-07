@@ -1,7 +1,8 @@
+#include "Global_b0.hlsl"
 
 #ifndef SEA_GLOBAL
 #define SEA_GLOBAL
-#include "Global_b0.hlsl"
+
 
 Texture2D globalT17 : register(t17);
 
