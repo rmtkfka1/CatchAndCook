@@ -54,7 +54,7 @@ public:
     virtual void Destroy();
 
     virtual void SetData(Material* material = nullptr);
-
+    void Setting(const wstring& colorPath, const wstring& movementPath);
 private:
     shared_ptr<Texture> _textures;
     shared_ptr<Texture> _bump;
