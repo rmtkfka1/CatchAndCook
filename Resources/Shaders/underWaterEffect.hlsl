@@ -161,22 +161,20 @@ void CS_Main(uint3 id : SV_DispatchThreadID)
 
     float fogFactor = CalculateFogFactor(viewPos);
 
-    LightingResult light = ComputeLightColor(worldPos, normal);
-    float distFogNorm = saturate((viewPos.z - g_fogMin) / (g_fogMax - g_fogMin));
-    float swAtten = lerp(light.subWaterAtten, 1.0f, distFogNorm);
+    //LightingResult light = ComputeLightColor(worldPos, normal);
+    //float distFogNorm = saturate((viewPos.z - g_fogMin) / (g_fogMax - g_fogMin));
+    //float swAtten = lerp(light.subWaterAtten, 1.0f, distFogNorm);
     
-#ifdef SHADOW_ON
-    float3 uvz[4];
-    ComputeCascadeShadowUVs(worldPos.xyz, uvz);
-    light.atten *= ComputeCascadeShadowAtten(uvz, mul(float4(worldPos.xyz, 1), ViewMatrix).z);
-#endif
+//#ifdef SHADOW_ON
+//    float3 uvz[4];
+//    ComputeCascadeShadowUVs(worldPos.xyz, uvz);
+//    light.atten *= ComputeCascadeShadowAtten(uvz, mul(float4(worldPos.xyz, 1), ViewMatrix).z);
+//#endif
     
-    float3 underCol = lerp(g_underWaterColor * albedo, albedo, light.atten);
+    float3 underCol = albedo * g_underWaterColor;
 
-    float3 litColor = underCol + light.subColor;
-
-    float adjustedFog = saturate(fogFactor * swAtten);
-    float3 finalColor = lerp(litColor, g_fogColor, adjustedFog);
+    float adjustedFog = saturate(fogFactor);
+    float3 finalColor = lerp(underCol, g_fogColor, adjustedFog);
 
     resultTexture[tex] = float4(finalColor, 1.0f);
 }
