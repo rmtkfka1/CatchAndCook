@@ -64,6 +64,9 @@ public:
 	void SetBoundingSphere(vec3 center,float radius);
 	void SetBoundingFrustum(BoundingFrustum& boundingFrustum);
 	void CalculateBounding();
+	bool SetTrigger(bool trigger) { return isTrigger = trigger; };
+	bool IsTrigger() { return isTrigger; };
+	
 	pair<vec3, vec3> GetMinMax();
 	BoundingUnion& GetBoundUnion() {return _bound;}
 	CollisionType GetBoundType() { return _type; }
@@ -84,6 +87,8 @@ private:
 	CollisionType _type;
 	BoundingUnion _orgin;
 	BoundingUnion _bound;
+
+	bool isTrigger = false;
 
 	int groupId = 0;
 	std::weak_ptr<GameObject> groupRootObject;

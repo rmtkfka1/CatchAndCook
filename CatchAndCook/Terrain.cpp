@@ -179,8 +179,11 @@ void Terrain::RenderBegin()
 
         GrassParam grass_param;
         grass_param.objectCount = _objectPositions.size();
-        for (int i = 0; i < std::min(_objectPositions.size(), grass_param.objectPos.size()); i++)
-        {
+        if (_objectPositions.size() > 1)
+        std::ranges::sort(_objectPositions, [&](const Vector3& pos1, const Vector3& pos2) {
+                return (_objectPositions[0] - pos1).LengthSquared() < (_objectPositions[0] - pos2).LengthSquared();
+            });
+        for (int i = 0; i < std::min(_objectPositions.size(), grass_param.objectPos.size()); i++) {
             grass_param.objectPos[i] = Vector4(_objectPositions[i].x, _objectPositions[i].y, _objectPositions[i].z, 1);
         }
         memcpy(_grassCBuffer->ptr, &grass_param, sizeof(GrassParam));
@@ -293,7 +296,7 @@ void Terrain::SetHeightMap(const std::wstring& rawPath, const std::wstring& pngP
     cout << "Terrain Size : "<< _fieldSize.x << " " << _fieldSize.y << " " << _fieldSize.z << endl;
 
 #ifdef RECT_TERRAIN
-    _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(_fieldSize.x, _fieldSize.z, _fieldSize.x / 16, _fieldSize.y / 16);
+    _gridMesh = GeoMetryHelper::LoadGripMeshControlPoints(_fieldSize.x, _fieldSize.z, _fieldSize.x / 10, _fieldSize.y / 10);
     _gridMesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 #else
 

@@ -64,7 +64,7 @@ void PlayerController::Update()
 	MoveControl();
 
 	for (auto& terrain : TerrainManager::main->GetTerrains())
-		terrain->_objectPositions.push_back(GetOwner()->_transform->GetWorldPosition());
+		terrain->AddObjectPositionFront(GetOwner()->_transform->GetWorldPosition());
 	//GetOwner()->_transform->SetWorldPosition(GetOwner()->_transform->GetWorldPosition() + Vector3::Forward * 10.0f * Time::main->GetDeltaTime());
 }
 
@@ -112,12 +112,17 @@ void PlayerController::CameraControl()
 	double bias = 0.05f;
 	std::vector<RayHit> hitList;
 	if (auto isHit = ColliderManager::main->RayCastAll({ _currentOffset, -_currentNextDirection }, finalCameraDistance + bias, hitList))
+	{
 		for (auto& hit : hitList)
-			if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
+		{
+			if (PhysicsComponent::GetPhysicsGroupID(hit.gameObject->GetCast<GameObject>()) != PhysicsComponent::GetPhysicsGroupID(GetOwner()) &&
+				(hit.collider == nullptr || (hit.collider != nullptr && (!hit.collider->IsTrigger()))))
 			{
 				finalCameraDistance = std::min((double)hit.distance, finalCameraDistance) - bias;
 				break;
 			}
+		}
+	}
 
 	cameraNextPosition = _currentOffset - _currentNextDirection * finalCameraDistance;
 
@@ -226,7 +231,7 @@ void PlayerController::MoveControl()
 			{
 				for (auto& otherCollider : otherColliders)
 				{
-					if (otherCollider->GetGroupID() != playerGroupID)
+					if (otherCollider->GetGroupID() != playerGroupID && !otherCollider->IsTrigger())
 					{
 						auto otherBoundingData = otherCollider->GetBoundingData();
 						Vector3 hitPosition = Collider::GetContactPoint(boundingData, otherBoundingData);
@@ -253,11 +258,12 @@ void PlayerController::MoveControl()
 	RayHit foundGround;
 	std::vector<RayHit> hitList;
 	if (auto isHit = ColliderManager::main->RayCastAllForMyCellDirect({ upRayOffset, Vector3::Down }, upDistance + gitMargin, hitList, 
-		BoundingData{CollisionType::Box, BoundingUnion(BoundingOrientedBox(GetOwner()->_transform->GetWorldPosition(), Vector3(2,2,2), Quaternion::Identity))}))
+		BoundingData{CollisionType::Box, BoundingUnion(BoundingOrientedBox(currentPos, Vector3(2,2,2), Quaternion::Identity))}))
 	{
 		for (auto& hit : hitList)
 		{
-			if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
+			if (PhysicsComponent::GetPhysicsGroupID(hit.gameObject->GetCast<GameObject>()) != PhysicsComponent::GetPhysicsGroupID(GetOwner()) && 
+				(hit.collider ==nullptr || (hit.collider != nullptr && (!hit.collider->IsTrigger()))))
 			{
 				if (hit.distance <= upDistance + gitMargin) {
 					foundGround = hit;
@@ -294,25 +300,6 @@ void PlayerController::Update2()
 
 	camera.lock()->Calculate();
 
-	/*
-	if (Input::main->GetMouse(KeyCode::LeftMouse))
-	{
-		auto mousePos = Input::main->GetMousePosition();
-		auto camera = CameraManager::main->GetActiveCamera();
-		auto cameraPos = camera->GetCameraPos();
-		vec3 cameraDir = camera->GetScreenToWorldPosition(mousePos) - camera->GetCameraPos();
-		cameraDir.Normalize();
-
-		auto hit = ColliderManager::main->RayCast({ cameraPos, cameraDir }, 500);
-		if (hit)
-		{
-			auto box = BoundingOrientedBox(hit.worldPos, Vector3::One, Quaternion::Identity);
-			Gizmo::Width(0.02f);
-			Gizmo::Box(box, ColliderManager::main->CollisionCheckDirect(CollisionType::Box, { .box = box }) ? Vector4(1, 0.5, 0, 1) : Vector4(0, 1, 0, 1));
-			Gizmo::WidthRollBack();
-		}
-	}
-	*/
 
 	CameraManager::main->Setting();
 }
@@ -335,6 +322,10 @@ void PlayerController::RenderBegin()
 void PlayerController::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)
 {
 	Component::CollisionBegin(collider, other);
+	if (other->IsTrigger())
+	{
+		std::cout << "Trigger\n";
+	}
 }
 
 void PlayerController::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)

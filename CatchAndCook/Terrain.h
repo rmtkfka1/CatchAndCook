@@ -60,10 +60,12 @@ private:
 public:
 	void SetData(Material* material) override;
 
+	void AddObjectPosition(const Vector3& pos) { _objectPositions.push_back(pos); };
+	void AddObjectPositionFront(const Vector3& pos) { _objectPositions.push_front(pos); };
 
 
 public:
-	vector<Vector3> _objectPositions;
+	deque<Vector3> _objectPositions;
 
 private:
 	static const int CellsPerPatch = 32;

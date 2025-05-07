@@ -126,7 +126,7 @@ std::vector<Vector3> NavMeshManager::CalculatePath(const Vector3& startPos, cons
         // containment 못 찾았으면 distance² 계산하여 후보로 등록
         if (!foundStart) {
             Vector3 closest = ClosestPointOnTriangle(startPos, A, B, C);
-            float d2 = (startPos - closest).LengthSquared();
+            float d2 = (Vector2(startPos.x, startPos.z) - Vector2(closest.x, closest.z)).LengthSquared();
             if (d2 < bestStartDist2) {
                 bestStartDist2 = d2;
                 startTri = t;
@@ -135,18 +135,18 @@ std::vector<Vector3> NavMeshManager::CalculatePath(const Vector3& startPos, cons
         }
         if (!foundEnd) {
             Vector3 closest = ClosestPointOnTriangle(endPos, A, B, C);
-            float d2 = (endPos - closest).LengthSquared();
+            float d2 = (Vector2(endPos.x, endPos.z) - Vector2(closest.x, closest.z)).LengthSquared();
             if (d2 < bestEndDist2) {
                 bestEndDist2 = d2;
                 endTri = t;
-                endPathPos.y = closest.y;
+                endPathPos = closest; // 갈수있는곳까지만 가셔
             }
         }
 
         // 둘 다 찾았으면 빨리 탈출
         if (foundStart && foundEnd) break;
     }
-
+    
     // 5) 삼각형 A* (centroid 휴리스틱)
     std::vector<TriangleNode> triangleNodes(triangleCount);
     auto GetTriangleIdCenterPosition = [&](int ti) {

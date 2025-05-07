@@ -10,6 +10,7 @@ enum class StateType
 	goto_any,
 	goto_shop,
 	goto_table,
+	eat,
 };
 
 class StatePatternGroup : public std::enable_shared_from_this<StatePatternGroup>

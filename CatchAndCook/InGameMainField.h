@@ -7,6 +7,7 @@ class InGameMainField : public Component
 public:
 
 	bool shopOpen = false;
+	std::vector<std::weak_ptr<GameObject>> shopTablePointsPool;
 
 
 	static std::shared_ptr<InGameMainField> GetMain() {

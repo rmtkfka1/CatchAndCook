@@ -4,13 +4,6 @@
 
 class NPCComponent;
 
-enum class NPCStateType
-{
-	stay,
-	goto_any,
-	goto_shop_in,
-	goto_shop_out,
-};
 
 class NPCFSMGroup : public StatePatternGroup
 {
@@ -40,6 +33,8 @@ public:
 	void Begin(StateType type, const std::shared_ptr<StatePattern>& prevState) override;
 	bool TriggerUpdate() override;
 	void End(const std::shared_ptr<StatePattern>& nextState) override;
+
+	bool runMove = false;
 };
 
 class NPCGotoShop : public NPCState
@@ -60,6 +55,8 @@ public:
 	void Begin(StateType type, const std::shared_ptr<StatePattern>& prevState) override;
 	bool TriggerUpdate() override;
 	void End(const std::shared_ptr<StatePattern>& nextState) override;
+
+	std::weak_ptr<GameObject> point;
 };
 
 class NPCEatting : public NPCState
@@ -70,6 +67,12 @@ public:
 	void Begin(StateType type, const std::shared_ptr<StatePattern>& prevState) override;
 	bool TriggerUpdate() override;
 	void End(const std::shared_ptr<StatePattern>& nextState) override;
+
+	bool isSitBegin = false;
+	bool isSit = false;
+	bool isSitEnd = false;
+
+	std::weak_ptr<GameObject> point;
 };
 
 class NPCIdle : public NPCState
@@ -112,6 +115,9 @@ public:
 	std::vector<Vector3> gotoPoints;
 	std::vector<Vector3> paths;
 	Vector3 shopEntryPoint;
+
+	std::vector<Vector3> shopTablePoints;
+	std::vector<weak_ptr<GameObject>> shopTablePointsPool;
 
 	Vector3 velocity;
 	Vector3 lookDirection = Vector3::Forward;
