@@ -17,14 +17,12 @@ void WaterController::Init()
 
 
 	vector<wstring> paths;
-	paths.reserve(120);
 
-	std::wstring orginPath = L"../Resources/Textures/sea/NoramlAni/";
-	std::wstring path = L"../Resources/Textures/sea/NoramlAni/";
+	paths.resize(120);
 
-	for (const auto& entry : fs::directory_iterator(path))
+	for (int i = 0; i <= 119; ++i)
 	{
-		paths.push_back(orginPath + entry.path().filename().wstring());
+		paths[i] = (L"../Resources/Textures/sea/" + to_wstring(i) + L".png");
 	}
 	
     _textures = make_shared<Texture>();
@@ -40,7 +38,7 @@ void WaterController::Init()
 	ImguiManager::main->_seaParam = &_seaParam;
 
  
-  /*  std::ifstream file("../Resources/Textures/sea/sea_color.bin", std::ios::binary);
+    std::ifstream file("../Resources/Textures/sea/sea_color_real.bin", std::ios::binary);
     if (file)
     {
         file.read(reinterpret_cast<char*>(&_seaParam.seaBaseColor), sizeof(_seaParam.seaBaseColor));
@@ -56,9 +54,9 @@ void WaterController::Init()
     else
     {
         cout << "파도색깔 bin 없음" << "\n";
-    };*/
+    };
 	
-	std::ifstream in("../Resources/Textures/sea/sea_move.bin", std::ios::binary);
+	std::ifstream in("../Resources/Textures/sea/sea_move_real.bin", std::ios::binary);
 	if (in.is_open())
 	{
 

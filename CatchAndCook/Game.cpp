@@ -78,7 +78,6 @@ void Game::Init(HWND hwnd)
 	CameraManager::main->AddCamera(CameraType::DebugCamera, make_shared<DebugCamera>());
 	CameraManager::main->AddCamera(CameraType::UiCamera, make_shared<UiCamera>());
 	CameraManager::main->AddCamera(CameraType::SeaCamera, make_shared<SeaCamera>());
-	CameraManager::main->GetCamera(CameraType::DebugCamera)->SetCameraPos(vec3(0, 0, -50.0f));
 	CameraManager::main->SetActiveCamera(CameraType::DebugCamera);
 
 	LightManager::main = make_unique<LightManager>();
@@ -221,11 +220,9 @@ void Game::CameraUpdate()
 	if (CameraManager::main->GetActiveCamera()->GetCameraType() != CameraType::DebugCamera)
 		return;
 
-
-
 	shared_ptr<Camera> camera = CameraManager::main->GetCamera(CameraType::DebugCamera);
 
-	cout << camera->GetCameraPos().y << endl;
+
 
 	static float speed = 500.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;

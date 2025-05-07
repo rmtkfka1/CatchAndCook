@@ -135,7 +135,10 @@ void SkinnedMeshRenderer::RenderBegin()
 
 	if (HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::Culling))
 	{
-		Gizmo::Width(3.0f);
+		if (SceneManager::main->GetCurrentScene()->GetSceneType() == SceneType::Sea01)
+			Gizmo::Width(3.0f);
+		else
+			Gizmo::Width(0.3f);
 		Gizmo::Box(GetBound(), vec4(0, 0, 1.0f, 1.0f));
 	}
 
