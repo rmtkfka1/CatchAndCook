@@ -41,6 +41,7 @@ void NPCComponent::Init()
 	fsm->AddState(StateType::idle, make_shared<NPCIdle>());
 	fsm->AddState(StateType::goto_shop, make_shared<NPCGotoShop>());
 	fsm->AddState(StateType::goto_table, make_shared<NPCGotoTable>());
+	fsm->AddState(StateType::eat, make_shared<NPCEatting>());
 	fsm->SetNPC(GetCast<NPCComponent>());
 }
 
@@ -74,6 +75,8 @@ void NPCComponent::Start()
 	SceneManager::main->GetCurrentScene()->FindsInclude(L"$PathPoint", pathPointObjects);
 	for (auto path : pathPointObjects)
 		gotoPoints.push_back(path->_transform->GetWorldPosition());
+
+
 	//pathPointObjects
 	//shopEntryPoint
 
@@ -83,7 +86,6 @@ void NPCComponent::Start()
 void NPCComponent::Update()
 {
 	Component::Update();
-	ColliderManager::main->UpdateDynamicCells();
 	fsm->Update();
 	fsm->AnyUpdate();
 }
@@ -107,9 +109,9 @@ void NPCComponent::MoveControl()
 	std::vector<std::shared_ptr<Collider>> playerColliders;
 
 	GetOwner()->GetComponentsWithChilds<Collider>(playerColliders);
-	int playerGroupID = PhysicsComponent::GetPhysicsGroupID(GetOwner());
+	int npcGroupID = PhysicsComponent::GetPhysicsGroupID(GetOwner());
 	for (auto& collider : playerColliders) {
-		if (playerGroupID == collider->GetGroupID()) {
+		if (npcGroupID == collider->GetGroupID()) {
 			collider->CalculateBounding();
 			playerColliderDatas.push_back(collider->GetBoundingData());
 		}
@@ -141,7 +143,7 @@ void NPCComponent::MoveControl()
 			{
 				for (auto& otherCollider : otherColliders)
 				{
-					if (otherCollider->GetGroupID() != playerGroupID)
+					if (otherCollider->GetGroupID() != npcGroupID && !otherCollider->IsTrigger())
 					{
 						auto otherBoundingData = otherCollider->GetBoundingData();
 						Vector3 hitPosition = Collider::GetContactPoint(boundingData, otherBoundingData);
@@ -169,11 +171,12 @@ void NPCComponent::MoveControl()
 	std::vector<RayHit> hitList;
 
 	if (auto isHit = ColliderManager::main->RayCastAllForMyCellDirect({ upRayOffset, Vector3::Down }, upDistance + gitMargin, hitList,
-		BoundingData{ CollisionType::Box, BoundingUnion(BoundingOrientedBox(GetOwner()->_transform->GetWorldPosition(), Vector3(2,2,2), Quaternion::Identity)) }))
+		BoundingData{ CollisionType::Box, BoundingUnion(BoundingOrientedBox(currentPos, Vector3(2,2,2), Quaternion::Identity)) }))
 	{
 		for (auto& hit : hitList)
 		{
-			if (hit.gameObject->GetRoot() != GetOwner()->GetRoot())
+			if (hit.gameObject->GetRoot() != GetOwner()->GetRoot() 
+				&& (hit.collider == nullptr || (hit.collider != nullptr && (!hit.collider->IsTrigger()))))
 			{
 				if (hit.distance <= upDistance + gitMargin) {
 					foundGround = hit;
@@ -205,7 +208,6 @@ void NPCComponent::MoveControl()
 void NPCComponent::Update2()
 {
 	Component::Update2();
-	MoveControl();
 }
 
 void NPCComponent::Enable()
@@ -342,25 +344,45 @@ void NPCGotoAny::Begin(StateType type, const std::shared_ptr<StatePattern>& prev
 	StatePattern::Begin(type, prevState);
 
 	auto npc = this->npc.lock();
-	auto endPoint = npc->gotoPoints[_random_dist(_random) % npc->gotoPoints.size()];
 
-	npc->paths.clear();
-	while (npc->paths.empty())
+	std::vector<std::shared_ptr<GameObject>> pathPointObjects;
+	std::vector<std::shared_ptr<GameObject>> pathPointObjectsFilter;
+	SceneManager::main->GetCurrentScene()->FindsInclude(L"$PathPoint", pathPointObjects);
+	std::ranges::copy_if(pathPointObjects, std::back_inserter(pathPointObjectsFilter), [&](const std::shared_ptr<GameObject>& current) {
+		return (current->GetName().find(L"Out") != std::wstring::npos);
+		});
+
+	runMove = false;
+
+	if (pathPointObjectsFilter.size() != 0)
 	{
-		endPoint = npc->gotoPoints[_random_dist(_random) % npc->gotoPoints.size()];
-		endPoint += Vector3(_random_dist01(_random) * 6 - 3, 0, _random_dist01(_random) * 6 - 3);
-		npc->paths = NavMeshManager::main->CalculatePath(npc->GetOwner()->_transform->GetWorldPosition(), endPoint);
-	}
+		npc->paths.clear();
+		int i = 0;
+		while (npc->paths.empty())
+		{
+			auto endPoint = pathPointObjectsFilter[_random_dist(_random) % pathPointObjectsFilter.size()]->_transform->GetWorldPosition();
+			endPoint += Vector3(_random_dist01(_random) * 6 - 3, 0, _random_dist01(_random) * 6 - 3);
+			npc->paths = NavMeshManager::main->CalculatePath(npc->GetOwner()->_transform->GetWorldPosition(), endPoint);
+			++i;
+			if (i > 5)
+				break;
+		}
 
-	auto animationList = npc->GetOwner()->GetComponentWithChilds<AnimationListComponent>();
-	auto skinnedHierarchy = npc->GetOwner()->GetComponentWithChilds<SkinnedHierarchy>();
 
-	if (animationList)
-	{
-		auto walk = animationList->GetAnimations()["walk"];
-		auto idle = animationList->GetAnimations()["idle"];
-		auto run = animationList->GetAnimations()["run"];
-		skinnedHierarchy->Play(walk, 0.25);
+		runMove = (abs(_random_dist(_random)) % 10) == 0;
+		
+		auto animationList = npc->GetOwner()->GetComponentWithChilds<AnimationListComponent>();
+		auto skinnedHierarchy = npc->GetOwner()->GetComponentWithChilds<SkinnedHierarchy>();
+
+		skinnedHierarchy->_speedMultiple = 1.25f;
+
+		if (animationList)
+		{
+			auto walk = animationList->GetAnimations()["walk"];
+			auto idle = animationList->GetAnimations()["idle"];
+			auto run = animationList->GetAnimations()["run"];
+			skinnedHierarchy->Play(runMove ? run : walk, 0.25);
+		}
 	}
 }
 
@@ -384,6 +406,9 @@ void NPCGotoAny::Update()
 	nextDir.Normalize();
 	npc->lookDirection = Vector3(nextDir.x, 0, nextDir.y);
 
+	for (auto& terrain : TerrainManager::main->GetTerrains())
+		terrain->AddObjectPosition(currentWorldPos);
+
 	auto animationList = npc->GetOwner()->GetComponentWithChilds<AnimationListComponent>();
 	auto skinnedHierarchy = npc->GetOwner()->GetComponentWithChilds<SkinnedHierarchy>();
 	
@@ -398,14 +423,15 @@ void NPCGotoAny::Update()
 
 		if (npc->paths.size() != 0)
 		{
-			if ((npc->paths[npc->paths.size() - 1] - currentWorldPos).Length() <= 0.25)
+			auto endPoint = Vector2(npc->paths[npc->paths.size() - 1].x, npc->paths[npc->paths.size() - 1].z);
+			if ((endPoint - Vector2(currentWorldPos.x, currentWorldPos.z)).Length() <= 0.25)
 			{
 				skinnedHierarchy->Play(idle, 0.25);
 				GetGroup()->ChangeState(StateType::idle);
 			}
 			else
 			{
-				skinnedHierarchy->Play(walk, 0.25);
+				skinnedHierarchy->Play(runMove ? run : walk, 0.25);
 			}
 		}
 		else
@@ -414,6 +440,9 @@ void NPCGotoAny::Update()
 			GetGroup()->ChangeState(StateType::idle);
 		}
 	}
+
+	ColliderManager::main->UpdateDynamicCells();
+	npc->MoveControl();
 }
 
 
@@ -470,10 +499,11 @@ void NPCGotoShop::Update()
 
 		if (npc->paths.size() != 0)
 		{
-			if ((npc->paths[npc->paths.size() - 1] - currentWorldPos).Length() <= 0.25)
+			auto endPoint = Vector2(npc->paths[npc->paths.size() - 1].x, npc->paths[npc->paths.size() - 1].z);
+			if ((endPoint - Vector2(currentWorldPos.x, currentWorldPos.z)).Length() <= 0.25)
 			{
 				skinnedHierarchy->Play(idle, 0.25);
-				GetGroup()->ChangeState(StateType::idle);
+				GetGroup()->ChangeState(StateType::goto_table);
 			}
 			else
 			{
@@ -486,6 +516,9 @@ void NPCGotoShop::Update()
 			GetGroup()->ChangeState(StateType::idle);
 		}
 	}
+
+	ColliderManager::main->UpdateDynamicCells();
+	npc->MoveControl();
 }
 
 void NPCGotoShop::Begin(StateType type, const std::shared_ptr<StatePattern>& prevState)
@@ -503,7 +536,9 @@ void NPCGotoShop::Begin(StateType type, const std::shared_ptr<StatePattern>& pre
 	if (pathPointObjects2.size() != 0)
 	{
 		auto npc = this->npc.lock();
-		npc->paths = NavMeshManager::main->CalculatePath(npc->GetOwner()->_transform->GetWorldPosition(), pathPointObjects2[0]->_transform->GetWorldPosition());
+		auto endPoint = pathPointObjects2[0]->_transform->GetWorldPosition();
+		endPoint += Vector3(_random_dist01(_random) * 4 - 2, 0, _random_dist01(_random) * 4 - 2);
+		npc->paths = NavMeshManager::main->CalculatePath(npc->GetOwner()->_transform->GetWorldPosition(), endPoint);
 
 		auto animationList = npc->GetOwner()->GetComponentWithChilds<AnimationListComponent>();
 		auto skinnedHierarchy = npc->GetOwner()->GetComponentWithChilds<SkinnedHierarchy>();
@@ -544,11 +579,95 @@ void NPCGotoTable::Init()
 void NPCGotoTable::Update()
 {
 	NPCState::Update();
+
+
+	auto npc = this->npc.lock();
+
+	if (NavMeshManager::main->_gizmoDebug)
+	{
+		Gizmo::Width(0.2f);
+		for (int i = 1; i < (int)npc->paths.size(); ++i) {
+			Gizmo::Line(npc->paths[i - 1], npc->paths[i], Vector4(1, 0, 0, 1));
+		}
+		Gizmo::WidthRollBack();
+	}
+
+	Vector3 currentWorldPos = npc->GetOwner()->_transform->GetWorldPosition();
+	Vector3 nextPos = npc->AdvanceAlongPath(npc->paths, currentWorldPos, 0.75);
+	Vector3 nextDir = Vector2(nextPos.x, nextPos.z) - Vector2(currentWorldPos.x, currentWorldPos.z);
+	nextDir.Normalize();
+	npc->lookDirection = Vector3(nextDir.x, 0, nextDir.y);
+
+	auto animationList = npc->GetOwner()->GetComponentWithChilds<AnimationListComponent>();
+	auto skinnedHierarchy = npc->GetOwner()->GetComponentWithChilds<SkinnedHierarchy>();
+
+	if (animationList)
+	{
+		auto walk = animationList->GetAnimations()["walk"];
+		auto idle = animationList->GetAnimations()["idle"];
+		auto run = animationList->GetAnimations()["run"];
+		auto sit = animationList->GetAnimations()["sitting"];
+		auto sitdown = animationList->GetAnimations()["sitdown"];
+		auto situp = animationList->GetAnimations()["situp"];
+
+		if (npc->paths.size() != 0)
+		{
+			auto endPoint = Vector2(npc->paths[npc->paths.size() - 1].x, npc->paths[npc->paths.size() - 1].z);
+			if ((endPoint - Vector2(currentWorldPos.x, currentWorldPos.z)).Length() <= 0.20)
+			{
+				skinnedHierarchy->Play(idle, 0.25);
+				GetGroup()->ChangeState(StateType::eat);
+			}
+			else
+			{
+				skinnedHierarchy->Play(walk, 0.25);
+			}
+		}
+		else
+		{
+			skinnedHierarchy->Play(idle, 0.25);
+			GetGroup()->ChangeState(StateType::idle);
+		}
+	}
+
+	ColliderManager::main->UpdateDynamicCells();
+	npc->MoveControl();
 }
 
 void NPCGotoTable::Begin(StateType type, const std::shared_ptr<StatePattern>& prevState)
 {
 	NPCState::Begin(type, prevState);
+
+	auto npc = this->npc.lock();
+
+
+	if (InGameMainField::GetMain()->shopTablePointsPool.size() != 0)
+	{
+		npc->paths.clear();
+		int i = 0;
+		auto pointIter = InGameMainField::GetMain()->shopTablePointsPool.begin() + (abs(_random_dist(_random)) % InGameMainField::GetMain()->shopTablePointsPool.size());
+		auto point = pointIter->lock();
+		
+		InGameMainField::GetMain()->shopTablePointsPool.erase(pointIter);
+
+		auto endPoint = point->_transform->GetWorldPosition();
+		npc->paths = NavMeshManager::main->CalculatePath(npc->GetOwner()->_transform->GetWorldPosition(), endPoint);
+
+		this->point = point;
+
+		auto animationList = npc->GetOwner()->GetComponentWithChilds<AnimationListComponent>();
+		auto skinnedHierarchy = npc->GetOwner()->GetComponentWithChilds<SkinnedHierarchy>();
+
+		skinnedHierarchy->_speedMultiple = 1;
+
+		if (animationList)
+		{
+			auto walk = animationList->GetAnimations()["walk"];
+			auto idle = animationList->GetAnimations()["idle"];
+			auto run = animationList->GetAnimations()["run"];
+			skinnedHierarchy->Play(walk, 0.25);
+		}
+	}
 }
 
 bool NPCGotoTable::TriggerUpdate()
@@ -571,11 +690,72 @@ void NPCEatting::Init()
 void NPCEatting::Update()
 {
 	NPCState::Update();
+
+
+	auto npc = this->npc.lock();
+
+	auto animationList = npc->GetOwner()->GetComponentWithChilds<AnimationListComponent>();
+	auto skinnedHierarchy = npc->GetOwner()->GetComponentWithChilds<SkinnedHierarchy>();
+
+	if (animationList)
+	{
+		auto walk = animationList->GetAnimations()["walk"];
+		auto idle = animationList->GetAnimations()["idle"];
+		auto run = animationList->GetAnimations()["run"];
+		auto sit = animationList->GetAnimations()["sitting"];
+		auto sitdown = animationList->GetAnimations()["sitdown"];
+		auto situp = animationList->GetAnimations()["situp"];
+
+
+		if (auto point = this->point.lock())
+		{
+			auto pos = npc->GetOwner()->_transform->GetWorldPosition();
+			npc->GetOwner()->_transform->SetWorldPosition(Vector3::Lerp(pos, this->point.lock()->_transform->GetWorldPosition(), std::clamp(_time, 0.0f, 1.0f)));
+			auto rot = npc->GetOwner()->_transform->GetWorldRotation();
+			npc->GetOwner()->_transform->SetWorldRotation(Quaternion::Slerp(rot, this->point.lock()->_transform->GetWorldRotation(), std::clamp(_time, 0.0f, 1.0f)));
+		}
+
+		if (this->isSitBegin && !skinnedHierarchy->IsPlay())
+		{
+			this->isSitBegin = false;
+			this->isSit = true;
+			skinnedHierarchy->Play(sit, 0.25);
+		}
+	}
 }
 
 void NPCEatting::Begin(StateType type, const std::shared_ptr<StatePattern>& prevState)
 {
 	NPCState::Begin(type, prevState);
+
+	auto npc = this->npc.lock();
+
+	this->isSitBegin = false;
+	this->isSit = false;
+	this->isSitEnd = false;
+
+	auto animationList = npc->GetOwner()->GetComponentWithChilds<AnimationListComponent>();
+	auto skinnedHierarchy = npc->GetOwner()->GetComponentWithChilds<SkinnedHierarchy>();
+
+	if (auto prev = std::dynamic_pointer_cast<NPCGotoTable>(prevState))
+	{
+		this->point = prev->point;
+	}
+
+	if (animationList)
+	{
+		auto walk = animationList->GetAnimations()["walk"];
+		auto idle = animationList->GetAnimations()["idle"];
+		auto run = animationList->GetAnimations()["run"];
+		auto sit = animationList->GetAnimations()["sitting"];
+		auto sitdown = animationList->GetAnimations()["sitdown"];
+		auto situp = animationList->GetAnimations()["situp"];
+
+		this->isSitBegin = true;
+		this->isSit = false;
+		this->isSitEnd = false;
+		skinnedHierarchy->Play(sitdown, 0.25);
+	}
 }
 
 bool NPCEatting::TriggerUpdate()
@@ -586,6 +766,14 @@ bool NPCEatting::TriggerUpdate()
 void NPCEatting::End(const std::shared_ptr<StatePattern>& nextState)
 {
 	NPCState::End(nextState);
+	auto npc = this->npc.lock();
+	auto point = this->point.lock();
+
+	if (point)
+	{
+		InGameMainField::GetMain()->shopTablePointsPool.push_back(point);
+	}
+	//this->point
 }
 
 

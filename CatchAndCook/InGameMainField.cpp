@@ -25,6 +25,20 @@ void InGameMainField::Init()
 void InGameMainField::Start()
 {
 	Component::Start();
+
+
+	std::vector<std::shared_ptr<GameObject>> pathPointObjects;
+	SceneManager::main->GetCurrentScene()->FindsInclude(L"$PathPoint", pathPointObjects);
+
+	std::vector<std::shared_ptr<GameObject>> pathPointObjectTables;
+	std::ranges::copy_if(pathPointObjects, std::back_inserter(pathPointObjectTables), [&](const std::shared_ptr<GameObject>& current) {
+		return (current->GetName().find(L"Shop") != std::wstring::npos) &&
+			(current->GetName().find(L"Sit") != std::wstring::npos);
+		});
+	for (auto point : pathPointObjectTables)
+	{
+		shopTablePointsPool.push_back(point);
+	}
 }
 
 void InGameMainField::Update()

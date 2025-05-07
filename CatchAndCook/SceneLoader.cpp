@@ -421,6 +421,7 @@ void SceneLoader::LinkComponent(json& jsonData)
             jsonData["size"][0].get<float>(),
             jsonData["size"][1].get<float>(),
             jsonData["size"][2].get<float>());
+        collider->SetTrigger(jsonData["isTrigger"].get<bool>());
         collider->SetBoundingBox(center, size/2);
     }
     if (type == L"SphereCollider")
@@ -431,6 +432,7 @@ void SceneLoader::LinkComponent(json& jsonData)
             jsonData["center"][1].get<float>(),
             jsonData["center"][2].get<float>());
         auto radius = jsonData["radius"].get<float>();
+        collider->SetTrigger(jsonData["isTrigger"].get<bool>());
         collider->SetBoundingSphere(center, radius);
     }
     if(type == L"Rigidbody")
