@@ -21,14 +21,31 @@
 #include "InstancingManager.h"
 #include "Gizmo.h"
 #include "Mesh.h"
+#include <filesystem>
+
+
 void Scene_Sea01::Init()
 {
+	namespace fs = std::filesystem;
+
 	Scene::Init();
 
+
+	vector<wstring> paths;
+	paths.reserve(240);
+
+	std::wstring orginPath = L"../Resources/Textures/Caustics/";
+	std::wstring path = L"../Resources/Textures/Caustics/";
+
+	for (const auto& entry : fs::directory_iterator(path))
+	{
+		paths.push_back(orginPath + entry.path().filename().wstring());
+	}
+
 	caustics = make_shared<Texture>();
-	caustics->Init(L"../Resources/Textures/test.jpg");
-	//_finalShader->SetShader(ResourceManager::main->Get<Shader>(L"finalShader_MainField"));
-	//_finalShader->SetPass(RENDER_PASS::Forward);
+	caustics->Init(paths);
+
+
 
 	std::shared_ptr<Light> light = std::make_shared<Light>();
 	light->onOff = 1;
@@ -125,30 +142,16 @@ void Scene_Sea01::Init()
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(0, 0, 1, 0)));
 	}
 #pragma endregion
+
+
 	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/sea.json");
 	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
 	sceneLoader->Load(GetCast<Scene>());
-
 	auto player = Find(L"seaPlayer");
-
-	//vector<shared_ptr<GameObject>> gameObjects;
-
-	//player->GetChildsAll(gameObjects);
-
-	//for (auto& ele : gameObjects)
-	//{
-	//	Scene::RemoveGameObject(ele);
-	//}
-
-	//for (auto& ele : gameObjects)
-	//{
-	//	Scene::AddFrontGameObject(ele);
-	//}
 
 
 	if (player)
 	{
-		//player->_transform->SetPivotOffset(vec3(0, 1.0f, 0));
 		player->AddComponent<SeaPlayerController>();
 
 		vector<shared_ptr<GameObject>> childs;
@@ -165,27 +168,6 @@ void Scene_Sea01::Init()
 
 	}
 
-
-	for (auto& gameobject : _gameObjects)
-	{
-		auto& meshRenderer = gameobject->GetComponent<MeshRenderer>();
-
-		if (meshRenderer)
-		{
-			auto& materials = meshRenderer->GetMaterials();
-
-			for (auto& material : materials)
-			{
-				//cout << material->GetShader()->_name << endl;
-				if (material->GetShader()->_name == "DeferredSeaPlantClip.hlsl" || "DeferredSeaPlant.hlsl")
-				{
-					if(gameobject->GetComponent<PlantComponent>()==nullptr)
-						gameobject->AddComponent<PlantComponent>();
-				}
-			}
-		}
-
-	}
 
 
 	
@@ -215,6 +197,10 @@ void Scene_Sea01::Init()
 		});
 
 
+
+
+
+
 }
 
 void Scene_Sea01::Update()
@@ -234,6 +220,10 @@ void Scene_Sea01::RenderBegin()
 void Scene_Sea01::Rendering()
 {
 	GlobalSetting();
+
+	TableContainer conatiner = Core::main->GetBufferManager()->GetTable()->Alloc(3);
+	Core::main->GetBufferManager()->GetTable()->CopyHandle(conatiner.CPUHandle, caustics->GetSRVCpuHandle(), 0);
+	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(GLOBAL_SRV_INDEX, conatiner.GPUHandle);
 
 	_globalParam.caustics = 1;
 
@@ -282,6 +272,11 @@ void Scene_Sea01::RenderEnd()
 void Scene_Sea01::Finish()
 {
 	Scene::Finish();
+}
+
+void Scene_Sea01::SetSeaGlobalData()
+{
+
 }
 
 void Scene_Sea01::ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
@@ -384,13 +379,7 @@ void Scene_Sea01::ComputePass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>&
 	ComputeManager::main->Dispatch(cmdList);
 }
 
-void Scene_Sea01::SetMaterialData(RenderObjectStrucutre& data)
-{
-	if (data.material != nullptr)
-	{
-		data.material->SetTexture("_caustics", caustics);
-	}
-}
+
 
 void Scene_Sea01::UiPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
@@ -523,8 +512,6 @@ void Scene_Sea01::DeferredPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>
 						continue;
 					}
 				}
-
-				SetMaterialData(ele);
 
 				if (ele.renderer->isInstancing() == false)
 				{

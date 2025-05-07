@@ -11,6 +11,7 @@ public:
 	void RenderEnd() override;
 	void Finish() override;
 
+	void SetSeaGlobalData();
 	virtual void ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
 	virtual void UiPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
 	virtual void TransparentPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
@@ -19,8 +20,6 @@ public:
 	virtual void FinalRender(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
 	virtual void ComputePass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList);
 
-
-	void SetMaterialData(RenderObjectStrucutre& data);
 
 	shared_ptr<Texture> caustics;
 };

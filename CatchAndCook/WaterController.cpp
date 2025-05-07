@@ -13,15 +13,20 @@ bool WaterController::IsExecuteAble()
 
 void WaterController::Init()
 {
+
+
+
 	vector<wstring> paths;
+	paths.reserve(120);
 
-    paths.resize(120);
-    
-    for (int i = 0; i <= 119; ++i)
-    {
-        paths[i]= (L"../Resources/Textures/sea/" + to_wstring(i) + L".png");
-    }
+	std::wstring orginPath = L"../Resources/Textures/sea/NoramlAni/";
+	std::wstring path = L"../Resources/Textures/sea/NoramlAni/";
 
+	for (const auto& entry : fs::directory_iterator(path))
+	{
+		paths.push_back(orginPath + entry.path().filename().wstring());
+	}
+	
     _textures = make_shared<Texture>();
 	_textures->Init(paths);
 
