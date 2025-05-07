@@ -216,6 +216,10 @@ void ImguiManager::ComputeController()
     {
         *mainField_fog = !(*mainField_fog);
     }
+    if (ImGui::Button("MainField GodRay ON/OFF"))
+    {
+        *_godRayPtr = !(*_godRayPtr);
+    }
     if (ImGui::Button("Vignette ON/OFF"))
     {
         *mainField_vignette = !(*mainField_vignette);

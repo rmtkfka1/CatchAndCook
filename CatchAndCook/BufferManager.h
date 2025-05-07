@@ -45,6 +45,7 @@ enum class BufferType
 	WaterParam,
 	ShadowCasterParams,
 	ShadowCascadeIndexParams,
+	GodRayParam,
 };
 
 class CBufferPool;
