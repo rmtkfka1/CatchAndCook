@@ -88,6 +88,8 @@ public:
 
     BoundingFrustum _boundingFrsutum;
 
+    CameraParams _params;
+
 protected:
     vec3 _cameraPos = vec3(0, -300.0f, 0);
     vec3 _cameraLook = vec3(0, 0, 1.0f);
@@ -105,7 +107,6 @@ protected:
     vec2 _orthoSize = { 100.0f,100.0f };
 
     CameraProjectionMode _projmode = CameraProjectionMode::Perspective;
-    CameraParams _params;
     CameraType _type =CameraType::DebugCamera;
     CBufferContainer* _cbufferContainer;
 };

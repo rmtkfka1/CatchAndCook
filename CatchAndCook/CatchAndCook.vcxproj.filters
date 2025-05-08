@@ -884,6 +884,15 @@
     <FxCompile Include="..\Resources\Shaders\Skybox_Field.hlsl">
       <Filter>998.HLSL\Graphics\JIN</Filter>
     </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\GodRay.hlsl">
+      <Filter>998.HLSL\Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\blackShader_ray.hlsl">
+      <Filter>998.HLSL\Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\FXAA.hlsl">
+      <Filter>998.HLSL\Compute</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\Direct12-Project-Scene\Assets\Models\Objects\Sea\Terrian_Seed\New Folder\2023-11-23T113343Z.png">

@@ -98,6 +98,134 @@ private:
 	friend class ComputeManager;
 };
 
+struct GodRayParam
+{
+	Vector4 lightWorldPos;       // 월드 공간의 광원 위치 (dir light 는 far 포인트)
+	Vector2 lightScreenUV;       // 미리 계산해 전달: WorldPos → NDC → UV
+	int   sampleCount;          // e.g. 50
+	float decay;                // e.g. 0.95
+	float exposure;             // e.g. 0.3
+	Vector2 padding_ray;
+};
+
+class GodRay : public ComputeBase
+{
+
+public:
+	GodRay();
+	virtual ~GodRay();
+
+public:
+	virtual void Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture);
+	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+
+private:
+	virtual void Resize();
+private:
+	void Black(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+	void Ray(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+	bool _on = true;
+
+private:
+	GodRayParam param;
+
+	shared_ptr<Texture> _rayEmissionTexture;
+	shared_ptr<Texture> _pingtexture;
+	shared_ptr<Texture> _pongtexture;
+
+	shared_ptr<Shader> _BlackShader;
+	shared_ptr<Shader> _RayShader;
+
+	friend class ComputeManager;
+};
+
+struct FXAAParams
+{
+	float  uQualitySubpix;          
+	float  uQualityEdge;            
+	float  uQualityEdgeThreshold;   
+	float  uQualityEdgeThresholdMin;
+};
+
+
+class FXAA : public ComputeBase
+{
+
+public:
+	FXAA();
+	virtual ~FXAA();
+
+public:
+	virtual void Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture);
+	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+
+private:
+	virtual void Resize();
+private:
+
+	bool _on = true;
+
+private:
+
+	shared_ptr<Texture> _pingtexture;
+	FXAAParams params;
+	std::shared_ptr<Shader> _AAShader;
+
+	friend class ComputeManager;
+};
+
+struct DOFParam
+{
+	float g_fogMin = 20;
+	float g_fogMax = 100.0f;
+	Vector2 padding_dof;
+
+};
+
+class DOF : public ComputeBase
+{
+public:
+
+
+	DOF();
+	virtual ~DOF();
+
+public:
+	virtual void Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture);
+	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+
+private:
+	virtual void Resize();
+private:
+	void XBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+	void YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	int32 _blurCount = 1;
+
+	bool _on = false;
+
+	shared_ptr<Texture> _pingtexture;
+	shared_ptr<Texture> _pongtexture;
+	shared_ptr<Shader> _XBlurshader;
+	shared_ptr<Shader> _YBlurshader;
+
+	friend class ComputeManager;
+};
+
 
 
 
@@ -336,7 +464,9 @@ public:
 	shared_ptr<SSAORender> _ssaoRender;
 	shared_ptr<FieldFogRender> _fieldFogRender;
 	shared_ptr<ColorGradingRender> _colorGradingRender;
-
+	shared_ptr<GodRay> _godrayRender;
+	shared_ptr<FXAA> _fxaaRender;
+	shared_ptr<DOF> _dofRender;
 
 	bool _mainFieldTotalOn = true;
 	// color grading

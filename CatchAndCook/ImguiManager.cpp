@@ -216,6 +216,10 @@ void ImguiManager::ComputeController()
     {
         *mainField_fog = !(*mainField_fog);
     }
+    if (ImGui::Button("MainField GodRay ON/OFF"))
+    {
+        *_godRayPtr = !(*_godRayPtr);
+    }
     if (ImGui::Button("Vignette ON/OFF"))
     {
         *mainField_vignette = !(*mainField_vignette);
@@ -224,7 +228,16 @@ void ImguiManager::ComputeController()
     {
         *_bakedGIOnOff = !(*_bakedGIOnOff);
     }
+    if (ImGui::Button("MainField FXAA ON/OFF"))
+    {
+    	*_fxaa = !(*_fxaa);
+    }
+    if (ImGui::Button("MainField DOF ON/OFF"))
+    {
+        *_dofPtr = !(*_dofPtr);
+    }
 
+ 
     if (ImGui::Button("MainField Total ON/OFF"))
     {
         *mainField_total = !(*mainField_total);
