@@ -47,7 +47,7 @@ float4 PS_Main(VS_OUT IN) : SV_Target
     viewH /= viewH.w;
     float3 Pvs = viewH.xyz;
 
-   
+  
     float4 worldH = mul(InvertViewMatrix, float4(Pvs, 1));
     worldH /= worldH.w;
     float3 Pws = worldH.xyz;

@@ -43,8 +43,6 @@ void Volumetric::Render()
 
 	auto CbufferContainer =  Core::main->GetBufferManager()->CreateAndGetBufferPool(BufferType::VolumetricData, sizeof(VolumetricData), 1)->Alloc(1);
 
-	_data.color = vec3(0.0f, 0.0f, 0.0f);
-	_data.phase = 0.0f;
 	_data.lightDir = LightManager::main->GetMainLight()->direction;
 	_data.waterHeight = 2000.0f;
 
@@ -59,6 +57,5 @@ void Volumetric::Render()
 	
 	Core::main->GetCmdList()->DrawInstanced(3, _data.numSlice, 0, 0);
 	_texture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
-
 
 }

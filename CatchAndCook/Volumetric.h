@@ -14,6 +14,9 @@ struct VolumetricData
 	float Absorption =5.0f;
 	int numSlice=30.0f;
 
+
+
+
 };
 
 
