@@ -53,6 +53,7 @@ public:
 	bool* _ssaoOnOff;
 	bool* _colorGradingOnOff;
 
+
 	float* separationWeight;
 	float* alignmentWeight;
 	float* cohesionWeight;
@@ -70,6 +71,9 @@ public:
 	bool* _godRayPtr;
 	bool* _fxaa;
 	bool* _dofPtr;
+
+
+	bool* _colorGradingSeaOnOff;
 
 private:
 	bool show_window = true;

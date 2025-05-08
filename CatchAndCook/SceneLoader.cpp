@@ -330,6 +330,11 @@ void SceneLoader::LinkComponent(json& jsonData)
                             shader = ResourceManager::main->Get<Shader>(L"D_SeaEnv");
                         }
 
+                        if (shaderName == L"DeferredSeaGodRayPrePass")
+                        {
+                            cout << "걸릿누 ㅋㅋ" << endl;
+                        }
+
                         material->SetShader(shader);
                         material->SetPass(shader->GetPass());
                     }

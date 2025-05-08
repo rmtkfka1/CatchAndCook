@@ -91,7 +91,7 @@ void Game::Init(HWND hwnd)
 	PathStamp::main = make_unique<PathStamp>();
 	PathStamp::main->Init();
 
-	auto scene = SceneManager::main->AddScene(SceneType::Sea01);
+	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
 };
 
 void Game::PrevUpdate()
@@ -350,6 +350,9 @@ void Game::CameraUpdate()
 	{
 		cout << terrain->GetComponent<Terrain>()->GetLocalHeight(camera->GetCameraPos()) << endl;;
 	}*/
+
+	//cout << camera->GetCameraLook().x <<" " << camera->GetCameraLook().y <<" " << camera->GetCameraLook().z << endl;
+
 
 }
 

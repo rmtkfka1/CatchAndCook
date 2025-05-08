@@ -1116,14 +1116,7 @@ void ColorGradingRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, in
 	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 5);
 
 	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
-
-
-	/*auto CbufferContainer = Core::main->GetBufferManager()->CreateAndGetBufferPool(BufferType::VignetteParam, sizeof(VignetteParam), 1)->Alloc(1);
-	memcpy(CbufferContainer->ptr, (void*)&_vignetteParam, sizeof(VignetteParam));
-	cmdList->SetComputeRootConstantBufferView(1, CbufferContainer->GPUAdress);*/
-
 	cmdList->Dispatch(x, y, z);
-
 
 	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
 	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
@@ -1166,7 +1159,6 @@ void ComputeManager::Init()
 	_bloom->Init(_pingTexture, _pongTexture);
 
 
-
 	_depthRender = make_shared<DepthRender>();
 	_depthRender->Init(_pingTexture, _pongTexture);
 
@@ -1193,6 +1185,11 @@ void ComputeManager::Init()
 
 	_dofRender = std::make_shared<DOF>();
 	_dofRender->Init(_pingTexture, _pongTexture);
+
+	_colorGradingSea = std::make_shared<ColorGradingSea>();
+	_colorGradingSea->Init(_pingTexture, _pongTexture);
+
+
 
 	ImguiManager::main->mainField_total = &_mainFieldTotalOn;
 }
@@ -1230,7 +1227,6 @@ void ComputeManager::DispatchMainField(ComPtr<ID3D12GraphicsCommandList>& cmdLis
 
 	_depthRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
-
 	_fieldFogRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
 	_blur->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
@@ -1265,15 +1261,12 @@ void ComputeManager::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
 	_underWaterEffect->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
-	//_vignetteRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
-
-	//_ssaoRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
-
-	//_bloom->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
-
-	//_blur->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+	_colorGradingSea->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
 	Core::main->GetRenderTarget()->GetRenderTarget()->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
+	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_DEPTH_WRITE);
 
 }
 
@@ -1302,6 +1295,68 @@ void ComputeManager::Resize()
 	_godrayRender->Resize();
 	_fxaaRender->Resize();
 	_dofRender->Resize();
+	_colorGradingSea->Resize();
 }
 
+ColorGradingSea::ColorGradingSea()
+{
+}
 
+ColorGradingSea::~ColorGradingSea()
+{
+}
+
+void ColorGradingSea::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture)
+{
+
+	_pingTexture = pingTexture;
+
+	_shader = make_shared<Shader>();
+	ShaderInfo info;
+	info._computeShader = true;
+	_shader->Init(L"colorGradingSea.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
+
+#ifdef IMGUI_ON
+	ImguiManager::main->_colorGradingSeaOnOff = &colorGradingSeaOnOff;
+#endif // IMGUI_ON
+}
+
+void ColorGradingSea::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+	if (!colorGradingSeaOnOff)
+		return;
+	
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	cmdList->SetPipelineState(_shader->_pipelineState.Get());
+	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	_tableContainer = table->Alloc(8);
+	
+	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
+	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
+	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 2);
+	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 5);
+
+	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+	cmdList->Dispatch(x, y, z);
+
+	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
+	cmdList->CopyResource(renderTarget->GetResource().Get(), _pingTexture->GetResource().Get());
+}
+
+void ColorGradingSea::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+}
+
+void ColorGradingSea::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+}
+
+void ColorGradingSea::Resize()
+{
+}

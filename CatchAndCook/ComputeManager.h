@@ -429,10 +429,40 @@ private:
 
 private:
 	shared_ptr<Texture> _pingTexture;
-	std::shared_ptr<Texture> _ssaoTexture;
+	std::shared_ptr<Texture> _colorGradingTexture;
 	shared_ptr<Shader> _shader;
 
 	bool colorGradingOnOff = true;
+
+	friend class ComputeManager;
+};
+
+
+
+class ColorGradingSea : public ComputeBase
+{
+
+public:
+	ColorGradingSea();
+	virtual ~ColorGradingSea();
+
+public:
+	virtual void Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture);
+	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+
+private:
+	virtual void Resize();
+
+private:
+	shared_ptr<Texture> _pingTexture;
+	std::shared_ptr<Texture> _ssaoTexture;
+	shared_ptr<Shader> _shader;
+
+	bool colorGradingSeaOnOff = false;
 
 	friend class ComputeManager;
 };
@@ -467,6 +497,7 @@ public:
 	shared_ptr<GodRay> _godrayRender;
 	shared_ptr<FXAA> _fxaaRender;
 	shared_ptr<DOF> _dofRender;
+	shared_ptr<ColorGradingSea> _colorGradingSea;
 
 	bool _mainFieldTotalOn = true;
 	// color grading

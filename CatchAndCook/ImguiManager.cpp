@@ -245,6 +245,7 @@ void ImguiManager::ComputeController()
         *_bakedGIOnOff = *mainField_total;
     }
 
+
     static bool showDepthRender = false;
     if (ImGui::Button("Depth Render"))
     {
@@ -271,6 +272,11 @@ void ImguiManager::ComputeController()
         ImGui::SliderFloat("Underwater Fog Min", &_underWaterParam->g_fogMin, 0.0f, 5000.0f);
         ImGui::SliderFloat3("Underwater Color", &_underWaterParam->g_underWaterColor.x, 0.0f, 1.0f);
     }
+
+	if (ImGui::Button("ColorGrading Sea ON/OFF"))
+	{
+		*_colorGradingSeaOnOff = !(*_colorGradingSeaOnOff);
+	}
 }
 
 void ImguiManager::LightController()

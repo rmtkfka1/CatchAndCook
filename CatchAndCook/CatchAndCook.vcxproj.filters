@@ -749,9 +749,6 @@
     <FxCompile Include="..\Resources\Shaders\Gizmo_Text.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\sea.hlsl">
-      <Filter>998.HLSL\Graphics</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\SpriteShader.hlsl">
       <Filter>998.HLSL\Graphics</Filter>
     </FxCompile>
@@ -891,6 +888,24 @@
       <Filter>998.HLSL\Compute</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\FXAA.hlsl">
+      <Filter>998.HLSL\Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\DeferredSeaGodRayPrePass.hlsl">
+      <Filter>998.HLSL\Graphics\KSH</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\GodRaySea.hlsl">
+      <Filter>998.HLSL\Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\colorGradingSea.hlsl">
+      <Filter>998.HLSL\Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\SeaGlobal.hlsl">
+      <Filter>998.HLSL\Module</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\DOF_yblur.hlsl">
+      <Filter>998.HLSL\Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\DOF_xblur.hlsl">
       <Filter>998.HLSL\Compute</Filter>
     </FxCompile>
   </ItemGroup>

@@ -49,6 +49,27 @@ void ResourceManager::CreateDefaultShader()
 void ResourceManager::CreateDefaultShaderKSH()
 {
 
+
+	{
+		ShaderInfo info;
+		info._zTest = true;
+		info._zWrite = false;
+		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+
+		info.renderTargetCount = 4;
+
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Deferred);
+		shader->Init(L"DeferredSeaGodRayPrePass.hlsl", StaticProp, ShaderArg{}, info);
+		Add<Shader>(L"DeferredSeaGodRayPrePass", shader);
+	}
+
 	{
 
 		ShaderInfo info;
