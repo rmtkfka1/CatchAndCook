@@ -144,6 +144,45 @@ private:
 	friend class ComputeManager;
 };
 
+struct FXAAParams
+{
+	float  uQualitySubpix;          
+	float  uQualityEdge;            
+	float  uQualityEdgeThreshold;   
+	float  uQualityEdgeThresholdMin;
+};
+
+
+class FXAA : public ComputeBase
+{
+
+public:
+	FXAA();
+	virtual ~FXAA();
+
+public:
+	virtual void Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture);
+	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+
+private:
+	virtual void Resize();
+private:
+
+	bool _on = true;
+
+private:
+
+	shared_ptr<Texture> _pingtexture;
+	FXAAParams params;
+	std::shared_ptr<Shader> _AAShader;
+
+	friend class ComputeManager;
+};
+
 
 
 
@@ -383,6 +422,7 @@ public:
 	shared_ptr<FieldFogRender> _fieldFogRender;
 	shared_ptr<ColorGradingRender> _colorGradingRender;
 	shared_ptr<GodRay> _godrayRender;
+	shared_ptr<FXAA> _aaRender;
 
 	bool _mainFieldTotalOn = true;
 	// color grading

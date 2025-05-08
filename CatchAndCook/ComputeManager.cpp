@@ -375,10 +375,13 @@ void GodRay::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
 void GodRay::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
+	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
 	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
 	_rayEmissionTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
 	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
 	cmdList->CopyResource(renderTarget->GetResource().Get(), _rayEmissionTexture->GetResource().Get());
+
+	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_DEPTH_WRITE);
 }
 
 void GodRay::Resize()
@@ -443,6 +446,81 @@ void GodRay::Ray(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z
 	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
 	cmdList->Dispatch(x, y, z);
 	
+}
+
+FXAA::FXAA()
+{
+}
+
+FXAA::~FXAA()
+{
+}
+
+void FXAA::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture)
+{
+	_pingtexture = pingTexture;
+
+	{
+		_AAShader = make_shared<Shader>();
+		ShaderInfo info;
+		info._computeShader = true;
+		_AAShader->Init(L"FXAA.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
+		ResourceManager::main->Add<Shader>(L"FXAA", _AAShader);
+	}
+
+#ifdef IMGUI_ON
+	ImguiManager::main->_fxaa = &_on;
+#endif
+}
+
+void FXAA::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+	if (!_on)
+		return;
+	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
+
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	cmdList->SetPipelineState(_AAShader->_pipelineState.Get());
+
+	_tableContainer = table->Alloc(10);
+
+
+
+	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 0);
+	table->CopyHandle(_tableContainer.CPUHandle, _pingtexture->GetUAVCpuHandle(), 5);
+
+
+	auto CbufferContainer = Core::main->GetBufferManager()->CreateAndGetBufferPool(BufferType::FXAAParams, sizeof(FXAAParams), 1)->Alloc(1);
+	params.uQualityEdge = 6;
+	params.uQualitySubpix = 0.75;
+	params.uQualityEdgeThreshold = 0.0225;
+	params.uQualityEdgeThresholdMin = 0.01;
+
+	memcpy(CbufferContainer->ptr, (void*)&params, sizeof(FXAAParams));
+	cmdList->SetComputeRootConstantBufferView(1, CbufferContainer->GPUAdress);
+
+	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+	cmdList->Dispatch(x, y, z);
+
+	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
+	cmdList->CopyResource(renderTarget->GetResource().Get(), _pingtexture->GetResource().Get());
+}
+
+void FXAA::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+}
+
+void FXAA::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+}
+
+void FXAA::Resize()
+{
 }
 
 
@@ -971,6 +1049,9 @@ void ComputeManager::Init()
 	_godrayRender = std::make_shared<GodRay>();
 	_godrayRender->Init(_pingTexture, _pongTexture);
 
+	_aaRender = std::make_shared<FXAA>();
+	_aaRender->Init(_pingTexture, _pongTexture);
+
 	ImguiManager::main->mainField_total = &_mainFieldTotalOn;
 }
 
@@ -1019,6 +1100,8 @@ void ComputeManager::DispatchMainField(ComPtr<ID3D12GraphicsCommandList>& cmdLis
 	_bloom->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
 	_godrayRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+
+	_aaRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);;
 
 	Core::main->GetRenderTarget()->GetRenderTarget()->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
@@ -1073,6 +1156,7 @@ void ComputeManager::Resize()
 	_fieldFogRender->Resize();
 	_colorGradingRender->Resize();
 	_godrayRender->Resize();
+	_aaRender->Resize();
 }
 
 

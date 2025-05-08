@@ -46,6 +46,7 @@ enum class BufferType
 	ShadowCasterParams,
 	ShadowCascadeIndexParams,
 	GodRayParam,
+	FXAAParams,
 };
 
 class CBufferPool;

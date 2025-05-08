@@ -68,6 +68,7 @@ public:
 	bool* _bakedGIOnOff;
 	bool* mainField_total;
 	bool* _godRayPtr;
+	bool* _fxaa;
 
 private:
 	bool show_window = true;

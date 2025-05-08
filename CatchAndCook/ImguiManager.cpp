@@ -228,7 +228,10 @@ void ImguiManager::ComputeController()
     {
         *_bakedGIOnOff = !(*_bakedGIOnOff);
     }
-
+    if (ImGui::Button("MainField FXAA ON/OFF"))
+    {
+    	*_fxaa = !(*_fxaa);
+    }
     if (ImGui::Button("MainField Total ON/OFF"))
     {
         *mainField_total = !(*mainField_total);

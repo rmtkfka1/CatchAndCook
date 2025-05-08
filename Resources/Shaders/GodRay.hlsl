@@ -32,11 +32,11 @@ cbuffer cameraParams : register(b2)
 
 cbuffer RayData : register(b1)
 {
-    float4 lightWorldPos;       // 월드 공간의 광원 위치 (dir light 는 far 포인트)
-    float2 lightScreenUV;       // 미리 계산해 전달: WorldPos → NDC → UV
-    int   sampleCount;          // e.g. 50
-    float decay;                // e.g. 0.95
-    float exposure;             // e.g. 0.3
+    float4 lightWorldPos; 
+    float2 lightScreenUV; 
+    int   sampleCount;    
+    float decay;          
+    float exposure;       
 
     float2 padding_ray;
 };
@@ -81,18 +81,17 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     [unroll]
     for (int i = 0; i < count; ++i)
     {
-        currentUV -= step;  // 광원 방향으로 이동
-        // OcclusionMap: 앞서 만든 밝기 맵
+        currentUV -= step;
+        if (currentUV.x < 0 || currentUV.x > 1 || currentUV.y < 0 || currentUV.y > 1)
+            break;
         float3 occ = EmmT.SampleLevel(sampler_lerp, currentUV, 0);
         godRayColor += occ * illuminationDecay * weight;
         illuminationDecay *= decay;
     }
 
-    // 5) 노출 보정
     godRayColor *= exposure;
 
-    // 0미만→0, 5이상→1, 그 사이 선형 스무스
-    float fade     = smoothstep(0.0, 5.0, NdcDepthToViewDepth(depthT.SampleLevel(sampler_lerp, uv, 0).r));
+    float fade = smoothstep(0.0, 5.0, NdcDepthToViewDepth(depthT.SampleLevel(sampler_lerp, uv, 0).r));
 
     // 6) 원본 장면과 합성
     float3 sceneCol = RenderT.SampleLevel(sampler_lerp, uv, 0).rgb;
