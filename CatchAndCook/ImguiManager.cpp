@@ -273,10 +273,19 @@ void ImguiManager::ComputeController()
         ImGui::SliderFloat3("Underwater Color", &_underWaterParam->g_underWaterColor.x, 0.0f, 1.0f);
     }
 
-	if (ImGui::Button("ColorGrading Sea ON/OFF"))
+	if (ImGui::Button("Scattering ON/OFF"))
 	{
-		*_colorGradingSeaOnOff = !(*_colorGradingSeaOnOff);
+		*_scattering = !(*_scattering);
 	}
+
+	if (*_scattering)
+	{
+		ImGui::SliderFloat3("WATER_ABSORPTION", &_scatteringData->WATER_ABSORPTION.x, 0.0f, 1.0f);
+		ImGui::SliderFloat3("WATER_SCATTER", &_scatteringData->WATER_SCATTER.x, 0.0f, 1.0f);
+		ImGui::SliderFloat("DENSITY", &_scatteringData->DENSITY, 0.0f, 15.0f);
+	}
+
+
 }
 
 void ImguiManager::LightController()

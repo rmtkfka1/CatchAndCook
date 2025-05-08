@@ -107,7 +107,7 @@ void Blur::XBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList,int x, int y, int z)
 	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 	_pongtexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
-	_tableContainer = table->Alloc(8);
+	_tableContainer = table->Alloc(10);
 
 	table->CopyHandle(_tableContainer.CPUHandle, _pingtexture->GetSRVCpuHandle(), 0);
 	table->CopyHandle(_tableContainer.CPUHandle, _pongtexture->GetUAVCpuHandle(), 5);
@@ -124,7 +124,7 @@ void Blur::YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z
 	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 	_pongtexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
-	_tableContainer = table->Alloc(8);
+	_tableContainer = table->Alloc(10);
 
 	table->CopyHandle(_tableContainer.CPUHandle, _pingtexture->GetUAVCpuHandle(), 5);
 	table->CopyHandle(_tableContainer.CPUHandle, _pongtexture->GetSRVCpuHandle(), 0);
@@ -237,7 +237,7 @@ void Bloom::Black(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int 
 
 	auto& table = Core::main->GetBufferManager()->GetTable();
 	cmdList->SetPipelineState(_BlackShader->_pipelineState.Get());
-	_tableContainer = table->Alloc(8);
+	_tableContainer = table->Alloc(10);
 	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 0);
 	table->CopyHandle(_tableContainer.CPUHandle, MAOTexture->GetSRVCpuHandle(), 1);
 	table->CopyHandle(_tableContainer.CPUHandle, _pingtexture->GetUAVCpuHandle(), 5);
@@ -251,7 +251,7 @@ void Bloom::XBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int 
 	cmdList->SetPipelineState(_XBlurshader->_pipelineState.Get());
 	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 	_pongtexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-	_tableContainer = table->Alloc(8);
+	_tableContainer = table->Alloc(10);
 	table->CopyHandle(_tableContainer.CPUHandle, _pingtexture->GetSRVCpuHandle(), 0);
 	table->CopyHandle(_tableContainer.CPUHandle, _pongtexture->GetUAVCpuHandle(), 5);
 	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
@@ -264,7 +264,7 @@ void Bloom::YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int 
 	cmdList->SetPipelineState(_YBlurshader->_pipelineState.Get());
 	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 	_pongtexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
-	_tableContainer = table->Alloc(8);
+	_tableContainer = table->Alloc(10);
 	table->CopyHandle(_tableContainer.CPUHandle, _pingtexture->GetUAVCpuHandle(), 5);
 	table->CopyHandle(_tableContainer.CPUHandle, _pongtexture->GetSRVCpuHandle(), 0);
 	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
@@ -281,7 +281,7 @@ void Bloom::Blooming(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, i
 	_pongtexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 	_bloomTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
-	_tableContainer = table->Alloc(8);
+	_tableContainer = table->Alloc(10);
 
 	table->CopyHandle(_tableContainer.CPUHandle, _pongtexture->GetSRVCpuHandle(), 0);
 	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
@@ -617,7 +617,7 @@ void DOF::XBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
 	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 	_pongtexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
-	_tableContainer = table->Alloc(8);
+	_tableContainer = table->Alloc(10);
 
 
 	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
@@ -640,7 +640,7 @@ void DOF::YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
 	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 	_pongtexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
-	_tableContainer = table->Alloc(8);
+	_tableContainer = table->Alloc(10);
 
 
 	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
@@ -698,7 +698,7 @@ void DepthRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, in
 	auto& table = Core::main->GetBufferManager()->GetTable();
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
 	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-	_tableContainer = table->Alloc(8);
+	_tableContainer = table->Alloc(10);
 
 	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
 	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
@@ -778,7 +778,7 @@ void FieldFogRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x,
 	auto& table = Core::main->GetBufferManager()->GetTable();
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
 	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-	_tableContainer = table->Alloc(8);
+	_tableContainer = table->Alloc(10);
 
 	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
 	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
@@ -949,7 +949,7 @@ void VignetteRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x,
 	auto& table = Core::main->GetBufferManager()->GetTable();
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
 	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-	_tableContainer = table->Alloc(8);
+	_tableContainer = table->Alloc(10);
 
 	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
 	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
@@ -1107,7 +1107,7 @@ void ColorGradingRender::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, in
 	auto& table = Core::main->GetBufferManager()->GetTable();
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
 	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-	_tableContainer = table->Alloc(8);
+	_tableContainer = table->Alloc(10);
 
 	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
 	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
@@ -1186,7 +1186,7 @@ void ComputeManager::Init()
 	_dofRender = std::make_shared<DOF>();
 	_dofRender->Init(_pingTexture, _pongTexture);
 
-	_colorGradingSea = std::make_shared<ColorGradingSea>();
+	_colorGradingSea = std::make_shared<Scattering>();
 	_colorGradingSea->Init(_pingTexture, _pongTexture);
 
 
@@ -1298,15 +1298,15 @@ void ComputeManager::Resize()
 	_colorGradingSea->Resize();
 }
 
-ColorGradingSea::ColorGradingSea()
+Scattering::Scattering()
 {
 }
 
-ColorGradingSea::~ColorGradingSea()
+Scattering::~Scattering()
 {
 }
 
-void ColorGradingSea::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture)
+void Scattering::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture)
 {
 
 	_pingTexture = pingTexture;
@@ -1314,22 +1314,28 @@ void ColorGradingSea::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>
 	_shader = make_shared<Shader>();
 	ShaderInfo info;
 	info._computeShader = true;
-	_shader->Init(L"colorGradingSea.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
+	_shader->Init(L"scattering.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
 
 #ifdef IMGUI_ON
-	ImguiManager::main->_colorGradingSeaOnOff = &colorGradingSeaOnOff;
+	ImguiManager::main->_scatteringData = &_scatteringData;
+	ImguiManager::main->_scattering = &_scattering;
 #endif // IMGUI_ON
 }
 
-void ColorGradingSea::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+void Scattering::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
 {
-	if (!colorGradingSeaOnOff)
+	if (!_scattering)
 		return;
 	
 	auto& table = Core::main->GetBufferManager()->GetTable();
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
 	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-	_tableContainer = table->Alloc(8);
+	_tableContainer = table->Alloc(10);
+
+	auto CbufferContainer = Core::main->GetBufferManager()->CreateAndGetBufferPool(BufferType::ColorGradingSeaData, sizeof(ScatteringData), 1)->Alloc(1);
+	memcpy(CbufferContainer->ptr, (void*)&_scatteringData, sizeof(ScatteringData));
+	cmdList->SetComputeRootConstantBufferView(3, CbufferContainer->GPUAdress);
+
 	
 	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
 	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
@@ -1349,14 +1355,14 @@ void ColorGradingSea::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x
 	cmdList->CopyResource(renderTarget->GetResource().Get(), _pingTexture->GetResource().Get());
 }
 
-void ColorGradingSea::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+void Scattering::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
 }
 
-void ColorGradingSea::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+void Scattering::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
 }
 
-void ColorGradingSea::Resize()
+void Scattering::Resize()
 {
 }

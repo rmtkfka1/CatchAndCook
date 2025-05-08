@@ -8,6 +8,7 @@ class Material;
 struct SeaParam;
 struct FogParam;
 struct UnderWaterParam;
+struct ScatteringData;
 
 class ImguiManager
 {
@@ -50,6 +51,7 @@ public:
 	FogParam* _fogParam;
 	UnderWaterParam* _underWaterParam;
 	SeaParam* _seaParam;
+	ScatteringData* _scatteringData;
 	bool* _ssaoOnOff;
 	bool* _colorGradingOnOff;
 
@@ -73,7 +75,7 @@ public:
 	bool* _dofPtr;
 
 
-	bool* _colorGradingSeaOnOff;
+	bool* _scattering;
 
 private:
 	bool show_window = true;

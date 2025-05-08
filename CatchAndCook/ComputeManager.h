@@ -439,12 +439,20 @@ private:
 
 
 
-class ColorGradingSea : public ComputeBase
+struct ScatteringData
+{
+	vec3 WATER_ABSORPTION{};
+	float p1{};
+	vec3 WATER_SCATTER{};
+	float DENSITY{};
+};
+
+class Scattering : public ComputeBase
 {
 
 public:
-	ColorGradingSea();
-	virtual ~ColorGradingSea();
+	Scattering();
+	virtual ~Scattering();
 
 public:
 	virtual void Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture);
@@ -462,7 +470,8 @@ private:
 	std::shared_ptr<Texture> _ssaoTexture;
 	shared_ptr<Shader> _shader;
 
-	bool colorGradingSeaOnOff = false;
+	bool _scattering = false;
+	ScatteringData _scatteringData;
 
 	friend class ComputeManager;
 };
@@ -497,7 +506,7 @@ public:
 	shared_ptr<GodRay> _godrayRender;
 	shared_ptr<FXAA> _fxaaRender;
 	shared_ptr<DOF> _dofRender;
-	shared_ptr<ColorGradingSea> _colorGradingSea;
+	shared_ptr<Scattering> _colorGradingSea;
 
 	bool _mainFieldTotalOn = true;
 	// color grading

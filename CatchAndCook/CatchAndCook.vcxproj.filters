@@ -896,7 +896,7 @@
     <FxCompile Include="..\Resources\Shaders\GodRaySea.hlsl">
       <Filter>998.HLSL\Compute</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\colorGradingSea.hlsl">
+    <FxCompile Include="..\Resources\Shaders\scattering.hlsl">
       <Filter>998.HLSL\Compute</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\SeaGlobal.hlsl">

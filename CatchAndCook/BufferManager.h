@@ -26,6 +26,7 @@ enum class BufferType
 	SeaPlantParam,
 	SeaFIshParam,
 	SeaGrassParam,
+	ColorGradingSeaData,
 
 
 	PlayerMaterialParam,
