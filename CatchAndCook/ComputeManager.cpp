@@ -524,6 +524,142 @@ void FXAA::Resize()
 }
 
 
+DOF::DOF()
+{
+}
+
+DOF::~DOF()
+{
+}
+
+void DOF::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture)
+{
+	_pingtexture = pingTexture;
+	_pongtexture = pongTexture;
+
+
+	{
+		_XBlurshader = make_shared<Shader>();
+		ShaderInfo info;
+		info._computeShader = true;
+
+
+		_XBlurshader->Init(L"DOF_xblur.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
+		ResourceManager::main->Add<Shader>(L"DOF_xblur", _XBlurshader);
+	}
+
+	{
+		_YBlurshader = make_shared<Shader>();
+		ShaderInfo info;
+		info._computeShader = true;
+
+		_YBlurshader->Init(L"DOF_yblur.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
+		ResourceManager::main->Add<Shader>(L"DOF_yblur", _YBlurshader);
+	}
+
+#ifdef IMGUI_ON
+	ImguiManager::main->_dofPtr = &_on;
+#endif 
+
+
+};
+
+void DOF::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	auto& intermediateTexutre = Core::main->GetRenderTarget()->GetRenderTarget();
+
+	intermediateTexutre->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
+	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
+
+	cmdList->CopyResource(_pingtexture->GetResource().Get(), intermediateTexutre->GetResource().Get());
+}
+
+void DOF::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+	if (_on == false)
+		return;
+
+	DispatchBegin(cmdList);
+
+	DOFParam param;
+	param.g_fogMin = 8;
+	param.g_fogMax = 300;
+
+	auto CbufferContainer = Core::main->GetBufferManager()->CreateAndGetBufferPool(BufferType::DOFParam, sizeof(DOFParam), 1)->Alloc(1);
+	memcpy(CbufferContainer->ptr, (void*)&param, sizeof(DOFParam));
+	cmdList->SetComputeRootConstantBufferView(1, CbufferContainer->GPUAdress);
+
+	for (int i = 0; i < _blurCount; ++i)
+	{
+		XBlur(cmdList, x, y, z);
+		YBlur(cmdList, x, y, z);
+	}
+
+	DispatchEnd(cmdList);
+}
+
+void DOF::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	auto& intermediateTexutre = Core::main->GetRenderTarget()->GetRenderTarget();
+	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
+	intermediateTexutre->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
+	cmdList->CopyResource(intermediateTexutre->GetResource().Get(), _pingtexture->GetResource().Get());
+
+	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
+	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_DEPTH_WRITE);
+}
+
+void DOF::XBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	cmdList->SetPipelineState(_XBlurshader->_pipelineState.Get());
+
+	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+	_pongtexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
+	_tableContainer = table->Alloc(8);
+
+
+	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
+	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 1);
+
+	table->CopyHandle(_tableContainer.CPUHandle, _pingtexture->GetSRVCpuHandle(), 0);
+	table->CopyHandle(_tableContainer.CPUHandle, _pongtexture->GetUAVCpuHandle(), 5);
+
+	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+	cmdList->Dispatch(x, y, z);
+}
+
+void DOF::YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	cmdList->SetPipelineState(_YBlurshader->_pipelineState.Get());
+
+	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	_pongtexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	_tableContainer = table->Alloc(8);
+
+
+	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
+	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 1);
+
+	table->CopyHandle(_tableContainer.CPUHandle, _pingtexture->GetUAVCpuHandle(), 5);
+	table->CopyHandle(_tableContainer.CPUHandle, _pongtexture->GetSRVCpuHandle(), 0);
+
+	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+	cmdList->Dispatch(x, y, z);
+}
+
+void DOF::Resize()
+{
+
+}
+
 /*************************
 *	DepthRender          *
 **************************/
@@ -1049,8 +1185,11 @@ void ComputeManager::Init()
 	_godrayRender = std::make_shared<GodRay>();
 	_godrayRender->Init(_pingTexture, _pongTexture);
 
-	_aaRender = std::make_shared<FXAA>();
-	_aaRender->Init(_pingTexture, _pongTexture);
+	_fxaaRender = std::make_shared<FXAA>();
+	_fxaaRender->Init(_pingTexture, _pongTexture);
+
+	_dofRender = std::make_shared<DOF>();
+	_dofRender->Init(_pingTexture, _pongTexture);
 
 	ImguiManager::main->mainField_total = &_mainFieldTotalOn;
 }
@@ -1088,12 +1227,8 @@ void ComputeManager::DispatchMainField(ComPtr<ID3D12GraphicsCommandList>& cmdLis
 
 	_depthRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
-	_vignetteRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
 	_fieldFogRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
-
-	_colorGradingRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
-
 
 	_blur->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
@@ -1101,7 +1236,13 @@ void ComputeManager::DispatchMainField(ComPtr<ID3D12GraphicsCommandList>& cmdLis
 
 	_godrayRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
-	_aaRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);;
+	_fxaaRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+
+	_dofRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+
+	_colorGradingRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+
+	_vignetteRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
 	Core::main->GetRenderTarget()->GetRenderTarget()->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
@@ -1156,7 +1297,8 @@ void ComputeManager::Resize()
 	_fieldFogRender->Resize();
 	_colorGradingRender->Resize();
 	_godrayRender->Resize();
-	_aaRender->Resize();
+	_fxaaRender->Resize();
+	_dofRender->Resize();
 }
 
 

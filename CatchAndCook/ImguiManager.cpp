@@ -232,6 +232,12 @@ void ImguiManager::ComputeController()
     {
     	*_fxaa = !(*_fxaa);
     }
+    if (ImGui::Button("MainField DOF ON/OFF"))
+    {
+        *_dofPtr = !(*_dofPtr);
+    }
+
+ 
     if (ImGui::Button("MainField Total ON/OFF"))
     {
         *mainField_total = !(*mainField_total);

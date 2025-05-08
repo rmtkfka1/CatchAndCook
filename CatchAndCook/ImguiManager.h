@@ -69,6 +69,7 @@ public:
 	bool* mainField_total;
 	bool* _godRayPtr;
 	bool* _fxaa;
+	bool* _dofPtr;
 
 private:
 	bool show_window = true;
