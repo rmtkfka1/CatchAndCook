@@ -378,6 +378,9 @@
       <Filter>03.Component</Filter>
     </ClCompile>
     <ClCompile Include="InGameMainField.cpp" />
+    <ClCompile Include="Volumetric.cpp">
+      <Filter>04.Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -708,6 +711,9 @@
       <Filter>03.Component</Filter>
     </ClInclude>
     <ClInclude Include="InGameMainField.h" />
+    <ClInclude Include="Volumetric.h">
+      <Filter>04.Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
@@ -893,9 +899,6 @@
     <FxCompile Include="..\Resources\Shaders\DeferredSeaGodRayPrePass.hlsl">
       <Filter>998.HLSL\Graphics\KSH</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shaders\GodRaySea.hlsl">
-      <Filter>998.HLSL\Compute</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shaders\scattering.hlsl">
       <Filter>998.HLSL\Compute</Filter>
     </FxCompile>
@@ -907,6 +910,9 @@
     </FxCompile>
     <FxCompile Include="..\Resources\Shaders\DOF_xblur.hlsl">
       <Filter>998.HLSL\Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\UnderwaterVolumetric.hlsl">
+      <Filter>998.HLSL\Graphics\KSH</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

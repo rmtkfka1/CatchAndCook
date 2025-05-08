@@ -23,6 +23,7 @@
 #include "Mesh.h"
 #include <filesystem>
 #include "WaterController.h"
+#include "Volumetric.h"
 
 
 void Scene_Sea01::Init()
@@ -31,6 +32,8 @@ void Scene_Sea01::Init()
 
 	Scene::Init();
 
+	Volumetric::main = make_unique<Volumetric>();
+	Volumetric::main->Init();
 
 	//vector<wstring> paths;
 	//paths.reserve(240);
@@ -283,6 +286,8 @@ void Scene_Sea01::Rendering()
 	ForwardPass(cmdList);
 	Profiler::Fin();
 
+	Volumetric::main->Render();
+	Core::main->GetRenderTarget()->SetRenderTarget();
 	//Profiler::Set("PASS : Transparent", BlockTag::CPU);
 	//TransparentPass(cmdList); // Position,
 	//Profiler::Fin();
@@ -415,7 +420,6 @@ void Scene_Sea01::ComputePass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>&
 {
 	ComputeManager::main->Dispatch(cmdList);
 }
-
 
 
 void Scene_Sea01::UiPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)

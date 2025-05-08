@@ -9,6 +9,7 @@ struct SeaParam;
 struct FogParam;
 struct UnderWaterParam;
 struct ScatteringData;
+struct VolumetricData;
 
 class ImguiManager
 {
@@ -41,8 +42,8 @@ private:
 
 	void Test2();
 
+	void VolumetricTest();
 
-	
 
 public:
 	GameObject* _light;
@@ -52,6 +53,8 @@ public:
 	UnderWaterParam* _underWaterParam;
 	SeaParam* _seaParam;
 	ScatteringData* _scatteringData;
+	VolumetricData* _volumetricData;
+
 	bool* _ssaoOnOff;
 	bool* _colorGradingOnOff;
 

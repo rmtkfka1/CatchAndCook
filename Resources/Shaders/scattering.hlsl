@@ -85,8 +85,7 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
 
     float3 worldPos = cameraPos.xyz + normalize(viewPos) * depth;
 
-    // 매질 효과 적용
-    float3 lightDir = normalize(float3(0, -1, -1)); 
+    float3 lightDir = normalize(float3(0, -1, 0)); 
     color = ApplyMediumScattering(color, depth, lightDir, normalize(viewPos), worldPos);
     
     resultTexture[texCoord] = float4(color, 1.0);

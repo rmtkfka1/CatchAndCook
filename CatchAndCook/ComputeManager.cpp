@@ -1332,7 +1332,7 @@ void Scattering::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int
 	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 	_tableContainer = table->Alloc(10);
 
-	auto CbufferContainer = Core::main->GetBufferManager()->CreateAndGetBufferPool(BufferType::ColorGradingSeaData, sizeof(ScatteringData), 1)->Alloc(1);
+	auto CbufferContainer = Core::main->GetBufferManager()->CreateAndGetBufferPool(BufferType::ScatteringData, sizeof(ScatteringData), 1)->Alloc(1);
 	memcpy(CbufferContainer->ptr, (void*)&_scatteringData, sizeof(ScatteringData));
 	cmdList->SetComputeRootConstantBufferView(3, CbufferContainer->GPUAdress);
 

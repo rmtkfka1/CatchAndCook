@@ -53,6 +53,7 @@ public:
 	void RenderBegin();
 	void RenderEnd();
 	void ClearDepth();
+	void SetRenderTarget();
 
 	shared_ptr<Texture>& GetRenderTarget() { return _RenderTargets[_RenderTargetIndex]; }
 	shared_ptr<Texture>& GetDSTexture() { return _DSTexture; };
@@ -127,3 +128,24 @@ private:
 	array<shared_ptr<Texture>, _count> _DSTextures = { nullptr, };
 };
 
+
+
+//class VolumetricPass
+//{
+//public:
+//
+//	VolumetricPass();
+//	~VolumetricPass();
+//
+//	void Init();
+//	void RenderBegin();
+//	void RenderEnd();
+//
+//	shared_ptr<Texture>& GetTexture() { return _texture; }
+//
+//private:
+//	shared_ptr<Texture> _texture;
+//
+//	D3D12_VIEWPORT _viewport;
+//	D3D12_RECT _scissorRect;
+//};

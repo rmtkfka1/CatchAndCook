@@ -102,6 +102,16 @@ void RenderTarget::ClearDepth()
 	cmdList->ClearDepthStencilView(_DSTexture->GetSharedDSVHandle(), D3D12_CLEAR_FLAG_DEPTH , 1.0f, 0, 0, nullptr);
 }
 
+void RenderTarget::SetRenderTarget()
+{
+	ComPtr<ID3D12GraphicsCommandList> cmdList = Core::main->GetCmdList();
+
+	const float BackColor[] = { 0.0f,0.0f,0.0f,0.0f };
+	cmdList->RSSetViewports(1, &_viewport);
+	cmdList->RSSetScissorRects(1, &_scissorRect);
+	cmdList->OMSetRenderTargets(1, &_RenderTargets[_RenderTargetIndex]->GetRTVCpuHandle(), FALSE, &_RenderTargets[_RenderTargetIndex]->GetSharedDSVHandle());
+}
+
 
 void RenderTarget::ChangeIndex()
 {
@@ -251,3 +261,47 @@ void ShadowBuffer::RenderEnd()
 	_DSTextures[currentIndex]->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 }
 
+
+//VolumetricPass::VolumetricPass()
+//{
+//
+//}
+//
+//VolumetricPass::~VolumetricPass()
+//{
+//}
+//
+//void VolumetricPass::Init()
+//{
+//	//Resize 할때 이미할당된 BufferPool 이있는경우 놓아줌.
+//
+//	if (_texture)
+//	{
+//		Core::main->GetBufferManager()->GetTextureBufferPool()->FreeSRVHandle(_texture->GetSRVCpuHandle());
+//	}
+//
+//	_viewport = D3D12_VIEWPORT{ 0.0f,0.0f,static_cast<float>(WINDOW_WIDTH),static_cast<float>(WINDOW_HEIGHT), 0,1.0f };
+//	_scissorRect = D3D12_RECT{ 0,0, static_cast<LONG>(WINDOW_WIDTH),static_cast<LONG>(WINDOW_HEIGHT) };
+//
+//	_texture = make_shared<Texture>();
+//	_texture->CreateStaticTexture(DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_RESOURCE_STATE_COMMON, WINDOW_WIDTH, WINDOW_HEIGHT, TextureUsageFlags::RTV | TextureUsageFlags::SRV, false, true);
+//
+//}
+//
+//void VolumetricPass::RenderBegin()
+//{
+//	auto& list = Core::main->GetCmdList();
+//	float arrFloat[4] = { 0,0,0,0 };
+//
+//	_texture->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
+//	list->ClearRenderTargetView(_texture->GetRTVCpuHandle(), arrFloat, 0, nullptr);
+//	list->RSSetViewports(1, &_viewport);
+//	list->RSSetScissorRects(1, &_scissorRect);
+//	list->OMSetRenderTargets(1, &_texture->GetRTVCpuHandle(), FALSE, &_texture->GetSharedDSVHandle());
+//}
+//
+//void VolumetricPass::RenderEnd()
+//{
+//	auto& list = Core::main->GetCmdList();
+//	_texture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+//};
