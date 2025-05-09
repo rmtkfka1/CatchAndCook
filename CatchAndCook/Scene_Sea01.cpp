@@ -32,8 +32,8 @@ void Scene_Sea01::Init()
 
 	Scene::Init();
 
-	Volumetric::main = make_unique<Volumetric>();
-	Volumetric::main->Init();
+	//Volumetric::main = make_unique<Volumetric>();
+	//Volumetric::main->Init();
 
 	//vector<wstring> paths;
 	//paths.reserve(240);
@@ -270,9 +270,9 @@ void Scene_Sea01::Rendering()
 	auto& cmdList = Core::main->GetCmdList();
 	Core::main->GetRenderTarget()->ClearDepth();
 
-	//Profiler::Set("PASS : Shadow", BlockTag::CPU);  
-	//ShadowPass(cmdList);
-	//Profiler::Fin();
+	/*Profiler::Set("PASS : Shadow", BlockTag::CPU);  
+	ShadowPass(cmdList);
+	Profiler::Fin();*/
 
 	Profiler::Set("PASS : Deferred", BlockTag::CPU);
 	DeferredPass(cmdList);
@@ -286,8 +286,9 @@ void Scene_Sea01::Rendering()
 	ForwardPass(cmdList);
 	Profiler::Fin();
 
-	Volumetric::main->Render();
-	Core::main->GetRenderTarget()->SetRenderTarget();
+	//Volumetric::main->Render();
+	//Core::main->GetRenderTarget()->SetRenderTarget();
+
 	//Profiler::Set("PASS : Transparent", BlockTag::CPU);
 	//TransparentPass(cmdList); // Position,
 	//Profiler::Fin();
