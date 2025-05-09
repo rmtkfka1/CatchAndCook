@@ -46,41 +46,41 @@ void Scene_Sea01::Init()
 	//	paths.push_back(orginPath + entry.path().filename().wstring());
 	//}
 
-	{
-		ShaderInfo info;
-		info._zTest = true;
-		info._stencilTest = false;
-		info.cullingType = CullingType::BACK;
-		info.cullingType = CullingType::NONE;
-		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+	//{
+	//	ShaderInfo info;
+	//	info._zTest = true;
+	//	info._stencilTest = false;
+	//	info.cullingType = CullingType::BACK;
+	//	info.cullingType = CullingType::NONE;
+	//	info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest", L"seatest.hlsl", GeoMetryProp,
-			ShaderArg{ {{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}} }, info);
+	//	shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest", L"seatest.hlsl", GeoMetryProp,
+	//		ShaderArg{ {{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}} }, info);
 
-		shared_ptr<Material> material = make_shared<Material>();
+	//	shared_ptr<Material> material = make_shared<Material>();
 
-		shared_ptr<GameObject> gameObject = CreateGameObject(L"grid_orgin");
-		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
-		auto a = gameObject->AddComponent<WaterController>();
-		a->Setting(L"sea_color_sea.bin", L"sea_move_real.bin");
+	//	shared_ptr<GameObject> gameObject = CreateGameObject(L"grid_orgin");
+	//	auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+	//	auto a = gameObject->AddComponent<WaterController>();
+	//	a->Setting(L"sea_color_sea.bin", L"sea_move_real.bin");
 
-		//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal_Sea"));
-		gameObject->_transform->SetLocalPosition(vec3(0, 600.f, 0));
+	//	//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal_Sea"));
+	//	gameObject->_transform->SetLocalPosition(vec3(0, 600.f, 0));
 
-		material = make_shared<Material>();
-		material->SetShader(shader);
-		material->SetPass(RENDER_PASS::Forward);
-		material->SetTexture("_cubeMap", ResourceManager::main->_cubemap_skyTexture);
-		material->SetUseMaterialParams(true);
-		material->SetShadowCasting(false);
-		meshRenderer->AddMaterials({ material });
+	//	material = make_shared<Material>();
+	//	material->SetShader(shader);
+	//	material->SetPass(RENDER_PASS::Forward);
+	//	material->SetTexture("_cubeMap", ResourceManager::main->_cubemap_skyTexture);
+	//	material->SetUseMaterialParams(true);
+	//	material->SetShadowCasting(false);
+	//	meshRenderer->AddMaterials({ material });
 
-		auto mesh = GeoMetryHelper::LoadGripMeshControlPoints(20000.0f, 20000.0f, 1000, 1000, false);
-		mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
-		meshRenderer->AddMesh(mesh);
-		meshRenderer->SetCulling(false);
+	//	auto mesh = GeoMetryHelper::LoadGripMeshControlPoints(20000.0f, 20000.0f, 1000, 1000, false);
+	//	mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
+	//	meshRenderer->AddMesh(mesh);
+	//	meshRenderer->SetCulling(false);
 
-	};
+	//};
 
 	caustics = make_shared<Texture>();
 	caustics->Init(L"../Resources/Textures/test.jpg");

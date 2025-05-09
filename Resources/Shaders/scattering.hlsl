@@ -52,12 +52,16 @@ RWTexture2D<float4> Output : register(u0);
 
 float3 ReconstructViewPos(int2 pixel)
 {
-    float2 uv = (float2(pixel) + 0.5f) / cameraScreenData.xy;
-    float z = DepthTexture.Load(int3(pixel, 0));
-    float4 ndc = float4(uv * 2 - 1, z, 1);
-    float4 view = mul(ndc, InvertProjectionMatrix);
-    return view.xyz / view.w;
+    float4 posProj;
+    posProj.xy = (pixel + 0.5f) / cameraScreenData.xy * 2.0f - 1.0f;
+    posProj.y *= -1;
+    posProj.z = DepthTexture.Load(int3(pixel, 0));
+    posProj.w = 1.0f;
+    
+    float4 posView = mul(posProj, InvertProjectionMatrix);
+    return posView.xyz / posView.w;
 }
+
 
 [numthreads(16, 16, 1)]
 void CS_Main(uint3 id : SV_DispatchThreadID)
@@ -66,20 +70,21 @@ void CS_Main(uint3 id : SV_DispatchThreadID)
     float3 baseColor = FoggedScene[pixel].rgb;
 
     float3 viewPos = ReconstructViewPos(pixel);
-    float viewDepth = length(viewPos);
-    float3 viewDir = normalize(viewPos);
+    float3 worldPos = mul(float4(viewPos, 1.0f), InvertViewMatrix).xyz;
 
-    float3 lightDirVS = normalize(mul((float3x3) ViewMatrix, mainLight.direction));
 
-    float cosTheta = dot(-viewDir, lightDirVS);
+    float3 lightToPixel = normalize(worldPos - mainLight.position);
+    float3 lightDir = normalize(mainLight.direction);
+
+    float cosTheta = dot(-lightToPixel, lightDir);
     float g2 = phaseG * phaseG;
     float denom = max(1 + g2 - 2 * phaseG * cosTheta, 1e-3);
     float phase = (1 - g2) / (4 * 3.14159 * pow(denom, 1.5));
 
-    float atten = exp(-absorption * viewDepth);
+    float lightDepth = length(worldPos - mainLight.position);
+    float atten = exp(-absorption * lightDepth);
 
     float3 scatter = scatterColor * phase * atten * density;
-
     float3 finalColor = baseColor + scatter;
     Output[pixel] = float4(finalColor, 1);
 }
