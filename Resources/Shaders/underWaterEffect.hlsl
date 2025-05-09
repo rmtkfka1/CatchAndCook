@@ -178,8 +178,5 @@ void CS_Main(uint3 id : SV_DispatchThreadID)
     float adjustedFog = saturate(fogFactor * swAtten);
     float3 finalColor = lerp(litColor, g_fogColor, adjustedFog);
     
-    
-    
-    
     resultTexture[tex] = float4(finalColor, 1.0f);
 }

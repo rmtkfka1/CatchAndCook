@@ -283,9 +283,11 @@ void ImguiManager::ComputeController()
 
 	if (*_scattering)
 	{
-		ImGui::SliderFloat3("WATER_ABSORPTION", &_scatteringData->WATER_ABSORPTION.x, 0.0f, 1.0f);
-		ImGui::SliderFloat3("WATER_SCATTER", &_scatteringData->WATER_SCATTER.x, 0.0f, 1.0f);
-		ImGui::SliderFloat("DENSITY", &_scatteringData->DENSITY, 0.0f, 15.0f);
+  
+		ImGui::SliderFloat("phaseG", &_scatteringData->phaseG, 0.0f, 1.0f);
+		ImGui::SliderFloat("absorption", &_scatteringData->absorption, 0.0f, 1.0f);
+		ImGui::SliderFloat("DENSITY", &_scatteringData->density, 0.0f, 15.0f);
+		ImGui::SliderFloat3("scatterColor", &_scatteringData->scatterColor.x, 0.0f, 1.0f);
 	}
 
 

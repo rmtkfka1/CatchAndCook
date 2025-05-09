@@ -1343,8 +1343,8 @@ void Scattering::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int
 	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
 	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
-	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
-	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 2);
+	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 0);
+	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 1);
 	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 5);
 
 	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);

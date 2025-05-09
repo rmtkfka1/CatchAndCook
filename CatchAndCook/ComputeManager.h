@@ -441,10 +441,12 @@ private:
 
 struct ScatteringData
 {
-	vec3 WATER_ABSORPTION{};
-	float p1{};
-	vec3 WATER_SCATTER{};
-	float DENSITY{};
+	float phaseG; // 헨리-그린스타인 g (0.8 권장)
+	float absorption; // 감쇠 정도 (0.002~0.01)
+	vec2 Padding;
+
+	float density; // 산란 세기 계수
+	vec3 scatterColor; // 산란되는 빛 색
 };
 
 class Scattering : public ComputeBase

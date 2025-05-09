@@ -1,4 +1,4 @@
-
+#include "Light_b3.hlsl"
 
 SamplerState sampler_lerp : register(s0);
 SamplerState sampler_point : register(s1);
@@ -32,61 +32,54 @@ cbuffer cameraParams : register(b2)
 };
 
 
-RWTexture2D<float4> resultTexture : register(u0);
-Texture2D<float4> RenderTexture : register(t1);
-Texture2D DepthTexture : register(t2);
 
 
-float3 ProjToView(int2 texCoord)
+
+cbuffer ScatterParams : register(b5)
 {
-    float2 uv = (float2(texCoord) + 0.5) / float2(cameraScreenData.x, cameraScreenData.y);
-    float depth = DepthTexture.Load(int3(texCoord, 0));
-    float4 ndc = float4(uv.x * 2.0 - 1.0, 1.0 - uv.y * 2.0, depth, 1.0);
-    float4 viewPos = mul(InvertProjectionMatrix, ndc);
-    return viewPos.xyz / viewPos.w;
-}
-
-
-
-cbuffer data : register(b3)
-{
-    float3 WATER_ABSORPTION;
-    float p1;
+    float phaseG; // 헨리-그린스타인 g (0.8 권장)
+    float absorption; // 감쇠 정도 (0.002~0.01)
+    float2 Padding;
     
-    float3 WATER_SCATTER;
-    float DENSITY;
+    float density; // 산란 세기 계수
+    float3 scatterColor; // 산란되는 빛 색
+
 };
 
+Texture2D<float4> FoggedScene : register(t0);
+Texture2D<float> DepthTexture : register(t1);
+RWTexture2D<float4> Output : register(u0);
 
-float3 ApplyMediumScattering(float3 color,float depth,float3 lightDir,float3 viewDir,float3 worldPos)
+float3 ReconstructViewPos(int2 pixel)
 {
- 
-    float distanceInMedium = depth * DENSITY;
-
-    float3 absorption = exp(-WATER_ABSORPTION * distanceInMedium);
-
-    float cosTheta = dot(normalize(-viewDir), normalize(lightDir));
-    float g = 0.8; 
-    float phase = (1 - g * g) / (4 * 3.1415 * pow(1 + g * g - 2 * g * cosTheta, 1.5));
-    
-    float3 scatterLight = WATER_SCATTER * phase * distanceInMedium;
-
-    return color * absorption + scatterLight;
+    float2 uv = (float2(pixel) + 0.5f) / cameraScreenData.xy;
+    float z = DepthTexture.Load(int3(pixel, 0));
+    float4 ndc = float4(uv * 2 - 1, z, 1);
+    float4 view = mul(ndc, InvertProjectionMatrix);
+    return view.xyz / view.w;
 }
 
-
 [numthreads(16, 16, 1)]
-void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
+void CS_Main(uint3 id : SV_DispatchThreadID)
 {
-    int2 texCoord = dispatchThreadID.xy;
-    float3 color = RenderTexture[texCoord.xy].xyz;
-    float3 viewPos = ProjToView(texCoord);
-    float depth = length(viewPos); 
+    int2 pixel = id.xy;
+    float3 baseColor = FoggedScene[pixel].rgb;
 
-    float3 worldPos = cameraPos.xyz + normalize(viewPos) * depth;
+    float3 viewPos = ReconstructViewPos(pixel);
+    float viewDepth = length(viewPos);
+    float3 viewDir = normalize(viewPos);
 
-    float3 lightDir = normalize(float3(0, -1, 0)); 
-    color = ApplyMediumScattering(color, depth, lightDir, normalize(viewPos), worldPos);
-    
-    resultTexture[texCoord] = float4(color, 1.0);
+    float3 lightDirVS = normalize(mul((float3x3) ViewMatrix, mainLight.direction));
+
+    float cosTheta = dot(-viewDir, lightDirVS);
+    float g2 = phaseG * phaseG;
+    float denom = max(1 + g2 - 2 * phaseG * cosTheta, 1e-3);
+    float phase = (1 - g2) / (4 * 3.14159 * pow(denom, 1.5));
+
+    float atten = exp(-absorption * viewDepth);
+
+    float3 scatter = scatterColor * phase * atten * density;
+
+    float3 finalColor = baseColor + scatter;
+    Output[pixel] = float4(finalColor, 1);
 }
