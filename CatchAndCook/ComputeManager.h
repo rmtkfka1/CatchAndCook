@@ -214,7 +214,7 @@ private:
 	void YBlur(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
 
 private:
-	int32 _blurCount = 1;
+	int32 _blurCount = 3;
 
 	bool _on = false;
 

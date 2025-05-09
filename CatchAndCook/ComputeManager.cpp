@@ -583,7 +583,7 @@ void DOF::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int
 
 	DOFParam param;
 	param.g_fogMin = 8;
-	param.g_fogMax = 300;
+	param.g_fogMax = 350;
 
 	auto CbufferContainer = Core::main->GetBufferManager()->CreateAndGetBufferPool(BufferType::DOFParam, sizeof(DOFParam), 1)->Alloc(1);
 	memcpy(CbufferContainer->ptr, (void*)&param, sizeof(DOFParam));
