@@ -301,15 +301,15 @@ private:
 
 struct UnderWaterParam
 {
-	vec3 g_fogColor = vec3(0.072f, 0.830f, 0.714f);
-	float g_fog_power = 7.0f;
+	vec3 g_fogColor = vec3(0, 0.256f, 0.350f);
+	float g_fog_power = 5.109f;
 
-	vec3 g_underWaterColor = vec3(0.5f, 0.6f, 0.6f);
+	vec3 g_underWaterColor = vec3(0.308f, 0.615f, 0.867f);
 	float g_fogMin = 0;
 
 	vec2 padding;
 	int g_on = 1;
-	float g_fogMax = 2600.0f;
+	float g_fogMax = 1467.f;
 };
 
 class UnderWaterEffect : public ComputeBase
@@ -429,10 +429,49 @@ private:
 
 private:
 	shared_ptr<Texture> _pingTexture;
-	std::shared_ptr<Texture> _ssaoTexture;
+	std::shared_ptr<Texture> _colorGradingTexture;
 	shared_ptr<Shader> _shader;
 
 	bool colorGradingOnOff = true;
+
+	friend class ComputeManager;
+};
+
+
+
+struct ScatteringData
+{
+	vec3 WATER_ABSORPTION{};
+	float p1{};
+	vec3 WATER_SCATTER{};
+	float DENSITY{};
+};
+
+class Scattering : public ComputeBase
+{
+
+public:
+	Scattering();
+	virtual ~Scattering();
+
+public:
+	virtual void Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture);
+	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+
+private:
+	virtual void Resize();
+
+private:
+	shared_ptr<Texture> _pingTexture;
+	std::shared_ptr<Texture> _ssaoTexture;
+	shared_ptr<Shader> _shader;
+
+	bool _scattering = false;
+	ScatteringData _scatteringData;
 
 	friend class ComputeManager;
 };
@@ -467,6 +506,7 @@ public:
 	shared_ptr<GodRay> _godrayRender;
 	shared_ptr<FXAA> _fxaaRender;
 	shared_ptr<DOF> _dofRender;
+	shared_ptr<Scattering> _colorGradingSea;
 
 	bool _mainFieldTotalOn = true;
 	// color grading

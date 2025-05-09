@@ -54,6 +54,27 @@ void ResourceManager::CreateDefaultShaderKSH()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
+		info._zWrite = false;
+		info._blendEnable = true;
+		info.cullingType = CullingType::NONE;
+		info._blendType[0] = BlendType::Add;
+
+		info.renderTargetCount = 1;
+
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Forward);
+		shader->Init(L"UnderwaterVolumetric.hlsl", StaticProp, ShaderArg{}, info);
+		Add<Shader>(L"UnderwaterVolumetric", shader);
+	}
+
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
 		info.cullingType = CullingType::BACK;
 
 		info.renderTargetCount = 4;

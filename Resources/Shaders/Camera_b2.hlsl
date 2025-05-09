@@ -14,7 +14,7 @@ cbuffer cameraParams : register(b2)
     float4 cameraPos;
     float4 cameraLook;
     float4 cameraUp;
-    float4 cameraFrustumData;
+    float4 cameraFrustumData; // _fov , _params.cameraScreenData.x / _params.cameraScreenData.y, _near, _far
     float4 cameraScreenData;
 };
 

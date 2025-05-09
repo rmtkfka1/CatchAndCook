@@ -318,7 +318,6 @@ TableContainer DescritporTable::Alloc(uint32 count)
 
 	_currentIndex += count;
 	return container;
-
 }
 
 void DescritporTable::CopyHandle(D3D12_CPU_DESCRIPTOR_HANDLE& destHandle, D3D12_CPU_DESCRIPTOR_HANDLE& sourceHandle, uint32 index)

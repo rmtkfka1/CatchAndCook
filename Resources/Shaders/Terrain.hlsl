@@ -3,12 +3,12 @@
 #include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
 #include "ShadowReceive_b6.hlsl"
+#include "SeaGlobal.hlsl"
 
 #define TessFactor 18
 #define PI 3.14159f
 #define DIST_MAX 100.0f
 #define DIST_MIN 20.0f
-
 
 cbuffer TerrainDetailsParam : register(b10)
 {
@@ -57,6 +57,7 @@ struct HS_OUT
 };
 
 Texture2D heightMap : register(t0);
+
 
 Texture2D _detailMap0 : register(t40);
 Texture2D _detailMap1 : register(t41);
@@ -258,6 +259,7 @@ PS_OUT PS_Main(DS_OUT input)
         _maskMap4,  _maskMap5,  _maskMap6,  _maskMap7,
         _maskMap8,  _maskMap9,  _maskMap10, _maskMap11
     };
+    
     float2 uv     = input.uv;
     float2 uvTile = input.uvTile;
 
@@ -287,120 +289,14 @@ PS_OUT PS_Main(DS_OUT input)
         }
     }
 
-    //float3 normal = 0;
-
-   // if (blendCount >= 1)
-   // {
-   //     blend = _blendMap0.Sample(sampler_lerp, input.uv);
-
-   //     if (blend.x != 0)
-   //     {
-   //         float2 tileUV0 = input.uvTile / tileST[0].xy + tileST[0].zw;
-   //         float4 mask0 = (textureActive[0].g == 0) ? 1 : (_maskMap0.Sample(sampler_lerp, tileUV0));
-   //         //normal += (textureActive[0].r == 0) ? 0 : (_normalMap0.Sample(sampler_lerp, tileUV0).xyz * 2 - 1) * blend.x;
-
-			//finalColor = _detailMap0.Sample(sampler_aniso8, tileUV0) * mask0.g * blend.x;
-   //     }
-   //     if (blend.y != 0)
-   //     {
-   //         float2 tileUV1 = input.uvTile / tileST[1].xy + tileST[1].zw;
-   //         float4 mask1 = (textureActive[1].g == 0) ? 1 : (_maskMap1.Sample(sampler_lerp, tileUV1));
-   //         //normal += (textureActive[1].r == 0) ? 0 : (_normalMap1.Sample(sampler_lerp, tileUV1).xyz * 2 - 1) * blend.y;
-			//finalColor += _detailMap1.Sample(sampler_aniso8, tileUV1) * mask1.g * blend.y;
-   //     }
-   //     if (blend.z != 0)
-   //     {
-   //         float2 tileUV2 = input.uvTile / tileST[2].xy + tileST[2].zw;
-   //         float4 mask2 = (textureActive[2].g == 0) ? 1 : (_maskMap2.Sample(sampler_lerp, tileUV2));
-   //         //normal += (textureActive[2].r == 0) ? 0 : (_normalMap2.Sample(sampler_lerp, tileUV2).xyz * 2 - 1) * blend.z;
-			//finalColor += _detailMap2.Sample(sampler_aniso8, tileUV2) * mask2.g * blend.z;
-   //     }
-   //     if (blend.w != 0)
-   //     {
-   //         float2 tileUV3 = input.uvTile / tileST[3].xy + tileST[3].zw;
-			//float4 mask3 = (textureActive[3].g == 0) ? 1 : (_maskMap3.Sample(sampler_lerp, tileUV3));
-   //         //normal += (textureActive[3].r == 0) ? 0 : (_normalMap3.Sample(sampler_lerp, tileUV3).xyz * 2 - 1) * blend.w;
-			//finalColor += _detailMap3.Sample(sampler_aniso8, tileUV3) * mask3.g * blend.w;
-   //     }
-   // }
-   // if (blendCount >= 2)
-   // {
-   //     blend = _blendMap1.Sample(sampler_lerp, input.uv);
-
-   //     if (blend.x != 0)
-   //     {
-   //         float2 tileUV0 = input.uvTile / tileST[4].xy + tileST[4].zw;
-   //         float4 mask0 = (textureActive[4].g == 0) ? 1 : (_maskMap4.Sample(sampler_lerp, tileUV0));
-   //         //normal += (textureActive[4].r == 0) ? 0 : (_normalMap4.Sample(sampler_lerp, tileUV0).xyz * 2 - 1) * blend.x;
-	  //      finalColor += _detailMap4.Sample(sampler_aniso8, tileUV0) * mask0.g * blend.x;
-   //     }
-   //     if (blend.y != 0)
-   //     {
-   //         float2 tileUV1 = input.uvTile / tileST[5].xy + tileST[5].zw;
-   //         float4 mask1 = (textureActive[5].g == 0) ? 1 : (_maskMap5.Sample(sampler_lerp, tileUV1));
-   //         //normal += (textureActive[5].r == 0) ? 0 : (_normalMap5.Sample(sampler_lerp, tileUV1).xyz * 2 - 1) * blend.y;
-   //         finalColor += _detailMap5.Sample(sampler_aniso8, tileUV1) * mask1.g * blend.y;
-   //     }
-   //     if (blend.z != 0)
-   //     {
-   //         float2 tileUV2 = input.uvTile / tileST[6].xy + tileST[6].zw;
-   //         float4 mask2 = (textureActive[6].g == 0) ? 1 : (_maskMap6.Sample(sampler_lerp, tileUV2));
-   //         //normal += (textureActive[6].r == 0) ? 0 : (_normalMap6.Sample(sampler_lerp, tileUV2).xyz * 2 - 1) * blend.z;
-   //         finalColor += _detailMap6.Sample(sampler_aniso8, tileUV2) * mask2.g * blend.z;
-   //     }
-   //     if (blend.w != 0)
-   //     {
-   //         float2 tileUV3 = input.uvTile / tileST[7].xy + tileST[7].zw;
-			//float4 mask3 = (textureActive[7].g == 0) ? 1 : (_maskMap7.Sample(sampler_lerp, tileUV3));
-   //         //normal += (textureActive[7].r == 0) ? 0 : (_normalMap7.Sample(sampler_lerp, tileUV3).xyz * 2 - 1) * blend.w;
-   //         finalColor += _detailMap7.Sample(sampler_aniso8, tileUV3) * mask3.g * blend.w;
-   //     }
-   // }
-   // if (blendCount >= 3)
-   // {
-   //     blend = _blendMap2.Sample(sampler_lerp, input.uv);
-
-
-   //     if (blend.x != 0)
-   //     {
-   //         float2 tileUV0 = input.uvTile / tileST[8].xy + tileST[8].zw;
-   //         float4 mask0 = (textureActive[8].g == 0) ? 1 : _maskMap8.Sample(sampler_lerp, tileUV0);
-   //         //normal += (textureActive[8].r == 0) ? 0 : (_normalMap8.Sample(sampler_lerp, tileUV0).xyz * 2 - 1) * blend.x;
-	  //      finalColor += _detailMap8.Sample(sampler_aniso8, tileUV0) * mask0.g * blend.x;
-   //     }
-
-   //     if (blend.y != 0)
-   //     {
-   //         float2 tileUV1 = input.uvTile / tileST[9].xy + tileST[9].zw;
-   //         float4 mask1 = (textureActive[9].g == 0) ? 1 : _maskMap9.Sample(sampler_lerp, tileUV1);
-   //         //normal += (textureActive[9].r == 0) ? 0 : (_normalMap9.Sample(sampler_lerp, tileUV1).xyz * 2 - 1) * blend.y;
-			//finalColor += _detailMap9.Sample(sampler_aniso8, tileUV1) * mask1.g * blend.y;
-   //     }
-   //     if (blend.z != 0)
-   //     {
-   //         float2 tileUV2 = input.uvTile / tileST[10].xy + tileST[10].zw;
-   //         float4 mask2 = (textureActive[10].g == 0) ? 1 : _maskMap10.Sample(sampler_lerp, tileUV2);
-   //         //normal += (textureActive[10].r == 0) ? 0 : (_normalMap10.Sample(sampler_lerp, tileUV2).xyz * 2 - 1) * blend.z;
-   //         finalColor += _detailMap10.Sample(sampler_aniso8, tileUV2) * mask2.g * blend.z;
-   //     }
-   //     if (blend.w != 0)
-   //     {
-   //         float2 tileUV3 = input.uvTile / tileST[11].xy + tileST[11].zw;
-			//float4 mask3 = (textureActive[11].g == 0) ? 1 : _maskMap11.Sample(sampler_lerp, tileUV3);
-   //         //normal += (textureActive[11].r == 0) ? 0 : (_normalMap11.Sample(sampler_lerp, tileUV3).xyz * 2 - 1) * blend.w;
-   //         finalColor += _detailMap11.Sample(sampler_aniso8, tileUV3) * mask3.g * blend.w;
-   //     }
-   // }
-
-
-
     output.color = finalColor;
-
-    //normal
-
-    //normal = normalize(float3(normal.xy * 0.08f, 1));
     output.normal = float4(normalize(input.normal), 1.0f);
-    //output.normal = float4(ComputeNormalMapping(input.normal, input.tangent, float4(normal * 0.5 + 0.5, 0)), 1);
+    
+    if(g_castic)
+    {        
+        output.color += ComputeCaustics(uv, 8, input.worldPos.xyz);
+    }
+    
     output.position = input.worldPos;
     return output;
 }

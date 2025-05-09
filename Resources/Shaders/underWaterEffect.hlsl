@@ -123,7 +123,7 @@ Texture2D depthT : register(t0);
 Texture2D<float4> RenderT : register(t1);
 Texture2D<float4> PositionTexture : register(t2);
 Texture2D<float4> NormalTexture : register(t3);
-Texture2D<float4> MAOTexture : register(t4);
+Texture2D<float4> MaoTexture : register(t4);
 
 float3 ProjToView(float2 texCoord)
 {
@@ -160,9 +160,9 @@ void CS_Main(uint3 id : SV_DispatchThreadID)
     float3 viewPos = ProjToView(tex);
 
     float fogFactor = CalculateFogFactor(viewPos);
-
+    
     LightingResult light = ComputeLightColor(worldPos, normal);
-    float distFogNorm = saturate((viewPos.z - g_fogMin) / (g_fogMax - g_fogMin));
+    float distFogNorm = saturate((length(viewPos.xyz) - g_fogMin) / (g_fogMax - g_fogMin));
     float swAtten = lerp(light.subWaterAtten, 1.0f, distFogNorm);
     
 #ifdef SHADOW_ON
@@ -177,6 +177,9 @@ void CS_Main(uint3 id : SV_DispatchThreadID)
 
     float adjustedFog = saturate(fogFactor * swAtten);
     float3 finalColor = lerp(litColor, g_fogColor, adjustedFog);
-
+    
+    
+    
+    
     resultTexture[tex] = float4(finalColor, 1.0f);
 }

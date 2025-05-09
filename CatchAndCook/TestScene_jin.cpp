@@ -62,8 +62,8 @@ void TestScene_jin::Init()
 
 		shared_ptr<GameObject> gameObject = CreateGameObject(L"grid_orgin");
 		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
-		gameObject->AddComponent<WaterController>();
-
+		auto a = gameObject->AddComponent<WaterController>();
+		a->Setting(L"sea_color_real.bin", L"sea_move_real.bin");
 		//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal_Sea"));
 		gameObject->_transform->SetLocalPosition(vec3(0, 9.5f, 0));
 

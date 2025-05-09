@@ -2,7 +2,7 @@
 #include "Transform_b1.hlsl"
 #include "Camera_b2.hlsl"
 #include "Light_b3.hlsl"
-
+#include "SeaGlobal.hlsl"
 
 
 Texture2D _BaseMap : register(t0);
@@ -72,6 +72,8 @@ PS_OUT PS_Main(VS_OUT input) : SV_Target
     output.color = _BaseMap.Sample(sampler_lerp, input.uv) * color;
     output.normal = float4(N, 1.0f);
     
+    
+    //output.color += ComputeCaustics(input.uv,1,input.worldPos);
 
     return output;
 }

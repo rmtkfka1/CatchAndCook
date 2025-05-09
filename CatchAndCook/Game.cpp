@@ -78,7 +78,6 @@ void Game::Init(HWND hwnd)
 	CameraManager::main->AddCamera(CameraType::DebugCamera, make_shared<DebugCamera>());
 	CameraManager::main->AddCamera(CameraType::UiCamera, make_shared<UiCamera>());
 	CameraManager::main->AddCamera(CameraType::SeaCamera, make_shared<SeaCamera>());
-	CameraManager::main->GetCamera(CameraType::DebugCamera)->SetCameraPos(vec3(0, 0, -50.0f));
 	CameraManager::main->SetActiveCamera(CameraType::DebugCamera);
 
 	LightManager::main = make_unique<LightManager>();
@@ -92,7 +91,7 @@ void Game::Init(HWND hwnd)
 	PathStamp::main = make_unique<PathStamp>();
 	PathStamp::main->Init();
 
-	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
+	auto scene = SceneManager::main->AddScene(SceneType::Sea01);
 };
 
 void Game::PrevUpdate()
@@ -223,6 +222,8 @@ void Game::CameraUpdate()
 
 	shared_ptr<Camera> camera = CameraManager::main->GetCamera(CameraType::DebugCamera);
 
+
+
 	static float speed = 500.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;
 
@@ -349,6 +350,9 @@ void Game::CameraUpdate()
 	{
 		cout << terrain->GetComponent<Terrain>()->GetLocalHeight(camera->GetCameraPos()) << endl;;
 	}*/
+
+	//cout << camera->GetCameraLook().x <<" " << camera->GetCameraLook().y <<" " << camera->GetCameraLook().z << endl;
+
 
 }
 

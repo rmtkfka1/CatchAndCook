@@ -21,11 +21,71 @@
 #include "InstancingManager.h"
 #include "Gizmo.h"
 #include "Mesh.h"
+#include <filesystem>
+#include "WaterController.h"
+#include "Volumetric.h"
+
+
 void Scene_Sea01::Init()
 {
+	namespace fs = std::filesystem;
+
 	Scene::Init();
-	//_finalShader->SetShader(ResourceManager::main->Get<Shader>(L"finalShader_MainField"));
-	//_finalShader->SetPass(RENDER_PASS::Forward);
+
+	Volumetric::main = make_unique<Volumetric>();
+	Volumetric::main->Init();
+
+	//vector<wstring> paths;
+	//paths.reserve(240);
+
+	//std::wstring orginPath = L"../Resources/Textures/Caustics/";
+	//std::wstring path = L"../Resources/Textures/Caustics/";
+
+	//for (const auto& entry : fs::directory_iterator(path))
+	//{
+	//	paths.push_back(orginPath + entry.path().filename().wstring());
+	//}
+
+	{
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::BACK;
+		info.cullingType = CullingType::NONE;
+		info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"seatest", L"seatest.hlsl", GeoMetryProp,
+			ShaderArg{ {{"VS_Main","vs"},{"PS_Main","ps"},{"HS_Main","hs"},{"DS_Main","ds"}} }, info);
+
+		shared_ptr<Material> material = make_shared<Material>();
+
+		shared_ptr<GameObject> gameObject = CreateGameObject(L"grid_orgin");
+		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+		auto a = gameObject->AddComponent<WaterController>();
+		a->Setting(L"sea_color_sea.bin", L"sea_move_real.bin");
+
+		//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal_Sea"));
+		gameObject->_transform->SetLocalPosition(vec3(0, 600.f, 0));
+
+		material = make_shared<Material>();
+		material->SetShader(shader);
+		material->SetPass(RENDER_PASS::Forward);
+		material->SetTexture("_cubeMap", ResourceManager::main->_cubemap_skyTexture);
+		material->SetUseMaterialParams(true);
+		material->SetShadowCasting(false);
+		meshRenderer->AddMaterials({ material });
+
+		auto mesh = GeoMetryHelper::LoadGripMeshControlPoints(20000.0f, 20000.0f, 1000, 1000, false);
+		mesh->SetTopolgy(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
+		meshRenderer->AddMesh(mesh);
+		meshRenderer->SetCulling(false);
+
+	};
+
+	caustics = make_shared<Texture>();
+	caustics->Init(L"../Resources/Textures/test.jpg");
+
+
 
 	std::shared_ptr<Light> light = std::make_shared<Light>();
 	light->onOff = 1;
@@ -122,30 +182,16 @@ void Scene_Sea01::Init()
 		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(0, 0, 1, 0)));
 	}
 #pragma endregion
+
+
 	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/sea.json");
 	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
 	sceneLoader->Load(GetCast<Scene>());
-
 	auto player = Find(L"seaPlayer");
-
-	//vector<shared_ptr<GameObject>> gameObjects;
-
-	//player->GetChildsAll(gameObjects);
-
-	//for (auto& ele : gameObjects)
-	//{
-	//	Scene::RemoveGameObject(ele);
-	//}
-
-	//for (auto& ele : gameObjects)
-	//{
-	//	Scene::AddFrontGameObject(ele);
-	//}
 
 
 	if (player)
 	{
-		//player->_transform->SetPivotOffset(vec3(0, 1.0f, 0));
 		player->AddComponent<SeaPlayerController>();
 
 		vector<shared_ptr<GameObject>> childs;
@@ -162,27 +208,6 @@ void Scene_Sea01::Init()
 
 	}
 
-
-	for (auto& gameobject : _gameObjects)
-	{
-		auto& meshRenderer = gameobject->GetComponent<MeshRenderer>();
-
-		if (meshRenderer)
-		{
-			auto& materials = meshRenderer->GetMaterials();
-
-			for (auto& material : materials)
-			{
-				//cout << material->GetShader()->_name << endl;
-				if (material->GetShader()->_name == "DeferredSeaPlantClip.hlsl" || "DeferredSeaPlant.hlsl")
-				{
-					if(gameobject->GetComponent<PlantComponent>()==nullptr)
-						gameobject->AddComponent<PlantComponent>();
-				}
-			}
-		}
-
-	}
 
 
 	
@@ -212,10 +237,16 @@ void Scene_Sea01::Init()
 		});
 
 
+
+
+
+
 }
 
 void Scene_Sea01::Update()
 {
+	
+
 	Scene::Update();
 
 	PathStamp::main->Run();
@@ -230,6 +261,11 @@ void Scene_Sea01::Rendering()
 {
 	GlobalSetting();
 
+	TableContainer conatiner = Core::main->GetBufferManager()->GetTable()->Alloc(3);
+	Core::main->GetBufferManager()->GetTable()->CopyHandle(conatiner.CPUHandle, caustics->GetSRVCpuHandle(), 0);
+	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(GLOBAL_SRV_INDEX, conatiner.GPUHandle);
+
+	_globalParam.caustics = 1;
 
 	auto& cmdList = Core::main->GetCmdList();
 	Core::main->GetRenderTarget()->ClearDepth();
@@ -250,6 +286,8 @@ void Scene_Sea01::Rendering()
 	ForwardPass(cmdList);
 	Profiler::Fin();
 
+	Volumetric::main->Render();
+	Core::main->GetRenderTarget()->SetRenderTarget();
 	//Profiler::Set("PASS : Transparent", BlockTag::CPU);
 	//TransparentPass(cmdList); // Position,
 	//Profiler::Fin();
@@ -276,6 +314,11 @@ void Scene_Sea01::RenderEnd()
 void Scene_Sea01::Finish()
 {
 	Scene::Finish();
+}
+
+void Scene_Sea01::SetSeaGlobalData()
+{
+
 }
 
 void Scene_Sea01::ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
@@ -377,6 +420,7 @@ void Scene_Sea01::ComputePass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>&
 {
 	ComputeManager::main->Dispatch(cmdList);
 }
+
 
 void Scene_Sea01::UiPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
 {
@@ -509,7 +553,6 @@ void Scene_Sea01::DeferredPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>
 						continue;
 					}
 				}
-
 
 				if (ele.renderer->isInstancing() == false)
 				{

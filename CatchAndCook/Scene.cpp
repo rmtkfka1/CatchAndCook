@@ -21,6 +21,7 @@
 #include "PathFinder.h"
 #include "ShadowManager.h"
 #include "TerrainManager.h"
+#include "Volumetric.h"
 
 void Scene::AddFrontGameObject(const std::shared_ptr<GameObject>& gameObject)
 {
@@ -46,11 +47,13 @@ void Scene::Init()
 	_finalShader = std::make_shared<Material>();
 	_finalShader->SetShader(ResourceManager::main->Get<Shader>(L"finalShader"));
     _finalShader->SetPass(RENDER_PASS::Forward);
+
+
 }
 
 void Scene::Update()
 {
-
+   
     Profiler::Set("Logic_Start");
     while (!_changeTypeQueue.empty()) 
     {
@@ -104,6 +107,8 @@ void Scene::RenderBegin()
 void Scene::Rendering()
 {
     GlobalSetting();
+
+    _globalParam.caustics = 0;
 
 #ifdef _DEBUG
     //Gizmo::Width(0.5);
@@ -504,9 +509,12 @@ void Scene::DebugRendering()
         Gizmo::Image(Core::main->GetGBuffer()->GetTexture(3),
             pos + lock + right * (-0.8 + (size.x + 0.02) * 3) + up * (0.4 + (size.y + 0.02) * 0),
             -lock, Vector3::Up, size);
-        Gizmo::Image(Core::main->GetDSReadTexture(),
-            pos + lock + right * (-0.8 + (size.x + 0.02) * 4) + up * (0.4 + (size.y + 0.02) * 0),
-            -lock, Vector3::Up, size);
+        if (Volumetric::main)
+        {
+            Gizmo::Image(Volumetric::main->GetTexture(),
+                pos + lock + right * (-0.8 + (size.x + 0.02) * 4) + up * (0.4 + (size.y + 0.02) * 0),
+                -lock, Vector3::Up, size);
+        }
         Gizmo::Image(ComputeManager::main->_pongTexture,
             pos + lock + right * (-0.8 + (size.x + 0.02) * 5) + up * (0.4 + (size.y + 0.02) * 0),
             -lock, Vector3::Up, size);
