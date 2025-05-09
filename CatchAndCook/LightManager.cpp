@@ -55,6 +55,7 @@ std::shared_ptr<Light> LightManager::GetMainLight()
 			_mainLights = light;
 		}
 	}
+
 	return _mainLights;
 }
 
@@ -63,6 +64,7 @@ void LightManager::Update()
 {
 	_lightParmas.eyeWorldPos = CameraManager::main->GetActiveCamera()->GetCameraPos();
 	_lightParmas.lightCount = _lights.size();
+	_lightParmas.mainLight = *GetMainLight().get();
 
 	/*_lightParmas.lightCount = 0;
 	for (auto& light : _lights)

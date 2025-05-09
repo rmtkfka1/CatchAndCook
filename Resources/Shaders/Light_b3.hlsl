@@ -36,13 +36,12 @@ struct Light
 };
 
 
-
 cbuffer LightHelperParams : register(b3)
 {
     float3 g_eyeWorld;
     int g_lightCount;
+    Light mainLight;
 };
-
 
 StructuredBuffer<Light> g_lights : register(t16);
 
