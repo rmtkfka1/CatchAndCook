@@ -373,6 +373,7 @@ private:
 	shared_ptr<Shader> _shader;
 
 	VignetteParam _vignetteParam;
+	Vector3 defualtColor = Vector3(0.1, 0.04, 0.08);
 	bool _onOff = true;
 
 	friend class ComputeManager;

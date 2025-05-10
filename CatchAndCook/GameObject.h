@@ -325,6 +325,7 @@ public:
 	void AddTag(GameObjectTag tag);
 	void RemoveTag(GameObjectTag tag);
 	GameObjectTag GetTag() const { return  _tag; };
+	bool HasTag(const GameObjectTag& tag2) const { return (static_cast<uint64>(_tag) & static_cast<uint64>(tag2)) != 0; };
 
 	void SetType(const GameObjectType& type) { _type = type; };
 	GameObjectType GetType() const { return  _type; };

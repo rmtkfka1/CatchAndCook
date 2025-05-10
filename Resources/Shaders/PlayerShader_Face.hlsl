@@ -46,7 +46,7 @@ struct VS_IN
 
 struct VS_OUT
 {
-    float id : InstanceID;
+    uint id : InstanceID;
 
     float4 position : SV_Position;
     float4 positionCS : PositionCS;

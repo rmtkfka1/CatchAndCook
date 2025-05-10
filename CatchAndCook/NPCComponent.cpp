@@ -17,6 +17,7 @@
 #include "Transform.h"
 #include "AnimationListComponent.h"
 #include "InGameMainField.h"
+#include "InitComponent.h"
 #include "NavMeshManager.h"
 
 COMPONENT(NPCComponent)
@@ -147,12 +148,17 @@ void NPCComponent::MoveControl()
 					{
 						auto otherBoundingData = otherCollider->GetBoundingData();
 						Vector3 hitPosition = Collider::GetContactPoint(boundingData, otherBoundingData);
-
 						auto pushDir = nextCenter - hitPosition;
 						auto pushNormal = pushDir;
 						pushNormal.Normalize();
 
-						velocityDirectionXZ += pushNormal * std::max(currentRadius - pushDir.Length(), 0.0f);
+						Vector3 finalPushForce = pushNormal * std::max(currentRadius - pushDir.Length(), 0.0f);
+						velocityDirectionXZ += finalPushForce;
+
+						if (auto tag = otherCollider->GetOwner()->GetComponentWithParents<NPCComponent>()) {
+							if (tag->GetOwner()->HasTag(GameObjectTag::NPC))
+								velocityDirectionXZ += pushNormal.Cross(Vector3::Up) * finalPushForce.Length() * 0.25;
+						}
 					}
 				}
 			}
@@ -503,7 +509,10 @@ void NPCGotoShop::Update()
 			if ((endPoint - Vector2(currentWorldPos.x, currentWorldPos.z)).Length() <= 0.25)
 			{
 				skinnedHierarchy->Play(idle, 0.25);
-				GetGroup()->ChangeState(StateType::goto_table);
+				if (InGameMainField::GetMain()->shopOpen)
+					GetGroup()->ChangeState(StateType::goto_table);
+				else
+					GetGroup()->ChangeState(StateType::goto_any);
 			}
 			else
 			{
@@ -720,6 +729,19 @@ void NPCEatting::Update()
 			this->isSitBegin = false;
 			this->isSit = true;
 			skinnedHierarchy->Play(sit, 0.25);
+		}
+
+		if (this->isSit && !InGameMainField::GetMain()->shopOpen)
+		{
+			this->isSit = false;
+			this->isSitEnd = true;
+			skinnedHierarchy->Play(situp, 0.25);
+		}
+		if (this->isSitEnd && !skinnedHierarchy->IsPlay())
+		{
+			this->isSitEnd = false;
+			npc->GetOwner()->_transform->SetWorldPosition(npc->GetOwner()->_transform->GetWorldPosition() - npc->GetOwner()->_transform->GetForward());
+			GetGroup()->ChangeState(StateType::goto_shop);
 		}
 	}
 }

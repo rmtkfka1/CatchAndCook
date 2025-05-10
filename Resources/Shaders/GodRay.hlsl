@@ -88,9 +88,9 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
         illuminationDecay *= decay;
     }
 
-    godRayColor *= exposure;
-
     float fade = smoothstep(0.0, 5.0, NdcDepthToViewDepth(depthT.SampleLevel(sampler_lerp, uv, 0).r));
+
+    godRayColor *= exposure * fade;
 
     // 6) 원본 장면과 합성
     float3 sceneCol = RenderT.SampleLevel(sampler_lerp, uv, 0).rgb;

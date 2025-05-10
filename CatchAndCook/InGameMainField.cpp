@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "InGameMainField.h"
 
+#include "Game.h"
+
 
 COMPONENT(InGameMainField)
 
@@ -98,4 +100,22 @@ void InGameMainField::SetDestroy()
 void InGameMainField::Destroy()
 {
 	Component::Destroy();
+}
+
+void InGameMainField::AddObjectSetting(const std::shared_ptr<ObjectSettingComponent>& object_setting_component)
+{
+	objectSettings.push_back(object_setting_component->GetOwner());
+}
+
+void InGameMainField::RemoveObjectSetting(const std::shared_ptr<ObjectSettingComponent>& object_setting_component)
+{
+	auto it = std::ranges::find_if(objectSettings, [&](const std::weak_ptr<GameObject>& obj)
+		{
+			if (auto obj2 = obj.lock())
+				if (auto comp = obj2->GetComponent<ObjectSettingComponent>())
+					return true;
+			return false;
+		});
+	if (it != objectSettings.end())
+		objectSettings.erase(it);
 }

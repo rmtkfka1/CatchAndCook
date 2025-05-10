@@ -14,6 +14,7 @@
 #include "TerrainManager.h"
 #include "Transform.h"
 #include "AnimationListComponent.h"
+#include "InGameMainField.h"
 
 
 COMPONENT(PlayerController)
@@ -62,6 +63,11 @@ void PlayerController::Update()
 	if (Input::main->IsMouseLock())
 		CameraControl();
 	MoveControl();
+
+	for (auto obj : InGameMainField::GetMain()->objectSettings)
+		if ((obj.lock()->_transform->GetWorldPosition() - GetOwner()->_transform->GetWorldPosition()).Length() <= 1)
+			obj.lock()->GetComponent<ObjectSettingComponent>()->_objectSettingParam.o_select = 1;
+		
 
 	for (auto& terrain : TerrainManager::main->GetTerrains())
 		terrain->AddObjectPositionFront(GetOwner()->_transform->GetWorldPosition());
