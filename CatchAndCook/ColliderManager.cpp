@@ -686,4 +686,14 @@ bool ColliderManager::RayCastAll(const std::vector<std::shared_ptr<Collider>>& c
 	return hitFound;
 }
 
+void ColliderManager::Clear()
+{
+	_staticColliderGrids.clear();
+	_dynamicColliderGrids.clear();
+	_dynamicColliderCashing.clear();;
+	_dynamicColliderList.clear();;
+	_colliderLinkTable.clear();;
+	_collidersForRay.clear();;
+}
+
 

@@ -181,9 +181,11 @@ void Scene_Sea01::Init()
 	}
 #pragma endregion
 
+	ColliderManager::main->SetCellSize(100);
 
-	ResourceManager::main->LoadAlway<SceneLoader>(L"test", L"../Resources/Datas/Scenes/sea.json");
-	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test");
+
+	ResourceManager::main->LoadAlway<SceneLoader>(L"test2", L"../Resources/Datas/Scenes/sea.json");
+	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test2");
 	sceneLoader->Load(GetCast<Scene>());
 	auto player = Find(L"seaPlayer");
 
@@ -313,6 +315,11 @@ void Scene_Sea01::RenderEnd()
 void Scene_Sea01::Finish()
 {
 	Scene::Finish();
+
+	if (Input::main->GetKeyDown(KeyCode::F6))
+	{
+		SceneManager::main->ChangeScene(SceneManager::main->GetCurrentScene(), SceneManager::main->FindScene(SceneType::TestScene2), true, true);
+	}
 }
 
 void Scene_Sea01::SetSeaGlobalData()

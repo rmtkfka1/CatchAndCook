@@ -69,6 +69,8 @@ public:
 	bool RayCastAllForMyCellDirect(const Ray& ray, const float& dis, std::vector<RayHit>& hitList, BoundingData data);
 	static bool RayCastAll(const std::vector<std::shared_ptr<Collider>>& colliders, const Ray& ray, const float& dis, std::vector<RayHit>& hitList);
 
+	void Clear();
+
 public:
 	float _cellSize = 100.0f;
 	void SetCellSize(float cellSize) { _cellSize = cellSize; }
