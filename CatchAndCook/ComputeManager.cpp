@@ -398,6 +398,10 @@ void GodRay::Black(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int
 	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
 	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 	auto& MAOTexture = Core::main->GetGBuffer()->GetTexture(3);
+
+	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
+	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
 	MAOTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 	_pingtexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
@@ -406,6 +410,7 @@ void GodRay::Black(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int
 	_tableContainer = table->Alloc(10);
 	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 0);
 	table->CopyHandle(_tableContainer.CPUHandle, MAOTexture->GetSRVCpuHandle(), 1);
+	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 2);
 	table->CopyHandle(_tableContainer.CPUHandle, _pingtexture->GetUAVCpuHandle(), 5);
 	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
 	cmdList->Dispatch(x, y, z);
@@ -413,9 +418,6 @@ void GodRay::Black(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int
 
 void GodRay::Ray(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
 {
-	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
-	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
-
 	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
 	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
@@ -428,9 +430,6 @@ void GodRay::Ray(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z
 
 	_tableContainer = table->Alloc(10);
 
-
-
-	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 0);
 
 	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
 

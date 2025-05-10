@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Component.h"
 #include "IComponentFactory.h"
+#include "ObjectSettingComponent.h"
 
 
 class AnimationListComponent;
@@ -71,11 +72,16 @@ private: // Camera Control
 
 	double currentCameraDistance = 3.6;
 	double minCameraDistance = 0.75f;
-	double maxCameraDistance = 3.75;
+	double maxCameraDistance = 3.5;
 
 private:
 	Vector3 velocity = Vector3::Zero;
 	ControlInfo controlInfo = fieldInfo;
 	bool isGround = true;
+
+
+
+public:
+
 };
 

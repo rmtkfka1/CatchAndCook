@@ -20,6 +20,12 @@ void ObjectSettingComponent::SetData(StructuredBuffer* buffer, Material* materia
 	buffer->AddData(_objectSettingParam);
 }
 
+void ObjectSettingComponent::RenderEnd()
+{
+	Component::RenderEnd();
+	_objectSettingParam.o_select = false;
+}
+
 
 void ObjectSettingComponent::Init()
 {

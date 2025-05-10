@@ -104,18 +104,36 @@ void InGameMainField::Destroy()
 
 void InGameMainField::AddObjectSetting(const std::shared_ptr<ObjectSettingComponent>& object_setting_component)
 {
-	objectSettings.push_back(object_setting_component->GetOwner());
+	objectSettings.push_back(object_setting_component);
 }
 
 void InGameMainField::RemoveObjectSetting(const std::shared_ptr<ObjectSettingComponent>& object_setting_component)
 {
-	auto it = std::ranges::find_if(objectSettings, [&](const std::weak_ptr<GameObject>& obj)
+	auto it = std::ranges::find_if(objectSettings, [&](const std::weak_ptr<ObjectSettingComponent>& obj) {
+		if (auto comp = obj.lock())
+			if(comp == object_setting_component)
+				return true;
+		return false;
+	});
+	if (it != objectSettings.end())
+		objectSettings.erase(it);
+}
+
+void InGameMainField::AddNPC(const std::shared_ptr<NPCComponent>& ele)
+{
+	npcList.push_back(ele);
+}
+
+void InGameMainField::RemoveNPC(const std::shared_ptr<NPCComponent>& ele)
+{
+	auto& list = npcList;
+	auto it = std::ranges::find_if(list, [&](const std::weak_ptr<NPCComponent>& obj)
 		{
 			if (auto obj2 = obj.lock())
-				if (auto comp = obj2->GetComponent<ObjectSettingComponent>())
+				if (auto comp = ele)
 					return true;
 			return false;
 		});
-	if (it != objectSettings.end())
-		objectSettings.erase(it);
+	if (it != list.end())
+		list.erase(it);
 }

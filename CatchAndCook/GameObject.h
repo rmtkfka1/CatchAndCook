@@ -26,7 +26,8 @@ public:
 	void Enable(); 
 	void Disable(); 
 	void Destroy(); 
-	void RenderBegin(); 
+	void RenderBegin();
+	void RenderEnd();
 	void Collision(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
 	
 
@@ -42,7 +43,8 @@ public:
 		if (GetActive()) component->Enable();
 		SceneManager::main->GetCurrentScene()->AddStartQueue(GetCast<GameObject>());
 		return component;
-	};
+	}
+
 
 	template <class T, class = std::enable_if_t<std::is_base_of_v<Component, T>>>
 	void AddComponent(shared_ptr<T> component)

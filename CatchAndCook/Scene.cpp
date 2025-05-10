@@ -557,7 +557,10 @@ void Scene::DebugRendering()
 
 void Scene::RenderEnd()
 {
-  
+    Profiler::Set("Logic_RenderEnd");
+    for (auto& gameObject : _gameObjects)
+        gameObject->RenderEnd();
+    Profiler::Fin();
 }
 
 void Scene::Finish()
