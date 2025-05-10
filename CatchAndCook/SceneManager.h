@@ -43,7 +43,7 @@ public:
 		return scene;
 	};
 
-	void ChangeScene(const shared_ptr<Scene>& prevScene, const shared_ptr<Scene>& nextScene, bool initExecute = false);
+	void ChangeScene(const shared_ptr<Scene>& prevScene, const shared_ptr<Scene>& nextScene, bool initExecute = true, bool removeExecute = true);
 	std::shared_ptr<Scene> FindScene(SceneType type);
 	template <class T,class = std::enable_if_t<std::is_base_of_v<Scene,T>>>
 	std::shared_ptr<T> FindScene()
