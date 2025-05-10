@@ -270,9 +270,9 @@ void Scene_Sea01::Rendering()
 	auto& cmdList = Core::main->GetCmdList();
 	Core::main->GetRenderTarget()->ClearDepth();
 
-	/*Profiler::Set("PASS : Shadow", BlockTag::CPU);  
+	Profiler::Set("PASS : Shadow", BlockTag::CPU);  
 	ShadowPass(cmdList);
-	Profiler::Fin();*/
+	Profiler::Fin();
 
 	Profiler::Set("PASS : Deferred", BlockTag::CPU);
 	DeferredPass(cmdList);
@@ -318,7 +318,7 @@ void Scene_Sea01::Finish()
 
 	if (Input::main->GetKeyDown(KeyCode::F6))
 	{
-		SceneManager::main->ChangeScene(SceneManager::main->GetCurrentScene(), SceneManager::main->FindScene(SceneType::TestScene2), false, false);
+		SceneManager::main->ChangeScene(SceneManager::main->GetCurrentScene(), SceneManager::main->FindScene(SceneType::TestScene2), true, true);
 	}
 }
 
