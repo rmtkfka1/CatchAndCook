@@ -397,7 +397,7 @@ void NPCGotoAny::Update()
 	StatePattern::Update();
 	auto npc = this->npc.lock();
 
-	if (NavMeshManager::main->_gizmoDebug)
+	if (HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::NavMesh))
 	{
 		Gizmo::Width(0.2f);
 		for (int i = 1; i < (int)npc->paths.size(); ++i) {
@@ -476,7 +476,7 @@ void NPCGotoShop::Update()
 
 	auto npc = this->npc.lock();
 
-	if (NavMeshManager::main->_gizmoDebug)
+	if (HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::NavMesh))
 	{
 		Gizmo::Width(0.2f);
 		for (int i = 1; i < (int)npc->paths.size(); ++i) {
@@ -592,7 +592,7 @@ void NPCGotoTable::Update()
 
 	auto npc = this->npc.lock();
 
-	if (NavMeshManager::main->_gizmoDebug)
+	if (HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::NavMesh))
 	{
 		Gizmo::Width(0.2f);
 		for (int i = 1; i < (int)npc->paths.size(); ++i) {
