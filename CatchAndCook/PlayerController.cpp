@@ -14,6 +14,7 @@
 #include "TerrainManager.h"
 #include "Transform.h"
 #include "AnimationListComponent.h"
+#include "InGameMainField.h"
 
 
 COMPONENT(PlayerController)
@@ -62,6 +63,29 @@ void PlayerController::Update()
 	if (Input::main->IsMouseLock())
 		CameraControl();
 	MoveControl();
+
+
+	Vector3 worldPos = GetOwner()->_transform->GetWorldPosition();
+	float selectDist = 10000;
+	std::shared_ptr<ObjectSettingComponent> selectObjectSetting;
+	for (auto obj : InGameMainField::GetMain()->objectSettings)
+	{
+		
+		auto currentObjectSetting = obj.lock();
+		auto currentDist = (currentObjectSetting->GetOwner()->_transform->GetWorldPosition() - worldPos).Length();
+		if (((!selectObjectSetting) || currentDist <= selectDist) && (currentObjectSetting->GetOwner() != GetOwner()))
+		{
+			selectObjectSetting = currentObjectSetting;
+			selectDist = currentDist;
+		}
+	}
+
+	if (selectDist <= 1 && selectObjectSetting)
+	{
+		selectObjectSetting->_objectSettingParam.o_select = true;
+		selectObjectSetting->_objectSettingParam.o_selectColor = Vector4(0.90, 0.90, 0.90, 1) * 0.5;
+	}
+		
 
 	for (auto& terrain : TerrainManager::main->GetTerrains())
 		terrain->AddObjectPositionFront(GetOwner()->_transform->GetWorldPosition());

@@ -557,7 +557,10 @@ void Scene::DebugRendering()
 
 void Scene::RenderEnd()
 {
-  
+    Profiler::Set("Logic_RenderEnd");
+    for (auto& gameObject : _gameObjects)
+        gameObject->RenderEnd();
+    Profiler::Fin();
 }
 
 void Scene::Finish()
@@ -764,7 +767,7 @@ void Scene::Release()
     Scene::ExecuteDestroyGameObjects();
     GameObject::ExecuteDestroyComponents();
 
-    Core::main->Fence();
+    Core::main->FenceCurrentFrame();
 
     for(auto pass : _passObjects)
         pass.clear();

@@ -30,8 +30,18 @@ void NavMesh::Update()
 
 	if (NavMeshManager::main->_gizmoDebug)
 	{
+		Gizmo::Width(0.05);
 		for (auto edge : _edges)
 			Gizmo::Line(edge[0], edge[1], Vector4(0, 0, 1, 1));
+		Gizmo::WidthRollBack();
+
+		for (int i = 0; i < _tris.size(); i+=3)
+		{
+			Gizmo::Line(_datas[_tris[i]].position, _datas[_tris[i+1]].position, Vector4(0, 1, 0, 1));
+			Gizmo::Line(_datas[_tris[i + 1]].position, _datas[_tris[i + 2]].position, Vector4(0, 1, 0, 1));
+			Gizmo::Line(_datas[_tris[i]].position, _datas[_tris[i + 2]].position, Vector4(0, 1, 0, 1));
+		}
+
 		Gizmo::WidthRollBack();
 	}
 }

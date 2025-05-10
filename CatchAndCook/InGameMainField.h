@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include "NPCComponent.h"
+#include "ObjectSettingComponent.h"
 
 
 class InGameMainField : public Component
@@ -8,6 +10,8 @@ public:
 
 	bool shopOpen = false;
 	std::vector<std::weak_ptr<GameObject>> shopTablePointsPool;
+	std::vector<std::weak_ptr<ObjectSettingComponent>> objectSettings;
+	std::vector<std::weak_ptr<NPCComponent>> npcList;
 
 
 	static std::shared_ptr<InGameMainField> GetMain() {
@@ -31,5 +35,13 @@ public:
 	void SetDestroy() override;
 	void Destroy() override;
 
+
+
+
+	void AddObjectSetting(const std::shared_ptr<ObjectSettingComponent>& object_setting_component);
+	void RemoveObjectSetting(const std::shared_ptr<ObjectSettingComponent>& object_setting_component);
+
+	void AddNPC(const std::shared_ptr<NPCComponent>& ele);
+	void RemoveNPC(const std::shared_ptr<NPCComponent>& ele);
 };
 

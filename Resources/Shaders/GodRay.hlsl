@@ -41,11 +41,7 @@ cbuffer RayData : register(b1)
     float2 padding_ray;
 };
 
-float NdcDepthToViewDepth(float z_ndc)
-{
-    float viewZ = ProjectionMatrix[3][2] / (z_ndc - ProjectionMatrix[2][2]);
-    return viewZ;
-}
+
 
 RWTexture2D<float4> resultTexture : register(u0);
 
@@ -89,8 +85,6 @@ void CS_Main(uint3 dispatchThreadID : SV_DispatchThreadID)
     }
 
     godRayColor *= exposure;
-
-    float fade = smoothstep(0.0, 5.0, NdcDepthToViewDepth(depthT.SampleLevel(sampler_lerp, uv, 0).r));
 
     // 6) 원본 장면과 합성
     float3 sceneCol = RenderT.SampleLevel(sampler_lerp, uv, 0).rgb;

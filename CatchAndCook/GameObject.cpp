@@ -95,6 +95,16 @@ void GameObject::RenderBegin()
 
 }
 
+void GameObject::RenderEnd()
+{
+    if (_active_total) {
+        for (auto& component : _components) {
+            if (!component->_first)
+                component->RenderEnd();
+        }
+    }
+}
+
 void GameObject::Destroy()
 {
     for (int i = 0; i < _components.size(); ++i) 

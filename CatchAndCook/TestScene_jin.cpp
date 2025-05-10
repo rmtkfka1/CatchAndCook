@@ -65,7 +65,7 @@ void TestScene_jin::Init()
 		auto a = gameObject->AddComponent<WaterController>();
 		a->Setting(L"sea_color_real.bin", L"sea_move_real.bin");
 		//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal_Sea"));
-		gameObject->_transform->SetLocalPosition(vec3(0, 9.5f, 0));
+		gameObject->_transform->SetLocalPosition(vec3(0, 41.5f, 0));
 
 		material = make_shared<Material>();
 		material->SetShader(shader);
@@ -93,6 +93,7 @@ void TestScene_jin::Init()
 void TestScene_jin::Update()
 {
 	Scene::Update();
+
 }
 
 void TestScene_jin::RenderBegin()
@@ -118,6 +119,11 @@ void TestScene_jin::RenderEnd()
 void TestScene_jin::Finish()
 {
 	Scene::Finish();
+
+	if (Input::main->GetKeyDown(KeyCode::F6))
+	{
+		SceneManager::main->ChangeScene(SceneManager::main->GetCurrentScene(), SceneManager::main->FindScene(SceneType::TestScene), true, false);
+	}
 }
 
 TestScene_jin::~TestScene_jin()

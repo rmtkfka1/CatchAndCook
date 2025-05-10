@@ -37,7 +37,7 @@ struct VS_IN
 
 struct VS_OUT
 {
-    float id : InstanceID;
+    uint id : InstanceID;
 
     float4 position : SV_Position;
     float4 positionCS : PositionCS;
@@ -100,6 +100,8 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
     output.shadowCoord1 = uvz[1];
     output.shadowCoord2 = uvz[2];
     output.shadowCoord3 = uvz[3];
+
+    output.id = id;
 
     return output;
 }

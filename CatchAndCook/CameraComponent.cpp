@@ -97,4 +97,5 @@ void CameraComponent::SetDestroy()
 void CameraComponent::Destroy()
 {
 	Component::Destroy();
+	CameraManager::main->RemoveCamera(CameraType::ComponentCamera);
 }

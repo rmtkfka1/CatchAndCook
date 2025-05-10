@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "ObjectSettingComponent.h"
 
+#include "InGameMainField.h"
+
 
 COMPONENT(ObjectSettingComponent)
 
@@ -18,16 +20,22 @@ void ObjectSettingComponent::SetData(StructuredBuffer* buffer, Material* materia
 	buffer->AddData(_objectSettingParam);
 }
 
+void ObjectSettingComponent::RenderEnd()
+{
+	Component::RenderEnd();
+	_objectSettingParam.o_select = false;
+}
+
 
 void ObjectSettingComponent::Init()
 {
 	Component::Init();
-
 }
 
 void ObjectSettingComponent::Start()
 {
 	Component::Start();
+	InGameMainField::GetMain()->AddObjectSetting(GetCast<ObjectSettingComponent>());
 }
 
 void ObjectSettingComponent::Update()
@@ -81,5 +89,7 @@ void ObjectSettingComponent::SetDestroy()
 void ObjectSettingComponent::Destroy()
 {
 	Component::Destroy();
+	if (InGameMainField::GetMain())
+		InGameMainField::GetMain()->RemoveObjectSetting(GetCast<ObjectSettingComponent>());
 }
 

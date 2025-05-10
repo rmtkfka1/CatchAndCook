@@ -19,7 +19,7 @@ public:
 	void Destroy() override;
 };
 
-class TagsComponent : public InitComponent
+class TagsComponent : public Component
 {
 public:
 	std::vector<std::string> _tagNames;

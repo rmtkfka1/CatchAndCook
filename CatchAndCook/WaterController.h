@@ -7,9 +7,9 @@ class Texture;
 
 struct Wave
 {
-    float amplitude= 2.5f;
-    float wavelength =150.0f;
-    float speed  =1.0f;
+    float amplitude= 1.0f;//2.5
+    float wavelength = 80.0f;//150
+    float speed  = 0.25f;//1
     float steepness =0.5f;
     vec2 direction =vec2(0.4f,0.2f);
     vec2 padding;

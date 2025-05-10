@@ -81,7 +81,7 @@ void InitComponent::Destroy()
 
 void TagsComponent::Init()
 {
-	InitComponent::Init();
+	Component::Init();
 	for (auto& tag : _tagNames)
 	{
 		if (GameObjectTagMap.contains(tag))
@@ -91,7 +91,7 @@ void TagsComponent::Init()
 
 void TagsComponent::Start()
 {
-	InitComponent::Start();
+	Component::Start();
 }
 
 void ScriptsComponent::Init()
@@ -99,6 +99,7 @@ void ScriptsComponent::Init()
 	InitComponent::Init();
 	for (auto& script : _scriptNames)
 	{
-		GetOwner()->AddComponent(IComponentFactory::Create(script));
+		auto component = IComponentFactory::Create(script);
+		GetOwner()->AddComponent(component);
 	}
 }

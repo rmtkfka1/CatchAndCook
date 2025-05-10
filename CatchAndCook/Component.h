@@ -27,6 +27,7 @@ public:
 	virtual void Enable(); 
 	virtual void Disable(); 
 	virtual void RenderBegin();
+	virtual void RenderEnd();
 	virtual void CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other);
 	virtual void CollisionEnd(const std::shared_ptr<Collider>& collider,const std::shared_ptr<Collider>& other);
 	virtual void ChangeParent(const std::shared_ptr<GameObject>& prev,const std::shared_ptr<GameObject>& current);

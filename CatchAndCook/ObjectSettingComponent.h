@@ -32,5 +32,6 @@ public:
 	void SetDestroy() override;
 	void Destroy() override;
 	void SetData(StructuredBuffer* buffer, Material* material) override;
+	void RenderEnd() override;
 };
 
