@@ -91,7 +91,9 @@ void Game::Init(HWND hwnd)
 	PathStamp::main = make_unique<PathStamp>();
 	PathStamp::main->Init();
 
-	auto scene = SceneManager::main->AddScene(SceneType::TestScene2);
+	SceneManager::main->AddScene(SceneType::TestScene, false);
+	SceneManager::main->AddScene(SceneType::TestScene2, false);
+	SceneManager::main->ChangeScene(nullptr, SceneManager::main->FindScene(SceneType::TestScene2), true);
 };
 
 void Game::PrevUpdate()

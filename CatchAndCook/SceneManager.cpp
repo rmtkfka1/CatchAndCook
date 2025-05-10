@@ -52,8 +52,9 @@ shared_ptr<Scene> SceneManager::AddScene(SceneType type, bool initExecute)
 void SceneManager::ChangeScene(const shared_ptr<Scene>& prevScene, const shared_ptr<Scene>& nextScene, bool initExecute)
 {
 	auto currentScene = prevScene;
-	
 	std::vector<std::shared_ptr<GameObject>> dontObj;
+
+	Core::main->FenceCurrentFrame();
 
 	if (currentScene != nullptr)
 	{
@@ -69,9 +70,11 @@ void SceneManager::ChangeScene(const shared_ptr<Scene>& prevScene, const shared_
 		if(currentScene != nullptr)
 			currentScene->RemoveGameObject(obj);
 	}
-	if(currentScene != nullptr)
+	if (currentScene != nullptr)
+	{
 		currentScene->_dont_destroy_gameObjects.clear();
-	currentScene->Release();
+		currentScene->Release();
+	}
 	_currentScene = nextScene;
 	if (initExecute)
 		_currentScene->Init();

@@ -122,8 +122,6 @@ void TestScene_jin::Finish()
 
 	if (Input::main->GetKeyDown(KeyCode::F6))
 	{
-		Core::main->FenceCurrentFrame();
-		SceneManager::main->AddScene(SceneType::TestScene, false);
 		SceneManager::main->ChangeScene(SceneManager::main->GetCurrentScene(), SceneManager::main->FindScene(SceneType::TestScene), true);
 	}
 }
