@@ -85,8 +85,6 @@ void Scene_Sea01::Init()
 	caustics = make_shared<Texture>();
 	caustics->Init(L"../Resources/Textures/test.jpg");
 
-
-
 	std::shared_ptr<Light> light = std::make_shared<Light>();
 	light->onOff = 1;
 	light->direction = vec3(-0.122f, -0.732f, 0.299f);

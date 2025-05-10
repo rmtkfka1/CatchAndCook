@@ -38,7 +38,10 @@ cbuffer SeaParam : register(b7)
 Texture2DArray _bumpMap : register(t1);
 Texture2D _bumpMap2 : register(t2);
 Texture2D _dudv : register(t3);
-TextureCube _cubeMap : register(t4);
+TextureCube _cubemap_skyTexture : register(t4);
+TextureCube _cubemap_skyNTexture : register(t5);
+TextureCube _cubemap_skyETexture : register(t6);
+
 
 
 
@@ -292,8 +295,36 @@ float4 PS_Main(DS_OUT input) : SV_Target0
     // 시야에 대한 반사 벡터 재계산 및 큐브 맵 좌표 회전
     float3 R2 = reflect(-viewDir, perturbedNormal);
     float3 rotatedR2 = float3(R2.z, R2.y, -R2.x);
-    float3 envReflection = _cubeMap.Sample(sampler_lerp, rotatedR2).rgb;
-
+    
+    float blend = fmod(g_skyBlendTime, 4);
+    
+    float3 envReflection;
+    
+    if (blend >=0 && blend <1)
+    {
+    
+        float3 envReflection1 = _cubemap_skyTexture.Sample(sampler_lerp, rotatedR2).rgb;
+        float3 envReflection2 = _cubemap_skyETexture.Sample(sampler_lerp, rotatedR2).rgb;
+        envReflection = lerp(envReflection1, envReflection2, blend);
+    }
+    
+    else if(blend >=1 && blend < 2)
+    {
+        float3 envReflection1 = _cubemap_skyETexture.Sample(sampler_lerp, rotatedR2).rgb;
+        float3 envReflection2 = _cubemap_skyNTexture.Sample(sampler_lerp, rotatedR2).rgb;
+        envReflection = lerp(envReflection1, envReflection2, blend-1);
+    }
+    else if (blend >= 2 && blend < 3)
+    {
+        float3 envReflection1 = _cubemap_skyNTexture.Sample(sampler_lerp, rotatedR2).rgb;
+        float3 envReflection2 = _cubemap_skyTexture.Sample(sampler_lerp, rotatedR2).rgb;
+        envReflection = lerp(envReflection1, envReflection2, blend-2);
+    }
+    else
+    {
+        envReflection = _cubemap_skyTexture.Sample(sampler_lerp, rotatedR2).rgb;
+    }
+    
     ///////////////////////////////////////////////////////////////////////////
     // 6. 깊이 기반 색상 블렌딩 및 Fresnel 효과
     ///////////////////////////////////////////////////////////////////////////
