@@ -28,7 +28,7 @@ void NavMesh::Update()
 {
 	Component::Update();
 
-	if (NavMeshManager::main->_gizmoDebug)
+	if (HasGizmoFlag(Gizmo::main->_flags, GizmoFlags::NavMesh))
 	{
 		Gizmo::Width(0.05);
 		for (auto edge : _edges)

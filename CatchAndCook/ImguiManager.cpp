@@ -179,7 +179,7 @@ void ImguiManager::GizmoController()
     }
     if (ImGui::Button("NavMesh"))
     {
-        *navMesh = !(*navMesh);
+        Gizmo::main->_flags = Gizmo::main->_flags | GizmoFlags::NavMesh;
     }
 
     if (ImGui::Button("DrawPath"))

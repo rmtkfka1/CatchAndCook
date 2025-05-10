@@ -315,6 +315,16 @@ void PlayerController::MoveControl()
 
 	GetOwner()->_transform->SetWorldPosition(nextPos);
 	velocity = velocity * (1 - (controlInfo.drag * Time::main->GetDeltaTime() * 60));
+
+	//temp
+
+	if (Input::main->GetKeyDown(KeyCode::P))
+	{
+		auto& cameraPos = CameraManager::main->GetCamera(CameraType::DebugCamera)->GetCameraPos();
+
+		GetOwner()->_transform->SetWorldPosition(cameraPos);
+
+	}
 }
 
 
