@@ -40,8 +40,7 @@ shared_ptr<Scene> SceneManager::AddScene(SceneType type, bool initExecute)
 	scene->_type = type;
 	_sceneTable[type] = scene;
 
-	if(_currentScene == nullptr)
-		_currentScene = scene;
+	_currentScene = scene;
 
 	if(initExecute)
 		scene->Init();
