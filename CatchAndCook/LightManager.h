@@ -45,6 +45,7 @@ struct LightHelperParams
 {
 	vec3 eyeWorldPos{};
 	int lightCount = 0;
+	Light mainLight;
 	/*std::array<Light, 60> light;
 
 	int useRim = 1;

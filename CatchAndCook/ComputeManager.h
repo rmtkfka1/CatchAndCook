@@ -442,10 +442,12 @@ private:
 
 struct ScatteringData
 {
-	vec3 WATER_ABSORPTION{};
-	float p1{};
-	vec3 WATER_SCATTER{};
-	float DENSITY{};
+	float phaseG{};
+	float absorption{};
+	vec2 Padding;
+
+	float density{};
+	vec3 scatterColor{};
 };
 
 class Scattering : public ComputeBase

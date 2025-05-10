@@ -1333,7 +1333,7 @@ void Scattering::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int
 
 	auto CbufferContainer = Core::main->GetBufferManager()->CreateAndGetBufferPool(BufferType::ScatteringData, sizeof(ScatteringData), 1)->Alloc(1);
 	memcpy(CbufferContainer->ptr, (void*)&_scatteringData, sizeof(ScatteringData));
-	cmdList->SetComputeRootConstantBufferView(3, CbufferContainer->GPUAdress);
+	cmdList->SetComputeRootConstantBufferView(5, CbufferContainer->GPUAdress);
 
 	
 	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
@@ -1342,8 +1342,8 @@ void Scattering::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int
 	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
 	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
-	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 1);
-	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 2);
+	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 0);
+	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 1);
 	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 5);
 
 	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
