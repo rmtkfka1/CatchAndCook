@@ -8,6 +8,11 @@ shared_ptr<Camera> CameraManager::GetCamera(CameraType type)
 	return _cameras[type];
 }
 
+void CameraManager::RemoveCamera(CameraType type)
+{
+	_cameras.erase(type);
+}
+
 void CameraManager::Setting(CameraType type)
 {
 	if (_cameras.find(type) == _cameras.end())

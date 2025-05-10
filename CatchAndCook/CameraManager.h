@@ -12,7 +12,7 @@ public:
 	shared_ptr<Camera> GetCamera(CameraType type);
 
 	void AddCamera(CameraType type, shared_ptr<Camera> camera) { _cameras[type] = camera; }
-	void RemoveCamera(CameraType type) { _cameras[type] = nullptr; }
+	void RemoveCamera(CameraType type);
 	void Setting(CameraType type);
 	void Setting();
 	void SetActiveCamera(CameraType type);
