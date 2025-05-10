@@ -89,6 +89,7 @@ void ObjectSettingComponent::SetDestroy()
 void ObjectSettingComponent::Destroy()
 {
 	Component::Destroy();
-	InGameMainField::GetMain()->RemoveObjectSetting(GetCast<ObjectSettingComponent>());
+	if (InGameMainField::GetMain())
+		InGameMainField::GetMain()->RemoveObjectSetting(GetCast<ObjectSettingComponent>());
 }
 

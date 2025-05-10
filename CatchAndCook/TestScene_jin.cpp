@@ -93,6 +93,7 @@ void TestScene_jin::Init()
 void TestScene_jin::Update()
 {
 	Scene::Update();
+
 }
 
 void TestScene_jin::RenderBegin()
@@ -118,6 +119,13 @@ void TestScene_jin::RenderEnd()
 void TestScene_jin::Finish()
 {
 	Scene::Finish();
+
+	if (Input::main->GetKeyDown(KeyCode::F6))
+	{
+		Core::main->FenceCurrentFrame();
+		SceneManager::main->AddScene(SceneType::TestScene, false);
+		SceneManager::main->ChangeScene(SceneManager::main->GetCurrentScene(), SceneManager::main->FindScene(SceneType::TestScene), true);
+	}
 }
 
 TestScene_jin::~TestScene_jin()

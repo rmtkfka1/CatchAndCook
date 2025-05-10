@@ -1,199 +1,37 @@
 ﻿#include "pch.h"
 #include "TestScene.h"
-#include "Shader.h"
-#include "Texture.h"
-#include "GameObject.h"
-#include "Transform.h"
-#include "GameObject.h"
+#include "Camera.h"
+#include "CameraManager.h"
+#include "ColliderManager.h"
+#include "Gizmo.h"
 #include "MeshRenderer.h"
-#include "Sprite.h"
-#include "TextManager.h"
-#include "SpriteAction.h"
 #include "testComponent.h"
-#include "StructuredBuffer.h"
+#include "Transform.h"
 #include "Mesh.h"
-#include "WaterHeight.h"
-#include "Terrain.h"
-#include "BoidsMove.h"
-#include <random>
-#include "Model.h"
-#include "ModelMesh.h"
+#include "WaterController.h"
 #include "Collider.h"
+#include "ComputeManager.h"
+#include "PlayerController.h"
+#include "testComponent.h"
+
 
 void TestScene::Init()
 {
 	Scene::Init();
 
-
-	/*{
-		auto& a = ResourceManager::main->Load<SceneLoader>(L"TestScene1",L"../Resources/Datas/Scenes/TestScene1.json");
-		auto& object= a->Load(GetCast<Scene>());
-	}*/
+	_finalShader->SetShader(ResourceManager::main->Get<Shader>(L"finalShader_MainField"));
+	_finalShader->SetPass(RENDER_PASS::Forward);
 
 
-	random_device urd;
-	mt19937 gen(urd());
-	uniform_real_distribution<float> ddis(-1000.0f, 1000.0f);
-	uniform_real_distribution<float> dis(1, 30.0f);
-	uniform_real_distribution<float> rotate(-360.0f, 360.0f);
-	//auto& a = ResourceManager::main->Load<Model>(L"kind", L"../Resources/Models/PaperPlane.obj", VertexType::Vertex_Skinned);
-
-	shared_ptr<Material> materialO = make_shared<Material>();
-	materialO->SetPass(RENDER_PASS::Deferred);
-	//shared_ptr<Mesh> mesh = a->_modelMeshList[0]->GetMesh();
-	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
-
-	for (int i = 0; i < 1000; ++i)
-	{
-		{
-			shared_ptr<Shader> shader = ResourceManager::main->Get<Shader>(L"Deferred");
-
-			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
-
-			shared_ptr<GameObject> root = CreateGameObject(L"root_test");
-
-			auto meshRenderer = root->AddComponent<MeshRenderer>();
-			auto collider = root->AddComponent<Collider>();
-			collider->SetBoundingBox(vec3(0, 0, 0), vec3(1.0f, 1.0f, 1.0f));
-
-			root->_transform->SetLocalScale(vec3(dis(urd), dis(urd), dis(urd)));
-			root->_transform->SetLocalPosition(vec3(ddis(urd), ddis(urd), ddis(urd)));
-			root->_transform->SetLocalRotation(vec3(rotate(urd), rotate(urd), rotate(urd)));
-			root->SetType(GameObjectType::Static);
-			root->AddTag(GameObjectTag::Wall);
-
-			if (i==0)
-			{
-				
-				root->AddComponent<testComponent>();
-				root->_transform->SetLocalPosition(vec3(0, 0, 0));
-				root->_transform->SetLocalScale(vec3(5.0f, 5.0f, 5.0f));
-				root->_transform->SetLocalRotation(vec3(0, 0,0));
-				root->SetType(GameObjectType::Dynamic);
-				root->AddTag(GameObjectTag::Player);
-			}
 
 
-			materialO->SetShader(shader);
-			materialO->SetTexture("_BaseMap", texture);
 
-			meshRenderer->AddMaterials({ materialO });
-			meshRenderer->AddMesh(mesh);
-		}
-	}
+	ColliderManager::main->SetCellSize(5);
+	ResourceManager::main->LoadAlway<SceneLoader>(L"test6", L"../Resources/Datas/Scenes/MainField5.json");
+	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test6");
+	sceneLoader->Load(GetCast<Scene>());
 
-	{
-		ShaderInfo info;
-		info._zTest = true;
-		info._stencilTest = false;
-		info.cullingType = CullingType::NONE;
-
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"cubemap", L"cubemap.hlsl", GeoMetryProp,
-			ShaderArg{}, info);
-
-		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"cubemap", L"Textures/cubemap/output.dds", TextureType::CubeMap);
-		shared_ptr<Material> material = make_shared<Material>();
-
-		shared_ptr<GameObject> gameObject = CreateGameObject(L"cubeMap");
-
-		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
-
-
-		material = make_shared<Material>();
-		material->SetShader(shader);
-		material->SetPass(RENDER_PASS::Forward);
-		material->SetTexture("g_tex_0", texture);
-
-		meshRenderer->AddMaterials({ material });
-		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
-		meshRenderer->SetCulling(false);
-	}
-
-
-	#pragma region sprite
-		//for (int i = 0; i < 1; ++i)
-		//{
-		//	shared_ptr<GameObject> gameObject = CreateGameObject(L"SpriteTest");
-		//	auto spriteRender = gameObject->AddComponent<SpriteRenderer>();
-	
-		//	shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"spriteTest", L"Textures/spriteTest.jpg");
-		//	shared_ptr<BasicSprite> sprite = make_shared<BasicSprite>();
-	
-		//	spriteRender->SetSprite(sprite);
-		//	sprite->AddAction(make_shared<DragAction>(KeyCode::LeftMouse));
-		//	sprite->AddAction(make_shared<EnableDisableKeyAction>(KeyCode::I));
-	
-		//	SpriteRect rect;
-		//	rect.left = 1024 / 7 * i;
-		//	rect.top = 0;
-		//	rect.right = 1024 / 7 * (i + 1);
-		//	rect.bottom = 1024 / 4;
-		//	sprite->SetPos(vec3(0 + i * WINDOW_WIDTH / 5, 0, 0.04f));
-		//	sprite->SetSize(vec2(WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3));
-		//	sprite->SetTexture(texture);
-		//	sprite->SetUVCoord(rect);
-	
-		//	{
-		//		shared_ptr<BasicSprite> childSprite = make_shared<BasicSprite>();
-		//		childSprite->SetPos(vec3(200, 0, 0.03f));
-		//		childSprite->SetSize(vec2(50, 50));
-		//		childSprite->SetTexture(ResourceManager::main->Load<Texture>(L"disable", L"Textures/disable.png"));
-		//		childSprite->AddAction(make_shared<DisableMouseAction>(KeyCode::LeftMouse));
-		//		sprite->AddChildern(childSprite);
-		//	}
-	
-		//};
-	
-		//{
-	
-		//	shared_ptr<GameObject> gameObject = CreateGameObject(L"AnimationSprite");
-		//	auto spriteRender = gameObject->AddComponent<SpriteRenderer>();
-		//	shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"fire", L"Textures/fire.png");
-		//	shared_ptr<AnimationSprite> sprite = make_shared<AnimationSprite>();
-	
-		//	spriteRender->SetSprite(sprite);
-		//	sprite->SetTexture(texture);
-		//	sprite->SetPos(vec3(0, 0, 0.3f));
-		//	sprite->SetSize(vec2(500, 500));
-		//	sprite->SetFrameRate(0.05f);
-		//	sprite->SetClipingColor(vec4(0, 0, 0, 1.0f));		https://imagecolorpicker.com/
-	
-		//	const float TextureSize = 512.0f;
-	
-		//	for (int i = 0; i < 5; ++i)
-		//	{
-		//		float add = i * TextureSize / 5;
-		//		for (int j = 0; j < 5; ++j)
-		//		{
-	
-		//			SpriteRect rect;
-		//			rect.left = 0 + j * TextureSize / 5;
-		//			rect.top = add;
-		//			rect.right = rect.left + TextureSize / 5;
-		//			rect.bottom = rect.top + TextureSize / 5;
-	
-		//			sprite->PushUVCoord(rect);
-		//		}
-		//	}
-		//};
-	
-	//for (int i = 0; i < 1; ++i)
-	//{
-	//	{
-	//		shared_ptr<GameObject> gameObject = CreateGameObject(L"TextTest");
-	//		auto spriteRender = gameObject->AddComponent<SpriteRenderer>();
-	//		shared_ptr<TextSprite> sprite = make_shared<TextSprite>();
-
-	//		spriteRender->SetSprite(sprite);
-	//		sprite->SetPos(vec3(0+i*200.0f, 0.0f, 0.000001));
-	//		sprite->SetSize(vec2(300, 300));
-	//		sprite->SetText(to_wstring(Time::main->GetDeltaTime()));
-	//		sprite->CreateObject(512, 256, L"Arial", FontColor::WHITE, 60);
-	//	}
-	//}
-	#pragma endregion
-
-};
+}
 
 void TestScene::Update()
 {
@@ -209,18 +47,69 @@ void TestScene::RenderBegin()
 void TestScene::Rendering()
 {
 	Scene::Rendering();
+}
 
-
+void TestScene::DebugRendering()
+{
+	Scene::DebugRendering();
 }
 
 void TestScene::RenderEnd()
 {
 	Scene::RenderEnd();
-
-
 }
 
 void TestScene::Finish()
 {
 	Scene::Finish();
+
+	if (Input::main->GetKeyDown(KeyCode::F6))
+	{
+		Core::main->FenceCurrentFrame();
+		SceneManager::main->ChangeScene(SceneManager::main->GetCurrentScene(), SceneManager::main->FindScene(SceneType::TestScene2), true);
+	}
+}
+
+TestScene::~TestScene()
+{
+}
+
+void TestScene::UiPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	Scene::UiPass(cmdList);
+}
+
+void TestScene::TransparentPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	Scene::TransparentPass(cmdList);
+}
+
+void TestScene::ForwardPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	Scene::ForwardPass(cmdList);
+}
+
+void TestScene::DeferredPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	Scene::DeferredPass(cmdList);
+}
+
+void TestScene::ShadowPass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	Scene::ShadowPass(cmdList);
+}
+
+void TestScene::FinalRender(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	Scene::FinalRender(cmdList);
+}
+
+void TestScene::SettingPrevData(RenderObjectStrucutre& data, const RENDER_PASS::PASS& pass)
+{
+	Scene::SettingPrevData(data, pass);
+}
+
+void TestScene::ComputePass(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+	ComputeManager::main->DispatchMainField(cmdList);
 }

@@ -100,6 +100,7 @@ void InGameMainField::SetDestroy()
 void InGameMainField::Destroy()
 {
 	Component::Destroy();
+	main = nullptr;
 }
 
 void InGameMainField::AddObjectSetting(const std::shared_ptr<ObjectSettingComponent>& object_setting_component)

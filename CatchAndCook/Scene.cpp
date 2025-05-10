@@ -767,7 +767,7 @@ void Scene::Release()
     Scene::ExecuteDestroyGameObjects();
     GameObject::ExecuteDestroyComponents();
 
-    Core::main->Fence();
+    Core::main->FenceCurrentFrame();
 
     for(auto pass : _passObjects)
         pass.clear();
