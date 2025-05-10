@@ -65,12 +65,16 @@ void TestScene_jin::Init()
 		auto a = gameObject->AddComponent<WaterController>();
 		a->Setting(L"sea_color_real.bin", L"sea_move_real.bin");
 		//meshRenderer->SetDebugShader(ResourceManager::main->Get<Shader>(L"DebugNormal_Sea"));
-		gameObject->_transform->SetLocalPosition(vec3(0, 41.5f, 0));
+		gameObject->_transform->SetLocalPosition(vec3(0, 44.5f, 0));
+
+
 
 		material = make_shared<Material>();
 		material->SetShader(shader);
 		material->SetPass(RENDER_PASS::Forward);
-		material->SetTexture("_cubeMap", ResourceManager::main->_cubemap_skyTexture);
+		material->SetTexture("_cubemap_skyTexture", ResourceManager::main->_cubemap_skyTexture);
+		material->SetTexture("_cubemap_skyNTexture", ResourceManager::main->_cubemap_skyNTexture);
+		material->SetTexture("_cubemap_skyETexture", ResourceManager::main->_cubemap_skyETexture);
 		material->SetUseMaterialParams(true);
 		material->SetShadowCasting(false);
 		meshRenderer->AddMaterials({ material });
