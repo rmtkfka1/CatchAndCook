@@ -67,7 +67,14 @@ void PathFinder::Start()
     _player = SceneManager::main->GetCurrentScene()->Find(L"seaPlayer");
 
     const vector<vec3>& myPath = _pathList[_pathName].path;
-    _currentIndex = std::rand() % myPath.size();
+    _currentIndex = (std::rand() % myPath.size());
+
+    if (_currentIndex >= myPath.size()-1)
+    {
+        _forward = false;
+    }
+
+
     GetOwner()->_transform->SetWorldPosition(myPath[_currentIndex]);
 }
 void PathFinder::Update()
