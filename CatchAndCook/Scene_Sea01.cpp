@@ -318,7 +318,7 @@ void Scene_Sea01::Finish()
 
 	if (Input::main->GetKeyDown(KeyCode::F6))
 	{
-		SceneManager::main->ChangeScene(SceneManager::main->GetCurrentScene(), SceneManager::main->FindScene(SceneType::TestScene2), true, true);
+		SceneManager::main->ChangeScene(SceneManager::main->GetCurrentScene(), SceneManager::main->FindScene(SceneType::TestScene2), false, false);
 	}
 }
 

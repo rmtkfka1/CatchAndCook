@@ -126,7 +126,7 @@ void TestScene_jin::Finish()
 
 	if (Input::main->GetKeyDown(KeyCode::F6))
 	{
-		SceneManager::main->ChangeScene(SceneManager::main->GetCurrentScene(), SceneManager::main->FindScene(SceneType::Sea01), true, true);
+		SceneManager::main->ChangeScene(SceneManager::main->GetCurrentScene(), SceneManager::main->FindScene(SceneType::Sea01), false, false);
 	}
 }
 
