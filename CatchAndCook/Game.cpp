@@ -108,7 +108,7 @@ void Game::PrevUpdate()
 	}
 	if(Input::main->GetKeyDown(KeyCode::F5))
 	{
-		SceneManager::main->Reload();
+		//SceneManager::main->Reload();
 	}
 	if (Input::main->GetKeyDown(KeyCode::F9))
 	{

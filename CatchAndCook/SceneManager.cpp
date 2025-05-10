@@ -91,7 +91,5 @@ void SceneManager::Reload()
 	//SceneManager::GetCurrentScene()->_type
 	auto prevScene = GetCurrentScene();
 	auto nextScene = AddScene(prevScene->_type, false);
-	ChangeScene(prevScene, nextScene, false, TODO);
-	prevScene->Release();
-	nextScene->Init();
+	ChangeScene(prevScene, nextScene, true, true);
 }

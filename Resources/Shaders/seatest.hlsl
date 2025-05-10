@@ -96,6 +96,7 @@ void WaveGeneration(inout float3 worldPos, inout float3 worldNormal)
 
     float3 modifiedPos = worldPos;
 
+    float waveY = 0;
     for (int i = 0; i < waveCount; i++)
     {
         Wave wave = waves[i];
@@ -116,8 +117,10 @@ void WaveGeneration(inout float3 worldPos, inout float3 worldNormal)
         // Gerstner 공식에 따라 위치 수정
         modifiedPos.x += steep * wave.amplitude * dir.x * waveCos;
         modifiedPos.z += steep * wave.amplitude * dir.y * waveCos;
-        modifiedPos.y += wave.amplitude * waveSin;
+        waveY += wave.amplitude * waveSin;
     }
+    
+    modifiedPos.y += waveY;
 
     // 수정된 위치 반영 및 기본 법선 할당
     worldPos = modifiedPos;
