@@ -22,10 +22,6 @@ void TestScene::Init()
 	_finalShader->SetShader(ResourceManager::main->Get<Shader>(L"finalShader_MainField"));
 	_finalShader->SetPass(RENDER_PASS::Forward);
 
-
-
-
-
 	ColliderManager::main->SetCellSize(5);
 	ResourceManager::main->LoadAlway<SceneLoader>(L"test6", L"../Resources/Datas/Scenes/MainField5.json");
 	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test6");

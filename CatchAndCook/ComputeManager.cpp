@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #include "ComputeManager.h"
-
+#include "LightManager.h"
 #include "Camera.h"
 #include "CameraManager.h"
 #include "LightComponent.h"
@@ -1330,6 +1330,8 @@ void Scattering::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int
 	cmdList->SetPipelineState(_shader->_pipelineState.Get());
 	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 	_tableContainer = table->Alloc(10);
+
+	_scatteringData.MainlightPos = LightManager::main->GetMainLight()->position;
 
 	auto CbufferContainer = Core::main->GetBufferManager()->CreateAndGetBufferPool(BufferType::ScatteringData, sizeof(ScatteringData), 1)->Alloc(1);
 	memcpy(CbufferContainer->ptr, (void*)&_scatteringData, sizeof(ScatteringData));

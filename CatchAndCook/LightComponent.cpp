@@ -147,12 +147,13 @@ void LightComponent::Disable()
 	Component::Disable();
 	light->onOff = 0;
 	LightManager::main->RemoveLight(light);
+
+
 }
 
 void LightComponent::RenderBegin()
 {
 	Component::RenderBegin();
-
 
 }
 

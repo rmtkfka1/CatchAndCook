@@ -32,18 +32,17 @@ cbuffer cameraParams : register(b2)
 };
 
 
-
-
-
 cbuffer ScatterParams : register(b5)
 {
-    float phaseG; // 헨리-그린스타인 g (0.8 권장)
-    float absorption; // 감쇠 정도 (0.002~0.01)
+    float phaseG;
+    float absorption;
     float2 Padding;
-    
-    float density; // 산란 세기 계수
-    float3 scatterColor; // 산란되는 빛 색
 
+    float density;
+    float3 scatterColor;
+
+    float3 MainlightPos;
+    float padding2;
 };
 
 Texture2D<float4> FoggedScene : register(t0);
@@ -73,7 +72,7 @@ void CS_Main(uint3 id : SV_DispatchThreadID)
     float3 worldPos = mul(float4(viewPos, 1.0f), InvertViewMatrix).xyz;
 
 
-    float3 lightToPixel = normalize(worldPos - mainLight.position);
+    float3 lightToPixel = normalize(worldPos - MainlightPos);
     float3 lightDir = normalize(mainLight.direction);
 
     float cosTheta = dot(-lightToPixel, lightDir);
@@ -81,7 +80,7 @@ void CS_Main(uint3 id : SV_DispatchThreadID)
     float denom = max(1 + g2 - 2 * phaseG * cosTheta, 1e-3);
     float phase = (1 - g2) / (4 * 3.14159 * pow(denom, 1.5));
 
-    float lightDepth = length(worldPos - mainLight.position);
+    float lightDepth = length(worldPos - MainlightPos);
     float atten = 1.0 / (1.0 + log(1.0 + absorption * lightDepth));
 
     float3 scatter = scatterColor * phase * atten * density;

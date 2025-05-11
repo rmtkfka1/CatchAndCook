@@ -774,11 +774,11 @@ void Scene::Release()
     _dont_destroy_gameObjects.clear();
     _gameObjects.clear();
     _gameObjects_deactivate.clear();
-
     while(!_destroyQueue.empty()) _destroyQueue.pop();
     while(!_destroyComponentQueue.empty()) _destroyComponentQueue.pop();
     while(!_startQueue.empty()) _startQueue.pop();
     while(!_changeTypeQueue.empty()) _changeTypeQueue.pop();
 
     ColliderManager::main->Clear();
+    LightManager::main->Clear();
 }

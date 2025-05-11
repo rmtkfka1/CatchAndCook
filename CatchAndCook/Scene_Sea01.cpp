@@ -98,6 +98,7 @@ void Scene_Sea01::Init()
 	light->material.lightType = static_cast<int32>(LIGHT_TYPE::DIRECTIONAL_LIGHT);
 	light->strength = vec3(1.0f, 1.0f, 1.0f);
 	LightManager::main->PushLight(light);
+	LightManager::main->_lightParmas.mainLight = *light.get();
 
 #pragma region DebugXYZ
 	{

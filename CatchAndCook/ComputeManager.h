@@ -450,6 +450,9 @@ struct ScatteringData
 
 	float density=7.283f;
 	vec3 scatterColor= vec3(1,1,1);
+
+	vec3 MainlightPos;
+	float padding2;
 };
 
 class Scattering : public ComputeBase
