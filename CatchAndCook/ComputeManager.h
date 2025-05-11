@@ -442,17 +442,16 @@ private:
 
 struct ScatteringData
 {
-	float phaseG{};
+	float phaseG=0.5f;
 	float absorption{};
 	vec2 Padding;
 
-	float density{};
-	vec3 scatterColor{};
+	float density=4.0f;
+	vec3 scatterColor=vec3(0.5f,0,0);
 };
 
 class Scattering : public ComputeBase
 {
-
 public:
 	Scattering();
 	virtual ~Scattering();
@@ -479,6 +478,61 @@ private:
 	friend class ComputeManager;
 };
 
+
+class FoggedPass : public ComputeBase
+{
+public:
+	FoggedPass();
+	virtual ~FoggedPass();
+
+public:
+	virtual void Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture);
+	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+
+private:
+	virtual void Resize();
+
+public:
+	shared_ptr<Texture> _pingTexture;
+	shared_ptr<Shader> _shader;
+
+	UnderWaterParam	_underWaterParam;
+	ScatteringData _scatteringData;
+
+	friend class ComputeManager;
+};
+
+
+class MergePass : public ComputeBase
+{
+public:
+	MergePass();
+	virtual ~MergePass();
+
+public:
+	virtual void Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture);
+	virtual void Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z);
+
+private:
+	virtual void DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+	virtual void DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList);
+
+private:
+	virtual void Resize();
+
+private:
+	shared_ptr<Texture> _pingTexture;
+	shared_ptr<Texture> _pongTexture;
+	shared_ptr<Shader> _shader;
+
+
+
+	friend class ComputeManager;
+};
 
 
 class ComputeManager 
@@ -510,6 +564,8 @@ public:
 	shared_ptr<FXAA> _fxaaRender;
 	shared_ptr<DOF> _dofRender;
 	shared_ptr<Scattering> _colorGradingSea;
+	shared_ptr<FoggedPass> _foggedPass;
+	shared_ptr<MergePass> _mergePass;
 
 	bool _mainFieldTotalOn = true;
 	// color grading

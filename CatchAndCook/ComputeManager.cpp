@@ -853,9 +853,9 @@ void UnderWaterEffect::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture
 
 
 
-#ifdef IMGUI_ON
-	ImguiManager::main->_underWaterParam = &_underWaterParam;
-#endif // IMGUI_ON
+//#ifdef IMGUI_ON
+//	ImguiManager::main->_underWaterParam = &_underWaterParam;
+//#endif // IMGUI_ON
 
 }
 
@@ -1136,6 +1136,78 @@ void ColorGradingRender::Resize()
 }
 
 
+FoggedPass::FoggedPass()
+{
+}
+
+FoggedPass::~FoggedPass()
+{
+}
+
+void FoggedPass::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture)
+{
+	_pingTexture = pingTexture;
+
+	_shader = make_shared<Shader>();
+	ShaderInfo info;
+	info._computeShader = true;
+	_shader->Init(L"FoggedPass.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
+
+#ifdef IMGUI_ON
+	ImguiManager::main->_underWaterParam = &_underWaterParam;
+	ImguiManager::main->_scatteringData = &_scatteringData;
+#endif // IMGUI_ON
+}
+
+void FoggedPass::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	cmdList->SetPipelineState(_shader->_pipelineState.Get());
+	_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	_tableContainer = table->Alloc(10);
+
+	{
+		auto CbufferContainer = Core::main->GetBufferManager()->CreateAndGetBufferPool(BufferType::ScatteringData, sizeof(ScatteringData), 1)->Alloc(1);
+		memcpy(CbufferContainer->ptr, (void*)&_scatteringData, sizeof(ScatteringData));
+		cmdList->SetComputeRootConstantBufferView(5, CbufferContainer->GPUAdress);
+	}
+
+	{
+		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::UnderWaterParam)->Alloc(1);
+		memcpy(CbufferContainer->ptr, (void*)&_underWaterParam, sizeof(_underWaterParam));
+		cmdList->SetComputeRootConstantBufferView(6, CbufferContainer->GPUAdress);
+	}
+
+	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	auto& depthTexture = Core::main->GetRenderTarget()->GetDSTexture();
+	depthTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	table->CopyHandle(_tableContainer.CPUHandle, depthTexture->GetSRVCpuHandle(), 0);
+	table->CopyHandle(_tableContainer.CPUHandle, _pingTexture->GetUAVCpuHandle(), 5);
+
+	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+	cmdList->Dispatch(x, y, z);
+
+	//_pingTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
+	//renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
+	//cmdList->CopyResource(renderTarget->GetResource().Get(), _pingTexture->GetResource().Get());
+}
+
+void FoggedPass::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+}
+
+void FoggedPass::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+}
+
+void FoggedPass::Resize()
+{
+}
+
+
 /*************************
 *	ComputeManager       *
 **************************/
@@ -1185,8 +1257,14 @@ void ComputeManager::Init()
 	_dofRender = std::make_shared<DOF>();
 	_dofRender->Init(_pingTexture, _pongTexture);
 
-	_colorGradingSea = std::make_shared<Scattering>();
-	_colorGradingSea->Init(_pingTexture, _pongTexture);
+	//_colorGradingSea = std::make_shared<Scattering>();
+	//_colorGradingSea->Init(_pingTexture, _pongTexture);
+
+	_foggedPass = make_shared<FoggedPass>();
+	_foggedPass->Init(_pingTexture, _pongTexture);
+
+	_mergePass = make_shared<MergePass>();
+	_mergePass->Init(_pingTexture, _pongTexture);
 
 
 
@@ -1255,12 +1333,13 @@ void ComputeManager::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 
 	int32 dispath[3] = {dispatchX,dispatchY,1};
 
+	_foggedPass->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
-	_depthRender->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+	_mergePass->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
-	_underWaterEffect->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+	/*_underWaterEffect->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);*/
 
-	_colorGradingSea->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
+	//_colorGradingSea->Dispatch(cmdList, dispath[0], dispath[1], dispath[2]);
 
 	Core::main->GetRenderTarget()->GetRenderTarget()->ResourceBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET);
 
@@ -1294,7 +1373,7 @@ void ComputeManager::Resize()
 	_godrayRender->Resize();
 	_fxaaRender->Resize();
 	_dofRender->Resize();
-	_colorGradingSea->Resize();
+	//_colorGradingSea->Resize();
 }
 
 Scattering::Scattering()
@@ -1363,5 +1442,64 @@ void Scattering::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 }
 
 void Scattering::Resize()
+{
+}
+
+MergePass::MergePass()
+{
+}
+
+MergePass::~MergePass()
+{
+}
+
+void MergePass::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pongTexture)
+{
+	_pingTexture = pingTexture;
+	_pongTexture = pongTexture;
+
+	_shader = make_shared<Shader>();
+	ShaderInfo info;
+	info._computeShader = true;
+	_shader->Init(L"MergePass.hlsl", {}, ShaderArg{ {{"CS_Main","cs"}} }, info);
+}
+
+void MergePass::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int y, int z)
+{
+
+	auto& table = Core::main->GetBufferManager()->GetTable();
+	cmdList->SetPipelineState(_shader->_pipelineState.Get());
+	_tableContainer = table->Alloc(10);
+
+	_pongTexture->ResourceBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
+	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	auto& foggedTexture = ComputeManager::main->_foggedPass->_pingTexture;
+	foggedTexture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+
+	table->CopyHandle(_tableContainer.CPUHandle, renderTarget->GetSRVCpuHandle(), 0);
+	table->CopyHandle(_tableContainer.CPUHandle, foggedTexture->GetSRVCpuHandle(), 1);
+
+	table->CopyHandle(_tableContainer.CPUHandle, _pongTexture->GetUAVCpuHandle(), 5);
+
+	cmdList->SetComputeRootDescriptorTable(10, _tableContainer.GPUHandle);
+	cmdList->Dispatch(x, y, z);
+
+	_pongTexture->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_SOURCE);
+	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_COPY_DEST);
+	cmdList->CopyResource(renderTarget->GetResource().Get(), _pongTexture->GetResource().Get());
+}
+
+void MergePass::DispatchBegin(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+}
+
+void MergePass::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
+{
+}
+
+void MergePass::Resize()
 {
 }

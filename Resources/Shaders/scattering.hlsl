@@ -72,7 +72,6 @@ void CS_Main(uint3 id : SV_DispatchThreadID)
     float3 viewPos = ReconstructViewPos(pixel);
     float3 worldPos = mul(float4(viewPos, 1.0f), InvertViewMatrix).xyz;
 
-
     float3 lightToPixel = normalize(worldPos - mainLight.position);
     float3 lightDir = normalize(mainLight.direction);
 
