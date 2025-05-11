@@ -82,7 +82,7 @@ void CS_Main(uint3 id : SV_DispatchThreadID)
     float phase = (1 - g2) / (4 * 3.14159 * pow(denom, 1.5));
 
     float lightDepth = length(worldPos - mainLight.position);
-    float atten = exp(-absorption * lightDepth);
+    float atten = 1.0 / (1.0 + log(1.0 + absorption * lightDepth));
 
     float3 scatter = scatterColor * phase * atten * density;
     float3 finalColor = baseColor + scatter;

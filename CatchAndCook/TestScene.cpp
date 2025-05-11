@@ -31,6 +31,9 @@ void TestScene::Init()
 	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test6");
 	sceneLoader->Load(GetCast<Scene>());
 
+	CameraManager::main->GetCamera(CameraType::DebugCamera)->SetCameraLook(vec3(0.316199, 0.743145, -0.589706));
+	CameraManager::main->GetCamera(CameraType::DebugCamera)->SetCameraPos(vec3(245.946, 79.8085, 225.333));
+
 }
 
 void TestScene::Update()

@@ -39,9 +39,8 @@ void SeaPlayerController::Start()
 	}
 
 
-	GetOwner()->_transform->SetForward(vec3(0, 0, 1));
-	GetOwner()->_transform->SetRight(vec3(1, 0, 0));
-	GetOwner()->_transform->SetUp(vec3(0, 1, 0));
+	GetOwner()->_transform->SetForward(vec3(0.308061f, 0.164842f, 0.936977f));
+	_camera->SetCameraLook(vec3(0.308061f, 0.164842f, 0.936977f));
 	//GetOwner()->_transform->SetWorldPosition(vec3(0, 1000.0f, 1.0f));
 
     _animations = GetOwner()->GetComponent<AnimationListComponent>()->GetAnimations();
@@ -57,6 +56,7 @@ void SeaPlayerController::Start()
 
 void SeaPlayerController::Update()
 {
+
 
     if (CameraManager::main->GetCameraType() == CameraType::DebugCamera)
     {

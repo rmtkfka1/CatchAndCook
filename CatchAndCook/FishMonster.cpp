@@ -180,10 +180,10 @@ void FishMonster::Move(float dt)
 		}
 	}
 
-	for (size_t i = 0; i < myPath.size() - 1; ++i)
-	{
-		Gizmo::main->Line(myPath[i], myPath[i + 1], vec4(1, 1, 0, 1));
-	}
+	//for (size_t i = 0; i < myPath.size() - 1; ++i)
+	//{
+	//	Gizmo::main->Line(myPath[i], myPath[i + 1], vec4(1, 1, 0, 1));
+	//}
 
 	//cout << "Current Index: " << _currentIndex << ", Next: " << nextIndex << endl;
 	//cout << "Forward: " << _forward << ", t: " << t << ", DistanceMoved: " << _distanceMoved << endl;

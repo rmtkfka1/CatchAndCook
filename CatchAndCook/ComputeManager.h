@@ -301,10 +301,12 @@ private:
 
 struct UnderWaterParam
 {
-	vec3 g_fogColor = vec3(0, 0.256f, 0.350f);
+	/*vec3 g_fogColor = vec3(0, 0.256f, 0.350f);*/
+
+	vec3 g_fogColor = vec3(0, 0.269f, 0.438f);
 	float g_fog_power = 5.109f;
 
-	vec3 g_underWaterColor = vec3(0.308f, 0.615f, 0.867f);
+	vec3 g_underWaterColor = vec3(0.526f, 0.603f, 1.0f);
 	float g_fogMin = 0;
 
 	vec2 padding;
@@ -442,12 +444,12 @@ private:
 
 struct ScatteringData
 {
-	float phaseG{};
-	float absorption{};
+	float phaseG=0.659f;
+	float absorption =992.f;
 	vec2 Padding;
 
-	float density{};
-	vec3 scatterColor{};
+	float density=7.283f;
+	vec3 scatterColor= vec3(1,1,1);
 };
 
 class Scattering : public ComputeBase
@@ -473,7 +475,7 @@ private:
 	std::shared_ptr<Texture> _ssaoTexture;
 	shared_ptr<Shader> _shader;
 
-	bool _scattering = false;
+	bool _scattering = true;
 	ScatteringData _scatteringData;
 
 	friend class ComputeManager;
