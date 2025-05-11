@@ -39,6 +39,8 @@ public:
 	float skyTime = -1;
 
 	static std::weak_ptr<LightComponent> mainLight;
-	static std::shared_ptr<LightComponent> GetMainLight() { return mainLight.lock(); };
+	static std::shared_ptr<LightComponent> GetMainLight() { return mainLight.lock(); }
+	void RenderEnd() override;
+	void ChangeScene(const std::shared_ptr<Scene>& currentScene, const std::shared_ptr<Scene>& nextScene) override;;
 };
 

@@ -77,6 +77,11 @@ void Component::ChangeParent(const std::shared_ptr<GameObject>& prev, const std:
 
 }
 
+void Component::ChangeScene(const std::shared_ptr<Scene>& currentScene, const std::shared_ptr<Scene>& nextScene)
+{
+
+}
+
 
 void Component::SetDestroy()
 {

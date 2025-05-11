@@ -180,3 +180,18 @@ void LightComponent::Destroy()
 {
 	Component::Destroy();
 }
+
+void LightComponent::RenderEnd()
+{
+	Component::RenderEnd();
+}
+
+void LightComponent::ChangeScene(const std::shared_ptr<Scene>& currentScene, const std::shared_ptr<Scene>& nextScene)
+{
+	Component::ChangeScene(currentScene, nextScene);
+
+	if (nextScene == GetOwner()->GetScene())
+		LightManager::main->PushLight(light);
+	else
+		LightManager::main->RemoveLight(light);
+}
