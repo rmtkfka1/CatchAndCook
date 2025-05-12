@@ -80,6 +80,12 @@ private:
 	bool _detphShared = false;
 	vec4 _clearValue = vec4::One;
 
+	Vector2 _size;
+	void SetSize(Vector2 size) { _size = size; }
+	Vector2 GetSize() { return _size; }
+
+	//_image
+
 public:
 	D3D12_RESOURCE_STATES _state; // 추적용
 

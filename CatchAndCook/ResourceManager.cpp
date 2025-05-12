@@ -431,6 +431,27 @@ void ResourceManager::CreateDefaultShaderJIN()
 		ShaderInfo info;
 		info._zTest = true;
 		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+
+		info.renderTargetCount = 4;
+
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		info.RTVForamts[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		info.RTVForamts[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetInjector({ BufferType::EnvMaterialParam });
+		shader->SetPass(RENDER_PASS::Deferred);
+		shader->Init(L"Environment.hlsl", StaticProp, ShaderArg{}, info);
+		Add<Shader>(L"Environment_NoCull", shader);
+	}
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
 		info.cullingType = CullingType::BACK;
 
 		info.renderTargetCount = 4;
@@ -788,6 +809,24 @@ void ResourceManager::CreateDefaultShaderJIN()
 		shader->SetPass(RENDER_PASS::Transparent);
 		shader->Init(L"WaterShader.hlsl", SkinProp, ShaderArg{}, info);
 		Add<Shader>(L"WaterShader", shader);
+	}
+
+
+	{
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._zWrite = false;
+		info._stencilTest = false;
+
+		info._blendEnable = true;
+		
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetInjector({ BufferType::DefaultMaterialParam });
+		shader->SetPass(RENDER_PASS::Transparent);
+		shader->Init(L"TestTransparent_Total.hlsl", StaticProp, ShaderArg{}, info);
+		Add<Shader>(L"TestTransparent", shader);
 	}
 
 

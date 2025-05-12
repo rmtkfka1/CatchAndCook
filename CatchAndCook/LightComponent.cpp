@@ -147,6 +147,8 @@ void LightComponent::Disable()
 	Component::Disable();
 	light->onOff = 0;
 	LightManager::main->RemoveLight(light);
+	if (LightManager::main->GetMainLight() == light)
+		LightManager::main->_mainLights = nullptr;
 }
 
 void LightComponent::RenderBegin()
