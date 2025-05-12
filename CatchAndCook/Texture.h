@@ -58,6 +58,8 @@ public:
 	DXGI_FORMAT& GetFormat() { return _format; };
 	DXGI_FORMAT& SetFormat(DXGI_FORMAT format) { return _format = format; };
 
+	void SetSize(Vector2 size) { _size = size; }
+	Vector2 GetSize() { return _size; }
 
 	bool _isAlpha = false;
 private:
@@ -81,8 +83,6 @@ private:
 	vec4 _clearValue = vec4::One;
 
 	Vector2 _size;
-	void SetSize(Vector2 size) { _size = size; }
-	Vector2 GetSize() { return _size; }
 
 	//_image
 

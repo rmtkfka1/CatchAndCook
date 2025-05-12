@@ -3,7 +3,9 @@
 
 struct GUISpriteParam
 {
-	Vector4 uvst;
+	//x,y offset
+	//z,w size
+	Vector4 uvOffsetSize;
 };
 
 struct GUISpriteRenderPack;
@@ -12,20 +14,13 @@ class GUISprite
 {
 public:
 	std::shared_ptr<Texture> texture;
-	std::vector<DirectX::SimpleMath::Rectangle> uvData;
-	Vector2 splitWdith;
+	DirectX::SimpleMath::Rectangle uvOffsetSize;
 
-	bool isSplit = false;
+	void SetTexture(const std::shared_ptr<Texture>& texture);
+	std::shared_ptr<Texture> GetTexture();
+	std::shared_ptr<GUISprite> Create(const std::shared_ptr<Texture>& texture);
+	std::vector<std::shared_ptr<GUISprite>> Create(const std::shared_ptr<Texture>& texture, Vector2 gridSize);
+	std::vector<std::shared_ptr<GUISprite>> Create(const std::shared_ptr<Texture>& texture, std::vector<DirectX::SimpleMath::Rectangle> rects);
 
-	unsigned int count = 1;
-	std::shared_ptr<Texture> GetTexture(int index = 0);
-	std::shared_ptr<Texture> GetTextureData(int index = 0);
-	void Init(const std::shared_ptr<Texture>& texture);
-};
-
-
-struct GUISpriteRenderPack
-{
-	std::shared_ptr<Texture> sprite;
-	GUISpriteParam paramData;
+	DirectX::SimpleMath::Rectangle CalculateRect(Vector2 offset, Vector2 size);
 };
