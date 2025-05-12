@@ -30,14 +30,85 @@ void Print(const Matrix& mat)
 
 int main()
 {
+	vec4 worldPos = vec4(-5.0f, 0, 30.0f, 1); 
 
-	Matrix transMat = Matrix::CreateTranslation(1, 2, 3);
+    // 1) 카메라 설정
+    Vector3 cameraPos(0, 0, 0);
+    Vector3 cameraLook(0, 0, 1);
+    Vector3 cameraUp(0, 1, 0);
 
-	Print(transMat);
+    Matrix viewMat = Matrix::CreateLookAt(
+        cameraPos,
+        cameraLook,
+        cameraUp
+    );
+
+    Matrix projMat = Matrix::CreatePerspectiveFieldOfView(
+        XM_PI / 4.0f,      // FOV 45°
+        1920.0f / 1080.0f, // Aspect
+        0.1f,              // Near
+        3000.0f            // Far
+    );
 
 
-	Matrix viewMat = Matrix::CreateLookAt(vec3(0, 0, 0), vec3(1, 0, 0), vec3(0, 1, 0));
+	vec4 viewPos = vec4::Transform(worldPos, viewMat);
+    vec4 clipPos = vec4::Transform(viewPos, projMat);
 
-	Print(viewMat);
+	cout << "World Space= (" << worldPos.x << " " << worldPos.y << " " << worldPos.z <<")" << endl;
+	cout << "View Space = (" << viewPos.x << ", " << viewPos.y << ", " << viewPos.z << ")" << endl;
+	cout << "Clip Space = (" << clipPos.x << ", " << clipPos.y << ", " << clipPos.z << ", " << clipPos.w << ")" << endl;
 
+	// 2) Clip Space → NDC
+	vec3 Originndc;
+    Originndc.x = clipPos.x / clipPos.w;
+    Originndc.y = clipPos.y / clipPos.w;
+    Originndc.z = clipPos.z / clipPos.w;
+	cout << "NDC = (" << Originndc.x << ", " << Originndc.y << ", " << Originndc.z << ")" << endl;
+
+
+    cout << "===========================================" << endl;
+    //////////////////////////////////////////////////////////////////////////////////////////
+
+    // 2) 화면상의 픽셀 좌표 + 깊이값 (예시)
+
+    Vector2 screenSize(1920.0f, 1080.0f);
+    float pixelX = (Originndc.x + 1.0f) * 0.5f * screenSize.x;
+    float pixelY = (1.0f - Originndc.y) * 0.5f * screenSize.y;
+
+	cout << "Pixel = (" << pixelX << ", " << pixelY << ")" << endl;
+    float depth = 1.0f;   
+
+
+    // 3) Pixel → NDC 변환
+    // DirectX: 화면 상단(0,0), 아래로 Y 증가 → NDC Y는 반전
+    Vector3 ndc;
+    ndc.x = (pixelX / screenSize.x) * 2.0f - 1.0f;
+    ndc.y = 1.0f - (pixelY / screenSize.y) * 2.0f;
+    ndc.z = depth;
+
+    // 4) NDC → Clip Space
+    Vector4 clipPos2(ndc.x, ndc.y, ndc.z, 1.0f);
+
+    // 5) Clip → View Space (Inverse Projection + Perspective Divide)
+    Matrix invProj = projMat.Invert();
+    Vector4 viewH = Vector4::Transform(clipPos2, invProj);
+    viewH = viewH / viewH.w;   // perspective divide
+
+	cout << "Unprojected View Space = (" << viewH.x << ", " << viewH.y << ", " << viewH.z << ")" << endl;
+
+    // 6) View → World Space (Inverse View + Divide)
+    Matrix invView = viewMat.Invert();
+    Vector4 worldH = Vector4::Transform(viewH, invView);
+    worldH = worldH / worldH.w;
+
+
+
+    // 7) 결과 출력
+    std::cout
+        << "Unprojected World Pos = ("
+        << worldH.x << ", "
+        << worldH.y << ", "
+        << worldH.z << ")\n";
+
+    return 0;
 }
