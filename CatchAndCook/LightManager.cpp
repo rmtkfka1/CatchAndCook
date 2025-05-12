@@ -41,16 +41,20 @@ void LightManager::SetData()
 
 	TableContainer tableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(1);
 	Core::main->GetBufferManager()->GetTable()->CopyHandle(tableContainer.CPUHandle, _strBuffer->GetSRVHandle(), 0);
-
 	Core::main->GetCmdList()->SetGraphicsRootDescriptorTable(SRV_LIGHTPARM_TABLE_INDEX, tableContainer.GPUHandle);
 	Core::main->GetCmdList()->SetComputeRootDescriptorTable(11, tableContainer.GPUHandle);
+}
+
+void LightManager::Clear()
+{
+	_lights.clear();
 }
 
 std::shared_ptr<Light> LightManager::GetMainLight()
 {
 	for (auto& light : _lights)
 	{
-		if (_mainLights == nullptr && light->material.lightType == 0)
+		if (light->material.lightType == 0)
 		{
 			_mainLights = light;
 		}

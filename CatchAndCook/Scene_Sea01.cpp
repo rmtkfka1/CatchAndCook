@@ -98,88 +98,89 @@ void Scene_Sea01::Init()
 	light->material.lightType = static_cast<int32>(LIGHT_TYPE::DIRECTIONAL_LIGHT);
 	light->strength = vec3(1.0f, 1.0f, 1.0f);
 	LightManager::main->PushLight(light);
+	LightManager::main->_lightParmas.mainLight = *light.get();
 
-#pragma region DebugXYZ
-	{
-
-		ShaderInfo info;
-		info._zTest = true;
-		info._stencilTest = false;
-
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"color", L"color.hlsl", ColorProp,
-			ShaderArg{}, info);
-
-		shared_ptr<Material> material = make_shared<Material>();
-
-		shared_ptr<GameObject> root = CreateGameObject(L"X");
-
-		root->_transform->SetLocalPosition(vec3(3000.0f, 0, 0.0f));
-		root->_transform->SetLocalScale(vec3(3000.0f, 1.0f, 1.0f));
-		auto meshRenderer = root->AddComponent<MeshRenderer>();
-
-		material = make_shared<Material>();
-		material->SetShader(shader);
-		material->SetPass(RENDER_PASS::Forward);
-
-		meshRenderer->AddMaterials({ material });
-
-		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(1, 0, 0, 0)));
-
-
-	}
-
-	{
-
-
-		ShaderInfo info;
-		info._zTest = true;
-		info._stencilTest = false;
-
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"color", L"color.hlsl", ColorProp,
-			ShaderArg{}, info);
-
-		shared_ptr<Material> material = make_shared<Material>();
-
-		shared_ptr<GameObject> root = CreateGameObject(L"Y");
-
-		root->_transform->SetLocalPosition(vec3(0, 0, 3000.0f));
-		root->_transform->SetLocalScale(vec3(1.0f, 1.0f, 3000.0f));
-		auto meshRenderer = root->AddComponent<MeshRenderer>();
-
-		material = make_shared<Material>();
-		material->SetShader(shader);
-		material->SetPass(RENDER_PASS::Forward);
-
-		meshRenderer->AddMaterials({ material });
-		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(0, 1, 0, 0)));
-	}
-
-	{
-
-
-		ShaderInfo info;
-		info._zTest = true;
-		info._stencilTest = false;
-
-		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"color", L"color.hlsl", ColorProp,
-			ShaderArg{}, info);
-
-		shared_ptr<Material> material = make_shared<Material>();
-
-		shared_ptr<GameObject> root = CreateGameObject(L"Z");
-
-		root->_transform->SetLocalPosition(vec3(0, 3000.0f, 0.0f));
-		root->_transform->SetLocalScale(vec3(1.0f, 3000.0f, 1.0f));
-		auto meshRenderer = root->AddComponent<MeshRenderer>();
-
-		material = make_shared<Material>();
-		material->SetShader(shader);
-		material->SetPass(RENDER_PASS::Forward);
-
-		meshRenderer->AddMaterials({ material });
-		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(0, 0, 1, 0)));
-	}
-#pragma endregion
+//#pragma region DebugXYZ
+//	{
+//
+//		ShaderInfo info;
+//		info._zTest = true;
+//		info._stencilTest = false;
+//
+//		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"color", L"color.hlsl", ColorProp,
+//			ShaderArg{}, info);
+//
+//		shared_ptr<Material> material = make_shared<Material>();
+//
+//		shared_ptr<GameObject> root = CreateGameObject(L"X");
+//
+//		root->_transform->SetLocalPosition(vec3(3000.0f, 0, 0.0f));
+//		root->_transform->SetLocalScale(vec3(3000.0f, 1.0f, 1.0f));
+//		auto meshRenderer = root->AddComponent<MeshRenderer>();
+//
+//		material = make_shared<Material>();
+//		material->SetShader(shader);
+//		material->SetPass(RENDER_PASS::Forward);
+//
+//		meshRenderer->AddMaterials({ material });
+//
+//		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(1, 0, 0, 0)));
+//
+//
+//	}
+//
+//	{
+//
+//
+//		ShaderInfo info;
+//		info._zTest = true;
+//		info._stencilTest = false;
+//
+//		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"color", L"color.hlsl", ColorProp,
+//			ShaderArg{}, info);
+//
+//		shared_ptr<Material> material = make_shared<Material>();
+//
+//		shared_ptr<GameObject> root = CreateGameObject(L"Y");
+//
+//		root->_transform->SetLocalPosition(vec3(0, 0, 3000.0f));
+//		root->_transform->SetLocalScale(vec3(1.0f, 1.0f, 3000.0f));
+//		auto meshRenderer = root->AddComponent<MeshRenderer>();
+//
+//		material = make_shared<Material>();
+//		material->SetShader(shader);
+//		material->SetPass(RENDER_PASS::Forward);
+//
+//		meshRenderer->AddMaterials({ material });
+//		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(0, 1, 0, 0)));
+//	}
+//
+//	{
+//
+//
+//		ShaderInfo info;
+//		info._zTest = true;
+//		info._stencilTest = false;
+//
+//		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"color", L"color.hlsl", ColorProp,
+//			ShaderArg{}, info);
+//
+//		shared_ptr<Material> material = make_shared<Material>();
+//
+//		shared_ptr<GameObject> root = CreateGameObject(L"Z");
+//
+//		root->_transform->SetLocalPosition(vec3(0, 3000.0f, 0.0f));
+//		root->_transform->SetLocalScale(vec3(1.0f, 3000.0f, 1.0f));
+//		auto meshRenderer = root->AddComponent<MeshRenderer>();
+//
+//		material = make_shared<Material>();
+//		material->SetShader(shader);
+//		material->SetPass(RENDER_PASS::Forward);
+//
+//		meshRenderer->AddMaterials({ material });
+//		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBoxWithColor(1.0f, vec4(0, 0, 1, 0)));
+//	}
+//#pragma endregion
 
 	ColliderManager::main->SetCellSize(100);
 

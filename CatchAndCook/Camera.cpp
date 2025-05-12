@@ -191,6 +191,7 @@ DebugCamera::DebugCamera()
     _type = CameraType::DebugCamera;
 
     _cameraPos = vec3(245.946 ,79.8085 ,225.333);
+ /*   SetCameraLook()*/
 }
 
 DebugCamera::~DebugCamera()

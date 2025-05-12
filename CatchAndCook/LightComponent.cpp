@@ -155,7 +155,6 @@ void LightComponent::RenderBegin()
 {
 	Component::RenderBegin();
 
-
 }
 
 void LightComponent::CollisionBegin(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other)

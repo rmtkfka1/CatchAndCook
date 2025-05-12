@@ -285,7 +285,7 @@ void ImguiManager::ComputeController()
 	{
   
 		ImGui::SliderFloat("phaseG", &_scatteringData->phaseG, 0.0f, 1.0f);
-		ImGui::SliderFloat("absorption", &_scatteringData->absorption, 0.0f, 1.0f);
+		ImGui::SliderFloat("absorption", &_scatteringData->absorption, 0.0f, 1000.0f);
 		ImGui::SliderFloat("DENSITY", &_scatteringData->density, 0.0f, 15.0f);
 		ImGui::SliderFloat3("scatterColor", &_scatteringData->scatterColor.x, 0.0f, 1.0f);
 	}

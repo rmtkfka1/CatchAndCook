@@ -224,7 +224,7 @@ void Game::CameraUpdate()
 
 	shared_ptr<Camera> camera = CameraManager::main->GetCamera(CameraType::DebugCamera);
 
-
+	
 
 	static float speed = 500.0f;
 	const float dt =Time::main->GetDeltaTime() *speed;
