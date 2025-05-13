@@ -54,7 +54,7 @@ void SeaPlayerController::Start()
 	}
 
 
-    _weapons->AddWeapon(L"test", L"Gun", L"Harpoon");
+    _weapons->AddWeapon(L"test", L"Gun", L"Harpoon",L"HarpoonSlot");
     _weapons->SetWeapon(L"test");
 }
 

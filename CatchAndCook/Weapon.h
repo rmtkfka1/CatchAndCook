@@ -6,11 +6,10 @@ struct Gun
 	wstring GunName =L"NULL";
 	shared_ptr<GameObject> body{};
 	shared_ptr<GameObject> hook{};
-
-	vec3 fireLocalPos;
+	shared_ptr<GameObject> weaponSlot{};
 
 	float _power{};
-	float _range =300.0f;
+	float _range =600.0f;
 	float _speed =500.0f;
 };
 
@@ -36,7 +35,7 @@ public:
 
 public:
 	void SetWeapon(const wstring& weaponName);
-	void AddWeapon(const wstring& weaponName, const wstring& bodyName, const wstring& hookName );
+	void AddWeapon(const wstring& weaponName, const wstring& bodyName, const wstring& hookName , const wstring& weaponSlot);
 	void Shot();
 
 private:
