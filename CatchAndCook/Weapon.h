@@ -10,7 +10,7 @@ struct Gun
 
 	float _power{};
 	float _range =300.0f;
-	float _speed =500.0f;
+	float _speed =800.0f;
 };
 
 enum class WeaponState

@@ -67,9 +67,9 @@ private:
 	SeaPlayerState _state = SeaPlayerState::Idle;
 	vec3 _velocity = vec3::Zero;
 
-	vec3 _cameraYawOffset{};
+	float _cameraYawOffset = -0.294f;
 	float _cameraPitchOffset = 2.212f;
-	float _cameraForwardOffset = 0.541f;
+	float _cameraForwardOffset = 0.737f;
 	float _cameraHeightOffset = 4.130f;
 	float  _yaw = 0;
 	float _pitch = 0;

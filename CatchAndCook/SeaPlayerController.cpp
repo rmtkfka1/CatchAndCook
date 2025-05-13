@@ -134,7 +134,7 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& playerRota
 
      // 최종 위치 적용
     _transform->SetWorldPosition(nextPos);
-    _camera->SetCameraPos(nextHeadPos + _camera->GetCameraRight() * _cameraYawOffset.x );
+    _camera->SetCameraPos(nextHeadPos + _camera->GetCameraRight() * _cameraYawOffset );
     _velocity *= (1 - (_resistance * dt));
 
 }
