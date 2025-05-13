@@ -228,7 +228,7 @@ void PathFinder::ReadPathFile(const std::wstring& fileName)
 	_pathList[fileName]._pathColor = vec3(hue, hue, hue);
 
 
-     cout << "라인 데이터: " << _pathList[fileName].path.size() << "개 읽음." << std::endl;
+    /* cout << "라인 데이터: " << _pathList[fileName].path.size() << "개 읽음." << std::endl;*/
 }
 
 vec3 PathFinder::GenerateRandomPointInSphere(float radius)

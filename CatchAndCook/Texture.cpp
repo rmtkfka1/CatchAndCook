@@ -179,7 +179,6 @@ void Texture::Init(vector<wstring>& paths)
 
         if (FAILED(hr))
         {
-            wcout << L"Failed to load file: " << path << endl;
             assert(false);
         }
 

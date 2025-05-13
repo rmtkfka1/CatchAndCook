@@ -14,7 +14,6 @@ void RootSignature::Init()
 void RootSignature::InitGraphicsRootSignature()
 {
 
-	// 정적 샘플러 설정
 	D3D12_STATIC_SAMPLER_DESC samplerDesc[7] = {};
 	samplerDesc[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
@@ -159,7 +158,7 @@ void RootSignature::InitGraphicsRootSignature()
 	param[SRV_LIGHTPARM_TABLE_INDEX].InitAsDescriptorTable(1, &G_LIGHT_RANGE); //32 t16
 	param[GLOBAL_SRV_INDEX].InitAsDescriptorTable(1, &G_GLOBAL_RANGE); //33 
 
-	// 루트 서명 설정
+
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 	rootSignatureDesc.NumParameters = param.size();
 	rootSignatureDesc.pParameters = param.data();
@@ -177,7 +176,7 @@ void RootSignature::InitGraphicsRootSignature()
 
 void RootSignature::InitComputeRootSignature()
 {
-	// 정적 샘플러 설정
+
 	D3D12_STATIC_SAMPLER_DESC samplerDesc[7] = {};
 	samplerDesc[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
@@ -300,7 +299,6 @@ void RootSignature::InitComputeRootSignature()
 	param[11].InitAsDescriptorTable(1,&G_LIGHT_RANGE);
 	param[12].InitAsDescriptorTable(1, &G_SHADOW_SRV_RANGE);
 	
-	// 루트 서명 설정
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 	rootSignatureDesc.NumParameters = param.size();
 	rootSignatureDesc.pParameters = param.data();

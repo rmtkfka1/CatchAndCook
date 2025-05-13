@@ -378,14 +378,14 @@ Matrix AnimationNode::CalculateTransformMatrixMapping(const std::shared_ptr<Mode
         auto e = interpolatedRotation * _originModelNode->GetLocalPreRotation();
         if (_originModelNode->GetOriginalName() == "LeftLeg" && false)
         {
-            std::cout << to_string(_originModelNode->GetLocalPreRotation()) << "\n";
+      /*      std::cout << to_string(_originModelNode->GetLocalPreRotation()) << "\n";
             std::cout << to_string(_animModelNode->GetLocalPreRotation()) << "\n";
             std::cout << to_string(interpolatedRotation * _originModelNode->GetLocalPreRotation()) << "\n";
             std::cout << to_string(interpolatedRotation * _animModelNode->GetLocalPreRotation()) << "\n\n";
 
             std::cout << to_string(interpolatedRotation.ToEuler() * R2D) << "\n";
             std::cout << to_string(_originModelNode->GetLocalPreRotation().ToEuler() * R2D) << "\n";
-            std::cout << to_string(_animModelNode->GetLocalPreRotation().ToEuler() * R2D) << "\n";
+            std::cout << to_string(_animModelNode->GetLocalPreRotation().ToEuler() * R2D) << "\n";*/
         }
 
         a = Vector3::Transform(Vector3::Zero, Matrix::CreateFromQuaternion(worldInter2) * _originModelNode->_globalTPose);

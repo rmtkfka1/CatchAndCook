@@ -233,5 +233,5 @@ void FishMonster::ReadPathFile(const std::wstring& fileName)
 	}
 
 	file.close();
-	cout << "라인 데이터: " << _fishPath.size() << "개 읽음." << std::endl;
+	//cout << "라인 데이터: " << _fishPath.size() << "개 읽음." << std::endl;
 }
