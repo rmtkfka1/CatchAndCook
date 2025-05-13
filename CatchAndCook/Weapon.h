@@ -43,15 +43,14 @@ public:
 
 public:
 	WeaponState GetState() { return  _state; }
-	void SetWeapon(const wstring& weaponName);
+	void SetCurrentWeapon(const wstring& weaponName);
 	void AddWeapon(const wstring& weaponName, const wstring& bodyName, const wstring& hookName , const wstring& weaponSlot);
-
+	void AddWeapon(shared_ptr<Gun> gun);
+	shared_ptr<Gun> GetCurrentWeapon() { return _currentWeapon; }
 
 private:
 	WeaponState _state = WeaponState::Idle;
 	float _moveDist = 0;
-
-
 	shared_ptr<Gun> _currentWeapon;
 	unordered_map<wstring, shared_ptr<Gun>> _weapons;
 
