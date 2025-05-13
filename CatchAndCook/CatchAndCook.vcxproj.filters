@@ -102,9 +102,6 @@
     <ClCompile Include="RootSignature.cpp">
       <Filter>00.Core</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>00.Core</Filter>
-    </ClCompile>
     <ClCompile Include="BufferPool.cpp">
       <Filter>00.Core</Filter>
     </ClCompile>
@@ -322,8 +319,6 @@
     <ClCompile Include="Sprite.cpp">
       <Filter>04.Resource\Sprite</Filter>
     </ClCompile>
-    <ClCompile Include="Inventory.cpp" />
-    <ClCompile Include="Item.cpp" />
     <ClCompile Include="WInMain.cpp" />
     <ClCompile Include="SeaPlayerController.cpp">
       <Filter>03.Component</Filter>
@@ -374,11 +369,24 @@
     <ClCompile Include="StatePattern.cpp">
       <Filter>997.Utils</Filter>
     </ClCompile>
-    <ClCompile Include="InGameMainField.cpp" />
     <ClCompile Include="Volumetric.cpp">
       <Filter>04.Resource</Filter>
     </ClCompile>
-    <ClCompile Include="Weapon.cpp" />
+    <ClCompile Include="Texture.cpp">
+      <Filter>997.Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Weapon.cpp">
+      <Filter>03.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>04.Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>04.Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="InGameMainField.cpp">
+      <Filter>03.Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -413,9 +421,6 @@
       <Filter>00.Core</Filter>
     </ClInclude>
     <ClInclude Include="RootSignature.h">
-      <Filter>00.Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
       <Filter>00.Core</Filter>
     </ClInclude>
     <ClInclude Include="BufferPool.h">
@@ -652,8 +657,6 @@
     <ClInclude Include="Sprite.h">
       <Filter>04.Resource\Sprite</Filter>
     </ClInclude>
-    <ClInclude Include="Inventory.h" />
-    <ClInclude Include="Item.h" />
     <ClInclude Include="WInMain.h" />
     <ClInclude Include="SeaPlayerController.h">
       <Filter>03.Component</Filter>
@@ -705,11 +708,24 @@
     <ClInclude Include="StatePattern.h">
       <Filter>997.Utils</Filter>
     </ClInclude>
-    <ClInclude Include="InGameMainField.h" />
     <ClInclude Include="Volumetric.h">
       <Filter>04.Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Weapon.h" />
+    <ClInclude Include="Texture.h">
+      <Filter>997.Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Weapon.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Inventory.h">
+      <Filter>04.Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>04.Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="InGameMainField.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">
