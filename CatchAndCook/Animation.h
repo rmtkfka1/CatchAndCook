@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-
 class AnimationNode;
 
 class Animation : public enable_shared_from_this<Animation>

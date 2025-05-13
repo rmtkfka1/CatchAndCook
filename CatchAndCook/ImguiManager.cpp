@@ -59,6 +59,7 @@ void ImguiManager::Render()
         ImGui::SliderFloat("playerHeightOffset", playerHeightOffset, 0.0f, 6.0f);
         ImGui::SliderFloat("playerForwardOffset", playerForwardOffset,-6.0f, 6.0f);
 		ImGui::SliderFloat("cameraPitchOffset", cameraPitchOffset, -90.0f, 90.0f);
+        ImGui::SliderFloat3("cameraYawOffset", &cameraYawOffset->x, -10.0f, 10.0f);
     }
 
 	ImGui::Render();

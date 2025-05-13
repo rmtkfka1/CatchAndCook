@@ -66,6 +66,7 @@ public:
 	float* playerHeightOffset;
 	float* playerForwardOffset;
 	float* cameraPitchOffset;
+	vec3* cameraYawOffset;
 
 	bool* navMesh;
 	bool* mainField_fog;

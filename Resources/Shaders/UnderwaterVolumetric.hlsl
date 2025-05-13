@@ -57,7 +57,6 @@ float4 PS_Main(VS_OUT IN) : SV_Target
    
     float4 clipPos = float4(IN.uv * 2.0f - 1.0f, ndcZ, 1.0f);
 
-
     float4 viewH = mul(InvertProjectionMatrix, clipPos);
     viewH /= viewH.w;
     float3 Pvs = viewH.xyz;

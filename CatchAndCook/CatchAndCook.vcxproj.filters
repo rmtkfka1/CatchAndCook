@@ -374,13 +374,11 @@
     <ClCompile Include="StatePattern.cpp">
       <Filter>997.Utils</Filter>
     </ClCompile>
-    <ClCompile Include="CableComponent.cpp">
-      <Filter>03.Component</Filter>
-    </ClCompile>
     <ClCompile Include="InGameMainField.cpp" />
     <ClCompile Include="Volumetric.cpp">
       <Filter>04.Resource</Filter>
     </ClCompile>
+    <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -707,13 +705,11 @@
     <ClInclude Include="StatePattern.h">
       <Filter>997.Utils</Filter>
     </ClInclude>
-    <ClInclude Include="CableComponent.h">
-      <Filter>03.Component</Filter>
-    </ClInclude>
     <ClInclude Include="InGameMainField.h" />
     <ClInclude Include="Volumetric.h">
       <Filter>04.Resource</Filter>
     </ClInclude>
+    <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath_LH.inl">

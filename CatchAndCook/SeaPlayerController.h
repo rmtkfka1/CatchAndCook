@@ -4,7 +4,7 @@ class Camera;
 class Terrain;
 class AnimationListComponent;
 class SkinnedHierarchy;
-class CableComponent;
+class Weapon;
 
 enum class SeaPlayerState
 {
@@ -59,7 +59,7 @@ private:
 	shared_ptr<Collider> _collider;
 	shared_ptr<Terrain> _terrian;
 	shared_ptr<SkinnedHierarchy> _skined;
-	shared_ptr<CableComponent> _weapons;
+	shared_ptr<Weapon> _weapons;
 
 	std::unordered_map<string, std::shared_ptr<Animation>> _animations;
 private:
@@ -67,6 +67,7 @@ private:
 	SeaPlayerState _state = SeaPlayerState::Idle;
 	vec3 _velocity = vec3::Zero;
 
+	vec3 _cameraYawOffset{};
 	float _cameraPitchOffset = 2.212f;
 	float _cameraForwardOffset = 0.541f;
 	float _cameraHeightOffset = 4.130f;
