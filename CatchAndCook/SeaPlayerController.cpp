@@ -160,7 +160,7 @@ void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float 
 
     if (Input::main->GetKey(KeyCode::Q))
     {
-        _weapons->Shot();
+        _weapons->ChangeState(WeaponState::Shot);
     }
 
     if (Input::main->GetKey(KeyCode::Space))

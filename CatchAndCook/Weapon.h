@@ -13,6 +13,13 @@ struct Gun
 	float _speed =500.0f;
 };
 
+enum WeaponState
+{
+	Idle,
+	Shot,
+	Reload,
+};
+
 class Weapon :public Component
 {
 
@@ -32,17 +39,16 @@ public:
 	void CollisionEnd(const std::shared_ptr<Collider>& collider, const std::shared_ptr<Collider>& other) override;
 	bool IsExecuteAble() override;
 
+	void ChangeState(const WeaponState& state);
 
 public:
 	void SetWeapon(const wstring& weaponName);
 	void AddWeapon(const wstring& weaponName, const wstring& bodyName, const wstring& hookName , const wstring& weaponSlot);
-	void Shot();
+
 
 private:
-	bool _isShot = false;
-	vec3 _shotForward;
+	WeaponState _state = WeaponState::Idle;
 	float _moveDist{};
-
 	shared_ptr<Gun> _currentWeapon;
 	unordered_map<wstring, shared_ptr<Gun>> _weapons;
 

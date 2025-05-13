@@ -24,18 +24,16 @@ void Weapon::Start()
 
 void Weapon::Update()
 {
-	if (_isShot)
+	switch (_state)
 	{
-		if (_moveDist >= _currentWeapon->_range)
+	case Idle:
+	{
+
+	}
+		break;
+	case Shot:
 		{
-			_moveDist = 0.0f;
-			_isShot = false;
-			_currentWeapon->hook->_transform->SetWorldPosition(_currentWeapon->weaponSlot->_transform->GetWorldPosition());
-
-			cout << _currentWeapon->hook->_transform->GetLocalRotation().x << " " << _currentWeapon->hook->_transform->GetLocalRotation().y << " " << _currentWeapon->hook->_transform->GetLocalRotation().z << endl;
-		}
-
-		if (_moveDist < _currentWeapon->_range/2)
+		if (_moveDist < _currentWeapon->_range / 2)
 		{
 			const float speed = _currentWeapon->_speed;
 			vec3 currentPos = _currentWeapon->hook->_transform->GetWorldPosition();
@@ -43,21 +41,39 @@ void Weapon::Update()
 			_currentWeapon->hook->_transform->SetWorldPosition(currentPos + forward * speed * Time::main->GetDeltaTime());
 			_moveDist += speed * Time::main->GetDeltaTime();
 		}
-
 		else
 		{
-			const float speed = _currentWeapon->_speed;
-			vec3 slotPos = _currentWeapon->weaponSlot->_transform->GetWorldPosition();
-			vec3 currentHookPos = _currentWeapon->hook->_transform->GetWorldPosition();
-
-			vec3 dir = slotPos - currentHookPos;
-			dir.Normalize();
-
-			_currentWeapon->hook->_transform->SetWorldPosition(currentHookPos + dir * speed * Time::main->GetDeltaTime());
-			_moveDist += speed * Time::main->GetDeltaTime();
+			_state = Reload;
 		}
-		
 	}
+		break;
+	case Reload:
+	{
+		const float speed = _currentWeapon->_speed;
+		vec3 slotPos = _currentWeapon->weaponSlot->_transform->GetWorldPosition();
+		vec3 currentHookPos = _currentWeapon->hook->_transform->GetWorldPosition();
+
+		vec3 dir = slotPos - currentHookPos;
+		dir.Normalize();
+
+		_currentWeapon->hook->_transform->SetWorldPosition(currentHookPos + dir * speed * Time::main->GetDeltaTime());
+		_moveDist += speed * Time::main->GetDeltaTime();
+
+		if (_moveDist > _currentWeapon->_range)
+		{
+			_currentWeapon->hook->_transform->SetLocalPosition(vec3(0, 0, 0));
+			_state = Idle;
+			_moveDist = 0;
+		}
+	}
+		break;
+	default:
+		break;
+	}
+
+
+	
+	
 }
 
 void Weapon::Update2()
@@ -91,6 +107,26 @@ void Weapon::CollisionEnd(const std::shared_ptr<Collider>& collider, const std::
 bool Weapon::IsExecuteAble()
 {
     return false;
+}
+
+void Weapon::ChangeState(const WeaponState& state)
+{
+	if (_state == state)
+		return;
+
+	_state = state;
+
+	switch (_state)
+	{
+	case Idle:
+		break;
+	case Shot:
+		break;
+	case Reload:
+		break;
+	default:
+		break;
+	}
 }
 
 void Weapon::SetWeapon(const wstring& weaponName)
@@ -139,9 +175,3 @@ void Weapon::AddWeapon(const wstring& weaponName, const wstring& bodyName, const
 
 
 
-void Weapon::Shot()
-{
-	_isShot = true;
-	_shotForward = _currentWeapon->hook->_transform->GetForward();
-
-}
