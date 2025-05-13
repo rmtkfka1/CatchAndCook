@@ -9,11 +9,11 @@ struct Gun
 	shared_ptr<GameObject> weaponSlot{};
 
 	float _power{};
-	float _range =600.0f;
+	float _range =300.0f;
 	float _speed =500.0f;
 };
 
-enum WeaponState
+enum class WeaponState
 {
 	Idle,
 	Shot,
@@ -42,13 +42,16 @@ public:
 	void ChangeState(const WeaponState& state);
 
 public:
+	WeaponState GetState() { return  _state; }
 	void SetWeapon(const wstring& weaponName);
 	void AddWeapon(const wstring& weaponName, const wstring& bodyName, const wstring& hookName , const wstring& weaponSlot);
 
 
 private:
 	WeaponState _state = WeaponState::Idle;
-	float _moveDist{};
+	float _moveDist = 0;
+
+
 	shared_ptr<Gun> _currentWeapon;
 	unordered_map<wstring, shared_ptr<Gun>> _weapons;
 

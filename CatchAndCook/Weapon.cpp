@@ -24,46 +24,46 @@ void Weapon::Start()
 
 void Weapon::Update()
 {
+	float dt = Time::main->GetDeltaTime();
+
 	switch (_state)
 	{
-	case Idle:
+	case WeaponState::Idle:
 	{
 
 	}
 		break;
-	case Shot:
+	case WeaponState::Shot:
+	{
+		const float speed = _currentWeapon->_speed;
+		vec3 currentPos = _currentWeapon->hook->_transform->GetWorldPosition();
+		vec3 forward = _currentWeapon->hook->_transform->GetForward();
+		_currentWeapon->hook->_transform->SetWorldPosition(currentPos + forward * _currentWeapon->_speed * Time::main->GetDeltaTime());
+		_moveDist += speed * Time::main->GetDeltaTime();
+
+		if (_moveDist >= _currentWeapon->_range)
 		{
-		if (_moveDist < _currentWeapon->_range / 2)
-		{
-			const float speed = _currentWeapon->_speed;
-			vec3 currentPos = _currentWeapon->hook->_transform->GetWorldPosition();
-			vec3 forward = _currentWeapon->hook->_transform->GetForward();
-			_currentWeapon->hook->_transform->SetWorldPosition(currentPos + forward * speed * Time::main->GetDeltaTime());
-			_moveDist += speed * Time::main->GetDeltaTime();
-		}
-		else
-		{
-			_state = Reload;
+			_moveDist = 0;
+			ChangeState(WeaponState::Reload);
 		}
 	}
 		break;
-	case Reload:
+	case WeaponState::Reload:
 	{
 		const float speed = _currentWeapon->_speed;
 		vec3 slotPos = _currentWeapon->weaponSlot->_transform->GetWorldPosition();
 		vec3 currentHookPos = _currentWeapon->hook->_transform->GetWorldPosition();
-
 		vec3 dir = slotPos - currentHookPos;
 		dir.Normalize();
 
 		_currentWeapon->hook->_transform->SetWorldPosition(currentHookPos + dir * speed * Time::main->GetDeltaTime());
 		_moveDist += speed * Time::main->GetDeltaTime();
 
-		if (_moveDist > _currentWeapon->_range)
+		if (_moveDist >= _currentWeapon->_range)
 		{
-			_currentWeapon->hook->_transform->SetLocalPosition(vec3(0, 0, 0));
-			_state = Idle;
 			_moveDist = 0;
+			_currentWeapon->hook->_transform->SetLocalPosition(vec3::Zero);
+			ChangeState(WeaponState::Idle);
 		}
 	}
 		break;
@@ -71,9 +71,6 @@ void Weapon::Update()
 		break;
 	}
 
-
-	
-	
 }
 
 void Weapon::Update2()
@@ -118,11 +115,12 @@ void Weapon::ChangeState(const WeaponState& state)
 
 	switch (_state)
 	{
-	case Idle:
+	case WeaponState::Idle:
+
 		break;
-	case Shot:
+	case WeaponState::Shot:
 		break;
-	case Reload:
+	case WeaponState::Reload:
 		break;
 	default:
 		break;

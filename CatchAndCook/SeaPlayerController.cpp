@@ -158,9 +158,15 @@ void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float 
         inputDir += vec3::Right;
     }
 
-    if (Input::main->GetKey(KeyCode::Q))
+    if (Input::main->GetMouseDown(KeyCode::LeftMouse))
     {
-        _weapons->ChangeState(WeaponState::Shot);
+        if (_state == SeaPlayerState::Aiming)
+        {
+            if (_weapons->GetState() == WeaponState::Idle)
+            {
+                _weapons->ChangeState(WeaponState::Shot);
+            }
+        }
     }
 
     if (Input::main->GetKey(KeyCode::Space))
@@ -183,15 +189,12 @@ void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float 
 
     if (Input::main->GetMouseDown(KeyCode::RightMouse))
     {
-        SetState(SeaPlayerState::Aiming);
+        if (_state == SeaPlayerState::Aiming)
+            SetState(SeaPlayerState::Idle);
+        else
+            SetState(SeaPlayerState::Aiming);
     }
   
-    if (Input::main->GetMouseUp(KeyCode::RightMouse) && _state == SeaPlayerState::Aiming)
-    {
-        SetState(SeaPlayerState::Idle);
-    }
-
-
     if (Input::main->GetKey(KeyCode::F1))
     {
         auto& camera = CameraManager::main->GetCamera(CameraType::DebugCamera);
