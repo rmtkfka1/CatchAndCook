@@ -128,6 +128,7 @@ void GameObject::SetDestroy()
     }
 
     IDelayDestroy::SetDestroy();
+
     GetScene()->AddDestroyQueue(GetCast<GameObject>());
 }
 

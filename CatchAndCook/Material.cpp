@@ -32,10 +32,13 @@ void Material::SetTexture(std::string name, std::shared_ptr<Texture> texture)
 
 void Material::AllocDefualtTextureHandle()
 {
+	auto& NoneTexture = ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle();
+
+
 	auto& table = Core::main->GetBufferManager()->GetTable();
 	_defualtTableContainer = Core::main->GetBufferManager()->GetTable()->Alloc(SRV_TABLE_REGISTER_COUNT);
 	for (int i=0;i< SRV_TABLE_REGISTER_COUNT;i++)
-		table->CopyHandle(_defualtTableContainer.CPUHandle, ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle(), i);
+		table->CopyHandle(_defualtTableContainer.CPUHandle, NoneTexture, i);
 }
 
 
@@ -51,7 +54,6 @@ void Material::AllocTextureLongTable()
 
 void Material::PushData()
 {
-
 
 	for (auto& injector : _shaderInjectors)
 		injector->Inject(GetCast<Material>());
@@ -113,11 +115,13 @@ void Material::PushHandle()
 		}
 	}
 
+	auto& noneTexture = ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle();
+
 	auto& tTable = _shader->GetTRegisterIndexs();
 	for (auto& tIndex : tTable)
 		if (tIndex < SRV_TABLE_REGISTER_COUNT && (!copyCheckList[tIndex]))
 			table->CopyHandle(_tableContainer.CPUHandle,
-				ResourceManager::main->GetNoneTexture()->GetSRVCpuHandle(), tIndex);
+				noneTexture, tIndex);
 
 }
 
