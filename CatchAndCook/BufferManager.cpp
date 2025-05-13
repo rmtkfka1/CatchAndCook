@@ -34,7 +34,6 @@ void BufferManager::Init()
 	{
 		CreateBufferPool(i, BufferType::GlobalParam,sizeof(GlobalParam),1);
 		CreateBufferPool(i, BufferType::TransformParam,sizeof(TransformParam),1000);
-		CreateBufferPool(i, BufferType::MateriaParam,sizeof(MaterialParams),1000);
 		CreateBufferPool(i, BufferType::MateriaSubParam,sizeof(TestSubMaterialParam),1000);
 		CreateBufferPool(i, BufferType::CameraParam,sizeof(CameraParams),128);
 		CreateBufferPool(i, BufferType::SpriteTextureParam,sizeof(SprtieTextureParam),255);

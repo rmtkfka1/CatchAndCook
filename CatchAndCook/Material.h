@@ -9,18 +9,6 @@
 class Shader;
 class Texture;
 
-struct MaterialParams
-{
-	void SetInt(uint8 index, int32 value) { intParams[index] = value; }
-	void Setfloat(uint8 index, float value) { floatParams[index] = value; }
-	void SetMatrix(int index, Matrix mat) { MatrixParams[index] = mat; }
-	void SetVec4(uint8 index, vec4 vector) { vec4Params[index] = vector; }
-
-	array<int32, 4>		intParams{ 0 };
-	array<vec4, 4>		vec4Params{ vec4::One, vec4::One, vec4::One, vec4::One };
-	array<float, 4>		floatParams{ 0 };
-	array<Matrix, 2>	MatrixParams{ Matrix::Identity, Matrix::Identity };
-};
 
 class Material : public IGuid
 {
@@ -97,8 +85,7 @@ public:
 	}
 
 public:
-	MaterialParams _params; // 추가 정보함수 넘겨서 데이터 넣는 셋 작업
-
+	
 	uint32 _instanceID = 0;
 private:
 	shared_ptr<Shader> _shader;

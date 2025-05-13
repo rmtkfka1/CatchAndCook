@@ -52,11 +52,6 @@ void Material::AllocTextureLongTable()
 void Material::PushData()
 {
 
-	if (_useMaterialParams)
-	{
-		_cbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::MateriaParam)->Alloc(1);
-		memcpy(_cbufferContainer->ptr, (void*)&_params, sizeof(MaterialParams));
-	}
 
 	for (auto& injector : _shaderInjectors)
 		injector->Inject(GetCast<Material>());
