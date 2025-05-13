@@ -127,7 +127,7 @@ void Weapon::ChangeState(const WeaponState& state)
 	}
 }
 
-void Weapon::SetWeapon(const wstring& weaponName)
+void Weapon::SetCurrentWeapon(const wstring& weaponName)
 {
 	if (_currentWeapon && _currentWeapon->GunName == weaponName)
 		return;
@@ -168,6 +168,19 @@ void Weapon::AddWeapon(const wstring& weaponName, const wstring& bodyName, const
 
 	gun->GunName = weaponName;
 	_weapons[weaponName] = gun;
+}
+
+void Weapon::AddWeapon(shared_ptr<Gun> gun)
+{
+	auto it = _weapons.find(gun->GunName);
+
+	if (it != _weapons.end())
+	{
+		cout << "Weapon Already Exist" << endl;
+		return;
+	}
+
+	_weapons[gun->GunName] = gun;
 }
 
 
