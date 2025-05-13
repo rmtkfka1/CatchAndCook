@@ -99,7 +99,7 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& playerRota
     vec3 nextPos = currentPos + _velocity * dt;
     vec3 headOffset = vec3(0, _cameraHeightOffset, 0);
     vec3 rotatedHeadOffset = vec3::Transform(headOffset, playerRotation);
-    vec3 nextHeadPos = nextPos + rotatedHeadOffset + _transform->GetForward() * _cameraForwardOffset + _cameraYawOffset;
+    vec3 nextHeadPos = nextPos + rotatedHeadOffset + _transform->GetForward() * _cameraForwardOffset ;
 
     vec3 dir = _velocity;
     dir.Normalize();
@@ -134,7 +134,7 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& playerRota
 
      // 최종 위치 적용
     _transform->SetWorldPosition(nextPos);
-    _camera->SetCameraPos(nextHeadPos );
+    _camera->SetCameraPos(nextHeadPos + _camera->GetCameraRight() * _cameraYawOffset.x );
     _velocity *= (1 - (_resistance * dt));
 
 }
