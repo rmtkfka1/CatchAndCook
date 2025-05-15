@@ -184,7 +184,7 @@ void Scene::Rendering()
 
 void Scene::TransparentPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 {
-    { // Forward
+    {
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Transparent)];
 
 		std::vector<RenderObjectStrucutre> vec;

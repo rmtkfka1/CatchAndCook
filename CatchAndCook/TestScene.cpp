@@ -83,7 +83,7 @@ void TestScene::Init()
 
 
 	shared_ptr<Material> materialO = make_shared<Material>();
-	materialO->SetPass(RENDER_PASS::Transparent);
+	materialO->SetPass(RENDER_PASS::Forward);
 	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
 
 	ShaderInfo info;
@@ -100,7 +100,7 @@ void TestScene::Init()
 	shared_ptr<Shader> shader = make_shared<Shader>();
 	shader->Init(L"UiForward.hlsl", StaticProp, ShaderArg{},info);
 	shader->SetInjector({ BufferType::SeaDefaultMaterialParam });
-	shader->SetPass(RENDER_PASS::UI);
+	shader->SetPass(RENDER_PASS::Deferred);
 
 
 	for (int i = 0; i < 1000; ++i)
