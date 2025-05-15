@@ -35,9 +35,6 @@ public:
 	void SetDestroy() override;
 	void Destroy() override;
 
-
-
-
 	void AddObjectSetting(const std::shared_ptr<ObjectSettingComponent>& object_setting_component);
 	void RemoveObjectSetting(const std::shared_ptr<ObjectSettingComponent>& object_setting_component);
 

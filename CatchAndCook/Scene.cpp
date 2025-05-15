@@ -184,88 +184,53 @@ void Scene::Rendering()
 
 void Scene::TransparentPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)
 {
-  //  { // Forward
-  //      auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Transparent)];
-
-		//std::vector<RenderObjectStrucutre> vec;
-  //      vec.reserve(2048);
-  //      for (auto& [shader, vec2] : targets)
-  //          vec.insert(vec.end(), vec2.begin(), vec2.end());
-
-  //  	Vector3 cameraPos = CameraManager::main->GetActiveCamera()->GetCameraPos();
-  //      Vector3 cameraDir = CameraManager::main->GetActiveCamera()->GetCameraLook();
-
-  //      auto tangentDistanceSquared = [&](const Vector3& center) -> float {
-  //          Vector3 offset = center - cameraPos;
-  //          float projection = offset.Dot(cameraDir);
-  //          return offset.LengthSquared() - projection * projection;
-  //      };
-
-  //      std::ranges::sort(vec, [&](const RenderObjectStrucutre& a, const RenderObjectStrucutre& b) {
-  //          return tangentDistanceSquared(a.renderer->_bound.Center) < tangentDistanceSquared(b.renderer->_bound.Center);
-  //      });
-
-  //      Shader* prevShader = nullptr;
-  //      for (auto& ele : vec)
-  //      {
-  //          Shader* shader = ele.material->GetShader().get();
-  //          if (shader != nullptr && shader != prevShader)
-		//	cmdList->SetPipelineState(shader->_pipelineState.Get());
-
-  //      	g_debug_forward_count++;
-
-  //          if (ele.renderer->IsCulling() == true)
-  //          {
-  //              if (CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound()) == false)
-  //              {
-  //                  g_debug_forward_culling_count++;
-  //                  continue;
-  //              }
-  //          }
-
-  //          SettingPrevData(ele, RENDER_PASS::PASS::Transparent);
-  //          InstancingManager::main->RenderNoInstancing(ele);
-
-		//	prevShader = shader;
-  //      }
-  //  }
-
     { // Forward
         auto& targets = _passObjects[RENDER_PASS::ToIndex(RENDER_PASS::Transparent)];
 
-        for (auto& [shader, vec] : targets)
+		std::vector<RenderObjectStrucutre> vec;
+        vec.reserve(2048);
+        for (auto& [shader, vec2] : targets)
+            vec.insert(vec.end(), vec2.begin(), vec2.end());
+
+    	Vector3 cameraPos = CameraManager::main->GetActiveCamera()->GetCameraPos();
+        Vector3 cameraDir = CameraManager::main->GetActiveCamera()->GetCameraLook();
+
+        auto tangentDistanceSquared = [&](const Vector3& center) -> float {
+            Vector3 offset = center - cameraPos;
+            float projection = offset.Dot(cameraDir);
+            return offset.LengthSquared() - projection * projection;
+        };
+
+        std::ranges::sort(vec, [&](const RenderObjectStrucutre& a, const RenderObjectStrucutre& b) {
+            return tangentDistanceSquared(a.renderer->_bound.Center) < tangentDistanceSquared(b.renderer->_bound.Center);
+        });
+
+        Shader* prevShader = nullptr;
+        for (auto& ele : vec)
         {
-            cmdList->SetPipelineState(shader->_pipelineState.Get());
+            Shader* shader = ele.material->GetShader().get();
+            if (shader != nullptr && shader != prevShader)
+			cmdList->SetPipelineState(shader->_pipelineState.Get());
 
-            for (auto& ele : vec)
+        	g_debug_forward_count++;
+
+            if (ele.renderer->IsCulling() == true)
             {
-                g_debug_forward_count++;
-
-                if (ele.renderer->IsCulling() == true)
+                if (CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound()) == false)
                 {
-                    if (CameraManager::main->GetActiveCamera()->IsInFrustum(ele.renderer->GetBound()) == false)
-                    {
-                        g_debug_forward_culling_count++;
-                        continue;
-                    }
-                }
-
-                SettingPrevData(ele, RENDER_PASS::PASS::Forward);
-
-                if (ele.renderer->isInstancing() == false)
-                {
-                    InstancingManager::main->RenderNoInstancing(ele);
-                }
-                else
-                {
-                    InstancingManager::main->AddObject(ele);
+                    g_debug_forward_culling_count++;
+                    continue;
                 }
             }
 
-            InstancingManager::main->Render();
-        }
+            SettingPrevData(ele, RENDER_PASS::PASS::Transparent);
+            InstancingManager::main->RenderNoInstancing(ele);
 
+			prevShader = shader;
+        }
     }
+
+ 
 }
 
 void Scene::ForwardPass(ComPtr<ID3D12GraphicsCommandList> & cmdList)

@@ -99,13 +99,7 @@ void Shader::InitPipeLine(const std::vector<VertexProp>& vertexProp)
     _pipelineDesc.SampleDesc.Count = 1;
     _pipelineDesc.SampleDesc.Quality = 0;
     _pipelineDesc.DSVFormat = _info.DSVFormat;
-    //_pipelineDesc.
 
-    //Material, Animation, Object, Camera, Scene
-
-    //_pipelineState->
-
-    //CD3DX12_RASTERIZER_DESC2 resterizerDesc {D3D12_DEFAULT};
     CD3DX12_RASTERIZER_DESC resterizerDesc{ D3D12_DEFAULT };
 
     resterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
@@ -130,6 +124,7 @@ void Shader::InitPipeLine(const std::vector<VertexProp>& vertexProp)
         resterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
         break;
     }
+
     _pipelineDesc.RasterizerState = resterizerDesc;
     _pipelineDesc.RasterizerState.FrontCounterClockwise = _info._wise == FrontWise::CCW ? TRUE : FALSE;
     _pipelineDesc.RasterizerState.DepthClipEnable = TRUE; // 깊이값 범위 밖 짤라냄.
@@ -163,17 +158,16 @@ void Shader::InitPipeLine(const std::vector<VertexProp>& vertexProp)
     default: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
         break;
     }
+
     depthStencilDesc.DepthWriteMask = _info._zWrite ? D3D12_DEPTH_WRITE_MASK_ALL : D3D12_DEPTH_WRITE_MASK_ZERO;
-
-
     depthStencilDesc.StencilEnable = _info._stencilTest ? TRUE : FALSE;
     depthStencilDesc.StencilReadMask = 0xFF;
     depthStencilDesc.StencilWriteMask = 0xFF;
-
     depthStencilDesc.FrontFace.StencilFailOp = _info._stencilFailOp;
     depthStencilDesc.FrontFace.StencilDepthFailOp = _info._stencilDepthFailOp;
     depthStencilDesc.FrontFace.StencilPassOp = _info._stencilPassOp;
     depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+
     switch (_info._stencilComp)
     {
     case CompOper::Always: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
@@ -197,12 +191,9 @@ void Shader::InitPipeLine(const std::vector<VertexProp>& vertexProp)
     }
 
     depthStencilDesc.BackFace = depthStencilDesc.FrontFace;
-
     _pipelineDesc.DepthStencilState = depthStencilDesc;
-
-    //_pipelineDesc.BlendState.AlphaToCoverageEnable = FALSE; // 필요에 따라 TRUE로 설정
-    //_pipelineDesc.BlendState.IndependentBlendEnable = TRUE; // 여러 렌더 타겟에 대해 다른 블렌딩 설정을 원할 경우 TRUE로 설정
-
+    _pipelineDesc.BlendState.AlphaToCoverageEnable = FALSE; // 필요에 따라 TRUE로 설정
+    _pipelineDesc.BlendState.IndependentBlendEnable = FALSE; // 여러 렌더 타겟에 대해 다른 블렌딩 설정을 원할 경우 TRUE로 설정
 
     for (int i = 0; i < 8; i++)
     {

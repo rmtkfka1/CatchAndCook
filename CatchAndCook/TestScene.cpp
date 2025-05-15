@@ -86,18 +86,21 @@ void TestScene::Init()
 	materialO->SetPass(RENDER_PASS::Transparent);
 	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
 
-		ShaderInfo info;
-		info._blendEnable = true;
-		info._blendType[0] = BlendType::Add;
-		info.renderTargetCount = 1;
-		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	ShaderInfo info;
+	info._blendEnable = true;
+	info.renderTargetCount = 1;
+	info.RTVForamts[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+	for (int i = 0; i < 8; ++i)
+	{
+		info._blendType[i] = BlendType::Add;
+	}
 
 
-	shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"UiForward", L"UiForward.hlsl", StaticProp,
-			ShaderArg{}, info);
-
+	shared_ptr<Shader> shader = make_shared<Shader>();
+	shader->Init(L"UiForward.hlsl", StaticProp, ShaderArg{},info);
 	shader->SetInjector({ BufferType::SeaDefaultMaterialParam });
-	shader->SetPass(RENDER_PASS::Transparent);
+	shader->SetPass(RENDER_PASS::UI);
 
 
 	for (int i = 0; i < 1000; ++i)
