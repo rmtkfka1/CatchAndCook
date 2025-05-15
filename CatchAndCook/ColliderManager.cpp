@@ -6,7 +6,6 @@
 #include "Terrain.h"
 #include "TerrainManager.h"
 
-
 unique_ptr<ColliderManager> ColliderManager::main = nullptr;
 
 vec3 ColliderManager::GetGridCell(const vec3& position) const

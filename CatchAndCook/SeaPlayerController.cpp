@@ -10,7 +10,8 @@
 #include "AnimationListComponent.h"
 #include "SkinnedHierarchy.h"
 #include "Animation.h"
-#include "CableComponent.h"
+#include "Weapon.h"
+
 SeaPlayerController::SeaPlayerController()
 {
 }
@@ -23,8 +24,9 @@ void SeaPlayerController::Init()
 	ImguiManager::main->playerHeightOffset = &_cameraHeightOffset;
 	ImguiManager::main->playerForwardOffset = &_cameraForwardOffset;
 	ImguiManager::main->cameraPitchOffset = &_cameraPitchOffset;
+    ImguiManager::main->cameraYawOffset = &_cameraYawOffset;
 
-    _weapons = GetOwner()->AddComponent<CableComponent>();
+    _weapons = GetOwner()->AddComponent<Weapon>();
 }
 
 void SeaPlayerController::Start()
@@ -51,11 +53,14 @@ void SeaPlayerController::Start()
 		cout << animation.first << endl;
 	}
 
-    _weapons->AddWeapon(L"hookgun", L"hook");
+
+    _weapons->AddWeapon(L"test", L"Gun", L"Harpoon",L"HarpoonSlot");
+    _weapons->SetCurrentWeapon(L"test");
 }
 
 void SeaPlayerController::Update()
 {
+
 
 
     if (CameraManager::main->GetCameraType() == CameraType::DebugCamera)
@@ -94,7 +99,7 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& playerRota
     vec3 nextPos = currentPos + _velocity * dt;
     vec3 headOffset = vec3(0, _cameraHeightOffset, 0);
     vec3 rotatedHeadOffset = vec3::Transform(headOffset, playerRotation);
-    vec3 nextHeadPos = nextPos + rotatedHeadOffset + _transform->GetForward() * _cameraForwardOffset;
+    vec3 nextHeadPos = nextPos + rotatedHeadOffset + _transform->GetForward() * _cameraForwardOffset ;
 
     vec3 dir = _velocity;
     dir.Normalize();
@@ -129,7 +134,7 @@ void SeaPlayerController::UpdatePlayerAndCamera(float dt, Quaternion& playerRota
 
      // 최종 위치 적용
     _transform->SetWorldPosition(nextPos);
-    _camera->SetCameraPos(nextHeadPos);
+    _camera->SetCameraPos(nextHeadPos + _camera->GetCameraRight() * _cameraYawOffset );
     _velocity *= (1 - (_resistance * dt));
 
 }
@@ -153,9 +158,15 @@ void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float 
         inputDir += vec3::Right;
     }
 
-    if (Input::main->GetKey(KeyCode::Q))
+    if (Input::main->GetMouseDown(KeyCode::LeftMouse))
     {
-        _weapons->Shooting();
+        if (_state == SeaPlayerState::Aiming)
+        {
+            if (_weapons->GetState() == WeaponState::Idle)
+            {
+                _weapons->ChangeState(WeaponState::Shot);
+            }
+        }
     }
 
     if (Input::main->GetKey(KeyCode::Space))
@@ -178,15 +189,12 @@ void SeaPlayerController::KeyUpdate(vec3& inputDir, Quaternion& rotation, float 
 
     if (Input::main->GetMouseDown(KeyCode::RightMouse))
     {
-        SetState(SeaPlayerState::Aiming);
+        if (_state == SeaPlayerState::Aiming)
+            SetState(SeaPlayerState::Idle);
+        else
+            SetState(SeaPlayerState::Aiming);
     }
   
-    if (Input::main->GetMouseUp(KeyCode::RightMouse) && _state == SeaPlayerState::Aiming)
-    {
-        SetState(SeaPlayerState::Idle);
-    }
-
-
     if (Input::main->GetKey(KeyCode::F1))
     {
         auto& camera = CameraManager::main->GetCamera(CameraType::DebugCamera);

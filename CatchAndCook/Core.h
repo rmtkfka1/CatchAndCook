@@ -31,7 +31,7 @@ public:
 	void FenceCurrentFrame();
 	//void FenceAll();
 
-	void FlushResCMDQueue();
+	void ExcuteCommandQueue();
 	void ResizeWindowSize();
 	HWND GetHandle() { return _hwnd; }
 

@@ -29,13 +29,13 @@ void Texture::Init(const wstring& path, TextureType type, bool relativePath, boo
     wstring ext = fs::path(finalPath).extension();
 
     if (ext == L".dds" || ext == L".DDS")
-        ::LoadFromDDSFile(finalPath.c_str(), DDS_FLAGS_NONE, nullptr, _image);
-    else if (ext == L".tga" || ext == L".TGA")
-        ::LoadFromTGAFile(finalPath.c_str(), nullptr, _image);
+        LoadFromDDSFile(finalPath.c_str(), DDS_FLAGS_NONE, nullptr, _image);
     else if (ext == L".hdr" || ext == L".HDR")
-        ::LoadFromHDRFile(path.c_str(), nullptr, _image);
-    else // png, jpg, jpeg, bmp
-        ::LoadFromWICFile(finalPath.c_str(), WIC_FLAGS_NONE, nullptr, _image);
+        LoadFromHDRFile(path.c_str(), nullptr, _image);
+    else if (ext == L".tga" || ext == L".TGA")
+        LoadFromTGAFile(finalPath.c_str(), nullptr, _image);
+    else 
+        LoadFromWICFile(finalPath.c_str(), WIC_FLAGS_NONE, nullptr, _image);
 
     if (!(ext == L".dds" || ext == L".DDS") && createMip)
     {
@@ -63,30 +63,25 @@ void Texture::Init(const wstring& path, TextureType type, bool relativePath, boo
 	
     SetSize(Vector2(_image.GetMetadata().width, _image.GetMetadata().height));
 
-    hr = ::PrepareUpload(Core::main->GetDevice().Get(),
+    ThrowIfFailed(PrepareUpload(Core::main->GetDevice().Get(),
         _image.GetImages(),
         _image.GetImageCount(),
         _image.GetMetadata(),
-        subResources);
+        subResources));
 
-    if (FAILED(hr))
-        assert(nullptr);
 
-    const uint64 bufferSize = ::GetRequiredIntermediateSize(_resource.Get(), 0, static_cast<uint32>(subResources.size()));
+    const UINT64 size = ::GetRequiredIntermediateSize(_resource.Get(), 0, static_cast<uint32>(subResources.size()));
 
     ComPtr<ID3D12Resource> textureUploadHeap;
-    hr = Core::main->GetDevice()->CreateCommittedResource(
+    ThrowIfFailed( Core::main->GetDevice()->CreateCommittedResource(
         &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
         D3D12_HEAP_FLAG_NONE,
-        &CD3DX12_RESOURCE_DESC::Buffer(bufferSize),
+        &CD3DX12_RESOURCE_DESC::Buffer(size),
         D3D12_RESOURCE_STATE_GENERIC_READ,
         nullptr,
-        IID_PPV_ARGS(textureUploadHeap.GetAddressOf()));
+        IID_PPV_ARGS(textureUploadHeap.GetAddressOf())));
 
-    if (FAILED(hr))
-        assert(nullptr);
-
-    hr = Core::main->GetDevice()->CreateCommittedResource(
+    ThrowIfFailed( Core::main->GetDevice()->CreateCommittedResource(
         &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
         D3D12_HEAP_FLAG_NONE,
         &CD3DX12_RESOURCE_DESC::Tex2D(
@@ -97,25 +92,19 @@ void Texture::Init(const wstring& path, TextureType type, bool relativePath, boo
             _image.GetMetadata().mipLevels),
         D3D12_RESOURCE_STATE_COMMON,
         nullptr,
-        IID_PPV_ARGS(&_resource));
+        IID_PPV_ARGS(&_resource)));
 
-    if (FAILED(hr))
-        assert(nullptr);
 
-    auto list = Core::main->GetResCmdList();
+    auto& list = Core::main->GetResCmdList();
   
     list->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_resource.Get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
 
-    ::UpdateSubresources(list.Get(),
-        _resource.Get(),
-        textureUploadHeap.Get(),
-        0, 0,
-        static_cast<unsigned int>(subResources.size()),
-        subResources.data());
+    int64 offset = UpdateSubresources(list.Get(),
+        _resource.Get(), textureUploadHeap.Get(), 0, 0, static_cast<unsigned int>(subResources.size()), subResources.data());
 
     list->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_resource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE));
    
-    Core::main->FlushResCMDQueue();
+    Core::main->ExcuteCommandQueue();
 
     Core::main->GetBufferManager()->GetTextureBufferPool()->AllocSRVDescriptorHandle(&_srvHandle);
 
@@ -181,7 +170,6 @@ void Texture::Init(vector<wstring>& paths)
 
         if (FAILED(hr))
         {
-            wcout << L"Failed to load file: " << path << endl;
             assert(false);
         }
 
@@ -288,7 +276,7 @@ void Texture::Init(vector<wstring>& paths)
     ));
 
     // 커맨드 제출 & 동기화
-    Core::main->FlushResCMDQueue();
+    Core::main->ExcuteCommandQueue();
 
     // 5) SRV 생성 (Texture2DArray)
     // ------------------------------------

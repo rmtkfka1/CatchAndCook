@@ -271,9 +271,9 @@ void Scene_Sea01::Rendering()
 	auto& cmdList = Core::main->GetCmdList();
 	Core::main->GetRenderTarget()->ClearDepth();
 
-	Profiler::Set("PASS : Shadow", BlockTag::CPU);  
-	ShadowPass(cmdList);
-	Profiler::Fin();
+	//Profiler::Set("PASS : Shadow", BlockTag::CPU);  
+	//ShadowPass(cmdList);
+	//Profiler::Fin();
 
 	Profiler::Set("PASS : Deferred", BlockTag::CPU);
 	DeferredPass(cmdList);
