@@ -25,9 +25,6 @@ void TestScene::Init()
 
 	ColliderManager::main->SetCellSize(5);
 
-	ResourceManager::main->LoadAlway<SceneLoader>(L"test6", L"../Resources/Datas/Scenes/MainField5.json");
-	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test6");
-	sceneLoader->Load(GetCast<Scene>());
 
 	std::shared_ptr<Light> light = std::make_shared<Light>();
 	light->onOff = 1;
@@ -47,7 +44,101 @@ void TestScene::Init()
 	CameraManager::main->GetCamera(CameraType::DebugCamera)->SetCameraLook(vec3(0.316199, 0.743145, -0.589706));
 	CameraManager::main->GetCamera(CameraType::DebugCamera)->SetCameraPos(vec3(245.946, 79.8085, 225.333));
 
-}
+
+
+	{
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info.cullingType = CullingType::NONE;
+
+		shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"cubemap", L"cubemap.hlsl", GeoMetryProp,
+			ShaderArg{}, info);
+
+		shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"cubemap", L"Textures/cubemap/Sky_0.png.dds", TextureType::CubeMap);
+		shared_ptr<Material> material = make_shared<Material>();
+
+		shared_ptr<GameObject> gameObject = CreateGameObject(L"cubeMap");
+
+		auto meshRenderer = gameObject->AddComponent<MeshRenderer>();
+
+
+		material = make_shared<Material>();
+		material->SetShader(shader);
+		material->SetPass(RENDER_PASS::Forward);
+		material->SetTexture("_BaseMap", texture);
+
+		meshRenderer->AddMaterials({ material });
+		meshRenderer->AddMesh(GeoMetryHelper::LoadRectangleBox(1.0f));
+		meshRenderer->SetCulling(false);
+	}
+
+
+
+	random_device urd;
+	mt19937 gen(urd());
+	uniform_real_distribution<float> ddis(-1000.0f, 1000.0f);
+	uniform_real_distribution<float> dis(1, 30.0f);
+	uniform_real_distribution<float> rotate(-360.0f, 360.0f);
+
+
+	shared_ptr<Material> materialO = make_shared<Material>();
+	materialO->SetPass(RENDER_PASS::Transparent);
+	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
+
+		ShaderInfo info;
+		info._blendEnable = true;
+		info._blendType[0] = BlendType::Add;
+		info.renderTargetCount = 1;
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+
+	shared_ptr<Shader> shader = ResourceManager::main->Load<Shader>(L"UiForward", L"UiForward.hlsl", StaticProp,
+			ShaderArg{}, info);
+
+	shader->SetInjector({ BufferType::SeaDefaultMaterialParam });
+	shader->SetPass(RENDER_PASS::Transparent);
+
+
+	for (int i = 0; i < 1000; ++i)
+	{
+		{
+
+			shared_ptr<Texture> texture = ResourceManager::main->Load<Texture>(L"start", L"Textures/start.jpg");
+			shared_ptr<GameObject> root = CreateGameObject(L"root_test");
+
+			auto meshRenderer = root->AddComponent<MeshRenderer>();
+			auto collider = root->AddComponent<Collider>();
+			collider->SetBoundingBox(vec3(0, 0, 0), vec3(1.0f, 1.0f, 1.0f));
+
+			root->_transform->SetLocalScale(vec3(dis(urd), dis(urd), dis(urd)));
+			root->_transform->SetLocalPosition(vec3(ddis(urd), ddis(urd), ddis(urd)));
+			root->_transform->SetLocalRotation(vec3(rotate(urd), rotate(urd), rotate(urd)));
+			root->SetType(GameObjectType::Static);
+			root->AddTag(GameObjectTag::Wall);
+
+			if (i == 0)
+			{
+
+				root->AddComponent<testComponent>();
+				root->_transform->SetLocalPosition(vec3(0, 0, 0));
+				root->_transform->SetLocalScale(vec3(5.0f, 5.0f, 5.0f));
+				root->_transform->SetLocalRotation(vec3(0, 0, 0));
+				root->SetType(GameObjectType::Dynamic);
+				root->AddTag(GameObjectTag::Player);
+			}
+
+
+			materialO->SetShader(shader);
+			materialO->SetTexture("_BaseMap", texture);
+
+			meshRenderer->AddMaterials({ materialO });
+			meshRenderer->AddMesh(mesh);
+		}
+	};
+
+
+};
 
 void TestScene::Update()
 {
