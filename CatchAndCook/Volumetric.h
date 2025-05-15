@@ -4,19 +4,12 @@
 
 struct VolumetricData
 {
-	vec3 color{};
-	float phase =30.0f;
-
-	vec3 lightDir{};
-	float waterHeight=2000.0f;
-
-	vec2 padding{};
-	float Absorption =5.0f;
-	int numSlice=30.0f;
-
-
-
-
+	vec3 fogColor; 
+	float phaseG; 
+	vec3 lightDir;
+	float waterHeight;
+	float absorption; 
+	int numSlices; 
 };
 
 

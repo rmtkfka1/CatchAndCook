@@ -29,9 +29,27 @@ void Volumetric::Init()
 
 	if (_shader == nullptr)
 	{
-		_shader = ResourceManager::main->Get<Shader>(L"UnderwaterVolumetric");
-	}
 
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info._zWrite = false;
+		info._blendEnable = false;
+		info.cullingType = CullingType::NONE;
+		info._blendType[0] = BlendType::Add;
+
+		info.renderTargetCount = 1;
+
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Forward);
+		shader->Init(L"UnderwaterVolumetric.hlsl", StaticProp, ShaderArg{}, info);
+
+		_shader = shader;
+	}
+	
 	ImguiManager::main->_volumetricData = &_data;
 }
 
@@ -45,7 +63,6 @@ void Volumetric::Render()
 
 	_data.lightDir = LightManager::main->GetMainLight()->direction;
 
-
 	memcpy(CbufferContainer->ptr, (void*)&_data, sizeof(VolumetricData));
 	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(5, CbufferContainer->GPUAdress);
 
@@ -55,7 +72,7 @@ void Volumetric::Render()
 	//float clearColor[4] = { 0.0f,0.0f,0.0f,0.0f };
 	//Core::main->GetCmdList()->ClearRenderTargetView(_texture->GetRTVCpuHandle(), clearColor, 0, nullptr);
 	
-	Core::main->GetCmdList()->DrawInstanced(3, _data.numSlice, 0, 0);
+	Core::main->GetCmdList()->DrawInstanced(3, _data.numSlices, 0, 0);
 	_texture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
 }
