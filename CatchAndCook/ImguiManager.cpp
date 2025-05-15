@@ -93,7 +93,7 @@ void ImguiManager::Debug()
         LightController();
         BoidMove();
         Sky();
-        //VolumetricTest();
+        VolumetricTest();
       
     };
 

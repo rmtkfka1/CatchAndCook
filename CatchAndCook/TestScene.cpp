@@ -14,11 +14,16 @@
 #include "PlayerController.h"
 #include "testComponent.h"
 #include "LightManager.h"
-
+#include "Profiler.h"
+#include "Volumetric.h"
 
 void TestScene::Init()
 {
 	Scene::Init();
+
+	Volumetric::main = make_unique<Volumetric>();
+	Volumetric::main->Init();
+
 
 	_finalShader->SetShader(ResourceManager::main->Get<Shader>(L"finalShader_MainField"));
 	_finalShader->SetPass(RENDER_PASS::Forward);
@@ -87,7 +92,7 @@ void TestScene::Init()
 	shared_ptr<Mesh> mesh = GeoMetryHelper::LoadRectangleBox(1.0f);
 
 	ShaderInfo info;
-	info._blendEnable = true;
+	info._blendEnable = false;
 	info.renderTargetCount = 4;
 	info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	info.RTVForamts[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -156,7 +161,36 @@ void TestScene::RenderBegin()
 
 void TestScene::Rendering()
 {
-	Scene::Rendering();
+	GlobalSetting();
+
+	_globalParam.caustics = 0;
+
+
+	auto& cmdList = Core::main->GetCmdList();
+	Core::main->GetRenderTarget()->ClearDepth();
+
+
+	Profiler::Set("PASS : Deferred", BlockTag::CPU);
+	DeferredPass(cmdList);
+	Profiler::Fin();
+
+	Profiler::Set("PASS : FinalPass", BlockTag::CPU);
+	FinalRender(cmdList);
+	Profiler::Fin();
+
+	Profiler::Set("PASS : Forward", BlockTag::CPU);
+	ForwardPass(cmdList);
+	Profiler::Fin();
+
+	Volumetric::main->Render();
+
+	Profiler::Set("PASS : Transparent", BlockTag::CPU);
+	TransparentPass(cmdList); // Position,
+	Profiler::Fin();
+
+	Profiler::Set("PASS : UI", BlockTag::CPU);
+	UiPass(cmdList);
+	Profiler::Fin();
 }
 
 void TestScene::DebugRendering()
