@@ -35,7 +35,7 @@ VS_OUT VS_Main(VS_IN input, uint iid : SV_InstanceID)
     o.pos = float4(input.Position.xy, 0.0f, 1.0f);
     o.uv = input.uv;
     o.sliceIdx = iid;
-    o.sliceNorm = (iid) / numSlices;
+    o.sliceNorm = (iid+0.5f) / numSlices;
 
     return o;
 }
@@ -52,6 +52,11 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float3 viewPos = viewPosH.xyz;
 
     float depth = viewPos.z;
+    
+    if(depth>500.0f)
+    {
+        return float4(0, 0, 0, 0);
+    }
    
     float density = saturate(depth / waterHeight);
 

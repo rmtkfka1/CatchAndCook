@@ -36,7 +36,7 @@ void Volumetric::Init()
 		info._zTest = true;
 		info._stencilTest = false;
 		info._zWrite = false;
-		info._blendEnable = true;
+		info._blendEnable = false;
 		info.cullingType = CullingType::NONE;
 		info._blendType[0] = BlendType::Add;
 
