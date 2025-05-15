@@ -13,6 +13,7 @@
 #include "ComputeManager.h"
 #include "PlayerController.h"
 #include "testComponent.h"
+#include "LightManager.h"
 
 
 void TestScene::Init()
@@ -23,9 +24,25 @@ void TestScene::Init()
 	_finalShader->SetPass(RENDER_PASS::Forward);
 
 	ColliderManager::main->SetCellSize(5);
+
 	ResourceManager::main->LoadAlway<SceneLoader>(L"test6", L"../Resources/Datas/Scenes/MainField5.json");
 	auto sceneLoader = ResourceManager::main->Get<SceneLoader>(L"test6");
 	sceneLoader->Load(GetCast<Scene>());
+
+	std::shared_ptr<Light> light = std::make_shared<Light>();
+	light->onOff = 1;
+	light->direction = vec3(-0.122f, -0.732f, 0.299f);
+	light->position = vec3(0, 1000.0f, 0);
+	light->direction.Normalize();
+
+	light->material.ambient = vec3(0.4f, 0.4f, 0.4f);
+	light->material.diffuse = vec3(1.0f, 1.0f, 1.0f);
+	light->material.specular = vec3(0, 0, 0);
+	light->material.shininess = 32.0f;
+	light->material.lightType = static_cast<int32>(LIGHT_TYPE::DIRECTIONAL_LIGHT);
+	light->strength = vec3(1.0f, 1.0f, 1.0f);
+	LightManager::main->PushLight(light);
+	LightManager::main->_lightParmas.mainLight = *light.get();
 
 	CameraManager::main->GetCamera(CameraType::DebugCamera)->SetCameraLook(vec3(0.316199, 0.743145, -0.589706));
 	CameraManager::main->GetCamera(CameraType::DebugCamera)->SetCameraPos(vec3(245.946, 79.8085, 225.333));

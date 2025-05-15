@@ -49,7 +49,7 @@ void ResourceManager::CreateDefaultShader()
 void ResourceManager::CreateDefaultShaderKSH()
 {
 
-	/*{
+	{
 
 		ShaderInfo info;
 		info._zTest = true;
@@ -67,7 +67,7 @@ void ResourceManager::CreateDefaultShaderKSH()
 		shader->SetPass(RENDER_PASS::Forward);
 		shader->Init(L"UnderwaterVolumetric.hlsl", StaticProp, ShaderArg{}, info);
 		Add<Shader>(L"UnderwaterVolumetric", shader);
-	}*/
+	}
 
 
 	{
