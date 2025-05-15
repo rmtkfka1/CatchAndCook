@@ -1,7 +1,8 @@
 ﻿#include "pch.h"
 #include "Volumetric.h"
 #include "LightManager.h"
-
+#include "Mesh.h"
+#include "GeoMetryHelper.h"
 
 unique_ptr<Volumetric> Volumetric::main;
 
@@ -29,9 +30,29 @@ void Volumetric::Init()
 
 	if (_shader == nullptr)
 	{
-		_shader = ResourceManager::main->Get<Shader>(L"UnderwaterVolumetric");
+
+
+		ShaderInfo info;
+		info._zTest = true;
+		info._stencilTest = false;
+		info._zWrite = false;
+		info._blendEnable = false;
+		info.cullingType = CullingType::NONE;
+		info._blendType[0] = BlendType::Add;
+
+		info.renderTargetCount = 1;
+
+		info.RTVForamts[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->SetPass(RENDER_PASS::Forward);
+		shader->Init(L"UnderwaterVolumetric.hlsl", GeoMetryProp, ShaderArg{}, info);
+
+		_shader = shader;
 	}
 
+	_mesh = GeoMetryHelper::LoadRectangleMesh();
+	
 	ImguiManager::main->_volumetricData = &_data;
 }
 
@@ -44,18 +65,21 @@ void Volumetric::Render()
 	auto CbufferContainer =  Core::main->GetBufferManager()->CreateAndGetBufferPool(BufferType::VolumetricData, sizeof(VolumetricData), 1)->Alloc(1);
 
 	_data.lightDir = LightManager::main->GetMainLight()->direction;
-	_data.waterHeight = 2000.0f;
 
 	memcpy(CbufferContainer->ptr, (void*)&_data, sizeof(VolumetricData));
 	Core::main->GetCmdList()->SetGraphicsRootConstantBufferView(5, CbufferContainer->GPUAdress);
 
-	Core::main->GetCmdList()->RSSetViewports(1, &_viewport);
-	Core::main->GetCmdList()->RSSetScissorRects(1, &_scissorRect);
-	Core::main->GetCmdList()->OMSetRenderTargets(1, &_texture->GetRTVCpuHandle(), false, &_texture->GetSharedDSVHandle());
-	float clearColor[4] = { 0.0f,0.0f,0.0f,0.0f };
-	Core::main->GetCmdList()->ClearRenderTargetView(_texture->GetRTVCpuHandle(), clearColor, 0, nullptr);
-	
-	Core::main->GetCmdList()->DrawInstanced(3, _data.numSlice, 0, 0);
+
+	//Core::main->GetCmdList()->RSSetViewports(1, &_viewport);
+	//Core::main->GetCmdList()->RSSetScissorRects(1, &_scissorRect);
+	//Core::main->GetCmdList()->OMSetRenderTargets(1, &_texture->GetRTVCpuHandle(), false, &_texture->GetSharedDSVHandle());
+	//float clearColor[4] = { 0.0f,0.0f,0.0f,0.0f };
+	//Core::main->GetCmdList()->ClearRenderTargetView(_texture->GetRTVCpuHandle(), clearColor, 0, nullptr);
+
+	Core::main->GetCmdList()->IASetVertexBuffers(0, 1, &_mesh->GetVertexView());
+	Core::main->GetCmdList()->IASetIndexBuffer(&_mesh->GetIndexView());
+
+	Core::main->GetCmdList()->DrawIndexedInstanced(6, _data.numSlices, 0, 0,0);
 	_texture->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
 }

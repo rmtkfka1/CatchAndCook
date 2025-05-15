@@ -23,7 +23,6 @@ static unordered_map<string, GameObjectTag> GameObjectTagMap =
 	{ "NonInstancing", GameObjectTag::NonInstancing },
 };
 
-
 inline GameObjectTag& operator|=(GameObjectTag& a, GameObjectTag b) {
 	a = static_cast<GameObjectTag>(
 		static_cast<std::uint64_t>(a) | static_cast<std::uint64_t>(b));

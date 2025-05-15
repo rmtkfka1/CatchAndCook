@@ -35,5 +35,5 @@ VS_OUT VS_Main(VS_IN input, uint id : SV_InstanceID)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    return _BaseMap.Sample(sampler_lerp, input.uv);
+    return float4(_BaseMap.Sample(sampler_lerp, input.uv).xyz, 1.0f);
 }

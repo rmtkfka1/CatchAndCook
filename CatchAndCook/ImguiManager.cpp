@@ -93,7 +93,7 @@ void ImguiManager::Debug()
         LightController();
         BoidMove();
         Sky();
-        //VolumetricTest();
+        VolumetricTest();
       
     };
 
@@ -541,10 +541,10 @@ void ImguiManager::VolumetricTest()
     {
         if (ImGui::TreeNode("_volumetricData"))
         {
-            ImGui::SliderFloat("Absorption", &_volumetricData->Absorption, 0.0f, 10.0f);
-            ImGui::SliderFloat3("color", &_volumetricData->color.x, 0, 1.0f);
-            ImGui::SliderInt("numSlice", &_volumetricData->numSlice, 0.0f, 50);
-            ImGui::SliderFloat("phase", &_volumetricData->phase, 0.0f, 10.0f);
+            ImGui::SliderFloat("Absorption", &_volumetricData->absorption, 0.0f, 10.0f);
+            ImGui::SliderFloat3("color", &_volumetricData->fogColor.x, 0, 1.0f);
+            ImGui::SliderInt("numSlice", &_volumetricData->numSlices, 0.0f, 50);
+            ImGui::SliderFloat("phase", &_volumetricData->phaseG, 0.0f, 10.0f);
             ImGui::SliderFloat("waterHeight", &_volumetricData->waterHeight, 0.0f, 3000.0f);
             ImGui::TreePop();
         }
