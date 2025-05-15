@@ -12,6 +12,8 @@ struct VolumetricData
 	int numSlices; 
 };
 
+class Mesh;
+class Shader;
 
 class Volumetric
 {
@@ -33,6 +35,7 @@ public:
 
 private:
 	shared_ptr<Shader> _shader;
+	shared_ptr<Mesh> _mesh;
 	D3D12_VIEWPORT _viewport;
 	D3D12_RECT _scissorRect;
 	shared_ptr<Texture> _texture;

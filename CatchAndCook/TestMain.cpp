@@ -58,13 +58,12 @@ int main()
 	cout << "View Space = (" << viewPos.x << ", " << viewPos.y << ", " << viewPos.z << ")" << endl;
 	cout << "Clip Space = (" << clipPos.x << ", " << clipPos.y << ", " << clipPos.z << ", " << clipPos.w << ")" << endl;
 
-	// 2) Clip Space → NDC
+
 	vec3 Originndc;
     Originndc.x = clipPos.x / clipPos.w;
     Originndc.y = clipPos.y / clipPos.w;
     Originndc.z = clipPos.z / clipPos.w;
 	cout << "NDC = (" << Originndc.x << ", " << Originndc.y << ", " << Originndc.z << ")" << endl;
-
 
     cout << "===========================================" << endl;
     //////////////////////////////////////////////////////////////////////////////////////////
@@ -76,14 +75,14 @@ int main()
     float pixelY = (1.0f - Originndc.y) * 0.5f * screenSize.y;
 
 	cout << "Pixel = (" << pixelX << ", " << pixelY << ")" << endl;
-    float depth = 1.0f;   
+    float depth = Originndc.z;
 
 
-    // 3) Pixel → NDC 변환
-    // DirectX: 화면 상단(0,0), 아래로 Y 증가 → NDC Y는 반전
     Vector3 ndc;
-    ndc.x = (pixelX / screenSize.x) * 2.0f - 1.0f;
-    ndc.y = 1.0f - (pixelY / screenSize.y) * 2.0f;
+    //ndc.x = (pixelX / screenSize.x) * 2.0f - 1.0f;
+    //ndc.y = 1.0f - (pixelY / screenSize.y) * 2.0f;
+    ndc.x = Originndc.x;
+    ndc.y = Originndc.y;
     ndc.z = depth;
 
     // 4) NDC → Clip Space
@@ -99,9 +98,9 @@ int main()
     // 6) View → World Space (Inverse View + Divide)
     Matrix invView = viewMat.Invert();
     Vector4 worldH = Vector4::Transform(viewH, invView);
-    worldH = worldH / worldH.w;
+    cout << worldH.w << endl;
 
-
+    //worldH = worldH / worldH.w;
 
     // 7) 결과 출력
     std::cout
