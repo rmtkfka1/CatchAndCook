@@ -153,7 +153,6 @@ void CS_Main(uint3 id : SV_DispatchThreadID)
     int2 tex = id.xy;
     float2 uv = (float2(tex) + 0.5) / cameraScreenData.xy;
 
-    // ±âº» G-buffer »ùÇÃ¸µ
     float3 albedo = RenderT.SampleLevel(sampler_lerp, uv, 0).xyz;
     float3 normal = normalize(NormalTexture.SampleLevel(sampler_point, uv, 0).xyz);
     float3 worldPos = PositionTexture.SampleLevel(sampler_point, uv, 0).xyz;
