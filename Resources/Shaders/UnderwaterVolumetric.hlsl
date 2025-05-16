@@ -71,35 +71,20 @@ float3 ProjToView(float2 uvCoord)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    // View 공간 기준의 ray 방향 구하기
     float3 viewRayEnd = ProjToView(input.uv);
-    float3 viewDir = normalize(viewRayEnd); // 정규화된 뷰 방향
-    float3 origin = float3(0, 0, 0); // ViewSpace에서 카메라 위치
+    float3 viewDir = normalize(viewRayEnd);
+    float3 origin = float3(0, 0, 0); 
 
-    float3 accum = float3(0, 0, 0); // 누적 색상
-    float transmittance = 1.0f; // 남은 투과도
+    float3 accum = float3(0, 0, 0);
 
     for (int i = 0; i < numSteps; ++i)
     {
         float t = stepSize * i;
         float3 pos = origin + viewDir * t;
 
-        float depth = pos.z; 
-        float density = saturate((waterHeight - depth) / waterHeight);
-
-        float3 lightVS = normalize(mul((float3x3) ViewMatrix, lightDir));
-        float3 sampleViewDir = normalize(-pos);
-        float phase = PhaseHG(dot(sampleViewDir, lightVS), phaseG);
-
-        float attenuation = exp(-absorption * t);
-        float3 fogSample = fogColor ;
-
-        accum += fogSample * transmittance;
-        transmittance *= (1.0f - density * 0.04f);
-
-        if (transmittance < 0.01f)
-            break;
+        float3 sampleColor = float3(t * 0.01f, 0.0f, 0.0f);
+        accum += sampleColor;
     }
 
-    return float4(saturate(accum), 1.0f - transmittance);
+    return float4(saturate(accum), 1.0f);
 }
