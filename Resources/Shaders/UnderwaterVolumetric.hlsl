@@ -1,75 +1,105 @@
+
 #include "Global_b0.hlsl"
 #include "Camera_b2.hlsl"
 
 
 cbuffer VolumetricData : register(b5)
 {
-    float3 fogColor; 
-    float phaseG; 
+    float3 fogColor;
+    float phaseG;
+    
     float3 lightDir;
-    float waterHeight; 
-    float absorption; 
+    float waterHeight;
+    
+    float absorption;
     int numSlices;
+    int numSteps;
+    float stepSize;
 };
 
-
-struct VS_IN
-{
-    float4 Position : POSITION;
-    float2 uv : TEXCOORD;
-    float3 normal : NORMAL;
-};
 
 struct VS_OUT
 {
     float4 pos : SV_POSITION;
     float2 uv : TEXCOORD0;
-    float sliceNorm : TEXCOORD1;
-    uint sliceIdx : SV_InstanceID;
 };
 
-VS_OUT VS_Main(VS_IN input, uint iid : SV_InstanceID)
+VS_OUT VS_Main(uint vid : SV_VertexID)
 {
     VS_OUT o;
 
-    o.pos = float4(input.Position.xy, 0.0f, 1.0f);
-    o.uv = input.uv;
-    o.sliceIdx = iid;
-    o.sliceNorm = (iid+0.5f) / numSlices;
+    float2 verts[4] =
+    {
+        float2(-1, 1), // top-left
+        float2(1, 1), // top-right
+        float2(-1, -1), // bottom-left
+        float2(1, -1) 
+    };
+
+    float2 uvs[4] =
+    {
+        float2(0, 0),
+        float2(1, 0),
+        float2(0, 1),
+        float2(1, 1)
+    };
+
+    o.pos = float4(verts[vid], 0.0f, 1.0f);
+    o.uv = uvs[vid];
 
     return o;
 }
 
+float PhaseHG(float cosTheta, float g)
+{
+    float g2 = g * g;
+    return (1.0f - g2) / pow(1.0f + g2 - 2.0f * g * cosTheta, 1.5f) * (1.0 / (4 * 3.14159));
+}
+
+float3 ProjToView(float2 uvCoord)
+{
+    float4 posProj;
+    posProj.xy = uvCoord * 2.0f - 1.0f;
+    posProj.y *= -1;
+    posProj.z = 1.0f;
+    posProj.w = 1.0f;
+    
+    float4 posView = mul(posProj, InvertProjectionMatrix);
+    return posView.xyz / posView.w;
+}
+
+
 float4 PS_Main(VS_OUT input) : SV_Target
 {
+    // View 공간 기준의 ray 방향 구하기
+    float3 viewRayEnd = ProjToView(input.uv);
+    float3 viewDir = normalize(viewRayEnd); // 정규화된 뷰 방향
+    float3 origin = float3(0, 0, 0); // ViewSpace에서 카메라 위치
 
-    float ndcZ = input.sliceNorm * 2.0f - 1.0f;
-    float4 clipPos = float4(input.uv * 2.0f - 1.0f, ndcZ, 1.0f);
-    clipPos.y *= -1;
-    
-    float4 viewPosH = mul(InvertProjectionMatrix, clipPos);
-    viewPosH /= viewPosH.w;
-    float3 viewPos = viewPosH.xyz;
+    float3 accum = float3(0, 0, 0); // 누적 색상
+    float transmittance = 1.0f; // 남은 투과도
 
-    float depth = viewPos.z;
-    
-    if(depth>500.0f)
+    for (int i = 0; i < numSteps; ++i)
     {
-        return float4(0, 0, 0, 0);
+        float t = stepSize * i;
+        float3 pos = origin + viewDir * t;
+
+        float depth = pos.z; 
+        float density = saturate((waterHeight - depth) / waterHeight);
+
+        float3 lightVS = normalize(mul((float3x3) ViewMatrix, lightDir));
+        float3 sampleViewDir = normalize(-pos);
+        float phase = PhaseHG(dot(sampleViewDir, lightVS), phaseG);
+
+        float attenuation = exp(-absorption * t);
+        float3 fogSample = fogColor ;
+
+        accum += fogSample * transmittance;
+        transmittance *= (1.0f - density * 0.04f);
+
+        if (transmittance < 0.01f)
+            break;
     }
-   
-    float density = saturate(depth / waterHeight);
 
-    float3 viewDir = normalize(viewPos);
-
-    float3 lightDirVS = normalize(mul((float3x3) ViewMatrix, lightDir));
- 
-    float cosTheta = dot(viewDir, lightDirVS);
-    float phase = (1 - phaseG * phaseG) /
-                  pow(1 + phaseG * phaseG - 2 * phaseG * cosTheta, 1.5f);
-
-
-    float3 fog = fogColor  * phase * exp(-absorption * depth);
-
-    return float4(fog, 1.0f); 
+    return float4(saturate(accum), 1.0f - transmittance);
 }
