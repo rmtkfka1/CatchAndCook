@@ -50,11 +50,6 @@ VS_OUT VS_Main(uint vid : SV_VertexID)
     return o;
 }
 
-float PhaseHG(float cosTheta, float g)
-{
-    float g2 = g * g;
-    return (1.0f - g2) / pow(1.0f + g2 - 2.0f * g * cosTheta, 1.5f) * (1.0 / (4 * 3.14159));
-}
 
 float3 ProjToView(float2 uvCoord)
 {
@@ -67,7 +62,6 @@ float3 ProjToView(float2 uvCoord)
     float4 posView = mul(posProj, InvertProjectionMatrix);
     return posView.xyz / posView.w;
 }
-
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
