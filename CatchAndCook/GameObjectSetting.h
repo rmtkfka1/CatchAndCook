@@ -7,7 +7,6 @@ enum class GameObjectTag : uint64
 	Monster = 1 << 2,
 	Wall = 1 << 3,
 	NPC = 1 << 2,
-
 	NonCulling = 1ull << 25,
 	NonInstancing = 1ull << 26,
 };

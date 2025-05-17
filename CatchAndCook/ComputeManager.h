@@ -310,7 +310,7 @@ struct UnderWaterParam
 	float g_fogMin = 0;
 
 	vec2 padding;
-	int g_on = 1;
+	int g_on = -1;
 	float g_fogMax = 1467.f;
 };
 
@@ -440,8 +440,6 @@ private:
 	friend class ComputeManager;
 };
 
-
-
 struct ScatteringData
 {
 	float phaseG=0.453f;
@@ -451,9 +449,13 @@ struct ScatteringData
 	float density=15.0f;
 	vec3 scatterColor= vec3(0,1,0.375f);
 
-	//vec3 MainlightPos;
-	//float padding2;
+	float numSteps =64.0f;
+	float stepSize = 0.1f;
+
+	vec2 padding2;
 };
+
+
 
 class Scattering : public ComputeBase
 {
@@ -479,7 +481,9 @@ private:
 	shared_ptr<Shader> _shader;
 
 	bool _scattering = true;
+
 	ScatteringData _scatteringData;
+	UnderWaterParam _underWaterParam;
 
 	friend class ComputeManager;
 };

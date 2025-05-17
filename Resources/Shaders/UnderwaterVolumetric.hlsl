@@ -60,13 +60,16 @@ float4 PS_Main(VS_OUT input) : SV_Target
 {
     float3 viewPos = ProjToView(input.ndcPos);
     float depth = viewPos.z;
+
+
     float normDepth = saturate(depth / waterHeight);
-    
-    float density = normDepth;
 
-    float sliceAlpha = (1.0f - exp(-absorption)) * density;
+    // 2) 포그 색상 → 멀수록 진해짐
+    float3 fogCol = fogColor * normDepth;
 
-    float3 fogCol = fogColor * density;
+    // 3) 알파도 멀수록 증가 (깊이 기반 가중치)
+    float sliceAlpha = (1.0f - exp(-absorption * stepSize)) * normDepth;
 
+    // 4) Premultiplied Alpha 출력
     return float4(fogCol * sliceAlpha, sliceAlpha);
 }

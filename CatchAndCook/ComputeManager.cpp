@@ -1095,6 +1095,7 @@ void ColorGradingRender::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Textu
 
 #ifdef IMGUI_ON
 	ImguiManager::main->_colorGradingOnOff = &colorGradingOnOff;
+
 #endif // IMGUI_ON
 }
 
@@ -1318,6 +1319,7 @@ void Scattering::Init(shared_ptr<Texture>& pingTexture, shared_ptr<Texture>& pon
 #ifdef IMGUI_ON
 	ImguiManager::main->_scatteringData = &_scatteringData;
 	ImguiManager::main->_scattering = &_scattering;
+	ImguiManager::main->_underWaterParam = &_underWaterParam;
 #endif // IMGUI_ON
 }
 
@@ -1332,12 +1334,16 @@ void Scattering::Dispatch(ComPtr<ID3D12GraphicsCommandList>& cmdList, int x, int
 	_tableContainer = table->Alloc(10);
 
 	//_scatteringData.MainlightPos = LightManager::main->GetMainLight()->position;
-
-	auto CbufferContainer = Core::main->GetBufferManager()->CreateAndGetBufferPool(BufferType::ScatteringData, sizeof(ScatteringData), 1)->Alloc(1);
-	memcpy(CbufferContainer->ptr, (void*)&_scatteringData, sizeof(ScatteringData));
-	cmdList->SetComputeRootConstantBufferView(5, CbufferContainer->GPUAdress);
-
-	
+	{
+		auto CbufferContainer = Core::main->GetBufferManager()->CreateAndGetBufferPool(BufferType::ScatteringData, sizeof(ScatteringData), 1)->Alloc(1);
+		memcpy(CbufferContainer->ptr, (void*)&_scatteringData, sizeof(ScatteringData));
+		cmdList->SetComputeRootConstantBufferView(5, CbufferContainer->GPUAdress);
+	}
+	{
+		auto CbufferContainer = Core::main->GetBufferManager()->GetBufferPool(BufferType::UnderWaterParam)->Alloc(1);
+		memcpy(CbufferContainer->ptr, (void*)&_underWaterParam, sizeof(_underWaterParam));
+		cmdList->SetComputeRootConstantBufferView(6, CbufferContainer->GPUAdress);
+	}
 	auto& renderTarget = Core::main->GetRenderTarget()->GetRenderTarget();
 	renderTarget->ResourceBarrier(D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
@@ -1367,3 +1373,7 @@ void Scattering::DispatchEnd(ComPtr<ID3D12GraphicsCommandList>& cmdList)
 void Scattering::Resize()
 {
 }
+
+
+
+

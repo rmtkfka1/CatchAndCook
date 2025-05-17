@@ -93,7 +93,7 @@ void ImguiManager::Debug()
         LightController();
         BoidMove();
         Sky();
-        VolumetricTest();
+        //VolumetricTest();
       
     };
 
@@ -284,11 +284,19 @@ void ImguiManager::ComputeController()
 
 	if (*_scattering)
 	{
-  
+
 		ImGui::SliderFloat("phaseG", &_scatteringData->phaseG, 0.0f, 1.0f);
 		ImGui::SliderFloat("absorption", &_scatteringData->absorption, 0.0f, 1000.0f);
 		ImGui::SliderFloat("DENSITY", &_scatteringData->density, 0.0f, 15.0f);
 		ImGui::SliderFloat3("scatterColor", &_scatteringData->scatterColor.x, 0.0f, 1.0f);
+        ImGui::SliderFloat("numSteps", &_scatteringData->numSteps, 0.0f, 100.0f);
+        ImGui::SliderFloat("stepSize", &_scatteringData->stepSize, 0.0f, 100.0f);
+
+        ImGui::SliderFloat3("Underwater Fog Color", &_underWaterParam->g_fogColor.x, 0.0f, 1.0f);
+        ImGui::SliderFloat("Underwater Fog Power", &_underWaterParam->g_fog_power, 0.0f, 30.0f);
+        ImGui::SliderFloat("Underwater Fog Max", &_underWaterParam->g_fogMax, 0.0f, 5000.0f);
+        ImGui::SliderFloat("Underwater Fog Min", &_underWaterParam->g_fogMin, 0.0f, 5000.0f);
+        ImGui::SliderFloat3("Underwater Color", &_underWaterParam->g_underWaterColor.x, 0.0f, 1.0f);
 	}
 
 

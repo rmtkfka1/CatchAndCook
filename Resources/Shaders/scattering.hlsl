@@ -41,51 +41,100 @@ cbuffer ScatterParams : register(b5)
     float density;
     float3 scatterColor;
 
+    float numSteps;
+    float stepSize;
+    float2 padding2;
     //float3 MainlightPos;
     //float padding2;
 };
 
-Texture2D<float4> FoggedScene : register(t0);
+cbuffer underWatgerParam : register(b6)
+{
+    float3 g_fogColor;
+    float g_fog_power;
+
+    float3 g_underWaterColor;
+    float g_fogMin;
+
+    float2 padding;
+    int g_on;
+    float g_fogMax;
+};
+
+Texture2D<float4> sceneColor : register(t0);
 Texture2D<float> DepthTexture : register(t1);
 RWTexture2D<float4> Output : register(u0);
 
 float3 ReconstructViewPos(int2 pixel)
 {
-    float4 posProj;
-    posProj.xy = (pixel + 0.5f) / cameraScreenData.xy * 2.0f - 1.0f;
-    posProj.y *= -1;
-    posProj.z = DepthTexture.Load(int3(pixel, 0));
-    posProj.w = 1.0f;
-    
-    float4 posView = mul(posProj, InvertProjectionMatrix);
-    return posView.xyz / posView.w;
+    float2 ndc = (pixel + 0.5f) / cameraScreenData.xy * 2.0f - 1.0f;
+    ndc.y *= -1;
+    float rawDepth = DepthTexture.Load(int3(pixel, 0));
+    float clipZ = rawDepth * 2.0f - 1.0f; 
+    float4 posProj = float4(ndc, clipZ, 1.0f);
+    float4 viewH = mul(posProj, InvertProjectionMatrix);
+    return viewH.xyz / viewH.w;
 }
+
 
 
 [numthreads(16, 16, 1)]
 void CS_Main(uint3 id : SV_DispatchThreadID)
 {
-    int2 pixel = id.xy;
-    float3 baseColor = FoggedScene[pixel].rgb;
+    int2 pixel = int2(id.xy);
 
+
+    float3 baseColor = sceneColor[pixel].rgb;
     float3 viewPos = ReconstructViewPos(pixel);
-    float3 worldPos = mul(float4(viewPos, 1.0f), InvertViewMatrix).xyz;
 
-    //viewDir: 픽셀에서 카메라(또는 관찰자) 방향으로 향하는 단위 벡터  
-    //lightDir: 픽셀에서 빛(광원) 방향으로 향하는 단위 벡터
+    float maxDist = length(viewPos);
+    float3 viewDir = viewPos / maxDist;
     
-    float3 lightToPixel = normalize(mainLight.position - worldPos ); // 픽셀에서 광원으로 나가는방향
-    float3 lightDir = normalize(-mainLight.direction);  //픽셀에서 광원으로 향하는방향
+    int steps = max(1, (int) numSteps);
+    float delta = maxDist / steps;
 
-    float cosTheta = dot(lightToPixel, lightDir);
-    float g2 = phaseG * phaseG;
-    float denom = max(1 + g2 - 2 * phaseG * cosTheta, 1e-3);
-    float phase = (1 - g2) / (4 * 3.14159 * pow(denom, 1.5));
+    float accDensity = 0;
+    for (int i = 0; i < steps; ++i)
+    {
+        float t = (i + 0.5f) * delta;
+        float3 samplePos = viewDir * t;
+        float d = saturate((t - g_fogMin) / (g_fogMax - g_fogMin));
 
-    float lightDepth = length(worldPos - mainLight.position);
-    float atten = 1.0 / (1.0 + log(1.0 + absorption * lightDepth));
+        accDensity += d;
+    }
+    float fogFactor = pow(accDensity / steps, g_fog_power);
+    fogFactor = saturate(fogFactor);
 
-    float3 scatter = scatterColor * phase * atten * density;
-    float3 finalColor = baseColor + scatter;
+    float3 finalColor = lerp(baseColor, g_fogColor, fogFactor);
     Output[pixel] = float4(finalColor, 1);
 }
+
+
+
+//[numthreads(16, 16, 1)]
+//void CS_Main(uint3 id : SV_DispatchThreadID)
+//{
+//    int2 pixel = id.xy;
+//    float3 baseColor = FoggedScene[pixel].rgb;
+
+//    float3 viewPos = ReconstructViewPos(pixel);
+//    float3 worldPos = mul(float4(viewPos, 1.0f), InvertViewMatrix).xyz;
+
+//    //viewDir: 픽셀에서 카메라(또는 관찰자) 방향으로 향하는 단위 벡터  
+//    //lightDir: 픽셀에서 빛(광원) 방향으로 향하는 단위 벡터
+    
+//    float3 lightToPixel = normalize(mainLight.position - worldPos ); // 픽셀에서 광원으로 나가는방향
+//    float3 lightDir = normalize(-mainLight.direction);  //픽셀에서 광원으로 향하는방향
+
+//    float cosTheta = dot(lightToPixel, lightDir);
+//    float g2 = phaseG * phaseG;
+//    float denom = max(1 + g2 - 2 * phaseG * cosTheta, 1e-3);
+//    float phase = (1 - g2) / (4 * 3.14159 * pow(denom, 1.5));
+
+//    float lightDepth = length(worldPos - mainLight.position);
+//    float atten = 1.0 / (1.0 + log(1.0 + absorption * lightDepth));
+
+//    float3 scatter = scatterColor * phase * atten * density;
+//    float3 finalColor = baseColor + scatter;
+//    Output[pixel] = float4(finalColor, 1);
+//}
