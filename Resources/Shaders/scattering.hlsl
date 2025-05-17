@@ -81,34 +81,45 @@ float3 ReconstructViewPos(int2 pixel)
 [numthreads(16, 16, 1)]
 void CS_Main(uint3 id : SV_DispatchThreadID)
 {
-    int2 pixel = int2(id.xy);
+    int2 pix = int2(id.xy);
 
+    float3 baseColor = sceneColor[pix].rgb;
+    float3 vPosVS = ReconstructViewPos(pix);
+    float maxDist = length(vPosVS);
+    float3 viewDirVS = vPosVS / maxDist; 
 
-    float3 baseColor = sceneColor[pixel].rgb;
-    float3 viewPos = ReconstructViewPos(pixel);
-
-    float maxDist = length(viewPos);
-    float3 viewDir = viewPos / maxDist;
+    float3 lightDirVS = normalize(mul((float3x3) ViewMatrix, mainLight.direction));
+    float3 accScatter = float3(0, 0, 0);
+    float transmittance = 1.0f;
     
-    int steps = max(1, (int) numSteps);
-    float delta = maxDist / steps;
-
-    float accDensity = 0;
-    for (int i = 0; i < steps; ++i)
+    for (int i = 0; i < numSteps; ++i)
     {
-        float t = (i + 0.5f) * delta;
-        float3 samplePos = viewDir * t;
-        float d = saturate((t - g_fogMin) / (g_fogMax - g_fogMin));
+        float t = (i + 0.5f) * stepSize;
+        float3 samplePos = viewDirVS * t;
 
-        accDensity += d;
+        float cosTheta = dot(-viewDirVS, lightDirVS);
+        float g2 = phaseG * phaseG;
+        float denom = max(1 + g2 - 2 * phaseG * cosTheta, 1e-4);
+        float phase = (1 - g2) / (4 * 3.14159265 * pow(denom, 1.5));
+
+        float absorbT = exp(-absorption * t);
+
+        float3 scatter = scatterColor * phase * absorbT
+                              * density * transmittance * stepSize;
+        accScatter += scatter;
+
+
+        transmittance *= exp(-absorption * stepSize);
     }
-    float fogFactor = pow(accDensity / steps, g_fog_power);
-    fogFactor = saturate(fogFactor);
 
-    float3 finalColor = lerp(baseColor, g_fogColor, fogFactor);
-    Output[pixel] = float4(finalColor, 1);
+    float3 litColor = baseColor + accScatter;
+    float distFog = saturate((maxDist - g_fogMin) / (g_fogMax - g_fogMin));
+    float fogFactor = 1 - exp(-distFog * g_fog_power);
+
+    float3 finalColor = lerp(litColor, g_underWaterColor, fogFactor);
+
+    Output[pix] = float4(finalColor, 1);
 }
-
 
 
 //[numthreads(16, 16, 1)]
