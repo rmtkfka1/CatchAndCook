@@ -39,7 +39,6 @@ VS_OUT VS_Main(uint vid : SV_VertexID, uint instanceID : SV_InstanceID)
     float ndcZ = (instanceID + 0.5f) / numSlices;
     o.ndcPos = float3(o.pos.xy, ndcZ);
 
-    
     return o;
 }
 
@@ -57,10 +56,17 @@ float3 ProjToView(float3 ndcPos)
 }
 
 
-
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    float3 viewPos = ProjToView(input.ndcPos.xyz);
+    float3 viewPos = ProjToView(input.ndcPos);
+    float depth = viewPos.z;
+    float normDepth = saturate(depth / waterHeight);
+    
+    float density = normDepth;
 
-    return float4(1, 0, 0, 0);
+    float sliceAlpha = (1.0f - exp(-absorption)) * density;
+
+    float3 fogCol = fogColor * density;
+
+    return float4(fogCol * sliceAlpha, sliceAlpha);
 }
